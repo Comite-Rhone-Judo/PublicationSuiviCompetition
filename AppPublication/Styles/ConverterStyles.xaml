@@ -1,0 +1,26 @@
+﻿<!--
+    Ce fichier contient des styles XAML qui simplifient le développement d'applications.
+
+    En plus d'être pratiques, ils sont aussi requis par la plupart des modèles de projet et d'élément Visual Studio.
+    Si vous supprimez, renommez ou modifiez de toute autre façon le contenu de ces fichiers, il est possible qu'un projet
+    ne soit pas généré ou qu'il ne se génère pas lors de l'ajout de pages supplémentaires. Si vous voulez modifier ces
+    styles, il est recommandé d'en copier le contenu sous un autre nom, puis de modifier votre
+    copie privée.
+-->
+
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+    xmlns:Converter="clr-namespace:AppPublication.Tools.Converter">
+
+    <Converter:ClientConverter x:Key="ClientConverter" />
+    <Converter:BoolNotConverter x:Key="BoolNotConverter" />
+    <Converter:RunningStatusConverter x:Key="RunningStatusConverter" />
+    <Converter:SiteURLConverter x:Key="SiteURLConverter" />
+    <Converter:DateGenerationConverter x:Key="DateGenerationConverter" />
+    <Converter:EtatPublicationConverter x:Key="EtatPublicationConverter" />
+    <Converter:EtatGenerationConverter x:Key="EtatGenerationConverter" />
+
+
+</ResourceDictionary>

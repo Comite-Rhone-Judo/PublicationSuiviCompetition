@@ -1,0 +1,121 @@
+﻿@charset "utf-8";
+
+/* HTML BODY */
+html, body {
+    margin: 0 auto;
+    padding: 0px;
+    font-family: Arial, sans-serif;
+    font-size: 1.5em;
+}
+
+.poule {
+}
+
+.div_max {
+    position: relative;
+    height: 1915px;
+    width: 2715px;
+    page-break-after: always;
+}
+
+.div_img {
+    position: absolute;
+    z-index: 1;
+}
+
+
+    .div_img img {
+        height: 1915px;
+        width: 2715px;
+    }
+
+.div_nom {
+    position: absolute;
+    top: 950px;
+    left: 370px;
+    width: 1975px;
+    z-index: 2;
+    font-size: 200%;
+    text-align: center;
+}
+
+.div_competition {
+    position: absolute;
+    top: 1100px;
+    left: 1250px;
+    width: 1300px;
+    z-index: 2;
+    font-size: 135%;
+    text-align: left;
+}
+
+.div_club {
+    position: absolute;
+    top: 1180px;
+    left: 1250px;
+    width: 1300px;
+    z-index: 2;
+    font-size: 135%;
+    text-align: left;
+}
+
+.div_cate {
+    position: absolute;
+    top: 1250px;
+    left: 1250px;
+    width: 1300px;
+    z-index: 2;
+    font-size: 135%;
+    text-align: left;
+}
+
+.div_date {
+    position: absolute;
+    top: 1320px;
+    left: 1250px;
+    width: 1300px;
+    z-index: 2;
+    font-size: 135%;
+    text-align: left;
+}
+
+
+
+.div_logo1 {
+    position: absolute;
+    top: 550px;
+    left: 390px;
+    z-index: 2;
+}
+
+    .div_logo1 img {
+        width: 300px;
+    }
+
+.div_logo2 {
+    position: absolute;
+    top: 550px;
+    right: 390px;
+    z-index: 2;
+}
+
+    .div_logo2 img {
+        width: 300px;
+    }
+
+.div_logo3 {
+    position: absolute;
+    width: 1975px;
+    z-index: 2;
+    left: 470px;
+    bottom: 350px;
+    text-align:center;
+}
+
+    .div_logo3 img {
+        height: 120px;
+    }
+
+    .div_logo3 table{
+        width:100%;
+    }

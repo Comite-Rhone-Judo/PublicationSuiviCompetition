@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://ffjda_critt.org/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://ffjda_critt.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://ffjda_critt.org/">
+      <s:element name="listeInscriptionsCRITT">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="idEvent" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="listeInscriptionsCRITTResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="listeInscriptionsCRITTResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="listeClubsEventCRITT">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="idEvent" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="listeClubsEventCRITTResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="listeClubsEventCRITTResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="listeClubsCRITT">
+        <s:complexType />
+      </s:element>
+      <s:element name="listeClubsCRITTResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="listeClubsCRITTResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="listeCategoriesPoidsCRITT">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Sexe" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Age" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="listeCategoriesPoidsCRITTResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="listeCategoriesPoidsCRITTResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="listeEventsCRITT">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="pwd" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="structure" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="listeEventsCRITTResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="listeEventsCRITTResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="listePopulationCRITT">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="pwd" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="structure" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="comite" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="listePopulationCRITTResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="listePopulationCRITTResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="majResultatCRITT">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="pwd" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="structure" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="xml" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="majResultatCRITTResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="majResultatCRITTResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="majResultatFFJDA">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="pwd" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="structure" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="xml" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="majResultatFFJDAResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="majResultatFFJDAResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="test">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="xml" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="testResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="testResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="listeInscriptionsCRITTSoapIn">
+    <wsdl:part name="parameters" element="tns:listeInscriptionsCRITT" />
+  </wsdl:message>
+  <wsdl:message name="listeInscriptionsCRITTSoapOut">
+    <wsdl:part name="parameters" element="tns:listeInscriptionsCRITTResponse" />
+  </wsdl:message>
+  <wsdl:message name="listeClubsEventCRITTSoapIn">
+    <wsdl:part name="parameters" element="tns:listeClubsEventCRITT" />
+  </wsdl:message>
+  <wsdl:message name="listeClubsEventCRITTSoapOut">
+    <wsdl:part name="parameters" element="tns:listeClubsEventCRITTResponse" />
+  </wsdl:message>
+  <wsdl:message name="listeClubsCRITTSoapIn">
+    <wsdl:part name="parameters" element="tns:listeClubsCRITT" />
+  </wsdl:message>
+  <wsdl:message name="listeClubsCRITTSoapOut">
+    <wsdl:part name="parameters" element="tns:listeClubsCRITTResponse" />
+  </wsdl:message>
+  <wsdl:message name="listeCategoriesPoidsCRITTSoapIn">
+    <wsdl:part name="parameters" element="tns:listeCategoriesPoidsCRITT" />
+  </wsdl:message>
+  <wsdl:message name="listeCategoriesPoidsCRITTSoapOut">
+    <wsdl:part name="parameters" element="tns:listeCategoriesPoidsCRITTResponse" />
+  </wsdl:message>
+  <wsdl:message name="listeEventsCRITTSoapIn">
+    <wsdl:part name="parameters" element="tns:listeEventsCRITT" />
+  </wsdl:message>
+  <wsdl:message name="listeEventsCRITTSoapOut">
+    <wsdl:part name="parameters" element="tns:listeEventsCRITTResponse" />
+  </wsdl:message>
+  <wsdl:message name="listePopulationCRITTSoapIn">
+    <wsdl:part name="parameters" element="tns:listePopulationCRITT" />
+  </wsdl:message>
+  <wsdl:message name="listePopulationCRITTSoapOut">
+    <wsdl:part name="parameters" element="tns:listePopulationCRITTResponse" />
+  </wsdl:message>
+  <wsdl:message name="majResultatCRITTSoapIn">
+    <wsdl:part name="parameters" element="tns:majResultatCRITT" />
+  </wsdl:message>
+  <wsdl:message name="majResultatCRITTSoapOut">
+    <wsdl:part name="parameters" element="tns:majResultatCRITTResponse" />
+  </wsdl:message>
+  <wsdl:message name="majResultatFFJDASoapIn">
+    <wsdl:part name="parameters" element="tns:majResultatFFJDA" />
+  </wsdl:message>
+  <wsdl:message name="majResultatFFJDASoapOut">
+    <wsdl:part name="parameters" element="tns:majResultatFFJDAResponse" />
+  </wsdl:message>
+  <wsdl:message name="testSoapIn">
+    <wsdl:part name="parameters" element="tns:test" />
+  </wsdl:message>
+  <wsdl:message name="testSoapOut">
+    <wsdl:part name="parameters" element="tns:testResponse" />
+  </wsdl:message>
+  <wsdl:portType name="WebService1Soap">
+    <wsdl:operation name="listeInscriptionsCRITT">
+      <wsdl:input message="tns:listeInscriptionsCRITTSoapIn" />
+      <wsdl:output message="tns:listeInscriptionsCRITTSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="listeClubsEventCRITT">
+      <wsdl:input message="tns:listeClubsEventCRITTSoapIn" />
+      <wsdl:output message="tns:listeClubsEventCRITTSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="listeClubsCRITT">
+      <wsdl:input message="tns:listeClubsCRITTSoapIn" />
+      <wsdl:output message="tns:listeClubsCRITTSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="listeCategoriesPoidsCRITT">
+      <wsdl:input message="tns:listeCategoriesPoidsCRITTSoapIn" />
+      <wsdl:output message="tns:listeCategoriesPoidsCRITTSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="listeEventsCRITT">
+      <wsdl:input message="tns:listeEventsCRITTSoapIn" />
+      <wsdl:output message="tns:listeEventsCRITTSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="listePopulationCRITT">
+      <wsdl:input message="tns:listePopulationCRITTSoapIn" />
+      <wsdl:output message="tns:listePopulationCRITTSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="majResultatCRITT">
+      <wsdl:input message="tns:majResultatCRITTSoapIn" />
+      <wsdl:output message="tns:majResultatCRITTSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="majResultatFFJDA">
+      <wsdl:input message="tns:majResultatFFJDASoapIn" />
+      <wsdl:output message="tns:majResultatFFJDASoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="test">
+      <wsdl:input message="tns:testSoapIn" />
+      <wsdl:output message="tns:testSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WebService1Soap" type="tns:WebService1Soap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="listeInscriptionsCRITT">
+      <soap:operation soapAction="http://ffjda_critt.org/listeInscriptionsCRITT" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listeClubsEventCRITT">
+      <soap:operation soapAction="http://ffjda_critt.org/listeClubsEventCRITT" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listeClubsCRITT">
+      <soap:operation soapAction="http://ffjda_critt.org/listeClubsCRITT" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listeCategoriesPoidsCRITT">
+      <soap:operation soapAction="http://ffjda_critt.org/listeCategoriesPoidsCRITT" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listeEventsCRITT">
+      <soap:operation soapAction="http://ffjda_critt.org/listeEventsCRITT" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listePopulationCRITT">
+      <soap:operation soapAction="http://ffjda_critt.org/listePopulationCRITT" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="majResultatCRITT">
+      <soap:operation soapAction="http://ffjda_critt.org/majResultatCRITT" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="majResultatFFJDA">
+      <soap:operation soapAction="http://ffjda_critt.org/majResultatFFJDA" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="test">
+      <soap:operation soapAction="http://ffjda_critt.org/test" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WebService1Soap12" type="tns:WebService1Soap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="listeInscriptionsCRITT">
+      <soap12:operation soapAction="http://ffjda_critt.org/listeInscriptionsCRITT" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listeClubsEventCRITT">
+      <soap12:operation soapAction="http://ffjda_critt.org/listeClubsEventCRITT" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listeClubsCRITT">
+      <soap12:operation soapAction="http://ffjda_critt.org/listeClubsCRITT" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listeCategoriesPoidsCRITT">
+      <soap12:operation soapAction="http://ffjda_critt.org/listeCategoriesPoidsCRITT" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listeEventsCRITT">
+      <soap12:operation soapAction="http://ffjda_critt.org/listeEventsCRITT" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listePopulationCRITT">
+      <soap12:operation soapAction="http://ffjda_critt.org/listePopulationCRITT" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="majResultatCRITT">
+      <soap12:operation soapAction="http://ffjda_critt.org/majResultatCRITT" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="majResultatFFJDA">
+      <soap12:operation soapAction="http://ffjda_critt.org/majResultatFFJDA" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="test">
+      <soap12:operation soapAction="http://ffjda_critt.org/test" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WebService1">
+    <wsdl:port name="WebService1Soap" binding="tns:WebService1Soap">
+      <soap:address location="http://www.ffjda.org/ws_Tas/WebService1.asmx" />
+    </wsdl:port>
+    <wsdl:port name="WebService1Soap12" binding="tns:WebService1Soap12">
+      <soap12:address location="http://www.ffjda.org/ws_Tas/WebService1.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

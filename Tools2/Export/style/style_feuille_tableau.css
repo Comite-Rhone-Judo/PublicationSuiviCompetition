@@ -1,0 +1,385 @@
+﻿@charset "utf-8";
+
+/* HTML BODY */
+
+.poule {
+}
+
+.header1 {
+    text-align: left;
+    vertical-align: bottom;
+    font-size: 10pt;
+}
+
+.header2 {
+    text-align: left;
+    vertical-align: middle;
+    font-size: 16pt;
+    font-weight: 600;
+}
+
+.header3 {
+    text-align: left;
+    vertical-align: middle;
+    font-size: 16pt;
+    font-weight: 600;
+}
+
+
+.t1 {
+    margin-top: 10px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .t1 td {
+        font-weight: 500;
+        font-size: 1em;
+        /*padding-bottom: 10px;
+        padding-top: 10px;
+        padding-left: 3px;
+        padding-right: 3px;*/
+        /*border: 1px;
+        border-style: solid;
+        border-color: gray;*/
+        /*page-break-inside: avoid;*/
+    }
+
+.d1 {
+    width: 100%;
+    /*border: 1px solid gray;*/
+    /*margin-top: 3px;*/
+    /*margin-left: 3px;*/
+    overflow: auto;
+    height: 100%;
+    min-height: 145px;
+}
+
+td.name {
+    font-size: 1.3em;
+    text-align: center;
+}
+
+td.combatname {
+    text-align: center;
+    width: 150px;
+    position: relative;
+}
+
+td.hr {
+    border-top: 1px solid black;
+}
+
+.cellres1 {
+    width: 100px;
+    border-bottom: 1px solid black;
+    border-left: 1px dashed black;
+    height: 25px;
+    color: #BDBDBD;
+    text-align: center;
+}
+
+.shido {
+    background-color: #D8D8D8;
+}
+
+.cellres2 {
+    width: 100px;
+    border-top: 1px solid black;
+    border-left: 1px dashed black;
+    height: 25px;
+    color: silver;
+    text-align: center;
+}
+
+.cellres3 {
+    width: 100px;
+    border-top: 1px solid black;
+    height: 25px;
+    color: silver;
+    text-align: center;
+}
+
+.cellres4 {
+    width: 100px;
+    border-bottom: 1px solid black;
+    height: 25px;
+    color: #BDBDBD;
+    text-align: center;
+}
+
+.alignright {
+    text-align: right;
+}
+
+/*td.line1 {
+    border-top: 1px;
+    border-top-style: solid;
+    border-top-color: gray;
+    border-right: 1px;
+    border-right-style: solid;
+    border-right-color: gray;
+    border-bottom: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: gray;
+}
+
+
+td.line2 {
+    border-bottom: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: gray;
+}*/
+
+.combatnum1 {
+    position: absolute;
+    z-index: 2;
+    width: 86px;
+    height: 86px;
+    display: table;
+}
+
+.combatnum2 {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    color: silver;
+    font-size: 1.6em;
+}
+
+div.line {
+    height: 100%;
+    overflow: auto;
+}
+
+    div.line table {
+        width: 100%;
+        height: 100%;
+    }
+
+        div.line table tr {
+            height: 25%;
+        }
+
+div.arrondi {
+    -moz-border-radius: 0 50% 50% 0;
+    -webkit-border-radius: 0 50% 50% 0;
+    border-radius: 0 50% 50% 0;
+    background: #ccc;
+    width: 10px;
+    height: 100%;
+}
+
+div.arrondi2 {
+    -moz-border-radius: 50% 0 0 50%;
+    -webkit-border-radius: 50% 0 0 50%;
+    border-radius: 50% 0 0 50%;
+    background: #ccc;
+    width: 10px;
+    height: 100%;
+}
+
+.d1 table.combat {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+}
+
+div.left_line {
+    height: 1px;
+    background-color: black;
+    text-align: right;
+}
+
+div.right_line {
+    height: 1px;
+    background-color: black;
+    text-align: left;
+}
+
+div.left_line span {
+    background-color: white;
+    position: relative;
+    top: -0.5em;
+    padding-left: 10px;
+    padding-right: 5px;
+}
+
+div.right_line span {
+    background-color: white;
+    position: relative;
+    top: -0.5em;
+    padding-left: 10px;
+    padding-right: 5px;
+}
+
+div.left_vainqueur {
+    position: absolute;
+    bottom: -8px;
+    right: 5px;
+}
+
+div.right_vainqueur {
+    position: absolute;
+    bottom: -8px;
+    left: 5px;
+}
+
+
+
+div.left_club_top {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+}
+
+div.right_club_top {
+    position: absolute;
+    top: 5px;
+    left: 10px;
+}
+
+div.left_club_top span {
+    font-size: 0.7em;
+}
+
+div.right_club_top span {
+    font-size: 0.7em;
+}
+
+
+div.left_club_bottom {
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+}
+
+div.right_club_bottom {
+    position: absolute;
+    bottom: 5px;
+    left: 10px;
+}
+
+div.left_club_bottom span {
+    font-size: 0.7em;
+}
+
+div.right_club_bottom span {
+    font-size: 0.7em;
+}
+
+
+
+div.left_club_top2 {
+    position: absolute;
+    top: 2px;
+    right: 10px;
+}
+
+div.right_club_top2 {
+    position: absolute;
+    top: 2px;
+    left: 10px;
+}
+
+div.left_club_top2 span {
+    font-size: 0.6em;
+}
+
+div.right_club_top2 span {
+    font-size: 0.6em;
+}
+
+
+div.left_club_bottom2 {
+    position: absolute;
+    bottom: 2px;
+    right: 10px;
+}
+
+div.right_club_bottom2 {
+    position: absolute;
+    bottom: 2px;
+    left: 10px;
+}
+
+div.left_club_bottom2 span {
+    font-size: 0.6em;
+}
+
+div.right_club_bottom2 span {
+    font-size: 0.6em;
+}
+
+
+/* AJOUT */
+
+
+.col1 {
+    float: left;
+    /*margin-left: 18pt;*/
+}
+
+.col2 {
+    /*background-color: #dcd9d9;*/
+    float: none;
+    text-align: center;
+    font-size:1.5em;
+}
+
+.col3 {
+    float: right;
+    /*margin-right: 18pt;*/
+}
+
+div.ard1 {
+    -moz-border-radius: 10px 10px 0 0;
+    -webkit-border-radius: 10px 10px 0 0;
+    border-radius: 10px 10px 0 0;
+    height: 100%;
+    border: 1px solid #000;
+}
+
+div.ard2 {
+    -moz-border-radius: 0 0 10px 10px;
+    -webkit-border-radius: 0 0 10px 10px;
+    border-radius: 0 0 10px 10px;
+    background: #ddd;
+    height: 100%;
+    border: 1px solid #000;
+}
+
+div.ard3 {
+    /*text-align: right;
+    -moz-border-radius: 10px 10px 10px 10px;
+    -webkit-border-radius: 10px 10px 10px 10px;
+    border-radius: 10px 10px 10px 10px;
+    background: #eee;
+    height: 100%;*/
+    border: 1px solid #000;
+    box-shadow: -10pt 10pt 8pt #ccc9c9;
+}
+
+.td_tab {
+    width: 10px;
+}
+
+.td_texte1 {
+    width: 25%;
+}
+
+.td_texte2 {
+    width: 15%;
+}
+
+.name {   
+    text-align: right;
+    font-size:1.5em;
+}
+
+.score {
+   margin-left:18pt;
+    text-align: left;
+    font-size:1.0em;
+}

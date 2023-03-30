@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<liste>
+  <ceintures date1="01092014" date2="31122100">
+    <ceinture id="01" nom="BL" ordre="01" remoteId="BL" couleur1="#ffffff" couleur2="#ffffff"  libelle="Blanche"></ceinture>
+    <ceinture id="02" nom="B1" ordre="02" remoteId="B1" couleur1="#ffffff" couleur2="#FFFF00" libelle="Blanche 1 liseré Jaune"></ceinture>
+    <ceinture id="03" nom="B2" ordre="03" remoteId="B2" couleur1="#ffffff" couleur2="#FFFF00" libelle="Blanche 2 liseré Jaune"></ceinture>
+    <ceinture id="04" nom="BJ" ordre="04" remoteId="BJ" couleur1="#ffffff" couleur2="#FFFF00" libelle="Blanche/Jaune"></ceinture>
+
+    <ceinture id="05" nom="CJ" ordre="05" remoteId="JA" couleur1="#FFFF00" couleur2="#FFFF00" libelle="Jaune"></ceinture>
+    <ceinture id="06" nom="JO" ordre="06" remoteId="JO" couleur1="#FFFF00" couleur2="#FF7F00" libelle="Jaune/Orange"></ceinture>
+    <ceinture id="07" nom="CO" ordre="07" remoteId="OR" couleur1="#FF7F00" couleur2="#FF7F00" libelle="Orange"></ceinture>
+    <ceinture id="08" nom="OV" ordre="08" remoteId="OV" couleur1="#FF7F00" couleur2="#15BF15" libelle="Orange/Verte"></ceinture>
+    <ceinture id="09" nom="CV" ordre="09" remoteId="VE" couleur1="#15BF15" couleur2="#15BF15" libelle="Verte"></ceinture>
+    <ceinture id="10" nom="VB" ordre="10" remoteId="VB" couleur1="#15BF15" couleur2="#0B60DF" libelle="Verte/Bleue"></ceinture>
+    <ceinture id="11" nom="CB" ordre="11" remoteId="BE" couleur1="#0B60DF" couleur2="#0B60DF" libelle="Bleue"></ceinture>
+    <ceinture id="12" nom="BM" ordre="12" remoteId="BM" couleur1="#0B60DF" couleur2="#800080" libelle="Bleue/Marron"></ceinture>
+    <ceinture id="13" nom="CM" ordre="13" remoteId="MA" couleur1="#800080" couleur2="#800080" libelle="Marron"></ceinture>
+
+    <ceinture id="14" nom="1D" ordre="14" remoteId="1D" couleur1="#000000" couleur2="#000000" libelle="1D"></ceinture>
+    <ceinture id="15" nom="2D" ordre="15" remoteId="2D" couleur1="#000000" couleur2="#000000" libelle="2D"></ceinture>
+    <ceinture id="16" nom="3D" ordre="16" remoteId="3D" couleur1="#000000" couleur2="#000000" libelle="3D"></ceinture>
+    <ceinture id="17" nom="4D" ordre="17" remoteId="4D" couleur1="#000000" couleur2="#000000" libelle="4D"></ceinture>
+    <ceinture id="18" nom="5D" ordre="18" remoteId="5D" couleur1="#000000" couleur2="#000000" libelle="5D" ></ceinture>
+    <ceinture id="19" nom="6D" ordre="19" remoteId="6D" couleur1="#FF0000" couleur2="#FFFFFF" libelle="6D"></ceinture>
+    <ceinture id="20" nom="7D" ordre="20" remoteId="7D" couleur1="#FF0000" couleur2="#FFFFFF" libelle="7D"></ceinture>
+    <ceinture id="21" nom="8D" ordre="21" remoteId="8D" couleur1="#FF0000" couleur2="#FF0000" libelle="8D"></ceinture>
+    <ceinture id="22" nom="9D" ordre="22" remoteId="9D" couleur1="#FF0000" couleur2="#FF0000" libelle="9D"></ceinture>
+    <ceinture id="23" nom="10D" ordre="23" remoteId="10D" couleur1="#FF0000" couleur2="#FF0000" libelle="10D"></ceinture>
+    <ceinture id="24" nom="11D" ordre="24" remoteId="11D" couleur1="#FF0000" couleur2="#FF0000" libelle="11D" ></ceinture>
+    <ceinture id="25" nom="12D" ordre="25" remoteId="12D" couleur1="#FFFFFF" couleur2="#FFFFFF" libelle="12D"></ceinture>
+
+    <ceinture id="26" nom="CN" ordre="26" remoteId="NO" couleur1="#FFFFFF" couleur2="#FFFFFF" libelle="Noire"></ceinture>
+  </ceintures>
+</liste>
+
+
+

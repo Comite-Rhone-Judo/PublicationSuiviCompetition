@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<structures>
+  <ligues>
+    <ligue ID="01" RemoteID="XX01" nom="GUADELOUPE" nomCourt="GUA"></ligue>
+    <ligue ID="02" RemoteID="XX02" nom="MARTINIQUE" nomCourt="MAR"></ligue>
+    <ligue ID="03" RemoteID="XX03" nom="GUYANE" nomCourt="GUY"></ligue>
+    <ligue ID="04" RemoteID="XX04" nom="REUNION" nomCourt="REU"></ligue>
+    <ligue ID="06" RemoteID="XX06" nom="MAYOTTE" nomCourt="MAY"></ligue>
+    <ligue ID="08" RemoteID="XX08" nom="NOUVELLE CALEDONIE" nomCourt="CAL"></ligue>
+    <ligue ID="09" RemoteID="XX09" nom="FEDERATION FRANCAISE - AUTRES" nomCourt=""></ligue>
+    <ligue ID="11" RemoteID="XX11" nom="ILE-DE-FRANCE" nomCourt="IDF"></ligue>
+    <ligue ID="24" RemoteID="XX24" nom="CENTRE-VAL-DE-LOIRE" nomCourt="CVL"></ligue>
+    <ligue ID="27" RemoteID="XX27" nom="BOURGOGNE-FRANCHE-COMTE" nomCourt="BFC"></ligue>
+    <ligue ID="28" RemoteID="XX28" nom="NORMANDIE" nomCourt="NOR"></ligue>
+    <ligue ID="32" RemoteID="XX32" nom="HAUTS-DE-FRANCE" nomCourt="HDF"></ligue>
+    <ligue ID="44" RemoteID="XX44" nom="GRAND-EST" nomCourt="GRE"></ligue>
+    <ligue ID="52" RemoteID="XX52" nom="PAYS-DE-LA-LOIRE" nomCourt="PDL"></ligue>
+    <ligue ID="53" RemoteID="XX53" nom="BRETAGNE" nomCourt="BRE"></ligue>
+    <ligue ID="75" RemoteID="XX75" nom="NOUVELLE AQUITAINE" nomCourt="NAQ"></ligue>
+    <ligue ID="76" RemoteID="XX76" nom="OCCITANIE" nomCourt="OCC"></ligue>
+    <ligue ID="84" RemoteID="XX84" nom="AUVERGNE-RHONE-ALPES" nomCourt="AURA"></ligue>
+    <ligue ID="93" RemoteID="XX93" nom="PROVENCE-ALPES-COTE-D AZUR" nomCourt="PACA"></ligue>
+    <ligue ID="94" RemoteID="XX94" nom="CORSE" nomCourt="COR"></ligue>
+  </ligues>
+  <comites>
+    <comite ID="" RemoteID="XX8401" nom="AIN"></comite>
+    <comite ID="" RemoteID="XX3202" nom="AISNE"></comite>
+    <comite ID="" RemoteID="XX8403" nom="ALLIER"></comite>
+    <comite ID="" RemoteID="XX9304" nom="ALPES HTE PRVCE"></comite>
+    <comite ID="" RemoteID="XX9306" nom="ALPES MARITIMES"></comite>
+    <comite ID="" RemoteID="XX4408" nom="ARDENNES"></comite>
+    <comite ID="" RemoteID="XX7609" nom="ARIEGE"></comite>
+    <comite ID="" RemoteID="XX4410" nom="AUBE"></comite>
+    <comite ID="" RemoteID="XX7611" nom="AUDE"></comite>
+    <comite ID="" RemoteID="XX7612" nom="AVEYRON"></comite>
+    <comite ID="" RemoteID="XX4467" nom="BAS RHIN"></comite>
+    <comite ID="" RemoteID="XX9313" nom="BOUCHES DU RHONE"></comite>
+    <comite ID="" RemoteID="XX2814" nom="CALVADOS"></comite>
+    <comite ID="" RemoteID="XX8415" nom="CANTAL"></comite>
+    <comite ID="" RemoteID="XX7516" nom="CHARENTE"></comite>
+    <comite ID="" RemoteID="XX7517" nom="CHARENTE MARITIME"></comite>
+    <comite ID="" RemoteID="XX2418" nom="CHER"></comite>
+    <comite ID="" RemoteID="XX7519" nom="CORREZE"></comite>
+    <comite ID="" RemoteID="XX9420" nom="CORSE"></comite>
+    <comite ID="" RemoteID="XX2721" nom="COTE D OR"></comite>
+    <comite ID="" RemoteID="XX5322" nom="COTES D ARMOR"></comite>
+    <comite ID="" RemoteID="XX7523" nom="CREUSE"></comite>
+    <comite ID="" RemoteID="XX1175" nom="DE PARIS"></comite>
+    <comite ID="" RemoteID="XX7579" nom="DEUX SEVRES"></comite>
+    <comite ID="" RemoteID="XX7524" nom="DORDOGNE"></comite>
+    <comite ID="" RemoteID="XX2725" nom="DOUBS"></comite>
+    <comite ID="" RemoteID="XX84DA" nom="DROME-ARDECHE"></comite>
+    <comite ID="" RemoteID="XX1191" nom="ESSONNE"></comite>
+    <comite ID="" RemoteID="XX2827" nom="EURE"></comite>
+    <comite ID="" RemoteID="XX2428" nom="EURE ET LOIR"></comite>
+    <comite ID="" RemoteID="XX5329" nom="FINISTERE"></comite>
+    <comite ID="" RemoteID="XX7630" nom="GARD"></comite>
+    <comite ID="" RemoteID="XX7632" nom="GERS"></comite>
+    <comite ID="" RemoteID="XX7533" nom="GIRONDE"></comite>
+    <comite ID="" RemoteID="XX4468" nom="HAUT RHIN"></comite>
+    <comite ID="" RemoteID="XX8443" nom="HAUTE LOIRE"></comite>
+    <comite ID="" RemoteID="XX4452" nom="HAUTE MARNE"></comite>
+    <comite ID="" RemoteID="XX9305" nom="HAUTES ALPES"></comite>
+    <comite ID="" RemoteID="XX1192" nom="HAUTS DE SEINE"></comite>
+    <comite ID="" RemoteID="XX7634" nom="HERAULT"></comite>
+    <comite ID="" RemoteID="XX7631" nom="HTE GARONNE"></comite>
+    <comite ID="" RemoteID="XX2770" nom="HTE SAONE"></comite>
+    <comite ID="" RemoteID="XX8474" nom="HTE SAVOIE"></comite>
+    <comite ID="" RemoteID="XX7587" nom="HTE VIENNE"></comite>
+    <comite ID="" RemoteID="XX7665" nom="HTES PYRENEES"></comite>
+    <comite ID="" RemoteID="XX5335" nom="ILLE ET VILAINE"></comite>
+    <comite ID="" RemoteID="XX2436" nom="INDRE"></comite>
+    <comite ID="" RemoteID="XX2437" nom="INDRE ET LOIRE"></comite>
+    <comite ID="" RemoteID="XX8438" nom="ISERE"></comite>
+    <comite ID="" RemoteID="XX2739" nom="JURA"></comite>
+    <comite ID="" RemoteID="XX7540" nom="LANDES"></comite>
+    <comite ID="" RemoteID="XX0197" nom="GUADELOUPE"></comite>
+    <comite ID="" RemoteID="XX0397" nom="GUYANE"></comite>
+    <comite ID="" RemoteID="XX0297" nom="MARTINIQUE"></comite>
+    <comite ID="" RemoteID="XX0898" nom="NOUVELLE CALEDONIE"></comite>
+    <comite ID="" RemoteID="XX0497" nom="REUNION"></comite>
+    <comite ID="" RemoteID="XX2441" nom="LOIR ET CHER"></comite>
+    <comite ID="" RemoteID="XX8442" nom="LOIRE"></comite>
+    <comite ID="" RemoteID="XX5244" nom="LOIRE ATLANTIQUE"></comite>
+    <comite ID="" RemoteID="XX2445" nom="LOIRET"></comite>
+    <comite ID="" RemoteID="XX7646" nom="LOT"></comite>
+    <comite ID="" RemoteID="XX7547" nom="LOT ET GARONNE"></comite>
+    <comite ID="" RemoteID="XX7648" nom="LOZERE"></comite>
+    <comite ID="" RemoteID="XX5249" nom="MAINE ET LOIRE"></comite>
+    <comite ID="" RemoteID="XX2850" nom="MANCHE"></comite>
+    <comite ID="" RemoteID="XX4451" nom="MARNE"></comite>
+    <comite ID="" RemoteID="XX5253" nom="MAYENNE"></comite>
+    <comite ID="" RemoteID="XX0697" nom="MAYOTTE"></comite>
+    <comite ID="" RemoteID="XX0997" nom="MAYOTTE"></comite>
+    <comite ID="" RemoteID="XX4454" nom="MEURTHE MOSELLE"></comite>
+    <comite ID="" RemoteID="XX4455" nom="MEUSE"></comite>
+    <comite ID="" RemoteID="XX5356" nom="MORBIHAN"></comite>
+    <comite ID="" RemoteID="XX4457" nom="MOSELLE"></comite>
+    <comite ID="" RemoteID="XX2758" nom="NIEVRE"></comite>
+    <comite ID="" RemoteID="XX3259" nom="NORD"></comite>
+    <comite ID="" RemoteID="XX3260" nom="OISE"></comite>
+    <comite ID="" RemoteID="XX2861" nom="ORNE"></comite>
+    <comite ID="" RemoteID="XX3262" nom="PAS DE CALAIS"></comite>
+    <comite ID="" RemoteID="XX8463" nom="PUY DE DOME"></comite>
+    <comite ID="" RemoteID="XX7564" nom="PYRENEES ATLANT."></comite>
+    <comite ID="" RemoteID="XX7666" nom="PYRENEES ORIENTALES"></comite>
+    <comite ID="" RemoteID="XX8469" nom="RHONE"></comite>
+    <comite ID="" RemoteID="XX2771" nom="SAONE ET LOIRE"></comite>
+    <comite ID="" RemoteID="XX5272" nom="SARTHE"></comite>
+    <comite ID="" RemoteID="XX8473" nom="SAVOIE"></comite>
+    <comite ID="" RemoteID="XX1177" nom="SEINE ET MARNE"></comite>
+    <comite ID="" RemoteID="XX2876" nom="SEINE MARITIME"></comite>
+    <comite ID="" RemoteID="XX1193" nom="SEINE SAINT DENIS"></comite>
+    <comite ID="" RemoteID="XX3280" nom="SOMME"></comite>
+    <comite ID="" RemoteID="XX7681" nom="TARN"></comite>
+    <comite ID="" RemoteID="XX7682" nom="TARN ET GARONNE"></comite>
+    <comite ID="" RemoteID="XX2790" nom="TERRITOIRE BELFORT"></comite>
+    <comite ID="" RemoteID="XX1195" nom="VAL D OISE"></comite>
+    <comite ID="" RemoteID="XX1194" nom="VAL DE MARNE"></comite>
+    <comite ID="" RemoteID="XX9383" nom="VAR"></comite>
+    <comite ID="" RemoteID="XX9384" nom="VAUCLUSE"></comite>
+    <comite ID="" RemoteID="XX5285" nom="VENDEE"></comite>
+    <comite ID="" RemoteID="XX7586" nom="VIENNE"></comite>
+    <comite ID="" RemoteID="XX4488" nom="VOSGES"></comite>
+    <comite ID="" RemoteID="XX2789" nom="YONNE"></comite>
+    <comite ID="" RemoteID="XX1178" nom="YVELINES"></comite>
+  </comites>
+</structures>
+

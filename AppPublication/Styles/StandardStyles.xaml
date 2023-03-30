@@ -1,0 +1,245 @@
+﻿<!--
+    Ce fichier contient des styles XAML qui simplifient le développement d'applications.
+
+    En plus d'être pratiques, ils sont aussi requis par la plupart des modèles de projet et d'élément Visual Studio.
+    Si vous supprimez, renommez ou modifiez de toute autre façon le contenu de ces fichiers, il est possible qu'un projet
+    ne soit pas généré ou qu'il ne se génère pas lors de l'ajout de pages supplémentaires. Si vous voulez modifier ces
+    styles, il est recommandé d'en copier le contenu sous un autre nom, puis de modifier votre
+    copie privée.
+-->
+
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation">
+
+    <Style x:Key="GridViewStyle1" TargetType="{x:Type telerik:RadGridView}">
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="ReorderColumnsMode" Value="ReorderColumns" />
+        <Setter Property="GroupPanelBackground" Value="Transparent" />
+        <Setter Property="GroupPanelForeground" Value="white" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="RowIndicatorVisibility" Value="Collapsed" />
+        <Setter Property="AutoGenerateColumns" Value="False" />
+        <Setter Property="GridLinesVisibility" Value="Vertical" />
+        <Setter Property="AutoExpandGroups" Value="True" />
+        <Setter Property="ShowGroupPanel" Value="False" />
+        <Setter Property="IsFilteringAllowed" Value="False" />
+        <Setter Property="telerik:StyleManager.Theme" Value="Expression_Dark" />
+        <Setter Property="Margin" Value="10"/>
+        <Setter Property="SelectionUnit" Value="FullRow"/>
+        <Setter Property="IsSynchronizedWithCurrentItem" Value="False"/>
+        <Setter Property="CanUserSelect" Value="True"/>
+        <Setter Property="ActionOnLostFocus" Value="CancelEdit"/>
+        <Setter Property="EditTriggers" Value="CellClick"/>
+        <Setter Property="ShowColumnFooters" Value="True"/>
+        <Setter Property="KeyboardNavigation.IsTabStop" Value="False"/>
+    </Style>
+
+    <Style x:Key="EpreuveBorder2" TargetType="{x:Type Border}">
+        <Setter Property="BorderBrush" Value="Black" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="5" />
+        <Setter Property="Background" Value="#DDDDDD" />
+        <Setter Property="Opacity" Value="0.7" />
+    </Style>
+
+    <Style x:Key="TextGridStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="FontFamily" Value="{telerik:Windows8Resource ResourceKey=FontFamily}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Margin" Value="5" />
+    </Style>
+
+    <Style x:Key="Header1Style" TargetType="{x:Type StackPanel}">
+        <Setter Property="Height" Value="40" />
+        <!--<Setter Property="Background" Value="{telerik:Windows8Resource ResourceKey=AccentBrush}" />-->
+        <Setter Property="Background" Value="#333333" />
+        <Setter Property="Orientation" Value="Horizontal" />
+        <Setter Property="Margin" Value="5" />
+    </Style>
+
+    <Style x:Key="Header1TextStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="FontFamily" Value="{telerik:Windows8Resource ResourceKey=FontFamily}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Margin" Value="5 10" />
+    </Style>
+
+    <Style x:Key="LabelStyle" TargetType="Label">
+        <Setter Property="Foreground" Value="#EEEEEE" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontFamily"  Value="pack://application:,,,/Tools;component/Styles/Polices/#Cooper Black"/>
+        <Setter Property="Margin"  Value="10"/>
+        <Setter Property="VerticalAlignment"  Value="Center"/>
+        <Setter Property="HorizontalAlignment"  Value="Left"/>
+    </Style>
+
+    <Style x:Key="LabelStyleValue" TargetType="Label">
+        <Setter Property="Foreground" Value="#EEEEEE" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontFamily"  Value="pack://application:,,,/Tools;component/Styles/Polices/#Cooper Black"/>
+        <Setter Property="Margin"  Value="10"/>
+        <Setter Property="FontStyle"  Value="Italic"/>
+        <Setter Property="VerticalAlignment"  Value="Center"/>
+        <Setter Property="HorizontalAlignment"  Value="Left"/>
+    </Style>
+
+    <Style x:Key="HeaderStyle" TargetType="Label">
+        <Setter Property="Foreground" Value="#EEEEEE" />
+        <Setter Property="FontSize" Value="18" />
+        <!-- <Setter Property="FontFamily"  Value="pack://application:,,,/Tools;component/Styles/Polices/#Cooper Black"/> -->
+        <Setter Property="Margin"  Value="10"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="VerticalAlignment"  Value="Center"/>
+        <Setter Property="HorizontalAlignment"  Value="Left"/>
+    </Style>
+
+    <Style x:Key="RadButtonStyleEdit" TargetType="telerik:RadButton">
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Grid>
+                        <Rectangle RadiusX="5" RadiusY="5" Grid.RowSpan="4" Fill="#FF1E93ED" Margin="0" Height="25" Width="25">
+                            <Rectangle.Effect>
+                                <DropShadowEffect BlurRadius="7" ShadowDepth="0" Color="white" Opacity="1"/>
+                            </Rectangle.Effect>
+                        </Rectangle>
+                        <WrapPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <Image Source="{Binding Content, RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type Button}}}" Height="15" Width="15" Margin="5" ToolTip="{TemplateBinding ToolTip}"/>
+                        </WrapPanel>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Cursor" Value="Hand" />
+            </Trigger>
+            <EventTrigger RoutedEvent="Mouse.MouseEnter">
+                <BeginStoryboard>
+                    <Storyboard TargetProperty="RenderTransform.ScaleX">
+                        <DoubleAnimation To="0.9" Duration="0:0:0.1" />
+                    </Storyboard>
+                </BeginStoryboard>
+                <BeginStoryboard>
+                    <Storyboard TargetProperty="RenderTransform.ScaleY">
+                        <DoubleAnimation To="0.9" Duration="0:0:0.1" />
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+
+            <EventTrigger RoutedEvent="Mouse.MouseLeave">
+                <BeginStoryboard>
+                    <Storyboard TargetProperty="RenderTransform.ScaleX">
+                        <DoubleAnimation To="1.0" Duration="0:0:0.1" />
+                    </Storyboard>
+                </BeginStoryboard>
+                <BeginStoryboard>
+                    <Storyboard TargetProperty="RenderTransform.ScaleY">
+                        <DoubleAnimation To="1.0" Duration="0:0:0.1" />
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Style.Triggers>
+    </Style>
+    
+    <Style x:Key="RadButtonStyle1" TargetType="telerik:RadButton">
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Grid>
+                        <Rectangle RadiusX="5" RadiusY="5" Grid.RowSpan="4" Fill="#FF1E93ED" Margin="0">
+                            <Rectangle.Effect>
+                                <DropShadowEffect BlurRadius="7" ShadowDepth="0" Color="white" Opacity="1"/>
+                            </Rectangle.Effect>
+                        </Rectangle>
+                        <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Image Source="{Binding Tag, RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type Button}}}" Height="25" Margin="5" ToolTip="{TemplateBinding ToolTip}"/>
+                        </WrapPanel>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Cursor" Value="Hand" />
+            </Trigger>
+            <EventTrigger RoutedEvent="Mouse.MouseEnter">
+                <BeginStoryboard>
+                    <Storyboard TargetProperty="RenderTransform.ScaleX">
+                        <DoubleAnimation To="0.9" Duration="0:0:0.1" />
+                    </Storyboard>
+                </BeginStoryboard>
+                <BeginStoryboard>
+                    <Storyboard TargetProperty="RenderTransform.ScaleY">
+                        <DoubleAnimation To="0.9" Duration="0:0:0.1" />
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+
+            <EventTrigger RoutedEvent="Mouse.MouseLeave">
+                <BeginStoryboard>
+                    <Storyboard TargetProperty="RenderTransform.ScaleX">
+                        <DoubleAnimation To="1.0" Duration="0:0:0.1" />
+                    </Storyboard>
+                </BeginStoryboard>
+                <BeginStoryboard>
+                    <Storyboard TargetProperty="RenderTransform.ScaleY">
+                        <DoubleAnimation To="1.0" Duration="0:0:0.1" />
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+
+        </Style.Triggers>
+    </Style>
+
+
+    <Style x:Key="Header2TextStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="FontFamily" Value="{telerik:Windows8Resource ResourceKey=FontFamily}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="Foreground" Value="Black" />
+        <Setter Property="Margin" Value="5 10" />
+    </Style>
+
+    <Style TargetType="Rectangle" x:Key="RunningStatusStyle">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=IsGenerationActive}" Value="True">
+                <Setter Property="Fill" Value="Green"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Path=IsGenerationActive}" Value="False">
+                <Setter Property="Fill" Value="Red"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Path=IsActif}" Value="True">
+                <Setter Property="Fill" Value="Green"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Path=IsActif}" Value="False">
+                <Setter Property="Fill" Value="Red"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+
+    <DataTemplate x:Key="ServerItemTemplate">
+        <StackPanel Orientation="Horizontal">
+            <Label Content="{Binding IEP}">
+            </Label>
+            <Label Content="{Binding machine}"></Label>
+            <Label Content="{Binding user}"></Label>
+            <Label Content="{Binding competition}"></Label>
+        </StackPanel>
+    </DataTemplate>
+</ResourceDictionary>

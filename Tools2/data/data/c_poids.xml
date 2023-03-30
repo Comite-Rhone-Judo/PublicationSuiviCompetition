@@ -1,0 +1,445 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<liste>
+  <categoriesPoids date1="01092014" date2="31122016">
+
+    <!--BENJAMINS-->
+
+    <!--individuel-->
+    <categoriePoids id="20" remoteId="1" poidsMin="0" poidsMax="30" nom="-30" ordre="300" sexe="M" categorieAge="2" equipe="false" />
+    <categoriePoids id="21" remoteId="2" poidsMin="30" poidsMax="34" nom="-34" ordre="340" sexe="M" categorieAge="2" equipe="false" />
+    <categoriePoids id="22" remoteId="3" poidsMin="34" poidsMax="38" nom="-38" ordre="380" sexe="M" categorieAge="2" equipe="false" />
+    <categoriePoids id="23" remoteId="4" poidsMin="38" poidsMax="42" nom="-42" ordre="420" sexe="M" categorieAge="2" equipe="false" />
+    <categoriePoids id="24" remoteId="5" poidsMin="42" poidsMax="46" nom="-46" ordre="460" sexe="M" categorieAge="2" equipe="false" />
+    <categoriePoids id="25" remoteId="6" poidsMin="46" poidsMax="50" nom="-50" ordre="500" sexe="M" categorieAge="2" equipe="false" />
+    <categoriePoids id="26" remoteId="7" poidsMin="50" poidsMax="55" nom="-55" ordre="550" sexe="M" categorieAge="2" equipe="false" />
+    <categoriePoids id="27" remoteId="8" poidsMin="55" poidsMax="60" nom="-60" ordre="600" sexe="M" categorieAge="2" equipe="false" />
+    <categoriePoids id="28" remoteId="9" poidsMin="60" poidsMax="66" nom="-66" ordre="660" sexe="M" categorieAge="2" equipe="false" />
+    <categoriePoids id="29" remoteId="10" poidsMin="66" poidsMax="0" nom="+66" ordre="661" sexe="M" categorieAge="2" equipe="false" />
+
+    <categoriePoids id="30" remoteId="1" poidsMin="0" poidsMax="32" nom="-32" ordre="320" sexe="F" categorieAge="2" equipe="false" />
+    <categoriePoids id="31" remoteId="2" poidsMin="32" poidsMax="36" nom="-36" ordre="360" sexe="F" categorieAge="2" equipe="false" />
+    <categoriePoids id="32" remoteId="3" poidsMin="36" poidsMax="40" nom="-40" ordre="400" sexe="F" categorieAge="2" equipe="false" />
+    <categoriePoids id="33" remoteId="4" poidsMin="40" poidsMax="44" nom="-44" ordre="440" sexe="F" categorieAge="2" equipe="false" />
+    <categoriePoids id="34" remoteId="5" poidsMin="44" poidsMax="48" nom="-48" ordre="480" sexe="F" categorieAge="2" equipe="false" />
+    <categoriePoids id="35" remoteId="6" poidsMin="48" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="2" equipe="false" />
+    <categoriePoids id="36" remoteId="7" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="2" equipe="false" />
+    <categoriePoids id="37" remoteId="8" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="2" equipe="false" />
+    <categoriePoids id="38" remoteId="9" poidsMin="63" poidsMax="0" nom="+63" ordre="631" sexe="F" categorieAge="2" equipe="false" />
+
+    <!--equipes-->
+    <categoriePoids id="105" remoteId="1" poidsMin="0" poidsMax="30" nom="-30" ordre="300" sexe="M" categorieAge="2" equipe="true" />
+    <categoriePoids id="106" remoteId="2" poidsMin="30" poidsMax="34" nom="-34" ordre="340" sexe="M" categorieAge="2" equipe="true" />
+    <categoriePoids id="107" remoteId="3" poidsMin="34" poidsMax="38" nom="-38" ordre="380" sexe="M" categorieAge="2" equipe="true" />
+    <categoriePoids id="108" remoteId="4" poidsMin="38" poidsMax="42" nom="-42" ordre="420" sexe="M" categorieAge="2" equipe="true" />
+    <categoriePoids id="109" remoteId="5" poidsMin="42" poidsMax="46" nom="-46" ordre="460" sexe="M" categorieAge="2" equipe="true" />
+    <categoriePoids id="110" remoteId="6" poidsMin="46" poidsMax="50" nom="-50" ordre="500" sexe="M" categorieAge="2" equipe="true" />
+    <categoriePoids id="111" remoteId="7" poidsMin="50" poidsMax="55" nom="-55" ordre="550" sexe="M" categorieAge="2" equipe="true" />
+    <categoriePoids id="112" remoteId="8" poidsMin="55" poidsMax="60" nom="-60" ordre="600" sexe="M" categorieAge="2" equipe="true" />
+    <categoriePoids id="113" remoteId="9" poidsMin="60" poidsMax="66" nom="-66" ordre="660" sexe="M" categorieAge="2" equipe="true" />
+    <categoriePoids id="114" remoteId="10" poidsMin="66" poidsMax="0" nom="+66" ordre="661" sexe="M" categorieAge="2" equipe="true" />
+
+    <categoriePoids id="115" remoteId="1" poidsMin="0" poidsMax="32" nom="-32" ordre="320" sexe="F" categorieAge="2" equipe="true" />
+    <categoriePoids id="116" remoteId="2" poidsMin="32" poidsMax="36" nom="-36" ordre="360" sexe="F" categorieAge="2" equipe="true" />
+    <categoriePoids id="117" remoteId="3" poidsMin="36" poidsMax="40" nom="-40" ordre="400" sexe="F" categorieAge="2" equipe="true" />
+    <categoriePoids id="118" remoteId="4" poidsMin="40" poidsMax="44" nom="-44" ordre="440" sexe="F" categorieAge="2" equipe="true" />
+    <categoriePoids id="119" remoteId="5" poidsMin="44" poidsMax="48" nom="-48" ordre="480" sexe="F" categorieAge="2" equipe="true" />
+    <categoriePoids id="120" remoteId="6" poidsMin="48" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="2" equipe="true" />
+    <categoriePoids id="121" remoteId="7" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="2" equipe="true" />
+    <categoriePoids id="122" remoteId="8" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="2" equipe="true" />
+    <categoriePoids id="123" remoteId="9" poidsMin="63" poidsMax="0" nom="+63" ordre="631" sexe="F" categorieAge="2" equipe="true" />
+
+
+    <!--MINIMES-->
+
+    <!--individuel-->
+    <categoriePoids id="39" remoteId="1" poidsMin="0" poidsMax="34" nom="-34" ordre="340" sexe="M" categorieAge="3" equipe="false" />
+    <categoriePoids id="40" remoteId="2" poidsMin="34" poidsMax="38" nom="-38" ordre="380" sexe="M" categorieAge="3" equipe="false" />
+    <categoriePoids id="41" remoteId="3" poidsMin="38" poidsMax="42" nom="-42" ordre="420" sexe="M" categorieAge="3" equipe="false" />
+    <categoriePoids id="42" remoteId="4" poidsMin="42" poidsMax="46" nom="-46" ordre="460" sexe="M" categorieAge="3" equipe="false" />
+    <categoriePoids id="43" remoteId="5" poidsMin="46" poidsMax="50" nom="-50" ordre="500" sexe="M" categorieAge="3" equipe="false" />
+    <categoriePoids id="44" remoteId="6" poidsMin="50" poidsMax="55" nom="-55" ordre="550" sexe="M" categorieAge="3" equipe="false" />
+    <categoriePoids id="45" remoteId="7" poidsMin="55" poidsMax="60" nom="-60" ordre="600" sexe="M" categorieAge="3" equipe="false" />
+    <categoriePoids id="46" remoteId="8" poidsMin="60" poidsMax="66" nom="-66" ordre="660" sexe="M" categorieAge="3" equipe="false" />
+    <categoriePoids id="47" remoteId="9" poidsMin="66" poidsMax="73" nom="-73" ordre="730" sexe="M" categorieAge="3" equipe="false" />
+    <categoriePoids id="48" remoteId="10" poidsMin="73" poidsMax="0" nom="+73" ordre="731" sexe="M" categorieAge="3" equipe="false" />
+
+    <categoriePoids id="49" remoteId="1" poidsMin="0" poidsMax="36" nom="-36" ordre="360" sexe="F" categorieAge="3" equipe="false" />
+    <categoriePoids id="50" remoteId="2" poidsMin="36" poidsMax="40" nom="-40" ordre="400" sexe="F" categorieAge="3" equipe="false" />
+    <categoriePoids id="51" remoteId="3" poidsMin="40" poidsMax="44" nom="-44" ordre="440" sexe="F" categorieAge="3" equipe="false" />
+    <categoriePoids id="52" remoteId="4" poidsMin="44" poidsMax="48" nom="-48" ordre="480" sexe="F" categorieAge="3" equipe="false" />
+    <categoriePoids id="53" remoteId="5" poidsMin="48" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="3" equipe="false" />
+    <categoriePoids id="54" remoteId="6" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="3" equipe="false" />
+    <categoriePoids id="55" remoteId="7" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="3" equipe="false" />
+    <categoriePoids id="56" remoteId="8" poidsMin="63" poidsMax="70" nom="-70" ordre="700" sexe="F" categorieAge="3" equipe="false" />
+    <categoriePoids id="57" remoteId="9" poidsMin="70" poidsMax="0" nom="+70" ordre="701" sexe="F" categorieAge="3" equipe="false" />
+
+    <!--equipes-->
+    <categoriePoids id="124" remoteId="1" poidsMin="0" poidsMax="34" nom="-34" ordre="340" sexe="M" categorieAge="3" equipe="true" />
+    <categoriePoids id="125" remoteId="2" poidsMin="34" poidsMax="38" nom="-38" ordre="380" sexe="M" categorieAge="3" equipe="true" />
+    <categoriePoids id="126" remoteId="3" poidsMin="38" poidsMax="42" nom="-42" ordre="420" sexe="M" categorieAge="3" equipe="true" />
+    <categoriePoids id="127" remoteId="4" poidsMin="42" poidsMax="46" nom="-46" ordre="460" sexe="M" categorieAge="3" equipe="true" />
+    <categoriePoids id="128" remoteId="5" poidsMin="46" poidsMax="50" nom="-50" ordre="500" sexe="M" categorieAge="3" equipe="true" />
+    <categoriePoids id="129" remoteId="6" poidsMin="50" poidsMax="55" nom="-55" ordre="550" sexe="M" categorieAge="3" equipe="true" />
+    <categoriePoids id="130" remoteId="7" poidsMin="55" poidsMax="60" nom="-60" ordre="600" sexe="M" categorieAge="3" equipe="true" />
+    <categoriePoids id="131" remoteId="8" poidsMin="60" poidsMax="66" nom="-66" ordre="660" sexe="M" categorieAge="3" equipe="true" />
+    <categoriePoids id="132" remoteId="9" poidsMin="66" poidsMax="73" nom="-73" ordre="730" sexe="M" categorieAge="3" equipe="true" />
+    <categoriePoids id="133" remoteId="10" poidsMin="73" poidsMax="0" nom="+73" ordre="731" sexe="M" categorieAge="3" equipe="true" />
+
+    <categoriePoids id="134" remoteId="1" poidsMin="0" poidsMax="36" nom="-36" ordre="360" sexe="F" categorieAge="3" equipe="true" />
+    <categoriePoids id="135" remoteId="2" poidsMin="36" poidsMax="40" nom="-40" ordre="400" sexe="F" categorieAge="3" equipe="true" />
+    <categoriePoids id="136" remoteId="3" poidsMin="40" poidsMax="44" nom="-44" ordre="440" sexe="F" categorieAge="3" equipe="true" />
+    <categoriePoids id="137" remoteId="4" poidsMin="44" poidsMax="48" nom="-48" ordre="480" sexe="F" categorieAge="3" equipe="true" />
+    <categoriePoids id="138" remoteId="5" poidsMin="48" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="3" equipe="true" />
+    <categoriePoids id="139" remoteId="6" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="3" equipe="true" />
+    <categoriePoids id="140" remoteId="7" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="3" equipe="true" />
+    <categoriePoids id="141" remoteId="8" poidsMin="63" poidsMax="70" nom="-70" ordre="700" sexe="F" categorieAge="3" equipe="true" />
+    <categoriePoids id="142" remoteId="9" poidsMin="70" poidsMax="0" nom="+70" ordre="701" sexe="F" categorieAge="3" equipe="true" />
+
+
+    <!--CADETS-->
+
+    <!--individuel-->
+    <categoriePoids id="58" remoteId="1" poidsMin="0" poidsMax="46" nom="-46" ordre="460" sexe="M" categorieAge="4" equipe="false" />
+    <categoriePoids id="59" remoteId="2" poidsMin="46" poidsMax="50" nom="-50" ordre="500" sexe="M" categorieAge="4" equipe="false" />
+    <categoriePoids id="60" remoteId="3" poidsMin="50" poidsMax="55" nom="-55" ordre="550" sexe="M" categorieAge="4" equipe="false" />
+    <categoriePoids id="61" remoteId="4" poidsMin="55" poidsMax="60" nom="-60" ordre="600" sexe="M" categorieAge="4" equipe="false" />
+    <categoriePoids id="62" remoteId="5" poidsMin="60" poidsMax="66" nom="-66" ordre="660" sexe="M" categorieAge="4" equipe="false" />
+    <categoriePoids id="63" remoteId="6" poidsMin="66" poidsMax="73" nom="-73" ordre="730" sexe="M" categorieAge="4" equipe="false" />
+    <categoriePoids id="64" remoteId="7" poidsMin="73" poidsMax="81" nom="-81" ordre="810" sexe="M" categorieAge="4" equipe="false" />
+    <categoriePoids id="65" remoteId="8" poidsMin="81" poidsMax="90" nom="-90" ordre="900" sexe="M" categorieAge="4" equipe="false" />
+    <categoriePoids id="66" remoteId="9" poidsMin="90" poidsMax="0" nom="+90" ordre="901" sexe="M" categorieAge="4" equipe="false" />
+
+    <categoriePoids id="67" remoteId="1" poidsMin="0" poidsMax="40" nom="-40" ordre="400" sexe="F" categorieAge="4" equipe="false" />
+    <categoriePoids id="68" remoteId="2" poidsMin="40" poidsMax="44" nom="-44" ordre="440" sexe="F" categorieAge="4" equipe="false" />
+    <categoriePoids id="69" remoteId="3" poidsMin="44" poidsMax="48" nom="-48" ordre="480" sexe="F" categorieAge="4" equipe="false" />
+    <categoriePoids id="70" remoteId="4" poidsMin="48" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="4" equipe="false" />
+    <categoriePoids id="71" remoteId="5" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="4" equipe="false" />
+    <categoriePoids id="72" remoteId="6" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="4" equipe="false" />
+    <categoriePoids id="73" remoteId="7" poidsMin="63" poidsMax="70" nom="-70" ordre="700" sexe="F" categorieAge="4" equipe="false" />
+    <categoriePoids id="74" remoteId="8" poidsMin="70" poidsMax="0" nom="+70" ordre="701" sexe="F" categorieAge="4" equipe="false" />
+
+    <!--equipes-->
+    <categoriePoids id="145" remoteId="3" poidsMin="0" poidsMax="55" nom="-55" ordre="550" sexe="M" categorieAge="4" equipe="true" />
+    <categoriePoids id="146" remoteId="4" poidsMin="55" poidsMax="60" nom="-60" ordre="600" sexe="M" categorieAge="4" equipe="true" />
+    <categoriePoids id="147" remoteId="5" poidsMin="60" poidsMax="66" nom="-66" ordre="660" sexe="M" categorieAge="4" equipe="true" />
+    <categoriePoids id="148" remoteId="6" poidsMin="66" poidsMax="73" nom="-73" ordre="730" sexe="M" categorieAge="4" equipe="true" />
+    <categoriePoids id="149" remoteId="7" poidsMin="73" poidsMax="0" nom="+73" ordre="810" sexe="M" categorieAge="4" equipe="true" />
+
+    <categoriePoids id="154" remoteId="3" poidsMin="0" poidsMax="48" nom="-48" ordre="480" sexe="F" categorieAge="4" equipe="true" />
+    <categoriePoids id="155" remoteId="4" poidsMin="48" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="4" equipe="true" />
+    <categoriePoids id="156" remoteId="5" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="4" equipe="true" />
+    <categoriePoids id="157" remoteId="6" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="4" equipe="true" />
+    <categoriePoids id="158" remoteId="7" poidsMin="63" poidsMax="0" nom="+63" ordre="700" sexe="F" categorieAge="4" equipe="true" />
+
+
+    <!--JUNIORS-->
+
+    <!--individuel-->
+    <categoriePoids id="75" remoteId="1" poidsMin="0" poidsMax="55" nom="-55" ordre="0550" sexe="M" categorieAge="5" equipe="false" />
+    <categoriePoids id="76" remoteId="2" poidsMin="55" poidsMax="60" nom="-60" ordre="0600" sexe="M" categorieAge="5" equipe="false" />
+    <categoriePoids id="77" remoteId="3" poidsMin="60" poidsMax="66" nom="-66" ordre="0660" sexe="M" categorieAge="5" equipe="false" />
+    <categoriePoids id="78" remoteId="4" poidsMin="66" poidsMax="73" nom="-73" ordre="0730" sexe="M" categorieAge="5" equipe="false" />
+    <categoriePoids id="79" remoteId="5" poidsMin="73" poidsMax="81" nom="-81" ordre="0810" sexe="M" categorieAge="5" equipe="false" />
+    <categoriePoids id="80" remoteId="6" poidsMin="81" poidsMax="90" nom="-90" ordre="0900" sexe="M" categorieAge="5" equipe="false" />
+    <categoriePoids id="81" remoteId="7" poidsMin="90" poidsMax="100" nom="-100" ordre="1000" sexe="M" categorieAge="5" equipe="false" />
+    <categoriePoids id="82" remoteId="8" poidsMin="100" poidsMax="0" nom="+100" ordre="1001" sexe="M" categorieAge="5" equipe="false" />
+
+    <categoriePoids id="83" remoteId="1" poidsMin="0" poidsMax="44" nom="-44" ordre="440" sexe="F" categorieAge="5" equipe="false" />
+    <categoriePoids id="84" remoteId="2" poidsMin="44" poidsMax="48" nom="-48" ordre="480" sexe="F" categorieAge="5" equipe="false" />
+    <categoriePoids id="85" remoteId="3" poidsMin="48" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="5" equipe="false" />
+    <categoriePoids id="86" remoteId="4" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="5" equipe="false" />
+    <categoriePoids id="87" remoteId="5" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="5" equipe="false" />
+    <categoriePoids id="88" remoteId="6" poidsMin="63" poidsMax="70" nom="-70" ordre="700" sexe="F" categorieAge="5" equipe="false" />
+    <categoriePoids id="89" remoteId="7" poidsMin="70" poidsMax="78" nom="-78" ordre="780" sexe="F" categorieAge="5" equipe="false" />
+    <categoriePoids id="90" remoteId="8" poidsMin="78" poidsMax="0" nom="+78" ordre="781" sexe="F" categorieAge="5" equipe="false" />
+
+    <!--equipes-->
+    <categoriePoids id="176" remoteId="1" poidsMin="0" poidsMax="60" nom="-60" ordre="0600" sexe="M" categorieAge="5" equipe="true" />
+    <categoriePoids id="177" remoteId="2" poidsMin="60" poidsMax="66" nom="-66" ordre="0660" sexe="M" categorieAge="5" equipe="true" />
+    <categoriePoids id="178" remoteId="3" poidsMin="66" poidsMax="73" nom="-73" ordre="0730" sexe="M" categorieAge="5" equipe="true" />
+    <categoriePoids id="179" remoteId="4" poidsMin="73" poidsMax="81" nom="-81" ordre="0810" sexe="M" categorieAge="5" equipe="true" />
+    <categoriePoids id="180" remoteId="5" poidsMin="81" poidsMax="0" nom="+81" ordre="0900" sexe="M" categorieAge="5" equipe="true" />
+
+    <categoriePoids id="184" remoteId="2" poidsMin="0" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="5" equipe="true" />
+    <categoriePoids id="185" remoteId="3" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="5" equipe="true" />
+    <categoriePoids id="186" remoteId="4" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="5" equipe="true" />
+    <categoriePoids id="187" remoteId="5" poidsMin="63" poidsMax="70" nom="-70" ordre="700" sexe="F" categorieAge="5" equipe="true" />
+    <categoriePoids id="188" remoteId="6" poidsMin="70" poidsMax="0" nom="+70" ordre="780" sexe="F" categorieAge="5" equipe="true" />
+
+
+    <!--SENIORS-->
+
+    <!--individuel-->
+    <categoriePoids id="91" remoteId="1" poidsMin="0" poidsMax="60" nom="-60" ordre="0600" sexe="M" categorieAge="6" equipe="false" />
+    <categoriePoids id="92" remoteId="2" poidsMin="60" poidsMax="66" nom="-66" ordre="0660" sexe="M" categorieAge="6" equipe="false" />
+    <categoriePoids id="93" remoteId="3" poidsMin="66" poidsMax="73" nom="-73" ordre="0730" sexe="M" categorieAge="6" equipe="false" />
+    <categoriePoids id="94" remoteId="4" poidsMin="73" poidsMax="81" nom="-81" ordre="0810" sexe="M" categorieAge="6" equipe="false" />
+    <categoriePoids id="95" remoteId="5" poidsMin="81" poidsMax="90" nom="-90" ordre="0900" sexe="M" categorieAge="6" equipe="false" />
+    <categoriePoids id="96" remoteId="6" poidsMin="90" poidsMax="100" nom="-100" ordre="1000" sexe="M" categorieAge="6" equipe="false" />
+    <categoriePoids id="97" remoteId="7" poidsMin="100" poidsMax="0" nom="+100" ordre="1001" sexe="M" categorieAge="6" equipe="false" />
+
+    <categoriePoids id="98" remoteId="1" poidsMin="0" poidsMax="48" nom="-48" ordre="480" sexe="F" categorieAge="6" equipe="false" />
+    <categoriePoids id="99" remoteId="2" poidsMin="48" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="6" equipe="false" />
+    <categoriePoids id="100" remoteId="3" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="6" equipe="false" />
+    <categoriePoids id="101" remoteId="4" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="6" equipe="false" />
+    <categoriePoids id="102" remoteId="5" poidsMin="63" poidsMax="70" nom="-70" ordre="700" sexe="F" categorieAge="6" equipe="false" />
+    <categoriePoids id="103" remoteId="6" poidsMin="70" poidsMax="78" nom="-78" ordre="780" sexe="F" categorieAge="6" equipe="false" />
+    <categoriePoids id="104" remoteId="7" poidsMin="78" poidsMax="0" nom="+78" ordre="781" sexe="F" categorieAge="6" equipe="false" />
+
+    <!--equipes-->
+    <categoriePoids id="162" remoteId="3" poidsMin="0" poidsMax="66" nom="-66" ordre="0660" sexe="M" categorieAge="6" equipe="true" />
+    <categoriePoids id="163" remoteId="4" poidsMin="66" poidsMax="73" nom="-73" ordre="0730" sexe="M" categorieAge="6" equipe="true" />
+    <categoriePoids id="164" remoteId="5" poidsMin="73" poidsMax="81" nom="-81" ordre="0810" sexe="M" categorieAge="6" equipe="true" />
+    <categoriePoids id="165" remoteId="6" poidsMin="81" poidsMax="90" nom="-90" ordre="0900" sexe="M" categorieAge="6" equipe="true" />
+    <categoriePoids id="166" remoteId="7" poidsMin="90" poidsMax="0" nom="+90" ordre="1000" sexe="M" categorieAge="6" equipe="true" />
+
+    <categoriePoids id="170" remoteId="3" poidsMin="0" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="6" equipe="true" />
+    <categoriePoids id="171" remoteId="4" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="6" equipe="true" />
+    <categoriePoids id="172" remoteId="5" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="6" equipe="true" />
+    <categoriePoids id="173" remoteId="6" poidsMin="63" poidsMax="70" nom="-70" ordre="700" sexe="F" categorieAge="6" equipe="true" />
+    <categoriePoids id="174" remoteId="7" poidsMin="70" poidsMax="0" nom="+70" ordre="780" sexe="F" categorieAge="6" equipe="true" />
+
+  </categoriesPoids>
+
+
+  <categoriesPoids date1="01012017" date2="31122100">
+
+    <!--BENJAMINS-->
+
+    <!--individuel-->
+    <categoriePoids id="001" remoteId="77" poidsMin="0" poidsMax="30" nom="-30" ordre="300" sexe="M" categorieAge="2" equipe="false" />
+    <categoriePoids id="002" remoteId="78" poidsMin="30" poidsMax="34" nom="-34" ordre="340" sexe="M" categorieAge="2" equipe="false" />
+    <categoriePoids id="003" remoteId="79" poidsMin="34" poidsMax="38" nom="-38" ordre="380" sexe="M" categorieAge="2" equipe="false" />
+    <categoriePoids id="004" remoteId="80" poidsMin="38" poidsMax="42" nom="-42" ordre="420" sexe="M" categorieAge="2" equipe="false" />
+    <categoriePoids id="005" remoteId="81" poidsMin="42" poidsMax="46" nom="-46" ordre="460" sexe="M" categorieAge="2" equipe="false" />
+    <categoriePoids id="006" remoteId="82" poidsMin="46" poidsMax="50" nom="-50" ordre="500" sexe="M" categorieAge="2" equipe="false" />
+    <categoriePoids id="007" remoteId="83" poidsMin="50" poidsMax="55" nom="-55" ordre="550" sexe="M" categorieAge="2" equipe="false" />
+    <categoriePoids id="008" remoteId="84" poidsMin="55" poidsMax="60" nom="-60" ordre="600" sexe="M" categorieAge="2" equipe="false" />
+    <categoriePoids id="009" remoteId="85" poidsMin="60" poidsMax="66" nom="-66" ordre="660" sexe="M" categorieAge="2" equipe="false" />
+    <categoriePoids id="010" remoteId="86" poidsMin="66" poidsMax="0" nom="+66" ordre="661" sexe="M" categorieAge="2" equipe="false" />
+
+    <categoriePoids id="020" remoteId="87" poidsMin="0" poidsMax="32" nom="-32" ordre="320" sexe="F" categorieAge="2" equipe="false" />
+    <categoriePoids id="021" remoteId="88" poidsMin="32" poidsMax="36" nom="-36" ordre="360" sexe="F" categorieAge="2" equipe="false" />
+    <categoriePoids id="022" remoteId="89" poidsMin="36" poidsMax="40" nom="-40" ordre="400" sexe="F" categorieAge="2" equipe="false" />
+    <categoriePoids id="023" remoteId="90" poidsMin="40" poidsMax="44" nom="-44" ordre="440" sexe="F" categorieAge="2" equipe="false" />
+    <categoriePoids id="024" remoteId="91" poidsMin="44" poidsMax="48" nom="-48" ordre="480" sexe="F" categorieAge="2" equipe="false" />
+    <categoriePoids id="025" remoteId="92" poidsMin="48" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="2" equipe="false" />
+    <categoriePoids id="026" remoteId="93" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="2" equipe="false" />
+    <categoriePoids id="027" remoteId="94" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="2" equipe="false" />
+    <categoriePoids id="028" remoteId="95" poidsMin="63" poidsMax="0" nom="+63" ordre="631" sexe="F" categorieAge="2" equipe="false" />
+
+    <!--equipes-->
+    <categoriePoids id="050" remoteId="1" poidsMin="0" poidsMax="30" nom="-30" ordre="300" sexe="M" categorieAge="2" equipe="true" />
+    <categoriePoids id="051" remoteId="2" poidsMin="30" poidsMax="34" nom="-34" ordre="340" sexe="M" categorieAge="2" equipe="true" />
+    <categoriePoids id="052" remoteId="3" poidsMin="34" poidsMax="38" nom="-38" ordre="380" sexe="M" categorieAge="2" equipe="true" />
+    <categoriePoids id="053" remoteId="4" poidsMin="38" poidsMax="42" nom="-42" ordre="420" sexe="M" categorieAge="2" equipe="true" />
+    <categoriePoids id="054" remoteId="5" poidsMin="42" poidsMax="46" nom="-46" ordre="460" sexe="M" categorieAge="2" equipe="true" />
+    <categoriePoids id="055" remoteId="6" poidsMin="46" poidsMax="50" nom="-50" ordre="500" sexe="M" categorieAge="2" equipe="true" />
+    <categoriePoids id="056" remoteId="7" poidsMin="50" poidsMax="55" nom="-55" ordre="550" sexe="M" categorieAge="2" equipe="true" />
+    <categoriePoids id="057" remoteId="8" poidsMin="55" poidsMax="60" nom="-60" ordre="600" sexe="M" categorieAge="2" equipe="true" />
+    <categoriePoids id="058" remoteId="9" poidsMin="60" poidsMax="66" nom="-66" ordre="660" sexe="M" categorieAge="2" equipe="true" />
+    <categoriePoids id="059" remoteId="10" poidsMin="66" poidsMax="0" nom="+66" ordre="661" sexe="M" categorieAge="2" equipe="true" />
+
+    <categoriePoids id="070" remoteId="1" poidsMin="0" poidsMax="32" nom="-32" ordre="320" sexe="F" categorieAge="2" equipe="true" />
+    <categoriePoids id="071" remoteId="2" poidsMin="32" poidsMax="36" nom="-36" ordre="360" sexe="F" categorieAge="2" equipe="true" />
+    <categoriePoids id="072" remoteId="3" poidsMin="36" poidsMax="40" nom="-40" ordre="400" sexe="F" categorieAge="2" equipe="true" />
+    <categoriePoids id="073" remoteId="4" poidsMin="40" poidsMax="44" nom="-44" ordre="440" sexe="F" categorieAge="2" equipe="true" />
+    <categoriePoids id="074" remoteId="5" poidsMin="44" poidsMax="48" nom="-48" ordre="480" sexe="F" categorieAge="2" equipe="true" />
+    <categoriePoids id="075" remoteId="6" poidsMin="48" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="2" equipe="true" />
+    <categoriePoids id="076" remoteId="7" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="2" equipe="true" />
+    <categoriePoids id="077" remoteId="8" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="2" equipe="true" />
+    <categoriePoids id="078" remoteId="9" poidsMin="63" poidsMax="0" nom="+63" ordre="631" sexe="F" categorieAge="2" equipe="true" />
+
+
+    <!--MINIMES-->
+
+    <!--individuel-->
+    <categoriePoids id="100" remoteId="58" poidsMin="0" poidsMax="34" nom="-34" ordre="340" sexe="M" categorieAge="3" equipe="false" />
+    <categoriePoids id="101" remoteId="59" poidsMin="34" poidsMax="38" nom="-38" ordre="380" sexe="M" categorieAge="3" equipe="false" />
+    <categoriePoids id="102" remoteId="60" poidsMin="38" poidsMax="42" nom="-42" ordre="420" sexe="M" categorieAge="3" equipe="false" />
+    <categoriePoids id="103" remoteId="61" poidsMin="42" poidsMax="46" nom="-46" ordre="460" sexe="M" categorieAge="3" equipe="false" />
+    <categoriePoids id="104" remoteId="62" poidsMin="46" poidsMax="50" nom="-50" ordre="500" sexe="M" categorieAge="3" equipe="false" />
+    <categoriePoids id="105" remoteId="63" poidsMin="50" poidsMax="55" nom="-55" ordre="550" sexe="M" categorieAge="3" equipe="false" />
+    <categoriePoids id="106" remoteId="64" poidsMin="55" poidsMax="60" nom="-60" ordre="600" sexe="M" categorieAge="3" equipe="false" />
+    <categoriePoids id="107" remoteId="65" poidsMin="60" poidsMax="66" nom="-66" ordre="660" sexe="M" categorieAge="3" equipe="false" />
+    <categoriePoids id="108" remoteId="66" poidsMin="66" poidsMax="73" nom="-73" ordre="730" sexe="M" categorieAge="3" equipe="false" />
+    <categoriePoids id="109" remoteId="67" poidsMin="73" poidsMax="0" nom="+73" ordre="731" sexe="M" categorieAge="3" equipe="false" />
+
+    <categoriePoids id="120" remoteId="68" poidsMin="0" poidsMax="36" nom="-36" ordre="360" sexe="F" categorieAge="3" equipe="false" />
+    <categoriePoids id="121" remoteId="69" poidsMin="36" poidsMax="40" nom="-40" ordre="400" sexe="F" categorieAge="3" equipe="false" />
+    <categoriePoids id="122" remoteId="70" poidsMin="40" poidsMax="44" nom="-44" ordre="440" sexe="F" categorieAge="3" equipe="false" />
+    <categoriePoids id="123" remoteId="71" poidsMin="44" poidsMax="48" nom="-48" ordre="480" sexe="F" categorieAge="3" equipe="false" />
+    <categoriePoids id="124" remoteId="72" poidsMin="48" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="3" equipe="false" />
+    <categoriePoids id="125" remoteId="73" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="3" equipe="false" />
+    <categoriePoids id="126" remoteId="74" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="3" equipe="false" />
+    <categoriePoids id="127" remoteId="75" poidsMin="63" poidsMax="70" nom="-70" ordre="700" sexe="F" categorieAge="3" equipe="false" />
+    <categoriePoids id="128" remoteId="76" poidsMin="70" poidsMax="0" nom="+70" ordre="701" sexe="F" categorieAge="3" equipe="false" />
+
+    <!--equipes-->
+    <categoriePoids id="150" remoteId="1" poidsMin="0" poidsMax="34" nom="-34" ordre="340" sexe="M" categorieAge="3" equipe="true" />
+    <categoriePoids id="151" remoteId="2" poidsMin="34" poidsMax="38" nom="-38" ordre="380" sexe="M" categorieAge="3" equipe="true" />
+    <categoriePoids id="152" remoteId="3" poidsMin="38" poidsMax="42" nom="-42" ordre="420" sexe="M" categorieAge="3" equipe="true" />
+    <categoriePoids id="153" remoteId="4" poidsMin="42" poidsMax="46" nom="-46" ordre="460" sexe="M" categorieAge="3" equipe="true" />
+    <categoriePoids id="154" remoteId="5" poidsMin="46" poidsMax="50" nom="-50" ordre="500" sexe="M" categorieAge="3" equipe="true" />
+    <categoriePoids id="155" remoteId="6" poidsMin="50" poidsMax="55" nom="-55" ordre="550" sexe="M" categorieAge="3" equipe="true" />
+    <categoriePoids id="156" remoteId="7" poidsMin="55" poidsMax="60" nom="-60" ordre="600" sexe="M" categorieAge="3" equipe="true" />
+    <categoriePoids id="157" remoteId="8" poidsMin="60" poidsMax="66" nom="-66" ordre="660" sexe="M" categorieAge="3" equipe="true" />
+    <categoriePoids id="158" remoteId="9" poidsMin="66" poidsMax="73" nom="-73" ordre="730" sexe="M" categorieAge="3" equipe="true" />
+    <categoriePoids id="159" remoteId="10" poidsMin="73" poidsMax="0" nom="+73" ordre="731" sexe="M" categorieAge="3" equipe="true" />
+
+    <categoriePoids id="170" remoteId="1" poidsMin="0" poidsMax="36" nom="-36" ordre="360" sexe="F" categorieAge="3" equipe="true" />
+    <categoriePoids id="171" remoteId="2" poidsMin="36" poidsMax="40" nom="-40" ordre="400" sexe="F" categorieAge="3" equipe="true" />
+    <categoriePoids id="172" remoteId="3" poidsMin="40" poidsMax="44" nom="-44" ordre="440" sexe="F" categorieAge="3" equipe="true" />
+    <categoriePoids id="173" remoteId="4" poidsMin="44" poidsMax="48" nom="-48" ordre="480" sexe="F" categorieAge="3" equipe="true" />
+    <categoriePoids id="174" remoteId="5" poidsMin="48" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="3" equipe="true" />
+    <categoriePoids id="175" remoteId="6" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="3" equipe="true" />
+    <categoriePoids id="176" remoteId="7" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="3" equipe="true" />
+    <categoriePoids id="177" remoteId="8" poidsMin="63" poidsMax="70" nom="-70" ordre="700" sexe="F" categorieAge="3" equipe="true" />
+    <categoriePoids id="178" remoteId="9" poidsMin="70" poidsMax="0" nom="+70" ordre="701" sexe="F" categorieAge="3" equipe="true" />
+
+
+    <!--CADETS-->
+
+    <!--individuel-->
+    <categoriePoids id="200" remoteId="27" poidsMin="0" poidsMax="46" nom="-46" ordre="460" sexe="M" categorieAge="4" equipe="false" />
+    <categoriePoids id="201" remoteId="4" poidsMin="46" poidsMax="50" nom="-50" ordre="500" sexe="M" categorieAge="4" equipe="false" />
+    <categoriePoids id="202" remoteId="16" poidsMin="50" poidsMax="55" nom="-55" ordre="550" sexe="M" categorieAge="4" equipe="false" />
+    <categoriePoids id="203" remoteId="28" poidsMin="55" poidsMax="60" nom="-60" ordre="600" sexe="M" categorieAge="4" equipe="false" />
+    <categoriePoids id="204" remoteId="29" poidsMin="60" poidsMax="66" nom="-66" ordre="660" sexe="M" categorieAge="4" equipe="false" />
+    <categoriePoids id="205" remoteId="30" poidsMin="66" poidsMax="73" nom="-73" ordre="730" sexe="M" categorieAge="4" equipe="false" />
+    <categoriePoids id="206" remoteId="31" poidsMin="73" poidsMax="81" nom="-81" ordre="810" sexe="M" categorieAge="4" equipe="false" />
+    <categoriePoids id="207" remoteId="32" poidsMin="81" poidsMax="90" nom="-90" ordre="900" sexe="M" categorieAge="4" equipe="false" />
+    <categoriePoids id="208" remoteId="33" poidsMin="90" poidsMax="0" nom="+90" ordre="901" sexe="M" categorieAge="4" equipe="false" />
+
+    <categoriePoids id="220" remoteId="34" poidsMin="0" poidsMax="40" nom="-40" ordre="400" sexe="F" categorieAge="4" equipe="false" />
+    <categoriePoids id="221" remoteId="35" poidsMin="40" poidsMax="44" nom="-44" ordre="440" sexe="F" categorieAge="4" equipe="false" />
+    <categoriePoids id="222" remoteId="36" poidsMin="44" poidsMax="48" nom="-48" ordre="480" sexe="F" categorieAge="4" equipe="false" />
+    <categoriePoids id="223" remoteId="37" poidsMin="48" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="4" equipe="false" />
+    <categoriePoids id="224" remoteId="38" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="4" equipe="false" />
+    <categoriePoids id="225" remoteId="39" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="4" equipe="false" />
+    <categoriePoids id="226" remoteId="40" poidsMin="63" poidsMax="70" nom="-70" ordre="700" sexe="F" categorieAge="4" equipe="false" />
+    <categoriePoids id="227" remoteId="41" poidsMin="70" poidsMax="0" nom="+70" ordre="701" sexe="F" categorieAge="4" equipe="false" />
+
+    <!--equipes-->
+    <categoriePoids id="250" remoteId="106" poidsMin="0" poidsMax="55" nom="-55" ordre="550" sexe="M" categorieAge="4" equipe="true" />
+    <categoriePoids id="251" remoteId="107" poidsMin="55" poidsMax="60" nom="-60" ordre="600" sexe="M" categorieAge="4" equipe="true" />
+    <categoriePoids id="252" remoteId="108" poidsMin="60" poidsMax="66" nom="-66" ordre="660" sexe="M" categorieAge="4" equipe="true" />
+    <categoriePoids id="253" remoteId="109" poidsMin="66" poidsMax="73" nom="-73" ordre="730" sexe="M" categorieAge="4" equipe="true" />
+    <categoriePoids id="254" remoteId="110" poidsMin="73" poidsMax="0" nom="+73" ordre="810" sexe="M" categorieAge="4" equipe="true" />
+
+    <categoriePoids id="270" remoteId="111" poidsMin="0" poidsMax="48" nom="-48" ordre="480" sexe="F" categorieAge="4" equipe="true" />
+    <categoriePoids id="271" remoteId="112" poidsMin="48" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="4" equipe="true" />
+    <categoriePoids id="272" remoteId="113" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="4" equipe="true" />
+    <categoriePoids id="273" remoteId="114" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="4" equipe="true" />
+    <categoriePoids id="274" remoteId="115" poidsMin="63" poidsMax="0" nom="+63" ordre="700" sexe="F" categorieAge="4" equipe="true" />
+
+
+    <!--JUNIORS-->
+
+    <!--individuel-->
+    <categoriePoids id="300" remoteId="42" poidsMin="0" poidsMax="55" nom="-55" ordre="0550" sexe="M" categorieAge="5" equipe="false" />
+    <categoriePoids id="301" remoteId="43" poidsMin="55" poidsMax="60" nom="-60" ordre="0600" sexe="M" categorieAge="5" equipe="false" />
+    <categoriePoids id="302" remoteId="44" poidsMin="60" poidsMax="66" nom="-66" ordre="0660" sexe="M" categorieAge="5" equipe="false" />
+    <categoriePoids id="303" remoteId="45" poidsMin="66" poidsMax="73" nom="-73" ordre="0730" sexe="M" categorieAge="5" equipe="false" />
+    <categoriePoids id="304" remoteId="46" poidsMin="73" poidsMax="81" nom="-81" ordre="0810" sexe="M" categorieAge="5" equipe="false" />
+    <categoriePoids id="305" remoteId="47" poidsMin="81" poidsMax="90" nom="-90" ordre="0900" sexe="M" categorieAge="5" equipe="false" />
+    <categoriePoids id="306" remoteId="48" poidsMin="90" poidsMax="100" nom="-100" ordre="1000" sexe="M" categorieAge="5" equipe="false" />
+    <categoriePoids id="307" remoteId="49" poidsMin="100" poidsMax="0" nom="+100" ordre="1001" sexe="M" categorieAge="5" equipe="false" />
+
+    <categoriePoids id="320" remoteId="50" poidsMin="0" poidsMax="44" nom="-44" ordre="440" sexe="F" categorieAge="5" equipe="false" />
+    <categoriePoids id="321" remoteId="51" poidsMin="44" poidsMax="48" nom="-48" ordre="480" sexe="F" categorieAge="5" equipe="false" />
+    <categoriePoids id="322" remoteId="52" poidsMin="48" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="5" equipe="false" />
+    <categoriePoids id="323" remoteId="53" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="5" equipe="false" />
+    <categoriePoids id="324" remoteId="54" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="5" equipe="false" />
+    <categoriePoids id="325" remoteId="55" poidsMin="63" poidsMax="70" nom="-70" ordre="700" sexe="F" categorieAge="5" equipe="false" />
+    <categoriePoids id="326" remoteId="56" poidsMin="70" poidsMax="78" nom="-78" ordre="780" sexe="F" categorieAge="5" equipe="false" />
+    <categoriePoids id="327" remoteId="57" poidsMin="78" poidsMax="0" nom="+78" ordre="781" sexe="F" categorieAge="5" equipe="false" />
+
+    <!--equipes-->
+    <categoriePoids id="350" remoteId="96" poidsMin="0" poidsMax="60" nom="-60" ordre="0600" sexe="M" categorieAge="5" equipe="true" />
+    <categoriePoids id="351" remoteId="97" poidsMin="60" poidsMax="66" nom="-66" ordre="0660" sexe="M" categorieAge="5" equipe="true" />
+    <categoriePoids id="352" remoteId="98" poidsMin="66" poidsMax="73" nom="-73" ordre="0730" sexe="M" categorieAge="5" equipe="true" />
+    <categoriePoids id="353" remoteId="99" poidsMin="73" poidsMax="81" nom="-81" ordre="0810" sexe="M" categorieAge="5" equipe="true" />
+    <categoriePoids id="354" remoteId="100" poidsMin="81" poidsMax="0" nom="+81" ordre="0900" sexe="M" categorieAge="5" equipe="true" />
+
+    <categoriePoids id="370" remoteId="101" poidsMin="0" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="5" equipe="true" />
+    <categoriePoids id="371" remoteId="102" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="5" equipe="true" />
+    <categoriePoids id="372" remoteId="103" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="5" equipe="true" />
+    <categoriePoids id="373" remoteId="104" poidsMin="63" poidsMax="70" nom="-70" ordre="700" sexe="F" categorieAge="5" equipe="true" />
+    <categoriePoids id="374" remoteId="105" poidsMin="70" poidsMax="0" nom="+70" ordre="780" sexe="F" categorieAge="5" equipe="true" />
+
+
+    <!--SENIORS-->
+
+    <!--individuel-->
+    <categoriePoids id="400" remoteId="1" poidsMin="0" poidsMax="60" nom="-60" ordre="0600" sexe="M" categorieAge="6" equipe="false" />
+    <categoriePoids id="401" remoteId="2" poidsMin="60" poidsMax="66" nom="-66" ordre="0660" sexe="M" categorieAge="6" equipe="false" />
+    <categoriePoids id="402" remoteId="5" poidsMin="66" poidsMax="73" nom="-73" ordre="0730" sexe="M" categorieAge="6" equipe="false" />
+    <categoriePoids id="403" remoteId="6" poidsMin="73" poidsMax="81" nom="-81" ordre="0810" sexe="M" categorieAge="6" equipe="false" />
+    <categoriePoids id="404" remoteId="7" poidsMin="81" poidsMax="90" nom="-90" ordre="0900" sexe="M" categorieAge="6" equipe="false" />
+    <categoriePoids id="405" remoteId="8" poidsMin="90" poidsMax="100" nom="-100" ordre="1000" sexe="M" categorieAge="6" equipe="false" />
+    <categoriePoids id="406" remoteId="9" poidsMin="100" poidsMax="0" nom="+100" ordre="1001" sexe="M" categorieAge="6" equipe="false" />
+
+    <categoriePoids id="420" remoteId="3" poidsMin="0" poidsMax="48" nom="-48" ordre="480" sexe="F" categorieAge="6" equipe="false" />
+    <categoriePoids id="421" remoteId="10" poidsMin="48" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="6" equipe="false" />
+    <categoriePoids id="422" remoteId="11" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="6" equipe="false" />
+    <categoriePoids id="423" remoteId="12" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="6" equipe="false" />
+    <categoriePoids id="424" remoteId="13" poidsMin="63" poidsMax="70" nom="-70" ordre="700" sexe="F" categorieAge="6" equipe="false" />
+    <categoriePoids id="425" remoteId="14" poidsMin="70" poidsMax="78" nom="-78" ordre="780" sexe="F" categorieAge="6" equipe="false" />
+    <categoriePoids id="426" remoteId="15" poidsMin="78" poidsMax="0" nom="+78" ordre="781" sexe="F" categorieAge="6" equipe="false" />
+
+    <!--equipes-->
+    <categoriePoids id="450" remoteId="17" poidsMin="0" poidsMax="66" nom="-66" ordre="0660" sexe="M" categorieAge="6" equipe="true" />
+    <categoriePoids id="451" remoteId="18" poidsMin="66" poidsMax="73" nom="-73" ordre="0730" sexe="M" categorieAge="6" equipe="true" />
+    <categoriePoids id="452" remoteId="19" poidsMin="73" poidsMax="81" nom="-81" ordre="0810" sexe="M" categorieAge="6" equipe="true" />
+    <categoriePoids id="453" remoteId="20" poidsMin="81" poidsMax="90" nom="-90" ordre="0900" sexe="M" categorieAge="6" equipe="true" />
+    <categoriePoids id="454" remoteId="21" poidsMin="90" poidsMax="0" nom="+90" ordre="1000" sexe="M" categorieAge="6" equipe="true" />
+
+    <categoriePoids id="470" remoteId="22" poidsMin="0" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="6" equipe="true" />
+    <categoriePoids id="471" remoteId="23" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="6" equipe="true" />
+    <categoriePoids id="472" remoteId="24" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="6" equipe="true" />
+    <categoriePoids id="473" remoteId="25" poidsMin="63" poidsMax="70" nom="-70" ordre="700" sexe="F" categorieAge="6" equipe="true" />
+    <categoriePoids id="474" remoteId="26" poidsMin="70" poidsMax="0" nom="+70" ordre="780" sexe="F" categorieAge="6" equipe="true" />
+
+
+
+
+
+
+    <!--VETERANT-->
+
+    <!--individuel-->
+    <categoriePoids id="500" remoteId="116" poidsMin="0" poidsMax="60" nom="-60" ordre="0600" sexe="M" categorieAge="7" equipe="false" />
+    <categoriePoids id="501" remoteId="117" poidsMin="60" poidsMax="66" nom="-66" ordre="0660" sexe="M" categorieAge="7" equipe="false" />
+    <categoriePoids id="502" remoteId="118" poidsMin="66" poidsMax="73" nom="-73" ordre="0730" sexe="M" categorieAge="7" equipe="false" />
+    <categoriePoids id="503" remoteId="119" poidsMin="73" poidsMax="81" nom="-81" ordre="0810" sexe="M" categorieAge="7" equipe="false" />
+    <categoriePoids id="504" remoteId="120" poidsMin="81" poidsMax="90" nom="-90" ordre="0900" sexe="M" categorieAge="7" equipe="false" />
+    <categoriePoids id="505" remoteId="121" poidsMin="90" poidsMax="100" nom="-100" ordre="1000" sexe="M" categorieAge="7" equipe="false" />
+    <categoriePoids id="506" remoteId="122" poidsMin="100" poidsMax="0" nom="+100" ordre="1001" sexe="M" categorieAge="7" equipe="false" />
+
+    <categoriePoids id="520" remoteId="123" poidsMin="0" poidsMax="48" nom="-48" ordre="480" sexe="F" categorieAge="7" equipe="false" />
+    <categoriePoids id="521" remoteId="124" poidsMin="48" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="7" equipe="false" />
+    <categoriePoids id="522" remoteId="125" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="7" equipe="false" />
+    <categoriePoids id="523" remoteId="126" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="7" equipe="false" />
+    <categoriePoids id="524" remoteId="127" poidsMin="63" poidsMax="70" nom="-70" ordre="700" sexe="F" categorieAge="7" equipe="false" />
+    <categoriePoids id="525" remoteId="128" poidsMin="70" poidsMax="78" nom="-78" ordre="780" sexe="F" categorieAge="7" equipe="false" />
+    <categoriePoids id="526" remoteId="129" poidsMin="78" poidsMax="0" nom="+78" ordre="781" sexe="F" categorieAge="7" equipe="false" />
+
+    <!--equipes-->
+    <categoriePoids id="550" remoteId="130" poidsMin="0" poidsMax="66" nom="-66" ordre="0660" sexe="M" categorieAge="7" equipe="true" />
+    <categoriePoids id="551" remoteId="131" poidsMin="66" poidsMax="73" nom="-73" ordre="0730" sexe="M" categorieAge="7" equipe="true" />
+    <categoriePoids id="552" remoteId="132" poidsMin="73" poidsMax="81" nom="-81" ordre="0810" sexe="M" categorieAge="7" equipe="true" />
+    <categoriePoids id="553" remoteId="133" poidsMin="81" poidsMax="90" nom="-90" ordre="0900" sexe="M" categorieAge="7" equipe="true" />
+    <categoriePoids id="554" remoteId="134" poidsMin="90" poidsMax="0" nom="+90" ordre="1000" sexe="M" categorieAge="7" equipe="true" />
+
+    <categoriePoids id="570" remoteId="135" poidsMin="0" poidsMax="52" nom="-52" ordre="520" sexe="F" categorieAge="7" equipe="true" />
+    <categoriePoids id="571" remoteId="136" poidsMin="52" poidsMax="57" nom="-57" ordre="570" sexe="F" categorieAge="7" equipe="true" />
+    <categoriePoids id="572" remoteId="137" poidsMin="57" poidsMax="63" nom="-63" ordre="630" sexe="F" categorieAge="7" equipe="true" />
+    <categoriePoids id="573" remoteId="138" poidsMin="63" poidsMax="70" nom="-70" ordre="700" sexe="F" categorieAge="7" equipe="true" />
+    <categoriePoids id="574" remoteId="139" poidsMin="70" poidsMax="0" nom="+70" ordre="780" sexe="F" categorieAge="7" equipe="true" />
+
+
+  </categoriesPoids>
+
+
+</liste>

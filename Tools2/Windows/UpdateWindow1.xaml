@@ -1,0 +1,78 @@
+﻿<telerik:RadWindow
+    x:Class="Tools.Windows.UpdateWindow1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"   WindowStartupLocation="CenterScreen"   Closed="RadWindow_Closed"  
+        Header="Visualisation PDF" mc:Ignorable="d"   d:DesignWidth="1024" telerik:StyleManager.Theme="Expression_Dark">
+
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        
+        <telerik:RadBusyIndicator Name="RadBusyIndicator1" Grid.RowSpan="2" Grid.ColumnSpan="2" IsIndeterminate="False">
+            
+        </telerik:RadBusyIndicator>
+
+            <Image Source="pack://application:,,,/Tools;component/data/images/icons/white/help-32.png" Margin="15" Height="50"
+               Grid.Column="0" Grid.Row="0"/>
+        <TextBlock Name="LabelMessage" Grid.Column="1" Grid.Row="0" Text=""  TextWrapping="Wrap" VerticalAlignment="Center" Foreground="WhiteSmoke" Margin="10"/>
+
+
+        <WrapPanel HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal" Grid.Row="1" Margin="10" Grid.ColumnSpan="2" >
+            <telerik:RadButton x:Name="ButOk" Click="ButOk_Click" Width="70" Height="35" telerik:StyleManager.Theme="Expression_Dark">
+                <WrapPanel Orientation="Horizontal">
+                    <!--<Image Source="pack://application:,,,/Tools;component/data/images/icons/black/ok-32.png" Height="25" Margin="5 0"/>-->
+                    <Label x:Name="ButOkLabel"  Content="Ok" Foreground="White"/>
+                </WrapPanel>
+            </telerik:RadButton>
+
+            <telerik:RadButton x:Name="ButAnnuler" Click="ButAnnuler_Click" Margin="10 0 0 0"  Width="70" Height="35" telerik:StyleManager.Theme="Expression_Dark">
+                <StackPanel Orientation="Horizontal">
+                    <!--<Image Source="pack://application:,,,/Tools;component/data/images/icons/black/cancel-32.png" Height="25" Margin="5 0" />-->
+                    <Label x:Name="ButAnnulerLabel"  Content="Annuler" Foreground="White" />
+                </StackPanel>
+            </telerik:RadButton>
+
+            <telerik:RadButton x:Name="ButDownOui" Click="ButDownOui_Click"  Margin="10 0 0 0" Width="70" Height="35" telerik:StyleManager.Theme="Expression_Dark">
+                <WrapPanel Orientation="Horizontal">
+                    <!--<Image Source="pack://application:,,,/Tools;component/data/images/icons/black/ok-32.png" Height="25" Margin="5 0"/>-->
+                    <Label Content="Oui" Foreground="White"/>
+                </WrapPanel>
+            </telerik:RadButton>
+            <telerik:RadButton x:Name="ButDownMan" Click="ButDownMan_Click"  Margin="10 0 0 0" Height="35" telerik:StyleManager.Theme="Expression_Dark">
+                <WrapPanel Orientation="Horizontal">
+                    <!--<Image Source="pack://application:,,,/Tools;component/data/images/icons/black/ok-32.png" Height="25" Margin="5 0"/>-->
+                    <Label Content="Téléchargement manuel" Foreground="White"/>
+                </WrapPanel>
+            </telerik:RadButton>
+
+            <telerik:RadButton x:Name="ButDownNon" Click="ButDownNon_Click" Margin="10 0 0 0" Width="70" Height="35" telerik:StyleManager.Theme="Expression_Dark">
+                <StackPanel Orientation="Horizontal">
+                    <!--<Image Source="pack://application:,,,/Tools;component/data/images/icons/black/cancel-32.png" Height="25" Margin="5 0" />-->
+                    <Label Content="Non" Foreground="White" />
+                </StackPanel>
+            </telerik:RadButton>
+
+            <telerik:RadButton x:Name="ButDownOK" Click="ButDownOK_Click" Margin="10 0 0 0"  Width="70" Height="35" telerik:StyleManager.Theme="Expression_Dark">
+                <StackPanel Orientation="Horizontal">
+                    <!--<Image Source="pack://application:,,,/Tools;component/data/images/icons/black/cancel-32.png" Height="25" Margin="5 0" />-->
+                    <Label Content="OK" Foreground="White" />
+                </StackPanel>
+            </telerik:RadButton>
+
+
+
+        </WrapPanel>
+
+    </Grid>
+</telerik:RadWindow>
