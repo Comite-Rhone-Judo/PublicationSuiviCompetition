@@ -12,5 +12,6 @@
         Classement = 5,
         AllTapis = 6,
         All = 7,
+        AffectationTapis = 8,
     }
 }

@@ -11,36 +11,33 @@ using KernelImpl.Noyau.Organisation;
 
 namespace AppPublication.Tools.Converter
 {
-    public class EtatGenerationConverter : IMultiValueConverter
+    public class DisplayURLStatusConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            bool output = false;
+            string output = "URL indéfinie";
             // Verifie le type des donnees en entree
             if (values.Count() >= 2)
             {
+                string url = "URL indéfinie";
                 bool actif = false;
-                Competition compet = null;
 
                 foreach (object item in values)
                 {
                     if (item != null)
                     {
+                        if (item.GetType() == typeof(string))
+                        {
+                            url = (string)item;
+                        }
                         if (item.GetType() == typeof(bool))
                         {
                             actif = (bool)item;
                         }
-                        if (item.GetType() == typeof(Competition))
-                        {
-                            compet = (Competition)item;
-                        }
                     }
                 }
 
-                if (compet != null)
-                {
-                    output = !String.IsNullOrEmpty(compet.remoteId) && !actif;
-                }
+                output = (actif) ? url : "N/A";
             }
 
             return output;

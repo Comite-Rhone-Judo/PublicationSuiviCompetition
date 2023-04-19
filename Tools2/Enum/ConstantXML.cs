@@ -55,6 +55,16 @@ namespace Tools.Enum
         public const string Logo_Valeur = "valeur";
         public const string Logo_Nom = "nom";
 
+        public const string publierProchainsCombats = "PublierProchainsCombats";
+        public const string publierAffectationTapis = "PublierAffectationTapis";
+
+        public const string checksums = "Checksums";
+        public const string checksumFile = "ChecksumFile";
+        public const string checksumFile_fichier = "fichier";
+        public const string checksumFile_checksum = "checksum";
+
+        public const string TapisEpreuve = "TapisEpreuve";
+        public const string Tapis_No = "no_tapis";
 
         //Structure 
         public const string Structure_ID = "ID";

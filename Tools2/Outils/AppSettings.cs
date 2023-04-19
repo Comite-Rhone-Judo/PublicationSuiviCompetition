@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Tools.Outils
 {
-    class AppSettings
+    public class AppSettings
     {
         public static void SaveSettings(string key, string value)
         {

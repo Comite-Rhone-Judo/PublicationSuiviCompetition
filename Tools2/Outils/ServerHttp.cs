@@ -134,7 +134,7 @@ namespace Tools.Outils
 
         public static ulong _sent_data = 0;
 
-        public IPAddress IpAddress
+        public IPAddress ListeningIpAddress
         {
             get
             {
@@ -193,7 +193,9 @@ namespace Tools.Outils
                 try
                 {
                     //LogTools.Trace("GestionSite PORT " + port, LogTools.Level.DEBUG);
-                    HttpListener listener = HttpListener.Create(System.Net.IPAddress.Any, port);
+                    IPAddress adr = (ListeningIpAddress != null) ? ListeningIpAddress : IPAddress.Any;
+                    // HttpListener listener = HttpListener.Create(System.Net.IPAddress.Any, port);
+                    HttpListener listener = HttpListener.Create(adr, port);
 
                     //_server.RequestReceived += server_RequestReceived;
                     listener.Start(100);
@@ -226,7 +228,11 @@ namespace Tools.Outils
                     _server = new HttpServer.HttpServer();
                     _server.Add(new MyModule());
 
-                    _server.Start(IPAddress.Any, _port);
+
+                    // Ecoute sur l'adresse specifiee, sur toutes sinon
+                    IPAddress adr = (ListeningIpAddress != null) ? ListeningIpAddress : IPAddress.Any;
+                    _server.Start(adr, _port);
+                    // _server.Start(IPAddress.Any, _port);
                 }
             }
             catch (Exception ex)

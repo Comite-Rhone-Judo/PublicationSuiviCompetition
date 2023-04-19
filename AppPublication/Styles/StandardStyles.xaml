@@ -76,8 +76,20 @@
     <Style x:Key="LabelStyle" TargetType="Label">
         <Setter Property="Foreground" Value="#EEEEEE" />
         <Setter Property="FontSize" Value="14" />
-        <Setter Property="FontFamily"  Value="pack://application:,,,/Tools;component/Styles/Polices/#Cooper Black"/>
-        <Setter Property="Margin"  Value="10"/>
+        <!-- <Setter Property="FontFamily"  Value="pack://application:,,,/Tools;component/Styles/Polices/#Cooper Black"/>  -->
+        <Setter Property="FontFamily" Value="{telerik:Windows8Resource ResourceKey=FontFamily}" />
+        <Setter Property="Margin"  Value="5"/>
+        <Setter Property="VerticalAlignment"  Value="Center"/>
+        <Setter Property="HorizontalAlignment"  Value="Left"/>
+        <Setter Property="FontWeight"  Value="Bold"/>
+    </Style>
+
+    <Style x:Key="CheckboxStyle" TargetType="CheckBox">
+        <Setter Property="Foreground" Value="#EEEEEE" />
+        <Setter Property="FontSize" Value="14" />
+        <!-- <Setter Property="FontFamily"  Value="pack://application:,,,/Tools;component/Styles/Polices/#Cooper Black"/> -->
+        <Setter Property="FontFamily" Value="{telerik:Windows8Resource ResourceKey=FontFamily}" />
+        <Setter Property="Margin"  Value="5"/>
         <Setter Property="VerticalAlignment"  Value="Center"/>
         <Setter Property="HorizontalAlignment"  Value="Left"/>
     </Style>
@@ -85,9 +97,11 @@
     <Style x:Key="LabelStyleValue" TargetType="Label">
         <Setter Property="Foreground" Value="#EEEEEE" />
         <Setter Property="FontSize" Value="12" />
-        <Setter Property="FontFamily"  Value="pack://application:,,,/Tools;component/Styles/Polices/#Cooper Black"/>
-        <Setter Property="Margin"  Value="10"/>
+        <!-- <Setter Property="FontFamily"  Value="pack://application:,,,/Tools;component/Styles/Polices/#Cabin"/> -->
+        <Setter Property="FontFamily" Value="{telerik:Windows8Resource ResourceKey=FontFamily}" />
+        <Setter Property="Margin"  Value="5"/>
         <Setter Property="FontStyle"  Value="Italic"/>
+        <Setter Property="FontWeight" Value="Normal"/>
         <Setter Property="VerticalAlignment"  Value="Center"/>
         <Setter Property="HorizontalAlignment"  Value="Left"/>
     </Style>
@@ -96,7 +110,8 @@
         <Setter Property="Foreground" Value="#EEEEEE" />
         <Setter Property="FontSize" Value="18" />
         <!-- <Setter Property="FontFamily"  Value="pack://application:,,,/Tools;component/Styles/Polices/#Cooper Black"/> -->
-        <Setter Property="Margin"  Value="10"/>
+        <Setter Property="FontFamily" Value="{telerik:Windows8Resource ResourceKey=FontFamily}" />
+        <Setter Property="Margin"  Value="5"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="VerticalAlignment"  Value="Center"/>
         <Setter Property="HorizontalAlignment"  Value="Left"/>
@@ -228,6 +243,45 @@
             </DataTrigger>
             <DataTrigger Binding="{Binding Path=IsActif}" Value="False">
                 <Setter Property="Fill" Value="Red"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="Image" x:Key="InfoTooltipStyle">
+        <Style.Setters>
+            <Setter Property="ToolTip" Value="{Binding Path=MessageDetaille}"/>
+        </Style.Setters>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=MessageDetaille}" Value="">
+                <Setter Property="Visibility" Value="Hidden" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Path=MessageDetaille}" Value="{x:Null}">
+                <Setter Property="Visibility" Value="Hidden" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="telerik:RadProgressBar" x:Key="StatusProgressBarStyle">
+        <Style.Setters>
+            <Setter Property="Value" Value="{Binding Path=Progress}"/>
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Setter Property="IsIndeterminate" Value="{Binding Path=IsProgressUnknown}"/> 
+        </Style.Setters>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=State}" Value="2">
+                <Setter Property="Visibility" Value="Visible" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="Ellipse" x:Key="OperationStatusStyle">
+        <Style.Setters>
+            <Setter Property="Stroke" Value="White"/>
+            <Setter Property="Fill" Value="DarkGray"/>
+        </Style.Setters>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=State}" Value="2">
+                <Setter Property="Fill" Value="Orange"/>
             </DataTrigger>
         </Style.Triggers>
     </Style>

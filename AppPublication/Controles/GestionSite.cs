@@ -7,8 +7,12 @@ using System.Net.Sockets;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using AppPublication.Tools;
 using Tools.Enum;
 using Tools.Outils;
 using Tools.Export;
@@ -23,50 +27,79 @@ namespace AppPublication.Controles
     public class GestionSite : NotificationBase
     {
         #region MEMBRES
+        private CancellationTokenSource _tokenSource;   // Token pour la gestion de la thread de lecture
 
-        private CancellationTokenSource _tokenSource;   // Taken pour la gestion de la thread de lecture
-        #endregion
-
-
-
+        /// <summary>
+        /// Structure interne pour gerer les parametres de generation du site
+        /// </summary>
         public class GenereSiteStruct
         {
             public SiteEnum type { get; set; }
             public Phase phase { get; set; }
             public int? tapis { get; set; }
         }
+        #endregion
 
-        #region Properties
+        #region CONSTRUCTEURS
+        public GestionSite()
+        {
+            try
+            {
+                // Initialise les objets de gestion des sites Web
+                _siteLocal = new MiniSite(true);
+                _siteDistant = new MiniSite(false);
 
-        DateTime _dateGeneration = DateTime.Now; 
-        public DateTime DerniereGeneration
+                // Initialise la configuration via le cache de fichier
+                InitCacheConfig();
+            }
+            catch (Exception ex)
+            {
+                LogTools.Log(ex);
+            }
+        }
+
+        #endregion
+
+        #region PROPRIETES
+
+        StatExecution _statGeneration; 
+        /// <summary>
+        /// Statistique de derniere generation - lecture seule
+        /// </summary>
+        public StatExecution DerniereGeneration
         {
             get
             {
-                return _dateGeneration;
+                return _statGeneration;
             }
             private set
             {
-                _dateGeneration = value;
+                _statGeneration = value;
                 NotifyPropertyChanged("DerniereGeneration");
             }
         }
 
-        DateTime _dateSyncDistant = DateTime.Now;
-        public DateTime DerniereSynchronisation
+        StatExecution _statSyncDistant;
+        /// <summary>
+        /// Statistiques de derniere synchronisation - lecture seule
+        /// </summary>
+        public StatExecution DerniereSynchronisation
         {
             get
             {
-                return _dateSyncDistant;
+                return _statSyncDistant;
             }
             private set
             {
-                _dateSyncDistant = value;
+                _statSyncDistant = value;
                 NotifyPropertyChanged("DerniereSynchronisation");
             }
         }
 
         bool _siteGenere = false;
+        /// <summary>
+        /// Indique si le site a ete bien genere (true) - lecture seule
+        /// </summary>
         public bool SiteGenere
         {
             get
@@ -80,8 +113,10 @@ namespace AppPublication.Controles
             }
         }
 
-
         bool _siteSynchronise = false;
+        /// <summary>
+        /// Indique si le site a bien ete synchronnise - lecture seule
+        /// </summary>
         public bool SiteSynchronise
         {
             get
@@ -102,6 +137,30 @@ namespace AppPublication.Controles
         public MiniSite MiniSiteLocal {
             get {
                 return _siteLocal;
+            }
+        }
+
+        /// <summary>
+        /// Propriete passerelle pour selectionner l'interface de publication du site local
+        /// Permet de tenir a jour le QR code de l'URL de publication
+        /// </summary>
+        public IPAddress InterfaceLocalPublication
+        {
+            get
+            {
+                return MiniSiteLocal.InterfaceLocalPublication;
+            }
+            set
+            {
+                // Verifie que la valeur selectionnee est bien dans la liste des interfaces
+                try
+                {
+                    MiniSiteLocal.InterfaceLocalPublication = value;
+                    AppSettings.SaveSettings("InterfaceLocalPublication", MiniSiteLocal.InterfaceLocalPublication.ToString());
+                    NotifyPropertyChanged("InterfaceLocalPublication");
+                    URLLocalPublication = CalculURLSiteLocal();
+                }
+                catch(ArgumentOutOfRangeException) { }
             }
         }
 
@@ -132,7 +191,27 @@ namespace AppPublication.Controles
             }
         }
 
-        int _delaiGenerationSec = 60;
+        bool _isolerCompetition = false;
+        /// <summary>
+        /// Isole les competitions avec leur ID lors de l'upload sur le site distant
+        /// </summary>
+        public bool IsolerCompetition
+        {
+            get
+            {
+                return _isolerCompetition;
+            }
+            set
+            {
+                _isolerCompetition = value;
+                NotifyPropertyChanged("IsolerCompetition");
+                AppSettings.SaveSettings("IsolerCompetition", _isolerCompetition.ToString());
+                URLDistantPublication = CalculURLSiteDistant();
+                MiniSiteDistant.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
+            }
+        }
+
+        int _delaiGenerationSec = 30;
         /// <summary>
         /// Delai entre 2 generations du site
         /// </summary>
@@ -145,25 +224,189 @@ namespace AppPublication.Controles
             set
             {
                 _delaiGenerationSec = value;
+                AppSettings.SaveSettings("DelaiGenerationSec", _delaiGenerationSec.ToString());
                 NotifyPropertyChanged("DelaiGenerationSec");
             }
         }
 
-        #endregion
-
-        #region Constructeurs
-
-        public GestionSite()
+        private string _urlDistant;
+        /// <summary>
+        /// URL racine du site distant de publication
+        /// </summary>
+        public string URLDistant
         {
-            try
+            get
             {
-                // Initialise les objets de gestion des sites Web
-                _siteLocal = new MiniSite(true);
-                _siteDistant = new MiniSite(false);
+                return _urlDistant;
             }
-            catch (Exception ex)
+            set
             {
-                LogTools.Log(ex);
+                _urlDistant = value;
+                AppSettings.SaveSettings("URLDistant", _urlDistant);
+                NotifyPropertyChanged("URLDistant");
+                URLDistantPublication = CalculURLSiteDistant();
+            }
+        }
+
+        private string _urlDistantPublication;
+        /// <summary>
+        /// URL Complete sur le site distant de publication
+        /// </summary>
+        public string URLDistantPublication
+        {
+            get
+            {
+                return _urlDistantPublication;
+            }
+            private set
+            {
+                _urlDistantPublication = value;
+                NotifyPropertyChanged("URLDistantPublication");
+            }
+        }
+
+        private string _urlLocalPublication;
+        /// <summary>
+        /// URL sur le site local
+        /// </summary>
+        public string URLLocalPublication
+        {
+            get
+            {
+                return _urlLocalPublication;
+            }
+            private set
+            {
+                _urlLocalPublication = value;
+                NotifyPropertyChanged("URLLocalPublication");
+            }
+        }
+
+        private string _ftpRepertoireRacineDistant;
+        /// <summary>
+        /// Repertoire racine cible sur le site distant
+        /// </summary>
+        public string RepertoireRacineSiteFTPDistant
+        {
+            get
+            {
+                return _ftpRepertoireRacineDistant;
+            }
+            set
+            {
+                _ftpRepertoireRacineDistant = value;
+                AppSettings.SaveSettings("RepertoireRacineSiteFTPDistant", _ftpRepertoireRacineDistant);
+                NotifyPropertyChanged("RepertoireRacineSiteFTPDistant");
+                MiniSiteDistant.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
+            }
+        }
+
+        private string _idCompetition;
+        /// <summary>
+        /// ID de la competition en cours
+        /// </summary>
+        public string IdCompetition
+        {
+            get
+            {
+                return _idCompetition;
+            }
+            set
+            {
+                _idCompetition = value;
+                NotifyPropertyChanged("IdCompetition");
+                MiniSiteDistant.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
+                URLDistantPublication = CalculURLSiteDistant();
+                URLLocalPublication = CalculURLSiteLocal();
+
+                // On en peut publier que en individuelle
+                CanPublierAffectation = DialogControleur.Instance.ServerData.competition.IsIndividuelle();
+            }
+        }
+
+        private bool _canPublierAffectation = false;
+        /// <summary>
+        /// Indique si on peut publier l'affectation des tapis ou nnon
+        /// </summary>
+        public bool CanPublierAffectation
+        {
+            get
+            {
+                return _canPublierAffectation;
+            }
+            private set
+            {
+                _canPublierAffectation = value;
+                NotifyPropertyChanged("CanPublierAffectation");
+            }
+        }
+
+        private bool _publierProchainsCombats = false;
+        /// <summary>
+        /// Indique si on doit publier la liste des prochains combats ou non
+        /// </summary>
+        public bool PublierProchainsCombats
+        {
+            get
+            {
+                return _publierProchainsCombats;
+            }
+            set
+            {
+                _publierProchainsCombats = value;
+                AppSettings.SaveSettings("PublierProchainsCombats", _publierProchainsCombats.ToString());
+                NotifyPropertyChanged("PublierProchainsCombats");
+            }
+        }
+
+        private bool _publierAffectationTapis = false;
+        /// <summary>
+        /// Indique si on doit publier la liste des prochains combats ou non
+        /// </summary>
+        public bool PublierAffectationTapis
+        {
+            get
+            {
+                return _publierAffectationTapis;
+            }
+            set
+            {
+                _publierAffectationTapis = value;
+                AppSettings.SaveSettings("PublierAffectationTapis", _publierAffectationTapis.ToString());
+                NotifyPropertyChanged("_publierAffectationTapis");
+            }
+        }
+
+        private StatusGenerationSite _status;
+        /// <summary>
+        /// Le statut de generation du site
+        /// </summary>
+        public StatusGenerationSite Status
+        {
+            get
+            {
+                if(null == _status)
+                {
+                    _status = new StatusGenerationSite();
+                }
+                return _status;
+            }
+            set
+            {
+                _status = value;
+                NotifyPropertyChanged("Status");
+                IsGenerationActive = !(_status.State == StateGenerationEnum.Stopped);
+            }
+        }
+
+        /// <summary>
+        /// Nom du fichierd de cache utiliser pour le controle des checksums
+        /// </summary>
+        public string ChecksumFileName
+        {
+            get
+            {
+                return Path.Combine(ConstantFile.ExportSite_dir, ExportTools.getFileName(ExportEnum.Site_Checksum) + ConstantFile.ExtensionXML);
             }
         }
 
@@ -171,9 +414,147 @@ namespace AppPublication.Controles
 
         #region METHODES
 
+        /// <summary>
+        /// Initialise les donnees a partir du cache de fichier AppConfig
+        /// </summary>
+        private void InitCacheConfig()
+        {
+            string valCache = string.Empty;
+
+            try
+            {
+                valCache = AppSettings.ReadSettings("URLDistant");
+                URLDistant = (valCache == null) ? String.Empty : valCache;
+
+                valCache = AppSettings.ReadSettings("IsolerCompetition");
+                IsolerCompetition = (valCache == null) ? false : bool.Parse(valCache);
+
+                valCache = AppSettings.ReadSettings("RepertoireRacineSiteFTPDistant");
+                RepertoireRacineSiteFTPDistant = (valCache == null) ? String.Empty : valCache;
+
+                valCache = AppSettings.ReadSettings("PublierProchainsCombats");
+                PublierProchainsCombats = (valCache == null) ? false : bool.Parse(valCache);
+
+                valCache = AppSettings.ReadSettings("PublierAffectationTapis");
+                PublierAffectationTapis = (valCache == null) ? true : bool.Parse(valCache);
+
+                valCache = AppSettings.ReadSettings("DelaiGenerationSec");
+                DelaiGenerationSec = (valCache == null) ? 30 : int.Parse(valCache);
+
+                // Si la liste contient au moins un element
+                if (MiniSiteLocal.InterfacesLocal.Count >= 1)
+                {
+                    // Cherche si une interface existe dans la configuration du fichier
+                    valCache = AppSettings.ReadSettings("InterfaceLocalPublication");
+                    IPAddress ipToUse = null;
+                    bool useCache = false;
+
+                    if (valCache != null)
+                    {
+                        try
+                        {
+                            // Lit l'adresse dans le fichier et verifie qu'elle est dans la liste
+                            ipToUse = IPAddress.Parse(valCache);
+                            useCache = MiniSiteLocal.InterfacesLocal.Contains(ipToUse);
+                        }
+                        catch (Exception ex)
+                        {
+                            // Soit l'IP configuree est incorrecte, soit elle n'est pas dans la liste
+                            useCache = false;
+                            LogTools.Log(ex);
+                        }
+                    }
+
+                    // on prend la 1ere interface de la liste si elle n'est pas dans la 
+                    if (!useCache)
+                    {
+                        ipToUse = MiniSiteLocal.InterfacesLocal.First();
+                    }
+
+                    // Assigne la valeur (en dernier pour eviter les bindings successifs)
+                    InterfaceLocalPublication = ipToUse;
+                }
+            }
+            catch(Exception ex)
+            {
+                LogTools.Trace(ex);
+            }
+        }
+
+        /// <summary>
+        /// Calcul l'URL sur le site distant en fonction de la configuration
+        /// </summary>
+        /// <returns></returns>
+        private string CalculURLSiteDistant()
+        {
+            string output = "URL indéfinie";
+
+            if (!String.IsNullOrEmpty(URLDistant))
+            {
+                if (IsolerCompetition)
+                {
+                    if (!String.IsNullOrEmpty(IdCompetition))
+                    {
+                        output = ExportTools.GetURLSiteDistant(URLDistant, IdCompetition);
+                    }
+                }
+                else
+                {
+                    output = ExportTools.GetURLSiteDistant(URLDistant, "courante");
+                }
+            }
+            return output;
+        }
+
+        /// <summary>
+        /// Calcul l'URL sur le site local en fonction de la configuration
+        /// </summary>
+        /// <returns></returns>
+        private string CalculURLSiteLocal()
+        {
+            string output = "URL indéfinie";
+
+            if (!String.IsNullOrEmpty(IdCompetition) && MiniSiteLocal.ServerHTTP != null && MiniSiteLocal.ServerHTTP.ListeningIpAddress != null && MiniSiteLocal.ServerHTTP.Port > 0)
+            {
+                output = ExportTools.GetURLSiteLocal(MiniSiteLocal.ServerHTTP.ListeningIpAddress.ToString(),
+                                                        MiniSiteLocal.ServerHTTP.Port,
+                                                        IdCompetition);
+            }
+
+            return output;
+        }
+
+        /// <summary>
+        /// Calcul le repertoire sur le site distant en fonction de la configuration
+        /// </summary>
+        /// <returns></returns>
+        private string CalculRepertoireSiteDistant()
+        {
+            string output = string.Empty;
+            if (!String.IsNullOrEmpty(RepertoireRacineSiteFTPDistant))
+            {
+                if (IsolerCompetition)
+                {
+                    if (!String.IsNullOrEmpty(IdCompetition))
+                    {
+                        output = Path.Combine(RepertoireRacineSiteFTPDistant, IdCompetition);
+                    }
+                }
+                else
+                {
+                    output = Path.Combine(RepertoireRacineSiteFTPDistant, "courante");
+                }
+            }
+            return output;
+        }
+
+        /// <summary>
+        /// Demarre le thread de generation du site
+        /// </summary>
         public void StartGeneration()
         {
-            IsGenerationActive = true;
+            // Status = new StatusGenerationSite(StateGenerationEnum.Idle);
+            Status = StatusGenerationSite.Instance(StateGenerationEnum.Idle);
 
             // Reset le token d'arret
             if (_tokenSource != null)
@@ -188,27 +569,75 @@ namespace AppPublication.Controles
                 {
                     while (!_tokenSource.Token.IsCancellationRequested)
                     {
+                        // Pour controler la duree total par rapport au timer
+                        Stopwatch watcherTotal = new Stopwatch();
+                        watcherTotal.Start();
+
                         // Pousse les commandes de generation dans le thread de travail
-                        SiteGenere = GenereAll();
+                        // Status = new StatusGenerationSite(StateGenerationEnum.Generating, "Generation du site ...");
+                        Status = StatusGenerationSite.Instance(StateGenerationEnum.Generating);
+
+                        StatExecution statGeneration = new StatExecution();
+                        Stopwatch watcherGen = new Stopwatch();
+                        watcherGen.Start();
+
+                        // Charge le fichier de cache de checksum
+                        List<FileWithChecksum> checksumCache = LoadChecksumFichiersGeneres();
+                        List<FileWithChecksum> checksumGenere = GenereAll();
+                        SiteGenere = (checksumGenere.Count > 0);
+                        watcherGen.Stop();
+                        statGeneration.DelaiExecutionMs = watcherGen.ElapsedMilliseconds;
+                        // Status = new StatusGenerationSite(StateGenerationEnum.Idle, "En attente ...");
+                        Status = StatusGenerationSite.Instance(StateGenerationEnum.Idle);
+
                         if (SiteGenere)
                         {
-                            DerniereGeneration = DateTime.Now;
+                            // Met a jour la date de generation puisque le site a ete traite
+                            DerniereGeneration = statGeneration;
 
                             // Si le site distant est actif, transfere la mise a jour
-                            if(MiniSiteDistant.IsActif)
+                            if (MiniSiteDistant.IsActif)
                             {
                                 string localRoot = Path.Combine(ConstantFile.ExportSite_dir, DialogControleur.Instance.ServerData.competition.remoteId);
-                                string distantRoot = DialogControleur.Instance.ServerData.competition.remoteId;
-                                SiteSynchronise = MiniSiteDistant.UploadSite(localRoot, distantRoot);        
-                                if(SiteSynchronise)
+
+                                // Le site distant sur lequel charger les fichiers selon si on isole ou pas
+                                StatExecution statSync = new StatExecution();
+                                Stopwatch watcherSync = new Stopwatch();
+                                watcherSync.Start();
+
+                                // Calcul les fichiers a prendre en compte
+                                List<FileInfo> filesToSync = null; 
+                                if (checksumCache != null && checksumCache.Count > 0)
                                 {
-                                    DerniereSynchronisation = DateTime.Now;
+                                    // Extrait les fichiers generes qui sont differents du cache
+                                    List<FileWithChecksum> chkToSync = checksumGenere.Except(checksumCache, new FileWithChecksumComparer()).ToList();
+                                    filesToSync = chkToSync.Select(o => o.File).ToList();
+                                }
+
+                                // Synchronise le site FTP
+                                SiteSynchronise = MiniSiteDistant.UploadSite(localRoot, filesToSync);
+
+                                watcherSync.Stop();
+                                statSync.DelaiExecutionMs = watcherSync.ElapsedMilliseconds;
+                                if (SiteSynchronise)
+                                {
+                                    // Enregistre les checksums en cache maintenant qu'on sait que l'etat distant est synchrone
+                                    SaveChecksumFichiersGeneres(checksumGenere);
+                                    DerniereSynchronisation = statSync;
                                 }
                             }
                         }
 
+                       
+                        watcherTotal.Stop();
+
+                        // Si le transfert a duree plus que le temps d'attente, on attend au plus 5 sec
+                        // Sinon, on attend la difference restantes
+                        int delaiThread = (int) Math.Max(DelaiGenerationSec * 1000 - watcherTotal.ElapsedMilliseconds, 5000);
+
                         // Met le thread en attente pour la prochaine generation
-                        Thread.Sleep(DelaiGenerationSec * 1000);
+                        Status.NextGenerationSec = (int) Math.Round(delaiThread / 1000.0);
+                        Thread.Sleep(delaiThread);
                     }
                 }, _tokenSource.Token);
             }
@@ -219,26 +648,38 @@ namespace AppPublication.Controles
             }
         }
 
+        /// <summary>
+        /// Arrete le thread de generation du site
+        /// </summary>
         public void StopGeneration()
         {
             // Arrete le thread de generation
             _tokenSource.Cancel();
-            
-            // Etat de la generation
-            IsGenerationActive = false;
-        }
 
-        private void Exporter(GenereSiteStruct genere)
+            // Etat de la generation
+            // Status = new StatusGenerationSite(StateGenerationEnum.Stopped);
+            Status = StatusGenerationSite.Instance(StateGenerationEnum.Stopped);
+        }
+        
+        /// <summary>
+        /// Declenche l'exportation
+        /// </summary>
+        /// <param name="genere">Type d'exportation</param>
+        private List<FileWithChecksum> Exporter(GenereSiteStruct genere)
         {
+            List<FileWithChecksum> urls = new List<FileWithChecksum>();
+
             try
             {
                 JudoData DC = DialogControleur.Instance.ServerData;
-                List<string> urls = new List<string>();
+
                 switch (genere.type)
                 {
+                    /*
                     case SiteEnum.All:
                         urls = ExportSite.GenereWebSite(DC);
                         break;
+                    */
                     case SiteEnum.AllTapis:
                         urls = ExportSite.GenereWebSiteAllTapis(DC);
                         break;
@@ -249,7 +690,7 @@ namespace AppPublication.Controles
                         urls = ExportSite.GenereWebSiteIndex();
                         break;
                     case SiteEnum.Menu:
-                        urls = ExportSite.GenereWebSiteMenu(DC);
+                        urls = ExportSite.GenereWebSiteMenu(DC, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation);
                         break;
                     case SiteEnum.Phase:
                         urls = ExportSite.GenereWebSitePhase(DC, genere.phase);
@@ -257,17 +698,29 @@ namespace AppPublication.Controles
                     case SiteEnum.Tapis:
                         urls = ExportSite.GenereWebSiteTapis(DC, (int)genere.tapis);
                         break;
+                    case SiteEnum.AffectationTapis:
+                        urls = ExportSite.GenereWebSiteAffectation(DC);
+                        break;
                 }
             }
             catch (Exception ex)
             {
                 LogTools.Trace(ex);
             }
+
+            return urls;
         }
 
-        public Task AddWork(SiteEnum type, Phase phase, int? tapis)
+        /// <summary>
+        /// Ajoute une tache de fond de generation
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="phase"></param>
+        /// <param name="tapis"></param>
+        /// <returns></returns>
+        public Task<List<FileWithChecksum>> AddWork(SiteEnum type, Phase phase, int? tapis)
         {
-            Task output = null;
+            Task<List<FileWithChecksum>> output = null;
 
             if (IsGenerationActive)
             {
@@ -278,29 +731,45 @@ namespace AppPublication.Controles
                     tapis = tapis
                 };
 
-                output = OutilsTools.Factory.StartNew(() => Exporter(export));
+                output = OutilsTools.Factory.StartNew(() =>
+                {
+                    return Exporter(export);
+                });
             }
 
             return output;
         }
 
-        public bool GenereAll()
+        /// <summary>
+        /// Genere la totalite du site
+        /// </summary>
+        /// <returns></returns>
+        public List<FileWithChecksum> GenereAll()
         {
-            // TODO Virer le AddWork et lancer directement les taches a partir d'ici
-            bool output = false;
+            List<FileWithChecksum> output = new List<FileWithChecksum>();
             if (IsGenerationActive)
             {
                 JudoData DC = DialogControleur.Instance.ServerData;
                 if (DC.Organisation.Competitions.Count > 0)
                 {
-                    List<Task> listTaskGeneration = new List<Task>();
+                    List<Task<List<FileWithChecksum>>> listTaskGeneration = new List<Task<List<FileWithChecksum>>>();
 
                     listTaskGeneration.Add(AddWork(SiteEnum.Index, null, null));
                     listTaskGeneration.Add(AddWork(SiteEnum.Menu, null, null));
-                    listTaskGeneration.Add(AddWork(SiteEnum.AllTapis, null, null));
-                    for (int i = 1; i <= DC.competition.nbTapis; i++)
+                    if (PublierAffectationTapis && CanPublierAffectation)
                     {
-                        listTaskGeneration.Add(AddWork(SiteEnum.Tapis, null, i));
+                        listTaskGeneration.Add(AddWork(SiteEnum.AffectationTapis, null, null));
+                    }
+
+
+                    // On ne genere pas les informations de prochains combat si ce n'est pas necessaire
+                    if (PublierProchainsCombats)
+                    {
+                        listTaskGeneration.Add(AddWork(SiteEnum.AllTapis, null, null));
+                        for (int i = 1; i <= DC.competition.nbTapis; i++)
+                        {
+                            listTaskGeneration.Add(AddWork(SiteEnum.Tapis, null, i));
+                        }
                     }
 
                     foreach (Phase phase in DC.Deroulement.Phases)
@@ -315,8 +784,11 @@ namespace AppPublication.Controles
                         listTaskGeneration.RemoveAll(item => item == null);
                         if (listTaskGeneration.Count > 0)
                         {
+                            Task<List<FileWithChecksum>> t = WaitGenereAll(listTaskGeneration);
                             // Attend la fin de la generation pour rendre la main
-                            output = Task.WaitAll(listTaskGeneration.ToArray(), DelaiGenerationSec * 1000);
+                            t.Wait();
+                            output = t.Result;
+
                         }
                     }
                     catch (Exception ex)
@@ -328,6 +800,89 @@ namespace AppPublication.Controles
 
             return output;
         }
+
+        /// <summary>
+        /// Se met en attente de la fin de tous les travaux de generation. Met a jour l'indicateur de progression en fonction de la fin des taches
+        /// </summary>
+        /// <param name="listTaskGeneration"></param>
+        /// <returns></returns>
+        private async Task<List<FileWithChecksum>> WaitGenereAll(List<Task<List<FileWithChecksum>>> listTaskGeneration)
+        {
+            int totalTask = listTaskGeneration.Count();
+            int nTask = 0;
+            List<FileWithChecksum> fichiersGeneres = new List<FileWithChecksum>();
+            while (listTaskGeneration.Any())
+            {
+                Task<List<FileWithChecksum>> finishedTask = await Task.WhenAny(listTaskGeneration.ToArray());
+                listTaskGeneration.Remove(finishedTask);
+                nTask++;
+                Status.Progress = (int)Math.Round(100.0 * nTask / totalTask);
+                fichiersGeneres = fichiersGeneres.Concat(await finishedTask).ToList();
+            }
+
+            return fichiersGeneres;
+        }
+
+        /// <summary>
+        /// Sauvegarde une liste de fichiers generes dans le cache de checksum (ecrase le precedent)
+        /// </summary>
+        /// <param name="fichiersGeneres"></param>
+        private void SaveChecksumFichiersGeneres(List<FileWithChecksum> fichiersGeneres)
+        {
+            // Enregistre les checksums des fichiers generes
+            XDocument doc = ExportXML.ExportChecksumFichiers(fichiersGeneres);
+
+            if (!File.Exists(ChecksumFileName) || !FileAndDirectTools.IsFileLocked(ChecksumFileName))
+            {
+                FileAndDirectTools.NeedAccessFile(ChecksumFileName);
+                try
+                {
+                    using (FileStream fs = new FileStream(ChecksumFileName, FileMode.Create))
+                    {
+                        doc.Save(fs);
+                    }
+                }
+                catch (Exception ex) {
+                    LogTools.Trace(ex);
+                }
+                finally
+                {
+                    FileAndDirectTools.ReleaseFile(ChecksumFileName);
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Charge le fichier de cache de checksum
+        /// </summary>
+        /// <param name=""></param>
+        /// <returns>Liste vide si le fichier n'existe pas</returns>
+        private List<FileWithChecksum> LoadChecksumFichiersGeneres()
+        {
+            List<FileWithChecksum> output = new List<FileWithChecksum>();
+
+            try
+            {
+                // Charge le fichier
+                XDocument doc = XDocument.Load(ChecksumFileName);
+
+                // Recherche la racine
+                List<XElement> rootElem = doc.Descendants(ConstantXML.checksums).ToList();
+
+                if (rootElem.Count() >= 1)
+                {
+                    output = ExportXML.ImportChecksumFichiers(rootElem.First());
+                }
+            }
+            catch(Exception ex)
+            {
+                LogTools.Trace(ex);
+            }
+
+            return output;
+        }
+
         #endregion
     }
 }

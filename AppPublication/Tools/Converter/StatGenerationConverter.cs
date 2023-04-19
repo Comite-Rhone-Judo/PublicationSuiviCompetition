@@ -7,10 +7,11 @@ using System.Windows.Data;
 using Tools.Outils;
 using Tools.Export;
 using KernelImpl.Noyau.Organisation;
+using AppPublication.Tools;
 
 namespace AppPublication.Tools.Converter
 {
-    public class DateGenerationConverter : IMultiValueConverter
+    public class StatGenerationConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
@@ -19,24 +20,27 @@ namespace AppPublication.Tools.Converter
             // Verifie le type des donnees en entree
             if (values.Count() >= 2)
             {
-                DateTime theDate = DateTime.Now;
+                StatExecution theStat = null;
                 bool genere = false;
 
                 foreach (object item in values)
                 {
-                    if (item.GetType() == typeof(DateTime))
+                    if (item != null)
                     {
-                        theDate = (DateTime)item;
-                    }
-                    if (item.GetType() == typeof(bool))
-                    {
-                        genere = (bool)item;
+                        if (item.GetType() == typeof(StatExecution))
+                        {
+                            theStat = (StatExecution)item;
+                        }
+                        if (item.GetType() == typeof(bool))
+                        {
+                            genere = (bool)item;
+                        }
                     }
                 }
 
-                if (genere)
+                if (genere && theStat != null)
                 {
-                    output = theDate.ToString("dd MMM yyyy HH:mm:ss");
+                    output = string.Format("{0} ({1} sec.)", theStat.DateFin.ToString("dd/MM/yyyy HH:mm:ss"), (int) Math.Round(theStat.DelaiExecutionMs / 1000.0));
                 }
             }
 

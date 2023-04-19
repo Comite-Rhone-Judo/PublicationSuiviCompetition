@@ -129,18 +129,21 @@
       <Link>VersionInfo.cs</Link>
     </Compile>
     <Compile Include="Controles\RelayCommand.cs" />
-    <Compile Include="Tools\AppSettings.cs" />
-    <Compile Include="Tools\Converter\DateGenerationConverter.cs" />
+    <Compile Include="Tools\Converter\AppStatusConverter.cs" />
+    <Compile Include="Tools\Converter\BoolOperationConverter.cs" />
+    <Compile Include="Tools\Converter\BoolToVisibilityConverter.cs" />
+    <Compile Include="Tools\Converter\DisplayURLStatusConverter.cs" />
+    <Compile Include="Tools\Converter\StatGenerationConverter.cs" />
     <Compile Include="Tools\Converter\EtatGenerationConverter.cs" />
     <Compile Include="Tools\Converter\EtatPublicationConverter.cs" />
     <Compile Include="Tools\Converter\RunningStatusConverter.cs" />
     <Compile Include="Tools\Converter\BoolNotConverter.cs" />
     <Compile Include="Tools\Converter\ClientConverter.cs" />
-    <Compile Include="Tools\Converter\SiteURLConverter.cs" />
     <Compile Include="Tools\Enum\BusyStatusEnum.cs" />
     <Compile Include="Tools\FileTools.cs" />
     <Compile Include="Tools\LectureFile\LectureStructures.cs" />
-    <Compile Include="Tools\Outils.cs" />
+    <Compile Include="Tools\StatExecution.cs" />
+    <Compile Include="Tools\StatusGenerationSite.cs" />
     <Compile Include="Tools\Struct\ExportStruct.cs" />
     <Page Include="IHM\Commissaire\ExportWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

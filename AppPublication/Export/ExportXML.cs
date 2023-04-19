@@ -1,5 +1,4 @@
 ﻿using KernelImpl;
-using KernelImpl.Noyau;
 using KernelImpl.Noyau.Arbitrage;
 using KernelImpl.Noyau.Categories;
 using KernelImpl.Noyau.Deroulement;
@@ -14,6 +13,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using Tools.Enum;
+using Tools.Export;
 using Tools.Outils;
 
 namespace AppPublication.Export
@@ -184,6 +184,215 @@ namespace AppPublication.Export
             doc = xdoc.ToXmlDocument();
         }
 
+        public static XDocument ExportChecksumFichiers(List<FileWithChecksum> listFiles) {
+            XDocument doc = new XDocument();
+
+            XElement xelemRoot = new XElement(ConstantXML.checksums);
+            doc.Add(xelemRoot);
+            foreach (FileWithChecksum fc in listFiles)
+            {
+                xelemRoot.Add(fc.ToXml());
+            }
+
+            return doc;
+        }
+
+        public static List<FileWithChecksum> ImportChecksumFichiers(XElement rootElem)
+        {
+            List<FileWithChecksum> output = new List<FileWithChecksum>();
+
+            foreach (XElement xinfo in rootElem.Descendants(ConstantXML.checksumFile))
+            {
+                FileWithChecksum fc = new FileWithChecksum();
+                fc.LoadXml(xinfo);
+                output.Add(fc);
+            }
+
+            return output;
+        }
+
+        /// <summary>
+        /// Création du menu (pour le site)
+        /// </summary>
+        /// <param name="DC"></param>
+        /// <returns></returns>
+        public static XmlDocument CreateDocumentMenu(JudoData DC, bool publierProchainsCombats, bool publierAffectationTapis)
+        {
+            XDocument doc = new XDocument();
+            XElement xcompetitions = new XElement(ConstantXML.Competitions);
+
+            // Ajoute le drapeau pour indiquer si on veut les prochains combats ou non
+            xcompetitions.SetAttributeValue(ConstantXML.publierProchainsCombats, publierProchainsCombats);
+            xcompetitions.SetAttributeValue(ConstantXML.publierAffectationTapis, publierAffectationTapis);
+
+            doc.Add(xcompetitions);
+
+            IList<Competition> competitions = DC.Organisation.Competitions.ToList();
+            IList<Epreuve> epreuves1 = DC.Organisation.Epreuves.ToList();
+            IList<Epreuve_Equipe> epreuves2 = DC.Organisation.EpreuveEquipes.ToList();
+            //IList<i_vue_epreuve_interface> vepreuves = DC.Organisation.vepreuves.ToList();
+            IList<Phase> phases = DC.Deroulement.Phases.ToList();
+            IList<vue_groupe> groupes = DC.Deroulement.vgroupes.ToList();
+
+            foreach (Competition competition in competitions)
+            {
+                XElement xcompetition = competition.ToXmlInformations();
+                xcompetitions.Add(xcompetition);
+
+                for (int i = 0; i <= competition.nbTapis; i++)
+                {
+                    string directory = ExportTools.getDirectory(true, null, null);
+
+                    XElement xtapis = new XElement(ConstantXML.Tapis);
+                    xtapis.SetAttributeValue(ConstantXML.Tapis, i);
+                    //xtapis.SetAttributeValue(ConstantXML.Directory, directory);
+
+                    xtapis.SetAttributeValue(ConstantXML.Tapis, i);
+
+                    xcompetition.Add(xtapis);
+                }
+
+                IList<i_vue_epreuve_interface> epreuves_compet = null;
+                if (competition.IsEquipe())
+                {
+                    epreuves_compet = DC.Organisation.vepreuves_equipe.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>().ToList();
+                }
+                else
+                {
+                    epreuves_compet = DC.Organisation.vepreuves.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>().ToList();
+                }
+
+
+                foreach (i_vue_epreuve_interface ep in epreuves_compet)
+                {
+
+                    if (phases.Count(o => o.epreuve == ep.id && o.etat > (int)EtatPhaseEnum.Cree) == 0)
+                    {
+                        continue;
+                    }
+
+                    //i_vue_epreuve ep = vepreuves.FirstOrDefault(o => o.id == epreuve.id);
+                    string epreuve_nom = ep != null ? (ep.id + "_" + ep.nom) : null;
+                    string directory = ExportTools.getDirectory(true, epreuve_nom, null);
+                    string directory2 = ExportTools.getDirectory(true, null, null).Replace("/common", "");
+                    int index = directory.IndexOf(@"\site\");
+
+                    XElement xepreuve = ep.ToXml(DC);
+                    xepreuve.SetAttributeValue(ConstantXML.Directory, directory.Replace(directory2, ""));
+                    xcompetition.Add(xepreuve);
+
+                    XElement xphases = new XElement(ConstantXML.Phases);
+                    xepreuve.Add(xphases);
+
+                    List<int> phaseEnCours = new List<int>();
+                    foreach (Phase phase in DC.Deroulement.Phases.Where(o => o.epreuve == ep.id))
+                    {
+                        XElement xphase = phase.ToXml();
+                        xphases.Add(xphase);
+
+                        if(phase.etat == (int) EtatPhaseEnum.TirageValide)
+                        {
+                            phaseEnCours.Add(phase.id);
+                        }
+                    }
+                }
+            }
+
+            return doc.ToXmlDocument();
+        }
+
+        /// <summary>
+        /// Document XML contenant les informations pour les generations des affectations de tapis
+        /// </summary>
+        /// <param name="DC"></param>
+        /// <returns></returns>
+        public static XmlDocument CreateDocumentAffectationTapis(JudoData DC)
+        {
+            XDocument doc = new XDocument();
+            XElement xcompetitions = new XElement(ConstantXML.Competitions);
+            doc.Add(xcompetitions);
+
+            IList<Competition> competitions = DC.Organisation.Competitions.ToList();
+            IList<Epreuve> epreuves1 = DC.Organisation.Epreuves.ToList();
+            IList<Epreuve_Equipe> epreuves2 = DC.Organisation.EpreuveEquipes.ToList();
+            //IList<i_vue_epreuve_interface> vepreuves = DC.Organisation.vepreuves.ToList();
+            IList<Phase> phases = DC.Deroulement.Phases.ToList();
+            // IList<vue_groupe> groupes = DC.Deroulement.vgroupes.ToList();
+
+            foreach (Competition competition in competitions)
+            {
+                XElement xcompetition = competition.ToXmlInformations();
+                xcompetitions.Add(xcompetition);
+
+                IList<i_vue_epreuve_interface> epreuves_compet = null;
+                if (competition.IsEquipe())
+                {
+                    epreuves_compet = DC.Organisation.vepreuves_equipe.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>().ToList();
+                }
+                else
+                {
+                    epreuves_compet = DC.Organisation.vepreuves.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>().ToList();
+                }
+
+
+                foreach (i_vue_epreuve_interface ep in epreuves_compet)
+                {
+
+                    if (phases.Count(o => o.epreuve == ep.id && o.etat > (int)EtatPhaseEnum.Cree) == 0)
+                    {
+                        continue;
+                    }
+
+                    //i_vue_epreuve ep = vepreuves.FirstOrDefault(o => o.id == epreuve.id);
+                    string epreuve_nom = ep != null ? (ep.id + "_" + ep.nom) : null;
+
+                    XElement xepreuve = ep.ToXml(DC);
+                    xcompetition.Add(xepreuve);
+
+                    XElement xphases = new XElement(ConstantXML.Phases);
+                    xepreuve.Add(xphases);
+
+                    // List<int> phaseEnCours = new List<int>();
+                    foreach (Phase phase in DC.Deroulement.Phases.Where(o => o.epreuve == ep.id))
+                    {
+                        XElement xphase = phase.ToXml();
+                        xphases.Add(xphase);
+
+                        /*
+                        if (phase.etat == (int)EtatPhaseEnum.TirageValide)
+                        {
+                            phaseEnCours.Add(phase.id);
+                        }
+                        */
+                    }
+
+                    // On n'ajoute les affectations de tapis que pour les individuelle (pas besoin en shiai ou equipe)
+                    if (competition.IsIndividuelle())
+                    {
+                        XElement xtapisRoot = new XElement(ConstantXML.TapisEpreuve);
+                        xepreuve.Add(xtapisRoot);
+
+                        // Si au moins une phase active
+                        // if (phaseEnCours.Count > 0)
+                        // {
+                        // Cherche tous les numeros de tapis sur les combats de la phase de l'epreuve si la phase n'est pas terminee
+                        // List<int?> tapisEpreuve = DC.Deroulement.Combats.Where(o => o.epreuve == ep.id && o.tapis > 0).Join(phaseEnCours, o => o.phase, idx => idx, (o, idx) => o).Select(o => o.tapis).Distinct().ToList();
+                        List<int> tapisEpreuve = DC.Deroulement.vcombats.Where(o => o.epreuve_id == ep.id && o.combat_tapis > 0 && o.phase_etat == (int)EtatPhaseEnum.TirageValide && o.combat_vaiqueur == null).Select(o => o.combat_tapis).Distinct().ToList();
+
+                        // Ajoute les no de tapis
+                        foreach (int noTapis in tapisEpreuve)
+                        {
+                            XElement xTapis = new XElement(ConstantXML.Tapis);
+                            xTapis.SetAttributeValue(ConstantXML.Tapis_No, noTapis);
+                            xtapisRoot.Add(xTapis);
+                        }
+                        // }
+                    }
+                }
+            }
+
+            return doc.ToXmlDocument();
+        }
 
 
         public static XmlDocument ExportCompetitionJudoTV(JudoData DC)
@@ -330,6 +539,13 @@ namespace AppPublication.Export
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="epreuve"></param>
+        /// <param name="judokas"></param>
+        /// <param name="DC"></param>
+        /// <returns></returns>
         public static XmlDocument CreateDocumentJudokasEpreuve(i_vue_epreuve_interface epreuve, ICollection<vue_judoka> judokas, JudoData DC)
         {
             Competition competition = null;

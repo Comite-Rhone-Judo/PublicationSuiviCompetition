@@ -291,6 +291,12 @@ namespace Tools.Export
                 case ExportEnum.Site_ClassementFinal:
                     result = "classement_final";
                     break;
+                case ExportEnum.Site_Checksum:
+                    result = "checksum_fichiers_site";
+                    break;
+                case ExportEnum.Site_AffectationTapis:
+                    result = "affectation_tapis";
+                    break;
             }
 
             result = result.Replace(' ', '_');
@@ -595,6 +601,9 @@ namespace Tools.Export
                 case ExportEnum.Site_ClassementFinal:
                     name = ConstantResource.Export_Site_res + "classement_final";
                     break;
+                case ExportEnum.Site_AffectationTapis:
+                    name = ConstantResource.Export_Site_res + "affectation_tapis";
+                    break;
                 default:
                     return "";
             }
@@ -683,6 +692,5 @@ namespace Tools.Export
 
             //List<ExportPDFItem> exportItemList = new List<ExportPDFItem> { new ExportPDFItem { PdfName = directory2 + "/" + filename, IsLandscape = false } };
         }
-
     }
 }

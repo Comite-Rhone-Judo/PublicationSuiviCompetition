@@ -23,8 +23,10 @@ namespace Tools.Export
             argsList.AddParam("js", "", ExportTools.getJS());
             //argsList.AddParam("menu", "", ExportTools.getDirectory(true, null, null) + @"\menu.html");
 
-            ExportTools.ExportStyleAndJS(false);
-            ExportTools.ExportImg(false);
+            // Ces fichiers sont generes en parallele par le processus de generation, le fait de les appeler ici provoque des blocages
+            // sur les fichiers et leur generation n'est pas compte dans la liste des fichiers generes
+            // ExportTools.ExportStyleAndJS(false);
+            // ExportTools.ExportImg(false);
 
             string xslt = ExportTools.GetXsltSite(export_type);
             ExportHTML.ToHTML(xml, fileSave, argsList, xslt);
@@ -49,6 +51,7 @@ namespace Tools.Export
             var resource = ResourcesTools.GetAssembyResource(xslt_st);
             XmlReader xsltReader = XmlReader.Create(resource);
 
+            // TODO Supprimer le True en mode Release
             XslCompiledTransform xslt = new XslCompiledTransform();
             xslt.Load(xsltReader, settings, null);
 

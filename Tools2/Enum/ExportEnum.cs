@@ -52,6 +52,7 @@
         Site_Tableau_Competition = 109,
         Site_ClassementFinal = 110,
         Site_FeuilleCombatTapis = 111,
-
+        Site_AffectationTapis = 112,
+        Site_Checksum = 113
     }
 }

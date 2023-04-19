@@ -24,13 +24,16 @@ namespace AppPublication.Tools.Converter
 
                 foreach (object item in values)
                 {
-                    if (item.GetType() == typeof(MiniSite))
+                    if (item != null)
                     {
-                        site = (MiniSite)item;
-                    }
-                    if (item.GetType() == typeof(Competition))
-                    {
-                        compet = (Competition)item;
+                        if (item.GetType() == typeof(MiniSite))
+                        {
+                            site = (MiniSite)item;
+                        }
+                        if (item.GetType() == typeof(Competition))
+                        {
+                            compet = (Competition)item;
+                        }
                     }
                 }
 

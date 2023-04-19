@@ -4,7 +4,9 @@ using System.Windows;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
 using Tools.Outils;
+using Tools.Windows;
 using AppPublication.Tools.Enum;
+using Telerik.Windows.Controls;
 
 namespace AppPublication.Controles
 {
@@ -14,22 +16,26 @@ namespace AppPublication.Controles
     public class DialogControleur : NotificationBase
     {
         #region MEMBRES
-
-        private static DialogControleur _currentControleur = null;
-        //private static ICommissaireWindow windows_main;
-
+        private static DialogControleur _currentControleur = null;      // instance singletion
         #endregion
 
         #region CONSTRUCTEUR
 
-        public DialogControleur()
+        private DialogControleur()
         {
             FileAndDirectTools.InitDataDirectories();
-            LogTools.HeaderType = "PC COM/PRINT";
+            LogTools.HeaderType = "PC PUBLICATION";
 
             InitControleur();
         }
 
+        #endregion
+
+        #region PROPRIETES
+
+        /// <summary>
+        /// Acces a l'instance du singleton - Lecture seule
+        /// </summary>
         public static DialogControleur Instance
         {
             get
@@ -46,11 +52,10 @@ namespace AppPublication.Controles
             }
         }
 
-        #endregion
-
-        #region PROPRIETES
-
         private BusyStatusEnum _busyStatus = BusyStatusEnum.InitDonneesNone;
+        /// <summary>
+        /// L'etat d'occupation de l'application (pendant le chargement des données)
+        /// </summary>
         public BusyStatusEnum BusyStatus
         {
             get
@@ -66,25 +71,36 @@ namespace AppPublication.Controles
 
 
         private GestionConnection _connection = new GestionConnection();
+        /// <summary>
+        /// Le gestionnaire de la connexion au serveur - Lecture seule
+        /// </summary>
         public GestionConnection Connection
         {
-            get {
+            get
+            {
                 return _connection;
             }
         }
-        
+
 
         private GestionSite _site = null;
+        /// <summary>
+        /// Le gestionnaire des site de publication
+        /// </summary>
         public GestionSite GestionSite
         {
             get { return _site; }
-            set { _site = value; }
+            private set { _site = value; }
         }
 
         private JudoData _serverData;
+        /// <summary>
+        /// Le bloc de donnees recupere du serveur
+        /// </summary>
         public JudoData ServerData
         {
-            get {
+            get
+            {
                 if (_serverData == null)
                 {
                     _serverData = KernelManager.Manager.manager.m_JudoData;
@@ -93,7 +109,10 @@ namespace AppPublication.Controles
             }
         }
 
-        bool _isBusy;
+        private bool _isBusy;
+        /// <summary>
+        /// Indique si l'application est occupee (chargement de données)
+        /// </summary>
         public bool IsBusy
         {
             get
@@ -111,6 +130,17 @@ namespace AppPublication.Controles
 
         #region METHODES
 
+        /// <summary>
+        /// Actualise l'ID de competition (necessaire pour faire le lien avec la reception des donnees)
+        /// </summary>
+        public void UpdateCompetition()
+        {
+            GestionSite.IdCompetition = (ServerData.competition != null) ? ServerData.competition.remoteId : string.Empty;
+        }
+
+        /// <summary>
+        /// Initialisation du controleur
+        /// </summary>
         private void InitControleur()
         {
             Application.Current.ExecOnUiThread(new Action(() =>
@@ -131,6 +161,9 @@ namespace AppPublication.Controles
 
         #region COMMANDES
         private ICommand _cmdDemarrerSiteLocal = null;
+        /// <summary>
+        /// Command de demarrage du site local
+        /// </summary>
         public ICommand CmdDemarrerSiteLocal
         {
             get
@@ -143,10 +176,8 @@ namespace AppPublication.Controles
                                 if (Instance.GestionSite.MiniSiteLocal != null && !Instance.GestionSite.MiniSiteLocal.IsActif)
                                 {
                                     // Demarre le site en local
-                                    // TODO A voir si la notion de demarrer ou non n'est pas gerer plutot dans Gestion site directment
-                                    // TODO C'est lui qui va gere le thread de generation
-
-                                    Instance.GestionSite.MiniSiteLocal.StartSite();                                }
+                                    Instance.GestionSite.MiniSiteLocal.StartSite();
+                                }
                             },
                             o =>
                             {
@@ -157,8 +188,10 @@ namespace AppPublication.Controles
             }
         }
 
-
         private ICommand _cmdArreterSiteLocal = null;
+        /// <summary>
+        /// Commande d'arret du site local
+        /// </summary>
         public ICommand CmdArreterSiteLocal
         {
             get
@@ -171,8 +204,6 @@ namespace AppPublication.Controles
                                 if (Instance.GestionSite.MiniSiteLocal != null && Instance.GestionSite.MiniSiteLocal.IsActif)
                                 {
                                     // Demarre le site en local
-                                    // TODO A voir si la notion de demarrer ou non n'est pas gerer plutot dans Gestion site directment
-                                    // TODO C'est lui qui va gere le thread de generation
                                     Instance.GestionSite.MiniSiteLocal.StopSite();
                                 }
                             },
@@ -186,6 +217,9 @@ namespace AppPublication.Controles
         }
 
         private ICommand _cmdDemarrerSiteDistant = null;
+        /// <summary>
+        /// Commande de demarrage du site distant
+        /// </summary>
         public ICommand CmdDemarrerSiteDistant
         {
             get
@@ -198,8 +232,6 @@ namespace AppPublication.Controles
                                 if (Instance.GestionSite.MiniSiteDistant != null && !Instance.GestionSite.MiniSiteDistant.IsActif)
                                 {
                                     // Demarre le site en local
-                                    // TODO A voir si la notion de demarrer ou non n'est pas gerer plutot dans Gestion site directment
-                                    // TODO C'est lui qui va gere le thread de generation
                                     Instance.GestionSite.MiniSiteDistant.StartSite();
                                 }
                             },
@@ -213,6 +245,9 @@ namespace AppPublication.Controles
         }
 
         private ICommand _cmdArreterSiteDistant = null;
+        /// <summary>
+        /// Commande d'arret du site distant
+        /// </summary>
         public ICommand CmdArreterSiteDistant
         {
             get
@@ -225,8 +260,6 @@ namespace AppPublication.Controles
                                 if (Instance.GestionSite.MiniSiteDistant != null && Instance.GestionSite.MiniSiteDistant.IsActif)
                                 {
                                     // Demarre le site en local
-                                    // TODO A voir si la notion de demarrer ou non n'est pas gerer plutot dans Gestion site directment
-                                    // TODO C'est lui qui va gere le thread de generation
                                     Instance.GestionSite.MiniSiteDistant.StopSite();
                                 }
                             },
@@ -239,7 +272,50 @@ namespace AppPublication.Controles
             }
         }
 
+        private ICommand _cmdNettoyerSiteDistant = null;
+        /// <summary>
+        /// Commande de nettoyage du site distant
+        /// </summary>
+        public ICommand CmdNettoyerSiteDistant
+        {
+            get
+            {
+                if (_cmdNettoyerSiteDistant == null)
+                {
+                    _cmdNettoyerSiteDistant = new RelayCommand(
+                            o =>
+                            {
+                                if (Instance.GestionSite.MiniSiteDistant != null && !Instance.GestionSite.MiniSiteDistant.IsActif)
+                                {
+                                    DialogParameters param = new DialogParameters();
+                                    param.OkButtonContent = "Oui";
+                                    param.CancelButtonContent = "Non";
+                                    param.Content = "Etes-vous sûr de vouloir supprimer le contenu du site distant ?";
+                                    param.Header = "Nettoyer site distant";
+
+                                    ConfirmWindow win = new ConfirmWindow(param);
+                                    win.ShowDialog();
+
+                                    if (win.DialogResult.HasValue && (bool)win.DialogResult)
+                                    {
+                                        // Nettoyer le site distant
+                                        Instance.GestionSite.MiniSiteDistant.NettoyerSite();
+                                    }
+                                }
+                            },
+                            o =>
+                            {
+                                return !Instance.GestionSite.MiniSiteDistant.IsActif;
+                            });
+                }
+                return _cmdNettoyerSiteDistant;
+            }
+        }
+
         private ICommand _cmdDemarrerGeneration = null;
+        /// <summary>
+        /// Comamnde de demarrage de la generation du site
+        /// </summary>
         public ICommand CmdDemarrerGeneration
         {
             get
@@ -249,7 +325,6 @@ namespace AppPublication.Controles
                     _cmdDemarrerGeneration = new RelayCommand(
                             o =>
                             {
-                                // TODO A implementer
                                 Instance.GestionSite.StartGeneration();
                             },
                             o =>
@@ -262,6 +337,9 @@ namespace AppPublication.Controles
         }
 
         private ICommand _cmdArreterGeneration = null;
+        /// <summary>
+        /// Commande d'arret de la generation du site
+        /// </summary>
         public ICommand CmdArreterGeneration
         {
             get
@@ -271,7 +349,6 @@ namespace AppPublication.Controles
                     _cmdArreterGeneration = new RelayCommand(
                             o =>
                             {
-                                // TODO A implementer
                                 Instance.GestionSite.StopGeneration();
                             },
                             o =>

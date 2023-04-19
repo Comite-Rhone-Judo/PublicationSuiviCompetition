@@ -8,99 +8,27 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Xsl;
+using AppPublication.Tools;
 using Tools.Enum;
 using Tools.Export;
 using Tools.Outils;
+using System.Diagnostics;
 
 namespace AppPublication.Export
 {
     public static class ExportSite
     {
-        /// <summary>
-        /// Création du menu (pour le site)
-        /// </summary>
-        /// <param name="DC"></param>
-        /// <returns></returns>
-        public static XmlDocument CreateDocumentMenu(JudoData DC)
-        {
-            XDocument doc = new XDocument();
-            XElement xcompetitions = new XElement(ConstantXML.Competitions);
-            doc.Add(xcompetitions);
-
-            IList<Competition> competitions = DC.Organisation.Competitions.ToList();
-            IList<Epreuve> epreuves1 = DC.Organisation.Epreuves.ToList();
-            IList<Epreuve_Equipe> epreuves2 = DC.Organisation.EpreuveEquipes.ToList();
-            //IList<i_vue_epreuve_interface> vepreuves = DC.Organisation.vepreuves.ToList();
-            IList<Phase> phases = DC.Deroulement.Phases.ToList();
-
-            foreach (Competition competition in competitions)
-            {
-                XElement xcompetition = competition.ToXmlInformations();
-                xcompetitions.Add(xcompetition);
-
-                for (int i = 0; i <= competition.nbTapis; i++)
-                {
-                    string directory = ExportTools.getDirectory(true, null, null);
-
-                    XElement xtapis = new XElement(ConstantXML.Tapis);
-                    xtapis.SetAttributeValue(ConstantXML.Tapis, i);
-                    //xtapis.SetAttributeValue(ConstantXML.Directory, directory);
-
-                    xtapis.SetAttributeValue(ConstantXML.Tapis, i);
-
-                    xcompetition.Add(xtapis);
-                }
-
-                IList<i_vue_epreuve_interface> epreuves_compet = null;
-                if(competition.IsEquipe())
-                {
-                    epreuves_compet = DC.Organisation.vepreuves_equipe.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>().ToList();
-                }
-                else
-                {
-                    epreuves_compet = DC.Organisation.vepreuves.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>().ToList();
-                }
-                
-
-                foreach (i_vue_epreuve_interface ep in epreuves_compet)
-                {
-                    if (phases.Count(o => o.epreuve == ep.id && o.etat > (int)EtatPhaseEnum.Cree) == 0)
-                    {
-                        continue;
-                    }
-
-                    //i_vue_epreuve ep = vepreuves.FirstOrDefault(o => o.id == epreuve.id);
-                    string epreuve_nom = ep != null ? (ep.id + "_" + ep.nom) : null;
-                    string directory = ExportTools.getDirectory(true, epreuve_nom, null);
-                    string directory2 = ExportTools.getDirectory(true, null, null).Replace("/common", "");
-                    int index = directory.IndexOf(@"\site\");
-
-                    XElement xepreuve = ep.ToXml(DC);
-                    xepreuve.SetAttributeValue(ConstantXML.Directory, directory.Replace(directory2, ""));
-                    xcompetition.Add(xepreuve);
-
-                    XElement xphases = new XElement(ConstantXML.Phases);
-                    xepreuve.Add(xphases);
-
-                    foreach (Phase phase in DC.Deroulement.Phases.Where(o => o.epreuve == ep.id))
-                    {
-                        XElement xphase = phase.ToXml();
-                        xphases.Add(xphase);
-                    }
-                }
-            }
-
-            return doc.ToXmlDocument();
-        }
+        // TODO Certaines donnees sont generees plusieurs fois ... peut être pas le plus efficace
 
         /// <summary>
         /// Génére les éléments donnés d'une phase
         /// </summary>
         /// <param name="DC"></param>
         /// <param name="phase">la phase</param>
-        public static List<string> GenereWebSitePhase(JudoData DC, Phase phase)
+        public static List<FileWithChecksum> GenereWebSitePhase(JudoData DC, Phase phase)
         {
             List<string> urls = new List<string>();
+            List<FileWithChecksum> output = new List<FileWithChecksum>();  
 
             i_vue_epreuve_interface i_vue_epreuve = null;
             if(phase.isEquipe)
@@ -163,7 +91,12 @@ namespace AppPublication.Export
                 urls.Add(fileSave2 + ".html");
             }
 
-            return urls;
+            // Genere les checksums des fichiers generes
+            output = urls.Select(o => new FileWithChecksum(o)).ToList();
+
+            // Debug.WriteLine(string.Format("GenereWebSitePhase {0}", output.Count));
+
+            return output;
         }
 
         /// <summary>
@@ -171,9 +104,11 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <param name="tapis"></param>
-        public static List<string> GenereWebSiteTapis(JudoData DC, int tapis)
+        public static List<FileWithChecksum> GenereWebSiteTapis(JudoData DC, int tapis)
         {
             bool site = true;
+            List<FileWithChecksum> output = new List<FileWithChecksum>();
+
             ExportEnum type = ExportEnum.Site_FeuilleCombatTapis;
             string directory = ExportTools.getDirectory(site, null, null);
             string filename = ExportTools.getFileName(type) + tapis;
@@ -184,7 +119,12 @@ namespace AppPublication.Export
             XmlDocument xml = ExportXML.CreateDocumentFeuilleCombat(DC, null, tapis);
             ExportXML.AddClubs(ref xml, DC);
             ExportHTML.ToHTMLSite(xml, type, fileSave, argsList);
-            return new List<string> { fileSave + ".html" };
+            // return new List<string> { fileSave + ".html" };
+            
+            output.Add(new FileWithChecksum(fileSave + ".html"));
+            // Debug.WriteLine(string.Format("GenereWebSiteTapis {0}", output.Count));
+
+            return output; 
         }
 
         /// <summary>
@@ -192,9 +132,11 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <param name="epreuve"></param>
-        public static List<string> GenereWebSiteClassement(JudoData DC, i_vue_epreuve_interface epreuve)
+        public static List<FileWithChecksum> GenereWebSiteClassement(JudoData DC, i_vue_epreuve_interface epreuve)
         {
             bool site = true;
+            List<FileWithChecksum> output = new List<FileWithChecksum>();
+
             ExportEnum type = ExportEnum.Site_ClassementFinal;
             string epreuve_nom = epreuve != null ? (epreuve.id + "_" + epreuve.nom) : null;
             string directory = ExportTools.getDirectory(site, epreuve_nom, null);
@@ -205,16 +147,23 @@ namespace AppPublication.Export
             XmlDocument xml = ExportXML.CreateDocumentEpreuve(DC, epreuve);
             ExportXML.AddClubs(ref xml, DC);
             ExportHTML.ToHTMLSite(xml, type, fileSave, argsList);
-            return new List<string> { fileSave + ".html" };
+            // return new List<string> { fileSave + ".html" };
+
+            output.Add(new FileWithChecksum(fileSave + ".html"));
+            // Debug.WriteLine(string.Format("GenereWebSiteClassement {0}", output.Count));
+
+            return output;
         }
 
         /// <summary>
         /// Génére les premiers combats de tous les tapis
         /// </summary>
         /// <param name="DC"></param>
-        public static List<string> GenereWebSiteAllTapis(JudoData DC)
+        public static List<FileWithChecksum> GenereWebSiteAllTapis(JudoData DC)
         {
             bool site = true;
+            List<FileWithChecksum> output = new List<FileWithChecksum>();
+
             ExportEnum type = ExportEnum.Site_FeuilleCombatTapis;
             string directory = ExportTools.getDirectory(site, null, null);
             string filename = ExportTools.getFileName(type) + "All"; //ExportTools.getFileName(type) + "_tapis_" + "All";
@@ -226,16 +175,23 @@ namespace AppPublication.Export
             ExportXML.AddClubs(ref xml, DC);
 
             ExportHTML.ToHTMLSite(xml, type, fileSave, argsList);
-            return new List<string> { fileSave + ".html" };
+            // return new List<string> { fileSave + ".html" };
+            
+            output.Add(new FileWithChecksum(fileSave + ".html"));
+            // Debug.WriteLine(string.Format("GenereWebSiteAllTapis {0}", output.Count));
+
+            return output;
         }
 
         /// <summary>
         /// Génére les premiers combats de tous les tapis
         /// </summary>
         /// <param name="DC"></param>
-        public static List<string> GenereWebSitePrintTapis(JudoData DC, int nb)
+        public static List<FileWithChecksum> GenereWebSitePrintTapis(JudoData DC, int nb)
         {
             bool site = true;
+            List<FileWithChecksum> output = new List<FileWithChecksum>();
+
             ExportEnum type = ExportEnum.Site_Tapis1;
             switch (nb)
             {
@@ -258,7 +214,7 @@ namespace AppPublication.Export
             string fileSave = directory + "/" + filename.Replace("/", "_");
             XsltArgumentList argsList = new XsltArgumentList();
 
-            XmlDocument docmenu = ExportSite.CreateDocumentMenu(DC);
+            XmlDocument docmenu = ExportXML.CreateDocumentMenu(DC, false, true);
 
             argsList.AddParam("style", "", ExportTools.getStyleDirectory(site: true));
             argsList.AddParam("js", "", ExportTools.getJS());
@@ -266,16 +222,21 @@ namespace AppPublication.Export
             string xslt = ExportTools.GetXsltSite(type);
             ExportHTML.ToHTML(docmenu, fileSave, argsList, xslt);
 
-            return new List<string> { fileSave + ".html" };
+            // return new List<string> { fileSave + ".html" };
+            output.Add(new FileWithChecksum(fileSave + ".html"));
+            // Debug.WriteLine(string.Format("GenereWebSitePrintTapis {0}", output.Count));
+
+            return output;
         }
 
         /// <summary>
         /// Génére L'index
         /// </summary>
         /// <param name="DC"></param>
-        public static List<string> GenereWebSiteIndex()
+        public static List<FileWithChecksum> GenereWebSiteIndex()
         {
             List<string> urls = new List<string>();
+            List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             string directory = ExportTools.getDirectory(true, null, null);
             XDocument doc = new XDocument();
@@ -297,19 +258,34 @@ namespace AppPublication.Export
             {
                 xslt_index.Transform(doc.ToXmlDocument(), null, fs);
             }
+            // No need to regenerate those files, they are usually static unless they are updated
+            // urls = urls.Concat(ExportTools.ExportStyleAndJS(true)).ToList();
             urls = urls.Concat(ExportTools.ExportStyleAndJS(true)).ToList();
+
+            // Debug.WriteLine(string.Format("GenereWebSiteIndex - ExportStyleAndJS {0}", urls.Count));
+
+            // No need to regenerate those files, they are usually static unless they are updated
+            // urls = urls.Concat(ExportTools.ExportImg(true)).ToList();
             urls = urls.Concat(ExportTools.ExportImg(true)).ToList();
+
+            // Debug.WriteLine(string.Format("GenereWebSiteIndex - ExportImg {0}", urls.Count));
+
             urls.Add(directory + @"\index.html");
-            return urls;
+
+            output = urls.Select(o => new FileWithChecksum(o)).ToList();
+
+            // Debug.WriteLine(string.Format("GenereWebSiteIndex {0}", output.Count));
+
+            return output;
         }
 
         /// <summary>
         /// Génére L'index
         /// </summary>
         /// <param name="DC"></param>
-        public static List<string> GenereWebSiteMenu(JudoData DC)
+        public static List<FileWithChecksum> GenereWebSiteMenu(JudoData DC, bool publierProchainsCombats, bool publierAffectationTapis)
         {
-            List<string> urls = new List<string>();
+            List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             bool site = true;
             ExportEnum type = ExportEnum.Site_Menu;
@@ -318,73 +294,108 @@ namespace AppPublication.Export
             string fileSave = directory + "/" + filename.Replace("/", "_");
             XsltArgumentList argsList = new XsltArgumentList();
 
-            XmlDocument docmenu = ExportSite.CreateDocumentMenu(DC);
+            XmlDocument docmenu = ExportXML.CreateDocumentMenu(DC, publierProchainsCombats, publierAffectationTapis);
 
             ExportHTML.ToHTMLSite(docmenu, type, fileSave, argsList);
 
-            urls.Add(fileSave + ".html");
-            urls.Add(fileSave + ".xml");
-            urls = urls.Concat(GenereWebSitePrintTapis(DC, 0)).ToList();
-            urls = urls.Concat(GenereWebSitePrintTapis(DC, 1)).ToList();
-            urls = urls.Concat(GenereWebSitePrintTapis(DC, 2)).ToList();
-            urls = urls.Concat(GenereWebSitePrintTapis(DC, 4)).ToList();
+            output.Add(new FileWithChecksum(fileSave + ".html"));
+            output.Add(new FileWithChecksum(fileSave + ".xml"));
+            if (publierProchainsCombats)
+            {
+                output = output.Concat(GenereWebSitePrintTapis(DC, 0)).ToList();
+                output = output.Concat(GenereWebSitePrintTapis(DC, 1)).ToList();
+                output = output.Concat(GenereWebSitePrintTapis(DC, 2)).ToList();
+                output = output.Concat(GenereWebSitePrintTapis(DC, 4)).ToList();
+            }
 
-            return urls;
+            // Debug.WriteLine(string.Format("GenereWebSiteMenu {0}", output.Count));
+            return output;
            
             //ExportHTML.ToHTML_Menu(docmenu);
             //return new List<string> { ExportTools.getDirectory(true, null, null) + @"\menu.html" };
         }
 
         /// <summary>
-        /// Générer le site
+        /// Genere la page d'affectation des tapis
         /// </summary>
         /// <param name="DC"></param>
-        public static List<string> GenereWebSite(JudoData DC)
+        /// <returns></returns>
+        public static List<FileWithChecksum> GenereWebSiteAffectation(JudoData DC)
         {
-            List<string> urls = new List<string>();
-            if (DialogControleur.Instance.GestionSite == null)
-            {
-                return urls;
-            }
+            List<FileWithChecksum> output = new List<FileWithChecksum>();
 
-            urls = urls.Concat(ExportTools.ExportStyleAndJS(true)).ToList();
-            urls = urls.Concat(ExportTools.ExportImg(true)).ToList();
-            urls = urls.Concat(GenereWebSiteIndex()).ToList();
-            urls = urls.Concat(GenereWebSiteMenu(DC)).ToList();
-            urls = urls.Concat(GenereWebSiteAllTapis(DC)).ToList();
+            bool site = true;
+            ExportEnum type = ExportEnum.Site_AffectationTapis;
+            string directory = ExportTools.getDirectory(site, null, null);
+            string filename = ExportTools.getFileName(type);
+            string fileSave = directory + "/" + filename.Replace("/", "_");
+            XsltArgumentList argsList = new XsltArgumentList();
 
-            List<Competition> competitions = DC.Organisation.Competitions.ToList();
-            List<Phase> phases = DC.Deroulement.Phases.ToList();
+            XmlDocument docAffectation = ExportXML.CreateDocumentAffectationTapis(DC);
 
-            int nbtapis = competitions.Max(o => o.nbTapis);
-            for (int i = 0; i <= nbtapis; i++)
-            {
-                urls = urls.Concat(GenereWebSiteTapis(DC, i)).ToList();
-            }
+            ExportHTML.ToHTMLSite(docAffectation, type, fileSave, argsList);
 
-            foreach (Competition compet in competitions)
-            {
-                List<i_vue_epreuve_interface> epreuves = null;
-                if(compet.IsEquipe())
-                {
-                    epreuves = DC.Organisation.vepreuves_equipe.Where(o => o.competition == compet.id).Cast<i_vue_epreuve_interface>().ToList();
-                }
-                else
-                {
-                    epreuves = DC.Organisation.vepreuves.Where(o => o.competition == compet.id).Cast<i_vue_epreuve_interface>().ToList();
-                }
-
-                foreach (i_vue_epreuve_interface i_vue_epreuve in epreuves)
-                {
-                    foreach (Phase phase in phases.Where(o => o.epreuve == i_vue_epreuve.id))
-                    {
-                        urls = urls.Concat(GenereWebSitePhase(DC, phase)).ToList();
-                    }
-                    urls = urls.Concat(GenereWebSiteClassement(DC, i_vue_epreuve)).ToList();
-                }
-            }
-            return urls;
+            output.Add(new FileWithChecksum(fileSave + ".html"));
+            return output;
         }
 
+        /// <summary>
+        /// Générer le site complet - DEPRECATED
+        /// </summary>
+        /// <param name="DC"></param>
+        /*
+        public static List<FileWithChecksum> GenereWebSite(JudoData DC)
+        {
+            List<string> urls = new List<string>();
+            List<FileWithChecksum> output = new List<FileWithChecksum>();
+
+            if (DialogControleur.Instance.GestionSite != null)
+            {
+                urls = urls.Concat(ExportTools.ExportStyleAndJS(true)).ToList();
+                urls = urls.Concat(ExportTools.ExportImg(true)).ToList();
+
+                output = output.Concat(urls.Select(o => new FileWithChecksum(o)).ToList()).ToList();
+                output = output.Concat(GenereWebSiteIndex()).ToList();
+                output = output.Concat(GenereWebSiteMenu(DC, false, true)).ToList();
+                output = output.Concat(GenereWebSiteAllTapis(DC)).ToList();
+                output = output.Concat(GenereWebSiteAffectation(DC)).ToList();
+
+                List<Competition> competitions = DC.Organisation.Competitions.ToList();
+                List<Phase> phases = DC.Deroulement.Phases.ToList();
+
+                int nbtapis = competitions.Max(o => o.nbTapis);
+                for (int i = 0; i <= nbtapis; i++)
+                {
+                    output = output.Concat(GenereWebSiteTapis(DC, i)).ToList();
+                }
+
+                foreach (Competition compet in competitions)
+                {
+                    List<i_vue_epreuve_interface> epreuves = null;
+                    if (compet.IsEquipe())
+                    {
+                        epreuves = DC.Organisation.vepreuves_equipe.Where(o => o.competition == compet.id).Cast<i_vue_epreuve_interface>().ToList();
+                    }
+                    else
+                    {
+                        epreuves = DC.Organisation.vepreuves.Where(o => o.competition == compet.id).Cast<i_vue_epreuve_interface>().ToList();
+                    }
+
+                    foreach (i_vue_epreuve_interface i_vue_epreuve in epreuves)
+                    {
+                        foreach (Phase phase in phases.Where(o => o.epreuve == i_vue_epreuve.id))
+                        {
+                            output = output.Concat(GenereWebSitePhase(DC, phase)).ToList();
+                        }
+                        output = output.Concat(GenereWebSiteClassement(DC, i_vue_epreuve)).ToList();
+                    }
+                }
+                // output = urls.Select(o => new FileChecksum(o)).ToList();
+            }
+
+            // Debug.WriteLine(string.Format("GenereWebSite {0}", output.Count));
+            return output;
+        }
+        */
     }
 }

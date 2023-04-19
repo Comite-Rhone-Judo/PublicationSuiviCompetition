@@ -177,6 +177,9 @@ namespace AppPublication.Controles
             {
                 DialogControleur.Instance.Connection.Client.DemandeJudokas();
             }
+
+            // Signale la mise a jour de la competition
+            DC.UpdateCompetition();
         }
 
         public static void client_OnUpdateOrganisation(object sender, XElement element)
@@ -191,6 +194,10 @@ namespace AppPublication.Controles
             DC.ServerData.Organisation.lecture_competitions(element, DC.ServerData);
             DC.ServerData.Organisation.lecture_epreuves_equipe(element, DC.ServerData);
             DC.ServerData.Organisation.lecture_epreuves(element, DC.ServerData);
+
+            // Signale la mise a jour de la competition
+            DC.UpdateCompetition();
+
         }
 
         public static void client_OnListeEquipes(object sender, XElement element)

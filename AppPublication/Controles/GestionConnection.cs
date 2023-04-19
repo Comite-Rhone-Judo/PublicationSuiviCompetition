@@ -106,14 +106,6 @@ namespace AppPublication.Controles
 
             _client.TraitementConnexion.OnAcceptConnectionTest += clientjudo_OnDemandeConnectionTest;
 
-            /*
-             * TODO A remplacer par une propriete et un binding
-             * DialogControleur.CS.RadBusyIndicator1.IsIndeterminate = true;
-            DialogControleur.CS.RadBusyIndicator1.IsBusy = true;
-            DialogControleur.CS.RadBusyIndicator1.BusyContent = "Initialisation des données (clubs) ...";
-            */
-
-            // TODO C'est pas la meilleure façon de faire mais c'est le plus simple
             DialogControleur.Instance.IsBusy = true;
             DialogControleur.Instance.BusyStatus = Tools.Enum.BusyStatusEnum.InitDonneesClub;
 

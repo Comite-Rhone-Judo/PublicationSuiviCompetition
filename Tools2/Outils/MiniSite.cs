@@ -1,32 +1,27 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Net;
-using System.IO;
-using System.Net.Sockets;
+﻿using FluentFTP;
+using System;
 using System.Collections.Generic;
-using Tools.Enum;
-using Tools.Export;
-using System.ComponentModel;
-using FluentFTP;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Tools.Outils
 {
     public class MiniSite : NotificationBase
     {
-        private bool _actif = false;
-        private ServerHttp _server = null;
-        private bool _local = true;
-        // TODO mettre ces valeurs dans un cache fichier
-        private string _ftp = "";
-        private string _ftp_log = "";
-        private string _ftp_pass = "";
-        private string _url_distant = "";
-        private string _ftp_rep = "";
-        private FtpProfile _ftp_profile = null;
-
+        #region MEMBRES
+        private FtpProfile _ftp_profile = null;     // Le profile FTP a utiliser pour les connexions
+        private Action<FtpProgress> _ftpProgressCallback = null;
+        private long _nbSyncDistant = 0;
+        #endregion
 
         #region CONSTRUCTEURS
+        /// <summary>
+        /// Constructeur
+        /// </summary>
+        /// <param name="local">Mode du minisite (local = true, distant = false)</param>
         public MiniSite(bool local = false)
         {
             if (local)
@@ -41,10 +36,19 @@ namespace Tools.Outils
             {
                 // Site distant
                 InitConfigFTP();
+
+                // Initialise le callback de tracking
+                _ftpProgressCallback = new Action<FtpProgress>(p =>
+                {
+                    if (IsActif)
+                    {
+                        CalculProgressionFTP(p);
+                    }
+                });
             }
 
             _local = local;
-            IsActif = false;
+            Status = new StatusMiniSite();
         }
 
         #endregion
@@ -52,6 +56,9 @@ namespace Tools.Outils
         #region PROPRIETES
 
         List<IPAddress> _interfacesLocal;
+        /// <summary>
+        /// La liste des interfaces locales du PCen lecture seule, initialise lors de la creation si Local)
+        /// </summary>
         public List<IPAddress> InterfacesLocal
         {
             get
@@ -66,6 +73,10 @@ namespace Tools.Outils
         }
 
         IPAddress _interfaceLocalPublication;
+        /// <summary>
+        /// Interface (@IP) utilisée pour la publication du site en mode local
+        /// doit etre presente dans la liste InterfacesLocal
+        /// </summary>
         public IPAddress InterfaceLocalPublication
         {
             get
@@ -82,13 +93,14 @@ namespace Tools.Outils
                     // Configure l'adresse du serveur de publication si on est en mode local
                     if(IsLocal && null != _interfaceLocalPublication && null != ServerHTTP)
                     {
-                        ServerHTTP.IpAddress = _interfaceLocalPublication;
+                        ServerHTTP.ListeningIpAddress = _interfaceLocalPublication;
                     }
                     if (_interfaceLocalPublication != null)
                     {
                         AppSettings.SaveSettings("InterfaceLocalPublication", _interfaceLocalPublication.ToString());
                     }
                     NotifyPropertyChanged("InterfaceLocalPublication");
+                    IsChanged = true;
                 }
                 else
                 {
@@ -97,6 +109,10 @@ namespace Tools.Outils
             }
         }
 
+        private ServerHttp _server = null; 
+        /// <summary>
+        /// Le serveur HTTP de publication locale (null si distant, lecture seule)
+        /// </summary>
         public ServerHttp ServerHTTP
         {
             get
@@ -112,6 +128,9 @@ namespace Tools.Outils
         }
 
         bool _isChanged = false;
+        /// <summary>
+        /// Indique qu'une modification a eu lieu sur le parametrage du site
+        /// </summary>
         public bool IsChanged
         {
             get
@@ -125,6 +144,10 @@ namespace Tools.Outils
             }
         }
 
+        private bool _local = true; 
+        /// <summary>
+        /// Indique si le site est en mode local (true) ou distant (false) - Lecture seule
+        /// </summary>
         public bool IsLocal
         {
             get
@@ -133,81 +156,121 @@ namespace Tools.Outils
             }
         }
 
-        public string URLDistant
-        {
-            get
-            {
-                return _url_distant;
-            }
-            set
-            {
-                _url_distant = value;
-                AppSettings.SaveSettings("URLDistant", _url_distant);
-                NotifyPropertyChanged("URLDistant");
-                IsChanged = true;
-            }
-        }
-
+        private string _ftpDistant = string.Empty; 
+        /// <summary>
+        /// L'adresse du site FTP Distant
+        /// </summary>
         public string SiteFTPDistant
         {
             get
             {
-                return _ftp;
+                return _ftpDistant;
             }
             set
             {
-                _ftp = value;
-                AppSettings.SaveSettings("SiteFTPDistant", _ftp);
+                _ftpDistant = value;
+                AppSettings.SaveSettings("SiteFTPDistant", _ftpDistant);
                 NotifyPropertyChanged("SiteFTPDistant");
                 IsChanged = true;
             }
         }
 
+        private string _ftRepertoireDistant = string.Empty; 
+        /// <summary>
+        /// Le repertoire cible sur le serveur FTP
+        /// </summary>
         public string RepertoireSiteFTPDistant
         {
             get
             {
-                return _ftp_rep;
+                return _ftRepertoireDistant;
             }
             set
             {
-                _ftp_rep = value;
-                AppSettings.SaveSettings("RepertoireSiteFTPDistant", _ftp_rep);
+                _ftRepertoireDistant = value;
                 NotifyPropertyChanged("RepertoireSiteFTPDistant");
                 IsChanged = true;
             }
         }
 
+        private string _ftpLoginDistant = string.Empty;
+        /// <summary>
+        /// Login de connexion au site FTP Distant
+        /// </summary>
         public string LoginSiteFTPDistant
         {
             get
             {
-                return _ftp_log;
+                return _ftpLoginDistant;
             }
             set
             {
-                _ftp_log = value;
-                AppSettings.SaveSettings("LoginSiteFTPDistant", _ftp_log);
+                _ftpLoginDistant = value;
+                AppSettings.SaveSettings("LoginSiteFTPDistant", _ftpLoginDistant);
                 NotifyPropertyChanged("LoginSiteFTPDistant");
                 IsChanged = true;
             }
         }
 
+        private bool _modeFTPActif = false;
+
+        /// <summary>
+        /// Mode de fonctionnement FTP Actif (true) ou passif (false)
+        /// </summary>
+        public bool ModeActifFTPDistant
+        {
+            get
+            {
+                return _modeFTPActif;
+            }
+            set
+            {
+                _modeFTPActif = value;
+                AppSettings.SaveSettings("ModeActifFTPDistant", _modeFTPActif.ToString());
+                NotifyPropertyChanged("ModeActifFTPDistant");
+                IsChanged = true;
+            }
+        }
+
+        private string _ftpPasswordDistant = string.Empty; 
+        /// <summary>
+        /// Mot de passe FTP au site FTP Distant
+        /// </summary>
         public string PasswordSiteFTPDistant
         {
             get
             {
-                return _ftp_pass;
+                return _ftpPasswordDistant;
             }
             set
             {
-                _ftp_pass = value;
-                AppSettings.SaveSettings("PasswordSiteFTPDistant", _ftp_pass);
+                _ftpPasswordDistant = value;
+                AppSettings.SaveSettings("PasswordSiteFTPDistant", _ftpPasswordDistant);
                 NotifyPropertyChanged("PasswordSiteFTPDistant");
                 IsChanged = true;
             }
         }
 
+        private bool _syncDiff = false;
+        public bool SynchroniseDifferences
+        {
+            get
+            {
+                return _syncDiff;
+            }
+            set
+            {
+                _syncDiff = value;
+                AppSettings.SaveSettings("SynchroniseDifferences", _syncDiff.ToString());
+                NotifyPropertyChanged("SynchroniseDifferences");
+                IsChanged = true;
+            }
+        }
+
+        private bool _actif = false; 
+        /// <summary>
+        /// Indique si le site est actif (lecture seule)
+        /// </summary>
         public bool IsActif
         {
             get
@@ -222,17 +285,27 @@ namespace Tools.Outils
             }
         }
 
-        string _status = "-";
-        public string Status
+        StatusMiniSite _status;
+        /// <summary>
+        /// Le statut textuelle du minisite (active, etc.)
+        /// </summary>
+        public StatusMiniSite Status
         {
             get
             {
+                if(null == _status)
+                {
+                    _status = new StatusMiniSite();
+                }
                 return _status;
             }
             private set
             {
                 _status = value;
                 NotifyPropertyChanged("Status");
+
+                // Actualise l'etat d'activite du site
+                IsActif = !(_status.State == StateMiniSiteEnum.Stopped);
             }
         }
 
@@ -240,26 +313,36 @@ namespace Tools.Outils
 
         #region METHODES
 
+        /// <summary>
+        /// Initialise la configuraiton FTP a partir du cache de fichier AppConfig
+        /// </summary>
         private void InitConfigFTP()
         {
             string valCache = string.Empty;
 
-            valCache = AppSettings.ReadSettings("URLDistant");
-            URLDistant = (valCache == null) ? String.Empty : valCache;
+            try
+            {
+                valCache = AppSettings.ReadSettings("SiteFTPDistant");
+                SiteFTPDistant = (valCache == null) ? String.Empty : valCache;
 
-            valCache = AppSettings.ReadSettings("SiteFTPDistant");
-            SiteFTPDistant = (valCache == null) ? String.Empty : valCache;
+                valCache = AppSettings.ReadSettings("LoginSiteFTPDistant");
+                LoginSiteFTPDistant = (valCache == null) ? String.Empty : valCache;
 
-            valCache = AppSettings.ReadSettings("LoginSiteFTPDistant");
-            LoginSiteFTPDistant = (valCache == null) ? String.Empty : valCache;
+                valCache = AppSettings.ReadSettings("PasswordSiteFTPDistant");
+                PasswordSiteFTPDistant = (valCache == null) ? String.Empty : valCache;
 
-            valCache = AppSettings.ReadSettings("PasswordSiteFTPDistant");
-            PasswordSiteFTPDistant = (valCache == null) ? String.Empty : valCache;
+                valCache = AppSettings.ReadSettings("ModeActifFTPDistant");
+                ModeActifFTPDistant = (valCache == null) ? false : bool.Parse(valCache);
 
-            valCache = AppSettings.ReadSettings("RepertoireSiteFTPDistant");
-            RepertoireSiteFTPDistant = (valCache == null) ? String.Empty : valCache;
+                valCache = AppSettings.ReadSettings("SynchroniseDifferences");
+                SynchroniseDifferences = (valCache == null) ? false : bool.Parse(valCache);
+            }
+            catch {}
         }
 
+        /// <summary>
+        /// Initialise la liste des interfaces locales disponibles
+        /// </summary>
         private void InitInterfaces()
         {
             // Initialise la liste des interfaces
@@ -303,15 +386,17 @@ namespace Tools.Outils
             }
         }
 
+        /// <summary>
+        /// Demarre le site
+        /// </summary>
         public void StartSite()
         {
-            bool actif = false;
-            string lStatus = "-";
+            StateMiniSiteEnum lStatus = StateMiniSiteEnum.Stopped;
+            string lStatusMsg = "-";
+            string lStatusDetail = string.Empty;
 
             try
             {
-
-
                 // Arrete le serveur local si necessaire
                 if (IsLocal)
                 {
@@ -324,7 +409,7 @@ namespace Tools.Outils
                         }
 
                         // Configure l'interface d'ecoute du minisite
-                        _server.IpAddress = InterfaceLocalPublication;
+                        _server.ListeningIpAddress = InterfaceLocalPublication;
 
                         // Demarre le serveur Web local
                         _server.Start();
@@ -332,32 +417,42 @@ namespace Tools.Outils
                         if (_server.IsStart)
                         {
                             // Active le site
-                            actif = true;
+                            lStatus = StateMiniSiteEnum.Listening;
                         }
                         else
                         {
                             // Le site n'a pas demarre
-                            lStatus = "Impossible de démarrer le serveur Web local";
+                            lStatusMsg = "Impossible de démarrer le serveur Web local";
                         }
 
                     }
                     else
                     {
-                        lStatus = "Serveur Web local indisponible";
+                        lStatusMsg = "Serveur Web local indisponible";
                     }
                 }
                 else
                 {
                     // Serveur distant
-                    if (CheckConfigurationSiteDistant())
+                    try
                     {
-                        // Active le site
-                        actif = true;
+                        if (CheckConfigurationSiteDistant())
+                        {
+                            // Active le site
+                            lStatus = StateMiniSiteEnum.Idle;
+                            // RAZ le nb de synchronisation realisee
+                            _nbSyncDistant = 0;
+                        }
+                        else
+                        {
+                            // La configuration ne permet pas de se connecter sur le site FTP
+                            lStatusMsg = "Configuration incorrecte";
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        // La configuration ne permet pas de se connecter sur le site FTP
-                        lStatus = "Configuration incorrecte";
+                        lStatusMsg = "Configuration incorrecte";
+                        lStatusDetail = ex.Message;
                     }
                 }
 
@@ -365,34 +460,41 @@ namespace Tools.Outils
             }
             catch (Exception ex)
             {
-                Status = "Erreur au demarrage";
+                lStatusMsg = "Erreur au demarrage";
+                lStatusDetail = ex.Message;
                 LogTools.Log(ex);
             }
 
             // Met a jour les status du minisite
-            IsActif = actif;
-            Status = lStatus;
+            Status = new StatusMiniSite(lStatus, lStatusMsg, lStatusDetail);
         }
 
+        /// <summary>
+        /// Arrete le site
+        /// </summary>
         public void StopSite()
         {
             try
             {
                 IsActif = false;
-                Status = "-";
+                Status = new StatusMiniSite(StateMiniSiteEnum.Stopped);
 
-                if (!IsLocal && null != _server)
+                if (IsLocal && null != _server)
                 {
                     _server.Stop();
                 }
             }
             catch (Exception ex)
             {
-                Status = "Erreur lors de l'arrêt";
+                Status = new StatusMiniSite(StateMiniSiteEnum.Stopped, "Erreur lors de l'arrêt");
                 LogTools.Log(ex);
             }
         }
 
+        /// <summary>
+        /// Valide la configuration du site distant et initialise le FtpProfile
+        /// </summary>
+        /// <returns></returns>
         private bool CheckConfigurationSiteDistant()
         {
             bool output = false;
@@ -407,33 +509,52 @@ namespace Tools.Outils
                     if (profiles.Count > 0)
                     {
                         _ftp_profile = profiles.First();
+                        _ftp_profile.DataConnection = (ModeActifFTPDistant) ? FtpDataConnectionType.PORT : FtpDataConnectionType.PASV;
                         output = true;
                     }
                 }
                 catch(Exception ex)
                 {
-                    output = false;
                     LogTools.Log(ex);
+                    throw ex;
                 }
             }
 
             return output;
         }
 
-        public bool UploadSite(string localRootDirectory, string distantDirectory)
+        /// <summary>
+        /// Nettoyer le site distant (efface tous les fichiers et les repertoires)
+        /// </summary>
+        /// <returns></returns>
+        public bool NettoyerSite()
         {
             bool output = false;
+            StatusMiniSite cStatus = Status;  // Recupere le status courant pour le restaurer apres les operations
 
-            if(IsLocal || !IsActif)
+            if (IsLocal || IsActif)
             {
-                // Si le site est local ou n'est pas actif
+                // Si le site est local ou est actif
                 return false;
             }
 
-            if (String.IsNullOrEmpty(SiteFTPDistant) || String.IsNullOrEmpty(LoginSiteFTPDistant) || string.IsNullOrEmpty(PasswordSiteFTPDistant) || String.IsNullOrEmpty(localRootDirectory) || String.IsNullOrEmpty(distantDirectory))
+            if (String.IsNullOrEmpty(SiteFTPDistant) || String.IsNullOrEmpty(LoginSiteFTPDistant) || string.IsNullOrEmpty(PasswordSiteFTPDistant))
             {
                 // Pas de configuration
                 return false;
+            }
+
+            try
+            {
+                if (!CheckConfigurationSiteDistant())
+                {
+                    Status = new StatusMiniSite(StateMiniSiteEnum.Idle, "Configuration incorrecte");
+                    return false;
+                }
+            }
+            catch(Exception ex)
+            {
+                Status = new StatusMiniSite(StateMiniSiteEnum.Idle, "Configuration incorrecte", ex.Message);
             }
 
             // Le client FTP pour la connection
@@ -441,27 +562,42 @@ namespace Tools.Outils
 
             try
             {
+                Status = new StatusMiniSite(StateMiniSiteEnum.Syncing, "Nettoyage FTP ...");
+
                 // Essaye de se connecter au serveur FTP
                 ftpClient.Connect(_ftp_profile);
-    
-                if(ftpClient.IsConnected)
+
+                if (ftpClient.IsConnected)
                 {
-                    string distantRootDirectory = Path.Combine(RepertoireSiteFTPDistant, distantDirectory);
+                    foreach(FtpListItem ftpItem in ftpClient.GetListing(RepertoireSiteFTPDistant)) {
+                        switch (ftpItem.Type)
+                        {
 
-                    // Charge le dossier du site vers le serveur FTP en mode miroir pour synchroniser
-                    List<FtpResult> uploadOut = ftpClient.UploadDirectory(localRootDirectory, distantRootDirectory, FtpFolderSyncMode.Mirror, FtpRemoteExists.Overwrite, FtpVerify.None);
+                            case FtpObjectType.Directory:
+                                {
+                                    ftpClient.DeleteDirectory(ftpItem.FullName);
+                                }
+                                break;
 
-                    if(uploadOut.Count > 0)
-                    {
-                        output = true;
+                            case FtpObjectType.File:
+                                {
+                                    ftpClient.DeleteFile(ftpItem.FullName);
+                                }
+                                break;
+
+                            case FtpObjectType.Link:
+                                break;
+                        }   
                     }
 
                     // Disconnect
                     ftpClient.Disconnect();
                 }
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
+                cStatus = new StatusMiniSite(cStatus.State, "Erreur FTP", ex.Message);
                 LogTools.Log(ex);
             }
             finally
@@ -472,10 +608,172 @@ namespace Tools.Outils
                 }
             }
 
+            // Restaure le status apres l'operation
+            Status = cStatus;
+
             return output;
         }
 
+        /// <summary>
+        /// Calcul le % de progression, FTP en fonction des informations retournees par FtpProgress
+        /// </summary>
+        /// <param name="p"></param>
+        private void CalculProgressionFTP(FtpProgress p)
+        {
+            if(p != null)
+            {
+                CalculProgressionFTP(p.FileIndex, p.FileCount);
+            }
+        }
+
+        /// <summary>
+        /// Calcul  le % de progressioon FTP
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="total"></param>
+        private void CalculProgressionFTP(int index, int total)
+        {
+            int pct = -1;
+            // Calcul le ratio de transfert du repertoire
+            if (index >= 0 && total > -1)
+            {
+                pct = (int)Math.Round(((index + 1.0) / total) * 100);
+            }
+
+            Status.Progress = pct;
+        }
+
         
+        /// <summary>
+        /// Charge la structure sur le site FTP
+        /// </summary>
+        /// <param name="localRootDirectory">Repertoire dont le contenu doit etre charge</param>
+        /// <param name="distantDirectory">Repertoire distant (par rapport à la racine), "" pour charger directement a la racine</param>
+        /// <returns></returns>
+        public bool UploadSite(string localRootDirectory, List<FileInfo> listFiles = null)
+        {
+            bool output = false;
+            StatusMiniSite cStatus = Status;  // Recupere le status courant pour le restaurer apres les operations
+
+            if (IsLocal || !IsActif)
+            {
+                // Si le site est local ou n'est pas actif
+                return false;
+            }
+
+            if (String.IsNullOrEmpty(SiteFTPDistant) || String.IsNullOrEmpty(LoginSiteFTPDistant) || string.IsNullOrEmpty(PasswordSiteFTPDistant) || String.IsNullOrEmpty(localRootDirectory) || String.IsNullOrEmpty(RepertoireSiteFTPDistant))
+            {
+                // Pas de configuration
+                return false;
+            }
+
+            // Le client FTP pour la connection
+            FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
+
+            try
+            {
+                Status = new StatusMiniSite(StateMiniSiteEnum.Syncing, "Envoi FTP ...");
+
+                // Essaye de se connecter au serveur FTP
+                ftpClient.Connect(_ftp_profile);
+    
+                if(ftpClient.IsConnected)
+                {
+                    // La 1ere synchro est forcement complete ou si le flag de synchroniser les differences n'est pas leve
+                    if (_nbSyncDistant >= 1 && SynchroniseDifferences && listFiles != null) {
+
+                        output = true;
+                        int idx =0;
+                        foreach( FileInfo localFileInfo in listFiles)
+                        {
+                            // Calculer le repertoire de destination FTP en remplacant le repertoire racine local par la racine FTP
+                            string ftpFileName = GetFTPFromLocal(localFileInfo.FullName, localRootDirectory);
+
+                            // Charhe le fichier
+                            FtpStatus fileUploadOut = ftpClient.UploadFile(localFileInfo.FullName,
+                                                                            ftpFileName,
+                                                                            FtpRemoteExists.Overwrite,
+                                                                            true,
+                                                                            FtpVerify.None,
+                                                                            null);
+                            if(fileUploadOut != FtpStatus.Success)
+                            {
+                                output = false;
+                            }
+
+                            // Met a jour la progression du transfert
+                            CalculProgressionFTP(idx,listFiles.Count);
+                            idx++;
+                        } 
+                    }
+                    else
+                    {
+                        // Charge le dossier du site vers le serveur FTP en mode miroir pour synchroniser
+                        List<FtpResult> uploadOut = ftpClient.UploadDirectory(localRootDirectory,
+                                                                                RepertoireSiteFTPDistant,
+                                                                                FtpFolderSyncMode.Mirror,
+                                                                                FtpRemoteExists.Overwrite,
+                                                                                FtpVerify.None,
+                                                                                null,
+                                                                                _ftpProgressCallback);
+
+                        if (uploadOut.Count > 0)
+                        {
+                            output = true;
+                        }
+                    }
+
+                    // Disconnect
+                    ftpClient.Disconnect();
+
+                    // Incremente le nb de synchronisation realisee depuis le demarrage
+                    _nbSyncDistant++;
+                }
+            }
+            catch(Exception ex)
+            {
+                cStatus = new StatusMiniSite(cStatus.State, "Erreur FTP", ex.Message);
+                LogTools.Log(ex);
+            }
+            finally
+            {
+                if (ftpClient.IsConnected)
+                {
+                    ftpClient.Disconnect();
+                }
+            }
+
+            // Restaure le status apres l'operation
+            Status = cStatus;
+            
+            return output;
+        }
+
+        /// <summary>
+        /// Calcul le repertoire de destination FTP a partir du nom de fichier local
+        /// </summary>
+        /// <param name="localFileName"></param>
+        /// <param name="localDirectoryName"></param>
+        /// <returns></returns>
+        private string GetFTPFromLocal(string localFileName, string localDirectoryName)
+        {
+            string output = string.Empty;
+            if (!string.IsNullOrEmpty(localFileName) && !string.IsNullOrEmpty(localDirectoryName))
+            {
+                // Aligne les noms des repertoires pour n'avoir que des '/' au lieu de '\'
+                string cleanLocalFileName = FluentFTP.Helpers.RemotePaths.GetFtpPath(localFileName);
+                string cleanLocalDirName = FluentFTP.Helpers.RemotePaths.GetFtpPath(localDirectoryName);
+                string cleanDistantDirName = FluentFTP.Helpers.RemotePaths.GetFtpPath(RepertoireSiteFTPDistant);
+
+                // Remplace le repertoire racine local dans le nom du fichier local par le repertoire racine FTP
+                string ftpDestination = cleanLocalFileName.Replace(cleanLocalDirName, cleanDistantDirName);
+
+                // Nettoie  le chemin
+                output = FluentFTP.Helpers.RemotePaths.GetFtpPath(ftpDestination);
+            }
+
+            return output;
+        }
         #endregion
     }
 }

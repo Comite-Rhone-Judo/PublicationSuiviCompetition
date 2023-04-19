@@ -70,7 +70,7 @@ namespace AppPublication.IHM.Commissaire
                 if (DialogControleur.Instance.GestionSite.MiniSiteLocal.IsLocal)
                 {
                     url = ExportTools.GetURLSiteLocal(
-                         DialogControleur.Instance.GestionSite.MiniSiteLocal.ServerHTTP.IpAddress.ToString(),
+                         DialogControleur.Instance.GestionSite.MiniSiteLocal.ServerHTTP.ListeningIpAddress.ToString(),
                          DialogControleur.Instance.GestionSite.MiniSiteLocal.ServerHTTP.Port,
                          DialogControleur.Instance.ServerData.competition.remoteId);
                 }

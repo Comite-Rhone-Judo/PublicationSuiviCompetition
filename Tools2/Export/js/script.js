@@ -160,6 +160,7 @@ $(window).load(function () {
     add_id_tabs($('#div2'), $('#tab2'), 'form');
     add_id_tabs($('#div3'), $('#tab3'), 'form');
     add_id_tabs($('#div4'), $('#tab4'), 'form');
+    add_id_tabs($('#div5'), $('#tab5'), 'form');
 
     set_tab(3, 'form');
 });
