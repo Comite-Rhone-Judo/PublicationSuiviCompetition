@@ -61,8 +61,12 @@
 								</span>
 
 								<div style="position: fixed;right: 10px;top: 10px;">
-									<a class="btn btn-danger" onclick="anim2();" style="margin-right: 10px;">Actualiser</a>
-									<a class="btn btn-info" onclick="setDefilement();">Défilement</a>
+									<a class="btn btn-danger" onclick="anim2();" style="margin-right: 10px;">
+										<img class="img" src="../img/refresh-32.png" alt="Actualiser"/>
+									</a>
+									<a class="btn btn-info" onclick="setDefilement();">
+										<img class="img" src="../img/repeat-32.png" alt="Défilement"/>
+									</a>
 								</div>
 
 								<!--<a class="btn btn-danger" onclick="anim2();"  style="margin-right: 10px;">Actualiser</a>
@@ -74,8 +78,12 @@
 
 				<xsl:if test="$istapis != 'tapis' or count(//tapis) != 1">
 					<div style="position: fixed;right: 10px;top: 10px;">
-						<a class="btn btn-danger" onclick="anim2();"  style="margin-right: 10px;">Actualiser</a>
-						<a class="btn btn-info" onclick="setDefilement();">Défilement</a>
+						<a class="btn btn-danger" onclick="anim2();"  style="margin-right: 10px;">
+							<img class="img" src="../img/refresh-32.png" alt="Actualiser"/>
+						</a>
+						<a class="btn btn-info" onclick="setDefilement();">
+							<img class="img" src="../img/repeat-32.png" alt="Défilement"/>
+						</a>
 					</div>
 
 				</xsl:if>
@@ -85,7 +93,9 @@
 			<xsl:if test="$istapis != 'tapis'">
 
 				<div class="btn_menu">
-					<a class="btn btn-warning" href="../common/menu.html" role="button">Menu</a>
+					<a class="btn btn-warning" href="../common/menu.html" role="button">
+						<img class="img" src="../img/home-32.png" alt="Menu"/>
+					</a>
 				</div>
 
 				<div class="panel panel-primary">

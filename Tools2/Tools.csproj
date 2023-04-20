@@ -2978,6 +2978,15 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\site\refresh-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\site\repeat-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\site\home-32.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

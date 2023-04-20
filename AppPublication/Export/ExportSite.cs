@@ -18,8 +18,6 @@ namespace AppPublication.Export
 {
     public static class ExportSite
     {
-        // TODO Certaines donnees sont generees plusieurs fois ... peut être pas le plus efficace
-
         /// <summary>
         /// Génére les éléments donnés d'une phase
         /// </summary>

@@ -377,7 +377,10 @@ namespace AppPublication.Export
                         // {
                         // Cherche tous les numeros de tapis sur les combats de la phase de l'epreuve si la phase n'est pas terminee
                         // List<int?> tapisEpreuve = DC.Deroulement.Combats.Where(o => o.epreuve == ep.id && o.tapis > 0).Join(phaseEnCours, o => o.phase, idx => idx, (o, idx) => o).Select(o => o.tapis).Distinct().ToList();
-                        List<int> tapisEpreuve = DC.Deroulement.vcombats.Where(o => o.epreuve_id == ep.id && o.combat_tapis > 0 && o.phase_etat == (int)EtatPhaseEnum.TirageValide && o.combat_vaiqueur == null).Select(o => o.combat_tapis).Distinct().ToList();
+                        List<int> tapisEpreuve = DC.Deroulement.vcombats.Where(o => o.epreuve_id == ep.id
+                                                                               && o.combat_tapis > 0
+                                                                               && o.phase_etat == (int)EtatPhaseEnum.TirageValide
+                                                                               && o.combat_vaiqueur == null).Select(o => o.combat_tapis).Distinct().ToList();
 
                         // Ajoute les no de tapis
                         foreach (int noTapis in tapisEpreuve)

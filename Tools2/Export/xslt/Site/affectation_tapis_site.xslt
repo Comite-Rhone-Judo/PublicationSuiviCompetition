@@ -35,9 +35,13 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 		<body>
 			<!-- LES BOUTONS -->
 			<div class="btn_defilement">
-				<div style="position: fixed;right: 10px;top: 10px;">
-					<a class="btn btn-danger" onclick="anim2();"  style="margin-right: 10px;">Actualiser</a>
-					<a class="btn btn-info" onclick="setDefilement();">Défilement</a>
+				<div style="position: fixed;right: 35px;top: 2px;">
+					<a class="btn btn-danger" onclick="anim2();"  style="margin-right: 10px;">
+						<img class="img" src="../img/refresh-32.png" alt="Actualiser"/>
+					</a>
+					<a class="btn btn-info" onclick="setDefilement();">
+						<img class="img" src="../img/repeat-32.png" alt="Défilement"/>
+					</a>
 				</div>
 			</div>
 			<!-- VUE AFFECTATION -->

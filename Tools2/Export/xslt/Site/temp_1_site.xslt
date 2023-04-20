@@ -64,7 +64,9 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <body style="height: 100%;">
     
       <div class="btn_menu">
-        <a class="btn btn-warning" href="../common/menu.html" role="button">Menu</a>
+        <a class="btn btn-warning" href="../common/menu.html" role="button">
+			<img class="img" src="../img/home-32.png" alt="Menu"/>
+		</a>
       </div>
 
       <div class="panel panel-primary">
