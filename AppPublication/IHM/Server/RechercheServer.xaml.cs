@@ -48,7 +48,7 @@ namespace AppPublication.IHM.Server
                 args.Cancel = true;
                 return;
             }
-            recherche.DemareRechecherche(text);
+            recherche.DemarreRechecherche(text, worker);
         }
 
         private void recherche_Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs args)
@@ -148,6 +148,9 @@ namespace AppPublication.IHM.Server
                 Controles.DialogControleur.Instance.Connection.Client = new ClientJudo(IEP.Address.ToString(), IEP.Port);
 
                 LB1.Items.Clear();
+
+                recherche_Worker.CancelAsync(); // Demande l'annumation de la tache de recherche
+
                 this.Close();
             }
         }

@@ -92,7 +92,7 @@ namespace JudoClient
         }
 
 
-        public void DemareRechecherche(string ipAdressText)
+        public void DemarreRechecherche(string ipAdressText, System.ComponentModel.BackgroundWorker bWorker = null)
         {
             if (_recherche_en_cours)
             {
@@ -116,6 +116,12 @@ namespace JudoClient
             int index = 0;
             foreach (string adresse in machines)
             {
+                if(bWorker != null && bWorker.CancellationPending)
+                {
+                    // si on s'execute dans une tache qui doit s'arreter on quitte directement
+                    return;
+                }
+
                 if (index++ % 10 == 0)
                 {
                     Thread.Sleep(100);

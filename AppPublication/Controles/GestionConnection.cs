@@ -12,6 +12,7 @@ namespace AppPublication.Controles
     public class GestionConnection : NotificationBase
     {
         private const Int32 TEST_CONNECT = 15;
+        private const Int32 MAX_RETRY = 5;
 
         public string IpAdress
         {
@@ -29,6 +30,7 @@ namespace AppPublication.Controles
         private bool _isconnected = false;
         private DispatcherTimer _timer = null;
         private DateTime _reference = DateTime.Now;
+        private int _nRetry = 0;
 
         public GestionConnection()
         {
@@ -63,6 +65,7 @@ namespace AppPublication.Controles
             _isconnected = false;
             _reference = DateTime.Now;
             _client.DemandConnectionTest();
+            _nRetry++;
         }
 
         private void setClient()
@@ -116,6 +119,7 @@ namespace AppPublication.Controles
         {
             _isconnected = true;
             _reference = DateTime.Now;
+            _nRetry = 0;
         }
 
         private void dispatcherTimer0_Tick(object sender, EventArgs e)
@@ -126,15 +130,45 @@ namespace AppPublication.Controles
             }
 
             DateTime now = DateTime.Now;
+            double elapseSec = (now - _reference).TotalSeconds;
 
+            /*
             if (_isconnected && (now - _reference).TotalSeconds > TEST_CONNECT)
             {
                 this.TesteConnection();
             }
-            else if (!_isconnected && (now - _reference).TotalSeconds > TEST_CONNECT)
+            else if (!_isconnected && (now - _reference).TotalSeconds > TEST_CONNECT && _nRetry > MAX_RETRY)
             {
                 this.Client.Client.Stop();
                 this.Client = null;
+            }
+            */
+            if (_isconnected)
+            {
+                // Verifie si le delai avant de tester la connexion est echue ou non
+                if(elapseSec > TEST_CONNECT)
+                {
+                    TesteConnection();
+                }
+            }
+            else
+            {
+                // Le client n'est plus connecte, peut etre la reponse n'est pas encore recu
+                if(elapseSec > TEST_CONNECT)
+                {
+                    // Essaye de refaire une demande de connexion
+                    if(_nRetry > MAX_RETRY)
+                    {
+                        // on a deja essaye plusieurs fois, on est vraiment deconnecte
+                        this.Client.Client.Stop();
+                        this.Client = null;
+                    }
+                    else
+                    {
+                        // On va essayer une nouvelle fois
+                        TesteConnection();
+                    }
+                }
             }
         }
     }
