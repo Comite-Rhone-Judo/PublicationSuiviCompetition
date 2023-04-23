@@ -29,6 +29,7 @@ namespace AppPublication.Controles
         #region MEMBRES
         private CancellationTokenSource _tokenSource;   // Token pour la gestion de la thread de lecture
         private Task _taskGeneration = null;            // La tache de generation
+        private GestionStatistiques _statMgr = null;
 
         /// <summary>
         /// Structure interne pour gerer les parametres de generation du site
@@ -42,13 +43,14 @@ namespace AppPublication.Controles
         #endregion
 
         #region CONSTRUCTEURS
-        public GestionSite()
+        public GestionSite(GestionStatistiques statMgr)
         {
             try
             {
                 // Initialise les objets de gestion des sites Web
                 _siteLocal = new MiniSite(true);
                 _siteDistant = new MiniSite(false);
+                _statMgr = (statMgr != null) ? statMgr : new GestionStatistiques();
 
                 // Initialise la configuration via le cache de fichier
                 InitCacheConfig();
@@ -597,6 +599,8 @@ namespace AppPublication.Controles
                                 // Status = new StatusGenerationSite(StateGenerationEnum.Idle, "En attente ...");
                                 Status = StatusGenerationSite.Instance(StateGenerationEnum.Idle);
 
+                                _statMgr.RegisterGeneration(watcherGen.ElapsedMilliseconds / 1000F);
+
                                 if (SiteGenere)
                                 {
                                     // Met a jour la date de generation puisque le site a ete traite
@@ -622,10 +626,14 @@ namespace AppPublication.Controles
                                         }
 
                                         // Synchronise le site FTP
-                                        SiteSynchronise = MiniSiteDistant.UploadSite(localRoot, filesToSync);
+                                        UploadStatus uploadOut = MiniSiteDistant.UploadSite(localRoot, filesToSync);
+                                        SiteSynchronise = uploadOut.IsSuccess;
 
                                         watcherSync.Stop();
                                         statSync.DelaiExecutionMs = watcherSync.ElapsedMilliseconds;
+
+                                        _statMgr.RegisterSynchronisation(watcherSync.ElapsedMilliseconds / 1000F, uploadOut);
+
                                         if (SiteSynchronise)
                                         {
                                             // Enregistre les checksums en cache maintenant qu'on sait que l'etat distant est synchrone
@@ -633,6 +641,10 @@ namespace AppPublication.Controles
                                             DerniereSynchronisation = statSync;
                                         }
                                     }
+                                }
+                                else
+                                {
+                                    _statMgr.RegisterErreurGeneration();
                                 }
 
                                 watcherTotal.Stop();
@@ -643,6 +655,8 @@ namespace AppPublication.Controles
 
                                 // Met le thread en attente pour la prochaine generation
                                 Status.NextGenerationSec = (int)Math.Round(delaiThread / 1000.0);
+
+                                _statMgr.RegisterDelaiGeneration(delaiThread / 1000F);
 
                                 // prochaine heure de generation
                                 wakeUpTime = DateTime.Now.AddMilliseconds(delaiThread);

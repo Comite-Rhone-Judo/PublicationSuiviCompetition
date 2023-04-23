@@ -9,8 +9,23 @@ using System.Text.RegularExpressions;
 
 namespace Tools.Outils
 {
-    public class MiniSite : NotificationBase
+    public class UploadStatus
     {
+        public UploadStatus() {
+            IsSuccess = false;
+            IsComplet = true;
+            nbUpload = -1;
+        }
+
+        public bool IsSuccess;  // Etat de l'upload (True = Ok, False = Err)
+        public bool IsComplet;  // Upload complet si true, diff only si false
+        public int nbUpload;    // Nb de fichier charge
+    }
+
+
+    public class MiniSite : NotificationBase
+    {        
+        
         #region MEMBRES
         private FtpProfile _ftp_profile = null;     // Le profile FTP a utiliser pour les connexions
         private Action<FtpProgress> _ftpProgressCallback = null;
@@ -527,21 +542,21 @@ namespace Tools.Outils
         /// Nettoyer le site distant (efface tous les fichiers et les repertoires)
         /// </summary>
         /// <returns></returns>
-        public bool NettoyerSite()
+        public UploadStatus NettoyerSite()
         {
-            bool output = false;
+            UploadStatus output = new UploadStatus();
             StatusMiniSite cStatus = Status;  // Recupere le status courant pour le restaurer apres les operations
 
             if (IsLocal || IsActif)
             {
                 // Si le site est local ou est actif
-                return false;
+                return output;
             }
 
             if (String.IsNullOrEmpty(SiteFTPDistant) || String.IsNullOrEmpty(LoginSiteFTPDistant) || string.IsNullOrEmpty(PasswordSiteFTPDistant))
             {
                 // Pas de configuration
-                return false;
+                return output;
             }
 
             try
@@ -549,12 +564,13 @@ namespace Tools.Outils
                 if (!CheckConfigurationSiteDistant())
                 {
                     Status = new StatusMiniSite(StateMiniSiteEnum.Idle, "Configuration incorrecte");
-                    return false;
+                    return output;
                 }
             }
             catch(Exception ex)
             {
                 Status = new StatusMiniSite(StateMiniSiteEnum.Idle, "Configuration incorrecte", ex.Message);
+                return output;
             }
 
             // Le client FTP pour la connection
@@ -592,6 +608,7 @@ namespace Tools.Outils
 
                     // Disconnect
                     ftpClient.Disconnect();
+                    output.IsSuccess = true;
                 }
 
             }
@@ -650,21 +667,21 @@ namespace Tools.Outils
         /// <param name="localRootDirectory">Repertoire dont le contenu doit etre charge</param>
         /// <param name="distantDirectory">Repertoire distant (par rapport à la racine), "" pour charger directement a la racine</param>
         /// <returns></returns>
-        public bool UploadSite(string localRootDirectory, List<FileInfo> listFiles = null)
+        public UploadStatus UploadSite(string localRootDirectory, List<FileInfo> listFiles = null)
         {
-            bool output = false;
+            UploadStatus output = new UploadStatus();
             StatusMiniSite cStatus = Status;  // Recupere le status courant pour le restaurer apres les operations
 
             if (IsLocal || !IsActif)
             {
                 // Si le site est local ou n'est pas actif
-                return false;
+                return output;
             }
 
             if (String.IsNullOrEmpty(SiteFTPDistant) || String.IsNullOrEmpty(LoginSiteFTPDistant) || string.IsNullOrEmpty(PasswordSiteFTPDistant) || String.IsNullOrEmpty(localRootDirectory) || String.IsNullOrEmpty(RepertoireSiteFTPDistant))
             {
                 // Pas de configuration
-                return false;
+                return output;
             }
 
             // Le client FTP pour la connection
@@ -680,9 +697,11 @@ namespace Tools.Outils
                 if(ftpClient.IsConnected)
                 {
                     // La 1ere synchro est forcement complete ou si le flag de synchroniser les differences n'est pas leve
-                    if (_nbSyncDistant >= 1 && SynchroniseDifferences && listFiles != null) {
-
-                        output = true;
+                    if (_nbSyncDistant >= 1 && SynchroniseDifferences && listFiles != null)
+                    {
+                        output.IsComplet = false;
+                        output.IsSuccess = true;
+                        output.nbUpload = listFiles.Count;
                         int idx =0;
                         foreach( FileInfo localFileInfo in listFiles)
                         {
@@ -698,7 +717,13 @@ namespace Tools.Outils
                                                                             null);
                             if(fileUploadOut != FtpStatus.Success)
                             {
-                                output = false;
+                                // NOK car pas tous les fichiers charges
+                                output.IsSuccess = false;
+                            }
+                            else
+                            {
+                                // Un fichier de plus charge
+                                output.nbUpload++;
                             }
 
                             // Met a jour la progression du transfert
@@ -708,6 +733,8 @@ namespace Tools.Outils
                     }
                     else
                     {
+                        output.IsComplet = true;
+                        output.IsSuccess = false;
                         // Charge le dossier du site vers le serveur FTP en mode miroir pour synchroniser
                         List<FtpResult> uploadOut = ftpClient.UploadDirectory(localRootDirectory,
                                                                                 RepertoireSiteFTPDistant,
@@ -719,7 +746,8 @@ namespace Tools.Outils
 
                         if (uploadOut.Count > 0)
                         {
-                            output = true;
+                            output.IsSuccess = true;
+                            output.nbUpload = uploadOut.Count;
                         }
                     }
 

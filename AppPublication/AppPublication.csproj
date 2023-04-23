@@ -128,7 +128,11 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Controles\GestionStatistiques.cs" />
     <Compile Include="Controles\RelayCommand.cs" />
+    <Compile Include="IHM\Commissaire\Statistiques.xaml.cs">
+      <DependentUpon>Statistiques.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tools\Converter\AppStatusConverter.cs" />
     <Compile Include="Tools\Converter\BoolOperationConverter.cs" />
     <Compile Include="Tools\Converter\BoolToVisibilityConverter.cs" />
@@ -148,6 +152,10 @@
     <Page Include="IHM\Commissaire\ExportWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="IHM\Commissaire\Statistiques.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="IHM\Server\RechercheServer.xaml">
       <Generator>MSBuild:Compile</Generator>

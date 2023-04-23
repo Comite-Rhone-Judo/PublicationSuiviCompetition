@@ -93,6 +93,16 @@ namespace AppPublication.Controles
             private set { _site = value; }
         }
 
+        private GestionStatistiques _stats = null;
+        /// <summary>
+        /// Le gestionnaire des site de publication
+        /// </summary>
+        public GestionStatistiques GestionStatistiques
+        {
+            get { return _stats; }
+            private set { _stats = value; }
+        }
+
         private JudoData _serverData;
         /// <summary>
         /// Le bloc de donnees recupere du serveur
@@ -148,7 +158,9 @@ namespace AppPublication.Controles
                 try
                 {
                     _connection = new GestionConnection();
-                    _site = new GestionSite();
+                    _stats = new GestionStatistiques();
+                    _site = new GestionSite(_stats);
+                    
                 }
                 catch (Exception ex)
                 {
@@ -359,6 +371,32 @@ namespace AppPublication.Controles
                 return _cmdArreterGeneration;
             }
         }
+
+        private ICommand _cmdAfficherStatistiques = null;
+        /// <summary>
+        /// Commande d'arret de la generation du site
+        /// </summary>
+        public ICommand CmdAfficherStatistiques
+        {
+            get
+            {
+                if (_cmdAfficherStatistiques == null)
+                {
+                    _cmdAfficherStatistiques = new RelayCommand(
+                            o =>
+                            {
+                                (new AppPublication.IHM.Commissaire.Statistiques(GestionStatistiques)).Show();
+                            },
+                            o =>
+                            {
+                                return true;
+                            });
+                }
+                return _cmdAfficherStatistiques;
+            }
+        }
+
+        
         #endregion
     }
 }

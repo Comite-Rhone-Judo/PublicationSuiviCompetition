@@ -91,6 +91,14 @@
                             <ScaleTransform ScaleX="1.0" ScaleY="1.0"></ScaleTransform>
                         </Button.RenderTransform>
                     </telerik:RadButton>
+
+                    <telerik:RadButton ToolTip="Statistiques de fonctionnement" Style="{StaticResource RadButtonStyle1}"
+                                   Focusable="False" Tag="pack://application:,,,/Tools;component/data/images/icons/black/statistics-32.png" Margin="25 0 0 0"
+                                       Command="{Binding Path=CmdAfficherStatistiques}">
+                        <Button.RenderTransform>
+                            <ScaleTransform ScaleX="1.0" ScaleY="1.0"></ScaleTransform>
+                        </Button.RenderTransform>
+                    </telerik:RadButton>
                 </WrapPanel>
                 <!-- PAGE CONTENT -->
                 <Grid Grid.Row="1" Margin="10 -5 10 10">
