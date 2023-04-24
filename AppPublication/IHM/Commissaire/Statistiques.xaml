@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AppPublication.IHM.Commissaire"
         mc:Ignorable="d"
-        Header="Statistiques" Height="490" Width="1200"
+        Header="Statistiques" Height="540" Width="900"
         WindowStartupLocation="CenterScreen" 
         CanClose="True" CanMove="True" ResizeMode="CanResize" 
         WindowState="Normal" Name="UI" Background="Black" SizeToContent="True">
@@ -35,28 +35,16 @@
         </StackPanel>
         <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" BorderBrush="White" Margin="10 0 10 10">
             <StackPanel Orientation="Vertical">
-                <Label HorizontalAlignment="Left" Content="Durée de génération (Sec.)" Style="{StaticResource HeaderStyle}" />
-                <StackPanel Orientation="Horizontal" Margin="30 0 0 0">
-                    <Label Content="Min.:" Style="{StaticResource LabelStyle}"/>
-                    <Label Content="{Binding TpsGenerationMinSec, StringFormat=F2}" Style="{StaticResource LabelStyleValue}"/>
-                    <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
-                    <Label Content="Moy.:" Style="{StaticResource LabelStyle}"/>
-                    <Label Content="{Binding TpsGenerationMoySec, StringFormat=F2}" Style="{StaticResource LabelStyleValue}"/>
-                    <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
-                    <Label Content="Max.:" Style="{StaticResource LabelStyle}"/>
-                    <Label Content="{Binding TpsGenerationMaxSec, StringFormat=F2}" Style="{StaticResource LabelStyleValue}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" >
-                    <Label HorizontalAlignment="Left" Content="Nb générations:" Style="{StaticResource LabelStyle}" />
-                    <Label Content="{Binding NbGeneration}" Style="{StaticResource LabelStyleValue}"/>
-                    <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
-                    <Label HorizontalAlignment="Left" Content="Nb erreur génération:" Style="{StaticResource LabelStyle}" />
-                    <Label Content="{Binding NbErreurGeneration}" Style="{StaticResource LabelStyleValue}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" >
-                    <Label HorizontalAlignment="Left" Content="Délai inter génération (Sec.):" Style="{StaticResource LabelStyle}" />
-                    <Label Content="{Binding DelaiEntreGenerationSec, StringFormat=F2}" Style="{StaticResource LabelStyleValue}"/>
-                </StackPanel>
+                <telerik:RadGridView ItemsSource="{Binding CompteursGeneration}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
+                    CanUserDeleteRows="False" CanUserGroupColumns="False" CanUserInsertRows="False" ShowGroupPanel="False">
+                    <telerik:RadGridView.Columns>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Libelle}" Header="Compteur" Width="180"/>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Valeur, StringFormat=F0}" Header="Valeur" Width="50"/>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Min, StringFormat=F2}" Header="Min." Width="50"/>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Moy, StringFormat=F2}" Header="Moy." Width="50"/>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Max, StringFormat=F2}" Header="Max." Width="50"/>
+                    </telerik:RadGridView.Columns>
+                </telerik:RadGridView>
             </StackPanel>
         </Border>
         <!-- PANEL SYNCHRONISATION -->
@@ -67,64 +55,29 @@
             <StackPanel Orientation="Vertical">
                 <!-- SECTION SYNCHRONISATION COMPLETE -->
                 <Label HorizontalAlignment="Left" Content="Synchronisation Complète" Style="{StaticResource HeaderStyle}" />
-                <Label HorizontalAlignment="Left" Content="Durée de synchronistation (Sec.)" Style="{StaticResource LabelStyle}" Margin="30 0 0 0" />
-                <StackPanel Orientation="Horizontal" Margin="60 0 0 0">
-                    <Label Content="Min.:" Style="{StaticResource LabelStyle}"/>
-                    <Label Content="{Binding TpsSynchronisationCompleteMinSec, StringFormat=F2}" Style="{StaticResource LabelStyleValue}"/>
-                    <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
-                    <Label Content="Moy.:" Style="{StaticResource LabelStyle}"/>
-                    <Label Content="{Binding TpsSynchronisationCompleteMoySec, StringFormat=F2}" Style="{StaticResource LabelStyleValue}"/>
-                    <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
-                    <Label Content="Max.:" Style="{StaticResource LabelStyle}"/>
-                    <Label Content="{Binding TpsSynchronisationCompleteMaxSec, StringFormat=F2}" Style="{StaticResource LabelStyleValue}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="30 0 0 0">
-                    <Label HorizontalAlignment="Left" Content="Nb synchronisation:" Style="{StaticResource LabelStyle}" />
-                    <Label Content="{Binding NbSynchronisationComplete}" Style="{StaticResource LabelStyleValue}"/>
-                    <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
-                    <Label HorizontalAlignment="Left" Content="Nb erreur synchronisation:" Style="{StaticResource LabelStyle}" />
-                    <Label Content="{Binding NbErreurSynchronisationComplete}" Style="{StaticResource LabelStyleValue}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="30 0 0 0">
-                    <Label Content="Nb Fichiers Min.:" Style="{StaticResource LabelStyle}"/>
-                    <Label Content="{Binding NbMinFichiersSynchronisationComplete, StringFormat=F2}" Style="{StaticResource LabelStyleValue}"/>
-                    <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
-                    <Label Content="Nb Fichiers Moy.:" Style="{StaticResource LabelStyle}"/>
-                    <Label Content="{Binding NbMoyFichiersSynchronisationComplete, StringFormat=F2}" Style="{StaticResource LabelStyleValue}"/>
-                    <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
-                    <Label Content="Nb Fichiers Max.:" Style="{StaticResource LabelStyle}"/>
-                    <Label Content="{Binding NbMaxFichiersSynchronisationComplete, StringFormat=F2}" Style="{StaticResource LabelStyleValue}"/>
-                </StackPanel>
+                <telerik:RadGridView ItemsSource="{Binding CompteursSynchronisationComplete}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
+                    CanUserDeleteRows="False" CanUserGroupColumns="False" CanUserInsertRows="False" ShowGroupPanel="False">
+                    <telerik:RadGridView.Columns>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Libelle}" Header="Compteur" Width="180"/>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Valeur, StringFormat=F0}" Header="Valeur" Width="50"/>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Min, StringFormat=F2}" Header="Min." Width="50"/>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Moy, StringFormat=F2}" Header="Moy." Width="50"/>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Max, StringFormat=F2}" Header="Max." Width="50"/>
+                    </telerik:RadGridView.Columns>
+                </telerik:RadGridView>
                 <!-- SECTION SYNCHRONISATION DIFFERENCE -->
+                <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="1" Y1="0" Y2="0" Stretch="Fill"/>
                 <Label HorizontalAlignment="Left" Content="Synchronisation des différences" Style="{StaticResource HeaderStyle}" />
-                <Label HorizontalAlignment="Left" Content="Durée de synchronistation (Sec.)" Style="{StaticResource LabelStyle}" Margin="30 0 0 0" />
-                <StackPanel Orientation="Horizontal" Margin="60 0 0 0">
-                    <Label Content="Min.:" Style="{StaticResource LabelStyle}"/>
-                    <Label Content="{Binding TpsSynchronisationDifferenceMinSec, StringFormat=F2}" Style="{StaticResource LabelStyleValue}"/>
-                    <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
-                    <Label Content="Moy.:" Style="{StaticResource LabelStyle}"/>
-                    <Label Content="{Binding TpsSynchronisationDifferenceMoySec, StringFormat=F2}" Style="{StaticResource LabelStyleValue}"/>
-                    <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
-                    <Label Content="Max.:" Style="{StaticResource LabelStyle}"/>
-                    <Label Content="{Binding TpsSynchronisationDifferenceMaxSec, StringFormat=F2}" Style="{StaticResource LabelStyleValue}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="30 0 0 0">
-                    <Label HorizontalAlignment="Left" Content="Nb synchronisation:" Style="{StaticResource LabelStyle}" />
-                    <Label Content="{Binding NbSynchronisationDifference}" Style="{StaticResource LabelStyleValue}"/>
-                    <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
-                    <Label HorizontalAlignment="Left" Content="Nb erreur synchronisation:" Style="{StaticResource LabelStyle}" />
-                    <Label Content="{Binding NbErreurSynchronisationDifference}" Style="{StaticResource LabelStyleValue}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="30 0 0 0">
-                    <Label Content="Nb Fichiers Min.:" Style="{StaticResource LabelStyle}"/>
-                    <Label Content="{Binding NbMinFichiersSynchronisationDifference, StringFormat=F2}" Style="{StaticResource LabelStyleValue}"/>
-                    <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
-                    <Label Content="Nb Fichiers Moy.:" Style="{StaticResource LabelStyle}"/>
-                    <Label Content="{Binding NbMoyFichiersSynchronisationDifference, StringFormat=F2}" Style="{StaticResource LabelStyleValue}"/>
-                    <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
-                    <Label Content="Nb Fichiers Max.:" Style="{StaticResource LabelStyle}"/>
-                    <Label Content="{Binding NbMaxFichiersSynchronisationDifference, StringFormat=F2}" Style="{StaticResource LabelStyleValue}"/>
-                </StackPanel>
+                <telerik:RadGridView ItemsSource="{Binding CompteursSynchronisationDifference}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
+                    CanUserDeleteRows="False" CanUserGroupColumns="False" CanUserInsertRows="False" ShowGroupPanel="False">
+                    <telerik:RadGridView.Columns>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Libelle}" Header="Compteur" Width="180"/>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Valeur, StringFormat=F0}" Header="Valeur" Width="50"/>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Min, StringFormat=F2}" Header="Min." Width="50"/>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Moy, StringFormat=F2}" Header="Moy." Width="50"/>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Max, StringFormat=F2}" Header="Max." Width="50"/>
+                    </telerik:RadGridView.Columns>
+                </telerik:RadGridView>
             </StackPanel>
         </Border>
     </Grid>

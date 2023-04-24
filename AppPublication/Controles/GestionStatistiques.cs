@@ -4,409 +4,146 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tools.Outils;
+using AppPublication.Statistiques;
 
 namespace AppPublication.Controles
 {
     public class GestionStatistiques : NotificationBase
     {
+        public enum CompteurGenerationEnum
+        {
+            TempsGeneration = 0,
+            DelaiGeneration = 1,
+            NbGeneration = 2,
+            NbErreurGeneration = 3
+        }
+
+        public enum CompteurSynchronisationEnum
+        {
+            TempsSynchronisation = 0,
+            NbSynchronisation = 1,
+            NbErreurSynchronisation = 2,
+            NbFichierSynchronisation = 3
+        }
+
         #region MEMBRES
-        private float _SumTpsGeneration = 0F;
-        private float _SumDelaiGeneration = 0F;
-        private float _SumTpsSynchronisationComplete = 0F;
-        private float _SumTpsSynchronisationDifference = 0F;
-
-        private float _SumNbFichierSynchronisationDifference = 0F;
-        private float _SumNbFichierSynchronisationComplete = 0F;
-
         #endregion
 
         #region CONSTRUCTEURS
         public GestionStatistiques()
         {
-            _SumDelaiGeneration = 0F;
-            _SumTpsSynchronisationComplete = 0F;
-            _SumTpsSynchronisationDifference = 0F;
-            _SumTpsGeneration = 0F;
-            _SumNbFichierSynchronisationDifference = 0F;
-            _SumNbFichierSynchronisationComplete = 0F;
+            Dictionary < CompteurGenerationEnum, StatistiqueItem > cpt = new Dictionary<CompteurGenerationEnum, StatistiqueItem>();
+            cpt.Add(CompteurGenerationEnum.TempsGeneration, new StatistiqueItemMoyenneur("TempsGeneration","Durée de génération (Sec.)"));
+            cpt.Add(CompteurGenerationEnum.DelaiGeneration, new StatistiqueItemMoyenneur("DelaiGeneration", "Délai entre génération (Sec.)"));
+            cpt.Add(CompteurGenerationEnum.NbGeneration, new StatistiqueItemCompteur("NbGeneration","Nb de génération"));
+            cpt.Add(CompteurGenerationEnum.NbErreurGeneration, new StatistiqueItemCompteur("NbErreurGeneration", "Nb d'erreur de génération"));
+            CompteursGeneration = cpt;
+
+            Dictionary<CompteurSynchronisationEnum, StatistiqueItem> cptSyncC = new Dictionary<CompteurSynchronisationEnum, StatistiqueItem>();
+            cptSyncC.Add(CompteurSynchronisationEnum.TempsSynchronisation, new StatistiqueItemMoyenneur("TempsSynchronisation", "Durée de Synchronisation (Sec.)"));
+            cptSyncC.Add(CompteurSynchronisationEnum.NbFichierSynchronisation, new StatistiqueItemMoyenneur("NbFichiersSynchronises", "Nb de fichiers synchronisés"));
+            cptSyncC.Add(CompteurSynchronisationEnum.NbSynchronisation, new StatistiqueItemCompteur("NbSynchronisation", "Nb de synchronisation"));
+            cptSyncC.Add(CompteurSynchronisationEnum.NbErreurSynchronisation, new StatistiqueItemCompteur("NbErreurSynchronisation", "Nb d'erreur de synchronisation"));
+            CompteursSynchronisationComplete = cptSyncC;
+
+            Dictionary<CompteurSynchronisationEnum, StatistiqueItem> cptSyncD = new Dictionary<CompteurSynchronisationEnum, StatistiqueItem>();
+            cptSyncD.Add(CompteurSynchronisationEnum.TempsSynchronisation, new StatistiqueItemMoyenneur("TempsSynchronisation", "Durée de Synchronisation (Sec.)"));
+            cptSyncD.Add(CompteurSynchronisationEnum.NbFichierSynchronisation, new StatistiqueItemMoyenneur("NbFichiersSynchronises", "Nb de fichiers synchronisés"));
+            cptSyncD.Add(CompteurSynchronisationEnum.NbSynchronisation, new StatistiqueItemCompteur("NbSynchronisation", "Nb de synchronisation"));
+            cptSyncD.Add(CompteurSynchronisationEnum.NbErreurSynchronisation, new StatistiqueItemCompteur("NbErreurSynchronisation", "Nb d'erreur de synchronisation"));
+            CompteursSynchronisationDifference = cptSyncD;
+
         }
         #endregion
 
         #region PROPRIETES
-        private float _tpsGenerationMinSec = float.NaN;
-        public float TpsGenerationMinSec {
-            get
-            {
-                return _tpsGenerationMinSec;
-            }
-            private set {
-                _tpsGenerationMinSec = value;
-                NotifyPropertyChanged("TpsGenerationMinSec");
-            }
-        }
 
-
-        private float _tpsGenerationMoySec = 0F; 
-        public float TpsGenerationMoySec
+        private Dictionary<CompteurGenerationEnum, StatistiqueItem> _compteursGeneration = null;
+        public Dictionary<CompteurGenerationEnum, StatistiqueItem> CompteursGeneration
         {
             get
             {
-                return _tpsGenerationMoySec;
+                return _compteursGeneration;
             }
             private set
             {
-                _tpsGenerationMoySec = value;
-                NotifyPropertyChanged("TpsGenerationMoySec");
-            }
-        }
-        
-        
-        private float _tpsGenerationMaxSec = float.NaN; 
-        public float TpsGenerationMaxSec
-        {
-            get
-            {
-                return _tpsGenerationMaxSec;
-            }
-            private set
-            {
-                _tpsGenerationMaxSec = value;
-                NotifyPropertyChanged("TpsGenerationMaxSec");
+                _compteursGeneration = value;
+                NotifyPropertyChanged("CompteursGeneration");
             }
         }
 
-        private int _nbGeneration = 0; 
-        public int NbGeneration
+        private Dictionary<CompteurSynchronisationEnum, StatistiqueItem> _compteursSynchronisationComplete = null;
+        public Dictionary<CompteurSynchronisationEnum, StatistiqueItem> CompteursSynchronisationComplete
         {
             get
             {
-                return _nbGeneration;
+                return _compteursSynchronisationComplete;
             }
             private set
             {
-                _nbGeneration = value;
-                NotifyPropertyChanged("NbGeneration");
+                _compteursSynchronisationComplete = value;
+                NotifyPropertyChanged("CompteursSynchronisationComplete");
             }
         }
 
-        private int _nbErreurGeneration = 0;
-        public int NbErreurGeneration
+        private Dictionary<CompteurSynchronisationEnum, StatistiqueItem> _compteursSynchronisationDifference = null; 
+        public Dictionary<CompteurSynchronisationEnum, StatistiqueItem> CompteursSynchronisationDifference
         {
             get
             {
-                return _nbErreurGeneration;
+                return _compteursSynchronisationDifference;
             }
             private set
             {
-                _nbErreurGeneration = value;
-                NotifyPropertyChanged("NbErreurGeneration");
-            }
-        }
-
-        private float _delaiGenerationSec = 0F; 
-        public float DelaiEntreGenerationSec
-        {
-            get
-            {
-                return _delaiGenerationSec;
-            }
-            private set
-            {
-                _delaiGenerationSec = value;
-                NotifyPropertyChanged("DelaiEntreGenerationSec");
-            }
-        }
-
-        private float _tpsSynchronisationCompleteMinSec = float.NaN;
-        public float TpsSynchronisationCompleteMinSec
-        {
-            get
-            {
-                return _tpsSynchronisationCompleteMinSec;
-            }
-            private set
-            {
-                _tpsSynchronisationCompleteMinSec = value;
-                NotifyPropertyChanged("TpsSynchronisationCompleteMinSec");
-            }
-        }
-
-        private float _tpsSynchronisationCompleteMoySec = 0F;
-        public float TpsSynchronisationCompleteMoySec
-        {
-            get
-            {
-                return _tpsSynchronisationCompleteMoySec;
-            }
-            private set
-            {
-                _tpsSynchronisationCompleteMoySec = value;
-                NotifyPropertyChanged("TpsSynchronisationCompleteMoySec");
-            }
-        }
-
-        private float _tpsSynchronisationCompleteMaxSec = float.NaN;
-        public float TpsSynchronisationCompleteMaxSec
-        {
-            get
-            {
-                return _tpsSynchronisationCompleteMaxSec;
-            }
-            private set
-            {
-                _tpsSynchronisationCompleteMaxSec = value;
-                NotifyPropertyChanged("TpsSynchronisationCompleteMaxSec");
-            }
-        }
-
-        private int _nbSynchronisationDifference = 0;
-        public int NbSynchronisationDifference
-        {
-            get
-            {
-                return _nbSynchronisationDifference;
-            }
-            private set
-            {
-                _nbSynchronisationDifference = value;
-                NotifyPropertyChanged("NbSynchronisationDifference");
-            }
-        }
-
-        private int _nbSynchronisationComplete = 0;
-        public int NbSynchronisationComplete
-        {
-            get
-            {
-                return _nbSynchronisationComplete;
-            }
-            private set
-            {
-                _nbSynchronisationComplete = value;
-                NotifyPropertyChanged("NbSynchronisationComplete");
-            }
-        }
-
-        private int _nbErreurSynchronisationComplete = 0;
-        public int NbErreurSynchronisationComplete
-        {
-            get
-            {
-                return _nbErreurSynchronisationComplete;
-            }
-            private set
-            {
-                _nbErreurSynchronisationComplete = value;
-                NotifyPropertyChanged("NbErreurSynchronisationComplete");
-            }
-        }
-
-        private float _nbMinFichiersSynchronisationComplete = float.NaN;
-        public float NbMinFichiersSynchronisationComplete
-        {
-            get
-            {
-                return _nbMinFichiersSynchronisationComplete;
-            }
-            private set
-            {
-                _nbMinFichiersSynchronisationComplete = value;
-                NotifyPropertyChanged("NbMinFichiersSynchronisationComplete");
-            }
-        }
-
-        private float _nbMoyFichiersSynchronisationComplete = 0F;
-        public float NbMoyFichiersSynchronisationComplete
-        {
-            get
-            {
-                return _nbMoyFichiersSynchronisationComplete;
-            }
-            private set
-            {
-                _nbMoyFichiersSynchronisationComplete = value;
-                NotifyPropertyChanged("NbMoyFichiersSynchronisationComplete");
-            }
-        }
-
-        private float _nbMaxFichiersSynchronisationComplete = float.NaN;
-        public float NbMaxFichiersSynchronisationComplete
-        {
-            get
-            {
-                return _nbMaxFichiersSynchronisationComplete;
-            }
-            private set
-            {
-                _nbMaxFichiersSynchronisationComplete = value;
-                NotifyPropertyChanged("NbMaxFichiersSynchronisationComplete");
-            }
-        }
-
-        private float _tpsSynchronisationDifferenceMinSec = float.NaN;
-        public float TpsSynchronisationDifferenceMinSec
-        {
-            get
-            {
-                return _tpsSynchronisationDifferenceMinSec;
-            }
-            private set
-            {
-                _tpsSynchronisationDifferenceMinSec = value;
-                NotifyPropertyChanged("TpsSynchronisationDifferenceMinSec");
-            }
-        }
-
-        private float _tpsSynchronisationDifferenceMoySec = 0F;
-        public float TpsSynchronisationDifferenceMoySec
-        {
-            get
-            {
-                return _tpsSynchronisationDifferenceMoySec;
-            }
-            private set
-            {
-                _tpsSynchronisationDifferenceMoySec = value;
-                NotifyPropertyChanged("TpsSynchronisationDifferenceMoySec");
-            }
-        }
-
-        private float _tpsSynchronisationDifferenceMaxSec = float.NaN;
-        public float TpsSynchronisationDifferenceMaxSec
-        {
-            get
-            {
-                return _tpsSynchronisationDifferenceMaxSec;
-            }
-            private set
-            {
-                _tpsSynchronisationDifferenceMaxSec = value;
-                NotifyPropertyChanged("TpsSynchronisationDifferenceMaxSec");
-            }
-        }
-
-        private int _nbErreurSynchronisationDifference = 0;
-        public int NbErreurSynchronisationDifference
-        {
-            get
-            {
-                return _nbErreurSynchronisationDifference;
-            }
-            private set
-            {
-                _nbErreurSynchronisationDifference = value;
-                NotifyPropertyChanged("NbErreurSynchronisationDifference");
-            }
-        }
-
-        private float _nbMinFichiersSynchronisationDifference = float.NaN;
-        public float NbMinFichiersSynchronisationDifference
-        {
-            get
-            {
-                return _nbMinFichiersSynchronisationDifference;
-            }
-            private set
-            {
-                _nbMinFichiersSynchronisationDifference = value;
-                NotifyPropertyChanged("NbMinFichiersSynchronisationDifference");
-            }
-        }
-
-        private float _nbMoyFichiersSynchronisationDifference = 0F;
-        public float NbMoyFichiersSynchronisationDifference
-        {
-            get
-            {
-                return _nbMoyFichiersSynchronisationDifference;
-            }
-            private set
-            {
-                _nbMoyFichiersSynchronisationDifference = value;
-                NotifyPropertyChanged("NbMoyFichiersSynchronisationDifference");
-            }
-        }
-
-        private float _nbMaxFichiersSynchronisationDifference = float.NaN;
-        public float NbMaxFichiersSynchronisationDifference
-        {
-            get
-            {
-                return _nbMaxFichiersSynchronisationDifference;
-            }
-            private set
-            {
-                _nbMaxFichiersSynchronisationDifference = value;
-                NotifyPropertyChanged("NbMaxFichiersSynchronisationDifference");
+                _compteursSynchronisationDifference = value;
+                NotifyPropertyChanged("CompteursSynchronisationDifference");
             }
         }
 
         #endregion
 
         #region METHODES
-        public void RegisterErreurGeneration()
+        public void EnregistrerErreurGeneration()
         {
-            NbErreurGeneration++;
+            StatistiqueItem item = _compteursGeneration[CompteurGenerationEnum.NbErreurGeneration];
+            item.EnregistrerValeur();
         }
 
-        public void RegisterGeneration(float duree) {
-            _SumTpsGeneration += duree;
-            NbGeneration++;
+        public void EnregistrerGeneration(float duree) {
 
-            TpsGenerationMoySec = (NbGeneration > 0) ? _SumTpsGeneration / NbGeneration : float.NaN;
-            TpsGenerationMaxSec = Math.Max(TpsGenerationMaxSec, duree);
-            TpsGenerationMinSec = Math.Min(TpsGenerationMinSec, duree);
+            StatistiqueItem item = _compteursGeneration[CompteurGenerationEnum.NbGeneration];
+            item.EnregistrerValeur();
+            item = _compteursGeneration[CompteurGenerationEnum.TempsGeneration];
+            item.EnregistrerValeur(duree);
         }
 
-        public void RegisterDelaiGeneration(float delai)
+        public void EnregsitrerDelaiGeneration(float delai)
         {
-            _SumDelaiGeneration += delai;
-            DelaiEntreGenerationSec = (NbGeneration > 0) ? _SumDelaiGeneration / NbGeneration : float.NaN;
+            StatistiqueItem item = _compteursGeneration[CompteurGenerationEnum.DelaiGeneration];
+            item.EnregistrerValeur(delai);
         }
 
-        public void RegisterSynchronisation(float duree, UploadStatus syncStatus)
+        public void EnregistrerSynchronisation(float duree, UploadStatus syncStatus)
         {
-            if(syncStatus.IsComplet)
+            // Selectionne le dictionnaire en fonction du type de synchronisation
+            Dictionary<CompteurSynchronisationEnum, StatistiqueItem> statDict = (syncStatus.IsComplet) ? _compteursSynchronisationComplete : _compteursSynchronisationDifference;
+
+            // Enregistre les donnees dans les compteurs respectifs
+            StatistiqueItem item = statDict[CompteurSynchronisationEnum.TempsSynchronisation];
+            item.EnregistrerValeur(duree);
+            item = statDict[CompteurSynchronisationEnum.NbSynchronisation];
+            item.EnregistrerValeur();
+
+            if (!syncStatus.IsSuccess)
             {
-                _SumTpsSynchronisationComplete  += duree;
-                NbSynchronisationComplete++;
-                if (!syncStatus.IsSuccess)
-                {
-                    NbErreurSynchronisationComplete++;
-                }
-
-                TpsSynchronisationCompleteMoySec = (NbSynchronisationComplete > 0) ? _SumTpsSynchronisationComplete / NbSynchronisationComplete : float.NaN;
-                TpsSynchronisationCompleteMaxSec = Math.Max(TpsSynchronisationCompleteMaxSec, duree);
-                TpsSynchronisationCompleteMinSec = Math.Min(TpsSynchronisationCompleteMinSec, duree);
-
-                if(syncStatus.nbUpload >     0)
-                {
-                    _SumNbFichierSynchronisationComplete += syncStatus.nbUpload;
-                    NbMoyFichiersSynchronisationComplete = (NbSynchronisationComplete > 0) ? _SumNbFichierSynchronisationComplete / NbSynchronisationComplete : float.NaN;
-                    NbMaxFichiersSynchronisationComplete = Math.Max(NbMaxFichiersSynchronisationComplete, syncStatus.nbUpload);
-                    NbMinFichiersSynchronisationComplete = Math.Min(NbMinFichiersSynchronisationComplete, syncStatus.nbUpload);
-                }
+                item = statDict[CompteurSynchronisationEnum.NbErreurSynchronisation];
+                item.EnregistrerValeur();
             }
-            else
+
+            if (syncStatus.nbUpload > 0)
             {
-                _SumTpsSynchronisationDifference += duree;
-                NbSynchronisationDifference++;
-                if (!syncStatus.IsSuccess)
-                {
-                    NbErreurSynchronisationDifference++;
-                }
-
-                TpsSynchronisationDifferenceMoySec = (NbSynchronisationDifference > 0) ? _SumTpsSynchronisationDifference / NbSynchronisationDifference : float.NaN;
-                TpsSynchronisationDifferenceMaxSec = Math.Max(TpsSynchronisationDifferenceMaxSec, duree);
-                TpsSynchronisationDifferenceMinSec = Math.Min(TpsSynchronisationDifferenceMinSec, duree);
-
-                if (syncStatus.nbUpload > 0)
-                {
-                    _SumNbFichierSynchronisationDifference += syncStatus.nbUpload;
-                    NbMoyFichiersSynchronisationDifference = (NbSynchronisationDifference > 0) ? _SumNbFichierSynchronisationDifference / NbSynchronisationDifference : float.NaN;
-                    NbMaxFichiersSynchronisationDifference = Math.Max(NbMaxFichiersSynchronisationDifference, syncStatus.nbUpload);
-                    NbMinFichiersSynchronisationDifference = Math.Min(NbMinFichiersSynchronisationDifference, syncStatus.nbUpload);
-                }
+                item = statDict[CompteurSynchronisationEnum.NbFichierSynchronisation];
+                item.EnregistrerValeur(syncStatus.nbUpload);
             }
         }
 

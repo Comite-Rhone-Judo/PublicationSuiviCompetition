@@ -133,6 +133,9 @@
     <Compile Include="IHM\Commissaire\Statistiques.xaml.cs">
       <DependentUpon>Statistiques.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Statistiques\StatistiqueItem.cs" />
+    <Compile Include="Statistiques\StatistiqueItemCompteur.cs" />
+    <Compile Include="Statistiques\StatistiqueItemMoyenneur.cs" />
     <Compile Include="Tools\Converter\AppStatusConverter.cs" />
     <Compile Include="Tools\Converter\BoolOperationConverter.cs" />
     <Compile Include="Tools\Converter\BoolToVisibilityConverter.cs" />

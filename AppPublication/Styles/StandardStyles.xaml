@@ -33,7 +33,7 @@
         <Setter Property="CanUserSelect" Value="True"/>
         <Setter Property="ActionOnLostFocus" Value="CancelEdit"/>
         <Setter Property="EditTriggers" Value="CellClick"/>
-        <Setter Property="ShowColumnFooters" Value="True"/>
+        <Setter Property="ShowColumnFooters" Value="False"/>
         <Setter Property="KeyboardNavigation.IsTabStop" Value="False"/>
     </Style>
 

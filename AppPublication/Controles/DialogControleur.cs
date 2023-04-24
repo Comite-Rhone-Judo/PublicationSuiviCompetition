@@ -17,6 +17,7 @@ namespace AppPublication.Controles
     {
         #region MEMBRES
         private static DialogControleur _currentControleur = null;      // instance singletion
+        private AppPublication.IHM.Commissaire.Statistiques _statWindow = null;
         #endregion
 
         #region CONSTRUCTEUR
@@ -385,7 +386,11 @@ namespace AppPublication.Controles
                     _cmdAfficherStatistiques = new RelayCommand(
                             o =>
                             {
-                                (new AppPublication.IHM.Commissaire.Statistiques(GestionStatistiques)).Show();
+                                if (_statWindow == null)
+                                {
+                                    _statWindow = new AppPublication.IHM.Commissaire.Statistiques(GestionStatistiques);
+                                }
+                                _statWindow.Show();
                             },
                             o =>
                             {
