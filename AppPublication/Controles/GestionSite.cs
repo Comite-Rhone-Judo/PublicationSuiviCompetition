@@ -599,7 +599,7 @@ namespace AppPublication.Controles
                                 // Status = new StatusGenerationSite(StateGenerationEnum.Idle, "En attente ...");
                                 Status = StatusGenerationSite.Instance(StateGenerationEnum.Idle);
 
-                                _statMgr.RegisterGeneration(watcherGen.ElapsedMilliseconds / 1000F);
+                                _statMgr.EnregistrerGeneration(watcherGen.ElapsedMilliseconds / 1000F);
 
                                 if (SiteGenere)
                                 {
@@ -632,7 +632,7 @@ namespace AppPublication.Controles
                                         watcherSync.Stop();
                                         statSync.DelaiExecutionMs = watcherSync.ElapsedMilliseconds;
 
-                                        _statMgr.RegisterSynchronisation(watcherSync.ElapsedMilliseconds / 1000F, uploadOut);
+                                        _statMgr.EnregistrerSynchronisation(watcherSync.ElapsedMilliseconds / 1000F, uploadOut);
 
                                         if (SiteSynchronise)
                                         {
@@ -644,7 +644,7 @@ namespace AppPublication.Controles
                                 }
                                 else
                                 {
-                                    _statMgr.RegisterErreurGeneration();
+                                    _statMgr.EnregistrerErreurGeneration();
                                 }
 
                                 watcherTotal.Stop();
@@ -656,7 +656,7 @@ namespace AppPublication.Controles
                                 // Met le thread en attente pour la prochaine generation
                                 Status.NextGenerationSec = (int)Math.Round(delaiThread / 1000.0);
 
-                                _statMgr.RegisterDelaiGeneration(delaiThread / 1000F);
+                                _statMgr.EnregsitrerDelaiGeneration(delaiThread / 1000F);
 
                                 // prochaine heure de generation
                                 wakeUpTime = DateTime.Now.AddMilliseconds(delaiThread);

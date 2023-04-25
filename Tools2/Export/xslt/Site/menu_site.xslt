@@ -36,247 +36,259 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 		<body>
 			<div class="panel panel-primary" style="text-align: center;">
 				<div class="panel-body">
-					<!-- TITRE RHONE (Logo & entete) -->
-					<div  class="col-xs-12">
-						<div class="col-xs-6">
-							<img class="img" src="../img/France-Judo-Rhone.png" width="100"/>
-						</div>
-						<div class="col-xs-6">Suivi compétition</div>
-					</div>
-					<!-- CONTENU de la page -->
-					<!-- BOUTONS de selection -->
-					<div class="col-md-12" style="margin-top: 15px;">
-						<ul class="nav nav-pills nav-justified" role="tablist" style="margin-bottom: 20px;">
-							<xsl:if test="/competitions/@PublierProchainsCombats ='true'">
-								<li id="tab1" class="active">
-									<a onclick="set_tab(1, 'form');">Se prépare</a>
-								</li>
-								<li id="tab2" class="">
-									<a onclick="set_tab(2, 'form');">Prochains combats</a>
-								</li>
-							</xsl:if>
-							<li id="tab3" class="">
-								<a onclick="set_tab(3, 'form');">Avancements</a>
-							</li>
-							<xsl:if test="/competitions/@PublierAffectationTapis ='true'">
-								<li id="tab5" class="">
-									<a onclick="set_tab(5, 'form');">Affectation</a>
-								</li>
-							</xsl:if>
-							<li id="tab4" class="">
-								<a onclick="set_tab(4, 'form');">Classements</a>
-							</li>
-						</ul>
-					</div>
-
-					<!-- VUE PAR TAPIS -->
-					<xsl:if test="/competitions/@PublierProchainsCombats ='true'">
-						<div id="div1" class="col-md-12">
-							<div class="alert alert-warning" role="alert" style="padding: 5px; text-align:left;">
-								<a href="../common/tapis_All.html" class="alert-link">
-									Affichage tous les tapis
-								</a>
-							</div>
-							<div class="alert alert-warning" role="alert" style="padding: 5px; text-align:left;">
-								<a href="../common/tapis_All1.html" class="alert-link">
-									Affichage 1 Tapis
-								</a>
-							</div>
-							<div class="alert alert-warning" role="alert" style="padding: 5px; text-align:left;">
-								<a href="../common/tapis_All2.html" class="alert-link">
-									Affichage 2 Tapis
-								</a>
-							</div>
-							<div class="alert alert-warning" role="alert" style="padding: 5px; text-align:left;">
-								<a href="../common/tapis_All4.html" class="alert-link">
-									Affichage 4 Tapis
-								</a>
+					<div class="container">
+						<!-- TITRE RHONE (Logo & entete) -->
+						<div class="row">
+							<div  class="col-md-12">
+								<div class="col-xs-6">
+									<img class="img" src="../img/France-Judo-Rhone.png" width="100"/>
+								</div>
+								<div class="col-xs-6">Suivi compétition</div>
 							</div>
 						</div>
-					</xsl:if>
+						<!-- CONTENU de la page -->
+						<!-- BOUTONS de selection -->
+						<div class="row">
+							<div class="col-md-12" style="margin-top: 15px;">
+								<ul class="nav nav-pills nav-justified" role="tablist" style="margin-bottom: 20px;">
+									<xsl:if test="/competitions/@PublierProchainsCombats ='true'">
+										<li id="tab1" class="active">
+											<a onclick="set_tab(1, 'form');">Se prépare</a>
+										</li>
+										<li id="tab2" class="">
+											<a onclick="set_tab(2, 'form');">Prochains combats</a>
+										</li>
+									</xsl:if>
+									<li id="tab3" class="">
+										<a onclick="set_tab(3, 'form');">Avancements</a>
+									</li>
+									<xsl:if test="/competitions/@PublierAffectationTapis ='true'">
+										<li id="tab5" class="">
+											<a onclick="set_tab(5, 'form');">Affectation</a>
+										</li>
+									</xsl:if>
+									<li id="tab4" class="">
+										<a onclick="set_tab(4, 'form');">Classements</a>
+									</li>
+								</ul>
+							</div>
+						</div>
 
-					<!-- VUE SE PREPARE -->
-					<xsl:if test="/competitions/@PublierProchainsCombats ='true'">
-						<div id="div2" class="col-md-12">
-							<xsl:for-each select="/competitions/competition">
-								<xsl:if test="count(./epreuve) > 0">
-									<div class="col-md-12">
-										<div class="panel panel-info" style="text-align: center;">
-											<div class="panel-heading clearfix">
-												<span id="ContentPlaceHolder1_Label2" style="width: 100%;">
-													<xsl:value-of select="./titre"/>
-												</span>
+						<!-- VUE PAR TAPIS -->
+						<xsl:if test="/competitions/@PublierProchainsCombats ='true'">
+							<div class="row">
+								<div id="div1" class="col-md-12">
+									<div class="alert alert-warning" role="alert" style="padding: 5px; text-align:left;">
+										<a href="../common/tapis_All.html" class="alert-link">
+											Affichage tous les tapis
+										</a>
+									</div>
+									<div class="alert alert-warning" role="alert" style="padding: 5px; text-align:left;">
+										<a href="../common/tapis_All1.html" class="alert-link">
+											Affichage 1 Tapis
+										</a>
+									</div>
+									<div class="alert alert-warning" role="alert" style="padding: 5px; text-align:left;">
+										<a href="../common/tapis_All2.html" class="alert-link">
+											Affichage 2 Tapis
+										</a>
+									</div>
+									<div class="alert alert-warning" role="alert" style="padding: 5px; text-align:left;">
+										<a href="../common/tapis_All4.html" class="alert-link">
+											Affichage 4 Tapis
+										</a>
+									</div>
+								</div>
+							</div>
+						</xsl:if>
+
+						<!-- VUE SE PREPARE -->
+						<xsl:if test="/competitions/@PublierProchainsCombats ='true'">
+							<div class="row">
+								<div id="div2" class="col-md-12">
+									<xsl:for-each select="/competitions/competition">
+										<xsl:if test="count(./epreuve) > 0">
+											<div class="col-md-12">
+												<div class="panel panel-info" style="text-align: center;">
+													<div class="panel-heading clearfix">
+														<span id="ContentPlaceHolder1_Label2" style="width: 100%;">
+															<xsl:value-of select="./titre"/>
+														</span>
+													</div>
+													<div class="panel-body">
+														<xsl:if test="count(./epreuve[@sexe='F']) > 0">
+															<div class="row">
+																<div class="alert alert-success" role="alert" style="padding: 5px; text-align:left;">
+																	Catégories féminines
+																</div>
+
+																<xsl:apply-templates select="./epreuve[@sexe='F']">
+																	<xsl:with-param name="type">
+																		<xsl:number value="0"/>
+																	</xsl:with-param>
+																</xsl:apply-templates>
+															</div>
+														</xsl:if>
+
+														<xsl:if test="count(./epreuve[@sexe='M']) > 0">
+															<div class="row">
+																<div class="alert alert-success" role="alert" style="padding: 5px; text-align:left;">
+																	Catégories masculines
+																</div>
+																<xsl:apply-templates select="./epreuve[@sexe='M']">
+																	<xsl:with-param name="type">
+																		<xsl:number value="0"/>
+																	</xsl:with-param>
+																</xsl:apply-templates>
+															</div>
+														</xsl:if>
+
+														<xsl:if test="count(./epreuve[not(@sexe)]) > 0">
+															<div class="row">
+																<xsl:apply-templates select="./epreuve[not(@sexe)]">
+																	<xsl:with-param name="type">
+																		<xsl:number value="0"/>
+																	</xsl:with-param>
+																</xsl:apply-templates>
+															</div>
+														</xsl:if>
+
+													</div>
+												</div>
 											</div>
-											<div class="panel-body">
-												<xsl:if test="count(./epreuve[@sexe='F']) > 0">
-													<div class="row">
-														<div class="alert alert-success" role="alert" style="padding: 5px; text-align:left;">
-															Catégories féminines
-														</div>
-
-														<xsl:apply-templates select="./epreuve[@sexe='F']">
-															<xsl:with-param name="type">
-																<xsl:number value="0"/>
-															</xsl:with-param>
-														</xsl:apply-templates>
-													</div>
-												</xsl:if>
-
-												<xsl:if test="count(./epreuve[@sexe='M']) > 0">
-													<div class="row">
-														<div class="alert alert-success" role="alert" style="padding: 5px; text-align:left;">
-															Catégories masculines
-														</div>
-														<xsl:apply-templates select="./epreuve[@sexe='M']">
-															<xsl:with-param name="type">
-																<xsl:number value="0"/>
-															</xsl:with-param>
-														</xsl:apply-templates>
-													</div>
-												</xsl:if>
-
-												<xsl:if test="count(./epreuve[not(@sexe)]) > 0">
-													<div class="row">
-														<xsl:apply-templates select="./epreuve[not(@sexe)]">
-															<xsl:with-param name="type">
-																<xsl:number value="0"/>
-															</xsl:with-param>
-														</xsl:apply-templates>
-													</div>
-												</xsl:if>
-
-											</div>
-										</div>
-									</div>
-								</xsl:if>
-							</xsl:for-each>
-						</div>
-					</xsl:if>
-
-					<!-- VUE AVANCEMENT -->
-					<div id="div3" class="col-md-12">
-						<xsl:for-each select="/competitions/competition">
-							<xsl:if test="count(./epreuve) > 0">
-
-								<div class="col-md-12">
-									<div class="panel panel-info" style="text-align: center;">
-										<div class="panel-heading clearfix">
-											<span id="ContentPlaceHolder1_Label2" style="width: 100%;">
-												<xsl:value-of select="./titre"/>
-											</span>
-										</div>
-
-										<div class="panel-body">
-											<xsl:if test="count(./epreuve[@sexe='F']) > 0">
-												<div class="row">
-													<div class="alert alert-success" role="alert" style="padding: 5px; text-align:left;">
-														Catégories féminines
-													</div>
-													<xsl:apply-templates select="./epreuve[@sexe='F']">
-														<xsl:with-param name="type">
-															<xsl:number value="1"/>
-														</xsl:with-param>
-													</xsl:apply-templates>
-												</div>
-											</xsl:if>
-
-											<xsl:if test="count(./epreuve[@sexe='M']) > 0">
-												<div class="row">
-													<div class="alert alert-success" role="alert" style="padding: 5px; text-align:left;">
-														Catégories masculines
-													</div>
-													<xsl:apply-templates select="./epreuve[@sexe='M']">
-														<xsl:with-param name="type">
-															<xsl:number value="1"/>
-														</xsl:with-param>
-													</xsl:apply-templates>
-												</div>
-											</xsl:if>
-
-											<xsl:if test="count(./epreuve[not(@sexe)]) > 0">
-												<div class="row">
-													<xsl:apply-templates select="./epreuve[not(@sexe)]">
-														<xsl:with-param name="type">
-															<xsl:number value="1"/>
-														</xsl:with-param>
-													</xsl:apply-templates>
-												</div>
-											</xsl:if>
-										</div>
-									</div>
-								</div>
-							</xsl:if>
-						</xsl:for-each>
-					</div>
-
-					<!-- VUE CLASSEMENT -->
-					<div id="div4" class="col-md-12">
-						<xsl:for-each select="/competitions/competition">
-							<xsl:if test="count(./epreuve) > 0">
-								<div class="col-md-12">
-									<div class="panel panel-info" style="text-align: center;">
-										<div class="panel-heading clearfix">
-											<span id="ContentPlaceHolder1_Label2" style="width: 100%;">
-												<xsl:value-of select="./titre"/>
-											</span>
-										</div>
-
-										<div class="panel-body">
-											<xsl:if test="count(./epreuve[@sexe='F']) > 0">
-												<div class="row">
-													<div class="alert alert-success" role="alert" style="padding: 5px; text-align:left;">
-														Catégories féminines
-													</div>
-
-													<xsl:apply-templates select="./epreuve[@sexe='F']">
-														<xsl:with-param name="type">
-															<xsl:number value="2"/>
-														</xsl:with-param>
-													</xsl:apply-templates>
-												</div>
-											</xsl:if>
-
-											<xsl:if test="count(./epreuve[@sexe='M']) > 0">
-												<div class="row">
-													<div class="alert alert-success" role="alert" style="padding: 5px; text-align:left;">
-														Catégories masculines
-													</div>
-													<xsl:apply-templates select="./epreuve[@sexe='M']">
-														<xsl:with-param name="type">
-															<xsl:number value="2"/>
-														</xsl:with-param>
-													</xsl:apply-templates>
-												</div>
-											</xsl:if>
-
-											<xsl:if test="count(./epreuve[not(@sexe)]) > 0">
-												<div class="row">
-													<xsl:apply-templates select="./epreuve[not(@sexe)]">
-														<xsl:with-param name="type">
-															<xsl:number value="2"/>
-														</xsl:with-param>
-													</xsl:apply-templates>
-												</div>
-											</xsl:if>
-
-										</div>
-									</div>
-								</div>
-							</xsl:if>
-						</xsl:for-each>
-
-					</div>
-
-					<!-- VUE AFFECTATION -->
-					<xsl:if test="/competitions/@PublierAffectationTapis ='true'">
-						<div id="div5" class="col-md-12" style="height:100%;width:100%;padding-left:0px; padding-right:0px;">
-							<div class="video">
-								<div class="embed-container">
-									<iframe src="../common/affectation_tapis.html" frameborder="0" allowfullscreen=""></iframe>
+										</xsl:if>
+									</xsl:for-each>
 								</div>
 							</div>
+						</xsl:if>
+
+						<!-- VUE AVANCEMENT -->
+						<div class="row">
+							<div id="div3" class="col-md-12">
+								<xsl:for-each select="/competitions/competition">
+									<xsl:if test="count(./epreuve) > 0">
+
+										<div class="col-md-12">
+											<div class="panel panel-info" style="text-align: center;">
+												<div class="panel-heading clearfix">
+													<span id="ContentPlaceHolder1_Label2" style="width: 100%;">
+														<xsl:value-of select="./titre"/>
+													</span>
+												</div>
+
+												<div class="panel-body">
+													<xsl:if test="count(./epreuve[@sexe='F']) > 0">
+														<div class="row">
+															<div class="alert alert-success" role="alert" style="padding: 5px; text-align:left;">
+																Catégories féminines
+															</div>
+															<xsl:apply-templates select="./epreuve[@sexe='F']">
+																<xsl:with-param name="type">
+																	<xsl:number value="1"/>
+																</xsl:with-param>
+															</xsl:apply-templates>
+														</div>
+													</xsl:if>
+
+													<xsl:if test="count(./epreuve[@sexe='M']) > 0">
+														<div class="row">
+															<div class="alert alert-success" role="alert" style="padding: 5px; text-align:left;">
+																Catégories masculines
+															</div>
+															<xsl:apply-templates select="./epreuve[@sexe='M']">
+																<xsl:with-param name="type">
+																	<xsl:number value="1"/>
+																</xsl:with-param>
+															</xsl:apply-templates>
+														</div>
+													</xsl:if>
+
+													<xsl:if test="count(./epreuve[not(@sexe)]) > 0">
+														<div class="row">
+															<xsl:apply-templates select="./epreuve[not(@sexe)]">
+																<xsl:with-param name="type">
+																	<xsl:number value="1"/>
+																</xsl:with-param>
+															</xsl:apply-templates>
+														</div>
+													</xsl:if>
+												</div>
+											</div>
+										</div>
+									</xsl:if>
+								</xsl:for-each>
+							</div>
 						</div>
-					</xsl:if>
+
+						<!-- VUE CLASSEMENT -->
+						<div class="row">
+							<div id="div4" class="col-md-12">
+								<xsl:for-each select="/competitions/competition">
+									<xsl:if test="count(./epreuve) > 0">
+										<div class="col-md-12">
+											<div class="panel panel-info" style="text-align: center;">
+												<div class="panel-heading clearfix">
+													<span id="ContentPlaceHolder1_Label2" style="width: 100%;">
+														<xsl:value-of select="./titre"/>
+													</span>
+												</div>
+
+												<div class="panel-body">
+													<xsl:if test="count(./epreuve[@sexe='F']) > 0">
+														<div class="row">
+															<div class="alert alert-success" role="alert" style="padding: 5px; text-align:left;">
+																Catégories féminines
+															</div>
+
+															<xsl:apply-templates select="./epreuve[@sexe='F']">
+																<xsl:with-param name="type">
+																	<xsl:number value="2"/>
+																</xsl:with-param>
+															</xsl:apply-templates>
+														</div>
+													</xsl:if>
+
+													<xsl:if test="count(./epreuve[@sexe='M']) > 0">
+														<div class="row">
+															<div class="alert alert-success" role="alert" style="padding: 5px; text-align:left;">
+																Catégories masculines
+															</div>
+															<xsl:apply-templates select="./epreuve[@sexe='M']">
+																<xsl:with-param name="type">
+																	<xsl:number value="2"/>
+																</xsl:with-param>
+															</xsl:apply-templates>
+														</div>
+													</xsl:if>
+
+													<xsl:if test="count(./epreuve[not(@sexe)]) > 0">
+														<div class="row">
+															<xsl:apply-templates select="./epreuve[not(@sexe)]">
+																<xsl:with-param name="type">
+																	<xsl:number value="2"/>
+																</xsl:with-param>
+															</xsl:apply-templates>
+														</div>
+													</xsl:if>
+
+												</div>
+											</div>
+										</div>
+									</xsl:if>
+								</xsl:for-each>
+
+							</div>
+						</div>
+
+						<!-- VUE AFFECTATION -->
+						<xsl:if test="/competitions/@PublierAffectationTapis ='true'">
+							<div class="row">
+								<div id="div5" class="col-md-12" style="height:100%;width:100%;padding-left:0px; padding-right:0px;">
+									<iframe  src="../common/affectation_tapis.html" allowfullscreen="" style="height:500px; width:100%; marginwidth:0; marginheight:0" frameborder="0" ></iframe>
+								</div>
+							</div>
+						</xsl:if>
+					</div>
 				</div>
 			</div>
 		</body>
