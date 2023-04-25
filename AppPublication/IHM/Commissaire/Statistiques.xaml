@@ -31,7 +31,7 @@
 
         <!-- PANEL GENERATION -->
         <StackPanel Grid.Row="0" Grid.Column="0" Style="{StaticResource Header1Style}" Margin="10,10,10,10" Visibility="Visible" >
-            <TextBlock Text="Statistique génération" Style="{StaticResource Header1TextStyle}"/>
+            <TextBlock Text="Génération du site" Style="{StaticResource Header1TextStyle}"/>
         </StackPanel>
         <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" BorderBrush="White" Margin="10 0 10 10">
             <StackPanel Orientation="Vertical">
@@ -49,7 +49,7 @@
         </Border>
         <!-- PANEL SYNCHRONISATION -->
         <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource Header1Style}" Margin="10,10,10,10" Visibility="Visible" >
-            <TextBlock Text="Statistique Synchronisation site distant" Style="{StaticResource Header1TextStyle}"/>
+            <TextBlock Text="Synchronisation du site distant" Style="{StaticResource Header1TextStyle}"/>
         </StackPanel>
         <Border BorderThickness="1" Grid.Row="1" Grid.Column="1" BorderBrush="White" Margin="10 0 10 10" >
             <StackPanel Orientation="Vertical">
