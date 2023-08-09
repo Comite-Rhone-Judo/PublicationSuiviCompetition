@@ -1,205 +1,165 @@
 ﻿<?xml version="1.0"?>
+<!DOCTYPE xsl:stylesheet [
+	<!ENTITY nbsp "&#160;">
+	<!ENTITY times "&#215;">
+]>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<xsl:output method="html" indent="yes" />
+	<xsl:param name="style"></xsl:param>
+	<xsl:param name="js"></xsl:param>
 
-<xsl:stylesheet version="1.0"
-                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xsl:key name="combats" match="combat" use="@niveau"/>
+	<xsl:template match="/">
+		<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
+		<html>
+			<xsl:apply-templates/>
+		</html>
+	</xsl:template>
 
-  <xsl:output method="html" indent="yes" />
-  <xsl:param name="style"></xsl:param>
-  <!--<xsl:param name="menu"></xsl:param>-->
-  <xsl:param name="js"></xsl:param>
+	<xsl:variable select="/competition/@PublierProchainsCombats = 'True'" name="affProchainCombats"/>
+	<xsl:variable select="/competition/@PublierAffectationTapis = 'True'" name="affAffectationTapis"/>
 
-  <xsl:template match="/">
-    <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
-    <html>
-      <xsl:apply-templates/>
-    </html>
-  </xsl:template>
+	<xsl:template match="/*">
+		<!-- ENTETE HTML -->
+		<head>
+			<META http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+			<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+			<meta name="viewport" content="width=device-width,initial-scale=1"/>
+			<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+			<meta http-equiv="Pragma" content="no-cache"/>
+			<meta http-equiv="Expires" content="0"/>
 
-  <xsl:template match="/*">
-    <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-      <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />-->
-      <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-      <meta http-equiv="Pragma" content="no-cache" />
-      <meta http-equiv="Expires" content="0" />
-      
-      <link type="text/css" rel="stylesheet" href="../style/style_classement.css" ></link>
-      <link type="text/css" rel="stylesheet" href="../style/style_menu.css" ></link>
+			<!-- Feuille de style W3.CSS -->
+			<link type="text/css" rel="stylesheet" href="../style/w3.css"/>
+			<link type="text/css" rel="stylesheet" href="../style/style-common.css"/>
+			<link type="text/css" rel="stylesheet" href="../style/style-classement.css"/>
 
-      <!--<script src="../js/jquery.min.js"></script>
-      <script src="../js/script.js"></script>-->
-     
-      
-      
-      <!--<xsl:variable name="css1">
-        file:///<xsl:value-of select="$style"/>
-        <xsl:text>style_classement.css</xsl:text>
-      </xsl:variable>
+			<!-- Script de navigation par defaut -->
+			<script src="../js/site-display.js"></script>
 
-      <xsl:variable name="css2">
-        file:///<xsl:value-of select="$style"/>
-        <xsl:text>style_menu.css</xsl:text>
-      </xsl:variable>
+			<!-- Script ajoute en parametre -->
+			<script type="text/javascript">
+				<xsl:value-of select="$js"/>
+			</script>
+			<title>
+				<xsl:value-of select="@titre"/>
+			</title>
+		</head>
+		<body>
+			<!-- BANDEAU DE TITRE -->
+			<div class="w3-top">
+				<div class="w3-cell-row w3-light-grey">
+					<button class="w3-cell w3-button w3-xlarge w3-cell-left" onclick="openElement('navigationPanel')">☰</button>
+					<div class="w3-cell w3-cell-middle w3-center">
+						<h3>Suivi compétition</h3>
+					</div>
+					<div class="w3-cell w3-cell-middle bandeau-titre">
+						<img class="img img-bandeau-titre" src="../img/France-Judo-Rhone.png"/>
+					</div>
+				</div>
+			</div>
 
-      <style type="text/css">
-        <xsl:value-of select="document($css1)" disable-output-escaping="yes" />
-        <xsl:value-of select="document($css2)" disable-output-escaping="yes" />
-      </style>
+			<!-- PANNEAU DE NAVIGATION -->
+			<div class="w3-sidebar w3-bar-block w3-border-right w3-animate-left tas-navigation-panel" id="navigationPanel">
+				<button onclick="closeElement('navigationPanel')" class="w3-bar-item w3-large">Fermer &times;</button>
+				<button class="w3-bar-item w3-button navButton" onclick="location.reload()">Actualiser</button>
+				<xsl:if test="$affProchainCombats">
+					<a class="w3-bar-item w3-button navButton" href="../common/se-prepare.html">Se prépare</a>
+					<a class="w3-bar-item w3-button navButton" href="../common/prochains-combats.html">Prochains combats</a>
+				</xsl:if>
+				<xsl:if test="$affAffectationTapis">
+					<a class="w3-bar-item w3-button navButton" href="../common/affectation_tapis.html">Affectations</a>
+				</xsl:if>
+				<a class="w3-bar-item w3-button navButton" href="../common/avancement.html">Avancements</a>
+				<a class="w3-bar-item w3-button navButton w3-indigo" href="../common/classement.html">Classements</a>
+			</div>
+			
+			<!-- Div vide pour aligner le contenu avec le bandeau de titre de taille fixe -->
+			<div class="w3-container tas-filler-div">&nbsp;</div>
 
-      -->
+			<!-- CONTENU -->
+			<!-- Nom de la competition + Catégorie -->
+			<div class="w3-container w3-blue w3-center tas-competition-bandeau">
+				<div>
+					<h4>
+						<xsl:value-of select="./titre"/>
+					</h4>
+				</div>
+				<div class="w3-card w3-indigo">
+					<h5>
 
-      <script type="text/javascript" >
-        <xsl:value-of select="$js"/>
-      </script>
+						<xsl:if test="//epreuve[1]/@sexe='F'">
+							Féminines&nbsp;
+						</xsl:if>
+						<xsl:if test="//epreuve[1]/@sexe='M'">
+							Masculins&nbsp;
+						</xsl:if>
+						<xsl:value-of select="//epreuve[1]/@nom"/>
+					</h5>
+				</div>
+			</div>
 
-      <title>
-        <xsl:value-of select="@titre"/>
-      </title>
-    </head>
-    <body>
+			<!-- Le classement -->
+			<div class="w3-responsive w3-card w3-small w3-animate-top tas-panel-classement">
+			<table class="w3-table-all">
+				<thead>
+					<tr class="w3-light-blue w3-text-indigo">
+						<th>&nbsp;</th>
+						<th>NOM et Prénom</th>
+						<th>Club</th>
+						<th>Comité</th>
+						<th>Ligue</th>
+						<th>Pays</th>
+					</tr>
+				</thead>
+				<tbody>
+					<xsl:apply-templates select="//classement/participant">
+						<xsl:sort select="@classementFinal" data-type="number" order="ascending"/>
+					</xsl:apply-templates>
+				</tbody>
+			</table>
+		</div>
+					</body>
+	</xsl:template>
 
-      <div class="btn_defilement">
-        <div style="position: fixed;right: 10px;top: 10px;">
-          <a class="btn btn-danger" onclick="anim2();"  style="margin-right: 10px;">
-			  <img class="img" src="../img/refresh-32.png" alt="Actualiser"/>
-		  </a>
-          <a class="btn btn-info" onclick="setDefilement();">
-			  <img class="img" src="../img/repeat-32.png" alt="Défilement"/>
-		  </a>
-        </div>
-      </div>
+	<!-- TEMPLATES -->
+	<!-- Ligne de classement -->
+	<xsl:template match="participant">
+		<xsl:variable name="participant1" select="@judoka" />
+		<xsl:variable name="j1" select="//participants/participant[@judoka=$participant1]/descendant::*[1]" />
 
-      <div class="btn_menu">
-        <a class="btn btn-warning" href="../common/menu.html" role="button">
-			<img class="img" src="../img/home-32.png" alt="Menu"/>
-		</a>
-      </div>
+		<xsl:variable name="club" select="$j1/@club"/>
+		<xsl:variable name="clubN" select="//club[@ID=$club]"/>
+		<xsl:variable name="comite" select="$clubN/@comite"/>
+		<xsl:variable name="ligue" select="$clubN/@ligue"/>
+		<xsl:variable name="position" select="position()"/>
 
-      <div class="panel panel-primary">
-        <div class="panel-heading clearfix" style="text-align:center;">
-          
-          <span style="font-size:1.0em;">
-            <xsl:value-of select="./titre"/>
-            <xsl:text> - </xsl:text>
-            <xsl:value-of select="./lieu"/>
-          </span>
-          <br/>
-          <span style="font-size:1.2em;">
-            <!--<xsl:text> (</xsl:text>-->
-            <!--<xsl:value-of select="//epreuve[1]/@nom_cateage"/>
-                      <xsl:text> </xsl:text>-->
-            <xsl:value-of select="//epreuve[1]/@nom"/>
-            <!--<xsl:text>)</xsl:text>-->
-          </span>
-        
-        </div>
-
-
-
-        <div class="panel-body">
-          <div class="table-responsive">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>
-                    NOM et Prénom
-                  </th>
-                  <th>
-                    Club
-                  </th>
-                  <th>
-                    Comité
-                  </th>
-                  <th>
-                    Ligue
-                  </th>
-                  <th>
-                    Pays
-                  </th>
-                </tr>
-              </thead>
-              <xsl:apply-templates select="//classement/participant">
-                <xsl:sort select="@classementFinal" data-type="number" order="ascending"/>
-              </xsl:apply-templates>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!--<div class="bandeau">
-        <div class="header1" >
-          <xsl:value-of select="./titre"/>
-          <xsl:text> - </xsl:text>
-          <xsl:value-of select="./lieu"/>
-        </div>
-        <div class="header2" >
-          <xsl:value-of select="//epreuve[1]/@nom_cateage"/>
-          <xsl:text> </xsl:text>
-          <xsl:value-of select="//epreuve[1]/@nom"/>
-        </div>
-      </div>-->
-      <!--<div id='newsbox' style='width: 100%; height:95%;'>
-        <div id='newslist' style='visibility: hidden; width: 100%'>-->
-
-      <!--<div class="main">
-        <table class="classement" style="margin: auto auto auto auto;">
-
-
-        </table>
-      </div>-->
-      <!--</div>
-      </div>-->
-    </body>
-  </xsl:template>
-
-  <xsl:template match="participant">
-    <xsl:variable name="participant1" select="@judoka" />
-    <xsl:variable name="j1" select="//participants/participant[@judoka=$participant1]/descendant::*[1]" />
-
-
-
-    <xsl:variable name="club" select="$j1/@club"/>
-    <xsl:variable name="clubN" select="//club[@ID=$club]"/>
-    <xsl:variable name="comite" select="$clubN/@comite"/>
-    <xsl:variable name="ligue" select="$clubN/@ligue"/>
-    <xsl:variable name="position" select="position()"/>
-
-
-
-    <tr>
-      <xsl:attribute name="class">
-        <xsl:if test="$position mod 2 = 1">
-          <xsl:text>active</xsl:text>
-        </xsl:if>
-      </xsl:attribute>
-      <td class="align_center">
-        <xsl:choose>
-          <xsl:when test="@classementFinal != 0 and @classementFinal &lt; 9">
-            <xsl:value-of select="@classementFinal"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:text>NC</xsl:text>
-          </xsl:otherwise>
-        </xsl:choose>
-      </td>
-      <td>
-        <xsl:value-of select="$j1/@nom"/>
-        <xsl:text disable-output-escaping="yes">&#032;</xsl:text>
-        <xsl:value-of select="$j1/@prenom"/>
-      </td>
-      <td>
-        <xsl:value-of select="$clubN/nomCourt"/>
-      </td>
-      <td>
-        <xsl:value-of select="$comite"/>
-      </td>
-      <td>
-        <xsl:value-of select="//ligue[@ID=$ligue]/nomCourt"/>
-      </td>
-      <td>
-      </td>
-    </tr>
-  </xsl:template>
+		<tr>
+			<td>
+				<xsl:choose>
+					<xsl:when test="@classementFinal != 0 and @classementFinal &lt; 9">
+						<xsl:value-of select="@classementFinal"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:text>NC</xsl:text>
+					</xsl:otherwise>
+				</xsl:choose>
+			</td>
+			<td>
+				<xsl:value-of select="$j1/@nom"/>
+				&nbsp;
+				<xsl:value-of select="$j1/@prenom"/>
+			</td>
+			<td>
+				<xsl:value-of select="$clubN/nomCourt"/>
+			</td>
+			<td>
+				<xsl:value-of select="$comite"/>
+			</td>
+			<td>
+				<xsl:value-of select="//ligue[@ID=$ligue]/nomCourt"/>
+			</td>
+			<td>&nbsp;</td>
+		</tr>
+	</xsl:template>
 </xsl:stylesheet>

@@ -470,8 +470,6 @@ namespace Tools.Outils
                         lStatusDetail = ex.Message;
                     }
                 }
-
-
             }
             catch (Exception ex)
             {
@@ -512,13 +510,17 @@ namespace Tools.Outils
         /// <returns></returns>
         private bool CheckConfigurationSiteDistant()
         {
+            // TODO check this because during last use this function had to be forced (stop/start for connexion to restart)
+            // Maybe should not use CLone on autodetect
+
             bool output = false;
             if (!String.IsNullOrEmpty(SiteFTPDistant) && !String.IsNullOrEmpty(LoginSiteFTPDistant) && !string.IsNullOrEmpty(PasswordSiteFTPDistant))
             {
                 // Test les parametres de connection
+                FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
+
                 try
                 {
-                    FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
                     List<FtpProfile> profiles = ftpClient.AutoDetect(true);
 
                     if (profiles.Count > 0)
@@ -532,6 +534,10 @@ namespace Tools.Outils
                 {
                     LogTools.Log(ex);
                     throw ex;
+                }
+                finally
+                {
+                    ftpClient?.Dispose();
                 }
             }
 
@@ -619,10 +625,16 @@ namespace Tools.Outils
             }
             finally
             {
+                // TODO Forcer le disconnect et forcer le dispose pour s'assurer que la connection est bien coupe (cf. pb de 2 cnx max surt Free)
+                // Apres test, le fait de faire Start/Stop relancait la connexion
+
                 if (ftpClient.IsConnected)
                 {
                     ftpClient.Disconnect();
                 }
+
+                // Detruit le client
+                ftpClient?.Dispose();
             }
 
             // Restaure le status apres l'operation
@@ -760,15 +772,24 @@ namespace Tools.Outils
             }
             catch(Exception ex)
             {
-                cStatus = new StatusMiniSite(cStatus.State, "Erreur FTP", ex.Message);
+                output.IsSuccess = false;
+                string msg = (ex.InnerException != null) ? String.Format("{0} ({1})", ex.Message, ex.InnerException.Message) : ex.Message;
+                cStatus = new StatusMiniSite(cStatus.State, "Erreur FTP", msg);
                 LogTools.Log(ex);
             }
             finally
             {
+
+                // TODO Forcer le disconnect et forcer le dispose pour s'assurer que la connection est bien coupe (cf. pb de 2 cnx max surt Free)
+                // Apres test, le fait de faire Start/Stop relancait la connexion
+
                 if (ftpClient.IsConnected)
                 {
                     ftpClient.Disconnect();
                 }
+
+                // Detruit le client
+                ftpClient?.Dispose();
             }
 
             // Restaure le status apres l'operation

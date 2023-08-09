@@ -297,6 +297,12 @@ namespace Tools.Export
                 case ExportEnum.Site_AffectationTapis:
                     result = "affectation_tapis";
                     break;
+                case ExportEnum.Site_MenuAvancement:
+                    result = "avancement";
+                    break;
+                case ExportEnum.Site_MenuClassement:
+                    result = "classement";
+                    break;
             }
 
             result = result.Replace(' ', '_');
@@ -603,6 +609,12 @@ namespace Tools.Export
                     break;
                 case ExportEnum.Site_AffectationTapis:
                     name = ConstantResource.Export_Site_res + "affectation_tapis";
+                    break;
+                case ExportEnum.Site_MenuClassement:
+                    name = ConstantResource.Export_Site_res + "classement";
+                    break;
+                case ExportEnum.Site_MenuAvancement:
+                    name = ConstantResource.Export_Site_res + "avancement";
                     break;
                 default:
                     return "";

@@ -1,20 +1,19 @@
 ﻿<?xml version="1.0"?>
 
-<xsl:stylesheet version="1.0"
-xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
   <!--<xsl:param name="site_url"></xsl:param>-->
 
-  <xsl:output method="html" indent="yes" />
-  <xsl:param name="style"></xsl:param>
+  <xsl:output method="html" indent="yes"/>
+  <xsl:param name="style"/>
   <!--<xsl:param name="menu"></xsl:param>-->
-  <xsl:param name="js"></xsl:param>
+  <xsl:param name="js"/>
 
   <xsl:key name="combats" match="combat" use="@niveau"/>
 
 
   <xsl:template match="/">
-    <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
+    <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
     <html>
       <xsl:apply-templates/>
     </html>
@@ -24,19 +23,19 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:template match="/*">
 
     <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
       <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />-->
-      <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-      <meta http-equiv="Pragma" content="no-cache" />
-      <meta http-equiv="Expires" content="0" />
-      <link type="text/css" rel="stylesheet" href="../style/style_menu.css" ></link>
+      <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+      <meta http-equiv="Pragma" content="no-cache"/>
+      <meta http-equiv="Expires" content="0"/>
+      <link type="text/css" rel="stylesheet" href="../style/style_menu.css"/>
 
       <!--<script src="../js/jquery.min.js"></script>
       <script src="../js/script.js"></script>-->
 
 
 
-      <script type="text/javascript" >
+      <script type="text/javascript">
         <xsl:value-of select="$js"/>
       </script>
 
@@ -61,38 +60,37 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
       <!--<div class="panel panel-primary">
         <div class="panel-body">-->
-          <div class="col-md-12">
-            <div class="alert alert-success" role="alert" style="padding: 5px; text-align:left;">
-              Liste des tapis
-            </div>
+      <div class="col-md-12">
+        <div class="alert alert-success" role="alert" style="padding: 5px; text-align:left;"> Liste
+          des tapis </div>
+      </div>
+      <xsl:for-each select="/competitions/competition[1]/tapis[@tapis != '0']">
+        <!--c-->
+        <xsl:sort select="@tapis" data-type="number" order="ascending"/>
+        <div class="col-md-6">
+          <div class="alert alert-warning" role="alert" style="padding: 5px; text-align:left;">
+            <a class="alert-link">
+              <xsl:attribute name="href">
+                <!--<xsl:value-of select="$site_url"/>-->
+                <xsl:text>..</xsl:text>
+                <xsl:text>/common/tapis_</xsl:text>
+                <xsl:value-of select="@tapis"/>
+                <xsl:text>.html</xsl:text>
+              </xsl:attribute>
+              <xsl:text>Tapis&#32;</xsl:text>
+              <xsl:value-of select="@tapis"/>
+            </a>
           </div>
-          <xsl:for-each select="/competitions/competition[1]/tapis[@tapis != '0']">
-            <!--c-->
-            <xsl:sort select="@tapis" data-type="number" order="ascending"/>
-            <div class="col-md-6">
-              <div class="alert alert-warning" role="alert" style="padding: 5px; text-align:left;">
-                <a class="alert-link">
-                  <xsl:attribute name="href">
-                    <!--<xsl:value-of select="$site_url"/>-->
-                    <xsl:text>..</xsl:text>
-                    <xsl:text>/common/tapis_</xsl:text>
-                    <xsl:value-of select="@tapis"/>
-                    <xsl:text>.html</xsl:text>
-                  </xsl:attribute>
-                  <xsl:text>Tapis&#32;</xsl:text>
-                  <xsl:value-of select="@tapis"/>
-                </a>
-              </div>
-            </div>
-          </xsl:for-each>
-        <!--</div>
+        </div>
+      </xsl:for-each>
+      <!--</div>
       </div>-->
     </body>
   </xsl:template>
 
 
   <xsl:template match="epreuve">
-    <xsl:param name="type" />
+    <xsl:param name="type"/>
 
     <xsl:if test="$type = 0">
       <xsl:call-template name="se_prepare_epreuve">
@@ -114,7 +112,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   </xsl:template>
 
   <xsl:template name="se_prepare_epreuve">
-    <xsl:param name="epreuve" />
+    <xsl:param name="epreuve"/>
     <div class="link">
       <a>
         <xsl:attribute name="href">
@@ -138,7 +136,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   </xsl:template>
 
   <xsl:template name="avancement_epreuve">
-    <xsl:param name="epreuve" />
+    <xsl:param name="epreuve"/>
 
     <xsl:variable select="number($epreuve/@typePhase)" name="type1"/>
     <xsl:variable select="number($epreuve/@typePhase)" name="type2"/>
@@ -195,7 +193,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   </xsl:template>
 
   <xsl:template name="classement_epreuve">
-    <xsl:param name="epreuve" />
+    <xsl:param name="epreuve"/>
     <div class="link">
       <a>
         <xsl:attribute name="href">

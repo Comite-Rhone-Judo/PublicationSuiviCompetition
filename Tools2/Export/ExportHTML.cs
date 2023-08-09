@@ -20,6 +20,9 @@ namespace Tools.Export
         public static void ToHTMLSite(XmlDocument xml, ExportEnum export_type, string fileSave, XsltArgumentList argsList)
         {
             //argsList.AddParam("style", "", ExportTools.getStyleDirectory(site: true));
+            
+            // TODO retirer le JS embarque
+            
             argsList.AddParam("js", "", ExportTools.getJS());
             //argsList.AddParam("menu", "", ExportTools.getDirectory(true, null, null) + @"\menu.html");
 
@@ -49,7 +52,11 @@ namespace Tools.Export
             settings.EnableScript = true;
 
             var resource = ResourcesTools.GetAssembyResource(xslt_st);
-            XmlReader xsltReader = XmlReader.Create(resource);
+
+            XmlReaderSettings readerSettings = new XmlReaderSettings();
+            readerSettings.DtdProcessing = DtdProcessing.Parse;
+
+            XmlReader xsltReader = XmlReader.Create(resource, readerSettings);
 
             // TODO Supprimer le True en mode Release
             XslCompiledTransform xslt = new XslCompiledTransform();
@@ -92,6 +99,8 @@ namespace Tools.Export
             }
         }
 
+        // OBSOLETE - PLUS UTILISE
+        /*
         public static void ToHTML_Header(XmlDocument xml, ExportEnum export_type, string fileSave)
         {
             string directoryStyle = ExportTools.getStyleDirectory(false);
@@ -221,5 +230,6 @@ namespace Tools.Export
                 FileAndDirectTools.ReleaseFile(file_menu);
             }
         }
+        */
     }
 }
