@@ -278,7 +278,7 @@
 		
 		<div class="w3-padding-small">
 			<xsl:if test="$participant1 != @vainqueur">
-				<xsl:attribute name="class">  w3-xxlarge </xsl:attribute>
+				<xsl:attribute name="class">w3-xxlarge </xsl:attribute>
 				<xsl:text>X</xsl:text>
 			</xsl:if>
 			<xsl:if test="$participant1 = @vainqueur">
