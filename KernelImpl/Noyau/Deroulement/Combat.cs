@@ -532,13 +532,6 @@ namespace KernelImpl.Noyau.Deroulement
                 }
             }
 
-            //TODO BARRAGE
-            if (feuille.repechage)
-            {
-
-            }
-
-
             if (!feuille.repechage)
             {
                 //Mise à jour du tableau des repéchés

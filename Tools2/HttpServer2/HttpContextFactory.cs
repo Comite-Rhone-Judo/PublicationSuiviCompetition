@@ -298,7 +298,7 @@ namespace HttpServer
 		{
             
 			if (Socket != null && Socket.Connected)
-				Socket.Close(); //TODO: Maybe use Disconnect with reuseSocket=true? I tried but it took forever.
+				Socket.Close();
 			base.Close();
              
 		}

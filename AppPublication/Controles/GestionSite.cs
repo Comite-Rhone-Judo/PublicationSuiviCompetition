@@ -624,7 +624,8 @@ namespace AppPublication.Controles
                                             List<FileWithChecksum> chkToSync = checksumGenere.Except(checksumCache, new FileWithChecksumComparer()).ToList();
                                             filesToSync = chkToSync.Select(o => o.File).ToList();
 
-                                            // TODO REmove for Tests only
+                                            // For Tests only
+                                            /*
                                             if (filesToSync.Count <= 0)
                                             {
                                                 Random rnd1 = new Random();
@@ -637,6 +638,7 @@ namespace AppPublication.Controles
                                                     filesToSync.Add(checksumGenere[rnd2.Next(checksumGenere.Count)].File);
                                                 }
                                             }
+                                            */
                                         }
 
                                         // Synchronise le site FTP

@@ -510,9 +510,6 @@ namespace Tools.Outils
         /// <returns></returns>
         private bool CheckConfigurationSiteDistant()
         {
-            // TODO check this because during last use this function had to be forced (stop/start for connexion to restart)
-            // Maybe should not use CLone on autodetect
-
             bool output = false;
             if (!String.IsNullOrEmpty(SiteFTPDistant) && !String.IsNullOrEmpty(LoginSiteFTPDistant) && !string.IsNullOrEmpty(PasswordSiteFTPDistant))
             {
@@ -625,9 +622,7 @@ namespace Tools.Outils
             }
             finally
             {
-                // TODO Forcer le disconnect et forcer le dispose pour s'assurer que la connection est bien coupe (cf. pb de 2 cnx max surt Free)
-                // Apres test, le fait de faire Start/Stop relancait la connexion
-
+                // disconnect et forcer le dispose pour s'assurer que la connection est bien coupe (cf. pb de 2 cnx max surt Free)
                 if (ftpClient.IsConnected)
                 {
                     ftpClient.Disconnect();
@@ -780,9 +775,7 @@ namespace Tools.Outils
             finally
             {
 
-                // TODO Forcer le disconnect et forcer le dispose pour s'assurer que la connection est bien coupe (cf. pb de 2 cnx max surt Free)
-                // Apres test, le fait de faire Start/Stop relancait la connexion
-
+                // disconnect et forcer le dispose pour s'assurer que la connection est bien coupe (cf. pb de 2 cnx max surt Free)
                 if (ftpClient.IsConnected)
                 {
                     ftpClient.Disconnect();
@@ -792,8 +785,8 @@ namespace Tools.Outils
                 ftpClient?.Dispose();
             }
 
-            // Restaure le status apres l'operation
-            Status = cStatus;
+            // RAZ le status apres la fin du transfert
+            Status = new StatusMiniSite(StateMiniSiteEnum.Idle); ;
             
             return output;
         }

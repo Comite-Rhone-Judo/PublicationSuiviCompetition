@@ -21,8 +21,6 @@ namespace Tools.Export
         {
             //argsList.AddParam("style", "", ExportTools.getStyleDirectory(site: true));
             
-            // TODO retirer le JS embarque
-            
             argsList.AddParam("js", "", ExportTools.getJS());
             //argsList.AddParam("menu", "", ExportTools.getDirectory(true, null, null) + @"\menu.html");
 
@@ -58,7 +56,6 @@ namespace Tools.Export
 
             XmlReader xsltReader = XmlReader.Create(resource, readerSettings);
 
-            // TODO Supprimer le True en mode Release
             XslCompiledTransform xslt = new XslCompiledTransform();
             xslt.Load(xsltReader, settings, null);
 

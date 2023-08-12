@@ -127,7 +127,7 @@
 					<button class="w3-bar-item w3-light-blue" onclick="toggleElement('tableauRepechages')">
 						<img class="img" id="tableauRepechagesCollapse" width="25" src="../img/up_circular-32.png" />
 						<img class="img" id="tableauRepechagesExpand" width="25" src="../img/down_circular-32.png" style="display: none;" />
-						Tableau repêchages
+						Tableaux de repêchage
 					</button>
 				</div>
 				<div class="w3-container tas-panel-tableau-combat w3-animate-top" id="tableauRepechages">
@@ -139,6 +139,20 @@
 					</xsl:call-template>
 				</div>
 			</xsl:if>
+
+			<!-- Les barrages -->
+		<xsl:if test="count(//phase[@barrage5 = 'true' or @barrage3 = 'true' or @barrage7 = 'true']) &gt; 0">
+				<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
+					<button class="w3-bar-item w3-light-blue" onclick="toggleElement('tableauBarrages')">
+						<img class="img" id="tableauBarragesCollapse" width="25" src="../img/up_circular-32.png" />
+						<img class="img" id="tableauBarragesExpand" width="25" src="../img/down_circular-32.png" style="display: none;" />
+						Tableaux de barrage
+					</button>
+				</div>
+				<div class="w3-container tas-panel-tableau-combat w3-animate-top" id="tableauBarrages">
+					<xsl:call-template name="tableauBarrage"/>
+				</div>
+			</xsl:if>
 		</body>
 	</xsl:template>
 
@@ -148,9 +162,21 @@
 	<xsl:template name="tableau">
 		<xsl:param name="repechage"/>
 
+		<xsl:variable name="prefixRef">
+			<xsl:choose>
+				<xsl:when test="$repechage='true'">
+					<xsl:value-of select="2."/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="1."/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+
+			
 		<xsl:variable name="niveau">
 			<xsl:for-each
-				select="//combat[@repechage = $repechage and generate-id() = generate-id(key('combats', @niveau)[1])]">
+				select="//combat[@repechage = $repechage and generate-id() = generate-id(key('combats', @niveau)[1]) and starts-with(@reference, $prefixRef)]">
 				<xsl:sort select="@niveau" data-type="number" order="descending"/>
 				<xsl:if test="position() = 1">
 					<xsl:value-of select="@niveau"/>
@@ -160,7 +186,7 @@
 
 		<xsl:variable name="niveaumax">
 			<xsl:for-each
-				select="//combat[@repechage = $repechage and generate-id() = generate-id(key('combats', @niveau)[1])]">
+				select="//combat[@repechage = $repechage and generate-id() = generate-id(key('combats', @niveau)[1]) and starts-with(@reference, $prefixRef)]">
 				<xsl:sort select="@niveau" data-type="number" order="ascending"/>
 				<xsl:if test="position() = 1">
 					<xsl:value-of select="@niveau"/>
@@ -170,7 +196,7 @@
 
 		<xsl:variable name="niveaumin">
 			<xsl:for-each
-				select="//combat[@repechage = $repechage and generate-id() = generate-id(key('combats', @niveau)[1])]">
+				select="//combat[@repechage = $repechage and generate-id() = generate-id(key('combats', @niveau)[1]) and starts-with(@reference, $prefixRef)]">
 				<xsl:sort select="@niveau" data-type="number" order="descending"/>
 				<xsl:if test="position() = 1">
 					<xsl:value-of select="@niveau"/>
@@ -192,7 +218,7 @@
 
 			<tbody>
 				<!-- BOUCLE SUR LES COMBATS DU NIVEAU EN COURS -->
-				<xsl:for-each select="//combat[@niveau = $niveau and @repechage = $repechage]">
+				<xsl:for-each select="//combat[@niveau = $niveau and @repechage = $repechage and starts-with(@reference, $prefixRef)]">
 					<xsl:sort select="@reference" order="ascending"/>
 					<!-- une ligne par combat de 1er niveau -->
 					<tr>
@@ -208,6 +234,7 @@
 							<xsl:with-param name="fillerPrev" select="-1"/>
 							<xsl:with-param name="spacerPrev" select="-1"/>
 							<xsl:with-param name="hcombatPrev" select="-1"/>
+							<xsl:with-param name="prefixRef" select="$prefixRef"/>						
 						</xsl:apply-templates>
 					</tr>
 				</xsl:for-each>
@@ -215,6 +242,62 @@
 		</table>
 	</xsl:template>
 
+	<!-- Tableaux de barrage -->		
+	<xsl:template name="tableauBarrage">
+		<xsl:if test="count(//combat[@repechage = 'true' and starts-with(@reference, '3.')]) &gt; 0">
+			<div class="w3-panel w3-small w3-text-blue" style="font-weight: bold;">Barrages 3èmes</div>
+			<xsl:call-template name="barrageNiveau">
+				<xsl:with-param name="niveau" select="3."/>
+			</xsl:call-template>
+		</xsl:if>
+
+		<xsl:if test="count(//combat[@repechage = 'true' and starts-with(@reference, '5.')]) &gt; 0">
+			<div class="w3-container w3-small w3-text-blue" style="font-weight: bold;">Barrages 5èmes</div>
+			<xsl:call-template name="barrageNiveau">
+				<xsl:with-param name="niveau" select="5."/>
+			</xsl:call-template>
+		</xsl:if>
+
+		<xsl:if test="count(//combat[@repechage = 'true' and starts-with(@reference, '7.')]) &gt; 0">
+			<div class="w3-container w3-small w3-text-blue" style="font-weight: bold;">Barrages 7èmes</div>
+			<xsl:call-template name="barrageNiveau">
+				<xsl:with-param name="niveau" select="7."/>
+			</xsl:call-template>
+		</xsl:if>
+	</xsl:template>
+
+	<!-- Un niveau (3, 5 ou 7) de tableau de barrage -->
+	<xsl:template name="barrageNiveau">
+		<xsl:param name="niveau"/>
+		
+		<div class="w3-panel">
+			<table class="tas-tableau-combat">
+				<tbody>
+					<!-- BOUCLE SUR LES COMBATS -->
+					<xsl:for-each select="//combat[@repechage = 'true' and starts-with(@reference, $niveau)]">
+						<xsl:sort select="@reference" order="ascending"/>
+						<!-- une ligne par combat de 1er niveau -->
+						<tr>
+							<td>
+								<xsl:call-template name="contenuCombat">
+									<xsl:with-param name="combat" select="."/>
+									<xsl:with-param name="rowspan" select="1"/>
+									<xsl:with-param name="niveaumax" select="0"/>
+								</xsl:call-template>
+							</td>
+							<td>
+								<xsl:call-template name="combatVainqueur">
+									<xsl:with-param name="combat" select="."/>
+									<xsl:with-param name="rowspan" select="1"/>
+								</xsl:call-template>
+							</td>	
+						</tr>
+					</xsl:for-each>
+				</tbody>
+			</table>
+		</div>
+	</xsl:template>
+	
 	<!-- Combat -->
 	<xsl:template match="combat">
 		<!-- DEFINITION DES VARIABLES -->
@@ -230,7 +313,7 @@
 		<xsl:param name="fillerPrev"/>
 		<xsl:param name="spacerPrev"/>
 		<xsl:param name="hcombatPrev"/>
-
+		<xsl:param name="prefixRef"/>
 
 		<xsl:variable name="p">
 			<xsl:call-template name="power">
@@ -240,17 +323,17 @@
 		</xsl:variable>
 
 		<xsl:variable name="niveau" select="@niveau"/>
-		<xsl:variable name="countNiveau" select="count(//combat[@niveau = $niveau and @repechage = $repechage])"/>
+		<xsl:variable name="countNiveau" select="count(//combat[@niveau = $niveau and @repechage = $repechage and starts-with(@reference, $prefixRef)])"/>
 
 		<xsl:variable name="niveauNext">
-			<xsl:for-each select="//combat[@niveau &lt;= $niveau and @repechage = $repechage and generate-id() = generate-id(key('combats', @niveau)[1])]">
+			<xsl:for-each select="//combat[@niveau &lt;= $niveau and @repechage = $repechage and generate-id() = generate-id(key('combats', @niveau)[1]) and starts-with(@reference, $prefixRef)]">
 				<xsl:sort select="@niveau" data-type="number" order="descending"/>
 				<xsl:if test="position() = 2">
 					<xsl:value-of select="@niveau"/>
 				</xsl:if>
 			</xsl:for-each>
 		</xsl:variable>
-		<xsl:variable name="countNiveauNext" select="count(//combat[@niveau = $niveauNext and @repechage = $repechage])"/>
+		<xsl:variable name="countNiveauNext" select="count(//combat[@niveau = $niveauNext and @repechage = $repechage and starts-with(@reference, $prefixRef)])"/>
 
 		<!-- hauteur d'une ligne de combat -->
 		<xsl:variable name="hcombat">
@@ -302,7 +385,7 @@
 							</xsl:choose>
 						</xsl:when>
 						<xsl:when test="not($countNiveauPrev = $countNiveau)">
-							<xsl:value-of select="$fillerPrev + 2 * $hcombat + $spacerPrev"/>
+							<xsl:value-of select="$fillerPrev + 2 * $hcombatPrev + $spacerPrev"/>
 						</xsl:when>
 					</xsl:choose>
 				</xsl:when>
@@ -355,6 +438,13 @@
 					</xsl:attribute>
 				</xsl:if>
 
+				<xsl:variable name="affj2">
+					<xsl:choose>
+						<xsl:when test="$countNiveauPrev = $countNiveau">false</xsl:when>
+						<xsl:otherwise>true</xsl:otherwise>
+					</xsl:choose>
+				</xsl:variable>
+				
 				<!-- une case = 1 combat (div + table de 2 lignes) incluant la barre verticale-->
 				<xsl:call-template name="contenuCombatRepechage">
 					<xsl:with-param name="combat" select="."/>
@@ -363,6 +453,7 @@
 					<xsl:with-param name="filler" select="$filler"/>
 					<xsl:with-param name="spacer" select="$spacer"/>
 					<xsl:with-param name="hcombat" select="$hcombat"/>
+					<xsl:with-param name="afficheScoreJudoka2" select="$affj2"/>
 				</xsl:call-template>
 			</td>
 
@@ -422,7 +513,7 @@
       </xsl:choose>-->
 		</xsl:variable>
 
-		<xsl:for-each select="//combat[@niveau = $niveauNext and @repechage = $repechage]">
+		<xsl:for-each select="//combat[@niveau = $niveauNext and @repechage = $repechage and starts-with(@reference, $prefixRef)]">
 			<xsl:sort select="@reference" order="ascending"/>
 			<xsl:if test="position() = $p3">
 				<xsl:apply-templates select=".">
@@ -445,6 +536,7 @@
 					<xsl:with-param name="fillerPrev" select="$filler"/>
 					<xsl:with-param name="spacerPrev" select="$spacer"/>
 					<xsl:with-param name="hcombatPrev" select="$hcombat"/>
+					<xsl:with-param name="prefixRef" select="$prefixRef"/>
 				</xsl:apply-templates>
 			</xsl:if>
 		</xsl:for-each>
@@ -743,6 +835,7 @@
 		<xsl:param name="filler"/>
 		<xsl:param name="spacer"/>
 		<xsl:param name="hcombat"/>
+		<xsl:param name="afficheScoreJudoka2"/>
 
 		<!-- Information sur les 2 combattants -->
 		<xsl:variable name="participant1" select="$combat/score[1]/@judoka"/>
@@ -1006,12 +1099,19 @@
 
 								<!-- Affiche le score -->
 								<xsl:if test="$combat/@niveau != $niveaumax">
-									<xsl:variable name="ref" select="$combat/feuille/@ref2"/>
-									<xsl:variable name="combat_prec" select="//combat[@reference = $ref]"/>
+									<xsl:choose>
+										<xsl:when test="$afficheScoreJudoka2 = 'true'">
+											<xsl:variable name="ref" select="$combat/feuille/@ref2"/>
+											<xsl:variable name="combat_prec" select="//combat[@reference = $ref]"/>
 
-									<xsl:call-template name="score">
-										<xsl:with-param name="combat" select="$combat_prec"/>
-									</xsl:call-template>
+											<xsl:call-template name="score">
+												<xsl:with-param name="combat" select="$combat_prec"/>
+											</xsl:call-template>
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:call-template name="scoreVide"/>
+										</xsl:otherwise>
+									</xsl:choose>
 								</xsl:if>
 							</xsl:when>
 							<xsl:otherwise>
@@ -1053,7 +1153,6 @@
 			</table>
 		</div>
 	</xsl:template>
-
 
 	<!-- Score d'un combat -->
 	<xsl:template name="score">
@@ -1123,11 +1222,12 @@
 								</header>
 							</div>
 							<!-- Affiche le score -->
+							<!--
 							<xsl:variable name="ref" select="$combat/feuille/@ref1"/>
-							<xsl:variable name="combat_prec" select="//combat[@reference = $ref]"/>
+							<xsl:variable name="combat_prec" select="//combat[@reference = $ref]"/> -->
 							
 							<xsl:call-template name="score">
-								<xsl:with-param name="combat" select="$combat_prec"/>
+								<xsl:with-param name="combat" select="$combat"/>
 							</xsl:call-template>		
 						</td>
 					</tr>
@@ -1175,11 +1275,11 @@
 								</header>
 							</div>
 							<!-- Affiche le score -->
-							<xsl:variable name="ref" select="$combat/feuille/@ref1"/>
-							<xsl:variable name="combat_prec" select="//combat[@reference = $ref]"/>
+							<!--<xsl:variable name="ref" select="$combat/feuille/@ref1"/>
+							<xsl:variable name="combat_prec" select="//combat[@reference = $ref]"/>-->
 
 							<xsl:call-template name="score">
-								<xsl:with-param name="combat" select="$combat_prec"/>
+								<xsl:with-param name="combat" select="$combat"/>
 							</xsl:call-template>
 						</td>
 					</tr>

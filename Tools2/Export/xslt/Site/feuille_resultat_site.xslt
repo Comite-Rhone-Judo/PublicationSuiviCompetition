@@ -127,7 +127,7 @@
 						<xsl:value-of select="concat('poule',$numero,'Collapse')"/>
 					</xsl:attribute>
 				</img>
-				<img class="img" id="poule1Expand" width="25" src="../img/down_circular-32.png" style="display: none;" >
+				<img class="img" width="25" src="../img/down_circular-32.png" style="display: none;" >
 					<xsl:attribute name="id">
 						<xsl:value-of select="concat('poule',$numero,'Expand')"/>
 					</xsl:attribute>
@@ -224,11 +224,7 @@
                 <div class="w3-badge w3-light-grey">
 					<xsl:value-of select="position()"/>
 				</div>
-            </td>
-			<td class="w3-center w3-border w3-border-black w3-grey tas-poule-combat">
-                    &nbsp;
-			</td>
-			
+            </td>	
 			<xsl:for-each select="key('participants', $poule)">
 				<xsl:sort select="@position" data-type="number" order="ascending"/>
 				<xsl:variable name="participant2" select="@judoka"/>

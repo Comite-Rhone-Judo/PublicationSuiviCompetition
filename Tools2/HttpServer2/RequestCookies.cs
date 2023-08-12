@@ -41,7 +41,7 @@ namespace HttpServer
                         if (char.IsWhiteSpace(ch) || ch == '=')
                         {
                             if (start == -1)
-                                return; // todo: decide if an exception should be thrown.
+                                return;
                             name = cookies.Substring(start, i - start);
                             start = -1;
                             ++state;

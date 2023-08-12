@@ -40,7 +40,6 @@ namespace HttpServer
 	/// }
 	/// </code>
 	/// </example>
-	/// todo: add two examples, using SendHeaders/SendBody and just the Body stream.
 	public class HttpResponse : IHttpResponse
 	{
 		private const string DefaultContentType = "text/html;charset=UTF-8";

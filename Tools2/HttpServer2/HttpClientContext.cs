@@ -14,7 +14,6 @@ namespace HttpServer
     /// <remarks>
     /// Remember to <see cref="Start"/> after you have hooked the <see cref="RequestReceived"/> event.
     /// </remarks>
-    /// TODO: Maybe this class should be broken up into HttpClientChannel and HttpClientContext?
     public class HttpClientContext : IHttpClientContext ,IDisposable
     {
         private readonly byte[] _buffer;
