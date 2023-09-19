@@ -113,7 +113,7 @@ namespace HttpServer.Templates
             foreach (KeyValuePair<string, object> variable in variables)
                 sb.AppendLine("this." + variable.Key + " = (" + GetTypeName(variable.Value.GetType()) + ")variables[\"" + variable.Key + "\"];");
 
-            // HACK: Mono treats unreferenced variables as errors during the compile, so we need to complete this pointless little exercise
+            // Mono treats unreferenced variables as errors during the compile, so we need to complete this pointless little exercise
             // in case some of the variables are not used in the template
             foreach (string variableName in variables.Keys)
                 sb.AppendLine("this." + variableName + ".ToString();");
@@ -317,7 +317,6 @@ namespace HttpServer.Templates
                         "Line number: " + CompErr.Line + Environment.NewLine +
                         "Error: " + CompErr.ErrorNumber + " '" + CompErr.ErrorText + "'";
                 }
-                // TODO: Use the logging engine
                 Console.WriteLine(errs);
                 return null;
             }

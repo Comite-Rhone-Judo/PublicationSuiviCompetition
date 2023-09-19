@@ -23,13 +23,13 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <param name="phase">la phase</param>
-        public static List<FileWithChecksum> GenereWebSitePhase(JudoData DC, Phase phase)
+        public static List<FileWithChecksum> GenereWebSitePhase(JudoData DC, Phase phase, bool publierProchainsCombats, bool publierAffectationTapis)
         {
             List<string> urls = new List<string>();
-            List<FileWithChecksum> output = new List<FileWithChecksum>();  
+            List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             i_vue_epreuve_interface i_vue_epreuve = null;
-            if(phase.isEquipe)
+            if (phase.isEquipe)
             {
                 i_vue_epreuve = DC.Organisation.vepreuves_equipe.FirstOrDefault(o => o.id == phase.epreuve);
             }
@@ -37,25 +37,31 @@ namespace AppPublication.Export
             {
                 i_vue_epreuve = DC.Organisation.vepreuves.FirstOrDefault(o => o.id == phase.epreuve);
             }
-            
+
             //Epreuve epreuve = DC.Epreuve.FirstOrDefault(o => o.id == phase.epreuve);
             Competition compet = DC.Organisation.Competitions.FirstOrDefault(o => o.id == i_vue_epreuve.competition);
 
             bool site = true;
-            ExportEnum type = ExportEnum.Site_FeuilleCombat;
+            // Ne genere que les fichiers necessaires
+            if (publierProchainsCombats)
+            {
+                ExportEnum type = ExportEnum.Site_FeuilleCombat;
 
-            string epreuve_nom = i_vue_epreuve != null ? (i_vue_epreuve.id + "_" + i_vue_epreuve.nom) : null;
-            string directory = ExportTools.getDirectory(site, epreuve_nom, null);
-            string filename = ExportTools.getFileName(type);
-            string fileSave = directory + "/" + filename.Replace("/", "_");
-            XsltArgumentList argsList = new XsltArgumentList();
-            argsList.AddParam("istapis", "", "epreuve");
+                string epreuve_nom = i_vue_epreuve != null ? (i_vue_epreuve.id + "_" + i_vue_epreuve.nom) : null;
+                string directory = ExportTools.getDirectory(site, epreuve_nom, null);
+                string filename = ExportTools.getFileName(type);
+                string fileSave = directory + "/" + filename.Replace("/", "_");
+                XsltArgumentList argsList = new XsltArgumentList();
+                argsList.AddParam("istapis", "", "epreuve");
 
-            XmlDocument xmlFeuilleCombat = ExportXML.CreateDocumentFeuilleCombat(DC, phase, null);
-            ExportXML.AddClubs(ref xmlFeuilleCombat, DC);
+                XmlDocument xmlFeuilleCombat = ExportXML.CreateDocumentFeuilleCombat(DC, phase, null);
+                ExportXML.AddPublicationInfo(ref xmlFeuilleCombat, publierProchainsCombats, publierAffectationTapis);
+                ExportXML.AddClubs(ref xmlFeuilleCombat, DC);
 
-            ExportHTML.ToHTMLSite(xmlFeuilleCombat, type, fileSave, argsList);
-            urls.Add(fileSave + ".html");
+                ExportHTML.ToHTMLSite(xmlFeuilleCombat, type, fileSave, argsList);
+                urls.Add(fileSave + ".html");
+            }
+
             if (phase.typePhase == (int)TypePhaseEnum.Poule)
             {
                 ExportEnum type2 = ExportEnum.Site_Poule_Resultat;
@@ -66,6 +72,7 @@ namespace AppPublication.Export
                 XsltArgumentList argsList2 = new XsltArgumentList();
 
                 XmlDocument xmlResultat = ExportXML.CreateDocumentPhase(i_vue_epreuve, phase, DC);
+                ExportXML.AddPublicationInfo(ref xmlResultat, publierProchainsCombats, publierAffectationTapis);
                 ExportXML.AddCeintures(ref xmlResultat, DC);
                 ExportXML.AddClubs(ref xmlResultat, DC);
 
@@ -82,6 +89,7 @@ namespace AppPublication.Export
                 XsltArgumentList argsList2 = new XsltArgumentList();
 
                 XmlDocument xmlResultat = ExportXML.CreateDocumentPhase(i_vue_epreuve, phase, DC);
+                ExportXML.AddPublicationInfo(ref xmlResultat, publierProchainsCombats, publierAffectationTapis);
                 ExportXML.AddCeintures(ref xmlResultat, DC);
                 ExportXML.AddClubs(ref xmlResultat, DC);
 
@@ -102,7 +110,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <param name="tapis"></param>
-        public static List<FileWithChecksum> GenereWebSiteTapis(JudoData DC, int tapis)
+        public static List<FileWithChecksum> GenereWebSiteTapis(JudoData DC, int tapis, bool publierProchainsCombats, bool publierAffectationTapis)
         {
             bool site = true;
             List<FileWithChecksum> output = new List<FileWithChecksum>();
@@ -115,6 +123,8 @@ namespace AppPublication.Export
             argsList.AddParam("istapis", "", "tapis");
 
             XmlDocument xml = ExportXML.CreateDocumentFeuilleCombat(DC, null, tapis);
+            ExportXML.AddPublicationInfo(ref xml, publierProchainsCombats, publierAffectationTapis);
+
             ExportXML.AddClubs(ref xml, DC);
             ExportHTML.ToHTMLSite(xml, type, fileSave, argsList);
             // return new List<string> { fileSave + ".html" };
@@ -130,7 +140,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <param name="epreuve"></param>
-        public static List<FileWithChecksum> GenereWebSiteClassement(JudoData DC, i_vue_epreuve_interface epreuve)
+        public static List<FileWithChecksum> GenereWebSiteClassement(JudoData DC, i_vue_epreuve_interface epreuve, bool publierProchainsCombats, bool publierAffectationTapis)
         {
             bool site = true;
             List<FileWithChecksum> output = new List<FileWithChecksum>();
@@ -143,6 +153,8 @@ namespace AppPublication.Export
             XsltArgumentList argsList = new XsltArgumentList();
 
             XmlDocument xml = ExportXML.CreateDocumentEpreuve(DC, epreuve);
+            ExportXML.AddPublicationInfo(ref xml, publierProchainsCombats, publierAffectationTapis);
+
             ExportXML.AddClubs(ref xml, DC);
             ExportHTML.ToHTMLSite(xml, type, fileSave, argsList);
             // return new List<string> { fileSave + ".html" };
@@ -157,7 +169,7 @@ namespace AppPublication.Export
         /// Génére les premiers combats de tous les tapis
         /// </summary>
         /// <param name="DC"></param>
-        public static List<FileWithChecksum> GenereWebSiteAllTapis(JudoData DC)
+        public static List<FileWithChecksum> GenereWebSiteAllTapis(JudoData DC, bool publierProchainsCombats, bool publierAffectationTapis)
         {
             bool site = true;
             List<FileWithChecksum> output = new List<FileWithChecksum>();
@@ -170,6 +182,8 @@ namespace AppPublication.Export
             argsList.AddParam("istapis", "", "alltapis");
 
             XmlDocument xml = ExportXML.CreateDocumentFeuilleCombat(DC, null, null);
+            ExportXML.AddPublicationInfo(ref xml, publierProchainsCombats, publierAffectationTapis);
+
             ExportXML.AddClubs(ref xml, DC);
 
             ExportHTML.ToHTMLSite(xml, type, fileSave, argsList);
@@ -185,7 +199,7 @@ namespace AppPublication.Export
         /// Génére les premiers combats de tous les tapis
         /// </summary>
         /// <param name="DC"></param>
-        public static List<FileWithChecksum> GenereWebSitePrintTapis(JudoData DC, int nb)
+        public static List<FileWithChecksum> GenereWebSitePrintTapis(JudoData DC, int nb, bool publierProchainsCombats, bool publierAffectationTapis)
         {
             bool site = true;
             List<FileWithChecksum> output = new List<FileWithChecksum>();
@@ -212,7 +226,8 @@ namespace AppPublication.Export
             string fileSave = directory + "/" + filename.Replace("/", "_");
             XsltArgumentList argsList = new XsltArgumentList();
 
-            XmlDocument docmenu = ExportXML.CreateDocumentMenu(DC, false, true);
+            XmlDocument docmenu = ExportXML.CreateDocumentMenu(DC);
+            ExportXML.AddPublicationInfo(ref docmenu, publierProchainsCombats, publierAffectationTapis);
 
             argsList.AddParam("style", "", ExportTools.getStyleDirectory(site: true));
             argsList.AddParam("js", "", ExportTools.getJS());
@@ -286,24 +301,35 @@ namespace AppPublication.Export
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             bool site = true;
-            ExportEnum type = ExportEnum.Site_Menu;
+            ExportEnum type;
             string directory = ExportTools.getDirectory(site, null, null);
+
+            XmlDocument docmenu = ExportXML.CreateDocumentMenu(DC);
+            ExportXML.AddPublicationInfo(ref docmenu, publierProchainsCombats, publierAffectationTapis);
+            
+            // Genere le menu de d'avancement
+            type = ExportEnum.Site_MenuAvancement;
+            XsltArgumentList argsList = new XsltArgumentList(); 
             string filename = ExportTools.getFileName(type);
-            string fileSave = directory + "/" + filename.Replace("/", "_");
-            XsltArgumentList argsList = new XsltArgumentList();
-
-            XmlDocument docmenu = ExportXML.CreateDocumentMenu(DC, publierProchainsCombats, publierAffectationTapis);
-
+            string fileSave = directory + "/" + filename.Replace("/", "_");            
             ExportHTML.ToHTMLSite(docmenu, type, fileSave, argsList);
-
             output.Add(new FileWithChecksum(fileSave + ".html"));
-            output.Add(new FileWithChecksum(fileSave + ".xml"));
+
+            // Genere le menu de classement
+            type = ExportEnum.Site_MenuClassement;
+            XsltArgumentList argsList2 = new XsltArgumentList();
+            string filename2 = ExportTools.getFileName(type);
+            string fileSave2 = directory + "/" + filename2.Replace("/", "_");
+            ExportHTML.ToHTMLSite(docmenu, type, fileSave2, argsList2);
+            output.Add(new FileWithChecksum(fileSave2 + ".html"));
+
+            // output.Add(new FileWithChecksum(fileSave + ".xml"));
             if (publierProchainsCombats)
             {
-                output = output.Concat(GenereWebSitePrintTapis(DC, 0)).ToList();
-                output = output.Concat(GenereWebSitePrintTapis(DC, 1)).ToList();
-                output = output.Concat(GenereWebSitePrintTapis(DC, 2)).ToList();
-                output = output.Concat(GenereWebSitePrintTapis(DC, 4)).ToList();
+                output = output.Concat(GenereWebSitePrintTapis(DC, 0, publierProchainsCombats, publierAffectationTapis)).ToList();
+                output = output.Concat(GenereWebSitePrintTapis(DC, 1, publierProchainsCombats, publierAffectationTapis)).ToList();
+                output = output.Concat(GenereWebSitePrintTapis(DC, 2, publierProchainsCombats, publierAffectationTapis)).ToList();
+                output = output.Concat(GenereWebSitePrintTapis(DC, 4, publierProchainsCombats, publierAffectationTapis)).ToList();
             }
 
             // Debug.WriteLine(string.Format("GenereWebSiteMenu {0}", output.Count));
@@ -318,7 +344,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static List<FileWithChecksum> GenereWebSiteAffectation(JudoData DC)
+        public static List<FileWithChecksum> GenereWebSiteAffectation(JudoData DC, bool publierProchainsCombats, bool publierAffectationTapis)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
@@ -330,6 +356,7 @@ namespace AppPublication.Export
             XsltArgumentList argsList = new XsltArgumentList();
 
             XmlDocument docAffectation = ExportXML.CreateDocumentAffectationTapis(DC);
+            ExportXML.AddPublicationInfo(ref docAffectation, publierProchainsCombats, publierAffectationTapis);
 
             ExportHTML.ToHTMLSite(docAffectation, type, fileSave, argsList);
 

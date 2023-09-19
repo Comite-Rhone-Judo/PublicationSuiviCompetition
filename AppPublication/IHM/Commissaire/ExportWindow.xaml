@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"        
         Closing="MainWindow1_Closing"  Closed="MainWin_Closed_1" 
-        Background="Black" Title="Application Publication Suivi de Compétition" Name="MainWin" Focusable="True"
+        Background="Black" Title="{Binding AppVersion, StringFormat=Application Publication Suivi de Compétition - {0}}" Name="MainWin" Focusable="True"
         mc:Ignorable="d" SizeToContent="Width" Height="920">
     <!--Style="{StaticResource WindowStyle}"-->
 
@@ -119,6 +119,8 @@
                     <!-- Entete -->
                     <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
                         <TextBlock Text="Génération du suivi de la compétition" Style="{StaticResource Header1TextStyle}"/>
+                        <TextBlock Text="{Binding ServerData.competition.remoteId}" Style="{StaticResource Header1TextStyle}"/>
+                        <TextBlock Text="{Binding ServerData.competition.nom}" Style="{StaticResource Header1TextStyle}"/>
                     </StackPanel>
                     <!-- Contenu -->
                     <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="White" Margin="10 0 10 10">
@@ -161,7 +163,8 @@
                             <!-- Boutons-->
                             <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                                    <CheckBox Content="Publier 'Prochains Combats'" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.PublierProchainsCombats}" IsEnabled="{Binding Path=GestionSite.IsGenerationActive, Converter={StaticResource BoolNotConverter}}" />
+                                    <!-- <CheckBox Content="Publier 'Prochains Combats'" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.PublierProchainsCombats}" IsEnabled="{Binding Path=GestionSite.IsGenerationActive, Converter={StaticResource BoolNotConverter}}" /> -->
+                                    <CheckBox Content="Publier 'Prochains Combats'" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.PublierProchainsCombats}" IsEnabled="false" />
                                     <CheckBox Content="Publier 'Affectation tapis'" Style="{StaticResource CheckboxStyle}"
                                                 IsChecked="{Binding Path=GestionSite.PublierAffectationTapis}"
                                                 IsEnabled="{Binding Path=GestionSite.IsGenerationActive, Converter={StaticResource BoolNotConverter}}"

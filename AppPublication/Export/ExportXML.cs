@@ -20,6 +20,22 @@ namespace AppPublication.Export
 {
     public static class ExportXML
     {
+        public static void AddPublicationInfo(ref XmlDocument doc, bool publierProchainsCombats = false, bool publierAffectationTapis = true)
+        {
+            // Recupere le flag de la competition
+            XmlNodeList listcomp = doc.GetElementsByTagName(ConstantXML.Competition);
+
+            XmlAttribute attrProchainCombat = doc.CreateAttribute(ConstantXML.publierProchainsCombats);
+            attrProchainCombat.Value = publierProchainsCombats.ToString();
+            XmlAttribute attrAffectationTapis = doc.CreateAttribute(ConstantXML.publierAffectationTapis);
+            attrAffectationTapis.Value = publierAffectationTapis.ToString();
+            foreach (XmlNode node in listcomp)
+            {
+                node.Attributes.Append(attrProchainCombat);
+                node.Attributes.Append(attrAffectationTapis);
+            }
+        }
+
         /// <summary>
         /// Ajout des logos et autres images dans le xml
         /// </summary>
@@ -216,15 +232,10 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static XmlDocument CreateDocumentMenu(JudoData DC, bool publierProchainsCombats, bool publierAffectationTapis)
+        public static XmlDocument CreateDocumentMenu(JudoData DC)
         {
             XDocument doc = new XDocument();
             XElement xcompetitions = new XElement(ConstantXML.Competitions);
-
-            // Ajoute le drapeau pour indiquer si on veut les prochains combats ou non
-            xcompetitions.SetAttributeValue(ConstantXML.publierProchainsCombats, publierProchainsCombats);
-            xcompetitions.SetAttributeValue(ConstantXML.publierAffectationTapis, publierAffectationTapis);
-
             doc.Add(xcompetitions);
 
             IList<Competition> competitions = DC.Organisation.Competitions.ToList();

@@ -37,4 +37,5 @@ using System.Windows;
                                               // dans l'application ou dans l'un des dictionnaires de ressources spécifiques à un thème)
 )]
 
+[assembly: log4net.Config.XmlConfigurator(ConfigFileExtension = "config", Watch = true)]
 

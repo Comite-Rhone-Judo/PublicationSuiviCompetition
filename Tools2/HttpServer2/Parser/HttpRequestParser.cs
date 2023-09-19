@@ -83,7 +83,7 @@ namespace HttpServer.Parser
         protected void OnFirstLine(string value)
         {
             //
-            //todo: In the interest of robustness, servers SHOULD ignore any empty line(s) received where a Request-Line is expected. 
+            // In the interest of robustness, servers SHOULD ignore any empty line(s) received where a Request-Line is expected. 
             // In other words, if the server is reading the protocol stream at the beginning of a message and receives a CRLF first, it should ignore the CRLF.
             //
             _log.Write(this, LogPrio.Debug, "Got request: " + value);

@@ -1,14 +1,13 @@
 ﻿<?xml version="1.0"?>
 
-<xsl:stylesheet version="1.0"
-xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
-  <xsl:output method="html" indent="yes" />
-  <xsl:param name="style"></xsl:param>
-  <xsl:param name="js"></xsl:param>
+  <xsl:output method="html" indent="yes"/>
+  <xsl:param name="style"/>
+  <xsl:param name="js"/>
 
   <xsl:template match="/">
-    <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
+    <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
     <html style="overflow:hidden;height: 100%;">
       <xsl:apply-templates/>
     </html>
@@ -17,22 +16,22 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
   <xsl:template match="/*">
     <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
       <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />-->
-      <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-      <meta http-equiv="Pragma" content="no-cache" />
-      <meta http-equiv="Expires" content="0" />
-      <link type="text/css" rel="stylesheet" href="../style/style_menu.css" ></link>
-      <link type="text/css" rel="stylesheet" href="../style/style_iframe1.css" ></link>
+      <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+      <meta http-equiv="Pragma" content="no-cache"/>
+      <meta http-equiv="Expires" content="0"/>
+      <link type="text/css" rel="stylesheet" href="../style/style_menu.css"/>
+      <link type="text/css" rel="stylesheet" href="../style/style_iframe1.css"/>
 
       <!--<script src="../js/jquery.min.js"></script>
       <script src="../js/script.js"></script>-->
 
-      <script type="text/javascript" >
+      <script type="text/javascript">
         <xsl:value-of select="$js"/>
       </script>
-      
-      
+
+
 
       <!--<xsl:variable name="css1">
         file:///<xsl:value-of select="$style"/>
@@ -58,41 +57,42 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     </head>
     <body style="height: 100%;">
 
-   
+
       <div class="btn_menu">
         <a class="btn btn-warning" href="../common/menu.html" role="button">
-			<img class="img" src="../img/home-32.png" alt="Menu"/>
-		</a>
+          <img class="img" src="../img/home-32.png" alt="Menu"/>
+        </a>
       </div>
-      
+
       <div class="panel panel-primary">
         <div class="panel-heading clearfix" style="text-align:center;">
-        
-                <span style="font-size:1.0em;">
-                  <xsl:value-of select="//competition[1]/titre"/>
-                  <xsl:text> - </xsl:text>
-                  <xsl:value-of select="//competition[1]/lieu"/>
-                </span>
-             
+
+          <span style="font-size:1.0em;">
+            <xsl:value-of select="//competition[1]/titre"/>
+            <xsl:text> - </xsl:text>
+            <xsl:value-of select="//competition[1]/lieu"/>
+          </span>
+
         </div>
 
         <div class="panel-body">
           <div class="col-md-12" style="height:50%;padding-left:0px; padding-right:0px;">
             <div class="video">
               <div class="embed-container embed-responsive">
-                <iframe class="embed-responsive-item" src="../common/tapis_All0.html" frameborder="0" allowfullscreen=""></iframe>
+                <iframe class="embed-responsive-item" src="../common/tapis_All0.html"
+                  frameborder="0" allowfullscreen=""/>
               </div>
-            </div>            
+            </div>
           </div>
           <div class="col-md-12" style="height:50%;padding-left:0px; padding-right:0px;">
             <div class="video">
               <div class="embed-container">
-                <iframe src="../common/tapis_All0.html" frameborder="0" allowfullscreen=""></iframe>
+                <iframe src="../common/tapis_All0.html" frameborder="0" allowfullscreen=""/>
               </div>
             </div>
           </div>
         </div>
-      </div>  
+      </div>
     </body>
   </xsl:template>
 

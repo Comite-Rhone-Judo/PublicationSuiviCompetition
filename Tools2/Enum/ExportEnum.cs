@@ -53,6 +53,8 @@
         Site_ClassementFinal = 110,
         Site_FeuilleCombatTapis = 111,
         Site_AffectationTapis = 112,
-        Site_Checksum = 113
+        Site_Checksum = 113,
+        Site_MenuClassement = 114,
+        Site_MenuAvancement = 115
     }
 }

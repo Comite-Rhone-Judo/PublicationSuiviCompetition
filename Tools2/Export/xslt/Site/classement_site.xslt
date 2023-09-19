@@ -61,16 +61,15 @@
 			<!-- PANNEAU DE NAVIGATION -->
 			<div class="w3-sidebar w3-bar-block w3-border-right w3-animate-left tas-navigation-panel" id="navigationPanel">
 				<button onclick="closeElement('navigationPanel')" class="w3-bar-item w3-large">Fermer &times;</button>
-				<button class="w3-bar-item w3-button navButton" onclick="location.reload()">Actualiser</button>
 				<xsl:if test="$affProchainCombats">
 					<a class="w3-bar-item w3-button navButton" href="../common/se-prepare.html">Se prépare</a>
 					<a class="w3-bar-item w3-button navButton" href="../common/prochains-combats.html">Prochains combats</a>
 				</xsl:if>
 				<xsl:if test="$affAffectationTapis">
-					<a class="w3-bar-item w3-button navButton w3-indigo" href="../common/affectation_tapis.html">Affectations</a>
+					<a class="w3-bar-item w3-button navButton" href="../common/affectation_tapis.html">Affectations</a>
 				</xsl:if>
 				<a class="w3-bar-item w3-button navButton" href="../common/avancement.html">Avancements</a>
-				<a class="w3-bar-item w3-button navButton" href="../common/classement.html">Classements</a>
+				<a class="w3-bar-item w3-button navButton w3-indigo" href="../common/classement.html">Classements</a>
 			</div>
 
 			<!-- Div vide pour aligner le contenu avec le bandeau de titre de taille fixe -->
@@ -87,7 +86,7 @@
 						</h4>
 					</div>
 
-					<div id="Affectations" class="w3-container w3-border pane w3-animate-left">
+					<div id="Classements" class="w3-container w3-border pane w3-animate-left">
 						<!-- une ligne de cellule pour occuper toute le largeur de l'ecran -->
 						<div class="w3-cell-row">
 							<!-- Chaque panneau est un panel contenant une carte, utilise cell + mobile pour gerer horizontal/vertical selon la taille de l'ecran -->
@@ -98,12 +97,13 @@
 									<div class="w3-card">
 										<!-- entete avec un bouton permet d'ouvrir fermer le contenu de la carte -->
 										<header class="w3-bar w3-light-green w3-large">
-											<button class="w3-bar-item w3-light-green" onclick="toggleElement('AffectationFemininesContentPanel')">
-												<img class="img" id="AffectationFemininesContentPanelCollapse" width="25" src="../img/up_circular-32.png" style="display: none;"/>
-												<img class="img" id="AffectationFemininesContentPanelExpand" width="25" src="../img/down_circular-32.png"/>
-												Catégorie féminine </button>
+											<button class="w3-bar-item w3-light-green" onclick="toggleElement('ClassementFemininesContentPanel')">
+												<img class="img" id="ClassementFemininesContentPanelCollapse" width="25" src="../img/up_circular-32.png" style="display: none;"/>
+												<img class="img" id="ClassementFemininesContentPanelExpand" width="25" src="../img/down_circular-32.png"/>
+												Catégorie féminine
+											</button>
 										</header>
-										<div class="w3-container" id="AffectationFemininesContentPanel" style="display:none">
+										<div class="w3-container" id="ClassementFemininesContentPanel" style="display:none">
 											<xsl:apply-templates select="./epreuve[@sexe = 'F']"/>
 										</div>
 									</div>
@@ -115,13 +115,16 @@
 									<div class="w3-card">
 
 										<header class="w3-bar w3-light-green w3-large">
-											<button class="w3-bar-item w3-light-green" onclick="toggleElement('AffectationMasculinsContentPanel')">
-												<img class="img" id="AffectationMasculinsContentPanelCollapse" width="25" src="../img/up_circular-32.png" style="display: none;"/>
-												<img class="img" id="AffectationMasculinsContentPanelExpand" width="25" src="../img/down_circular-32.png"/>
-												Catégorie Masculine </button>
+											<button class="w3-bar-item w3-light-green" onclick="toggleElement('ClassementMasculinsContentPanel')">
+												<img class="img" id="ClassementMasculinsContentPanelCollapse" width="25" src="../img/up_circular-32.png" style="display: none;"/>
+												<img class="img" id="ClassementMasculinsContentPanelExpand" width="25" src="../img/down_circular-32.png"/>
+												Catégorie Masculine
+											</button>
 										</header>
 
-										<div class="w3-container" id="AffectationMasculinsContentPanel" style="display:none;">
+										<div class="w3-container"
+											id="ClassementMasculinsContentPanel"
+											style="display:none;">
 											<xsl:apply-templates select="./epreuve[@sexe = 'M']"/>
 										</div>
 									</div>
@@ -132,12 +135,15 @@
 								<div class="w3-panel w3-cell w3-mobile">
 									<div class="w3-card">
 										<header class="w3-bar w3-light-green w3-large">
-											<button class="w3-bar-item w3-light-green" onclick="toggleElement('AffectationNoSexeContentPanel')">
-												<img class="img" id="AffectationNoSexeContentPanelCollapse" width="25" src="../img/up_circular-32.png" style="display: none;"/>
-												<img class="img" id="AffectationNoSexeContentPanelExpand" width="25" src="../img/down_circular-32.png"/> 
-												Sans Catégorie </button>
+											<button class="w3-bar-item w3-light-green" onclick="toggleElement('ClassementNoSexeContentPanel')">
+												<img class="img" id="ClassementNoSexeContentPanelCollapse" width="25" src="../img/up_circular-32.png" style="display: none;"/>
+												<img class="img" id="ClassementNoSexeContentPanelExpand" width="25" src="../img/down_circular-32.png"/>
+												Sans Catégorie
+											</button>
 										</header>
-										<div class="w3-container" id="AffectationNoSexeContentPanel" style="display:none;">
+
+										<div class="w3-container" id="ClassementNoSexeContentPanel"
+											style="display:none;">
 											<xsl:apply-templates select="./epreuve[not(@sexe)]"/>
 										</div>
 									</div>
@@ -151,43 +157,21 @@
 	</xsl:template>
 
 	<!-- TEMPLATES -->
-	<!-- Bouton affectations par epreuve -->
-	<xsl:template name="affectation_epreuve" match="epreuve">
-		<div class="w3-panel">
-			<div class="w3-card">
-				<header class="w3-container w3-pale-yellow w3-large w3-padding-small">
-					<xsl:value-of select="./@libelle"/>
-					<xsl:value-of select="./@nom"/>
-				</header>
-				<div class="w3-container w3-cell w3-cell-middle w3-padding">
-					<xsl:choose>
-						<xsl:when test="count(./TapisEpreuve/tapis) > 1">
-							<xsl:text>Tapis&#32;</xsl:text>
-							<xsl:for-each select="./TapisEpreuve/tapis">
-								<xsl:sort select="./@no_tapis"/>
-								<xsl:value-of select="./@no_tapis"/>
-								<xsl:if test="position() &lt; last() - 1">
-									<xsl:text>, </xsl:text>
-								</xsl:if>
-								<xsl:if test="position() = last() - 1">
-									<xsl:text> et </xsl:text>
-								</xsl:if>
-							</xsl:for-each>
-						</xsl:when>
-						<xsl:when test="count(./TapisEpreuve/tapis) = 1">
-							<xsl:text>Tapis&#32;</xsl:text>
-							<xsl:for-each select="./TapisEpreuve/tapis">
-								<xsl:sort select="./@no_tapis"/>
-								<xsl:value-of select="./@no_tapis"/>
-							</xsl:for-each>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:text>&nbsp;</xsl:text>
-						</xsl:otherwise>
-					</xsl:choose>
-				</div>
-			</div>
-		</div>
-	</xsl:template>
+	<!-- Bouton classement par epreuve -->
+	<xsl:template name="classement_epreuve" match="epreuve">
 
+		<!--<xsl:variable select="number(./@typePhase)" name="type1"/>-->
+		<!--<xsl:variable select="number(./@typePhase)" name="type2"/>-->
+
+		<a class="w3-button w3-panel w3-card w3-block w3-pale-yellow w3-large w3-round-large w3-padding-small">
+			<xsl:attribute name="href">
+				<xsl:text>..</xsl:text>
+				<xsl:value-of select="@directory"/>
+				<xsl:text>/classement_final</xsl:text>
+				<xsl:text>.html</xsl:text>
+			</xsl:attribute>
+			<xsl:value-of select="./@libelle"/>
+			<xsl:value-of select="./@nom"/>
+		</a>
+	</xsl:template>
 </xsl:stylesheet>

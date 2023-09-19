@@ -470,8 +470,6 @@ namespace Tools.Outils
                         lStatusDetail = ex.Message;
                     }
                 }
-
-
             }
             catch (Exception ex)
             {
@@ -516,9 +514,10 @@ namespace Tools.Outils
             if (!String.IsNullOrEmpty(SiteFTPDistant) && !String.IsNullOrEmpty(LoginSiteFTPDistant) && !string.IsNullOrEmpty(PasswordSiteFTPDistant))
             {
                 // Test les parametres de connection
+                FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
+
                 try
                 {
-                    FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
                     List<FtpProfile> profiles = ftpClient.AutoDetect(true);
 
                     if (profiles.Count > 0)
@@ -532,6 +531,10 @@ namespace Tools.Outils
                 {
                     LogTools.Log(ex);
                     throw ex;
+                }
+                finally
+                {
+                    ftpClient?.Dispose();
                 }
             }
 
@@ -619,10 +622,14 @@ namespace Tools.Outils
             }
             finally
             {
+                // disconnect et forcer le dispose pour s'assurer que la connection est bien coupe (cf. pb de 2 cnx max surt Free)
                 if (ftpClient.IsConnected)
                 {
                     ftpClient.Disconnect();
                 }
+
+                // Detruit le client
+                ftpClient?.Dispose();
             }
 
             // Restaure le status apres l'operation
@@ -760,19 +767,26 @@ namespace Tools.Outils
             }
             catch(Exception ex)
             {
-                cStatus = new StatusMiniSite(cStatus.State, "Erreur FTP", ex.Message);
+                output.IsSuccess = false;
+                string msg = (ex.InnerException != null) ? String.Format("{0} ({1})", ex.Message, ex.InnerException.Message) : ex.Message;
+                cStatus = new StatusMiniSite(cStatus.State, "Erreur FTP", msg);
                 LogTools.Log(ex);
             }
             finally
             {
+
+                // disconnect et forcer le dispose pour s'assurer que la connection est bien coupe (cf. pb de 2 cnx max surt Free)
                 if (ftpClient.IsConnected)
                 {
                     ftpClient.Disconnect();
                 }
+
+                // Detruit le client
+                ftpClient?.Dispose();
             }
 
-            // Restaure le status apres l'operation
-            Status = cStatus;
+            // RAZ le status apres la fin du transfert
+            Status = new StatusMiniSite(StateMiniSiteEnum.Idle); ;
             
             return output;
         }

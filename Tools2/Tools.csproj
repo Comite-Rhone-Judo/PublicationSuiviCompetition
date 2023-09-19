@@ -2277,26 +2277,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Export\style\site\style_classement.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Export\style\site\style_combats.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Export\style\site\style_feuille_competition.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Export\style\site\style_feuille_tableau.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Export\style\style_combats.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -2509,21 +2489,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Export\js\jquery.min.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Export\js\script.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Export\style\site\style_iframe1.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Export\xslt\Site\temp_1_site.xslt">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -2548,24 +2513,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Export\style\site\style_menu.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Export\xslt\Site\feuille_matchs_site.xslt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Export\style\site\style_iframe2.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Export\style\site\style_iframe4.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -2986,6 +2936,32 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Export\img\site\home-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\site\down_circular-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\site\up_circular-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\js\site-display.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\style\site\w3.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\style\site\style-classement.css" />
+    <EmbeddedResource Include="Export\style\site\style-tableau.css" />
+    <EmbeddedResource Include="Export\style\site\style-poule.css" />
+    <EmbeddedResource Include="Export\style\site\style-common.css" />
+    <EmbeddedResource Include="Export\xslt\Site\avancement_site.xslt">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Export\xslt\Site\classement_site.xslt">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

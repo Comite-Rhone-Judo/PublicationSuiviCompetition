@@ -121,7 +121,6 @@ namespace HttpServer
 				}
 				catch(Exception err)
 				{
-					// todo, write logging code
 					throw new Exception("Error deleting temporary file!", err);
 				}
 			}

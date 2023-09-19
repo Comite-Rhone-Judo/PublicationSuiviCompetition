@@ -623,6 +623,22 @@ namespace AppPublication.Controles
                                             // Extrait les fichiers generes qui sont differents du cache
                                             List<FileWithChecksum> chkToSync = checksumGenere.Except(checksumCache, new FileWithChecksumComparer()).ToList();
                                             filesToSync = chkToSync.Select(o => o.File).ToList();
+
+                                            // For Tests only
+                                            /*
+                                            if (filesToSync.Count <= 0)
+                                            {
+                                                Random rnd1 = new Random();
+                                                Random rnd2 = new Random();
+
+                                                int nbFile = rnd1.Next(checksumGenere.Count);
+
+                                                for(int i = 0; i < nbFile; i++)
+                                                {
+                                                    filesToSync.Add(checksumGenere[rnd2.Next(checksumGenere.Count)].File);
+                                                }
+                                            }
+                                            */
                                         }
 
                                         // Synchronise le site FTP
@@ -712,10 +728,10 @@ namespace AppPublication.Controles
                         break;
                     */
                     case SiteEnum.AllTapis:
-                        urls = ExportSite.GenereWebSiteAllTapis(DC);
+                        urls = ExportSite.GenereWebSiteAllTapis(DC, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation);
                         break;
                     case SiteEnum.Classement:
-                        urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC));
+                        urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation);
                         break;
                     case SiteEnum.Index:
                         urls = ExportSite.GenereWebSiteIndex();
@@ -724,13 +740,13 @@ namespace AppPublication.Controles
                         urls = ExportSite.GenereWebSiteMenu(DC, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation);
                         break;
                     case SiteEnum.Phase:
-                        urls = ExportSite.GenereWebSitePhase(DC, genere.phase);
+                        urls = ExportSite.GenereWebSitePhase(DC, genere.phase, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation);
                         break;
                     case SiteEnum.Tapis:
-                        urls = ExportSite.GenereWebSiteTapis(DC, (int)genere.tapis);
+                        urls = ExportSite.GenereWebSiteTapis(DC, (int)genere.tapis, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation);
                         break;
                     case SiteEnum.AffectationTapis:
-                        urls = ExportSite.GenereWebSiteAffectation(DC);
+                        urls = ExportSite.GenereWebSiteAffectation(DC, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation);
                         break;
                 }
             }
