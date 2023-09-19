@@ -1160,15 +1160,29 @@
 		<div class="w3-left-align">
 			<span class="w3-small">
 				<xsl:choose>
-					<xsl:when test="$combat/@scorevainqueur != ''">
-						<xsl:value-of select="substring($combat/@scorevainqueur, 0, 3)"/>
+					<xsl:when test="$combat/@scorevainqueur != ''">					
+						<xsl:choose>
+							<xsl:when test="$typeCompetition != '1'">
+								<xsl:value-of select="substring($combat/@scorevainqueur, 0, 3)"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="$combat/@scorevainqueur"/>
+							</xsl:otherwise>
+						</xsl:choose>													
 						<xsl:if test="$typeCompetition != '1'">
 							<span class="w3-text-red">
 								<xsl:value-of select="$combat/@penvainqueur"/>
 							</span>
 						</xsl:if>
 						<xsl:text disable-output-escaping="yes">/</xsl:text>
-						<xsl:value-of select="substring($combat/@scoreperdant, 0, 3)"/>
+						<xsl:choose>
+							<xsl:when test="$typeCompetition != '1'">
+								<xsl:value-of select="substring($combat/@scoreperdant, 0, 3)"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="$combat/@scoreperdant"/>
+							</xsl:otherwise>
+						</xsl:choose>													
 						<xsl:if test="$typeCompetition != '1'">
 							<span class="w3-text-red">
 								<xsl:value-of select="$combat/@penperdant"/>

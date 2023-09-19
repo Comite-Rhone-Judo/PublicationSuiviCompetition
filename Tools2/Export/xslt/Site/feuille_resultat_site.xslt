@@ -93,11 +93,9 @@
 
 						<xsl:if test="//epreuve[1]/@sexe='F'">
 							Féminines&nbsp;
-						
 						</xsl:if>
 						<xsl:if test="//epreuve[1]/@sexe='M'">
 							Masculins&nbsp;
-						
 						</xsl:if>
 						<xsl:value-of select="//epreuve[1]/@nom"/>						
 					</h5>
@@ -165,7 +163,11 @@
                         </td>
                         <td class="w3-small tas-poule-heading">
                             <div class="w3-center w3-padding-small">
-                                Pt
+
+								<xsl:choose>
+									<xsl:when test="$typeCompetition != '1'">Pt</xsl:when>
+									<xsl:when test="$typeCompetition = '1'">Score</xsl:when>
+								</xsl:choose>
                             </div>
                         </td>
                     </tr>
@@ -286,7 +288,14 @@
 					<tr>
 						<td class="tas-poule-combat-gagnant">
 							<span>
-								<xsl:value-of select="substring(./@scorevainqueur, 0, 3)"/>
+								<xsl:choose>
+									<xsl:when test="$typeCompetition != '1'">
+										<xsl:value-of select="substring(./@scorevainqueur, 0, 3)"/>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="./@scorevainqueur"/>
+									</xsl:otherwise>
+								</xsl:choose>
 							</span>
 							
 							<xsl:if test="$typeCompetition != '1'">
@@ -299,7 +308,15 @@
 					<tr>
 						<td>
 							<span>
-								<xsl:value-of select="substring(./@scoreperdant, 0, 3)"/>
+								<xsl:choose>
+									<xsl:when test="$typeCompetition != '1'">
+										<xsl:value-of select="substring(./@scoreperdant, 0, 3)"/>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="./@scoreperdant"/>
+									</xsl:otherwise>
+								</xsl:choose>
+								
 							</span>
 							<xsl:if test="$typeCompetition != '1'">
 								<span class="w3-text-red">

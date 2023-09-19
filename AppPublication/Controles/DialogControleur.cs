@@ -28,11 +28,27 @@ namespace AppPublication.Controles
             LogTools.HeaderType = "PC PUBLICATION";
 
             InitControleur();
+
+            AppVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
         #endregion
 
         #region PROPRIETES
+
+        private string _appVersion = string.Empty;
+        public string AppVersion
+        {
+            get
+            {
+                return _appVersion;
+            }
+            private set
+            {
+                _appVersion = value;
+                NotifyPropertyChanged("AppVersion");
+            }
+        }
 
         /// <summary>
         /// Acces a l'instance du singleton - Lecture seule

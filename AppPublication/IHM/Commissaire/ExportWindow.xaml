@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"        
         Closing="MainWindow1_Closing"  Closed="MainWin_Closed_1" 
-        Background="Black" Title="Application Publication Suivi de Compétition" Name="MainWin" Focusable="True"
+        Background="Black" Title="{Binding AppVersion, StringFormat=Application Publication Suivi de Compétition - {0}}" Name="MainWin" Focusable="True"
         mc:Ignorable="d" SizeToContent="Width" Height="920">
     <!--Style="{StaticResource WindowStyle}"-->
 
