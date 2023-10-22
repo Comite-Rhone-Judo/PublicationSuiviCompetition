@@ -4,6 +4,7 @@
 #define MyAppName "Publication Suivi Competition"
 #define MyAppPublisher "Comité du Rhone-Lyon Metropole Judo"
 #define MyAppExeName "AppPublication.exe"
+#define InstallerName "PublicationSuiviCompetitionInstaller_v" + MyAppVersion
 
 ; ################# WARNING ##############
 ; Do Not configure MyAppVersion, it will be added automatically using PreBuild Event
@@ -26,7 +27,7 @@ DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir=.
-OutputBaseFilename=PublicationSuiviCompetitionInstaller
+OutputBaseFilename={#InstallerName}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -35,7 +36,7 @@ WizardStyle=modern
 Name: "french"; MessagesFile: "compiler:Languages\French.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checked
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]
 Source: "..\..\..\AppPublication\bin\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
