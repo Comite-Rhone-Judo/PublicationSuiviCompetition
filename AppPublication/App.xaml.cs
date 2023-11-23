@@ -19,7 +19,10 @@ namespace AppPublication
         /// </summary>
         public App()
         {
-            BasicConfigurator.Configure();
+            // BasicConfigurator.Configure();
+            log4net.Config.XmlConfigurator.Configure();
+
+            LogTools.Trace("App is starting");
 
             CultureInfo culture = new CultureInfo("fr");
             Thread.CurrentThread.CurrentCulture = culture;

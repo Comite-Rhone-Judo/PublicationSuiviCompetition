@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Net.Mail;
 
 namespace Tools.Outils
 {
@@ -514,7 +515,8 @@ namespace Tools.Outils
             if (!String.IsNullOrEmpty(SiteFTPDistant) && !String.IsNullOrEmpty(LoginSiteFTPDistant) && !string.IsNullOrEmpty(PasswordSiteFTPDistant))
             {
                 // Test les parametres de connection
-                FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
+                // FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
+                FtpClient ftpClient = GetAndConfigureFtpClient();
 
                 try
                 {
@@ -539,6 +541,17 @@ namespace Tools.Outils
             }
 
             return output;
+        }
+
+        private FtpClient GetAndConfigureFtpClient()
+        {
+            // Le client FTP pour la connection
+            FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
+            // Autorise l'utilisation de n'importe quel certificat
+            ftpClient.Config.EncryptionMode = FtpEncryptionMode.Auto;
+            ftpClient.Config.ValidateAnyCertificate = true;
+
+            return ftpClient;
         }
 
         /// <summary>
@@ -577,7 +590,8 @@ namespace Tools.Outils
             }
 
             // Le client FTP pour la connection
-            FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
+            // FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
+            FtpClient ftpClient = GetAndConfigureFtpClient();
 
             try
             {
@@ -692,7 +706,8 @@ namespace Tools.Outils
             }
 
             // Le client FTP pour la connection
-            FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
+            // FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
+            FtpClient ftpClient = GetAndConfigureFtpClient();
 
             try
             {
@@ -786,7 +801,7 @@ namespace Tools.Outils
             }
 
             // RAZ le status apres la fin du transfert
-            Status = new StatusMiniSite(StateMiniSiteEnum.Idle); ;
+            Status = cStatus;
             
             return output;
         }
