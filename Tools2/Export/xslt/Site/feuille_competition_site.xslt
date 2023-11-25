@@ -608,7 +608,7 @@
 									<!-- Insert le nom du club uniquement au debut du tableau -->
 									<xsl:if test="$combat/@niveau = $niveaumax">
 										<footer class="w3-tiny">
-											<xsl:variable name="ecartement1" select="//phase[@id = $combat/phase]/@ecartement"/>
+											<xsl:variable name="ecartement1" select="//phase[@id = $combat/@phase]/@ecartement"/>
 
 											<xsl:choose>
 												<xsl:when test="$ecartement1 = '3'">
@@ -740,7 +740,7 @@
 									<!-- Insert le nom du club uniquement au debut du tableau -->
 									<xsl:if test="$combat/@niveau = $niveaumax">
 										<footer class="w3-tiny">
-											<xsl:variable name="ecartement2" select="//phase[@id = $combat/phase]/@ecartement"/>
+											<xsl:variable name="ecartement2" select="//phase[@id = $combat/@phase]/@ecartement"/>
 
 											<xsl:choose>
 												<xsl:when test="$ecartement2 = '3'">
@@ -906,7 +906,7 @@
 									<!-- Insert le nom du club uniquement au debut du tableau -->
 									<xsl:if test="$combat/@niveau = $niveaumax">
 										<footer class="w3-tiny">
-											<xsl:variable name="ecartement1" select="//phase[@id = $combat/phase]/@ecartement"/>
+											<xsl:variable name="ecartement1" select="//phase[@id = $combat/@phase]/@ecartement"/>
 
 											<xsl:choose>
 												<xsl:when test="$ecartement1 = '3'">
@@ -1056,7 +1056,7 @@
 									<!-- Insert le nom du club uniquement au debut du tableau -->
 									<xsl:if test="$combat/@niveau = $niveaumax">
 										<footer class="w3-tiny">
-											<xsl:variable name="ecartement2" select="//phase[@id = $combat/phase]/@ecartement"/>
+											<xsl:variable name="ecartement2" select="//phase[@id = $combat/@phase]/@ecartement"/>
 
 											<xsl:choose>
 												<xsl:when test="$ecartement2 = '3'">
