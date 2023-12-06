@@ -39,8 +39,22 @@
             It will throw exceptions for permanent failures like invalid host or invalid credentials.
             </summary>
         </member>
+        <member name="M:FluentFTP.AsyncFtpClient.AutoDetect(FluentFTP.Model.Functions.FtpAutoDetectConfig,System.Threading.CancellationToken)">
+            <summary>
+            Automatic FTP and FTPS connection negotiation.
+            This method tries every possible combination of the FTP connection properties, and returns the list of successful connection profiles.
+            You can configure it to stop after finding the first successful profile, or to collect all successful profiles.
+            You can then generate code for the profile using the FtpProfile.ToCode method.
+            If no successful profiles are found, a blank list is returned.
+            </summary>
+            <param name="config">The coresponding config object for this API</param>
+            <param name="token">The token that can be used to cancel the entire process</param>
+            <returns></returns>
+        </member>
         <member name="M:FluentFTP.AsyncFtpClient.AutoDetect(System.Boolean,System.Boolean,System.Threading.CancellationToken)">
             <summary>
+            LEGACY CALL FORMAT, to be deleted sometime in the future
+            
             Automatic FTP and FTPS connection negotiation.
             This method tries every possible combination of the FTP connection properties, and returns the list of successful connection profiles.
             You can configure it to stop after finding the first successful profile, or to collect all successful profiles.
@@ -345,6 +359,14 @@
             <param name="stopPosition">The last byte index that should be downloaded, or 0 if the entire file should be downloaded.</param>
             <returns>If true then the file was downloaded, false otherwise.</returns>
         </member>
+        <member name="M:FluentFTP.AsyncFtpClient.DownloadUriBytes(System.String,System.IProgress{FluentFTP.FtpProgress},System.Threading.CancellationToken)">
+            <summary>
+            Downloads the specified uri and return the raw byte array.
+            </summary>
+            <param name="uri">The uri of the item to download</param>
+            <param name="progress">Provide a callback to track download progress.</param>
+            <returns>A byte array containing the contents of the downloaded file if successful, otherwise null.</returns>
+        </member>
         <member name="M:FluentFTP.AsyncFtpClient.EmptyDirectory(System.String,System.Threading.CancellationToken)">
             <summary>
             Deletes the contents of the specified directory, without deleting the directory itself.
@@ -425,7 +447,7 @@
             5. XSHA512 command
             6. XCRC command
             </remarks>
-            <param name="path">Full or relative path of the file to checksum</param>
+            <param name="remotePath">Full or relative path of the file to checksum</param>
             <param name="token">The token that can be used to cancel the entire process</param>
             <param name="algorithm">Specify an algorithm that you prefer, or NONE to use the first available algorithm. If the preferred algorithm is not supported, a blank hash is returned.</param>
             <returns><see cref="T:FluentFTP.FtpHash"/> object containing the value and algorithm. Use the <see cref="P:FluentFTP.FtpHash.IsValid"/> property to
@@ -433,14 +455,14 @@
             the underlying calls.</returns>
             <exception cref="T:FluentFTP.Exceptions.FtpCommandException">The command fails</exception>
         </member>
-        <member name="M:FluentFTP.AsyncFtpClient.GetHashInternalAsync(System.String,System.String,System.Threading.CancellationToken)">
-            <summary>
-            Gets the hash of the specified file using the given command.
-            </summary>
-        </member>
         <member name="M:FluentFTP.AsyncFtpClient.SetHashAlgorithmInternalAsync(FluentFTP.FtpHashAlgorithm,System.Threading.CancellationToken)">
             <summary>
             Sets the hash algorithm on the server to be used with the HASH command asynchronously.
+            </summary>
+        </member>
+        <member name="M:FluentFTP.AsyncFtpClient.GetHashInternalAsync(System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Gets the hash of the specified file using the given command.
             </summary>
         </member>
         <member name="M:FluentFTP.AsyncFtpClient.HashCommandInternalAsync(System.String,System.Threading.CancellationToken)">
@@ -571,7 +593,7 @@
         </member>
         <member name="M:FluentFTP.AsyncFtpClient.GetObjectInfo(System.String,System.Boolean,System.Threading.CancellationToken)">
             <summary>
-            Return information about a remote file system object asynchronously. 
+            Return information about a remote file system object asynchronously.
             </summary>
             <remarks>
             You should check the <see cref="P:FluentFTP.Client.BaseClient.BaseFtpClient.Capabilities"/> property for the <see cref="F:FluentFTP.FtpCapability.MLSD"/>
@@ -709,7 +731,7 @@
             <param name="type">ASCII/Binary</param>
             <param name="checkIfFileExists">Only set this to false if you are SURE that the file does not exist. If true, it reads the file size and saves it into the stream length.</param>
             <param name="token">The token that can be used to cancel the entire process</param>
-            <returns>A stream for writing to the file on the server</returns>
+            <returns>A stream for appending to the file on the server</returns>
         </member>
         <member name="M:FluentFTP.AsyncFtpClient.OpenAppend(System.String,FluentFTP.FtpDataType,System.Int64,System.Threading.CancellationToken)">
             <summary>
@@ -724,7 +746,18 @@
             <br> >0 => File length is KNOWN. No need to determine it</br>
             </param>
             <param name="token">The token that can be used to cancel the entire process</param>
-            <returns>A stream for writing to the file on the server</returns>
+            <returns>A stream for appending to the file on the server</returns>
+        </member>
+        <member name="M:FluentFTP.AsyncFtpClient.OpenAppendInternal(System.String,FluentFTP.FtpDataType,System.Int64,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+            Internal routine
+            </summary>
+            <param name="path"></param>
+            <param name="type"></param>
+            <param name="fileLen"></param>
+            <param name="ignoreStaleData">Normally false. Obsolete API uses true</param>
+            <param name="token">The token that can be used to cancel the entire process</param>
+            <returns>A stream for appending the file on the server</returns>
         </member>
         <member name="M:FluentFTP.AsyncFtpClient.OpenDataStreamAsync(System.String,System.Int64,System.Threading.CancellationToken)">
             <summary>
@@ -781,6 +814,18 @@
             <param name="token">The token that can be used to cancel the entire process</param>
             <returns>A stream for reading the file on the server</returns>
         </member>
+        <member name="M:FluentFTP.AsyncFtpClient.OpenReadInternal(System.String,FluentFTP.FtpDataType,System.Int64,System.Int64,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+            Internal routine
+            </summary>
+            <param name="path"></param>
+            <param name="type"></param>
+            <param name="restart"></param>
+            <param name="fileLen"></param>
+            <param name="ignoreStaleData">Normally false. Obsolete API uses true</param>
+            <param name="token">The token that can be used to cancel the entire process</param>
+            <returns>A stream for reading the file on the server</returns>
+        </member>
         <member name="M:FluentFTP.AsyncFtpClient.OpenWrite(System.String,FluentFTP.FtpDataType,System.Boolean,System.Threading.CancellationToken)">
             <summary>
             Opens the specified file for writing. Please call GetReply() after you have successfully transferred the file to read the "OK" command sent by the server and prevent stale data on the socket.
@@ -805,6 +850,17 @@
             </param>
             <param name="token">The token that can be used to cancel the entire process</param>
             <returns>A stream for writing to the file on the server</returns>
+        </member>
+        <member name="M:FluentFTP.AsyncFtpClient.OpenWriteInternal(System.String,FluentFTP.FtpDataType,System.Int64,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+            Internal routine
+            </summary>
+            <param name="path"></param>
+            <param name="type"></param>
+            <param name="fileLen"></param>
+            <param name="ignoreStaleData">Normally false. Obsolete API uses true</param>
+            <param name="token">The token that can be used to cancel the entire process</param>
+            <returns>A stream for writing the file on the server</returns>
         </member>
         <member name="M:FluentFTP.AsyncFtpClient.Rename(System.String,System.String,System.Threading.CancellationToken)">
             <summary>
@@ -1306,20 +1362,20 @@
         </member>
         <member name="M:FluentFTP.Client.BaseClient.BaseFtpClient.GetEnhancedPassivePort(FluentFTP.FtpReply,System.String@,System.Int32@)">
             <summary>
-            Parse the host and port number from an EPSV response
+            Parse the advertised port number from an EPSV response and derive an IPAD
             Handles (|||nnnn|) and (!!!nnnn!)
             </summary>
         </member>
         <member name="M:FluentFTP.Client.BaseClient.BaseFtpClient.GetPassivePort(FluentFTP.FtpDataConnectionType,FluentFTP.FtpReply,System.String@,System.Int32@)">
             <summary>
-            Parse the host and port number from an PASV or PASVEX response
+            Parse the advertised IPAD and advertised port number from a PASV response and derive the final IPAD
             </summary>
         </member>
         <member name="M:FluentFTP.Client.BaseClient.BaseFtpClient.GetLocalAddress(System.Net.IPAddress)">
             <summary>
-            Returns the IP address to be sent to the server for the active connection.
+            Returns the IPAD to be sent to the server for the active connection.
             </summary>
-            <param name="ip"></param>
+            <param name="ipad"></param>
             <returns></returns>
         </member>
         <member name="M:FluentFTP.Client.BaseClient.BaseFtpClient.GetReplyInternal">
@@ -1466,6 +1522,13 @@
             <summary>
             Log the version of the running assembly
             </summary>
+        </member>
+        <member name="M:FluentFTP.Client.BaseClient.BaseFtpClient.LogFunction(System.String,System.Object)">
+            <summary>
+            Log a function call with relevant arguments
+            </summary>
+            <param name="function">The name of the API function</param>
+            <param name="args">The args passed to the function</param>
         </member>
         <member name="M:FluentFTP.Client.BaseClient.BaseFtpClient.LogFunction(System.String,System.Object[])">
             <summary>
@@ -1721,22 +1784,20 @@
             Returns the remote end point of the FTP socket, if it is available.
             </summary>
         </member>
-        <member name="M:FluentFTP.Client.BaseClient.BaseFtpClient.ReadStaleData(System.Boolean,System.String)">
+        <member name="M:FluentFTP.Client.BaseClient.BaseFtpClient.ReadStaleData(System.String)">
             <summary>
             Data shouldn't be on the socket, if it is it probably means we've been disconnected.
             Read and discard whatever is there.
             Returns the stale data as text, if any, or null if none was found.
             </summary>
-            <param name="logData">copy stale data information to logs?</param>
             <param name="logFrom">for the log information</param>
         </member>
-        <member name="M:FluentFTP.Client.BaseClient.BaseFtpClient.ReadStaleDataAsync(System.Boolean,System.String,System.Threading.CancellationToken)">
+        <member name="M:FluentFTP.Client.BaseClient.BaseFtpClient.ReadStaleDataAsync(System.String,System.Threading.CancellationToken)">
             <summary>
             Data shouldn't be on the socket, if it is it probably means we've been disconnected.
             Read and discard whatever is there.
             Returns the stale data as text, if any, or null if none was found.
             </summary>
-            <param name="logData">copy stale data information to logs?</param>
             <param name="logFrom">called from where (text)</param>
             <param name="token">The token that can be used to cancel the entire process</param>
         </member>
@@ -1828,7 +1889,7 @@
             Class responsible for automatically detecting working FTP settings to connect to a target FTP server.
             </summary>
         </member>
-        <member name="M:FluentFTP.Client.Modules.ConnectModule.AutoDetect(FluentFTP.FtpClient,System.Boolean,System.Boolean)">
+        <member name="M:FluentFTP.Client.Modules.ConnectModule.AutoDetect(FluentFTP.FtpClient,FluentFTP.Model.Functions.FtpAutoDetectConfig)">
             <summary>
             Automatic FTP and FTPS connection negotiation.
             This method tries every possible combination of the FTP connection properties, and returns the list of successful connection profiles.
@@ -1837,7 +1898,7 @@
             If no successful profiles are found, a blank list is returned.
             </summary>
         </member>
-        <member name="M:FluentFTP.Client.Modules.ConnectModule.AutoDetectAsync(FluentFTP.AsyncFtpClient,System.Boolean,System.Boolean,System.Threading.CancellationToken)">
+        <member name="M:FluentFTP.Client.Modules.ConnectModule.AutoDetectAsync(FluentFTP.AsyncFtpClient,FluentFTP.Model.Functions.FtpAutoDetectConfig,System.Threading.CancellationToken)">
             <summary>
             Automatic FTP and FTPS connection negotiation.
             This method tries every possible combination of the FTP connection properties, and returns the list of successful connection profiles.
@@ -1851,7 +1912,7 @@
             Check if the server refused to support one type of FTPS encryption, and if so blacklist that type of encryption.
             </summary>
         </member>
-        <member name="M:FluentFTP.Client.Modules.ConnectModule.IsPermanantConnectionFailure(System.Exception)">
+        <member name="M:FluentFTP.Client.Modules.ConnectModule.IsPermanentConnectionFailure(System.Exception)">
             <summary>
             Check if its an auth failure or something permanent,
             so that we don't need to retry all the connection config combinations and can hard-abort the AutoConnect.
@@ -2018,8 +2079,21 @@
             It will throw exceptions for permanent failures like invalid host or invalid credentials.
             </summary>
         </member>
+        <member name="M:FluentFTP.FtpClient.AutoDetect(FluentFTP.Model.Functions.FtpAutoDetectConfig)">
+            <summary>
+            Automatic FTP and FTPS connection negotiation.
+            This method tries every possible combination of the FTP connection properties, and returns the list of successful connection profiles.
+            You can configure it to stop after finding the first successful profile, or to collect all successful profiles.
+            You can then generate code for the profile using the FtpProfile.ToCode method.
+            If no successful profiles are found, a blank list is returned.
+            </summary>
+            <param name="config">The coresponding config object for this API</param>
+            <returns></returns>
+        </member>
         <member name="M:FluentFTP.FtpClient.AutoDetect(System.Boolean,System.Boolean)">
             <summary>
+            LEGACY CALL FORMAT, to be deleted sometime in the future
+            
             Automatic FTP and FTPS connection negotiation.
             This method tries every possible combination of the FTP connection properties, and returns the list of successful connection profiles.
             You can configure it to stop after finding the first successful profile, or to collect all successful profiles.
@@ -2304,6 +2378,15 @@
             <param name="stopPosition">The last byte index that should be downloaded, or 0 if the entire file should be downloaded.</param>
             <returns>If true then the file was downloaded, false otherwise.</returns>
         </member>
+        <member name="M:FluentFTP.FtpClient.DownloadUriBytes(System.Byte[]@,System.String,System.Action{FluentFTP.FtpProgress})">
+            <summary>
+            Downloads the specified uri and return the raw byte array.
+            </summary>
+            <param name="outBytes">The variable that will receive the bytes.</param>
+            <param name="uri">The uri of the item to download</param>
+            <param name="progress">Provide a callback to track download progress.</param>
+            <returns>Downloaded byte array</returns>
+        </member>
         <member name="M:FluentFTP.FtpClient.EmptyDirectory(System.String)">
             <summary>
             Deletes the contents of the specified directory, without deleting the directory itself.
@@ -2380,14 +2463,14 @@
             the underlying calls.</returns>
             <exception cref="T:FluentFTP.Exceptions.FtpCommandException">The command fails</exception>
         </member>
-        <member name="M:FluentFTP.FtpClient.GetHashInternal(System.String,System.String)">
-            <summary>
-            Gets the hash of the specified file using the given command.
-            </summary>
-        </member>
         <member name="M:FluentFTP.FtpClient.SetHashAlgorithmInternal(FluentFTP.FtpHashAlgorithm)">
             <summary>
             Sets the hash algorithm on the server to use for the HASH command. 
+            </summary>
+        </member>
+        <member name="M:FluentFTP.FtpClient.GetHashInternal(System.String,System.String)">
+            <summary>
+            Gets the hash of the specified file using the given command.
             </summary>
         </member>
         <member name="M:FluentFTP.FtpClient.HashCommandInternal(System.String)">
@@ -2592,7 +2675,7 @@
             <param name="path">The full or relative path to the file to be opened</param>
             <param name="type">ASCII/Binary</param>
             <param name="checkIfFileExists">Only set this to false if you are SURE that the file does not exist. If true, it reads the file size and saves it into the stream length.</param>
-            <returns>A stream for writing to the file on the server</returns>
+            <returns>A stream for appending to the file on the server</returns>
         </member>
         <member name="M:FluentFTP.FtpClient.OpenAppend(System.String,FluentFTP.FtpDataType,System.Int64)">
             <summary>
@@ -2606,7 +2689,17 @@
             <br> 0  => File length is unknown, try to determine it</br>
             <br> >0 => File length is KNOWN. No need to determine it</br>
             </param>
-            <returns>A stream for writing to the file on the server</returns>
+            <returns>A stream for appending to the file on the server</returns>
+        </member>
+        <member name="M:FluentFTP.FtpClient.OpenAppendInternal(System.String,FluentFTP.FtpDataType,System.Int64,System.Boolean)">
+            <summary>
+            Internal routine
+            </summary>
+            <param name="path"></param>
+            <param name="type"></param>
+            <param name="fileLen"></param>
+            <param name="ignoreStaleData">Normally false. Obsolete API uses true</param>
+            <returns>A stream for appending the file on the server</returns>
         </member>
         <member name="M:FluentFTP.FtpClient.OpenDataStream(System.String,System.Int64)">
             <summary>
@@ -2658,6 +2751,17 @@
             </param>
             <returns>A stream for reading the file on the server</returns>
         </member>
+        <member name="M:FluentFTP.FtpClient.OpenReadInternal(System.String,FluentFTP.FtpDataType,System.Int64,System.Int64,System.Boolean)">
+            <summary>
+            Internal routine
+            </summary>
+            <param name="path"></param>
+            <param name="type"></param>
+            <param name="restart"></param>
+            <param name="fileLen"></param>
+            <param name="ignoreStaleData">Normally false. Obsolete API uses true</param>
+            <returns>A stream for reading the file on the server</returns>
+        </member>
         <member name="M:FluentFTP.FtpClient.OpenWrite(System.String,FluentFTP.FtpDataType,System.Boolean)">
             <summary>
             Opens the specified file for writing. Please call GetReply() after you have successfully transferred the file to read the "OK" command sent by the server and prevent stale data on the socket.
@@ -2680,6 +2784,16 @@
             <br> >0 => File length is KNOWN. No need to determine it</br>
             </param>
             <returns>A stream for writing to the file on the server</returns>
+        </member>
+        <member name="M:FluentFTP.FtpClient.OpenWriteInternal(System.String,FluentFTP.FtpDataType,System.Int64,System.Boolean)">
+            <summary>
+            Internal routine
+            </summary>
+            <param name="path"></param>
+            <param name="type"></param>
+            <param name="fileLen"></param>
+            <param name="ignoreStaleData">Normally false. Obsolete API uses true</param>
+            <returns>A stream for writing the file on the server</returns>
         </member>
         <member name="M:FluentFTP.FtpClient.Rename(System.String,System.String)">
             <summary>
@@ -3275,8 +3389,29 @@
             </summary>
         </member>
         <member name="T:FluentFTP.FtpDataConnectionType">
+             <summary>
+             Data connection type
+            
+             PASV, EPSV, PORT, EPRT correspond directly to the "classic" FTP
+             connection types available on most "modern" FTP servers. These are
+             subject to the well known caveats and you might like to examine the
+             following enhanced alternatives:
+            
+             AutoActive, AutoPassive are FluentFTP extensions to make a fallback
+             to the non-extended versions of EPSV and EPRT automatic if not supported.
+            
+             PassiveExtended delivers the functionality of EPSV on servers that do not
+             support this command.
+            
+             PassiveAllowUnroutable makes using PASV work inside local networks.
+             </summary>
+        </member>
+        <member name="F:FluentFTP.FtpDataConnectionType.AutoActive">
             <summary>
-            Data connection type
+            This type of data connection attempts to use the EPRT command
+            and if the server does not support EPRT it falls back to the
+            PORT command before giving up unless you are connected via IPv6
+            in which case the PORT command is not supported.
             </summary>
         </member>
         <member name="F:FluentFTP.FtpDataConnectionType.AutoPassive">
@@ -3301,19 +3436,6 @@
             automatically be used in its place.
             </summary>
         </member>
-        <member name="F:FluentFTP.FtpDataConnectionType.PASVEX">
-            <summary>
-            Same as PASV except the host supplied by the server is ignored
-            and the data connection is made to the same address that the control
-            connection is connected to. This is useful in scenarios where the
-            server supplies a private/non-routable network address in the
-            PASV response. It's functionally identical to EPSV except some
-            servers may not implement the EPSV command. Please note that IPv6
-            does not support this type data connection. If you
-            ask for PASV and are connected via IPv6 EPSV will
-            automatically be used in its place.
-            </summary>
-        </member>
         <member name="F:FluentFTP.FtpDataConnectionType.EPSV">
             <summary>
             Extended passive data connection, recommended. Works
@@ -3322,14 +3444,6 @@
             the passive connection goes to the same address used
             in the control connection. This type of data connection
             supports IPv4 and IPv6.
-            </summary>
-        </member>
-        <member name="F:FluentFTP.FtpDataConnectionType.AutoActive">
-            <summary>
-            This type of data connection attempts to use the EPRT command
-            and if the server does not support EPRT it falls back to the
-            PORT command before giving up unless you are connected via IPv6
-            in which case the PORT command is not supported.
             </summary>
         </member>
         <member name="F:FluentFTP.FtpDataConnectionType.PORT">
@@ -3358,6 +3472,26 @@
             server outside of the client's network. The server
             connects to the IP address it sees the client coming
             from. This type of data connection supports IPv4 and IPv6.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.FtpDataConnectionType.PASVEX">
+            <summary>
+            Same as PASV except the host supplied by the server is ignored
+            and the data connection is made to the same address that the control
+            connection is connected to. This is useful in scenarios where the
+            server supplies a private/non-routable network address in the
+            PASV response. It's functionally identical to EPSV except some
+            servers may not implement the EPSV command. Please note that IPv6
+            does not support this type data connection. If you
+            ask for PASV and are connected via IPv6 EPSV will
+            automatically be used in its place.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.FtpDataConnectionType.PASVUSE">
+            <summary>
+            Same as PASV except the host supplied by the server is used even
+            if the address is an unroutable address. Useful if you are connecting
+            to a server with the same private network.
             </summary>
         </member>
         <member name="T:FluentFTP.FtpDataType">
@@ -3657,6 +3791,47 @@
         <member name="F:FluentFTP.FtpLocalExists.Append">
             <summary>
             Append is now renamed to Resume.
+            </summary>
+        </member>
+        <member name="T:FluentFTP.FtpNavigate">
+            <summary>
+            Directory navigation mode that control how server-side directory traversal is performed.
+            Manual mode is the legacy version which allows users full control of the working directory.
+            All the other modes are smarter automatic versions where FluentFTP will take control of the working directory
+            when executing FTP subcommands that accept a pathname[+filename] combination.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.FtpNavigate.Manual">
+            <summary>
+            The legacy navigation mode.
+            No automatic directory navigation performed by FluentFTP.
+            Users can `SetWorkingDirectory` (CWD).
+            Paths provided to FTP API can be absolute or relative to the current working directory.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.FtpNavigate.Auto">
+            <summary>
+            Fully automatic directory traversal on the server-side.
+            Users can `SetWorkingDirectory` (CWD), which will only temporarily override the CWD that will be set internally.
+            Paths provided to FTP API can be absolute or relative to the current working directory.
+            FluentFTP will automatically change the working directory based on the file path provided to the API method.
+            Fast mode.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.FtpNavigate.SemiAuto">
+            <summary>
+            Fully automatic directory traversal on the server-side.
+            FluentFTP will automatically change the working directory based on the file path provided to the API method.
+            Users can `SetWorkingDirectory` (CWD), which will only temporarily override the CWD that will be set internally.
+            Paths provided to FTP API can be absolute or relative to the current working directory.
+            This mode is slower than `Auto` because we will restore the directory (if needed) to the one the one that was active
+            prior to the API call.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.FtpNavigate.Conditional">
+            <summary>
+            Adds a flag to the enum that allows automatic directory traversal ONLY if the path contains spaces.
+            Only works with `Auto` or `SemiAuto` modes.
             </summary>
         </member>
         <member name="T:FluentFTP.FtpObjectSubType">
@@ -3971,7 +4146,11 @@
         </member>
         <member name="F:FluentFTP.FtpsBuffering.Auto">
             <summary>
-            Enables buffering in all cases except when using FTP proxies.
+            Enables SSL Buffering to massively speed up FTPS operations except when:
+            Under .NET 5.0 and later due to platform issues (see issue 682 in FluentFTP issue tracker).
+            On the control connection
+            For proxy connections
+            If NOOPs are configured to be used
             </summary>
         </member>
         <member name="F:FluentFTP.FtpsBuffering.Off">
@@ -3981,7 +4160,7 @@
         </member>
         <member name="F:FluentFTP.FtpsBuffering.On">
             <summary>
-            Always enables SSL Buffering to massively speed up FTPS operations.
+            Same as "Auto"
             </summary>
         </member>
         <member name="T:FluentFTP.FtpServer">
@@ -5316,6 +5495,12 @@
             Reset this value when a non-reconnect takes place
             </summary>
         </member>
+        <member name="P:FluentFTP.FtpClientState.IgnoreStaleData">
+            <summary>
+            Stale date will be on the control connection
+            Ignore it
+            </summary>
+        </member>
         <member name="M:FluentFTP.FtpClientState.Reset(System.Boolean)">
             <summary>
             These flags must be reset every time we connect, to allow for users to connect to
@@ -5538,6 +5723,7 @@
             <summary>
             Whether to use SSL Buffering to speed up data transfer during FTP operations.
             SSL Buffering is always disabled on .NET 5.0 and later due to platform issues (see issue 682 in FluentFTP issue tracker).
+            Also disabled on the control connection, for proxy connections and if NOOPs are configured to be used
             </summary>
         </member>
         <member name="P:FluentFTP.FtpConfig.SslSessionLength">
@@ -5561,6 +5747,13 @@
             Useful when you need to maintain the certificate chain validation,
             but skip the certificate revocation check.
             WARNING: Enabling this can cause memory leaks in some conditions (see issue #710 for details).
+            </summary>
+        </member>
+        <member name="P:FluentFTP.FtpConfig.Navigate">
+            <summary>
+            Directory navigation mode that controls how server-side directory traversal is performed.
+            Manual mode is the legacy version which allows users full control of the working directory.
+            All the other modes are smarter automatic versions where FluentFTP will take control of the working directory.
             </summary>
         </member>
         <member name="P:FluentFTP.FtpConfig.ListingDataType">
@@ -5642,6 +5835,12 @@
             Gets or sets the size of the file buffer when reading and writing files on the local file system.
             Used by <see cref="o:UploadFile"/>/<see cref="o:UploadFileAsync"/> and <see cref="o:DownloadFile"/>/<see cref="o:DownloadFileAsync"/>
             and all the other file and directory transfer methods.
+            </summary>
+        </member>
+        <member name="P:FluentFTP.FtpConfig.LocalFileShareOption">
+            <summary>
+            Gets or sets the FileShare setting to be used when opening a FileReadStream for uploading to the server,
+            which needs to be set to FileShare.ReadWrite in special cases to avoid denied access.
             </summary>
         </member>
         <member name="P:FluentFTP.FtpConfig.RetryAttempts">
@@ -6301,6 +6500,11 @@
             Human readable results
             </summary>
         </member>
+        <member name="M:FluentFTP.FtpResult.ToStatus">
+            <summary>
+            Convert this object to a FtpStatus enum for quick comparison.
+            </summary>
+        </member>
         <member name="T:FluentFTP.FtpSizeReply">
             <summary>
             Reply from a SIZE command
@@ -6314,6 +6518,32 @@
         <member name="P:FluentFTP.FtpSizeReply.Reply">
             <summary>
             The reply we got
+            </summary>
+        </member>
+        <member name="P:FluentFTP.Model.Functions.FtpAutoDetectConfig.CloneConnection">
+            <summary>
+            Use a new cloned FtpClient for testing connection profiles (true) or use the source FtpClient (false)
+            </summary>
+        </member>
+        <member name="P:FluentFTP.Model.Functions.FtpAutoDetectConfig.FirstOnly">
+            <summary>
+            Find all successful profiles (false) or stop after finding the first successful profile (true)
+            </summary>
+        </member>
+        <member name="P:FluentFTP.Model.Functions.FtpAutoDetectConfig.IncludeImplicit">
+            <summary>
+            If true, then try the very rarely used Implicit FTP mode.
+            </summary>
+        </member>
+        <member name="P:FluentFTP.Model.Functions.FtpAutoDetectConfig.RequireEncryption">
+            <summary>
+            If true, then we will not try the insecure FTP unencrypted mode, and only try FTPS.
+            If false, then both FTP and FTPS will be tried.
+            </summary>
+        </member>
+        <member name="P:FluentFTP.Model.Functions.FtpAutoDetectConfig.ProtocolPriority">
+            <summary>
+            List of protocols to be tried, and the order they should be tried in.
             </summary>
         </member>
         <member name="T:FluentFTP.Proxy.AsyncProxy.AsyncFtpClientBlueCoatProxy">
@@ -7983,11 +8213,17 @@
              See: https://learn.microsoft.com/en-us/windows/win32/secauthn/using-sspi-with-a-windows-sockets-client?source=recommendations
             
              Note:
+             Here is a quote from: https://github.com/dotnet/standard/issues/598#issuecomment-352148072
+             "The SslStream.ShutdownAsync API was added to .NET Core 2.0. It was also added to .NET Framework 4.7.
+             Logically, since .NET Core 2.0 and .NET Framework 4.7.1 are aligned with NETStandard2.0, it could
+             have been part of the NETStandard20 definition. But it wasn't due to when the NETStandard2.0 spec
+             was originally designed."
+             
+             Note:
              Microsoft says we should not override close():
              "Place all cleanup logic for your stream object in Dispose(Boolean). Do not override Close()."
              See: https://learn.microsoft.com/en-us/dotnet/api/system.io.stream.dispose?view=net-7.0
              But: We recently changed the below logic due to issue #1107, which solved the problem in part
-             
              </summary>
         </member>
         <member name="M:FluentFTP.Streams.FtpSslStream.#ctor(System.IO.Stream,System.Boolean,System.Net.Security.RemoteCertificateValidationCallback)">
@@ -8003,6 +8239,12 @@
         <member name="M:FluentFTP.Streams.FtpSslStream.ToString">
             <summary>
             For representing this SslStream in the log
+            </summary>
+        </member>
+        <member name="T:FluentFTP.Streams.SslDirectCall">
+            <summary>
+            Reflection hack to issue an SSL Close Notify Alert to cleanly shutdown an SSL session
+            Valid only on .NET Framework
             </summary>
         </member>
         <member name="T:FluentFTP.FtpSocketStream">

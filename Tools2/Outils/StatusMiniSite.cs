@@ -11,7 +11,8 @@ namespace Tools.Outils
         Stopped = -1,   // Le site est arrete
         Listening = 0,      // Le site local est demarre (en ecoute)
         Idle = 1,           // site distant est demarre mais en attente
-        Syncing = 2         // site distant en cours de synchronisation
+        Syncing = 2,         // site distant en cours de synchronisation
+        Cleaning = 3         // site distant en cours de nettoyage
     }
 
 

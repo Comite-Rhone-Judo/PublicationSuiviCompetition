@@ -70,8 +70,8 @@
       <HintPath>..\packages\evopdf.9.0.0\lib\net40\evohtmltopdf.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FluentFTP, Version=46.0.2.0, Culture=neutral, PublicKeyToken=f4af092b1d8df44f, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentFTP.46.0.2\lib\net472\FluentFTP.dll</HintPath>
+    <Reference Include="FluentFTP, Version=48.0.3.0, Culture=neutral, PublicKeyToken=f4af092b1d8df44f, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentFTP.48.0.3\lib\net472\FluentFTP.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
