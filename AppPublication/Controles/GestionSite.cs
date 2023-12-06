@@ -29,6 +29,7 @@ namespace AppPublication.Controles
         #region MEMBRES
         private CancellationTokenSource _tokenSource;   // Token pour la gestion de la thread de lecture
         private Task _taskGeneration = null;            // La tache de generation
+        private Task _taskNettoyage = null;            // La tache de nettoyage
         private GestionStatistiques _statMgr = null;
 
         /// <summary>
@@ -694,14 +695,43 @@ namespace AppPublication.Controles
         }
 
         /// <summary>
+        /// Demarre un thread pour traiter le nettoyage du site
+        /// </summary>
+        public void StartNettoyage()
+        {
+            if (_taskNettoyage == null || _taskNettoyage.IsCompleted)
+            {
+                try
+                {
+                    _taskNettoyage = Task.Factory.StartNew(() =>
+                    {
+                        // Nettoyer le site distant
+                        MiniSiteDistant.NettoyerSite();
+                    });
+                }
+                catch (Exception ex)
+                {
+                    // On RAZ l'etat du lecteur
+                    throw new Exception("Erreur lors du lancement du nettoyage du site", ex);
+                }
+            }
+            else
+            {
+                throw new Exception("Une tache de nettoyage est déjà en cours d'exécution");
+            }
+        }
+
+        /// <summary>
         /// Arrete le thread de generation du site
         /// </summary>
         public void StopGeneration()
         {
-            // Arrete le thread de generation
-            _tokenSource.Cancel();
-
-            _taskGeneration.Wait();
+            if (_tokenSource != null)
+            {
+                // Arrete le thread de generation
+                _tokenSource.Cancel();
+                _taskGeneration.Wait();
+            }
 
             // Etat de la generation
             // Status = new StatusGenerationSite(StateGenerationEnum.Stopped);

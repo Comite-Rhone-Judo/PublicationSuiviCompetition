@@ -419,6 +419,12 @@
                                         <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/trash-32.png" Height="25" Margin="5 0"/>
                                         <Label Content="Nettoyer" />
                                     </WrapPanel>
+                                    <telerik:RadButton.IsEnabled>
+                                        <MultiBinding Converter="{StaticResource BoolOperationConverter}" ConverterParameter="not_a_and_not_b"  Mode="OneWay">
+                                            <Binding Path="GestionSite.MiniSiteDistant.IsActif" Mode="OneWay"/>
+                                            <Binding Path="GestionSite.MiniSiteDistant.IsCleaning" Mode="OneWay"/>
+                                        </MultiBinding>
+                                    </telerik:RadButton.IsEnabled>
                                 </telerik:RadButton>
                             </StackPanel>
                         </Grid>

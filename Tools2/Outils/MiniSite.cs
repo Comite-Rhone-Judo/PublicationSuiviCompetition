@@ -301,6 +301,23 @@ namespace Tools.Outils
             }
         }
 
+        private bool _cleaning = false;
+        /// <summary>
+        /// Indique si le site est entrain de faire du nettoyage (lecture seule)
+        /// </summary>
+        public bool IsCleaning
+        {
+            get
+            {
+                return _cleaning;
+            }
+            private set
+            {
+                _cleaning = value;
+                NotifyPropertyChanged("IsCleaning");
+            }
+        }
+
         StatusMiniSite _status;
         /// <summary>
         /// Le statut textuelle du minisite (active, etc.)
@@ -322,6 +339,7 @@ namespace Tools.Outils
 
                 // Actualise l'etat d'activite du site
                 IsActif = !(_status.State == StateMiniSiteEnum.Stopped);
+                IsCleaning = (_status.State == StateMiniSiteEnum.Cleaning);
             }
         }
 
@@ -602,7 +620,9 @@ namespace Tools.Outils
 
                 if (ftpClient.IsConnected)
                 {
-                    foreach(FtpListItem ftpItem in ftpClient.GetListing(RepertoireSiteFTPDistant)) {
+                    List<FtpListItem> ftpList = ftpClient.GetListing(RepertoireSiteFTPDistant).ToList();
+                    int idx = 0;
+                    foreach (FtpListItem ftpItem in ftpList) {
                         switch (ftpItem.Type)
                         {
 
@@ -620,12 +640,17 @@ namespace Tools.Outils
 
                             case FtpObjectType.Link:
                                 break;
-                        }   
+                        }
+
+                        // Met a jour la progression du nettoyage
+                        CalculProgressionFTP(idx, ftpList.Count);
+                        idx++;
                     }
 
                     // Disconnect
                     ftpClient.Disconnect();
                     output.IsSuccess = true;
+                    cStatus = new StatusMiniSite(cStatus.State);
                 }
 
             }
@@ -723,6 +748,7 @@ namespace Tools.Outils
                     {
                         output.IsComplet = false;
                         output.IsSuccess = true;
+                        cStatus = new StatusMiniSite(cStatus.State);
                         output.nbUpload = listFiles.Count;
                         int idx =0;
                         foreach( FileInfo localFileInfo in listFiles)
@@ -741,6 +767,7 @@ namespace Tools.Outils
                             {
                                 // NOK car pas tous les fichiers charges
                                 output.IsSuccess = false;
+                                cStatus = new StatusMiniSite(cStatus.State, "Erreur FTP", "Impossible de charger certains fichiers");
                             }
                             else
                             {
@@ -757,6 +784,7 @@ namespace Tools.Outils
                     {
                         output.IsComplet = true;
                         output.IsSuccess = false;
+                        cStatus = new StatusMiniSite(cStatus.State, "Erreur FTP", "Impossible de charger le repertoire complet");
                         // Charge le dossier du site vers le serveur FTP en mode miroir pour synchroniser
                         List<FtpResult> uploadOut = ftpClient.UploadDirectory(localRootDirectory,
                                                                                 RepertoireSiteFTPDistant,
@@ -770,6 +798,7 @@ namespace Tools.Outils
                         {
                             output.IsSuccess = true;
                             output.nbUpload = uploadOut.Count;
+                            cStatus = new StatusMiniSite(cStatus.State);
                         }
                     }
 
@@ -778,6 +807,7 @@ namespace Tools.Outils
 
                     // Incremente le nb de synchronisation realisee depuis le demarrage
                     _nbSyncDistant++;
+
                 }
             }
             catch(Exception ex)

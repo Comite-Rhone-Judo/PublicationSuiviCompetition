@@ -8,7 +8,7 @@ using System.Globalization;
 
 namespace AppPublication.Tools.Converter
 {
-    public class BoolOperationToVisibilityConverter : IMultiValueConverter
+    public class BoolOperationConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
@@ -52,6 +52,11 @@ namespace AppPublication.Tools.Converter
                                 output = !ope1.Value && ope2.Value;
                                 break;
                             }
+                        case "not_a_and_not_b":
+                            {
+                                output = !ope1.Value && !ope2.Value;
+                                break;
+                            }
                         case "a_and_b":
                             {
                                 output = ope1.Value && ope2.Value;
@@ -60,6 +65,11 @@ namespace AppPublication.Tools.Converter
                         case "not_a_or_b":
                             {
                                 output = !ope1.Value || ope2.Value;
+                                break;
+                            }
+                        case "not_a_or_not_b":
+                            {
+                                output = !ope1.Value || !ope2.Value;
                                 break;
                             }
                         case "a_or_b":
@@ -76,7 +86,8 @@ namespace AppPublication.Tools.Converter
                 }
             }
 
-            return (output) ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+            // return (output) ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+            return output;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

@@ -328,13 +328,15 @@ namespace AppPublication.Controles
                                     if (win.DialogResult.HasValue && (bool)win.DialogResult)
                                     {
                                         // Nettoyer le site distant
-                                        Instance.GestionSite.MiniSiteDistant.NettoyerSite();
+                                        // Instance.GestionSite.MiniSiteDistant.NettoyerSite();
+                                        GestionSite.StartNettoyage();
                                     }
                                 }
                             },
                             o =>
                             {
-                                return !Instance.GestionSite.MiniSiteDistant.IsActif;
+                                return true;
+                                // return !Instance.GestionSite.MiniSiteDistant.IsActif && !Instance.GestionSite.MiniSiteDistant.IsCleaning;
                             });
                 }
                 return _cmdNettoyerSiteDistant;
