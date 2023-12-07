@@ -23,7 +23,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <param name="phase">la phase</param>
-        public static List<FileWithChecksum> GenereWebSitePhase(JudoData DC, Phase phase, bool publierProchainsCombats, bool publierAffectationTapis)
+        public static List<FileWithChecksum> GenereWebSitePhase(JudoData DC, Phase phase, bool publierProchainsCombats, bool publierAffectationTapis, long delaiActualisationClientSec)
         {
             List<string> urls = new List<string>();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
@@ -55,7 +55,7 @@ namespace AppPublication.Export
                 argsList.AddParam("istapis", "", "epreuve");
 
                 XmlDocument xmlFeuilleCombat = ExportXML.CreateDocumentFeuilleCombat(DC, phase, null);
-                ExportXML.AddPublicationInfo(ref xmlFeuilleCombat, publierProchainsCombats, publierAffectationTapis);
+                ExportXML.AddPublicationInfo(ref xmlFeuilleCombat, publierProchainsCombats, publierAffectationTapis, delaiActualisationClientSec);
                 ExportXML.AddClubs(ref xmlFeuilleCombat, DC);
 
                 ExportHTML.ToHTMLSite(xmlFeuilleCombat, type, fileSave, argsList);
@@ -72,7 +72,7 @@ namespace AppPublication.Export
                 XsltArgumentList argsList2 = new XsltArgumentList();
 
                 XmlDocument xmlResultat = ExportXML.CreateDocumentPhase(i_vue_epreuve, phase, DC);
-                ExportXML.AddPublicationInfo(ref xmlResultat, publierProchainsCombats, publierAffectationTapis);
+                ExportXML.AddPublicationInfo(ref xmlResultat, publierProchainsCombats, publierAffectationTapis, delaiActualisationClientSec);
                 ExportXML.AddCeintures(ref xmlResultat, DC);
                 ExportXML.AddClubs(ref xmlResultat, DC);
 
@@ -89,7 +89,7 @@ namespace AppPublication.Export
                 XsltArgumentList argsList2 = new XsltArgumentList();
 
                 XmlDocument xmlResultat = ExportXML.CreateDocumentPhase(i_vue_epreuve, phase, DC);
-                ExportXML.AddPublicationInfo(ref xmlResultat, publierProchainsCombats, publierAffectationTapis);
+                ExportXML.AddPublicationInfo(ref xmlResultat, publierProchainsCombats, publierAffectationTapis, delaiActualisationClientSec);
                 ExportXML.AddCeintures(ref xmlResultat, DC);
                 ExportXML.AddClubs(ref xmlResultat, DC);
 
@@ -110,7 +110,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <param name="tapis"></param>
-        public static List<FileWithChecksum> GenereWebSiteTapis(JudoData DC, int tapis, bool publierProchainsCombats, bool publierAffectationTapis)
+        public static List<FileWithChecksum> GenereWebSiteTapis(JudoData DC, int tapis, bool publierProchainsCombats, bool publierAffectationTapis, long delaiActualisationClientSec)
         {
             bool site = true;
             List<FileWithChecksum> output = new List<FileWithChecksum>();
@@ -123,7 +123,7 @@ namespace AppPublication.Export
             argsList.AddParam("istapis", "", "tapis");
 
             XmlDocument xml = ExportXML.CreateDocumentFeuilleCombat(DC, null, tapis);
-            ExportXML.AddPublicationInfo(ref xml, publierProchainsCombats, publierAffectationTapis);
+            ExportXML.AddPublicationInfo(ref xml, publierProchainsCombats, publierAffectationTapis, delaiActualisationClientSec);
 
             ExportXML.AddClubs(ref xml, DC);
             ExportHTML.ToHTMLSite(xml, type, fileSave, argsList);
@@ -140,7 +140,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <param name="epreuve"></param>
-        public static List<FileWithChecksum> GenereWebSiteClassement(JudoData DC, i_vue_epreuve_interface epreuve, bool publierProchainsCombats, bool publierAffectationTapis)
+        public static List<FileWithChecksum> GenereWebSiteClassement(JudoData DC, i_vue_epreuve_interface epreuve, bool publierProchainsCombats, bool publierAffectationTapis, long delaiActualisationClientSec)
         {
             bool site = true;
             List<FileWithChecksum> output = new List<FileWithChecksum>();
@@ -153,7 +153,7 @@ namespace AppPublication.Export
             XsltArgumentList argsList = new XsltArgumentList();
 
             XmlDocument xml = ExportXML.CreateDocumentEpreuve(DC, epreuve);
-            ExportXML.AddPublicationInfo(ref xml, publierProchainsCombats, publierAffectationTapis);
+            ExportXML.AddPublicationInfo(ref xml, publierProchainsCombats, publierAffectationTapis, delaiActualisationClientSec);
 
             ExportXML.AddClubs(ref xml, DC);
             ExportHTML.ToHTMLSite(xml, type, fileSave, argsList);
@@ -169,7 +169,7 @@ namespace AppPublication.Export
         /// Génére les premiers combats de tous les tapis
         /// </summary>
         /// <param name="DC"></param>
-        public static List<FileWithChecksum> GenereWebSiteAllTapis(JudoData DC, bool publierProchainsCombats, bool publierAffectationTapis)
+        public static List<FileWithChecksum> GenereWebSiteAllTapis(JudoData DC, bool publierProchainsCombats, bool publierAffectationTapis, long delaiActualisationClientSec)
         {
             bool site = true;
             List<FileWithChecksum> output = new List<FileWithChecksum>();
@@ -182,7 +182,7 @@ namespace AppPublication.Export
             argsList.AddParam("istapis", "", "alltapis");
 
             XmlDocument xml = ExportXML.CreateDocumentFeuilleCombat(DC, null, null);
-            ExportXML.AddPublicationInfo(ref xml, publierProchainsCombats, publierAffectationTapis);
+            ExportXML.AddPublicationInfo(ref xml, publierProchainsCombats, publierAffectationTapis, delaiActualisationClientSec);
 
             ExportXML.AddClubs(ref xml, DC);
 
@@ -199,7 +199,7 @@ namespace AppPublication.Export
         /// Génére les premiers combats de tous les tapis
         /// </summary>
         /// <param name="DC"></param>
-        public static List<FileWithChecksum> GenereWebSitePrintTapis(JudoData DC, int nb, bool publierProchainsCombats, bool publierAffectationTapis)
+        public static List<FileWithChecksum> GenereWebSitePrintTapis(JudoData DC, int nb, bool publierProchainsCombats, bool publierAffectationTapis, long delaiActualisationClientSec)
         {
             bool site = true;
             List<FileWithChecksum> output = new List<FileWithChecksum>();
@@ -227,7 +227,7 @@ namespace AppPublication.Export
             XsltArgumentList argsList = new XsltArgumentList();
 
             XmlDocument docmenu = ExportXML.CreateDocumentMenu(DC);
-            ExportXML.AddPublicationInfo(ref docmenu, publierProchainsCombats, publierAffectationTapis);
+            ExportXML.AddPublicationInfo(ref docmenu, publierProchainsCombats, publierAffectationTapis, delaiActualisationClientSec);
 
             argsList.AddParam("style", "", ExportTools.getStyleDirectory(site: true));
             argsList.AddParam("js", "", ExportTools.getJS());
@@ -246,7 +246,7 @@ namespace AppPublication.Export
         /// Génére L'index
         /// </summary>
         /// <param name="DC"></param>
-        public static List<FileWithChecksum> GenereWebSiteIndex()
+        public static List<FileWithChecksum> GenereWebSiteIndex(long delaiActualisationClientSec)
         {
             List<string> urls = new List<string>();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
@@ -296,7 +296,7 @@ namespace AppPublication.Export
         /// Génére L'index
         /// </summary>
         /// <param name="DC"></param>
-        public static List<FileWithChecksum> GenereWebSiteMenu(JudoData DC, bool publierProchainsCombats, bool publierAffectationTapis)
+        public static List<FileWithChecksum> GenereWebSiteMenu(JudoData DC, bool publierProchainsCombats, bool publierAffectationTapis, long delaiActualisationClientSec)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
@@ -305,7 +305,7 @@ namespace AppPublication.Export
             string directory = ExportTools.getDirectory(site, null, null);
 
             XmlDocument docmenu = ExportXML.CreateDocumentMenu(DC);
-            ExportXML.AddPublicationInfo(ref docmenu, publierProchainsCombats, publierAffectationTapis);
+            ExportXML.AddPublicationInfo(ref docmenu, publierProchainsCombats, publierAffectationTapis, delaiActualisationClientSec);
             
             // Genere le menu de d'avancement
             type = ExportEnum.Site_MenuAvancement;
@@ -326,10 +326,10 @@ namespace AppPublication.Export
             // output.Add(new FileWithChecksum(fileSave + ".xml"));
             if (publierProchainsCombats)
             {
-                output = output.Concat(GenereWebSitePrintTapis(DC, 0, publierProchainsCombats, publierAffectationTapis)).ToList();
-                output = output.Concat(GenereWebSitePrintTapis(DC, 1, publierProchainsCombats, publierAffectationTapis)).ToList();
-                output = output.Concat(GenereWebSitePrintTapis(DC, 2, publierProchainsCombats, publierAffectationTapis)).ToList();
-                output = output.Concat(GenereWebSitePrintTapis(DC, 4, publierProchainsCombats, publierAffectationTapis)).ToList();
+                output = output.Concat(GenereWebSitePrintTapis(DC, 0, publierProchainsCombats, publierAffectationTapis, delaiActualisationClientSec)).ToList();
+                output = output.Concat(GenereWebSitePrintTapis(DC, 1, publierProchainsCombats, publierAffectationTapis, delaiActualisationClientSec)).ToList();
+                output = output.Concat(GenereWebSitePrintTapis(DC, 2, publierProchainsCombats, publierAffectationTapis, delaiActualisationClientSec)).ToList();
+                output = output.Concat(GenereWebSitePrintTapis(DC, 4, publierProchainsCombats, publierAffectationTapis, delaiActualisationClientSec)).ToList();
             }
 
             // Debug.WriteLine(string.Format("GenereWebSiteMenu {0}", output.Count));
@@ -344,7 +344,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static List<FileWithChecksum> GenereWebSiteAffectation(JudoData DC, bool publierProchainsCombats, bool publierAffectationTapis)
+        public static List<FileWithChecksum> GenereWebSiteAffectation(JudoData DC, bool publierProchainsCombats, bool publierAffectationTapis, long delaiActualisationClientSec)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
@@ -356,7 +356,7 @@ namespace AppPublication.Export
             XsltArgumentList argsList = new XsltArgumentList();
 
             XmlDocument docAffectation = ExportXML.CreateDocumentAffectationTapis(DC);
-            ExportXML.AddPublicationInfo(ref docAffectation, publierProchainsCombats, publierAffectationTapis);
+            ExportXML.AddPublicationInfo(ref docAffectation, publierProchainsCombats, publierAffectationTapis, delaiActualisationClientSec);
 
             ExportHTML.ToHTMLSite(docAffectation, type, fileSave, argsList);
 

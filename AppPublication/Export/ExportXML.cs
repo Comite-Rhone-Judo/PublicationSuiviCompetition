@@ -20,7 +20,7 @@ namespace AppPublication.Export
 {
     public static class ExportXML
     {
-        public static void AddPublicationInfo(ref XmlDocument doc, bool publierProchainsCombats = false, bool publierAffectationTapis = true)
+        public static void AddPublicationInfo(ref XmlDocument doc, bool publierProchainsCombats, bool publierAffectationTapis, long delaiActualisationClientSec)
         {
             // Recupere le flag de la competition
             XmlNodeList listcomp = doc.GetElementsByTagName(ConstantXML.Competition);
@@ -29,10 +29,14 @@ namespace AppPublication.Export
             attrProchainCombat.Value = publierProchainsCombats.ToString();
             XmlAttribute attrAffectationTapis = doc.CreateAttribute(ConstantXML.publierAffectationTapis);
             attrAffectationTapis.Value = publierAffectationTapis.ToString();
+            XmlAttribute attrDelaiActualisationClient = doc.CreateAttribute(ConstantXML.delaiActualisationClientSec);
+            attrDelaiActualisationClient.Value = delaiActualisationClientSec.ToString();
+
             foreach (XmlNode node in listcomp)
             {
                 node.Attributes.Append(attrProchainCombat);
                 node.Attributes.Append(attrAffectationTapis);
+                node.Attributes.Append(attrDelaiActualisationClient);
             }
         }
 

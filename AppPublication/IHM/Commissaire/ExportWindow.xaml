@@ -171,10 +171,20 @@
                                               Visibility="{Binding Path=GestionSite.CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}">
                                     </CheckBox>
                                 </StackPanel>
-                                <Label HorizontalAlignment="Left" Content="Délai de génération:" Style="{StaticResource LabelStyle}" />
-                                <telerik:RadNumericUpDown Value="{Binding GestionSite.DelaiGenerationSec}"
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Label HorizontalAlignment="Left" Content="Délai de génération:" Style="{StaticResource LabelStyle}" />
+                                        <telerik:RadNumericUpDown Value="{Binding GestionSite.DelaiGenerationSec}"
                                                           Width="100" Height="24" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="0 0 50 0"
                                                           IsEnabled="{Binding Path=GestionSite.IsGenerationActive, Converter={StaticResource BoolNotConverter}}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Label HorizontalAlignment="Left" Content="Actualisation client :" Style="{StaticResource LabelStyle}" />
+                                        <telerik:RadNumericUpDown Value="{Binding GestionSite.DelaiActualisationClientSec}"
+                                                    Width="100" Height="24" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="0 0 50 0"
+                                                    IsEnabled="{Binding Path=GestionSite.IsGenerationActive, Converter={StaticResource BoolNotConverter}}"/>
+                                    </StackPanel>
+                                </StackPanel>
                                 <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 20 0"
                                                    Command="{Binding Path=CmdDemarrerGeneration}" Height="35">
                                     <telerik:RadButton.IsEnabled>

@@ -48,3 +48,32 @@ function toggleElement(elementName) {
     document.getElementById(elementName).style.display = newState;
     document.getElementById(elementToShow).style.display = "inline";
 }
+
+var reloading;  // Pour les gestion de l'autoreload
+
+// A mettre sur le window.onload pour verifier automatiquement le reload toutes les 1 secondes
+function checkReloading() {
+    var timeoutms;
+
+    if (window.location.hash == "#autoreload") {
+
+        if (typeof (delayAutoreloadSec) == undefined || isNaN(delayAutoreloadSec)) {
+            timeoutms = 60000;    // Par defaut 1 min
+        } else {
+            timeoutms = delayAutoreloadSec * 1000;    // Par defaut 1 min
+        }
+
+        reloading = setTimeout(function () { window.location.reload(); }, timeoutms);
+        document.getElementById('cbActualiser').checked = true;
+    }
+}
+
+function toggleAutoRefresh(cb) {
+    if (cb.checked) {
+        window.location.replace("#autoreload"); // Flag pour indiquer le autoreload
+        reloading = setTimeout(function () { window.location.reload(); }, 100); // Pour faire un 1er refrech immediatement
+    } else {
+        window.location.replace("#");
+        clearTimeout(reloading);
+    }
+}

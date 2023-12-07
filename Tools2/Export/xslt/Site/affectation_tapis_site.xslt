@@ -18,7 +18,8 @@
 
 	<xsl:variable select="count(/competitions/competition[@PublierProchainsCombats = 'True']) > 0" name="affProchainCombats"/>
 	<xsl:variable select="count(/competitions/competition[@PublierAffectationTapis = 'True']) > 0" name="affAffectationTapis"/>
-
+	<xsl:variable select="sum(/competitions/competition/@DelaiActualisationClientSec) div count(/competitions/competition)" name="delayActualisationClient"/>
+	
 	<xsl:template match="/*">
 		<!-- ENTETE HTML -->
 		<head>
@@ -39,6 +40,8 @@
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
 				<xsl:value-of select="$js"/>
+				var delayAutoreloadSec = <xsl:value-of select="$delayActualisationClient"/>;
+				window.onload=checkReloading;
 			</script>
 			<title>
 				<xsl:value-of select="@titre"/>
@@ -61,7 +64,7 @@
 			<!-- PANNEAU DE NAVIGATION -->
 			<div class="w3-sidebar w3-bar-block w3-border-right w3-animate-left tas-navigation-panel" id="navigationPanel">
 				<button onclick="closeElement('navigationPanel')" class="w3-bar-item w3-large">Fermer &times;</button>
-				<button class="w3-bar-item w3-button navButton" onclick="location.reload()">Actualiser</button>
+				<button class="w3-bar-item w3-button navButton"><input class="w3-check" type="checkbox" id="cbActualiser" onclick="toggleAutoRefresh(this);"/> Actualiser</button>
 				<xsl:if test="$affProchainCombats">
 					<a class="w3-bar-item w3-button navButton" href="../common/se-prepare.html">Se prépare</a>
 					<a class="w3-bar-item w3-button navButton" href="../common/prochains-combats.html">Prochains combats</a>
@@ -99,11 +102,11 @@
 										<!-- entete avec un bouton permet d'ouvrir fermer le contenu de la carte -->
 										<header class="w3-bar w3-light-green w3-large">
 											<button class="w3-bar-item w3-light-green" onclick="toggleElement('AffectationFemininesContentPanel')">
-												<img class="img" id="AffectationFemininesContentPanelCollapse" width="25" src="../img/up_circular-32.png" style="display: none;"/>
-												<img class="img" id="AffectationFemininesContentPanelExpand" width="25" src="../img/down_circular-32.png"/>
+												<img class="img" id="AffectationFemininesContentPanelCollapse" width="25" src="../img/up_circular-32.png" />
+												<img class="img" id="AffectationFemininesContentPanelExpand" width="25" src="../img/down_circular-32.png" style="display: none;"/>
 												Catégorie féminine </button>
 										</header>
-										<div class="w3-container" id="AffectationFemininesContentPanel" style="display:none">
+										<div class="w3-container" id="AffectationFemininesContentPanel" >
 											<xsl:apply-templates select="./epreuve[@sexe = 'F']"/>
 										</div>
 									</div>
@@ -116,12 +119,12 @@
 
 										<header class="w3-bar w3-light-green w3-large">
 											<button class="w3-bar-item w3-light-green" onclick="toggleElement('AffectationMasculinsContentPanel')">
-												<img class="img" id="AffectationMasculinsContentPanelCollapse" width="25" src="../img/up_circular-32.png" style="display: none;"/>
-												<img class="img" id="AffectationMasculinsContentPanelExpand" width="25" src="../img/down_circular-32.png"/>
+												<img class="img" id="AffectationMasculinsContentPanelCollapse" width="25" src="../img/up_circular-32.png" />
+												<img class="img" id="AffectationMasculinsContentPanelExpand" width="25" src="../img/down_circular-32.png" style="display: none;"/>
 												Catégorie Masculine </button>
 										</header>
 
-										<div class="w3-container" id="AffectationMasculinsContentPanel" style="display:none;">
+										<div class="w3-container" id="AffectationMasculinsContentPanel">
 											<xsl:apply-templates select="./epreuve[@sexe = 'M']"/>
 										</div>
 									</div>

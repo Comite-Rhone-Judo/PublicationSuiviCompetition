@@ -233,6 +233,26 @@ namespace AppPublication.Controles
             }
         }
 
+        int _delaiActualisationClientSec = 30;
+        /// <summary>
+        /// Delai entre 2 generations du site
+        /// </summary>
+        public int DelaiActualisationClientSec
+        {
+            get
+            {
+                return _delaiActualisationClientSec;
+            }
+            set
+            {
+                _delaiActualisationClientSec = value;
+                AppSettings.SaveSettings("DelaiActualisationClientSec", _delaiActualisationClientSec.ToString());
+                NotifyPropertyChanged("DelaiActualisationClientSec");
+            }
+        }
+
+        
+
         private string _urlDistant;
         /// <summary>
         /// URL racine du site distant de publication
@@ -444,6 +464,9 @@ namespace AppPublication.Controles
 
                 valCache = AppSettings.ReadSettings("DelaiGenerationSec");
                 DelaiGenerationSec = (valCache == null) ? 30 : int.Parse(valCache);
+
+                valCache = AppSettings.ReadSettings("DelaiActualisationClientSec");
+                DelaiActualisationClientSec = (valCache == null) ? 30 : int.Parse(valCache);
 
                 // Si la liste contient au moins un element
                 if (MiniSiteLocal.InterfacesLocal.Count >= 1)
@@ -758,25 +781,25 @@ namespace AppPublication.Controles
                         break;
                     */
                     case SiteEnum.AllTapis:
-                        urls = ExportSite.GenereWebSiteAllTapis(DC, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation);
+                        urls = ExportSite.GenereWebSiteAllTapis(DC, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec);
                         break;
                     case SiteEnum.Classement:
-                        urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation);
+                        urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec);
                         break;
                     case SiteEnum.Index:
-                        urls = ExportSite.GenereWebSiteIndex();
+                        urls = ExportSite.GenereWebSiteIndex(DelaiActualisationClientSec);
                         break;
                     case SiteEnum.Menu:
-                        urls = ExportSite.GenereWebSiteMenu(DC, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation);
+                        urls = ExportSite.GenereWebSiteMenu(DC, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec);
                         break;
                     case SiteEnum.Phase:
-                        urls = ExportSite.GenereWebSitePhase(DC, genere.phase, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation);
+                        urls = ExportSite.GenereWebSitePhase(DC, genere.phase, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec);
                         break;
                     case SiteEnum.Tapis:
-                        urls = ExportSite.GenereWebSiteTapis(DC, (int)genere.tapis, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation);
+                        urls = ExportSite.GenereWebSiteTapis(DC, (int)genere.tapis, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec);
                         break;
                     case SiteEnum.AffectationTapis:
-                        urls = ExportSite.GenereWebSiteAffectation(DC, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation);
+                        urls = ExportSite.GenereWebSiteAffectation(DC, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec);
                         break;
                 }
             }

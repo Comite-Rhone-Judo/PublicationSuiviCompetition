@@ -20,6 +20,8 @@
 
 	<xsl:variable select="/competition/@PublierProchainsCombats = 'True'" name="affProchainCombats"/>
 	<xsl:variable select="/competition/@PublierAffectationTapis = 'True'" name="affAffectationTapis"/>
+	<xsl:variable select="competition/@DelaiActualisationClientSec" name="delayActualisationClient"/>
+
 
 	<xsl:template match="/*">
 		<!-- ENTETE HTML -->
@@ -42,6 +44,8 @@
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
 				<xsl:value-of select="$js"/>
+				var delayAutoreloadSec = <xsl:value-of select="$delayActualisationClient"/>;
+				window.onload=checkReloading;
 			</script>
 			<title>
 				<xsl:value-of select="@titre"/>
@@ -64,7 +68,9 @@
 			<!-- PANNEAU DE NAVIGATION -->
 			<div class="w3-sidebar w3-bar-block w3-border-right w3-animate-left tas-navigation-panel" id="navigationPanel">
 				<button onclick="closeElement('navigationPanel')" class="w3-bar-item w3-large">Fermer &times;</button>
-				<button class="w3-bar-item w3-button navButton" onclick="location.reload()">Actualiser</button>
+				<button class="w3-bar-item w3-button navButton">
+					<input class="w3-check" type="checkbox" id="cbActualiser" onclick="toggleAutoRefresh(this);"/> Actualiser
+				</button>
 				<xsl:if test="$affProchainCombats">
 					<a class="w3-bar-item w3-button navButton" href="../common/se-prepare.html">Se prépare</a>
 					<a class="w3-bar-item w3-button navButton" href="../common/prochains-combats.html">Prochains combats</a>
@@ -111,7 +117,7 @@
 					Tableau principal
 				</button>
 			</div>
-			<div class="w3-container tas-panel-tableau-combat w3-animate-top" id="tableauPrincipal">
+			<div class="w3-container tas-panel-tableau-combat" id="tableauPrincipal">
 				<xsl:variable name="repechage">
 					<xsl:text>false</xsl:text>
 				</xsl:variable>
@@ -130,7 +136,7 @@
 						Tableaux de repêchage
 					</button>
 				</div>
-				<div class="w3-container tas-panel-tableau-combat w3-animate-top" id="tableauRepechages">
+				<div class="w3-container tas-panel-tableau-combat" id="tableauRepechages">
 					<xsl:variable name="repechage1">
 						<xsl:text>true</xsl:text>
 					</xsl:variable>
@@ -149,7 +155,7 @@
 						Tableaux de barrage
 					</button>
 				</div>
-				<div class="w3-container tas-panel-tableau-combat w3-animate-top" id="tableauBarrages">
+				<div class="w3-container tas-panel-tableau-combat" id="tableauBarrages">
 					<xsl:call-template name="tableauBarrage"/>
 				</div>
 			</xsl:if>

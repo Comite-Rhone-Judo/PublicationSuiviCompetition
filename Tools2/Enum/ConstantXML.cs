@@ -57,6 +57,7 @@ namespace Tools.Enum
 
         public const string publierProchainsCombats = "PublierProchainsCombats";
         public const string publierAffectationTapis = "PublierAffectationTapis";
+        public const string delaiActualisationClientSec = "DelaiActualisationClientSec";
 
         public const string checksums = "Checksums";
         public const string checksumFile = "ChecksumFile";
