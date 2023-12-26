@@ -20,23 +20,26 @@ namespace AppPublication.Export
 {
     public static class ExportXML
     {
-        public static void AddPublicationInfo(ref XmlDocument doc, bool publierProchainsCombats, bool publierAffectationTapis, long delaiActualisationClientSec)
+        public static void AddPublicationInfo(ref XmlDocument doc, ConfigurationExportSite config)
         {
             // Recupere le flag de la competition
             XmlNodeList listcomp = doc.GetElementsByTagName(ConstantXML.Competition);
 
             XmlAttribute attrProchainCombat = doc.CreateAttribute(ConstantXML.publierProchainsCombats);
-            attrProchainCombat.Value = publierProchainsCombats.ToString();
+            attrProchainCombat.Value = config.PublierProchainsCombats.ToString();
             XmlAttribute attrAffectationTapis = doc.CreateAttribute(ConstantXML.publierAffectationTapis);
-            attrAffectationTapis.Value = publierAffectationTapis.ToString();
+            attrAffectationTapis.Value = config.PublierAffectationTapis.ToString();
             XmlAttribute attrDelaiActualisationClient = doc.CreateAttribute(ConstantXML.delaiActualisationClientSec);
-            attrDelaiActualisationClient.Value = delaiActualisationClientSec.ToString();
+            attrDelaiActualisationClient.Value = config.DelaiActualisationClientSec.ToString();
+            XmlAttribute attrNbProchainsCombats = doc.CreateAttribute(ConstantXML.nbProchainsCombats);
+            attrNbProchainsCombats.Value = config.NbProchainsCombats.ToString();
 
             foreach (XmlNode node in listcomp)
             {
                 node.Attributes.Append(attrProchainCombat);
                 node.Attributes.Append(attrAffectationTapis);
                 node.Attributes.Append(attrDelaiActualisationClient);
+                node.Attributes.Append(attrNbProchainsCombats);
             }
         }
 

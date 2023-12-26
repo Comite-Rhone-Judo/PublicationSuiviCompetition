@@ -77,16 +77,19 @@
   <PropertyGroup>
     <SignManifests>true</SignManifests>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>AppPublication.App</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EPPlus">
       <HintPath>..\packages\EPPlus.dll</HintPath>
     </Reference>
-    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="log4net, Version=2.0.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.15\lib\net45\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xaml">
@@ -231,7 +234,7 @@
       <Project>{8b0012a9-d366-4764-bfc9-85cf60d3cdb5}</Project>
       <Name>KernelManager</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Tools2\Tools.csproj">
+    <ProjectReference Include="..\Tools\Tools.csproj">
       <Project>{319d52c2-081b-42af-bf17-57efd5dc0d9c}</Project>
       <Name>Tools</Name>
     </ProjectReference>

@@ -54,7 +54,7 @@
       <Project>{392bddab-3d85-46c8-b419-0d8c81dc5146}</Project>
       <Name>KernelImpl</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Tools2\Tools.csproj">
+    <ProjectReference Include="..\Tools\Tools.csproj">
       <Project>{319d52c2-081b-42af-bf17-57efd5dc0d9c}</Project>
       <Name>Tools</Name>
     </ProjectReference>

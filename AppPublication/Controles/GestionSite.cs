@@ -3,9 +3,7 @@ using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
 using System;
 using System.Net;
-using System.Net.Sockets;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -26,6 +24,9 @@ namespace AppPublication.Controles
     /// </summary>
     public class GestionSite : NotificationBase
     {
+        // TODO Ajouter propriete PublierCSA
+        // TODO Ajouter propriete NbProchainsCombats
+
         #region MEMBRES
         private CancellationTokenSource _tokenSource;   // Token pour la gestion de la thread de lecture
         private Task _taskGeneration = null;            // La tache de generation
@@ -214,6 +215,23 @@ namespace AppPublication.Controles
                 MiniSiteDistant.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
             }
         }
+
+        private int _nbProchainsCombats = 6;
+        /// <summary>
+        /// Nb de prochains combats a publier pour la chambre d'appel
+        /// </summary>
+        public int NbProchainsCombats
+        {
+            get {
+                return _nbProchainsCombats;
+            }
+            set
+            {
+                _nbProchainsCombats = value;
+                NotifyPropertyChanged("NbProchainsCombats");
+            }
+        }
+
 
         int _delaiGenerationSec = 30;
         /// <summary>
@@ -768,6 +786,7 @@ namespace AppPublication.Controles
         private List<FileWithChecksum> Exporter(GenereSiteStruct genere)
         {
             List<FileWithChecksum> urls = new List<FileWithChecksum>();
+            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec, NbProchainsCombats);
 
             try
             {
@@ -775,31 +794,23 @@ namespace AppPublication.Controles
 
                 switch (genere.type)
                 {
-                    /*
-                    case SiteEnum.All:
-                        urls = ExportSite.GenereWebSite(DC);
-                        break;
-                    */
                     case SiteEnum.AllTapis:
-                        urls = ExportSite.GenereWebSiteAllTapis(DC, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec);
+                        urls = ExportSite.GenereWebSiteAllTapis(DC, cfg);
                         break;
                     case SiteEnum.Classement:
-                        urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec);
+                        urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), cfg);
                         break;
                     case SiteEnum.Index:
-                        urls = ExportSite.GenereWebSiteIndex(DelaiActualisationClientSec);
+                        urls = ExportSite.GenereWebSiteIndex(cfg);
                         break;
                     case SiteEnum.Menu:
-                        urls = ExportSite.GenereWebSiteMenu(DC, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec);
+                        urls = ExportSite.GenereWebSiteMenu(DC, cfg);
                         break;
                     case SiteEnum.Phase:
-                        urls = ExportSite.GenereWebSitePhase(DC, genere.phase, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec);
-                        break;
-                    case SiteEnum.Tapis:
-                        urls = ExportSite.GenereWebSiteTapis(DC, (int)genere.tapis, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec);
+                        urls = ExportSite.GenereWebSitePhase(DC, genere.phase, cfg);
                         break;
                     case SiteEnum.AffectationTapis:
-                        urls = ExportSite.GenereWebSiteAffectation(DC, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec);
+                        urls = ExportSite.GenereWebSiteAffectation(DC, cfg);
                         break;
                 }
             }
@@ -866,10 +877,6 @@ namespace AppPublication.Controles
                     if (PublierProchainsCombats)
                     {
                         listTaskGeneration.Add(AddWork(SiteEnum.AllTapis, null, null));
-                        for (int i = 1; i <= DC.competition.nbTapis; i++)
-                        {
-                            listTaskGeneration.Add(AddWork(SiteEnum.Tapis, null, i));
-                        }
                     }
 
                     foreach (Phase phase in DC.Deroulement.Phases)

@@ -1,0 +1,2135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{319D52C2-081B-42AF-BF17-57EFD5DC0D9C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Tools</RootNamespace>
+    <AssemblyName>Tools</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publier\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FluentFTP, Version=49.0.0.0, Culture=neutral, PublicKeyToken=f4af092b1d8df44f, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentFTP.49.0.0\lib\net472\FluentFTP.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.15\lib\net45\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Telerik.Windows.Controls, Version=2019.2.618.40, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWPF\2019.2.618.40\Telerik.Windows.Controls.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.FixedDocumentViewers, Version=2019.2.618.40, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWPF\2019.2.618.40\Telerik.Windows.Controls.FixedDocumentViewers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.Navigation, Version=2019.2.618.40, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWPF\2019.2.618.40\Telerik.Windows.Controls.Navigation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Windows.Data, Version=2019.2.618.40, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWPF\2019.2.618.40\Telerik.Windows.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Windows.Documents.Core, Version=2019.2.612.40, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWPF\2019.2.618.40\Telerik.Windows.Documents.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Windows.Documents.Fixed, Version=2019.2.612.40, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWPF\2019.2.618.40\Telerik.Windows.Documents.Fixed.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.Windows.Zip, Version=2019.2.612.40, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWPF\2019.2.618.40\Telerik.Windows.Zip.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\VersionInfo.cs">
+      <Link>VersionInfo.cs</Link>
+    </Compile>
+    <Compile Include="CustomException\AppUpdateException.cs" />
+    <Compile Include="CustomException\JudoServerException.cs" />
+    <Compile Include="CustomException\JudoClientException.cs" />
+    <Compile Include="CustomException\WebServicesException.cs" />
+    <Compile Include="Enum\DiplomeTypeEnum.cs" />
+    <Compile Include="Enum\ConstantCouleur.cs" />
+    <Compile Include="Enum\ConstantFile.cs" />
+    <Compile Include="Enum\ConstantResource.cs" />
+    <Compile Include="Enum\EpreuveSexeEnum.cs" />
+    <Compile Include="Enum\ServerResponseEnum.cs" />
+    <Compile Include="Enum\SiteEnum.cs" />
+    <Compile Include="Enum\QualifieEnum.cs" />
+    <Compile Include="Enum\TypeCSAEnum.cs" />
+    <Compile Include="Export\ConfigurationExportSite.cs" />
+    <Compile Include="Export\ExportHTML.cs" />
+    <Compile Include="Export\ExportTools.cs" />
+    <Compile Include="HttpServerModule\Authentication\AuthenticationModule.cs" />
+    <Compile Include="HttpServerModule\Authentication\BasicAuthentication.cs" />
+    <Compile Include="HttpServerModule\Authentication\DigestAuthentication.cs" />
+    <Compile Include="HttpServerModule\Check.cs" />
+    <Compile Include="HttpServerModule\ClientAcceptedEventArgs.cs" />
+    <Compile Include="HttpServerModule\ComponentProvider.cs" />
+    <Compile Include="HttpServerModule\ContentTypes.cs" />
+    <Compile Include="HttpServerModule\ExceptionHandler.cs" />
+    <Compile Include="HttpServerModule\Exceptions\BadRequestException.cs" />
+    <Compile Include="HttpServerModule\Exceptions\ForbiddenException.cs" />
+    <Compile Include="HttpServerModule\Exceptions\HttpException.cs" />
+    <Compile Include="HttpServerModule\Exceptions\InternalServerException.cs" />
+    <Compile Include="HttpServerModule\Exceptions\NotFoundException.cs" />
+    <Compile Include="HttpServerModule\Exceptions\UnauthorizedException.cs" />
+    <Compile Include="HttpServerModule\FormDecoders\FormDecoderProvider.cs" />
+    <Compile Include="HttpServerModule\FormDecoders\HttpMultipart.cs" />
+    <Compile Include="HttpServerModule\FormDecoders\IFormDecoder.cs" />
+    <Compile Include="HttpServerModule\FormDecoders\MultipartDecoder.cs" />
+    <Compile Include="HttpServerModule\FormDecoders\UrlDecoder.cs" />
+    <Compile Include="HttpServerModule\FormDecoders\XmlDecoder.cs" />
+    <Compile Include="HttpServerModule\Helpers\FormHelper.cs" />
+    <Compile Include="HttpServerModule\Helpers\GetIdTitle.cs" />
+    <Compile Include="HttpServerModule\Helpers\Implementations\PrototypeImp.cs" />
+    <Compile Include="HttpServerModule\Helpers\IniReader.cs" />
+    <Compile Include="HttpServerModule\Helpers\JSHelper.cs" />
+    <Compile Include="HttpServerModule\Helpers\ObjectForm.cs" />
+    <Compile Include="HttpServerModule\Helpers\ResourceInfo.cs" />
+    <Compile Include="HttpServerModule\Helpers\ResourceManager.cs" />
+    <Compile Include="HttpServerModule\Helpers\WebHelper.cs" />
+    <Compile Include="HttpServerModule\Helpers\XmlHelper.cs" />
+    <Compile Include="HttpServerModule\HttpClientContext.cs" />
+    <Compile Include="HttpServerModule\HttpContextFactory.cs" />
+    <Compile Include="HttpServerModule\HttpFile.cs" />
+    <Compile Include="HttpServerModule\HttpForm.cs" />
+    <Compile Include="HttpServerModule\HttpHelper.cs" />
+    <Compile Include="HttpServerModule\HttpInput.cs" />
+    <Compile Include="HttpServerModule\HttpInputItem.cs" />
+    <Compile Include="HttpServerModule\HttpListener.cs" />
+    <Compile Include="HttpServerModule\HttpListenerBase.cs" />
+    <Compile Include="HttpServerModule\HttpModules\FileModule.cs" />
+    <Compile Include="HttpServerModule\HttpModules\HttpModule.cs" />
+    <Compile Include="HttpServerModule\HttpModules\HttpModuleExceptionEventArgs.cs" />
+    <Compile Include="HttpServerModule\HttpModules\ResourceFileModule.cs" />
+    <Compile Include="HttpServerModule\HttpModules\ReverseProxyModule.cs" />
+    <Compile Include="HttpServerModule\HttpModules\SimpleCommonGatewayInterfaceModule.cs" />
+    <Compile Include="HttpServerModule\HttpModules\WebSiteModule.cs" />
+    <Compile Include="HttpServerModule\HttpParam.cs" />
+    <Compile Include="HttpServerModule\HttpRequest.cs" />
+    <Compile Include="HttpServerModule\HttpResponse.cs" />
+    <Compile Include="HttpServerModule\HttpServer.cs" />
+    <Compile Include="HttpServerModule\IComponentProvider.cs" />
+    <Compile Include="HttpServerModule\IHttpClientContext.cs" />
+    <Compile Include="HttpServerModule\IHttpContextHandler.cs" />
+    <Compile Include="HttpServerModule\IHttpRequest.cs" />
+    <Compile Include="HttpServerModule\IHttpRequestParser.cs" />
+    <Compile Include="HttpServerModule\IHttpResponse.cs" />
+    <Compile Include="HttpServerModule\ILogWriter.cs" />
+    <Compile Include="HttpServerModule\Method.cs" />
+    <Compile Include="HttpServerModule\Parser\BodyEventArgs.cs" />
+    <Compile Include="HttpServerModule\Parser\HeaderEventArgs.cs" />
+    <Compile Include="HttpServerModule\Parser\HttpRequestParser.cs" />
+    <Compile Include="HttpServerModule\Parser\RequestLineEventArgs.cs" />
+    <Compile Include="HttpServerModule\Parser\RequestParserFactory.cs" />
+    <Compile Include="HttpServerModule\RequestCookie.cs" />
+    <Compile Include="HttpServerModule\RequestCookies.cs" />
+    <Compile Include="HttpServerModule\RequestQueue.cs" />
+    <Compile Include="HttpServerModule\RequestReceivedEventArgs.cs" />
+    <Compile Include="HttpServerModule\ResponseCookie.cs" />
+    <Compile Include="HttpServerModule\ResponseCookies.cs" />
+    <Compile Include="HttpServerModule\Rules\IRule.cs" />
+    <Compile Include="HttpServerModule\Rules\RedirectRule.cs" />
+    <Compile Include="HttpServerModule\Rules\RegexRedirectRule.cs" />
+    <Compile Include="HttpServerModule\Sessions\IHttpSession.cs" />
+    <Compile Include="HttpServerModule\Sessions\IHttpSessionStore.cs" />
+    <Compile Include="HttpServerModule\Sessions\MemorySession.cs" />
+    <Compile Include="HttpServerModule\Sessions\MemorySessionStore.cs" />
+    <Compile Include="HttpServerModule\Templates\SmartyEngine.cs" />
+    <Compile Include="HttpServerModule\Templates\TemplateEngine.cs" />
+    <Compile Include="Outils\AppSettings.cs" />
+    <Compile Include="Outils\BlockingCounter.cs" />
+    <Compile Include="Outils\FileAndDirectTools.cs" />
+    <Compile Include="Outils\FileWithChecksum.cs" />
+    <Compile Include="Outils\FileWithChecksumComparer.cs" />
+    <Compile Include="Outils\FTPTools.cs" />
+    <Compile Include="Outils\LimitedConcurrencyLevel.cs" />
+    <Compile Include="Outils\NotificationBase.cs" />
+    <Compile Include="Outils\ResourcesTools.cs" />
+    <Compile Include="Outils\ServeurHttp.cs" />
+    <Compile Include="Outils\MiniSite.cs" />
+    <Compile Include="Outils\StatusMiniSite.cs" />
+    <Compile Include="Outils\TimedLock.cs" />
+    <Compile Include="Outils\XMLTools.cs" />
+    <Compile Include="Outils\LogTools.cs" />
+    <Compile Include="Enum\NetworkTools.cs" />
+    <Compile Include="Outils\WebServicesTools.cs" />
+    <Compile Include="Outils\RechercheXmlTools.cs" />
+    <Compile Include="Service References\FFJudoServices\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Struct\ParamStruct.cs" />
+    <Compile Include="Struct\DataCSVStruct.cs" />
+    <Compile Include="Struct\DataXLSXStruct.cs" />
+    <Compile Include="Struct\ExportItemStruct.cs" />
+    <Compile Include="Struct\ListPhaseStruct.cs" />
+    <Compile Include="Struct\ListPouleStruct.cs" />
+    <Compile Include="Struct\MachineStruct.cs" />
+    <Compile Include="Struct\ServerFind.cs" />
+    <Compile Include="Struct\Sponsor.cs" />
+    <Compile Include="Struct\TapisStruct.cs" />
+    <Compile Include="Struct\VersionApp.cs" />
+    <Compile Include="TCP_Tools\Client\ClientGenerique.cs" />
+    <Compile Include="TCP_Tools\Client\ClientHelper.cs" />
+    <Compile Include="TCP_Tools\Client\ExceptionHelper.cs" />
+    <Compile Include="TCP_Tools\Client\LogHelper.cs" />
+    <Compile Include="TCP_Tools\Server\ClientConnection.cs" />
+    <Compile Include="TCP_Tools\Server\ExceptionHelper.cs" />
+    <Compile Include="TCP_Tools\Server\ListenerHelper.cs" />
+    <Compile Include="TCP_Tools\Server\LogHelper.cs" />
+    <Compile Include="TCP_Tools\Server\ServerGenerique.cs" />
+    <Compile Include="UDP_Tools\ClientUDP.cs" />
+    <Compile Include="UDP_Tools\ServerUDP.cs" />
+    <Compile Include="Windows\ChangeLogWindow.xaml.cs">
+      <DependentUpon>ChangeLogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\AlertWindow.xaml.cs">
+      <DependentUpon>AlertWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\UpdateWindow1.xaml.cs">
+      <DependentUpon>UpdateWindow1.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ConfirmWindow.xaml.cs">
+      <DependentUpon>ConfirmWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\PdfViewer.xaml.cs">
+      <DependentUpon>PdfViewer.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CustomException\ConnexionException.cs" />
+    <Compile Include="CustomException\ParametrageBalanceException.cs" />
+    <Compile Include="CustomException\XmlFormatException.cs" />
+    <Compile Include="Enum\CompetitionTypeEnum.cs" />
+    <Compile Include="Enum\ConstantXML.cs" />
+    <Compile Include="Enum\EchelonEnum.cs" />
+    <Compile Include="Enum\EtatCombatEnum.cs" />
+    <Compile Include="Enum\EtatCombattantEnum.cs" />
+    <Compile Include="Enum\EtatEpreuveEnum.cs" />
+    <Compile Include="Enum\EtatJudokaEnum.cs" />
+    <Compile Include="Enum\EtatPhaseEnum.cs" />
+    <Compile Include="Enum\ExportEnum.cs" />
+    <Compile Include="Enum\ServerCommandEnum.cs" />
+    <Compile Include="Enum\TypePhaseEnum.cs" />
+    <Page Include="Windows\ChangeLogWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\AlertWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\UpdateWindow1.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\ConfirmWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\PdfViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Outils\OutilsTools.cs" />
+    <Compile Include="Outils\PeseeTools.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+    <None Include="Service References\FFJudoServices\WebService1.wsdl" />
+    <Resource Include="Styles\Polices\dejavu-sans-mono\DejaVuSansMono-Bold.ttf" />
+    <Resource Include="Styles\Polices\dejavu-sans-mono\DejaVuSansMono-BoldOblique.ttf" />
+    <Resource Include="Styles\Polices\dejavu-sans-mono\DejaVuSansMono-Oblique.ttf" />
+    <Resource Include="Styles\Polices\dejavu-sans-mono\DejaVuSansMono.ttf" />
+    <Resource Include="Styles\Polices\batman_forever\batmfa__.ttf" />
+    <Resource Include="Styles\Polices\batman_forever\batmfo__.ttf" />
+    <Resource Include="Styles\Polices\Fredoka_One\FredokaOne-Regular.ttf" />
+    <Resource Include="Styles\Polices\Cabin\Cabin-BoldItalic.ttf" />
+    <Resource Include="Styles\Polices\Cabin\Cabin-Italic.ttf" />
+    <Resource Include="Styles\Polices\Cabin\Cabin-Medium.ttf" />
+    <Resource Include="Styles\Polices\Cabin\Cabin-MediumItalic.ttf" />
+    <Resource Include="Styles\Polices\Cabin\Cabin-Regular.ttf" />
+    <Resource Include="Styles\Polices\Cabin\Cabin-SemiBold.ttf" />
+    <Resource Include="Styles\Polices\Cabin\Cabin-SemiBoldItalic.ttf" />
+    <Resource Include="Styles\Polices\Cabin\OFL.txt" />
+    <Resource Include="Styles\Polices\Fjalla_One\FjallaOne-Regular.ttf" />
+    <Resource Include="Styles\Polices\Oswald\Oswald-Bold.ttf" />
+    <Resource Include="Styles\Polices\Oswald\Oswald-Light.ttf" />
+    <Resource Include="Styles\Polices\Oswald\Oswald-Regular.ttf" />
+    <Resource Include="Styles\Polices\PT_Sans_Narrow\PT_Sans-Narrow-Web-Bold.ttf" />
+    <Resource Include="Styles\Polices\PT_Sans_Narrow\PT_Sans-Narrow-Web-Regular.ttf" />
+    <Resource Include="Styles\Polices\Ubuntu_Condensed\UbuntuCondensed-Regular.ttf" />
+    <Resource Include="Styles\Polices\Cabin\Cabin-Bold.ttf" />
+    <Resource Include="Styles\Polices\Droid_Sans\DroidSans-Bold.ttf" />
+    <Resource Include="Styles\Polices\Droid_Sans\DroidSans.ttf" />
+    <Resource Include="Styles\Polices\Montserrat\Montserrat-Bold.ttf" />
+    <Resource Include="Styles\Polices\Montserrat\Montserrat-Regular.ttf" />
+    <Resource Include="Styles\Polices\Play\Play-Regular.ttf" />
+    <Resource Include="Styles\Polices\good-times.regular.ttf" />
+    <Resource Include="Styles\Polices\QUARTZMS.TTF" />
+    <Resource Include="Styles\Polices\COOPBL.TTF" />
+    <Resource Include="Styles\Polices\unispace\unispace bd it.ttf" />
+    <Resource Include="Styles\Polices\unispace\unispace bd.ttf" />
+    <Resource Include="Styles\Polices\unispace\unispace it.ttf" />
+    <Resource Include="Styles\Polices\unispace\unispace rg.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\FFJudoServices\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\FFJudoServices\WebService1.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\FFJudoServices\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\FFJudoServices\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\FFJudoServices\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="data\images\icons\accueil\Arbitre1.png" />
+    <Resource Include="data\images\icons\accueil\Arbitre2.png" />
+    <Resource Include="data\images\icons\accueil\Arbitre3.png" />
+    <Resource Include="data\images\icons\accueil\Classement-final1.png" />
+    <Resource Include="data\images\icons\accueil\Classement-final2.png" />
+    <Resource Include="data\images\icons\accueil\Classement-poule1.png" />
+    <Resource Include="data\images\icons\accueil\Classement-poule2.png" />
+    <Resource Include="data\images\icons\accueil\Classement-tableau1.png" />
+    <Resource Include="data\images\icons\accueil\Classement-tableau2.png" />
+    <Resource Include="data\images\icons\accueil\Commissaires1.png" />
+    <Resource Include="data\images\icons\accueil\Commissaires2.png" />
+    <Resource Include="data\images\icons\accueil\Commissaires3.png" />
+    <Resource Include="data\images\icons\accueil\Epreuves1.png" />
+    <Resource Include="data\images\icons\accueil\Epreuves2.png" />
+    <Resource Include="data\images\icons\accueil\Exporte-XML.png" />
+    <Resource Include="data\images\icons\accueil\Exporte-XML2.png" />
+    <Resource Include="data\images\icons\accueil\Exporte-XML3.png" />
+    <Resource Include="data\images\icons\accueil\Formule1.png" />
+    <Resource Include="data\images\icons\accueil\Formule2.png" />
+    <Resource Include="data\images\icons\accueil\Inscription1.png" />
+    <Resource Include="data\images\icons\accueil\Inscription2.png" />
+    <Resource Include="data\images\icons\accueil\Judoka1.png" />
+    <Resource Include="data\images\icons\accueil\Judoka2.png" />
+    <Resource Include="data\images\icons\accueil\Judoka3.png" />
+    <Resource Include="data\images\icons\accueil\Parametres1.png" />
+    <Resource Include="data\images\icons\accueil\Parametres2.png" />
+    <Resource Include="data\images\icons\accueil\Parametres3.png" />
+    <Resource Include="data\images\icons\accueil\Tirage-poule1.png" />
+    <Resource Include="data\images\icons\accueil\Tirage-poule2.png" />
+    <Resource Include="data\images\icons\accueil\Tirage-tableau1.png" />
+    <Resource Include="data\images\icons\accueil\Tirage-tableau2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="data\images\icons\black\0-32.png" />
+    <Resource Include="data\images\icons\black\0_filled-32.png" />
+    <Resource Include="data\images\icons\black\1-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\1-32.png" />
+    <Resource Include="data\images\icons\black\1_filled-32.png" />
+    <Resource Include="data\images\icons\black\2-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\2-32.png" />
+    <Resource Include="data\images\icons\black\25_percent-32.png" />
+    <Resource Include="data\images\icons\black\2f_double_tap-32.png" />
+    <Resource Include="data\images\icons\black\2f_swipe_down-32.png" />
+    <Resource Include="data\images\icons\black\2f_swipe_left-32.png" />
+    <Resource Include="data\images\icons\black\2f_swipe_right-32.png" />
+    <Resource Include="data\images\icons\black\2f_swipe_up-32.png" />
+    <Resource Include="data\images\icons\black\2f_tap-32.png" />
+    <Resource Include="data\images\icons\black\2_filled-32.png" />
+    <Resource Include="data\images\icons\black\3-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\3-32.png" />
+    <Resource Include="data\images\icons\black\3d_printer-32.png" />
+    <Resource Include="data\images\icons\black\3_filled-32.png" />
+    <Resource Include="data\images\icons\black\4-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\4-32.png" />
+    <Resource Include="data\images\icons\black\4_filled-32.png" />
+    <Resource Include="data\images\icons\black\5-32.png" />
+    <Resource Include="data\images\icons\black\50_percent-32.png" />
+    <Resource Include="data\images\icons\black\5_filled-32.png" />
+    <Resource Include="data\images\icons\black\6-32.png" />
+    <Resource Include="data\images\icons\black\6_filled-32.png" />
+    <Resource Include="data\images\icons\black\7-32.png" />
+    <Resource Include="data\images\icons\black\75_percent-32.png" />
+    <Resource Include="data\images\icons\black\7_filled-32.png" />
+    <Resource Include="data\images\icons\black\8-32.png" />
+    <Resource Include="data\images\icons\black\8_filled-32.png" />
+    <Resource Include="data\images\icons\black\9-32.png" />
+    <Resource Include="data\images\icons\black\9_filled-32.png" />
+    <Resource Include="data\images\icons\black\about-32.png" />
+    <Resource Include="data\images\icons\black\accept_database-32.png" />
+    <Resource Include="data\images\icons\black\accessibility1-32.png" />
+    <Resource Include="data\images\icons\black\accessibility2-32.png" />
+    <Resource Include="data\images\icons\black\action-32.png" />
+    <Resource Include="data\images\icons\black\actions2-32.png" />
+    <Resource Include="data\images\icons\black\active_directory-32.png" />
+    <Resource Include="data\images\icons\black\activity_feed-32.png" />
+    <Resource Include="data\images\icons\black\address_book-32.png" />
+    <Resource Include="data\images\icons\black\Add_Column-32.png" />
+    <Resource Include="data\images\icons\black\add_database-32.png" />
+    <Resource Include="data\images\icons\black\add_file-32.png" />
+    <Resource Include="data\images\icons\black\add_folder-32.png" />
+    <Resource Include="data\images\icons\black\add_image-32.png" />
+    <Resource Include="data\images\icons\black\add_link-32.png" />
+    <Resource Include="data\images\icons\black\add_list-32.png" />
+    <Resource Include="data\images\icons\black\add_property-32.png" />
+    <Resource Include="data\images\icons\black\Add_Row-32.png" />
+    <Resource Include="data\images\icons\black\add_user-32.png" />
+    <Resource Include="data\images\icons\black\administrator-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\administrator-32.png" />
+    <Resource Include="data\images\icons\black\adventures-32.png" />
+    <Resource Include="data\images\icons\black\advertising-32.png" />
+    <Resource Include="data\images\icons\black\ai-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\ai-32.png" />
+    <Resource Include="data\images\icons\black\airplane_landing-32.png" />
+    <Resource Include="data\images\icons\black\airplane_takeoff-32.png" />
+    <Resource Include="data\images\icons\black\airport-32.png" />
+    <Resource Include="data\images\icons\black\air_force-32.png" />
+    <Resource Include="data\images\icons\black\alarm_clock-32.png" />
+    <Resource Include="data\images\icons\black\almost_empty-32.png" />
+    <Resource Include="data\images\icons\black\almost_full-32.png" />
+    <Resource Include="data\images\icons\black\alphabetical_sorting-32.png" />
+    <Resource Include="data\images\icons\black\Alphabetical_Sorting2-32.png" />
+    <Resource Include="data\images\icons\black\alto_saxophone-32.png" />
+    <Resource Include="data\images\icons\black\ambulance-32.png" />
+    <Resource Include="data\images\icons\black\amex-32.png" />
+    <Resource Include="data\images\icons\black\ammo_tin-32.png" />
+    <Resource Include="data\images\icons\black\amputee-32.png" />
+    <Resource Include="data\images\icons\black\android-32.png" />
+    <Resource Include="data\images\icons\black\angel-32.png" />
+    <Resource Include="data\images\icons\black\angry-32.png" />
+    <Resource Include="data\images\icons\black\ankh-32.png" />
+    <Resource Include="data\images\icons\black\antiseptic_cream-32.png" />
+    <Resource Include="data\images\icons\black\anubis-32.png" />
+    <Resource Include="data\images\icons\black\apartment-32.png" />
+    <Resource Include="data\images\icons\black\applouse-32.png" />
+    <Resource Include="data\images\icons\black\appointment_reminders-32.png" />
+    <Resource Include="data\images\icons\black\approval-32.png" />
+    <Resource Include="data\images\icons\black\approve-32.png" />
+    <Resource Include="data\images\icons\black\app_shield-32.png" />
+    <Resource Include="data\images\icons\black\archive-32.png" />
+    <Resource Include="data\images\icons\black\archive2-32.png" />
+    <Resource Include="data\images\icons\black\area_chart-32.png" />
+    <Resource Include="data\images\icons\black\armchair-32.png" />
+    <Resource Include="data\images\icons\black\arrow-32.png" />
+    <Resource Include="data\images\icons\black\assistant-32.png" />
+    <Resource Include="data\images\icons\black\atm-32.png" />
+    <Resource Include="data\images\icons\black\attach-32.png" />
+    <Resource Include="data\images\icons\black\audience-32.png" />
+    <Resource Include="data\images\icons\black\audio_file-32.png" />
+    <Resource Include="data\images\icons\black\audio_wave-32.png" />
+    <Resource Include="data\images\icons\black\audio_wave2-32.png" />
+    <Resource Include="data\images\icons\black\autograf-32.png" />
+    <Resource Include="data\images\icons\black\automotive-32.png" />
+    <Resource Include="data\images\icons\black\available_updates-32.png" />
+    <Resource Include="data\images\icons\black\average-32.png" />
+    <Resource Include="data\images\icons\black\avi-32.png" />
+    <Resource Include="data\images\icons\black\back-32.png" />
+    <Resource Include="data\images\icons\black\backspace-32.png" />
+    <Resource Include="data\images\icons\black\bacon-32.png" />
+    <Resource Include="data\images\icons\black\bad_decision-32.png" />
+    <Resource Include="data\images\icons\black\banana_split-32.png" />
+    <Resource Include="data\images\icons\black\bandage-32.png" />
+    <Resource Include="data\images\icons\black\bandmasters_mace-32.png" />
+    <Resource Include="data\images\icons\black\bank-32.png" />
+    <Resource Include="data\images\icons\black\banknotes-32.png" />
+    <Resource Include="data\images\icons\black\bank_cards-32.png" />
+    <Resource Include="data\images\icons\black\bar-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\bar-32.png" />
+    <Resource Include="data\images\icons\black\barbell-32.png" />
+    <Resource Include="data\images\icons\black\barbers_chair-32.png" />
+    <Resource Include="data\images\icons\black\barbers_pole-32.png" />
+    <Resource Include="data\images\icons\black\barber_scissors-32.png" />
+    <Resource Include="data\images\icons\black\barcode-32.png" />
+    <Resource Include="data\images\icons\black\barley-32.png" />
+    <Resource Include="data\images\icons\black\barn-32.png" />
+    <Resource Include="data\images\icons\black\baseball_cap-32.png" />
+    <Resource Include="data\images\icons\black\base_jumping-32.png" />
+    <Resource Include="data\images\icons\black\basketball-32.png" />
+    <Resource Include="data\images\icons\black\bass_drum-32.png" />
+    <Resource Include="data\images\icons\black\beach-32.png" />
+    <Resource Include="data\images\icons\black\bear-32.png" />
+    <Resource Include="data\images\icons\black\bebo-32.png" />
+    <Resource Include="data\images\icons\black\bed-32.png" />
+    <Resource Include="data\images\icons\black\beer-32.png" />
+    <Resource Include="data\images\icons\black\beer_bottle-32.png" />
+    <Resource Include="data\images\icons\black\beer_glass-32.png" />
+    <Resource Include="data\images\icons\black\beeswax-32.png" />
+    <Resource Include="data\images\icons\black\beeswax2-32.png" />
+    <Resource Include="data\images\icons\black\bell-32.png" />
+    <Resource Include="data\images\icons\black\bell_lyre-32.png" />
+    <Resource Include="data\images\icons\black\berry-32.png" />
+    <Resource Include="data\images\icons\black\be_os-32.png" />
+    <Resource Include="data\images\icons\black\bg_color-32.png" />
+    <Resource Include="data\images\icons\black\bib-32.png" />
+    <Resource Include="data\images\icons\black\bicycle-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\bicycle-32.png" />
+    <Resource Include="data\images\icons\black\bill-32.png" />
+    <Resource Include="data\images\icons\black\billing-32.png" />
+    <Resource Include="data\images\icons\black\binders-32.png" />
+    <Resource Include="data\images\icons\black\biohazard-32.png" />
+    <Resource Include="data\images\icons\black\biomass-32.png" />
+    <Resource Include="data\images\icons\black\biotech-32.png" />
+    <Resource Include="data\images\icons\black\bird-32.png" />
+    <Resource Include="data\images\icons\black\birthday_cake-32.png" />
+    <Resource Include="data\images\icons\black\bishop-32.png" />
+    <Resource Include="data\images\icons\black\blackberry-32.png" />
+    <Resource Include="data\images\icons\black\blunderbuss-32.png" />
+    <Resource Include="data\images\icons\black\blu_ray-32.png" />
+    <Resource Include="data\images\icons\black\bobbin-32.png" />
+    <Resource Include="data\images\icons\black\bold-32.png" />
+    <Resource Include="data\images\icons\black\bomb-32.png" />
+    <Resource Include="data\images\icons\black\book-32.png" />
+    <Resource Include="data\images\icons\black\bookmark-32.png" />
+    <Resource Include="data\images\icons\black\books-32.png" />
+    <Resource Include="data\images\icons\black\book_stack-32.png" />
+    <Resource Include="data\images\icons\black\boombox-32.png" />
+    <Resource Include="data\images\icons\black\boots-32.png" />
+    <Resource Include="data\images\icons\black\border_color-32.png" />
+    <Resource Include="data\images\icons\black\bottle-32.png" />
+    <Resource Include="data\images\icons\black\bottom_navigation_toolbar-32.png" />
+    <Resource Include="data\images\icons\black\bowler_hat-32.png" />
+    <Resource Include="data\images\icons\black\box-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\box-32.png" />
+    <Resource Include="data\images\icons\black\br-32.png" />
+    <Resource Include="data\images\icons\black\bra-32.png" />
+    <Resource Include="data\images\icons\black\brandenburg_gate-32.png" />
+    <Resource Include="data\images\icons\black\bread-32.png" />
+    <Resource Include="data\images\icons\black\brick-32.png" />
+    <Resource Include="data\images\icons\black\briefcase-32.png" />
+    <Resource Include="data\images\icons\black\british-army-32.png" />
+    <Resource Include="data\images\icons\black\broken_link-32.png" />
+    <Resource Include="data\images\icons\black\brush-32.png" />
+    <Resource Include="data\images\icons\black\bug-32.png" />
+    <Resource Include="data\images\icons\black\bugle-32.png" />
+    <Resource Include="data\images\icons\black\bull-32.png" />
+    <Resource Include="data\images\icons\black\bunch_flowers-32.png" />
+    <Resource Include="data\images\icons\black\bunch_ingredients-32.png" />
+    <Resource Include="data\images\icons\black\bungalow-32.png" />
+    <Resource Include="data\images\icons\black\burn-32.png" />
+    <Resource Include="data\images\icons\black\burn_cd-32.png" />
+    <Resource Include="data\images\icons\black\bus-32.png" />
+    <Resource Include="data\images\icons\black\businessman-32.png" />
+    <Resource Include="data\images\icons\black\businesswoman-32.png" />
+    <Resource Include="data\images\icons\black\business_contact-32.png" />
+    <Resource Include="data\images\icons\black\button-32.png" />
+    <Resource Include="data\images\icons\black\buy-32.png" />
+    <Resource Include="data\images\icons\black\cafe-32.png" />
+    <Resource Include="data\images\icons\black\calculator-32.png" />
+    <Resource Include="data\images\icons\black\calendar-32.png" />
+    <Resource Include="data\images\icons\black\call_transfer-32.png" />
+    <Resource Include="data\images\icons\black\camcoder-32.png" />
+    <Resource Include="data\images\icons\black\camcoder_pro-32.png" />
+    <Resource Include="data\images\icons\black\camo_cream-32.png" />
+    <Resource Include="data\images\icons\black\cancel-32.png" />
+    <Resource Include="data\images\icons\black\cannon-32.png" />
+    <Resource Include="data\images\icons\black\canopy-32.png" />
+    <Resource Include="data\images\icons\black\capacitor-32.png" />
+    <Resource Include="data\images\icons\black\car-32.png" />
+    <Resource Include="data\images\icons\black\cards-32.png" />
+    <Resource Include="data\images\icons\black\card_inserting-32.png" />
+    <Resource Include="data\images\icons\black\card_in_use-32.png" />
+    <Resource Include="data\images\icons\black\cargo_ship-32.png" />
+    <Resource Include="data\images\icons\black\carrot-32.png" />
+    <Resource Include="data\images\icons\black\car_battery-32.png" />
+    <Resource Include="data\images\icons\black\cash_receiving-32.png" />
+    <Resource Include="data\images\icons\black\cat-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\cat-32.png" />
+    <Resource Include="data\images\icons\black\categorize-32.png" />
+    <Resource Include="data\images\icons\black\cave-32.png" />
+    <Resource Include="data\images\icons\black\cd-32.png" />
+    <Resource Include="data\images\icons\black\center-32.png" />
+    <Resource Include="data\images\icons\black\champagne-32.png" />
+    <Resource Include="data\images\icons\black\chance_of_storm-32.png" />
+    <Resource Include="data\images\icons\black\change_user-32.png" />
+    <Resource Include="data\images\icons\black\channel_mosaic-32.png" />
+    <Resource Include="data\images\icons\black\cheap-32.png" />
+    <Resource Include="data\images\icons\black\check-32.png" />
+    <Resource Include="data\images\icons\black\checked_checkbox-32.png" />
+    <Resource Include="data\images\icons\black\checked_user-32.png" />
+    <Resource Include="data\images\icons\black\checkmark-32.png" />
+    <Resource Include="data\images\icons\black\checkout-32.png" />
+    <Resource Include="data\images\icons\black\check_book-32.png" />
+    <Resource Include="data\images\icons\black\cheese-32.png" />
+    <Resource Include="data\images\icons\black\chest-32.png" />
+    <Resource Include="data\images\icons\black\chichen_itza-32.png" />
+    <Resource Include="data\images\icons\black\chiken-32.png" />
+    <Resource Include="data\images\icons\black\child_new_post-32.png" />
+    <Resource Include="data\images\icons\black\chili_papper-32.png" />
+    <Resource Include="data\images\icons\black\chip-32.png" />
+    <Resource Include="data\images\icons\black\chrome-32.png" />
+    <Resource Include="data\images\icons\black\church-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\church-32.png" />
+    <Resource Include="data\images\icons\black\cisco_router-32.png" />
+    <Resource Include="data\images\icons\black\citrus-32.png" />
+    <Resource Include="data\images\icons\black\clapperboard-32.png" />
+    <Resource Include="data\images\icons\black\clarnet-32.png" />
+    <Resource Include="data\images\icons\black\clenched_fist-32.png" />
+    <Resource Include="data\images\icons\black\climbing-32.png" />
+    <Resource Include="data\images\icons\black\clinic-32.png" />
+    <Resource Include="data\images\icons\black\cllipboard-32.png" />
+    <Resource Include="data\images\icons\black\clock-32.png" />
+    <Resource Include="data\images\icons\black\closed_topic-32.png" />
+    <Resource Include="data\images\icons\black\close_window-32.png" />
+    <Resource Include="data\images\icons\black\cloud-32.png" />
+    <Resource Include="data\images\icons\black\cloudflare-32.png" />
+    <Resource Include="data\images\icons\black\clouds-32.png" />
+    <Resource Include="data\images\icons\black\cloud_lighting-32.png" />
+    <Resource Include="data\images\icons\black\cloud_storage-32.png" />
+    <Resource Include="data\images\icons\black\clover-32.png" />
+    <Resource Include="data\images\icons\black\clubs-32.png" />
+    <Resource Include="data\images\icons\black\cnc_machine-32.png" />
+    <Resource Include="data\images\icons\black\coat-32.png" />
+    <Resource Include="data\images\icons\black\coctail-32.png" />
+    <Resource Include="data\images\icons\black\coderwall-32.png" />
+    <Resource Include="data\images\icons\black\coffee-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\coffee-32.png" />
+    <Resource Include="data\images\icons\black\coffe_maker-32.png" />
+    <Resource Include="data\images\icons\black\coins-32.png" />
+    <Resource Include="data\images\icons\black\coking_pot-32.png" />
+    <Resource Include="data\images\icons\black\collaborator-32.png" />
+    <Resource Include="data\images\icons\black\collapse-32.png" />
+    <Resource Include="data\images\icons\black\comb-32.png" />
+    <Resource Include="data\images\icons\black\combo-32.png" />
+    <Resource Include="data\images\icons\black\comedy-32.png" />
+    <Resource Include="data\images\icons\black\comedy2-32.png" />
+    <Resource Include="data\images\icons\black\comedy_mask-32.png" />
+    <Resource Include="data\images\icons\black\comments-32.png" />
+    <Resource Include="data\images\icons\black\commode-32.png" />
+    <Resource Include="data\images\icons\black\compact_camera-32.png" />
+    <Resource Include="data\images\icons\black\compare-32.png" />
+    <Resource Include="data\images\icons\black\compass-32.png" />
+    <Resource Include="data\images\icons\black\computer-32.png" />
+    <Resource Include="data\images\icons\black\conference-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\conference-32.png" />
+    <Resource Include="data\images\icons\black\conference_call-32.png" />
+    <Resource Include="data\images\icons\black\coniferous_tree-32.png" />
+    <Resource Include="data\images\icons\black\console-32.png" />
+    <Resource Include="data\images\icons\black\contacts-32.png" />
+    <Resource Include="data\images\icons\black\contacts2-32.png" />
+    <Resource Include="data\images\icons\black\cook-32.png" />
+    <Resource Include="data\images\icons\black\cooker-32.png" />
+    <Resource Include="data\images\icons\black\cooker_hood-32.png" />
+    <Resource Include="data\images\icons\black\cool-32.png" />
+    <Resource Include="data\images\icons\black\copy-32.png" />
+    <Resource Include="data\images\icons\black\copy_link-32.png" />
+    <Resource Include="data\images\icons\black\corkscrew-32.png" />
+    <Resource Include="data\images\icons\black\cornet-32.png" />
+    <Resource Include="data\images\icons\black\cottage-32.png" />
+    <Resource Include="data\images\icons\black\cow-32.png" />
+    <Resource Include="data\images\icons\black\crab-32.png" />
+    <Resource Include="data\images\icons\black\crib-32.png" />
+    <Resource Include="data\images\icons\black\crime-32.png" />
+    <Resource Include="data\images\icons\black\crop-32.png" />
+    <Resource Include="data\images\icons\black\cruise_ship-32.png" />
+    <Resource Include="data\images\icons\black\crying-32.png" />
+    <Resource Include="data\images\icons\black\css-32.png" />
+    <Resource Include="data\images\icons\black\csv-32.png" />
+    <Resource Include="data\images\icons\black\cup-32.png" />
+    <Resource Include="data\images\icons\black\cursor-32.png" />
+    <Resource Include="data\images\icons\black\cut-32.png" />
+    <Resource Include="data\images\icons\black\cymbals-32.png" />
+    <Resource Include="data\images\icons\black\dashboard-32.png" />
+    <Resource Include="data\images\icons\black\database-32.png" />
+    <Resource Include="data\images\icons\black\data_backup-32.png" />
+    <Resource Include="data\images\icons\black\data_configuration-32.png" />
+    <Resource Include="data\images\icons\black\data_encryption-32.png" />
+    <Resource Include="data\images\icons\black\data_protection-32.png" />
+    <Resource Include="data\images\icons\black\data_recovery-32.png" />
+    <Resource Include="data\images\icons\black\date_from-32.png" />
+    <Resource Include="data\images\icons\black\date_to-32.png" />
+    <Resource Include="data\images\icons\black\day_view-32.png" />
+    <Resource Include="data\images\icons\black\deciduous_tree-32.png" />
+    <Resource Include="data\images\icons\black\decision-32.png" />
+    <Resource Include="data\images\icons\black\decrease_font-32.png" />
+    <Resource Include="data\images\icons\black\define_location-32.png" />
+    <Resource Include="data\images\icons\black\degrees-32.png" />
+    <Resource Include="data\images\icons\black\delete-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\delete-32.png" />
+    <Resource Include="data\images\icons\black\Delete_Column-32.png" />
+    <Resource Include="data\images\icons\black\delete_database-32.png" />
+    <Resource Include="data\images\icons\black\delete_link-32.png" />
+    <Resource Include="data\images\icons\black\delete_message-32.png" />
+    <Resource Include="data\images\icons\black\delete_property-32.png" />
+    <Resource Include="data\images\icons\black\Delete_Row-32.png" />
+    <Resource Include="data\images\icons\black\delete_shield-32.png" />
+    <Resource Include="data\images\icons\black\delete_ticket-32.png" />
+    <Resource Include="data\images\icons\black\delivery-32.png" />
+    <Resource Include="data\images\icons\black\delivery_food-32.png" />
+    <Resource Include="data\images\icons\black\detective-32.png" />
+    <Resource Include="data\images\icons\black\diamonds-32.png" />
+    <Resource Include="data\images\icons\black\dice-32.png" />
+    <Resource Include="data\images\icons\black\dinghy-32.png" />
+    <Resource Include="data\images\icons\black\diploma1-32.png" />
+    <Resource Include="data\images\icons\black\diploma2-32.png" />
+    <Resource Include="data\images\icons\black\disapprove-32.png" />
+    <Resource Include="data\images\icons\black\display-32.png" />
+    <Resource Include="data\images\icons\black\divide-32.png" />
+    <Resource Include="data\images\icons\black\divide2-32.png" />
+    <Resource Include="data\images\icons\black\dj-32.png" />
+    <Resource Include="data\images\icons\black\dll-32.png" />
+    <Resource Include="data\images\icons\black\dmg-32.png" />
+    <Resource Include="data\images\icons\black\dna_helix-32.png" />
+    <Resource Include="data\images\icons\black\dnd-32.png" />
+    <Resource Include="data\images\icons\black\doctor-32.png" />
+    <Resource Include="data\images\icons\black\doctor_suitecase-32.png" />
+    <Resource Include="data\images\icons\black\document-32.png" />
+    <Resource Include="data\images\icons\black\documentary-32.png" />
+    <Resource Include="data\images\icons\black\documents-32.png" />
+    <Resource Include="data\images\icons\black\dog-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\dog-32.png" />
+    <Resource Include="data\images\icons\black\domain-32.png" />
+    <Resource Include="data\images\icons\black\donat_chart-32.png" />
+    <Resource Include="data\images\icons\black\dos-32.png" />
+    <Resource Include="data\images\icons\black\dossier-32.png" />
+    <Resource Include="data\images\icons\black\double_tap-32.png" />
+    <Resource Include="data\images\icons\black\down-32.png" />
+    <Resource Include="data\images\icons\black\download-32.png" />
+    <Resource Include="data\images\icons\black\downloading_updates-32.png" />
+    <Resource Include="data\images\icons\black\downloads-32.png" />
+    <Resource Include="data\images\icons\black\down_circular-32.png" />
+    <Resource Include="data\images\icons\black\drama-32.png" />
+    <Resource Include="data\images\icons\black\dribbble-32.png" />
+    <Resource Include="data\images\icons\black\drill-32.png" />
+    <Resource Include="data\images\icons\black\dropbox-32.png" />
+    <Resource Include="data\images\icons\black\drop_zone-32.png" />
+    <Resource Include="data\images\icons\black\duck-32.png" />
+    <Resource Include="data\images\icons\black\dumbbell-32.png" />
+    <Resource Include="data\images\icons\black\dust-32.png" />
+    <Resource Include="data\images\icons\black\dvd-32.png" />
+    <Resource Include="data\images\icons\black\dw-32.png" />
+    <Resource Include="data\images\icons\black\easter_cake-32.png" />
+    <Resource Include="data\images\icons\black\easter_egg-32.png" />
+    <Resource Include="data\images\icons\black\easter_rabbit-32.png" />
+    <Resource Include="data\images\icons\black\edit-32.png" />
+    <Resource Include="data\images\icons\black\edit_image-32.png" />
+    <Resource Include="data\images\icons\black\edit_property-32.png" />
+    <Resource Include="data\images\icons\black\edit_user-32.png" />
+    <Resource Include="data\images\icons\black\eggs-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\eggs-32.png" />
+    <Resource Include="data\images\icons\black\eject-32.png" />
+    <Resource Include="data\images\icons\black\electricity-32.png" />
+    <Resource Include="data\images\icons\black\electric_teapot-32.png" />
+    <Resource Include="data\images\icons\black\electronics-32.png" />
+    <Resource Include="data\images\icons\black\electro_devices-32.png" />
+    <Resource Include="data\images\icons\black\ellips-32.png" />
+    <Resource Include="data\images\icons\black\empty_battery-32.png" />
+    <Resource Include="data\images\icons\black\empty_box-32.png" />
+    <Resource Include="data\images\icons\black\empty_filter-32.png" />
+    <Resource Include="data\images\icons\black\empty_flag-32.png" />
+    <Resource Include="data\images\icons\black\empty_trash-32.png" />
+    <Resource Include="data\images\icons\black\end-32.png" />
+    <Resource Include="data\images\icons\black\engine-32.png" />
+    <Resource Include="data\images\icons\black\engineering-32.png" />
+    <Resource Include="data\images\icons\black\enter-32.png" />
+    <Resource Include="data\images\icons\black\equal_sign-32.png" />
+    <Resource Include="data\images\icons\black\equal_sign2-32.png" />
+    <Resource Include="data\images\icons\black\erase-32.png" />
+    <Resource Include="data\images\icons\black\eraser-32.png" />
+    <Resource Include="data\images\icons\black\erotic_bottom-32.png" />
+    <Resource Include="data\images\icons\black\erotic_breast-32.png" />
+    <Resource Include="data\images\icons\black\error-32.png" />
+    <Resource Include="data\images\icons\black\ethernet_off-32.png" />
+    <Resource Include="data\images\icons\black\ethernet_on-32.png" />
+    <Resource Include="data\images\icons\black\evil-32.png" />
+    <Resource Include="data\images\icons\black\excel-32.png" />
+    <Resource Include="data\images\icons\black\exe-32.png" />
+    <Resource Include="data\images\icons\black\exel-32.png" />
+    <Resource Include="data\images\icons\black\expand-32.png" />
+    <Resource Include="data\images\icons\black\expensive-32.png" />
+    <Resource Include="data\images\icons\black\explosion-32.png" />
+    <Resource Include="data\images\icons\black\extensions-32.png" />
+    <Resource Include="data\images\icons\black\external_link-32.png" />
+    <Resource Include="data\images\icons\black\facebook-32.png" />
+    <Resource Include="data\images\icons\black\factory-32.png" />
+    <Resource Include="data\images\icons\black\fan-32.png" />
+    <Resource Include="data\images\icons\black\fan2-32.png" />
+    <Resource Include="data\images\icons\black\fantasy-32.png" />
+    <Resource Include="data\images\icons\black\fast_forward-32.png" />
+    <Resource Include="data\images\icons\black\female-32.png" />
+    <Resource Include="data\images\icons\black\ferry-32.png" />
+    <Resource Include="data\images\icons\black\file-32.png" />
+    <Resource Include="data\images\icons\black\filing_cabinet-32.png" />
+    <Resource Include="data\images\icons\black\filled_box-32.png" />
+    <Resource Include="data\images\icons\black\filled_filter-32.png" />
+    <Resource Include="data\images\icons\black\filled_flag-32.png" />
+    <Resource Include="data\images\icons\black\film-32.png" />
+    <Resource Include="data\images\icons\black\film2-32.png" />
+    <Resource Include="data\images\icons\black\film_reel-32.png" />
+    <Resource Include="data\images\icons\black\finger_and_thumb-32.png" />
+    <Resource Include="data\images\icons\black\finish_flag-32.png" />
+    <Resource Include="data\images\icons\black\firefox-32.png" />
+    <Resource Include="data\images\icons\black\fireman-32.png" />
+    <Resource Include="data\images\icons\black\firewall-32.png" />
+    <Resource Include="data\images\icons\black\first-32.png" />
+    <Resource Include="data\images\icons\black\fish-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\fish-32 %283%29.png" />
+    <Resource Include="data\images\icons\black\fish-32.png" />
+    <Resource Include="data\images\icons\black\fishing-32.png" />
+    <Resource Include="data\images\icons\black\fit_to_width-32.png" />
+    <Resource Include="data\images\icons\black\fl-32.png" />
+    <Resource Include="data\images\icons\black\flash_bang-32.png" />
+    <Resource Include="data\images\icons\black\flip_flop-32.png" />
+    <Resource Include="data\images\icons\black\flip_horizontal-32.png" />
+    <Resource Include="data\images\icons\black\flip_vertical-32.png" />
+    <Resource Include="data\images\icons\black\flower-32.png" />
+    <Resource Include="data\images\icons\black\flow_chart-32.png" />
+    <Resource Include="data\images\icons\black\flv-32.png" />
+    <Resource Include="data\images\icons\black\flying_stork-32.png" />
+    <Resource Include="data\images\icons\black\flying_stork_with_bundle-32.png" />
+    <Resource Include="data\images\icons\black\fog_day-32.png" />
+    <Resource Include="data\images\icons\black\fog_night-32.png" />
+    <Resource Include="data\images\icons\black\foil_space_blanket-32.png" />
+    <Resource Include="data\images\icons\black\folder-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\folder-32.png" />
+    <Resource Include="data\images\icons\black\football-32.png" />
+    <Resource Include="data\images\icons\black\football2-32.png" />
+    <Resource Include="data\images\icons\black\fork-32.png" />
+    <Resource Include="data\images\icons\black\fork_truck-32.png" />
+    <Resource Include="data\images\icons\black\forrst-32.png" />
+    <Resource Include="data\images\icons\black\forward-32.png" />
+    <Resource Include="data\images\icons\black\foursquare-32.png" />
+    <Resource Include="data\images\icons\black\four_fingers-32.png" />
+    <Resource Include="data\images\icons\black\frame-32.png" />
+    <Resource Include="data\images\icons\black\frankenstein-32.png" />
+    <Resource Include="data\images\icons\black\free_bsd-32.png" />
+    <Resource Include="data\images\icons\black\free_shipping-32.png" />
+    <Resource Include="data\images\icons\black\french_fries-32.png" />
+    <Resource Include="data\images\icons\black\french_horn-32.png" />
+    <Resource Include="data\images\icons\black\fridge-32.png" />
+    <Resource Include="data\images\icons\black\frisbee-32.png" />
+    <Resource Include="data\images\icons\black\full_battery-32.png" />
+    <Resource Include="data\images\icons\black\full_trash-32.png" />
+    <Resource Include="data\images\icons\black\fw-32.png" />
+    <Resource Include="data\images\icons\black\gaiters-32.png" />
+    <Resource Include="data\images\icons\black\gallery-32.png" />
+    <Resource Include="data\images\icons\black\gantt_chart-32.png" />
+    <Resource Include="data\images\icons\black\gas-32.png" />
+    <Resource Include="data\images\icons\black\gas_station-32.png" />
+    <Resource Include="data\images\icons\black\gatling_gun-32.png" />
+    <Resource Include="data\images\icons\black\geisha-32.png" />
+    <Resource Include="data\images\icons\black\genealogy-32.png" />
+    <Resource Include="data\images\icons\black\generic_sorting-32.png" />
+    <Resource Include="data\images\icons\black\Generic_Sorting2-32.png" />
+    <Resource Include="data\images\icons\black\generic_text-32.png" />
+    <Resource Include="data\images\icons\black\genie-32.png" />
+    <Resource Include="data\images\icons\black\geography-32.png" />
+    <Resource Include="data\images\icons\black\geothermal-32.png" />
+    <Resource Include="data\images\icons\black\german_hat-32.png" />
+    <Resource Include="data\images\icons\black\gif-32.png" />
+    <Resource Include="data\images\icons\black\gift-32.png" />
+    <Resource Include="data\images\icons\black\github-32.png" />
+    <Resource Include="data\images\icons\black\glasses-32.png" />
+    <Resource Include="data\images\icons\black\globe-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\globe-32.png" />
+    <Resource Include="data\images\icons\black\gmail_login-32.png" />
+    <Resource Include="data\images\icons\black\goatee-32.png" />
+    <Resource Include="data\images\icons\black\good_decision-32.png" />
+    <Resource Include="data\images\icons\black\google_alerts-32.png" />
+    <Resource Include="data\images\icons\black\google_blog_search-32.png" />
+    <Resource Include="data\images\icons\black\google_code-32.png" />
+    <Resource Include="data\images\icons\black\google_drive-32.png" />
+    <Resource Include="data\images\icons\black\google_earth-32.png" />
+    <Resource Include="data\images\icons\black\google_groups-32.png" />
+    <Resource Include="data\images\icons\black\google_images-32.png" />
+    <Resource Include="data\images\icons\black\google_mobile-32.png" />
+    <Resource Include="data\images\icons\black\google_news-32.png" />
+    <Resource Include="data\images\icons\black\google_plus-32.png" />
+    <Resource Include="data\images\icons\black\google_scholar-32.png" />
+    <Resource Include="data\images\icons\black\google_sketchup-32.png" />
+    <Resource Include="data\images\icons\black\google_translate-32.png" />
+    <Resource Include="data\images\icons\black\google_web_search-32.png" />
+    <Resource Include="data\images\icons\black\gps_device-32.png" />
+    <Resource Include="data\images\icons\black\gps_disconnected-32.png" />
+    <Resource Include="data\images\icons\black\gps_receiving-32.png" />
+    <Resource Include="data\images\icons\black\gps_searching-32.png" />
+    <Resource Include="data\images\icons\black\graduation_cap-32.png" />
+    <Resource Include="data\images\icons\black\grapes-32.png" />
+    <Resource Include="data\images\icons\black\grass-32.png" />
+    <Resource Include="data\images\icons\black\great_wall-32.png" />
+    <Resource Include="data\images\icons\black\greentech-32.png" />
+    <Resource Include="data\images\icons\black\grenade-32.png" />
+    <Resource Include="data\images\icons\black\grey-32.png" />
+    <Resource Include="data\images\icons\black\grid-32.png" />
+    <Resource Include="data\images\icons\black\group-32.png" />
+    <Resource Include="data\images\icons\black\guest-32.png" />
+    <Resource Include="data\images\icons\black\guestion-32.png" />
+    <Resource Include="data\images\icons\black\guitar-32.png" />
+    <Resource Include="data\images\icons\black\gun-32.png" />
+    <Resource Include="data\images\icons\black\haiku-32.png" />
+    <Resource Include="data\images\icons\black\hail-32.png" />
+    <Resource Include="data\images\icons\black\hair_band-32.png" />
+    <Resource Include="data\images\icons\black\hair_brush-32.png" />
+    <Resource Include="data\images\icons\black\hair_clip-32.png" />
+    <Resource Include="data\images\icons\black\hair_dryer-32.png" />
+    <Resource Include="data\images\icons\black\hair_washing_sink-32.png" />
+    <Resource Include="data\images\icons\black\hammer-32.png" />
+    <Resource Include="data\images\icons\black\handshake-32.png" />
+    <Resource Include="data\images\icons\black\hand_biceps-32.png" />
+    <Resource Include="data\images\icons\black\hand_cursor-32.png" />
+    <Resource Include="data\images\icons\black\hand_poking_tool-32.png" />
+    <Resource Include="data\images\icons\black\happy-32.png" />
+    <Resource Include="data\images\icons\black\hat_beanie-32.png" />
+    <Resource Include="data\images\icons\black\hazelnut-32.png" />
+    <Resource Include="data\images\icons\black\hdd-32.png" />
+    <Resource Include="data\images\icons\black\hdtv-32.png" />
+    <Resource Include="data\images\icons\black\headset-32.png" />
+    <Resource Include="data\images\icons\black\hearts-32.png" />
+    <Resource Include="data\images\icons\black\heart_monitor-32.png" />
+    <Resource Include="data\images\icons\black\heat_map-32.png" />
+    <Resource Include="data\images\icons\black\helicopter-32.png" />
+    <Resource Include="data\images\icons\black\helmet-32.png" />
+    <Resource Include="data\images\icons\black\help-32.png" />
+    <Resource Include="data\images\icons\black\herald_trumpet-32.png" />
+    <Resource Include="data\images\icons\black\hex_burner-32.png" />
+    <Resource Include="data\images\icons\black\high_connection-32.png" />
+    <Resource Include="data\images\icons\black\high_importance-32.png" />
+    <Resource Include="data\images\icons\black\historical-32.png" />
+    <Resource Include="data\images\icons\black\holy_bible-32.png" />
+    <Resource Include="data\images\icons\black\home-32.png" />
+    <Resource Include="data\images\icons\black\honey-32.png" />
+    <Resource Include="data\images\icons\black\hops-32.png" />
+    <Resource Include="data\images\icons\black\horror-32.png" />
+    <Resource Include="data\images\icons\black\hospital-32.png" />
+    <Resource Include="data\images\icons\black\hospital2-32.png" />
+    <Resource Include="data\images\icons\black\hotel-32.png" />
+    <Resource Include="data\images\icons\black\hot_articcle-32.png" />
+    <Resource Include="data\images\icons\black\hot_chocolate-32.png" />
+    <Resource Include="data\images\icons\black\hot_dog-32.png" />
+    <Resource Include="data\images\icons\black\hot_tube-32.png" />
+    <Resource Include="data\images\icons\black\html-32.png" />
+    <Resource Include="data\images\icons\black\hub-32.png" />
+    <Resource Include="data\images\icons\black\human_footprints-32.png" />
+    <Resource Include="data\images\icons\black\humburger-32.png" />
+    <Resource Include="data\images\icons\black\hydroelectric-32.png" />
+    <Resource Include="data\images\icons\black\icq-32.png" />
+    <Resource Include="data\images\icons\black\icy-32.png" />
+    <Resource Include="data\images\icons\black\id-32.png" />
+    <Resource Include="data\images\icons\black\idea-32.png" />
+    <Resource Include="data\images\icons\black\ie-32.png" />
+    <Resource Include="data\images\icons\black\image_file-32.png" />
+    <Resource Include="data\images\icons\black\incendiary_grenade-32.png" />
+    <Resource Include="data\images\icons\black\increase_font-32.png" />
+    <Resource Include="data\images\icons\black\info-32.png" />
+    <Resource Include="data\images\icons\black\instagram-32.png" />
+    <Resource Include="data\images\icons\black\installing_updates-32.png" />
+    <Resource Include="data\images\icons\black\instapaper-32.png" />
+    <Resource Include="data\images\icons\black\integrated_circuit-32.png" />
+    <Resource Include="data\images\icons\black\integrated_webcam-32.png" />
+    <Resource Include="data\images\icons\black\internet-32.png" />
+    <Resource Include="data\images\icons\black\invisible-32.png" />
+    <Resource Include="data\images\icons\black\invoice-32.png" />
+    <Resource Include="data\images\icons\black\in_love-32.png" />
+    <Resource Include="data\images\icons\black\iphone-32.png" />
+    <Resource Include="data\images\icons\black\ip_adress-32.png" />
+    <Resource Include="data\images\icons\black\iron-32.png" />
+    <Resource Include="data\images\icons\black\italic-32.png" />
+    <Resource Include="data\images\icons\black\jacket-32.png" />
+    <Resource Include="data\images\icons\black\jacuzzi-32.png" />
+    <Resource Include="data\images\icons\black\jcb-32.png" />
+    <Resource Include="data\images\icons\black\joker-32.png" />
+    <Resource Include="data\images\icons\black\Joomla-32.png" />
+    <Resource Include="data\images\icons\black\joystick-32.png" />
+    <Resource Include="data\images\icons\black\jpg-32.png" />
+    <Resource Include="data\images\icons\black\js-32.png" />
+    <Resource Include="data\images\icons\black\jumper-32.png" />
+    <Resource Include="data\images\icons\black\jump_rope-32.png" />
+    <Resource Include="data\images\icons\black\justify-32.png" />
+    <Resource Include="data\images\icons\black\kettle-32.png" />
+    <Resource Include="data\images\icons\black\key-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\key-32.png" />
+    <Resource Include="data\images\icons\black\keyboard-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\keyboard-32.png" />
+    <Resource Include="data\images\icons\black\king-32.png" />
+    <Resource Include="data\images\icons\black\kiss-32.png" />
+    <Resource Include="data\images\icons\black\knife-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\knife-32.png" />
+    <Resource Include="data\images\icons\black\knight-32.png" />
+    <Resource Include="data\images\icons\black\koran-32.png" />
+    <Resource Include="data\images\icons\black\ladder-32.png" />
+    <Resource Include="data\images\icons\black\ladle-32.png" />
+    <Resource Include="data\images\icons\black\lamp-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\lamp-32.png" />
+    <Resource Include="data\images\icons\black\lamp_genie-32.png" />
+    <Resource Include="data\images\icons\black\last-32.png" />
+    <Resource Include="data\images\icons\black\latern-32.png" />
+    <Resource Include="data\images\icons\black\layers-32.png" />
+    <Resource Include="data\images\icons\black\leaf-32.png" />
+    <Resource Include="data\images\icons\black\leaf2-32.png" />
+    <Resource Include="data\images\icons\black\leaf3-32.png" />
+    <Resource Include="data\images\icons\black\led_diode-32.png" />
+    <Resource Include="data\images\icons\black\left-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\left-32.png" />
+    <Resource Include="data\images\icons\black\left_circular-32.png" />
+    <Resource Include="data\images\icons\black\left_footprint-32.png" />
+    <Resource Include="data\images\icons\black\left_navigation_toolbar-32.png" />
+    <Resource Include="data\images\icons\black\left_round-32.png" />
+    <Resource Include="data\images\icons\black\left_shoe-32.png" />
+    <Resource Include="data\images\icons\black\leg-32.png" />
+    <Resource Include="data\images\icons\black\lego-32.png" />
+    <Resource Include="data\images\icons\black\length-32.png" />
+    <Resource Include="data\images\icons\black\library-32.png" />
+    <Resource Include="data\images\icons\black\lifebuoy-32.png" />
+    <Resource Include="data\images\icons\black\like-32.png" />
+    <Resource Include="data\images\icons\black\likes-32.png" />
+    <Resource Include="data\images\icons\black\like_outline-32.png" />
+    <Resource Include="data\images\icons\black\line-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\line-32.png" />
+    <Resource Include="data\images\icons\black\line_width-32.png" />
+    <Resource Include="data\images\icons\black\link-32.png" />
+    <Resource Include="data\images\icons\black\linkedin-32.png" />
+    <Resource Include="data\images\icons\black\linux-32.png" />
+    <Resource Include="data\images\icons\black\linux_client-32.png" />
+    <Resource Include="data\images\icons\black\list-32.png" />
+    <Resource Include="data\images\icons\black\listen-32.png" />
+    <Resource Include="data\images\icons\black\list_ingredients-32.png" />
+    <Resource Include="data\images\icons\black\literature-32.png" />
+    <Resource Include="data\images\icons\black\little_rain-32.png" />
+    <Resource Include="data\images\icons\black\little_snow-32.png" />
+    <Resource Include="data\images\icons\black\lock-32.png" />
+    <Resource Include="data\images\icons\black\login-32.png" />
+    <Resource Include="data\images\icons\black\logout-32.png" />
+    <Resource Include="data\images\icons\black\log_cabin-32.png" />
+    <Resource Include="data\images\icons\black\lol-32.png" />
+    <Resource Include="data\images\icons\black\long_beard-32.png" />
+    <Resource Include="data\images\icons\black\loudspeaker-32.png" />
+    <Resource Include="data\images\icons\black\low_connection-32.png" />
+    <Resource Include="data\images\icons\black\low_importance-32.png" />
+    <Resource Include="data\images\icons\black\lyre-32.png" />
+    <Resource Include="data\images\icons\black\mac_client-32.png" />
+    <Resource Include="data\images\icons\black\mac_os-32.png" />
+    <Resource Include="data\images\icons\black\maestro-32.png" />
+    <Resource Include="data\images\icons\black\magazin-32.png" />
+    <Resource Include="data\images\icons\black\magazine-32.png" />
+    <Resource Include="data\images\icons\black\make_dicision-32.png" />
+    <Resource Include="data\images\icons\black\male-32.png" />
+    <Resource Include="data\images\icons\black\manager-32.png" />
+    <Resource Include="data\images\icons\black\map-32.png" />
+    <Resource Include="data\images\icons\black\map_marker-32.png" />
+    <Resource Include="data\images\icons\black\marine_radio-32.png" />
+    <Resource Include="data\images\icons\black\marker-32.png" />
+    <Resource Include="data\images\icons\black\martian-32.png" />
+    <Resource Include="data\images\icons\black\mastercard-32.png" />
+    <Resource Include="data\images\icons\black\matches-32.png" />
+    <Resource Include="data\images\icons\black\math-32.png" />
+    <Resource Include="data\images\icons\black\maximize_window-32.png" />
+    <Resource Include="data\images\icons\black\medal-32.png" />
+    <Resource Include="data\images\icons\black\medium_connection-32.png" />
+    <Resource Include="data\images\icons\black\megafone1-32.png" />
+    <Resource Include="data\images\icons\black\megafone2-32.png" />
+    <Resource Include="data\images\icons\black\memmory_slot-32.png" />
+    <Resource Include="data\images\icons\black\menorah-32.png" />
+    <Resource Include="data\images\icons\black\mens_underwear-32.png" />
+    <Resource Include="data\images\icons\black\message-32.png" />
+    <Resource Include="data\images\icons\black\message_outline-32.png" />
+    <Resource Include="data\images\icons\black\mess_tin-32.png" />
+    <Resource Include="data\images\icons\black\microphone-32.png" />
+    <Resource Include="data\images\icons\black\microphone2-32.png" />
+    <Resource Include="data\images\icons\black\micropore_tape-32.png" />
+    <Resource Include="data\images\icons\black\microwave-32.png" />
+    <Resource Include="data\images\icons\black\micro_sd-32.png" />
+    <Resource Include="data\images\icons\black\military_backpack_radio-32.png" />
+    <Resource Include="data\images\icons\black\milk-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\milk-32.png" />
+    <Resource Include="data\images\icons\black\mind_map-32.png" />
+    <Resource Include="data\images\icons\black\minimize_window-32.png" />
+    <Resource Include="data\images\icons\black\minus-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\minus-32.png" />
+    <Resource Include="data\images\icons\black\minus2-32.png" />
+    <Resource Include="data\images\icons\black\missed_call-32.png" />
+    <Resource Include="data\images\icons\black\missile-32.png" />
+    <Resource Include="data\images\icons\black\mixer-32.png" />
+    <Resource Include="data\images\icons\black\mobile_home-32.png" />
+    <Resource Include="data\images\icons\black\moderator-32.png" />
+    <Resource Include="data\images\icons\black\moneybox-32.png" />
+    <Resource Include="data\images\icons\black\money_bag-32.png" />
+    <Resource Include="data\images\icons\black\monitor-32.png" />
+    <Resource Include="data\images\icons\black\month_view-32.png" />
+    <Resource Include="data\images\icons\black\moon-32.png" />
+    <Resource Include="data\images\icons\black\mortar-32.png" />
+    <Resource Include="data\images\icons\black\mosque-32.png" />
+    <Resource Include="data\images\icons\black\motorcycle-32.png" />
+    <Resource Include="data\images\icons\black\mouse-32.png" />
+    <Resource Include="data\images\icons\black\mov-32.png" />
+    <Resource Include="data\images\icons\black\moved_topic-32.png" />
+    <Resource Include="data\images\icons\black\movies-32.png" />
+    <Resource Include="data\images\icons\black\mp3-32.png" />
+    <Resource Include="data\images\icons\black\mpg-32.png" />
+    <Resource Include="data\images\icons\black\multiply-32.png" />
+    <Resource Include="data\images\icons\black\multiply2-32.png" />
+    <Resource Include="data\images\icons\black\museum-32.png" />
+    <Resource Include="data\images\icons\black\mushroom-32.png" />
+    <Resource Include="data\images\icons\black\mushroom_cloud-32.png" />
+    <Resource Include="data\images\icons\black\music-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\music-32 %283%29.png" />
+    <Resource Include="data\images\icons\black\music-32.png" />
+    <Resource Include="data\images\icons\black\music_conduktor-32.png" />
+    <Resource Include="data\images\icons\black\music_record-32.png" />
+    <Resource Include="data\images\icons\black\mustache-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\mustache-32.png" />
+    <Resource Include="data\images\icons\black\mute-32.png" />
+    <Resource Include="data\images\icons\black\myspace-32.png" />
+    <Resource Include="data\images\icons\black\mysql-32.png" />
+    <Resource Include="data\images\icons\black\my_topic-32.png" />
+    <Resource Include="data\images\icons\black\nail-32.png" />
+    <Resource Include="data\images\icons\black\nappy-32.png" />
+    <Resource Include="data\images\icons\black\nas-32.png" />
+    <Resource Include="data\images\icons\black\neck-32.png" />
+    <Resource Include="data\images\icons\black\needle-32.png" />
+    <Resource Include="data\images\icons\black\negative_dynamic-32.png" />
+    <Resource Include="data\images\icons\black\netscape-32.png" />
+    <Resource Include="data\images\icons\black\network-32.png" />
+    <Resource Include="data\images\icons\black\network_cable-32.png" />
+    <Resource Include="data\images\icons\black\network_card-32.png" />
+    <Resource Include="data\images\icons\black\neutral_dicision-32.png" />
+    <Resource Include="data\images\icons\black\new-32.png" />
+    <Resource Include="data\images\icons\black\news-32.png" />
+    <Resource Include="data\images\icons\black\newspaper-32.png" />
+    <Resource Include="data\images\icons\black\new_post-32.png" />
+    <Resource Include="data\images\icons\black\next-32.png" />
+    <Resource Include="data\images\icons\black\nightvision-32.png" />
+    <Resource Include="data\images\icons\black\note-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\note-32.png" />
+    <Resource Include="data\images\icons\black\notebook-32.png" />
+    <Resource Include="data\images\icons\black\not_listen-32.png" />
+    <Resource Include="data\images\icons\black\novel-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\novel-32.png" />
+    <Resource Include="data\images\icons\black\no_connection-32.png" />
+    <Resource Include="data\images\icons\black\no_smoking-32.png" />
+    <Resource Include="data\images\icons\black\nui1-32.png" />
+    <Resource Include="data\images\icons\black\nui2-32.png" />
+    <Resource Include="data\images\icons\black\numerical_sorting-32.png" />
+    <Resource Include="data\images\icons\black\Numerical_Sorting2-32.png" />
+    <Resource Include="data\images\icons\black\nurse-32.png" />
+    <Resource Include="data\images\icons\black\nut-32.png" />
+    <Resource Include="data\images\icons\black\ogg-32.png" />
+    <Resource Include="data\images\icons\black\ok-32.png" />
+    <Resource Include="data\images\icons\black\old_time_camera-32.png" />
+    <Resource Include="data\images\icons\black\one_finger-32.png" />
+    <Resource Include="data\images\icons\black\one_free-32.png" />
+    <Resource Include="data\images\icons\black\one_note-32.png" />
+    <Resource Include="data\images\icons\black\one_page-32.png" />
+    <Resource Include="data\images\icons\black\online-32.png" />
+    <Resource Include="data\images\icons\black\online_support-32.png" />
+    <Resource Include="data\images\icons\black\open_in_browser-32.png" />
+    <Resource Include="data\images\icons\black\opera-32.png" />
+    <Resource Include="data\images\icons\black\opera_glasses-32.png" />
+    <Resource Include="data\images\icons\black\organization-32.png" />
+    <Resource Include="data\images\icons\black\origami-32.png" />
+    <Resource Include="data\images\icons\black\os2-32.png" />
+    <Resource Include="data\images\icons\black\outline-32.png" />
+    <Resource Include="data\images\icons\black\outline_star-32.png" />
+    <Resource Include="data\images\icons\black\outlook-32.png" />
+    <Resource Include="data\images\icons\black\overhead_crane-32.png" />
+    <Resource Include="data\images\icons\black\pacifier-32.png" />
+    <Resource Include="data\images\icons\black\package-32.png" />
+    <Resource Include="data\images\icons\black\padding-32.png" />
+    <Resource Include="data\images\icons\black\paint_brush-32.png" />
+    <Resource Include="data\images\icons\black\paint_bucket-32.png" />
+    <Resource Include="data\images\icons\black\palm_tree-32.png" />
+    <Resource Include="data\images\icons\black\paper-32.png" />
+    <Resource Include="data\images\icons\black\paper_plane-32.png" />
+    <Resource Include="data\images\icons\black\parallel_tasks-32.png" />
+    <Resource Include="data\images\icons\black\partly_cloudy_day-32.png" />
+    <Resource Include="data\images\icons\black\partly_cloudy_night-32.png" />
+    <Resource Include="data\images\icons\black\pause-32.png" />
+    <Resource Include="data\images\icons\black\pawn-32.png" />
+    <Resource Include="data\images\icons\black\paypal-32.png" />
+    <Resource Include="data\images\icons\black\pdf-32.png" />
+    <Resource Include="data\images\icons\black\peanuts-32.png" />
+    <Resource Include="data\images\icons\black\pencil-32.png" />
+    <Resource Include="data\images\icons\black\pepper_shaker-32.png" />
+    <Resource Include="data\images\icons\black\percentage-32.png" />
+    <Resource Include="data\images\icons\black\percentage2-32.png" />
+    <Resource Include="data\images\icons\black\phone-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\phone-32.png" />
+    <Resource Include="data\images\icons\black\phone1-32.png" />
+    <Resource Include="data\images\icons\black\phone2-32.png" />
+    <Resource Include="data\images\icons\black\php-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\php-32.png" />
+    <Resource Include="data\images\icons\black\physics-32.png" />
+    <Resource Include="data\images\icons\black\piccolo-32.png" />
+    <Resource Include="data\images\icons\black\pickup-32.png" />
+    <Resource Include="data\images\icons\black\picture-32.png" />
+    <Resource Include="data\images\icons\black\pictures-32.png" />
+    <Resource Include="data\images\icons\black\pie-32.png" />
+    <Resource Include="data\images\icons\black\pig-32.png" />
+    <Resource Include="data\images\icons\black\pill-32.png" />
+    <Resource Include="data\images\icons\black\pin-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\pin-32.png" />
+    <Resource Include="data\images\icons\black\pin2-32.png" />
+    <Resource Include="data\images\icons\black\pincette-32.png" />
+    <Resource Include="data\images\icons\black\pinch-32.png" />
+    <Resource Include="data\images\icons\black\ping_pong-32.png" />
+    <Resource Include="data\images\icons\black\pin_cushion-32.png" />
+    <Resource Include="data\images\icons\black\piston-32.png" />
+    <Resource Include="data\images\icons\black\pizza-32.png" />
+    <Resource Include="data\images\icons\black\planner-32.png" />
+    <Resource Include="data\images\icons\black\plasmid-32.png" />
+    <Resource Include="data\images\icons\black\plaster-32.png" />
+    <Resource Include="data\images\icons\black\play-32.png" />
+    <Resource Include="data\images\icons\black\plugin-32.png" />
+    <Resource Include="data\images\icons\black\plus-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\plus-32.png" />
+    <Resource Include="data\images\icons\black\plus2-32.png" />
+    <Resource Include="data\images\icons\black\plus_minus-32.png" />
+    <Resource Include="data\images\icons\black\plus_minus2-32.png" />
+    <Resource Include="data\images\icons\black\png-32.png" />
+    <Resource Include="data\images\icons\black\pocket_lantern-32.png" />
+    <Resource Include="data\images\icons\black\point_objects-32.png" />
+    <Resource Include="data\images\icons\black\poison-32.png" />
+    <Resource Include="data\images\icons\black\police-32.png" />
+    <Resource Include="data\images\icons\black\polish_cloth-32.png" />
+    <Resource Include="data\images\icons\black\poll_topic-32.png" />
+    <Resource Include="data\images\icons\black\polygom-32.png" />
+    <Resource Include="data\images\icons\black\polyline-32.png" />
+    <Resource Include="data\images\icons\black\poo-32.png" />
+    <Resource Include="data\images\icons\black\popular_topic-32.png" />
+    <Resource Include="data\images\icons\black\porn-32.png" />
+    <Resource Include="data\images\icons\black\positive_dynamic-32.png" />
+    <Resource Include="data\images\icons\black\powder-32.png" />
+    <Resource Include="data\images\icons\black\powerpoint-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\powerpoint-32.png" />
+    <Resource Include="data\images\icons\black\prawn-32.png" />
+    <Resource Include="data\images\icons\black\predator-32.png" />
+    <Resource Include="data\images\icons\black\prelum-32.png" />
+    <Resource Include="data\images\icons\black\pressure-32.png" />
+    <Resource Include="data\images\icons\black\pretzel-32.png" />
+    <Resource Include="data\images\icons\black\previous-32.png" />
+    <Resource Include="data\images\icons\black\price_tag-32.png" />
+    <Resource Include="data\images\icons\black\price_tag_euro-32.png" />
+    <Resource Include="data\images\icons\black\print-32.png" />
+    <Resource Include="data\images\icons\black\printer-32.png" />
+    <Resource Include="data\images\icons\black\printerest-32.png" />
+    <Resource Include="data\images\icons\black\private-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\private-32 %283%29.png" />
+    <Resource Include="data\images\icons\black\private-32.png" />
+    <Resource Include="data\images\icons\black\processor-32.png" />
+    <Resource Include="data\images\icons\black\product-32.png" />
+    <Resource Include="data\images\icons\black\ps-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\ps-32.png" />
+    <Resource Include="data\images\icons\black\psd-32.png" />
+    <Resource Include="data\images\icons\black\psyhology-32.png" />
+    <Resource Include="data\images\icons\black\public-32.png" />
+    <Resource Include="data\images\icons\black\publisher-32.png" />
+    <Resource Include="data\images\icons\black\purchase_order-32.png" />
+    <Resource Include="data\images\icons\black\purse-32.png" />
+    <Resource Include="data\images\icons\black\pussy_willow-32.png" />
+    <Resource Include="data\images\icons\black\puzzle-32.png" />
+    <Resource Include="data\images\icons\black\pyramids-32.png" />
+    <Resource Include="data\images\icons\black\python-32.png" />
+    <Resource Include="data\images\icons\black\qr_code-32.png" />
+    <Resource Include="data\images\icons\black\queen-32.png" />
+    <Resource Include="data\images\icons\black\queen_gb-32.png" />
+    <Resource Include="data\images\icons\black\question_shield-32.png" />
+    <Resource Include="data\images\icons\black\quote-32.png" />
+    <Resource Include="data\images\icons\black\rabbit-32.png" />
+    <Resource Include="data\images\icons\black\rack-32.png" />
+    <Resource Include="data\images\icons\black\radar_plot-32.png" />
+    <Resource Include="data\images\icons\black\radio1-32.png" />
+    <Resource Include="data\images\icons\black\radio2-32.png" />
+    <Resource Include="data\images\icons\black\radioactive-32.png" />
+    <Resource Include="data\images\icons\black\railroad_car-32.png" />
+    <Resource Include="data\images\icons\black\rain-32.png" />
+    <Resource Include="data\images\icons\black\rainy_weather-32.png" />
+    <Resource Include="data\images\icons\black\raiway_station-32.png" />
+    <Resource Include="data\images\icons\black\rar-32.png" />
+    <Resource Include="data\images\icons\black\rating-32.png" />
+    <Resource Include="data\images\icons\black\rattle-32.png" />
+    <Resource Include="data\images\icons\black\read_message-32.png" />
+    <Resource Include="data\images\icons\black\record-32.png" />
+    <Resource Include="data\images\icons\black\rectangle-32.png" />
+    <Resource Include="data\images\icons\black\recurring_appointment-32.png" />
+    <Resource Include="data\images\icons\black\recycle_sign-32.png" />
+    <Resource Include="data\images\icons\black\recycling-32.png" />
+    <Resource Include="data\images\icons\black\reddit-32.png" />
+    <Resource Include="data\images\icons\black\redeem-32.png" />
+    <Resource Include="data\images\icons\black\redo-32.png" />
+    <Resource Include="data\images\icons\black\refresh-32.png" />
+    <Resource Include="data\images\icons\black\refresh_shield-32.png" />
+    <Resource Include="data\images\icons\black\remote_working-32.png" />
+    <Resource Include="data\images\icons\black\remove_image-32.png" />
+    <Resource Include="data\images\icons\black\remove_user-32.png" />
+    <Resource Include="data\images\icons\black\rename-32.png" />
+    <Resource Include="data\images\icons\black\repeat-32.png" />
+    <Resource Include="data\images\icons\black\reply-32.png" />
+    <Resource Include="data\images\icons\black\research-32.png" />
+    <Resource Include="data\images\icons\black\resistor-32.png" />
+    <Resource Include="data\images\icons\black\resize-32.png" />
+    <Resource Include="data\images\icons\black\response-32.png" />
+    <Resource Include="data\images\icons\black\restaurant-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\restaurant-32.png" />
+    <Resource Include="data\images\icons\black\restore_window-32.png" />
+    <Resource Include="data\images\icons\black\restriction_shield-32.png" />
+    <Resource Include="data\images\icons\black\return-32.png" />
+    <Resource Include="data\images\icons\black\reuse-32.png" />
+    <Resource Include="data\images\icons\black\reviewer-32.png" />
+    <Resource Include="data\images\icons\black\rewind-32.png" />
+    <Resource Include="data\images\icons\black\rifle-32.png" />
+    <Resource Include="data\images\icons\black\right-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\right-32.png" />
+    <Resource Include="data\images\icons\black\right_circular-32.png" />
+    <Resource Include="data\images\icons\black\right_footprint-32.png" />
+    <Resource Include="data\images\icons\black\right_round-32.png" />
+    <Resource Include="data\images\icons\black\right_shoe-32.png" />
+    <Resource Include="data\images\icons\black\ring-32.png" />
+    <Resource Include="data\images\icons\black\rj45-32.png" />
+    <Resource Include="data\images\icons\black\road-32.png" />
+    <Resource Include="data\images\icons\black\robot-32.png" />
+    <Resource Include="data\images\icons\black\rock-32.png" />
+    <Resource Include="data\images\icons\black\rocket-32.png" />
+    <Resource Include="data\images\icons\black\rook-32.png" />
+    <Resource Include="data\images\icons\black\rotate-32.png" />
+    <Resource Include="data\images\icons\black\rounded_rectangle-32.png" />
+    <Resource Include="data\images\icons\black\router-32.png" />
+    <Resource Include="data\images\icons\black\royal_marines-32.png" />
+    <Resource Include="data\images\icons\black\royal_navy-32.png" />
+    <Resource Include="data\images\icons\black\rpg-32.png" />
+    <Resource Include="data\images\icons\black\rss-32.png" />
+    <Resource Include="data\images\icons\black\rucksach-32.png" />
+    <Resource Include="data\images\icons\black\rugby-32.png" />
+    <Resource Include="data\images\icons\black\ruler-32.png" />
+    <Resource Include="data\images\icons\black\running-32.png" />
+    <Resource Include="data\images\icons\black\running_man-32.png" />
+    <Resource Include="data\images\icons\black\sad-32.png" />
+    <Resource Include="data\images\icons\black\safari-32.png" />
+    <Resource Include="data\images\icons\black\safety_pin-32.png" />
+    <Resource Include="data\images\icons\black\sagrada_familia-32.png" />
+    <Resource Include="data\images\icons\black\sail_boat-32.png" />
+    <Resource Include="data\images\icons\black\sale-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\sale-32.png" />
+    <Resource Include="data\images\icons\black\salt_shaker-32.png" />
+    <Resource Include="data\images\icons\black\sandglass-32.png" />
+    <Resource Include="data\images\icons\black\save-32.png" />
+    <Resource Include="data\images\icons\black\save_as-32.png" />
+    <Resource Include="data\images\icons\black\saxophone-32.png" />
+    <Resource Include="data\images\icons\black\scale-32.png" />
+    <Resource Include="data\images\icons\black\scales-32.png" />
+    <Resource Include="data\images\icons\black\scanner-32.png" />
+    <Resource Include="data\images\icons\black\scatter_plot-32.png" />
+    <Resource Include="data\images\icons\black\school-32.png" />
+    <Resource Include="data\images\icons\black\scissors-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\scissors-32.png" />
+    <Resource Include="data\images\icons\black\sci_fi-32.png" />
+    <Resource Include="data\images\icons\black\scooter-32.png" />
+    <Resource Include="data\images\icons\black\screenshot-32.png" />
+    <Resource Include="data\images\icons\black\screw-32.png" />
+    <Resource Include="data\images\icons\black\screwdriver-32.png" />
+    <Resource Include="data\images\icons\black\scrunchy-32.png" />
+    <Resource Include="data\images\icons\black\sd-32.png" />
+    <Resource Include="data\images\icons\black\sdtv-32.png" />
+    <Resource Include="data\images\icons\black\search-32.png" />
+    <Resource Include="data\images\icons\black\self_distract_button-32.png" />
+    <Resource Include="data\images\icons\black\self_service_kiosk-32.png" />
+    <Resource Include="data\images\icons\black\sell-32.png" />
+    <Resource Include="data\images\icons\black\send_file-32.png" />
+    <Resource Include="data\images\icons\black\serial_tasks-32.png" />
+    <Resource Include="data\images\icons\black\server-32.png" />
+    <Resource Include="data\images\icons\black\services-32.png" />
+    <Resource Include="data\images\icons\black\settings-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\settings-32.png" />
+    <Resource Include="data\images\icons\black\settings2-32.png" />
+    <Resource Include="data\images\icons\black\share_point-32.png" />
+    <Resource Include="data\images\icons\black\sheep-32.png" />
+    <Resource Include="data\images\icons\black\sheep2-32.png" />
+    <Resource Include="data\images\icons\black\sheep_on_bike-32.png" />
+    <Resource Include="data\images\icons\black\shellfish-32.png" />
+    <Resource Include="data\images\icons\black\shield-32.png" />
+    <Resource Include="data\images\icons\black\shift-32.png" />
+    <Resource Include="data\images\icons\black\shirt-32.png" />
+    <Resource Include="data\images\icons\black\shoes-32.png" />
+    <Resource Include="data\images\icons\black\shoe_brush1-32.png" />
+    <Resource Include="data\images\icons\black\shoe_brush2-32.png" />
+    <Resource Include="data\images\icons\black\shoe_man-32.png" />
+    <Resource Include="data\images\icons\black\shoe_polish-32.png" />
+    <Resource Include="data\images\icons\black\shoe_woman-32.png" />
+    <Resource Include="data\images\icons\black\shop-32.png" />
+    <Resource Include="data\images\icons\black\shoping_bag-32.png" />
+    <Resource Include="data\images\icons\black\shoping_basket-32.png" />
+    <Resource Include="data\images\icons\black\shoping_cart-32.png" />
+    <Resource Include="data\images\icons\black\shoping_cart_filled-32.png" />
+    <Resource Include="data\images\icons\black\shopping_basket-32.png" />
+    <Resource Include="data\images\icons\black\shorts-32.png" />
+    <Resource Include="data\images\icons\black\short_beard-32.png" />
+    <Resource Include="data\images\icons\black\shoulders-32.png" />
+    <Resource Include="data\images\icons\black\show_property-32.png" />
+    <Resource Include="data\images\icons\black\shuffle-32.png" />
+    <Resource Include="data\images\icons\black\sideburns-32.png" />
+    <Resource Include="data\images\icons\black\side_drum-32.png" />
+    <Resource Include="data\images\icons\black\signal_horn-32.png" />
+    <Resource Include="data\images\icons\black\signpost-32.png" />
+    <Resource Include="data\images\icons\black\sinchronize-32.png" />
+    <Resource Include="data\images\icons\black\skiing-32.png" />
+    <Resource Include="data\images\icons\black\skip_to_start-32.png" />
+    <Resource Include="data\images\icons\black\skydiving-32.png" />
+    <Resource Include="data\images\icons\black\skydiving_gear-32.png" />
+    <Resource Include="data\images\icons\black\skype-32.png" />
+    <Resource Include="data\images\icons\black\sleeping-32.png" />
+    <Resource Include="data\images\icons\black\sleeping_bag-32.png" />
+    <Resource Include="data\images\icons\black\sleepin_mat-32.png" />
+    <Resource Include="data\images\icons\black\sleet-32.png" />
+    <Resource Include="data\images\icons\black\slot_machine-32.png" />
+    <Resource Include="data\images\icons\black\slr_camera-32.png" />
+    <Resource Include="data\images\icons\black\slr_camera2-32.png" />
+    <Resource Include="data\images\icons\black\smoke_explosion-32.png" />
+    <Resource Include="data\images\icons\black\smoking-32.png" />
+    <Resource Include="data\images\icons\black\sniper_rifle-32.png" />
+    <Resource Include="data\images\icons\black\snow-32.png" />
+    <Resource Include="data\images\icons\black\snow_storm-32.png" />
+    <Resource Include="data\images\icons\black\so-so-32.png" />
+    <Resource Include="data\images\icons\black\socks-32.png" />
+    <Resource Include="data\images\icons\black\soda_bottle-32.png" />
+    <Resource Include="data\images\icons\black\sofa-32.png" />
+    <Resource Include="data\images\icons\black\software_box-32.png" />
+    <Resource Include="data\images\icons\black\solar_panel-32.png" />
+    <Resource Include="data\images\icons\black\solutions-32.png" />
+    <Resource Include="data\images\icons\black\sombrero-32.png" />
+    <Resource Include="data\images\icons\black\soundcloud-32.png" />
+    <Resource Include="data\images\icons\black\soy-32.png" />
+    <Resource Include="data\images\icons\black\spades-32.png" />
+    <Resource Include="data\images\icons\black\spark_plug-32.png" />
+    <Resource Include="data\images\icons\black\speaker-32.png" />
+    <Resource Include="data\images\icons\black\speech_bubble-32.png" />
+    <Resource Include="data\images\icons\black\speed-32.png" />
+    <Resource Include="data\images\icons\black\speedometer-32.png" />
+    <Resource Include="data\images\icons\black\spoon-32.png" />
+    <Resource Include="data\images\icons\black\sport-32.png" />
+    <Resource Include="data\images\icons\black\spread-32.png" />
+    <Resource Include="data\images\icons\black\square_root-32.png" />
+    <Resource Include="data\images\icons\black\square_root2-32.png" />
+    <Resource Include="data\images\icons\black\ssd-32.png" />
+    <Resource Include="data\images\icons\black\stachoverflow_com-32.png" />
+    <Resource Include="data\images\icons\black\stack-32.png" />
+    <Resource Include="data\images\icons\black\stack_of_photos-32.png" />
+    <Resource Include="data\images\icons\black\stadium-32.png" />
+    <Resource Include="data\images\icons\black\star-32.png" />
+    <Resource Include="data\images\icons\black\start-32.png" />
+    <Resource Include="data\images\icons\black\star_of_david-32.png" />
+    <Resource Include="data\images\icons\black\statistics-32.png" />
+    <Resource Include="data\images\icons\black\steam-32.png" />
+    <Resource Include="data\images\icons\black\steering_wheel-32.png" />
+    <Resource Include="data\images\icons\black\stethoscope-32.png" />
+    <Resource Include="data\images\icons\black\stop-32.png" />
+    <Resource Include="data\images\icons\black\stopwatch-32.png" />
+    <Resource Include="data\images\icons\black\stork-32.png" />
+    <Resource Include="data\images\icons\black\stork_with_bundle-32.png" />
+    <Resource Include="data\images\icons\black\storm-32.png" />
+    <Resource Include="data\images\icons\black\street_view-32.png" />
+    <Resource Include="data\images\icons\black\stroller-32.png" />
+    <Resource Include="data\images\icons\black\stubble-32.png" />
+    <Resource Include="data\images\icons\black\student-32.png" />
+    <Resource Include="data\images\icons\black\stumbleupon-32.png" />
+    <Resource Include="data\images\icons\black\sugar-32.png" />
+    <Resource Include="data\images\icons\black\sun-32.png" />
+    <Resource Include="data\images\icons\black\sun_glasses-32.png" />
+    <Resource Include="data\images\icons\black\support-32.png" />
+    <Resource Include="data\images\icons\black\surface-32.png" />
+    <Resource Include="data\images\icons\black\surprised-32.png" />
+    <Resource Include="data\images\icons\black\survival_bag-32.png" />
+    <Resource Include="data\images\icons\black\sushi-32.png" />
+    <Resource Include="data\images\icons\black\swimming-32.png" />
+    <Resource Include="data\images\icons\black\swipe_down-32.png" />
+    <Resource Include="data\images\icons\black\swipe_left-32.png" />
+    <Resource Include="data\images\icons\black\swipe_right-32.png" />
+    <Resource Include="data\images\icons\black\swipe_up-32.png" />
+    <Resource Include="data\images\icons\black\switch-32.png" />
+    <Resource Include="data\images\icons\black\switch_off-32.png" />
+    <Resource Include="data\images\icons\black\switch_on-32.png" />
+    <Resource Include="data\images\icons\black\syringe-32.png" />
+    <Resource Include="data\images\icons\black\t-shirt-32.png" />
+    <Resource Include="data\images\icons\black\table-32.png" />
+    <Resource Include="data\images\icons\black\tabletop_radio-32.png" />
+    <Resource Include="data\images\icons\black\taco-32.png" />
+    <Resource Include="data\images\icons\black\tag-32.png" />
+    <Resource Include="data\images\icons\black\talk-32.png" />
+    <Resource Include="data\images\icons\black\tap-32.png" />
+    <Resource Include="data\images\icons\black\tape_drive-32.png" />
+    <Resource Include="data\images\icons\black\tape_measure-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\tape_measure-32.png" />
+    <Resource Include="data\images\icons\black\tattoo-32.png" />
+    <Resource Include="data\images\icons\black\tattoo_machine-32.png" />
+    <Resource Include="data\images\icons\black\taxi-32.png" />
+    <Resource Include="data\images\icons\black\tea-32.png" />
+    <Resource Include="data\images\icons\black\teapot-32.png" />
+    <Resource Include="data\images\icons\black\tear_of_calendar-32.png" />
+    <Resource Include="data\images\icons\black\temperature-32.png" />
+    <Resource Include="data\images\icons\black\tennis-32.png" />
+    <Resource Include="data\images\icons\black\tent-32.png" />
+    <Resource Include="data\images\icons\black\test_tube-32.png" />
+    <Resource Include="data\images\icons\black\text-32.png" />
+    <Resource Include="data\images\icons\black\theatre_masks-32.png" />
+    <Resource Include="data\images\icons\black\thermometer-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\thermometer-32.png" />
+    <Resource Include="data\images\icons\black\thimble-32.png" />
+    <Resource Include="data\images\icons\black\thor_hammer-32.png" />
+    <Resource Include="data\images\icons\black\three_fingers-32.png" />
+    <Resource Include="data\images\icons\black\thumbs_down-32.png" />
+    <Resource Include="data\images\icons\black\thumbs_up-32.png" />
+    <Resource Include="data\images\icons\black\ticket-32.png" />
+    <Resource Include="data\images\icons\black\time-32.png" />
+    <Resource Include="data\images\icons\black\timeline-32.png" />
+    <Resource Include="data\images\icons\black\timer-32.png" />
+    <Resource Include="data\images\icons\black\tire-32.png" />
+    <Resource Include="data\images\icons\black\today-32.png" />
+    <Resource Include="data\images\icons\black\tomato-32.png" />
+    <Resource Include="data\images\icons\black\tongue-32.png" />
+    <Resource Include="data\images\icons\black\tool_box-32.png" />
+    <Resource Include="data\images\icons\black\topic-32.png" />
+    <Resource Include="data\images\icons\black\top_navigation_toolbar-32.png" />
+    <Resource Include="data\images\icons\black\torah-32.png" />
+    <Resource Include="data\images\icons\black\torrent-32.png" />
+    <Resource Include="data\images\icons\black\torso-32.png" />
+    <Resource Include="data\images\icons\black\track-32.png" />
+    <Resource Include="data\images\icons\black\tractor-32.png" />
+    <Resource Include="data\images\icons\black\tragedy_mask-32.png" />
+    <Resource Include="data\images\icons\black\trailer-32.png" />
+    <Resource Include="data\images\icons\black\train-32.png" />
+    <Resource Include="data\images\icons\black\trainers-32.png" />
+    <Resource Include="data\images\icons\black\tram-32.png" />
+    <Resource Include="data\images\icons\black\tram2-32.png" />
+    <Resource Include="data\images\icons\black\trambone-32.png" />
+    <Resource Include="data\images\icons\black\trangia_stove-32.png" />
+    <Resource Include="data\images\icons\black\transistor-32.png" />
+    <Resource Include="data\images\icons\black\trash-32.png" />
+    <Resource Include="data\images\icons\black\treble_clef-32.png" />
+    <Resource Include="data\images\icons\black\tree_structure-32.png" />
+    <Resource Include="data\images\icons\black\trekking-32.png" />
+    <Resource Include="data\images\icons\black\triangular_bandage-32.png" />
+    <Resource Include="data\images\icons\black\triller-32.png" />
+    <Resource Include="data\images\icons\black\trolleybus-32.png" />
+    <Resource Include="data\images\icons\black\trousers-32.png" />
+    <Resource Include="data\images\icons\black\trumpet-32.png" />
+    <Resource Include="data\images\icons\black\tuba-32.png" />
+    <Resource Include="data\images\icons\black\tumblr-32.png" />
+    <Resource Include="data\images\icons\black\tv-32.png" />
+    <Resource Include="data\images\icons\black\twitter-32.png" />
+    <Resource Include="data\images\icons\black\two_fingers-32.png" />
+    <Resource Include="data\images\icons\black\two_hands-32.png" />
+    <Resource Include="data\images\icons\black\two_page-32.png" />
+    <Resource Include="data\images\icons\black\umbrella-32.png" />
+    <Resource Include="data\images\icons\black\unchecked_checkbox-32.png" />
+    <Resource Include="data\images\icons\black\undo-32.png" />
+    <Resource Include="data\images\icons\black\unix-32.png" />
+    <Resource Include="data\images\icons\black\unlock-32.png" />
+    <Resource Include="data\images\icons\black\unpin-32.png" />
+    <Resource Include="data\images\icons\black\unpin2-32.png" />
+    <Resource Include="data\images\icons\black\up-32.png" />
+    <Resource Include="data\images\icons\black\upload-32.png" />
+    <Resource Include="data\images\icons\black\up_circular-32.png" />
+    <Resource Include="data\images\icons\black\usb_connected-32.png" />
+    <Resource Include="data\images\icons\black\usb_disconnected-32.png" />
+    <Resource Include="data\images\icons\black\usb_off-32.png" />
+    <Resource Include="data\images\icons\black\usb_on-32.png" />
+    <Resource Include="data\images\icons\black\user-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\user-32.png" />
+    <Resource Include="data\images\icons\black\user_shield-32.png" />
+    <Resource Include="data\images\icons\black\utorrent-32.png" />
+    <Resource Include="data\images\icons\black\vampire-32.png" />
+    <Resource Include="data\images\icons\black\van_dyke-32.png" />
+    <Resource Include="data\images\icons\black\variable-32.png" />
+    <Resource Include="data\images\icons\black\very_popular_topic-32.png" />
+    <Resource Include="data\images\icons\black\vhs-32.png" />
+    <Resource Include="data\images\icons\black\video_call-32.png" />
+    <Resource Include="data\images\icons\black\video_file-32.png" />
+    <Resource Include="data\images\icons\black\video_projector-32.png" />
+    <Resource Include="data\images\icons\black\View_Details-32.png" />
+    <Resource Include="data\images\icons\black\viking_helmet-32.png" />
+    <Resource Include="data\images\icons\black\viking_ship-32.png" />
+    <Resource Include="data\images\icons\black\violin-32.png" />
+    <Resource Include="data\images\icons\black\visa-32.png" />
+    <Resource Include="data\images\icons\black\visible-32.png" />
+    <Resource Include="data\images\icons\black\vk.com-32.png" />
+    <Resource Include="data\images\icons\black\vkontakte-32.png" />
+    <Resource Include="data\images\icons\black\vlc-32.png" />
+    <Resource Include="data\images\icons\black\voip_gateway-32.png" />
+    <Resource Include="data\images\icons\black\volume-32.png" />
+    <Resource Include="data\images\icons\black\volume_down-32.png" />
+    <Resource Include="data\images\icons\black\volume_up-32.png" />
+    <Resource Include="data\images\icons\black\vpn-32.png" />
+    <Resource Include="data\images\icons\black\walkie_talkie_radio-32.png" />
+    <Resource Include="data\images\icons\black\wallet-32.png" />
+    <Resource Include="data\images\icons\black\wallpaper_roll-32.png" />
+    <Resource Include="data\images\icons\black\wardrobe-32.png" />
+    <Resource Include="data\images\icons\black\warning_shield-32.png" />
+    <Resource Include="data\images\icons\black\washing_machine-32.png" />
+    <Resource Include="data\images\icons\black\watch-32.png" />
+    <Resource Include="data\images\icons\black\water-32.png" />
+    <Resource Include="data\images\icons\black\water_bottle-32.png" />
+    <Resource Include="data\images\icons\black\webbing-32.png" />
+    <Resource Include="data\images\icons\black\webcam-32.png" />
+    <Resource Include="data\images\icons\black\web_shield-32.png" />
+    <Resource Include="data\images\icons\black\wedding_cake-32.png" />
+    <Resource Include="data\images\icons\black\wedding_day-32.png" />
+    <Resource Include="data\images\icons\black\wedding_photo-32.png" />
+    <Resource Include="data\images\icons\black\wedding_rings-32.png" />
+    <Resource Include="data\images\icons\black\week_view-32.png" />
+    <Resource Include="data\images\icons\black\weght-32.png" />
+    <Resource Include="data\images\icons\black\weightlift-32.png" />
+    <Resource Include="data\images\icons\black\werewolf-32.png" />
+    <Resource Include="data\images\icons\black\western-32.png" />
+    <Resource Include="data\images\icons\black\wheat-32.png" />
+    <Resource Include="data\images\icons\black\wheel-32.png" />
+    <Resource Include="data\images\icons\black\whole_hand-32.png" />
+    <Resource Include="data\images\icons\black\widescreen_tv-32.png" />
+    <Resource Include="data\images\icons\black\wifi-32.png" />
+    <Resource Include="data\images\icons\black\wii-32.png" />
+    <Resource Include="data\images\icons\black\wikipedia-32.png" />
+    <Resource Include="data\images\icons\black\win-32.png" />
+    <Resource Include="data\images\icons\black\windows-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\windows-32.png" />
+    <Resource Include="data\images\icons\black\windows8-32.png" />
+    <Resource Include="data\images\icons\black\windows_client-32.png" />
+    <Resource Include="data\images\icons\black\wind_rose-32.png" />
+    <Resource Include="data\images\icons\black\wind_turbine-32.png" />
+    <Resource Include="data\images\icons\black\wine_bottle-32.png" />
+    <Resource Include="data\images\icons\black\wine_glass-32.png" />
+    <Resource Include="data\images\icons\black\wink-32.png" />
+    <Resource Include="data\images\icons\black\wipes-32.png" />
+    <Resource Include="data\images\icons\black\wired_network-32.png" />
+    <Resource Include="data\images\icons\black\witch-32.png" />
+    <Resource Include="data\images\icons\black\wizard-32.png" />
+    <Resource Include="data\images\icons\black\wma-32.png" />
+    <Resource Include="data\images\icons\black\wolfram_alpha-32.png" />
+    <Resource Include="data\images\icons\black\womens_underwear-32.png" />
+    <Resource Include="data\images\icons\black\word-32 %282%29.png" />
+    <Resource Include="data\images\icons\black\word-32.png" />
+    <Resource Include="data\images\icons\black\Wordpress-32.png" />
+    <Resource Include="data\images\icons\black\worker-32.png" />
+    <Resource Include="data\images\icons\black\workers-32.png" />
+    <Resource Include="data\images\icons\black\workstation-32.png" />
+    <Resource Include="data\images\icons\black\worldwide_location-32.png" />
+    <Resource Include="data\images\icons\black\world_map-32.png" />
+    <Resource Include="data\images\icons\black\xbox-32.png" />
+    <Resource Include="data\images\icons\black\xing-32.png" />
+    <Resource Include="data\images\icons\black\xml-32.png" />
+    <Resource Include="data\images\icons\black\xray-32.png" />
+    <Resource Include="data\images\icons\black\xylophone-32.png" />
+    <Resource Include="data\images\icons\black\yacht-32.png" />
+    <Resource Include="data\images\icons\black\yin_yang-32.png" />
+    <Resource Include="data\images\icons\black\yoga-32.png" />
+    <Resource Include="data\images\icons\black\youtube-32.png" />
+    <Resource Include="data\images\icons\black\zip-32.png" />
+    <Resource Include="data\images\icons\black\zombie-32.png" />
+    <Resource Include="data\images\icons\black\zoom_in-32.png" />
+    <Resource Include="data\images\icons\black\zoom_out-32.png" />
+    <Resource Include="data\images\icons\white\3-32.png" />
+    <Resource Include="data\images\icons\white\checked_checkbox-32.png" />
+    <Resource Include="data\images\icons\white\search-32.png" />
+    <Resource Include="data\images\icons\white\settings-32.png" />
+    <Resource Include="data\images\icons\white\tree_structure-32.png" />
+    <Resource Include="data\images\icons\white\unchecked_checkbox-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="data\images\icons\white\help-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Styles\Polices\Droid_Sans\LICENSE.txt" />
+    <Resource Include="Styles\Polices\Montserrat\OFL.txt" />
+    <Resource Include="Styles\Polices\Play\OFL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Styles\Polices\Fjalla_One\OFL.txt" />
+    <Resource Include="Styles\Polices\Oswald\OFL.txt" />
+    <Resource Include="Styles\Polices\PT_Sans_Narrow\OFL.txt" />
+    <Resource Include="Styles\Polices\Ubuntu_Condensed\UFL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Styles\Polices\Fredoka_One\OFL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\xslt\Site\classement_final_site.xslt">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\xslt\Site\index.xslt">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\xslt\Site\feuille_resultat_site.xslt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\xslt\Site\qrcode.xslt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_1_argent.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_1_bronze.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_1_or.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_1_participation.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_10_argent.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_10_bronze.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_10_or.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_10_participation.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_2_argent.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_2_bronze.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_2_or.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_2_participation.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_3_argent.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_3_bronze.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_3_or.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_3_participation.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_4_argent.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_4_bronze.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_4_or.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_4_participation.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_5_argent.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_5_bronze.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_5_or.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_5_participation.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_6_argent.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_6_bronze.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_6_or.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_6_participation.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_7_argent.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_7_bronze.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_7_or.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_7_participation.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_8_argent.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_8_bronze.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_8_or.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_8_participation.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_9_argent.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_9_bronze.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_9_or.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\fond\Diplome_9_participation.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\icon\checked_checkbox-32.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\icon\unchecked_checkbox-32.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\xslt\Site\feuille_competition_site.xslt">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="data\data\c_ages.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="data\data\c_poids.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="data\data\structures.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="data\bd\judobase.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 et x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 4.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\xslt\Site\feuille_matchs_site.xslt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="data\bd\Judo.mdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\bd\Judo_log.ldf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <DependentUpon>Judo.mdf</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="data\data\grades.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="data\data\s_comites.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="data\data\s_ligues.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="data\data\g_temps.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="data\images\France-Judo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="data\images\France-Judo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="data\images\France-Judo.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\site\sablier.png" />
+    <Resource Include="data\images\Tournoi_Judo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\site\France-Judo-Rhone.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\xslt\Site\affectation_tapis_site.xslt">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\site\refresh-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\site\repeat-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\site\home-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\site\down_circular-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\site\up_circular-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\js\site-display.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\style\site\w3.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\style\site\style-classement.css" />
+    <EmbeddedResource Include="Export\style\site\style-tableau.css" />
+    <EmbeddedResource Include="Export\style\site\style-poule.css" />
+    <EmbeddedResource Include="Export\style\site\style-common.css" />
+    <EmbeddedResource Include="Export\xslt\Site\avancement_site.xslt">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Export\xslt\Site\classement_site.xslt">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\xslt\Site\prochains-combats_site.xslt">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
