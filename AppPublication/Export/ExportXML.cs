@@ -415,53 +415,6 @@ namespace AppPublication.Export
             return doc.ToXmlDocument();
         }
 
-
-        public static XmlDocument ExportCompetitionJudoTV(JudoData DC)
-        {
-            Competition competition = DC.Organisation.Competitions.FirstOrDefault();
-
-            XDocument doc = new XDocument();
-            XComment comment = new XComment("compétition de judo");
-            doc.Add(comment);
-            comment = new XComment("Généré le : " + System.DateTime.Now.ToString());
-
-            XElement xcompetitions = new XElement(ConstantXML.Competitions);
-            doc.Add(xcompetitions);
-
-            XElement xcompetition = competition.ToXmlInformations();
-            xcompetitions.Add(xcompetition);
-
-            XElement xepreuves = new XElement(ConstantXML.Epreuves);
-            xcompetition.Add(xepreuves);
-
-            foreach (Competition compte in DC.Organisation.Competitions)
-            {
-                if (competition.type == (int)CompetitionTypeEnum.Equipe)
-                {
-                    foreach (vue_epreuve_equipe epreuve in DC.Organisation.vepreuves_equipe.Where(o => o.competition == compte.id))
-                    {
-                        XElement xepreuve = ExportXML.ExportEpreuve(DC, epreuve);
-                        xepreuve.SetAttributeValue(ConstantXML.Competition, compte.nom);
-                        xepreuves.Add(xepreuve);
-                    }
-                }
-                else
-                {
-                    foreach (vue_epreuve epreuve in DC.Organisation.vepreuves.Where(o => o.competition == compte.id))
-                    {
-                        XElement xepreuve = ExportXML.ExportEpreuve(DC, epreuve);
-                        xepreuve.SetAttributeValue(ConstantXML.Competition, compte.nom);
-                        xepreuves.Add(xepreuve);
-                    }
-                }
-            }
-
-            XmlDocument result = doc.ToXmlDocument();
-            ExportXML.AddClubs(ref result, DC);
-
-            return result;
-        }
-
         /// <summary>
         /// Export de la compétition complète
         /// </summary>

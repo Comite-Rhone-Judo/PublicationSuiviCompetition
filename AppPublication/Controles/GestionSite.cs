@@ -24,9 +24,6 @@ namespace AppPublication.Controles
     /// </summary>
     public class GestionSite : NotificationBase
     {
-        // TODO Ajouter propriete PublierCSA
-        // TODO Ajouter propriete NbProchainsCombats
-
         #region MEMBRES
         private CancellationTokenSource _tokenSource;   // Token pour la gestion de la thread de lecture
         private Task _taskGeneration = null;            // La tache de generation
@@ -229,6 +226,7 @@ namespace AppPublication.Controles
             {
                 _nbProchainsCombats = value;
                 NotifyPropertyChanged("NbProchainsCombats");
+                AppSettings.SaveSettings("NbProchainsCombats", _nbProchainsCombats.ToString());
             }
         }
 
@@ -400,6 +398,24 @@ namespace AppPublication.Controles
                 NotifyPropertyChanged("PublierProchainsCombats");
             }
         }
+        private bool _publierRencontres = false;
+        /// <summary>
+        /// Indique si on doit publier les rencontres lors de competitions par equipe
+        /// </summary>
+        public bool PublierRencontres
+        {
+            get
+            {
+                return _publierRencontres;
+            }
+            set
+            {
+                _publierRencontres = value;
+                AppSettings.SaveSettings("PublierRencontres", _publierRencontres.ToString());
+                NotifyPropertyChanged("PublierRencontres");
+            }
+        }
+
 
         private bool _publierAffectationTapis = false;
         /// <summary>
@@ -477,8 +493,14 @@ namespace AppPublication.Controles
                 valCache = AppSettings.ReadSettings("PublierProchainsCombats");
                 PublierProchainsCombats = (valCache == null) ? false : bool.Parse(valCache);
 
+                valCache = AppSettings.ReadSettings("NbProchainsCombats");
+                NbProchainsCombats = (valCache == null) ? 6 : int.Parse(valCache);
+
                 valCache = AppSettings.ReadSettings("PublierAffectationTapis");
                 PublierAffectationTapis = (valCache == null) ? true : bool.Parse(valCache);
+
+                valCache = AppSettings.ReadSettings("PublierRencontres");
+                PublierRencontres = (valCache == null) ? true : bool.Parse(valCache);
 
                 valCache = AppSettings.ReadSettings("DelaiGenerationSec");
                 DelaiGenerationSec = (valCache == null) ? 30 : int.Parse(valCache);

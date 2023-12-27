@@ -162,42 +162,14 @@
                             </StackPanel>
                             <!-- Boutons-->
                             <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
-                                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                                    <CheckBox Content="Publier 'Prochains Combats'" Style="{StaticResource CheckboxStyle}"
-                                              IsChecked="{Binding Path=GestionSite.PublierProchainsCombats}"
-                                              IsEnabled="{Binding Path=GestionSite.IsGenerationActive, Converter={StaticResource BoolNotConverter}}"/>
-                                    <CheckBox Content="Publier 'Affectation tapis'" Style="{StaticResource CheckboxStyle}"
-                                                IsChecked="{Binding Path=GestionSite.PublierAffectationTapis}"
-                                                IsEnabled="{Binding Path=GestionSite.IsGenerationActive, Converter={StaticResource BoolNotConverter}}"
-                                                Visibility="{Binding Path=GestionSite.CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    </CheckBox>
-                                </StackPanel>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="auto"/>
-                                        <RowDefinition Height="auto"/>
-                                        <RowDefinition Height="auto"/>
-                                    </Grid.RowDefinitions>
-                                    <Label Grid.Row="0" Grid.Column="0"  HorizontalAlignment="Right" Content="Délai de génération:" Style="{StaticResource LabelStyle}" />
-                                    <telerik:RadNumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding GestionSite.DelaiGenerationSec}"
-                                                          Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="0 0 50 0"
-                                                          IsEnabled="{Binding Path=GestionSite.IsGenerationActive, Converter={StaticResource BoolNotConverter}}"/>
-
-                                    <Label Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Right" Content="Actualisation client:" Style="{StaticResource LabelStyle}" />
-                                    <telerik:RadNumericUpDown  Grid.Row="1" Grid.Column="1" Value="{Binding GestionSite.DelaiActualisationClientSec}"
-                                                            Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="0 0 50 0"
-                                                            IsEnabled="{Binding Path=GestionSite.IsGenerationActive, Converter={StaticResource BoolNotConverter}}"/>
-
-                                    <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" Content="Nb prochains combats:" Style="{StaticResource LabelStyle}" />
-                                    <telerik:RadNumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding GestionSite.NbProchainsCombats}"
-                                                Width="100" Height="20" Minimum="1" Maximum="99" SmallChange="1" HideTrailingZeros="True" Margin="0 0 50 0"
-                                                IsEnabled="{Binding Path=GestionSite.IsGenerationActive, Converter={StaticResource BoolNotConverter}}"/>
-                                </Grid>
-                                <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 20 0"
+                                <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 60 0"
+                                    Command="{Binding Path=CmdAfficherConfiguration}" Height="35" IsEnabled="{Binding GestionSite.IsGenerationActive, Converter={StaticResource BoolNotConverter}}">
+                                    <WrapPanel Orientation="Horizontal">
+                                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/settings2-32.png" Height="25" Margin="5 0"/>
+                                        <Label Content="Configuration" />
+                                    </WrapPanel>
+                                </telerik:RadButton>
+                                <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 15 0"
                                                    Command="{Binding Path=CmdDemarrerGeneration}" Height="35">
                                     <telerik:RadButton.IsEnabled>
                                         <MultiBinding Converter="{StaticResource EtatGenerationConverter}" Mode="OneWay">
@@ -210,7 +182,7 @@
                                         <Label Content="Démarrer" />
                                     </WrapPanel>
                                 </telerik:RadButton>
-                                <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="20 0 0 0" Height="35"
+                                <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="15 0 0 0" Height="35"
                                                    Command="{Binding Path=CmdArreterGeneration}">
                                     <WrapPanel Orientation="Horizontal">
                                         <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/stop-32.png" Height="25" Margin="5 0"/>

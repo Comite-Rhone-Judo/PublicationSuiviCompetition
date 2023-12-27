@@ -78,7 +78,7 @@
 					</div>
 				</div>
 			</div>
-			<!-- TODO Ajouter le nom de l'epreuvre si c'est une epreuve -->
+			<!-- TODO Ajouter le nom de l'epreuvre si c'est une epreuve et le titre de la competition -->
 
 			<!-- PANNEAU DE NAVIGATION -->
 			<div class="w3-sidebar w3-bar-block w3-border-right w3-animate-left tas-navigation-panel" id="navigationPanel">
@@ -122,13 +122,13 @@
 
 			<!-- CONTENU -->
 			<!-- Nom de la competition + Catégorie si on affiche une epreuve particuliere -->
-			<xsl:if test="$istapis = 'epreuve'">
-				<div class="w3-container w3-blue w3-center tas-competition-bandeau">
-					<div>
-						<h4>
-							<xsl:value-of select="./titre"/>
-						</h4>
-					</div>
+			<div class="w3-container w3-blue w3-center tas-competition-bandeau">
+				<div>
+					<h4>
+						<xsl:value-of select="./titre"/>
+					</h4>
+				</div>
+				<xsl:if test="$istapis = 'epreuve'">
 					<div class="w3-card w3-indigo">
 						<h5>
 
@@ -141,10 +141,10 @@
 							<xsl:value-of select="//epreuve[1]/@nom"/>
 						</h5>
 					</div>
-				</div>
-			</xsl:if>
-			
-			
+				</xsl:if>
+			</div>
+
+					
 			<!-- Parcours tous les tapis trouves -->
 			<xsl:for-each select="//tapis">
 				<xsl:sort select="@tapis" data-type="number" order="ascending"/>

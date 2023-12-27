@@ -18,6 +18,7 @@ namespace AppPublication.Controles
         #region MEMBRES
         private static DialogControleur _currentControleur = null;      // instance singletion
         private AppPublication.IHM.Commissaire.Statistiques _statWindow = null;
+        private AppPublication.IHM.Commissaire.ConfigurationPublication _cfgWindow = null;
         #endregion
 
         #region CONSTRUCTEUR
@@ -419,7 +420,37 @@ namespace AppPublication.Controles
             }
         }
 
-        
+        private ICommand _cmdAfficherConfiguration = null;
+        /// <summary>
+        /// Commande d'affichage de la configuration
+        /// </summary>
+        public ICommand CmdAfficherConfiguration
+        {
+            get
+            {
+                if (_cmdAfficherConfiguration == null)
+                {
+                    _cmdAfficherConfiguration = new RelayCommand(
+                            o =>
+                            {
+                                if (_cfgWindow == null)
+                                {
+                                    _cfgWindow = new AppPublication.IHM.Commissaire.ConfigurationPublication(GestionSite);
+                                }
+                                _cfgWindow.ShowDialog();
+
+                                _cfgWindow = null;
+                            },
+                            o =>
+                            {
+                                return true;
+                            });
+                }
+                return _cmdAfficherConfiguration;
+            }
+        }
+
+
         #endregion
     }
 }
