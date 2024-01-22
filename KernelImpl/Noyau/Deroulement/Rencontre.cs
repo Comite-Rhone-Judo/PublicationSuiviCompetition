@@ -1,11 +1,8 @@
 ﻿
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using Tools.Enum;
 using Tools.Outils;
@@ -15,7 +12,7 @@ namespace KernelImpl.Noyau.Deroulement
     /// <summary>
     /// Description des Rencontres
     /// </summary>
-    public class Rencontre :  INotifyPropertyChanged
+    public class Rencontre : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -360,13 +357,14 @@ namespace KernelImpl.Noyau.Deroulement
 
                 if (this.vainqueur == null)
                 {
-                     ////----
+                    ////----
                     /*if (this.penalite1 == 3 && this.penalite2 == 3)
                     {
                         this.vainqueur = null;
                     }
                     ////----
-                    else*/ if (this.penalite1 == 3)
+                    else*/
+                    if (this.penalite1 == 3)
                     {
                         this.vainqueur = this.judoka2;
                     }
@@ -389,7 +387,7 @@ namespace KernelImpl.Noyau.Deroulement
                     else if (this.penalite1 < this.penalite2)
                     {
                         this.vainqueur = this.judoka1;
-                    }                    
+                    }
                 }
 
                 this.etat = (int)EtatCombatEnum.Normal;
@@ -418,16 +416,16 @@ namespace KernelImpl.Noyau.Deroulement
                 }
                 else if (this.etatJ1 != (int)EtatCombattantEnum.Normal)
                 {
-                   /* this.score2 = 100;
-                    this.score1 = 0;*/
+                    /* this.score2 = 100;
+                     this.score1 = 0;*/
                     this.vainqueur = this.judoka2;
-                    
-                    
+
+
                 }
                 else if (this.etatJ2 != (int)EtatCombattantEnum.Normal)
                 {
-                   /* this.score1 = 100;
-                    this.score2 = 0;*/
+                    /* this.score1 = 100;
+                     this.score2 = 0;*/
                     this.vainqueur = this.judoka1;
                 }
             }
@@ -516,12 +514,12 @@ namespace KernelImpl.Noyau.Deroulement
             {
                 Combat combat = DC.Deroulement.Combats.FirstOrDefault(o => o.id == this.combat);
 
-                if(combat == null)
+                if (combat == null)
                 {
                     return null;
                 }
 
-                if(rencontres.Count == 0)
+                if (rencontres.Count == 0)
                 {
                     combat.debut = DateTime.Now;
                     combat.fin = DateTime.Now;
@@ -531,7 +529,7 @@ namespace KernelImpl.Noyau.Deroulement
                     combat.debut = rencontres.Min(o => o.debut);
                     combat.fin = rencontres.Max(o => o.fin);
                 }
-                
+
 
                 int score1 = 0;
                 int score2 = 0;
@@ -622,8 +620,8 @@ namespace KernelImpl.Noyau.Deroulement
                 penP = this.penalite1;
             }
 
-             /* if (this.etatJ1 == (int)EtatCombattantEnum.Normal && this.etatJ2 == (int)EtatCombattantEnum.Normal)
-             {*/
+            /* if (this.etatJ1 == (int)EtatCombattantEnum.Normal && this.etatJ2 == (int)EtatCombattantEnum.Normal)
+            {*/
             if (this.etatJ1 != (int)EtatCombattantEnum.HansokuMakeX && this.etatJ2 != (int)EtatCombattantEnum.HansokuMakeX &&
                 this.etatJ1 != (int)EtatCombattantEnum.HansokuMakeH && this.etatJ2 != (int)EtatCombattantEnum.HansokuMakeH)
             {
@@ -648,7 +646,8 @@ namespace KernelImpl.Noyau.Deroulement
                 if (penP >= 3 && penV >= 3)
                 {
                     return scoreV / 10;
-                }else if (penP >= 3)
+                }
+                else if (penP >= 3)
                 {
                     return 10;
                     ////----return 0;

@@ -17,44 +17,44 @@ namespace HttpServer
     /// </remarks>
     public class HttpInputItem : IHttpInput
     {
-		/// <summary> Representation of a non-initialized <see cref="HttpInputItem"/>.</summary>
+        /// <summary> Representation of a non-initialized <see cref="HttpInputItem"/>.</summary>
         public static readonly HttpInputItem Empty = new HttpInputItem(string.Empty, true);
         private readonly IDictionary<string, HttpInputItem> _items = new Dictionary<string, HttpInputItem>(StringComparer.OrdinalIgnoreCase);
         private readonly List<string> _values = new List<string>();
         private string _name;
         private readonly bool _ignoreChanges;
 
-		/// <summary>
-		/// Initializes an input item setting its name/identifier and value
-		/// </summary>
-		/// <param name="name">Parameter name/id</param>
-		/// <param name="value">Parameter value</param>
+        /// <summary>
+        /// Initializes an input item setting its name/identifier and value
+        /// </summary>
+        /// <param name="name">Parameter name/id</param>
+        /// <param name="value">Parameter value</param>
         public HttpInputItem(string name, string value)
         {
-			Name = name;
+            Name = name;
             Add(value);
         }
 
         private HttpInputItem(string name, bool ignore)
         {
-			Name = name;
-			_ignoreChanges = ignore;
+            Name = name;
+            _ignoreChanges = ignore;
         }
 
-		/// <summary>Creates a deep copy of the item specified</summary>
-		/// <param name="item">The item to copy</param>
-		/// <remarks>The function makes a deep copy of quite a lot which can be slow</remarks>
-		public HttpInputItem(HttpInputItem item)
-		{
-			foreach (KeyValuePair<string, HttpInputItem> pair in item._items)
-				_items.Add(pair.Key, pair.Value);
+        /// <summary>Creates a deep copy of the item specified</summary>
+        /// <param name="item">The item to copy</param>
+        /// <remarks>The function makes a deep copy of quite a lot which can be slow</remarks>
+        public HttpInputItem(HttpInputItem item)
+        {
+            foreach (KeyValuePair<string, HttpInputItem> pair in item._items)
+                _items.Add(pair.Key, pair.Value);
 
-			foreach (string value in item._values)
-				_values.Add(value);
+            foreach (string value in item._values)
+                _values.Add(value);
 
-			_ignoreChanges = item._ignoreChanges;
-			_name = item.Name;
-		}
+            _ignoreChanges = item._ignoreChanges;
+            _name = item.Name;
+        }
 
         /// <summary>
         /// Number of values
@@ -71,7 +71,8 @@ namespace HttpServer
         /// <returns><see cref="HttpInputItem.Empty"/> if no item was found.</returns>
         public HttpInputItem this[string name]
         {
-            get {
+            get
+            {
                 if (name == null)
                     throw new ArgumentNullException("name");
                 return _items.ContainsKey(name) ? _items[name] : Empty;
@@ -97,7 +98,8 @@ namespace HttpServer
         /// </summary>
         public string Value
         {
-            get {
+            get
+            {
                 return _values.Count == 0 ? null : _values[0];
             }
             set
@@ -157,16 +159,16 @@ namespace HttpServer
             return _items.ContainsKey(name) && _items[name].Value != null;
         }
 
-		/// <summary> Returns a formatted representation of the instance with the values of all contained parameters </summary>
+        /// <summary> Returns a formatted representation of the instance with the values of all contained parameters </summary>
         public override string ToString()
         {
             return ToString(string.Empty);
         }
 
-		/// <summary>
-		/// Outputs the string in a formatted manner
-		/// </summary>
-		/// <param name="prefix">A prefix to append, used internally</param>
+        /// <summary>
+        /// Outputs the string in a formatted manner
+        /// </summary>
+        /// <param name="prefix">A prefix to append, used internally</param>
         /// <param name="asQuerySting">produce a query string</param>
         public string ToString(string prefix, bool asQuerySting)
         {
@@ -224,7 +226,7 @@ namespace HttpServer
         /// <returns></returns>
         HttpInputItem IHttpInput.this[string name]
         {
-            get 
+            get
             {
                 return _items.ContainsKey(name) ? _items[name] : Empty;
             }

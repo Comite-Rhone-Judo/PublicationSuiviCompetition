@@ -35,7 +35,7 @@ namespace KernelImpl.Noyau.Organisation
             {
                 if (_lib_sexe != value)
                 {
-                    _lib_sexe = value;                  
+                    _lib_sexe = value;
                 }
             }
         }
@@ -66,13 +66,13 @@ namespace KernelImpl.Noyau.Organisation
             ceintureMax = epreuve.ceintureMax;
             anneeMin = epreuve.anneeMin;
             anneeMax = epreuve.anneeMax;
-            categorieAge = epreuve.categorieAge;           
+            categorieAge = epreuve.categorieAge;
 
             Categories.CategorieAge c_age = DC.Categories.CAges.FirstOrDefault(o => o.id == epreuve.categorieAge);
 
             nom_cateage = c_age != null ? c_age.nom : "";
             ordre = c_age != null ? c_age.ordre : "0";
-            remoteId_cateage = c_age != null ? c_age.remoteId : "";            
+            remoteId_cateage = c_age != null ? c_age.remoteId : "";
 
             //phase1 = ;
             //phase2 = ;

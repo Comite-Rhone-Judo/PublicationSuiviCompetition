@@ -18,7 +18,7 @@ namespace HttpServer.Exceptions
         public BadRequestException(string errMsg)
             : base(HttpStatusCode.BadRequest, errMsg)
         {
-            
+
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace HttpServer.Exceptions
         public BadRequestException(string errMsg, Exception inner)
             : base(HttpStatusCode.BadRequest, errMsg, inner)
         {
-            
+
         }
     }
 }

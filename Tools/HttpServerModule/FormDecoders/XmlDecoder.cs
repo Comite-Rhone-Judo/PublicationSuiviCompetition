@@ -42,7 +42,7 @@ namespace HttpServer.FormDecoders
             if (encoding == null)
                 encoding = Encoding.UTF8;
 
-			HttpForm form = new HttpForm();
+            HttpForm form = new HttpForm();
 
             using (TextReader reader = new StreamReader(stream, encoding))
             {

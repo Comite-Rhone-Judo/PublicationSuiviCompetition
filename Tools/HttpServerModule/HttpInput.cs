@@ -13,12 +13,12 @@ namespace HttpServer
     /// </remarks>
     public class HttpInput : IHttpInput
     {
-		/// <summary> Representation of a non-initialized class instance </summary>
+        /// <summary> Representation of a non-initialized class instance </summary>
         public static readonly HttpInput Empty = new HttpInput("Empty", true);
-		private readonly IDictionary<string, HttpInputItem> _items = new Dictionary<string, HttpInputItem>(StringComparer.CurrentCultureIgnoreCase);
+        private readonly IDictionary<string, HttpInputItem> _items = new Dictionary<string, HttpInputItem>(StringComparer.CurrentCultureIgnoreCase);
         private string _name;
 
-		/// <summary> Variable telling the class that it is non-initialized <see cref="Empty"/> </summary>
+        /// <summary> Variable telling the class that it is non-initialized <see cref="Empty"/> </summary>
         protected readonly bool _ignoreChanges;
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace HttpServer
         /// <param name="name">form name.</param>
         public HttpInput(string name)
         {
-        	Name = name;
+            Name = name;
         }
 
         /// <summary>
@@ -42,17 +42,17 @@ namespace HttpServer
             _ignoreChanges = ignoreChanges;
         }
 
-		/// <summary>Creates a deep copy of the HttpInput class</summary>
-		/// <param name="input">The object to copy</param>
-		/// <remarks>The function makes a deep copy of quite a lot which can be slow</remarks>
-		protected HttpInput(HttpInput input)
-		{
+        /// <summary>Creates a deep copy of the HttpInput class</summary>
+        /// <param name="input">The object to copy</param>
+        /// <remarks>The function makes a deep copy of quite a lot which can be slow</remarks>
+        protected HttpInput(HttpInput input)
+        {
             foreach (HttpInputItem item in input)
                 _items.Add(item.Name, new HttpInputItem(item));
 
-			Name = input._name;
-			_ignoreChanges = input._ignoreChanges;
-		}
+            Name = input._name;
+            _ignoreChanges = input._ignoreChanges;
+        }
 
         /// <summary>
         /// Form name as lower case
@@ -105,7 +105,8 @@ namespace HttpServer
         /// <returns>Returns <see cref="HttpInputItem.Empty"/> if item was not found.</returns>
         public HttpInputItem this[string name]
         {
-            get {
+            get
+            {
                 if (name == null)
                     throw new ArgumentNullException("name");
                 // name = name;
@@ -113,11 +114,11 @@ namespace HttpServer
             }
         }
 
-		/// <summary>
-		/// Returns true if the class contains a <see cref="HttpInput"/> with the corresponding name.
-		/// </summary>
-		/// <param name="name">The field/query string name</param>
-		/// <returns>True if the value exists</returns>
+        /// <summary>
+        /// Returns true if the class contains a <see cref="HttpInput"/> with the corresponding name.
+        /// </summary>
+        /// <param name="name">The field/query string name</param>
+        /// <returns>True if the value exists</returns>
         public bool Contains(string name)
         {
             if (name == null)
@@ -153,8 +154,8 @@ namespace HttpServer
             return item;
         }
 
-		/// <summary> Outputs the instance representing all its values joined together </summary>
-		/// <returns></returns>
+        /// <summary> Outputs the instance representing all its values joined together </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             string temp = string.Empty;
@@ -205,12 +206,12 @@ namespace HttpServer
             return value;
         }
 
-		/// <summary>Resets all data contained by class</summary>
-		virtual public void Clear()
-		{
-			_name = string.Empty;
-			_items.Clear();
-		}
+        /// <summary>Resets all data contained by class</summary>
+        virtual public void Clear()
+        {
+            _name = string.Empty;
+            _items.Clear();
+        }
 
         ///<summary>
         ///Returns an enumerator that iterates through the collection.
@@ -241,31 +242,31 @@ namespace HttpServer
 
     }
 
-	/// <summary>
-	/// Base class for request data containers
-	/// </summary>
+    /// <summary>
+    /// Base class for request data containers
+    /// </summary>
     public interface IHttpInput : IEnumerable<HttpInputItem>
     {
-		/// <summary>
-		/// Adds a parameter mapped to the presented name
-		/// </summary>
-		/// <param name="name">The name to map the parameter to</param>
-		/// <param name="value">The parameter value</param>
+        /// <summary>
+        /// Adds a parameter mapped to the presented name
+        /// </summary>
+        /// <param name="name">The name to map the parameter to</param>
+        /// <param name="value">The parameter value</param>
         void Add(string name, string value);
 
-		/// <summary>
-		/// Returns a request parameter
-		/// </summary>
-		/// <param name="name">The name associated with the parameter</param>
-		/// <returns></returns>
+        /// <summary>
+        /// Returns a request parameter
+        /// </summary>
+        /// <param name="name">The name associated with the parameter</param>
+        /// <returns></returns>
         HttpInputItem this[string name]
         { get; }
 
-		/// <summary>
-		/// Returns true if the container contains the requested parameter
-		/// </summary>
-		/// <param name="name">Parameter id</param>
-		/// <returns>True if parameter exists</returns>
+        /// <summary>
+        /// Returns true if the container contains the requested parameter
+        /// </summary>
+        /// <param name="name">Parameter id</param>
+        /// <returns>True if parameter exists</returns>
         bool Contains(string name);
     }
 }

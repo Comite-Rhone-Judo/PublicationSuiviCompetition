@@ -5,23 +5,23 @@ namespace HttpServer.Helpers
     /// </summary>
     public static class JSHelper
     {
-		/// <summary>
-		/// Requests a url through ajax
-		/// </summary>
-		/// <param name="url">url to fetch. Url is NOT enclosed in quotes by the implementation. You need to do that yourself.</param>
-		/// <param name="options">optional options in format "key, value, key, value", used in JS request object. All keys should end with colon.</param>
-		/// <returns>a link tag</returns>
-		/// <remarks>onclick attribute is used by this method.</remarks>
-		/// <example>
-		/// <code>
-		/// // plain text
-		/// JSHelper.AjaxRequest("'/user/show/1'");
-		/// 
-		/// // ajax request using this.href
-		/// string link = "&lt;a href=\"/user/call/1\" onclick=\"" + JSHelper.AjaxRequest("this.href") + "/&lt;call user&lt;/a&gt;";
-		/// </code>
-		/// </example>
-		public static string AjaxRequest(string url, params string[] options)
+        /// <summary>
+        /// Requests a url through ajax
+        /// </summary>
+        /// <param name="url">url to fetch. Url is NOT enclosed in quotes by the implementation. You need to do that yourself.</param>
+        /// <param name="options">optional options in format "key, value, key, value", used in JS request object. All keys should end with colon.</param>
+        /// <returns>a link tag</returns>
+        /// <remarks>onclick attribute is used by this method.</remarks>
+        /// <example>
+        /// <code>
+        /// // plain text
+        /// JSHelper.AjaxRequest("'/user/show/1'");
+        /// 
+        /// // ajax request using this.href
+        /// string link = "&lt;a href=\"/user/call/1\" onclick=\"" + JSHelper.AjaxRequest("this.href") + "/&lt;call user&lt;/a&gt;";
+        /// </code>
+        /// </example>
+        public static string AjaxRequest(string url, params string[] options)
         {
             return WebHelper.JSImplementation.AjaxRequest(url, options);
         }

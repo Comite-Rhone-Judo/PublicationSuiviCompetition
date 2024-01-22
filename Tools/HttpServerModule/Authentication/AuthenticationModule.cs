@@ -1,5 +1,5 @@
-using System;
 using HttpServer.Exceptions;
+using System;
 
 namespace HttpServer.Authentication
 {
@@ -63,9 +63,9 @@ namespace HttpServer.Authentication
         public abstract string Name
         { get; }
 
-		/// <summary>
-		/// Tag used for authentication.
-		/// </summary>
+        /// <summary>
+        /// Tag used for authentication.
+        /// </summary>
         public const string AuthenticationTag = "__authtag";
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace HttpServer.Authentication
         /// <exception cref="ForbiddenException">If no more attempts are allowed</exception>
         public bool AuthenticationRequired(IHttpRequest request)
         {
-        	return _authenticationRequiredHandler != null && _authenticationRequiredHandler(request);
+            return _authenticationRequiredHandler != null && _authenticationRequiredHandler(request);
         }
     }
 }

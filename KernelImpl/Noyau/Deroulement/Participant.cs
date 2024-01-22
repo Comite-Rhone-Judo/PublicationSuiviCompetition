@@ -12,7 +12,7 @@ namespace KernelImpl.Noyau.Deroulement
     /// <summary>
     /// Description des Participants
     /// </summary>
-    public class Participant:  INotifyPropertyChanged
+    public class Participant : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -20,7 +20,7 @@ namespace KernelImpl.Noyau.Deroulement
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        
+
         private int _judoka;
         public int judoka
         {
@@ -188,7 +188,7 @@ namespace KernelImpl.Noyau.Deroulement
                     OnPropertyChanged("nbVictoiresInd");
                 }
             }
-        }        
+        }
 
         private int _cumulPoints;
         public int cumulPoints
@@ -270,8 +270,8 @@ namespace KernelImpl.Noyau.Deroulement
             if (DC.competition.IsEquipe())
             {
                 Participants.Equipe e = Equipe1(DC);
-                if(e != null)
-            {
+                if (e != null)
+                {
                     xparticipant.SetAttributeValue(ConstantXML.Participant_ID, e.id.ToString());
                     // xparticipant.SetAttributeValue(ConstantXML.Participant_RemoteID, e.remoteID.ToString());
                     // xparticipant.SetAttributeValue(ConstantXML.Participant_Licence, e.licence);
@@ -320,7 +320,7 @@ namespace KernelImpl.Noyau.Deroulement
                         xparticipant.SetAttributeValue(ConstantXML.Participant_Poids, j.poids);
                     }
                 }
-            }            
+            }
 
             int qualifie1 = 0;
             if (DC.competition.IsEquipe())
@@ -335,7 +335,7 @@ namespace KernelImpl.Noyau.Deroulement
             }
 
             xparticipant.SetAttributeValue(ConstantXML.Participant_QualifieE1, (QualifieEnum)qualifie1);
-            
+
             // Valeurs communes
             xparticipant.SetAttributeValue(ConstantXML.Participant_Judoka, judoka);
             xparticipant.SetAttributeValue(ConstantXML.Participant_Phase, phase);

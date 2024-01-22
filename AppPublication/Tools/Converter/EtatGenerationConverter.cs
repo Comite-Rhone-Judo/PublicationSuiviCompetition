@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Data;
+﻿using KernelImpl.Noyau.Organisation;
+using System;
 using System.Globalization;
-using Tools.Outils;
-using Tools.Export;
-using KernelImpl.Noyau.Organisation;
+using System.Linq;
+using System.Windows.Data;
 
 namespace AppPublication.Tools.Converter
 {

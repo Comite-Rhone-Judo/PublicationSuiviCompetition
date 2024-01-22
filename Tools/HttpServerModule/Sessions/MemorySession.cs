@@ -21,7 +21,7 @@ namespace HttpServer.Sessions
         {
             _id = id;
         }
-        
+
         /// <summary>
         /// Id
         /// </summary>
@@ -49,13 +49,13 @@ namespace HttpServer.Sessions
         {
             get
             {
-				if (_vars.ContainsKey(name))
-				{
-					_accessed = DateTime.Now;
-					return _vars[name];
-				}
-				
-				return null;
+                if (_vars.ContainsKey(name))
+                {
+                    _accessed = DateTime.Now;
+                    return _vars[name];
+                }
+
+                return null;
             }
             set
             {
@@ -104,23 +104,23 @@ namespace HttpServer.Sessions
         /// </summary>
         public void Clear()
         {
-			Clear(false);
+            Clear(false);
         }
 
-		/// <summary>
-		/// Clears the specified expire.
-		/// </summary>
-		/// <param name="expires">True if the session is cleared due to expiration</param>
-		public void Clear(bool expires)
-		{
-			BeforeClear(this, new HttpSessionClearedArgs(expires));
+        /// <summary>
+        /// Clears the specified expire.
+        /// </summary>
+        /// <param name="expires">True if the session is cleared due to expiration</param>
+        public void Clear(bool expires)
+        {
+            BeforeClear(this, new HttpSessionClearedArgs(expires));
 
-			_vars.Clear();
-			_accessed = DateTime.Now;
-			_changed = true;	
-		}
+            _vars.Clear();
+            _accessed = DateTime.Now;
+            _changed = true;
+        }
 
-    	///<summary>
+        ///<summary>
         ///Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         ///</summary>
         ///<filterpriority>2</filterpriority>
@@ -128,19 +128,19 @@ namespace HttpServer.Sessions
         {
         }
 
-    	/// <summary>
-    	/// Event triggered upon clearing the session
-    	/// </summary>
-    	public event HttpSessionClearedHandler BeforeClear = delegate{};
+        /// <summary>
+        /// Event triggered upon clearing the session
+        /// </summary>
+        public event HttpSessionClearedHandler BeforeClear = delegate { };
 
-    	/// <summary>
-    	/// Gets keys for all values.
-    	/// </summary>
-    	public IEnumerable<string> Keys
-    	{
-			get { return _vars.Keys; }
-    	}
+        /// <summary>
+        /// Gets keys for all values.
+        /// </summary>
+        public IEnumerable<string> Keys
+        {
+            get { return _vars.Keys; }
+        }
 
-    	#endregion
+        #endregion
     }
 }

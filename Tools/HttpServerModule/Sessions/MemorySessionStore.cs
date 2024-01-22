@@ -12,23 +12,23 @@ namespace HttpServer.Sessions
         private readonly IDictionary<string, IHttpSession> _sessions = new Dictionary<string, IHttpSession>();
         private readonly Queue<IHttpSession> _unusedSessions = new Queue<IHttpSession>();
         private int _expireTime = 20;
-    	private Timer _expireTimer;
+        private Timer _expireTimer;
 
-		/// <summary>
-		/// Initializes the class setting the expirationtimer to clean the session every minute
-		/// </summary>
-		public MemorySessionStore()
-		{
-			 _expireTimer = new Timer(Cleanup, null, 60000, 60000);
-		}
+        /// <summary>
+        /// Initializes the class setting the expirationtimer to clean the session every minute
+        /// </summary>
+        public MemorySessionStore()
+        {
+            _expireTimer = new Timer(Cleanup, null, 60000, 60000);
+        }
 
-		/// <summary>
-		/// Delegate for the cleanup timer
-		/// </summary>
-		private void Cleanup(object o)
-		{
-			Cleanup();
-		}
+        /// <summary>
+        /// Delegate for the cleanup timer
+        /// </summary>
+        private void Cleanup(object o)
+        {
+            Cleanup();
+        }
 
         #region IHttpSessionStore Members
 
@@ -46,7 +46,7 @@ namespace HttpServer.Sessions
                     if (!_sessions.ContainsKey(sessionId))
                         return null;
 
-                	_sessions[sessionId].Accessed = DateTime.Now;
+                    _sessions[sessionId].Accessed = DateTime.Now;
                     if (sessionId.Length > 0)
                         ((MemorySession)_sessions[sessionId]).SetId(Guid.NewGuid().ToString());
                     return _sessions[sessionId];
@@ -102,7 +102,7 @@ namespace HttpServer.Sessions
         {
             if (_sessions.ContainsKey(sessionId))
                 return _sessions[sessionId];
-            
+
             return null;
         }
 
@@ -145,7 +145,7 @@ namespace HttpServer.Sessions
                     TimeSpan liveTime = DateTime.Now.Subtract(pair.Value.Accessed);
                     if (liveTime.TotalMinutes > _expireTime)
                     {
-						pair.Value.Clear(true);
+                        pair.Value.Clear(true);
                         _sessions.Remove(pair.Key);
                         break;
                     }

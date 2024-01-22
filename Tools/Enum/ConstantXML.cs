@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Tools.Enum
+﻿namespace Tools.Enum
 {
     /// <summary>
     /// Enumération des constants pour la construction des fichiers XML
@@ -37,7 +32,7 @@ namespace Tools.Enum
         public const string Directory = "directory";
         public const string FileName = "filename";
 
-        
+
 
         public const string Event_ID = "ID";
         public const string Event_Nom = "libelle";
@@ -83,12 +78,19 @@ namespace Tools.Enum
         public const string Competition_Lieu = "lieu";
         public const string Competition_Information = "information";
         public const string Competition_Type = "type";
+        public const string Competition_Type2 = "type2";
+        public const string Competition_Discipline = "discipline";
         public const string Competition_Couleur1 = "couleur1";
         public const string Competition_Couleur2 = "couleur2";
         public const string Competition_Niveau = "niveau";
         public const string Competition_Version = "version";
         public const string Competition_Tapis = "tapis";
         public const string Competition_AfficheCSA = "afficheCSA";
+        public const string Competition_AfficheKinzas = "kinzas";
+        public const string Competition_AfficheAnimationVainqueur = "animationVainqueur";
+        public const string Competition_RandomCombat = "randomCombat";
+        public const string Competition_TempsPause = "tempsPause";
+        public const string Competition_TempsMedical = "tempsMedical";
 
         //Club 
         public const string Club = "club";
@@ -152,12 +154,22 @@ namespace Tools.Enum
         public const string Combat_Vainqueur = "vainqueur";
         public const string Combat_Repechage = "repechage";
         public const string Combat_Score = "score";
+        public const string Combat_Kinza = "kinza";
+        public const string Combat_Kinza1 = "kinza1";
+        public const string Combat_Kinza2 = "kinza2";
         public const string Combat_Judoka = "judoka";
         public const string Combat_Penalite = "penalite";
         public const string Combat_Points = "points";
         public const string Combat_PointsGRCH = "pointsGRCH";
+        public const string Combat_PointsGRCH1 = "pointsGRCH1";
+        public const string Combat_PointsGRCH2 = "pointsGRCH2";
         public const string Combat_Phase = "phase";
         public const string Combat_Detail = "detail";
+        public const string Combat_Challenge1Refused = "challenge1Refused";
+        public const string Combat_Challenge2Refused = "challenge2Refused";
+        public const string Combat_ScoresJujitsu = "scoresJujitsu";
+        public const string Combat_PremiereCategoriePoids = "premiereCategoriePoids";
+
 
         public const string Combat_NbVictoire = "nbvictoire";
 
@@ -173,6 +185,11 @@ namespace Tools.Enum
         public const string Combat_TempsHippon = "tempsHippon";
         public const string Combat_TempsWazaAri = "tempsWazaAri";
         public const string Combat_TempsYuko = "tempsCombatYuko";
+        public const string Combat_TempsGolden = "tempsGolden";
+        public const string Combat_IsNewCombat = "isNewCombat";
+        public const string Combat_TempsRecupFinal = "tempsRecupFinal";
+        public const string Combat_Discipline = "discipline";
+
 
         public const string Combat_ScoreVainqueur = "scorevainqueur";
         public const string Combat_PenVainqueur = "penvainqueur";
@@ -202,10 +219,10 @@ namespace Tools.Enum
         public const string Epreuve_PoidsMax = "poidsMax";
         public const string Epreuve_EquipeEP = "equipeEP";
 
-        public const string Epreuve_CateAge_Nom = "nom_cateage";        
+        public const string Epreuve_CateAge_Nom = "nom_cateage";
         public const string Epreuve_CateAge_RemoteId = "remoteId_cateage";
 
-        public const string Epreuve_CatePoids_Nom = "nom_catepoids";        
+        public const string Epreuve_CatePoids_Nom = "nom_catepoids";
         public const string Epreuve_CatePoids_RemoteId = "remoteId_catepoids";
 
         //Epreuves_Equipe
@@ -223,6 +240,8 @@ namespace Tools.Enum
         public const string Epreuve_Equipe_RemoteID = "remoteID";
         public const string Epreuve_Equipe_AnneeMin = "anneeMin";
         public const string Epreuve_Equipe_AnneeMax = "anneeMax";
+        public const string Epreuve_Equipe_EpreuveRef = "epreuveRef";
+        
 
         //Groupe PhaseDecoupage 
         public const string PhaseDecoupages = "phasedecoupages";
@@ -315,6 +334,8 @@ namespace Tools.Enum
         public const string Participant_PositionOriginal = "positionOriginal";
         public const string Participant_DernierCombat = "dernierCombat";
         public const string Participant_QualifieE1 = "qualifieE1";
+        public const string Participant_ScoreProLeague = "scoreProLeague";
+        public const string Participant_NbPenalites = "nbPenalites";
 
 
 
@@ -345,7 +366,7 @@ namespace Tools.Enum
         public const string Phase_Ecartement = "ecartement";
         public const string Phase_Date_Tirage = "date_tirage";
         public const string Phase_Time_Tirage = "time_tirage";
-        
+
 
         //Feuilles 
         public const string Feuille = "feuille";
@@ -426,11 +447,11 @@ namespace Tools.Enum
 
         public const string Vue_Judoka_Present = "present";
         public const string Vue_Judoka_NomCategorieAge = "nomCategorieAge";
-        
+
         public const string Vue_Judoka_Club = "club";
         public const string Vue_Judoka_ClubNomCourt = "clubnomcourt";
         public const string Vue_Judoka_ClubNom = "clubnom";
-        
+
         public const string Vue_Judoka_ComiteNomCourt = "comitenomcourt";
         public const string Vue_Judoka_ComiteNom = "comitenom";
 
@@ -440,11 +461,11 @@ namespace Tools.Enum
 
         public const string Vue_Judoka_IdEpreuve = "idepreuve";
         public const string Vue_Judoka_LibEpreuve = "libepreuve";
-        
+
         public const string Vue_Judoka_Etat = "etat";
         public const string Vue_Judoka_Qualifie0 = "qualifie0";
         public const string Vue_Judoka_Qualifie1 = "qualifie1";
-        
+
 
         //Ceinture
         public const string Ceintures = "ceintures";
@@ -478,6 +499,7 @@ namespace Tools.Enum
         public const string CatePoids_sexe = "sexe";
         public const string CatePoids_cateage = "categorieAge";
         public const string CatePoids_equipe = "equipe";
+        public const string CatePoids_discipline = "discipline";
 
         //Gestion temps
         public const string GestionsTemps = "gestionsTemps";
@@ -486,10 +508,12 @@ namespace Tools.Enum
         public const string GestionTemps_Sexe = "sexe";
         public const string GestionTemps_TempsCombat = "tempsCombats";
         public const string GestionTemps_TempsRecup = "tempsRecup";
+        public const string GestionTemps_TempsRecupFinal = "tempsRecupFinal";
         public const string GestionTemps_TempsHippon = "tempsHippon";
         public const string GestionTemps_TempsWaza = "tempsWaza";
         public const string GestionTemps_TempsYuko = "tempsYuko";
         public const string GestionTemps_TempsGolden = "tempsGolden";
+        public const string GestionTemps_Discipline = "discipline";
 
         //Arbitre 
         public const string Arbitres = "arbitres";
@@ -542,7 +566,7 @@ namespace Tools.Enum
         public const string Delegue_Telephone = "telephone";
         public const string Delegue_Mail = "mail";
         public const string Delegue_Fonction = "fonction";
-        public const string Delegue_Commentaire = "commentaire";     
+        public const string Delegue_Commentaire = "commentaire";
 
 
         //Equipe
@@ -587,12 +611,19 @@ namespace Tools.Enum
         public const string Rencontre_Vainqueur = "vainqueur";
         public const string Rencontre_Combat = "combat";
         public const string Rencontre_CatePoids = "catePoids";
+        public const string Rencontre_Ippon1 = "ippon1";
+        public const string Rencontre_Ippon2 = "ippon2";
+        public const string Rencontre_GoldenScore = "goldenScore";
+        public const string Rencontre_IsNewRencontre = "isNewRencontre";
+        
 
         public const string Rencontre_TempsCombat = "tempsCombat";
         public const string Rencontre_TempsRecuperation = "tempsRecuperation";
         public const string Rencontre_TempsHippon = "tempsHippon";
         public const string Rencontre_TempsWazaAri = "tempsWazaAri";
         public const string Rencontre_TempsYuko = "tempsCombatYuko";
+        public const string Rencontre_TempsRecupFinal = "tempsRecupFinal";
+        public const string Rencontre_Discipline = "discipline";
 
         //vue groupe 
         public const string Vue_Groupes = "groupes";

@@ -6,7 +6,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"        
         Closing="MainWindow1_Closing"  Closed="MainWin_Closed_1" 
         Background="Black" Title="{Binding AppVersion, StringFormat=Application Publication Suivi de Compétition - {0}}" Name="MainWin" Focusable="True"
-        mc:Ignorable="d" SizeToContent="Width" Height="960">
+        mc:Ignorable="d" SizeToContent="Width" Height="900">
     <!--Style="{StaticResource WindowStyle}"-->
 
     <Window.Resources>

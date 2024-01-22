@@ -20,7 +20,7 @@ namespace HttpServer.Exceptions
         public ForbiddenException(string errorMsg)
             : base(HttpStatusCode.Forbidden, errorMsg)
         {
-            
+
         }
     }
 }

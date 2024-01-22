@@ -8,11 +8,9 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Xsl;
-using AppPublication.Tools;
 using Tools.Enum;
 using Tools.Export;
 using Tools.Outils;
-using System.Diagnostics;
 
 namespace AppPublication.Export
 {
@@ -79,7 +77,7 @@ namespace AppPublication.Export
 
                 ExportHTML.ToHTMLSite(xmlResultat, type2, fileSave2, argsList2);
                 urls.Add(fileSave2 + ".html");
-            }
+                }
             else if (phase.typePhase == (int)TypePhaseEnum.Tableau)
             {
                 ExportEnum type2 = ExportEnum.Site_Tableau_Competition;
@@ -165,7 +163,7 @@ namespace AppPublication.Export
 
             ExportHTML.ToHTMLSite(xml, type, fileSave, argsList);
             // return new List<string> { fileSave + ".html" };
-            
+
             output.Add(new FileWithChecksum(fileSave + ".html"));
             // Debug.WriteLine(string.Format("GenereWebSiteAllTapis {0}", output.Count));
 
@@ -223,7 +221,7 @@ namespace AppPublication.Export
         }
 
         /// <summary>
-        /// Génére L'index
+        /// Génére le menu
         /// </summary>
         /// <param name="DC"></param>
         public static List<FileWithChecksum> GenereWebSiteMenu(JudoData DC, ConfigurationExportSite config)
@@ -236,12 +234,12 @@ namespace AppPublication.Export
 
             XmlDocument docmenu = ExportXML.CreateDocumentMenu(DC);
             ExportXML.AddPublicationInfo(ref docmenu, config);
-            
+
             // Genere le menu de d'avancement
             type = ExportEnum.Site_MenuAvancement;
-            XsltArgumentList argsList = new XsltArgumentList(); 
+            XsltArgumentList argsList = new XsltArgumentList();
             string filename = ExportTools.getFileName(type);
-            string fileSave = directory + "/" + filename.Replace("/", "_");            
+            string fileSave = directory + "/" + filename.Replace("/", "_");
             ExportHTML.ToHTMLSite(docmenu, type, fileSave, argsList);
             output.Add(new FileWithChecksum(fileSave + ".html"));
 
@@ -266,7 +264,7 @@ namespace AppPublication.Export
 
             // Debug.WriteLine(string.Format("GenereWebSiteMenu {0}", output.Count));
             return output;
-           
+
             //ExportHTML.ToHTML_Menu(docmenu);
             //return new List<string> { ExportTools.getDirectory(true, null, null) + @"\menu.html" };
         }

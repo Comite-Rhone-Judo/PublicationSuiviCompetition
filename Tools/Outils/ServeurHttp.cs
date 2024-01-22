@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 using Tools.Enum;
 using HttpListener = HttpServer.HttpListener;
 
@@ -162,8 +161,11 @@ namespace Tools.Outils
             //    session["times"] = 1;
             //else
             //    session["times"] = ((int)session["times"]) + 1;
-            
+
             string s = request.UriPath.Substring(1);
+
+            // Verifie si on a un espace dans l'URI: les + sont substitues par des ' ' dans les URLs
+            s = s.Replace(" ", "+");
             string filename = ConstantFile.ExportSite_dir + s.Replace("site/", "");
 
             if (File.Exists(filename))
@@ -223,12 +225,12 @@ namespace Tools.Outils
                         writer.Write(result);
                         writer.Flush();
                     }
-                    
+
                 }
             }
 
 
-                
+
 
             // return true to tell webserver that we've handled the url
             return true;

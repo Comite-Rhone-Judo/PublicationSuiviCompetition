@@ -41,7 +41,7 @@ namespace KernelImpl
             set { _categories = value; }
         }
 
-        private  DataOrganisation _organisation = null;
+        private DataOrganisation _organisation = null;
         public DataOrganisation Organisation
         {
             get { return _organisation; }

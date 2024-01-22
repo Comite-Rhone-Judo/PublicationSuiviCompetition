@@ -112,7 +112,7 @@ namespace AppPublication.IHM.Server
                 LB1.Items.Add(o);
             }));
         }
-        
+
         private void ButSeConnecterServer_Click_1(object sender, RoutedEventArgs e)
         {
             Busy.Visibility = System.Windows.Visibility.Visible;
@@ -159,7 +159,7 @@ namespace AppPublication.IHM.Server
         {
             recherche_Worker.Dispose();
         }
-        
+
         public void Dispose()
         {
             this.Dispose();

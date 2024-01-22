@@ -42,7 +42,7 @@ namespace JudoClient
         public TraitementLogos TraitementLogos { get { return _traitement_log; } }
 
 
-        
+
 
         public bool IsConnected
         {
@@ -405,6 +405,9 @@ namespace JudoClient
                         case ServerCommandEnum.TraiteRencontres:
                             _traitement_der.RencontreReceived(xvaleur);
                             break;
+                        case ServerCommandEnum.UpdateRencontres:
+                            _traitement_der.UpdateRencontreReceived(xvaleur);
+                            break;
 
                         case ServerCommandEnum.ResultTapis:
                             break;
@@ -418,7 +421,7 @@ namespace JudoClient
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogTools.Log(ex);
             }

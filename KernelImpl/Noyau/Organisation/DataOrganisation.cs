@@ -73,7 +73,7 @@ namespace KernelImpl.Noyau.Organisation
                     }
                     _epreuve_equipes.Add(epreuve);
                 }
-                               
+
                 lecture_vue_epreuve_equipe(DC);
             }
         }
@@ -102,7 +102,7 @@ namespace KernelImpl.Noyau.Organisation
                         _epreuves.Remove(p);
                     }
                     _epreuves.Add(epreuve);
-                }                
+                }
                 lecture_vue_epreuves(DC);
             }
 

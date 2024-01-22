@@ -15,7 +15,6 @@ using Telerik.Windows.Zip;
 using Tools.CustomException;
 using Tools.Enum;
 using Tools.Windows;
-using System.IO.Compression;
 
 namespace Tools.Outils
 {
@@ -206,7 +205,7 @@ namespace Tools.Outils
                         return true;
                     }
                 }
-             
+
                 ex2 = ex2.InnerException;
             }
             return false;

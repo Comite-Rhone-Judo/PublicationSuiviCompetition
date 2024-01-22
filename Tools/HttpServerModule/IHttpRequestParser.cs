@@ -1,6 +1,6 @@
-using System;
 using HttpServer.Exceptions;
 using HttpServer.Parser;
+using System;
 
 namespace HttpServer
 {
@@ -49,15 +49,15 @@ namespace HttpServer
         /// </summary>
         event EventHandler<HeaderEventArgs> HeaderReceived;
 
-		/// <summary>
-		/// Clear parser state.
-		/// </summary>
-    	void Clear();
+        /// <summary>
+        /// Clear parser state.
+        /// </summary>
+        void Clear();
 
-		/// <summary>
-		/// Gets or sets the log writer.
-		/// </summary>
-    	ILogWriter LogWriter { get; set; }
+        /// <summary>
+        /// Gets or sets the log writer.
+        /// </summary>
+        ILogWriter LogWriter { get; set; }
     }
 
     /// <summary>

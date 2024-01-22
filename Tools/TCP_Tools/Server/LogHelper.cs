@@ -1,6 +1,4 @@
-﻿using System;
-using System.Net.Sockets;
-using Tools.Outils;
+﻿using System.Net.Sockets;
 
 namespace Tools.TCP_Tools.Server
 {
@@ -15,7 +13,7 @@ namespace Tools.TCP_Tools.Server
         public enum TypeLog
         {
             Connect = 1,
-            ReceiveData = 2, 
+            ReceiveData = 2,
             RemoteClose = 3,
             Close = 4,
             ClientClose = 5,
@@ -31,7 +29,7 @@ namespace Tools.TCP_Tools.Server
         public static void ShowLog(string mes, TcpClient client, TypeLog type)
         {
             string mess = "";
-            switch(type)
+            switch (type)
             {
                 case TypeLog.ClientClose:
                     mess += "Client Close\r\n";

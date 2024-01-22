@@ -1,25 +1,13 @@
 ﻿using AppPublication.Controles;
-using AppPublication.Export;
 using AppPublication.IHM.Server;
-using AppPublication.Tools;
-using AppPublication.Tools.LectureFile;
-using AppPublication.Tools.Struct;
 using KernelImpl.Noyau.Organisation;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Media.Imaging;
 using Telerik.Windows.Controls;
 using Tools.Enum;
 using Tools.Export;
-using Tools.Outils;
-using Tools.Struct;
 using Tools.Windows;
 
 namespace AppPublication.IHM.Commissaire
@@ -78,7 +66,7 @@ namespace AppPublication.IHM.Commissaire
                 {
                     url = ExportTools.GetURLSiteFTP(DialogControleur.Instance.ServerData.competition.remoteId);
                 }
-                
+
                 System.Diagnostics.Process.Start(url);
             }
             catch { }

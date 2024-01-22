@@ -1,12 +1,12 @@
-﻿using System;
+﻿using HttpServer.Exceptions;
+using HttpServer.Helpers;
+using HttpServer.Sessions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using HttpServer.Exceptions;
-using HttpServer.Helpers;
-using HttpServer.Sessions;
 
 namespace HttpServer.HttpModules
 {

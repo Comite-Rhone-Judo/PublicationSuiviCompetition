@@ -1,9 +1,8 @@
+using HttpServer.Exceptions;
+using HttpServer.Sessions;
 using System;
 using System.IO;
 using System.Net;
-using HttpServer.Exceptions;
-using HttpServer;
-using HttpServer.Sessions;
 
 namespace HttpServer.HttpModules
 {
@@ -46,7 +45,7 @@ namespace HttpServer.HttpModules
         /// </summary>
         /// <param name="uri">Url requested by the client.</param>
         /// <returns>true if module should handle the url.</returns>
-        private  bool CanHandle(Uri uri)
+        private bool CanHandle(Uri uri)
         {
             return uri.AbsolutePath.StartsWith(_sourceUrl);
         }

@@ -33,7 +33,7 @@ namespace Tools.Outils
             {
                 FileAndDirectTools.DeleteDirectory(ConstantFile.Logo1_dir);
                 FileAndDirectTools.CreateDirectorie(ConstantFile.Logo1_dir);
-                
+
                 FileAndDirectTools.DeleteDirectory(ConstantFile.Logo2_dir);
                 FileAndDirectTools.CreateDirectorie(ConstantFile.Logo2_dir);
 
@@ -51,7 +51,7 @@ namespace Tools.Outils
                 urls = urls.Concat(XMLTools.LectureElement(xelement, ConstantXML.LogoLigue, ConstantFile.Logo2_dir)).ToList();
                 urls = urls.Concat(XMLTools.LectureElement(xelement, ConstantXML.LogoSponsor, ConstantFile.Logo3_dir)).ToList();
             }
-            
+
             return urls;
         }
 
@@ -83,16 +83,16 @@ namespace Tools.Outils
             return urls;
         }
 
-       /// <summary>
-       /// Lecture d'une date
-       /// </summary>
-       /// <param name="ladate">attribut date</param>
-       /// <param name="format">format de la date</param>
-       /// <param name="default_value">date par défaut si mauvaise lecture</param>
-       /// <returns>la date</returns>
+        /// <summary>
+        /// Lecture d'une date
+        /// </summary>
+        /// <param name="ladate">attribut date</param>
+        /// <param name="format">format de la date</param>
+        /// <param name="default_value">date par défaut si mauvaise lecture</param>
+        /// <returns>la date</returns>
 
         public static DateTime LectureDate(XAttribute ladate, string format, DateTime default_value)
-        {            
+        {
             try
             {
                 if (ladate == null || string.IsNullOrWhiteSpace(ladate.Value))
@@ -115,7 +115,7 @@ namespace Tools.Outils
         /// <returns>la date</returns>
 
         public static DateTime LectureDate(XmlAttribute ladate, string format)
-        {            
+        {
             try
             {
                 if (ladate == null)
@@ -247,7 +247,7 @@ namespace Tools.Outils
             {
                 if (xattribute != null && !String.IsNullOrWhiteSpace(xattribute.Value))
                 {
-                    double.TryParse(xattribute.Value, NumberStyles.Float , CultureInfo.InvariantCulture, out result);
+                    double.TryParse(xattribute.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out result);
                 }
             }
             catch
@@ -286,7 +286,7 @@ namespace Tools.Outils
 
         public static int? LectureNullableInt(XAttribute xattribute)
         {
-            
+
             int result = 0;
             try
             {
@@ -329,7 +329,7 @@ namespace Tools.Outils
             else
             {
                 return xattribute.Value;
-            }           
+            }
         }
 
         public static string LectureString(XElement xattribute)

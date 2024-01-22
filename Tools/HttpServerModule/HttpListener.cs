@@ -18,7 +18,7 @@ namespace HttpServer
         /// <summary>
         /// A client have been accepted, but not handled, by the listener.
         /// </summary>
-        public event EventHandler<ClientAcceptedEventArgs> Accepted = delegate{};
+        public event EventHandler<ClientAcceptedEventArgs> Accepted = delegate { };
 
 
         /// <summary>

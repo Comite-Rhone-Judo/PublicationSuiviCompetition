@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
 
@@ -23,7 +21,7 @@ namespace Tools.Outils
 
         public static bool CreateDir(string directory, string login, string mdp)
         {
-            if(FTPTools.ExistDir(directory, login, mdp))
+            if (FTPTools.ExistDir(directory, login, mdp))
             {
                 return true;
             }

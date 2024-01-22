@@ -12,7 +12,7 @@ namespace Tools.Export
         public static void ToHTMLSite(XmlDocument xml, ExportEnum export_type, string fileSave, XsltArgumentList argsList)
         {
             //argsList.AddParam("style", "", ExportTools.getStyleDirectory(site: true));
-            
+
             argsList.AddParam("js", "", ExportTools.getJS());
             //argsList.AddParam("menu", "", ExportTools.getDirectory(true, null, null) + @"\menu.html");
 
@@ -25,14 +25,14 @@ namespace Tools.Export
             ExportHTML.ToHTML(xml, fileSave, argsList, xslt);
         }
 
-       /// <summary>
-       /// Realise un export HTML
-       /// </summary>
-       /// <param name="xml"></param>
-       /// <param name="fileSave"></param>
-       /// <param name="argsList"></param>
-       /// <param name="xslt_st"></param>
-       public static void ToHTML(XmlDocument xml, string fileSave, XsltArgumentList argsList, string xslt_st)
+        /// <summary>
+        /// Realise un export HTML
+        /// </summary>
+        /// <param name="xml"></param>
+        /// <param name="fileSave"></param>
+        /// <param name="argsList"></param>
+        /// <param name="xslt_st"></param>
+        public static void ToHTML(XmlDocument xml, string fileSave, XsltArgumentList argsList, string xslt_st)
         {
             XsltSettings settings = new XsltSettings();
             settings.EnableDocumentFunction = true;

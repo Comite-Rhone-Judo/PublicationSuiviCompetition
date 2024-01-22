@@ -197,7 +197,7 @@
 			</xsl:attribute>
 
 			<!-- La liste des combats -->
-			<table style="width:100%">
+			<table class="w3-table w3-bordered w3-card tas-tableau-prochain-combat" style="width:100%">
 				<tbody>
 					<!-- Selectionne tous les combats du tapis, sauf ceux "Aucun Judoka", avec les judoka absents -->
 					<!-- <xsl:for-each select="//tapis[@tapis = $notapis]/combats/combat"> -->

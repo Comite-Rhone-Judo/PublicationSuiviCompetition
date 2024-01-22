@@ -25,8 +25,8 @@ namespace HttpServer.FormDecoders
         /// <exception cref="InvalidDataException">If stream contents cannot be decoded properly.</exception>
         public HttpForm Decode(string contentType, Stream stream, Encoding encoding)
         {
-			if (_decoders.Count == 0 && _defaultDecoder == null)
-				return HttpForm.EmptyForm;
+            if (_decoders.Count == 0 && _defaultDecoder == null)
+                return HttpForm.EmptyForm;
 
             if (encoding == null)
                 encoding = Encoding.UTF8;
@@ -47,7 +47,7 @@ namespace HttpServer.FormDecoders
                     return decoder.Decode(stream, contentType, encoding);
             }
 
-			return HttpForm.EmptyForm;
+            return HttpForm.EmptyForm;
         }
 
         /// <summary>

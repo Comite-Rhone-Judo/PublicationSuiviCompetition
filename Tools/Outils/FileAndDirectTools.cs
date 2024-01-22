@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
-using System.Security.Cryptography;
 using Tools.Enum;
 
 namespace Tools.Outils
@@ -187,7 +186,7 @@ namespace Tools.Outils
         /// <param name="directory"></param>
         public static void CreateDirectorie(string directory)
         {
-           
+
             //LogTools.Trace("CREATION DU REPERTOIRE " + directory, LogTools.Level.DEBUG);
             if (!Directory.Exists(directory))
             {
@@ -203,7 +202,7 @@ namespace Tools.Outils
             //LogTools.Trace("REPERTOIRE CREE " + directory, LogTools.Level.DEBUG);
         }
 
-       
+
 
 
 

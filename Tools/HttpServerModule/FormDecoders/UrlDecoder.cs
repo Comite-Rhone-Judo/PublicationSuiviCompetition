@@ -35,7 +35,7 @@ namespace HttpServer.FormDecoders
                 StreamReader reader = new StreamReader(stream, encoding);
                 return new HttpForm(HttpHelper.ParseQueryString(reader.ReadToEnd()));
             }
-            catch(ArgumentException err)
+            catch (ArgumentException err)
             {
                 throw new InvalidDataException(err.Message, err);
             }

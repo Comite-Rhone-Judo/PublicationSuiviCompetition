@@ -11,7 +11,7 @@ namespace KernelImpl.Noyau.Participants
     /// <summary>
     /// Description des Equipes
     /// </summary>
-    public class Equipe :  INotifyPropertyChanged
+    public class Equipe : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

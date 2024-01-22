@@ -1,9 +1,9 @@
+using HttpServer.Helpers.Implementations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
-using HttpServer.Helpers.Implementations;
 
 namespace HttpServer.Helpers
 {
@@ -35,7 +35,7 @@ namespace HttpServer.Helpers
         public static string AjaxRequest(string url, string title, params string[] options)
         {
             string text = JSImplementation.AjaxRequest("this.href", options) + "return false;";
-        	options = JSImplementation.RemoveJavascriptOptions(options);
+            options = JSImplementation.RemoveJavascriptOptions(options);
             return BuildLink(url, title, options, "onclick", text);
         }
 
@@ -50,7 +50,7 @@ namespace HttpServer.Helpers
         public static string AjaxUpdater(string url, string title, string targetId, params string[] options)
         {
             string text = JSImplementation.AjaxUpdater("this.href", targetId, options) + "return false;";
-			options = JSImplementation.RemoveJavascriptOptions(options);
+            options = JSImplementation.RemoveJavascriptOptions(options);
             return BuildLink(url, title, options, "onclick", text);
         }
 
@@ -69,17 +69,17 @@ namespace HttpServer.Helpers
             return JSImplementation.DialogLink(url, title, htmlAttributes);
         }
 
-		/// <summary>
-		/// Create/Open a dialog box using ajax
-		/// </summary>
-		/// <param name="url"></param>
-		/// <param name="title"></param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		public static string CreateDialog(string url, string title, params string[] parameters)
-		{
-			return JSImplementation.CreateDialog(url, title, parameters);
-		}
+        /// <summary>
+        /// Create/Open a dialog box using ajax
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="title"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public static string CreateDialog(string url, string title, params string[] parameters)
+        {
+            return JSImplementation.CreateDialog(url, title, parameters);
+        }
 
         /// <summary>
         /// Close a javascript dialog window/div.
@@ -110,7 +110,7 @@ namespace HttpServer.Helpers
                 return
                     formStart +
                     "onsubmit=\"" + JSImplementation.AjaxFormOnSubmit() + "\">";
-            
+
             return formStart + ">";
         }
 
@@ -179,7 +179,7 @@ namespace HttpServer.Helpers
         /// <param name="selectedValue">Obsolete</param>
         /// <param name="firstEmpty">Obsolete</param>
         /// <returns>Obsolete</returns>
-       [Obsolete("Moved to FormHelper")]
+        [Obsolete("Moved to FormHelper")]
         public static string Select(string name, ICollection collection, GetIdTitle getIdTitle, object selectedValue, bool firstEmpty)
         {
             return FormHelper.Select(name, name, collection, getIdTitle, selectedValue, firstEmpty);
@@ -304,35 +304,35 @@ namespace HttpServer.Helpers
         /// <param name="secondOptions">attributes set by any of the helper classes.</param>
         internal static void GenerateHtmlAttributes(StringBuilder sb, string[] firstOptions, string[] secondOptions)
         {
-			if (firstOptions.Length % 2 == 1)
-				throw new ArgumentException("Options must be in pairs [key,value]", "firstOptions");
-			if (secondOptions.Length % 2 == 1)
-				throw new ArgumentException("Options must be in pairs [key,value]", "secondOptions");
+            if (firstOptions.Length % 2 == 1)
+                throw new ArgumentException("Options must be in pairs [key,value]", "firstOptions");
+            if (secondOptions.Length % 2 == 1)
+                throw new ArgumentException("Options must be in pairs [key,value]", "secondOptions");
 
-			Dictionary<string, List<string>> options = new Dictionary<string, List<string>>();
-			for (int i = 0; i < firstOptions.Length; i += 2)
-			{
-				if(!options.ContainsKey(firstOptions[i]))
-					options.Add(firstOptions[i], new List<string>());
-				options[firstOptions[i]].Add(firstOptions[i + 1]);
-			}
-        	for (int i = 0; i < secondOptions.Length; i += 2)
-			{
-				if (!options.ContainsKey(secondOptions[i]))
-					options.Add(secondOptions[i], new List<string>());
-				options[secondOptions[i]].Add(secondOptions[i + 1]);
-			}
+            Dictionary<string, List<string>> options = new Dictionary<string, List<string>>();
+            for (int i = 0; i < firstOptions.Length; i += 2)
+            {
+                if (!options.ContainsKey(firstOptions[i]))
+                    options.Add(firstOptions[i], new List<string>());
+                options[firstOptions[i]].Add(firstOptions[i + 1]);
+            }
+            for (int i = 0; i < secondOptions.Length; i += 2)
+            {
+                if (!options.ContainsKey(secondOptions[i]))
+                    options.Add(secondOptions[i], new List<string>());
+                options[secondOptions[i]].Add(secondOptions[i + 1]);
+            }
 
-			foreach (KeyValuePair<string, List<string>> option in options)
-        	{
-        		sb.Append(" ");
-        		sb.Append(option.Key);
-        		sb.Append("=\"");
-				for (int i = 0; i < option.Value.Count; ++i )
-					sb.Append(i != option.Value.Count - 1 ? option.Value[i] + " " : option.Value[i]);
+            foreach (KeyValuePair<string, List<string>> option in options)
+            {
+                sb.Append(" ");
+                sb.Append(option.Key);
+                sb.Append("=\"");
+                for (int i = 0; i < option.Value.Count; ++i)
+                    sb.Append(i != option.Value.Count - 1 ? option.Value[i] + " " : option.Value[i]);
 
-        		sb.Append("\" ");
-        	}
+                sb.Append("\" ");
+            }
         }
 
         /// <summary>
@@ -389,42 +389,42 @@ namespace HttpServer.Helpers
                 sb.Length -= 2;
         }
 
-		/// <summary>
-		/// Removes any javascript parameters from an array of parameters
-		/// </summary>
-		/// <param name="options">The array of parameters to remove javascript params from</param>
-		/// <returns>An array of html parameters</returns>
-		internal virtual string[] RemoveJavascriptOptions(string[] options)
-		{
-			if(options == null)
-				throw new ArgumentNullException("options");
-			if(options.Length%2 == 1)
-				throw new ArgumentException("Options must be in pairs [key,value]", "options");
+        /// <summary>
+        /// Removes any javascript parameters from an array of parameters
+        /// </summary>
+        /// <param name="options">The array of parameters to remove javascript params from</param>
+        /// <returns>An array of html parameters</returns>
+        internal virtual string[] RemoveJavascriptOptions(string[] options)
+        {
+            if (options == null)
+                throw new ArgumentNullException("options");
+            if (options.Length % 2 == 1)
+                throw new ArgumentException("Options must be in pairs [key,value]", "options");
 
-			List<string> saveParams = new List<string>();
-			for(int i = 0; i < options.Length; i += 2)
-			{
-				if(!options[i].TrimEnd().EndsWith(":"))
-				{
-					saveParams.Add(options[i]);
-					saveParams.Add(options[i+1]);
-				}
-			}
+            List<string> saveParams = new List<string>();
+            for (int i = 0; i < options.Length; i += 2)
+            {
+                if (!options[i].TrimEnd().EndsWith(":"))
+                {
+                    saveParams.Add(options[i]);
+                    saveParams.Add(options[i + 1]);
+                }
+            }
 
-			return saveParams.ToArray();
-		}
+            return saveParams.ToArray();
+        }
 
-		/// <summary>
-		/// javascript action that should be added to the "onsubmit" event in the form tag.
-		/// </summary>
-		/// <returns></returns>
-		/// <remarks>All javascript option names should end with colon.</remarks>
-		/// <example>
-		/// <code>
-		/// JSHelper.AjaxRequest("/user/show/1", "onsuccess:", "$('userInfo').update(result);");
-		/// </code>
-		/// </example>
-		public abstract string AjaxFormOnSubmit(params string[] options);
+        /// <summary>
+        /// javascript action that should be added to the "onsubmit" event in the form tag.
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>All javascript option names should end with colon.</remarks>
+        /// <example>
+        /// <code>
+        /// JSHelper.AjaxRequest("/user/show/1", "onsuccess:", "$('userInfo').update(result);");
+        /// </code>
+        /// </example>
+        public abstract string AjaxFormOnSubmit(params string[] options);
 
         /// <summary>
         /// Requests a url through ajax

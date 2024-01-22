@@ -25,6 +25,16 @@ table.tas-tableau-repechage-combat {
         vertical-align: top;
     }
 
+table.tas-tableau-prochain-combat {
+    border: 0px;
+    border-collapse: collapse;
+    border-spacing: 0px;
+    width: 100%
+}
+
+    table.tas-tableau-prochain-combat tr {
+        border-bottom: 6px solid white;
+    }
 
 div.tas-combat-niveau {
     width: 100%;

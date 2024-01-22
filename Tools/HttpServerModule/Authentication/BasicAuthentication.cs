@@ -5,11 +5,11 @@ namespace HttpServer.Authentication
 {
     /// <summary>
     /// The "basic" authentication scheme is based on the model that the
-   /// client must authenticate itself with a user-ID and a password for
-   /// each realm.  The realm value should be considered an opaque string
-   /// which can only be compared for equality with other realms on that
-   /// server. The server will service the request only if it can validate
-   /// the user-ID and password for the protection space of the Request-URI.
+    /// client must authenticate itself with a user-ID and a password for
+    /// each realm.  The realm value should be considered an opaque string
+    /// which can only be compared for equality with other realms on that
+    /// server. The server will service the request only if it can validate
+    /// the user-ID and password for the protection space of the Request-URI.
     /// There are no optional authentication parameters.
     /// </summary>
     public class BasicAuthentication : AuthenticationModule
@@ -20,7 +20,7 @@ namespace HttpServer.Authentication
         /// </summary>
         /// <param name="authenticator">Delegate used to provide information used during authentication.</param>
         /// <param name="authenticationRequiredHandler">Delegate used to determine if authentication is required (may be null).</param>
-        public BasicAuthentication(AuthenticationHandler authenticator, AuthenticationRequiredHandler authenticationRequiredHandler) 
+        public BasicAuthentication(AuthenticationHandler authenticator, AuthenticationRequiredHandler authenticationRequiredHandler)
             : base(authenticator, authenticationRequiredHandler)
         {
         }

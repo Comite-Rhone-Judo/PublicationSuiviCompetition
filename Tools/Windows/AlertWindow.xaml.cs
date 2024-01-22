@@ -20,7 +20,7 @@ namespace Tools.Windows
         /// </summary>
         /// <param name="header">header</param>
         /// <param name="message">message</param>
-        
+
         public AlertWindow(string header, string message)
         {
             InitializeComponent();
@@ -32,7 +32,7 @@ namespace Tools.Windows
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
             InitCommand();
-        }       
+        }
 
         private void ButOk_Click(object sender, RoutedEventArgs e)
         {

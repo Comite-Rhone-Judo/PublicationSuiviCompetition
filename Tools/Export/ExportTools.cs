@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Xml.Linq;
-using System.Xml.Xsl;
 using Tools.Enum;
 using Tools.Outils;
-using Tools.Struct;
 
 namespace Tools.Export
 {
@@ -24,6 +21,8 @@ namespace Tools.Export
         /// <returns></returns>
         public static string getDirectory(bool site, string epreuve_nom, string competition_nom)
         {
+            // TODO: voir pour enlever les '+' dans les noms de repertoire
+
             string directory = "";
 
             if (site)
@@ -51,6 +50,9 @@ namespace Tools.Export
                 string nom = "" + epreuve_nom;
                 directory = directory + OutilsTools.SubString(OutilsTools.TraiteChaine(nom), 0, 30);
             }
+            
+            // Remplace les symboles le necessitant (+ des categories de poids, etc.)
+            directory = OutilsTools.TraiteChaineURL(directory);
 
             FileAndDirectTools.CreateDirectorie(directory);
 
@@ -286,7 +288,7 @@ namespace Tools.Export
 
             string directory = ExportTools.getDirectory(true, null, null).Replace("common", "");
 
-            if(regenere)
+            if (regenere)
             {
                 FileAndDirectTools.DeleteDirectory(directory + "style");
                 FileAndDirectTools.DeleteDirectory(directory + "js");
@@ -296,7 +298,7 @@ namespace Tools.Export
             if (!Directory.Exists(directory + "style"))
             {
                 FileAndDirectTools.CreateDirectorie(directory + "style");
-                
+
                 foreach (string s1 in ResourcesTools.GetAssembyResourceName())
                 {
                     if (s1.Contains(ConstantResource.Export_site_style))
@@ -307,7 +309,7 @@ namespace Tools.Export
                         FileAndDirectTools.NeedAccessFile(fileName);
                         try
                         {
-                            using (FileStream fs = new FileStream( fileName, FileMode.Create))
+                            using (FileStream fs = new FileStream(fileName, FileMode.Create))
                             {
                                 byte[] bytes = new byte[resource.Length];
                                 resource.Read(bytes, 0, (int)resource.Length);
@@ -440,7 +442,7 @@ namespace Tools.Export
                     break;
                 case ExportEnum.Poule_Resultat_Shiai:
                     name = ConstantResource.Export_Poule_res + "feuille_resultat_shiai";
-                    break;  
+                    break;
                 case ExportEnum.Poule_Repartition:
                     name = ConstantResource.Export_Poule_res + "feuille_poule";
                     break;

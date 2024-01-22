@@ -6,7 +6,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Arbitrage
 {
-    public class Delegue 
+    public class Delegue
     {
         public int id { get; set; }
         public string nom { get; set; }
@@ -24,7 +24,7 @@ namespace KernelImpl.Noyau.Arbitrage
             this.telephone = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Delegue_Telephone));
             this.mail = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Delegue_Mail));
             this.fonction = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Delegue_Fonction));
-            this.commentaires = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Delegue_Commentaire));         
+            this.commentaires = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Delegue_Commentaire));
         }
 
 
@@ -39,7 +39,7 @@ namespace KernelImpl.Noyau.Arbitrage
             xdelegue.SetAttributeValue(ConstantXML.Delegue_Telephone, telephone);
             xdelegue.SetAttributeValue(ConstantXML.Delegue_Fonction, fonction);
             xdelegue.Add(new XElement(ConstantXML.Delegue_Commentaire, commentaires.ToString()));
-            
+
 
             return xdelegue;
         }

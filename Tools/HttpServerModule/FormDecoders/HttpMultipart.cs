@@ -31,14 +31,14 @@
 //
 using System;
 using System.Globalization;
-using System.Text;
 using System.IO;
+using System.Text;
 
 namespace HttpServer.FormDecoders
 {
     class HttpMultipart
     {
-		/// <summary>Represents a field in a multipart form</summary>
+        /// <summary>Represents a field in a multipart form</summary>
         public class Element
         {
             public string ContentType;
@@ -163,9 +163,9 @@ namespace HttpServer.FormDecoders
                     return true;
             }
             catch (ArgumentException)
-            {}
+            { }
             catch (ObjectDisposedException)
-            {}
+            { }
 
             return false;
         }

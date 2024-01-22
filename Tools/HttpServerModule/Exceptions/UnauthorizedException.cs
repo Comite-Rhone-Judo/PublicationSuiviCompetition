@@ -31,7 +31,7 @@ namespace HttpServer.Exceptions
         public UnauthorizedException()
             : base(HttpStatusCode.Unauthorized, "The request requires user authentication.")
         {
-            
+
         }
 
         /// <summary>

@@ -146,6 +146,6 @@ namespace HttpServer
         /// <param name="prio">Importance of the log message</param>
         /// <param name="message">The message.</param>
         public void Write(object source, LogPrio prio, string message)
-        {}
+        { }
     }
 }

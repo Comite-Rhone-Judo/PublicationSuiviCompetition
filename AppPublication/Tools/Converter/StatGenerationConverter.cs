@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Globalization;
+using System.Linq;
 using System.Windows.Data;
-using Tools.Outils;
-using Tools.Export;
-using KernelImpl.Noyau.Organisation;
-using AppPublication.Tools;
 
 namespace AppPublication.Tools.Converter
 {
@@ -40,7 +34,7 @@ namespace AppPublication.Tools.Converter
 
                 if (genere && theStat != null)
                 {
-                    output = string.Format("{0} ({1} sec.)", theStat.DateFin.ToString("dd/MM/yyyy HH:mm:ss"), (int) Math.Round(theStat.DelaiExecutionMs / 1000.0));
+                    output = string.Format("{0} ({1} sec.)", theStat.DateFin.ToString("dd/MM/yyyy HH:mm:ss"), (int)Math.Round(theStat.DelaiExecutionMs / 1000.0));
                 }
             }
 

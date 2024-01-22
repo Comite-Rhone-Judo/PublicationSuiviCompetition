@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Sockets;
-using System.Text;
-using System.Xml.Linq;
-using Tools.CustomException;
-using Tools.Enum;
 using Tools.Outils;
 
 namespace Tools.TCP_Tools.Client
@@ -180,7 +174,7 @@ namespace Tools.TCP_Tools.Client
             {
 
                 data = FileAndDirectTools.TheEncoding.GetBytes(sendMessage);
-               
+
                 //XDocument doc = Common.CreateDocument(ServerCommandEnum.NonTraite);
                 //string data1 = doc.ToString(SaveOptions.None);
                 //Byte[] data2 = System.Text.Encoding.UTF8.GetBytes(data1);

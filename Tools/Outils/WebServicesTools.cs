@@ -8,7 +8,7 @@ using Tools.Enum;
 namespace Tools.Outils
 {
     public static class WebServicesTools
-    {       
+    {
 
         /// <summary>
         /// Chargement des compétitions à partir d'un compte extranet (triplet login, mdp, structure à laquelle il est affilié)

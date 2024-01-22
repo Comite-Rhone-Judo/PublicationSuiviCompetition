@@ -36,7 +36,7 @@ namespace JudoClient.Communication
             string result = doc.ToString(SaveOptions.None);
             client.Client.Write(result);
         }
-        
+
         public static void SendResultInscrition(this ClientJudo client, XElement xvaleur)
         {
             XDocument doc = Common.CreateDocument(ServerCommandEnum.ResultInscription);

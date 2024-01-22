@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tools.Outils;
 
 namespace AppPublication.Statistiques
@@ -21,20 +17,24 @@ namespace AppPublication.Statistiques
         #region PROPRIETES
 
         private string _nom = String.Empty;
-        public string Nom {
+        public string Nom
+        {
             get
             {
                 return _nom;
             }
-            protected set {
+            protected set
+            {
                 _nom = value;
                 NotifyPropertyChanged("Nom");
             }
         }
 
         private string _libelle = String.Empty;
-        public string Libelle {
-            get {
+        public string Libelle
+        {
+            get
+            {
                 return _libelle;
             }
             protected set
@@ -47,7 +47,8 @@ namespace AppPublication.Statistiques
         private float? _valeur = null;
         public float? Valeur
         {
-            get {
+            get
+            {
                 return _valeur;
             }
             protected set

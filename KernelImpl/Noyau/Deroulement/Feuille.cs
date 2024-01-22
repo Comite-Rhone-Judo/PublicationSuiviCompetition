@@ -30,11 +30,11 @@ namespace KernelImpl.Noyau.Deroulement
         public Nullable<int> combat { get; set; }
         public int phase { get; set; }
 
-        
+
 
         public Combat Combat1(JudoData DC)
         {
-               return DC.Deroulement.Combats.FirstOrDefault(o => o.id == this.combat);
+            return DC.Deroulement.Combats.FirstOrDefault(o => o.id == this.combat);
         }
 
         public void LoadXml(XElement xinfo)

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Tools.Struct
+﻿namespace Tools.Struct
 {
     public class ParamStruct
     {

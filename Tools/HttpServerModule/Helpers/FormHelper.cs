@@ -52,10 +52,10 @@ namespace HttpServer.Helpers
             if (isAjax)
             {
                 string onsubmit = JSImplementation.AjaxFormOnSubmit(options) + "return false;";
-                WebHelper.GenerateHtmlAttributes(sb, options, new[]{"onsubmit", onsubmit, "id", id, "method", "post"});
+                WebHelper.GenerateHtmlAttributes(sb, options, new[] { "onsubmit", onsubmit, "id", id, "method", "post" });
             }
             else
-                WebHelper.GenerateHtmlAttributes(sb, options, new[]{"id", id, "method", "post"});
+                WebHelper.GenerateHtmlAttributes(sb, options, new[] { "id", id, "method", "post" });
 
             sb.Append(">");
             return sb.ToString();
@@ -220,8 +220,8 @@ namespace HttpServer.Helpers
             return sb.ToString();
         }
 
-    	/// <exception cref="ArgumentNullException"><c>sb</c> is null.</exception>
-    	private static void Options(StringBuilder sb, IEnumerable collection, GetIdTitle getIdTitle, object selectedValue, bool firstEmpty)
+        /// <exception cref="ArgumentNullException"><c>sb</c> is null.</exception>
+        private static void Options(StringBuilder sb, IEnumerable collection, GetIdTitle getIdTitle, object selectedValue, bool firstEmpty)
         {
             if (sb == null)
                 throw new ArgumentNullException("sb");

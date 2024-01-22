@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tools.Outils;
 
 namespace AppPublication.Tools
@@ -56,7 +52,7 @@ namespace AppPublication.Tools
             {
                 _state = value;
                 NotifyPropertyChanged("State");
-                if(_state != StateGenerationEnum.Idle)
+                if (_state != StateGenerationEnum.Idle)
                 {
                     _nextGenSec = -1;
                 }
@@ -138,7 +134,7 @@ namespace AppPublication.Tools
         private void CalculMessage()
         {
             string msg = string.Empty;
-            switch(_state)
+            switch (_state)
             {
                 case StateGenerationEnum.Stopped:
                     {
@@ -147,7 +143,7 @@ namespace AppPublication.Tools
                     }
                 case StateGenerationEnum.Idle:
                     {
-                        if(NextGenerationSec > 0)
+                        if (NextGenerationSec > 0)
                         {
                             msg = String.Format("En attente ({0} sec.) ...", NextGenerationSec);
                         }

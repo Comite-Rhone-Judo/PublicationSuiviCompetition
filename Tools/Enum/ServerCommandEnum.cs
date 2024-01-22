@@ -150,6 +150,7 @@ namespace Tools.Enum
         EnvoieCombats = 811,
         UpdateCombats = 812,
         UpdateTapisCombats = 813,
+        ChallengeRefuse = 814,
 
         #endregion
 
@@ -163,12 +164,15 @@ namespace Tools.Enum
 
         ResultRencontres = 934,
         TraiteRencontres = 935,
+        UpdateRencontres = 9340,
 
         ResultTapis = 936,
         TraiteTapis = 937,
 
         NonTraite = 938,
-       
+
+        CategoriePoidsTireeAuSort = 939,
+
 
         #endregion
 

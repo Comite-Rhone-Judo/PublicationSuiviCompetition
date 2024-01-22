@@ -83,77 +83,135 @@
 			<!-- Boucle global sur les competitions en cours -->
 			<xsl:for-each select="/competitions/competition">
 				<xsl:if test="count(./epreuve) > 0">
-					<!-- Nom de la competition -->
-					<div class="w3-container w3-blue w3-center tas-competition-bandeau">
-						<h4>
-							<xsl:value-of select="./titre"/>
-						</h4>
-					</div>
-
-					<div id="Affectations" class="w3-container w3-border pane w3-animate-left">
-						<!-- une ligne de cellule pour occuper toute le largeur de l'ecran -->
-						<div class="w3-cell-row">
-							<!-- Chaque panneau est un panel contenant une carte, utilise cell + mobile pour gerer horizontal/vertical selon la taille de l'ecran -->
-							<!-- Categorie F -->
-							<xsl:if test="count(./epreuve[@sexe = 'F']) > 0">
-								<div class="w3-panel w3-cell w3-mobile">
-									<!-- La carte des donnees elle meme -->
-									<div class="w3-card">
-										<!-- entete avec un bouton permet d'ouvrir fermer le contenu de la carte -->
-										<header class="w3-bar w3-light-green w3-large">
-											<button class="w3-bar-item w3-light-green" onclick="toggleElement('AffectationFemininesContentPanel')">
-												<img class="img" id="AffectationFemininesContentPanelCollapse" width="25" src="../img/up_circular-32.png" />
-												<img class="img" id="AffectationFemininesContentPanelExpand" width="25" src="../img/down_circular-32.png" style="display: none;"/>
-												Catégorie féminine </button>
-										</header>
-										<div class="w3-container" id="AffectationFemininesContentPanel" >
-											<xsl:apply-templates select="./epreuve[@sexe = 'F']"/>
-										</div>
-									</div>
-								</div>
-							</xsl:if>
-							<!-- Categorie M -->
-							<xsl:if test="count(./epreuve[@sexe = 'M']) > 0">
-								<div class="w3-panel w3-cell w3-mobile">
-									<div class="w3-card">
-
-										<header class="w3-bar w3-light-green w3-large">
-											<button class="w3-bar-item w3-light-green" onclick="toggleElement('AffectationMasculinsContentPanel')">
-												<img class="img" id="AffectationMasculinsContentPanelCollapse" width="25" src="../img/up_circular-32.png" />
-												<img class="img" id="AffectationMasculinsContentPanelExpand" width="25" src="../img/down_circular-32.png" style="display: none;"/>
-												Catégorie Masculine </button>
-										</header>
-
-										<div class="w3-container" id="AffectationMasculinsContentPanel">
-											<xsl:apply-templates select="./epreuve[@sexe = 'M']"/>
-										</div>
-									</div>
-								</div>
-							</xsl:if>
-							<!-- Sans Categorie -->
-							<xsl:if test="count(./epreuve[not(@sexe)]) > 0">
-								<div class="w3-panel w3-cell w3-mobile">
-									<div class="w3-card">
-										<header class="w3-bar w3-light-green w3-large">
-											<button class="w3-bar-item w3-light-green" onclick="toggleElement('AffectationNoSexeContentPanel')">
-												<img class="img" id="AffectationNoSexeContentPanelCollapse" width="25" src="../img/up_circular-32.png" style="display: none;"/>
-												<img class="img" id="AffectationNoSexeContentPanelExpand" width="25" src="../img/down_circular-32.png"/> 
-												Sans Catégorie </button>
-										</header>
-										<div class="w3-container" id="AffectationNoSexeContentPanel" style="display:none;">
-											<xsl:apply-templates select="./epreuve[not(@sexe)]"/>
-										</div>
-									</div>
-								</div>
-							</xsl:if>
-						</div>
-					</div>
+					<xsl:variable name="compet" select="@ID"/>
+					<xsl:call-template name="competition">
+						<xsl:with-param name="idcompetition" select="$compet"/>
+					</xsl:call-template>
 				</xsl:if>
 			</xsl:for-each>
 		</body>
 	</xsl:template>
 
 	<!-- TEMPLATES -->
+
+	<!-- Un bloc -->
+	<xsl:template name="competition">
+		<xsl:param name="idcompetition"/>
+		<xsl:variable name="apos">'</xsl:variable>
+		<xsl:variable name="prefixPanel">
+			<xsl:value-of select="concat('AffectationComp',$idcompetition,'ContentPanel')"/>
+		</xsl:variable>
+
+		<!-- Nom de la competition -->
+		<div class="w3-container w3-blue w3-center tas-competition-bandeau">
+			<h4>
+				<xsl:value-of select="./titre"/>
+			</h4>
+		</div>
+
+		<div id="Affectations" class="w3-container w3-border pane w3-animate-left">
+			<!-- une ligne de cellule pour occuper toute le largeur de l'ecran -->
+			<div class="w3-cell-row">
+				<!-- Chaque panneau est un panel contenant une carte, utilise cell + mobile pour gerer horizontal/vertical selon la taille de l'ecran -->
+				<!-- Categorie F -->
+				<xsl:if test="count(./epreuve[@sexe = 'F']) > 0">
+					<div class="w3-panel w3-cell w3-mobile">
+						<!-- La carte des donnees elle meme -->
+						<div class="w3-card">
+							<!-- entete avec un bouton permet d'ouvrir fermer le contenu de la carte -->
+							<header class="w3-bar w3-light-green w3-large">
+								<button class="w3-bar-item w3-light-green">
+									<xsl:attribute name="onclick">
+										<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel,'F',$apos,')')"/>
+									</xsl:attribute>
+									<img class="img" width="25" src="../img/up_circular-32.png">
+										<xsl:attribute name="id">
+											<xsl:value-of select="concat($prefixPanel,'F', 'Collapse')"/>
+										</xsl:attribute>
+									</img>
+									<img class="img" width="25" src="../img/down_circular-32.png" style="display: none;">
+										<xsl:attribute name="id">
+											<xsl:value-of select="concat($prefixPanel,'F', 'Expand')"/>
+										</xsl:attribute>
+									</img>
+									Catégorie Féminine
+								</button>
+							</header>			
+							<div class="w3-container">
+								<xsl:attribute name="id">
+									<xsl:value-of select="concat($prefixPanel,'F')"/>
+								</xsl:attribute>
+								<xsl:apply-templates select="./epreuve[@sexe = 'F']"/>
+							</div>
+						</div>
+					</div>
+				</xsl:if>
+				<!-- Categorie M -->
+				<xsl:if test="count(./epreuve[@sexe = 'M']) > 0">
+					<div class="w3-panel w3-cell w3-mobile">
+						<div class="w3-card">
+							<header class="w3-bar w3-light-green w3-large">
+								<button class="w3-bar-item w3-light-green">
+									<xsl:attribute name="onclick">
+										<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel,'M',$apos,')')"/>
+									</xsl:attribute>
+									<img class="img" width="25" src="../img/up_circular-32.png">
+										<xsl:attribute name="id">
+											<xsl:value-of select="concat($prefixPanel,'M', 'Collapse')"/>
+										</xsl:attribute>
+									</img>
+									<img class="img" width="25" src="../img/down_circular-32.png" style="display: none;">
+										<xsl:attribute name="id">
+											<xsl:value-of select="concat($prefixPanel,'M', 'Expand')"/>
+										</xsl:attribute>
+									</img>
+									Catégorie Masculine
+								</button>
+							</header>
+							<div class="w3-container">
+								<xsl:attribute name="id">
+									<xsl:value-of select="concat($prefixPanel,'M')"/>
+								</xsl:attribute>
+								<xsl:apply-templates select="./epreuve[@sexe = 'M']"/>
+							</div>
+						</div>
+					</div>
+				</xsl:if>
+				<!-- Sans Categorie -->
+				<xsl:if test="count(./epreuve[not(@sexe)]) > 0">
+					<div class="w3-panel w3-cell w3-mobile">
+						<div class="w3-card">
+							<header class="w3-bar w3-light-green w3-large">
+								<button class="w3-bar-item w3-light-green">
+									<xsl:attribute name="onclick">
+										<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel,$apos,')')"/>
+									</xsl:attribute>
+									<img class="img" width="25" src="../img/up_circular-32.png">
+										<xsl:attribute name="id">
+											<xsl:value-of select="concat($prefixPanel,'Collapse')"/>
+										</xsl:attribute>
+									</img>
+									<img class="img" width="25" src="../img/down_circular-32.png" style="display: none;">
+										<xsl:attribute name="id">
+											<xsl:value-of select="concat($prefixPanel,'Expand')"/>
+										</xsl:attribute>
+									</img>
+									Sans Catégorie
+								</button>
+							</header>
+							<div class="w3-container" style="display:none;">
+								<xsl:attribute name="id">
+									<xsl:value-of select="$prefixPanel"/>
+								</xsl:attribute>
+								<xsl:apply-templates select="./epreuve[not(@sexe)]"/>
+							</div>
+						</div>
+					</div>
+				</xsl:if>
+			</div>
+		</div>
+	</xsl:template>
+	
 	<!-- Bouton affectations par epreuve -->
 	<xsl:template name="affectation_epreuve" match="epreuve">
 		<div class="w3-panel">

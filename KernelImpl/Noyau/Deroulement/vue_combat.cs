@@ -7,7 +7,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public partial class vue_combat 
+    public partial class vue_combat
     {
         public int combat_id { get; set; }
         public int combat_numero { get; set; }
@@ -94,7 +94,7 @@ namespace KernelImpl.Noyau.Deroulement
 
             // Ajout de la lecture des donnees de phase et d'epreuve
             Phase phase = null;
-            using(TimedLock.Lock((DC.Deroulement.Phases as ICollection).SyncRoot))
+            using (TimedLock.Lock((DC.Deroulement.Phases as ICollection).SyncRoot))
             {
                 phase = DC.Deroulement.Phases.FirstOrDefault(o => o.id == combat.phase);
             }

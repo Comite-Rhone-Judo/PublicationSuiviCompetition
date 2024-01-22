@@ -69,7 +69,7 @@ namespace HttpServer.Rules
         public RegexRedirectRule(string fromUrlExpression, string toUrlExpression, RegexOptions options, bool shouldRedirect) :
             base(fromUrlExpression, toUrlExpression, shouldRedirect)
         {
-            if(string.IsNullOrEmpty(fromUrlExpression))
+            if (string.IsNullOrEmpty(fromUrlExpression))
                 throw new ArgumentNullException("fromUrlExpression");
             if (string.IsNullOrEmpty(toUrlExpression))
                 throw new ArgumentNullException("toUrlExpression");
@@ -102,11 +102,11 @@ namespace HttpServer.Rules
                 // Return the replace result
                 string resultUrl = _matchUrl.Replace(request.Uri.AbsolutePath, ToUrl);
                 if (!ShouldRedirect)
-            	{
-            		request.Uri = new Uri(request.Uri, resultUrl);
-            		return false;
-            	}
-				
+                {
+                    request.Uri = new Uri(request.Uri, resultUrl);
+                    return false;
+                }
+
                 response.Redirect(resultUrl);
                 return true;
             }

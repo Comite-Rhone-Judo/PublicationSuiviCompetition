@@ -11,10 +11,10 @@ namespace Tools.TCP_Tools.Client
     /// ClientGenerique : classe générique de communication TCP (client)
     /// </summary>
     public class ClientGenerique
-    {       
-        public delegate void OnConnectionHandler(object sender);       
-        public delegate void OnDataRecieveHandler(object sender, string donnees);        
-        public delegate void OnDataSentHandler(object sender);       
+    {
+        public delegate void OnConnectionHandler(object sender);
+        public delegate void OnDataRecieveHandler(object sender, string donnees);
+        public delegate void OnDataSentHandler(object sender);
         public delegate void OnEndConnectionHandler(object sender);
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace Tools.TCP_Tools.Client
             {
                 try
                 {
-                    return objClient.Client != null  && objClient.Client.Connected;
+                    return objClient.Client != null && objClient.Client.Connected;
                 }
                 catch
                 {

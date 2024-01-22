@@ -9,7 +9,7 @@ namespace KernelImpl.Noyau.Categories
     /// <summary>
     /// Description des Categorie Poids
     /// </summary>
-    public class CategoriePoids 
+    public class CategoriePoids
     {
         public int id { get; set; }
         public string nom { get; set; }

@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Tools.Enum
+﻿namespace Tools.Enum
 {
     /// <summary>
     /// Enumération des type de compétition
     /// </summary>
     public enum DiplomeTypeEnum
     {
-          Diplome_1 = 1
+        Diplome_1 = 1
         , Diplome_2 = 2
         , Diplome_3 = 3
         , Diplome_4 = 4

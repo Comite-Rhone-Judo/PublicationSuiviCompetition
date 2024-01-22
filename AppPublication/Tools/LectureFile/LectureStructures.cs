@@ -10,7 +10,7 @@ namespace AppPublication.Tools.LectureFile
         public static IList<Structure> GetStructures()
         {
             IList<Structure> result = new List<Structure>();
-            
+
             XmlReader structureReader = XmlReader.Create(ResourcesTools.GetAssembyResource(ConstantResource.Structures));
 
             XmlDocument doc = new XmlDocument();
@@ -38,7 +38,7 @@ namespace AppPublication.Tools.LectureFile
             foreach (XmlNode xcomite in xcomites)
             {
                 Structure item = new Structure();
-                item.nom = "COMITE " +  xcomite.Attributes[ConstantXML.Structure_Nom].Value;
+                item.nom = "COMITE " + xcomite.Attributes[ConstantXML.Structure_Nom].Value;
                 item.id = xcomite.Attributes[ConstantXML.Structure_ID].Value;
                 item.ordre = 3;
                 item.type = TypeStructureEnum.Comite;
@@ -47,7 +47,7 @@ namespace AppPublication.Tools.LectureFile
 
             return result;
         }
-        
+
     }
 
     public class Structure

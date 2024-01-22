@@ -9,15 +9,15 @@ namespace HttpServer
     /// </summary>
     public class HttpParam : IHttpInput
     {
-		/// <summary> Representation of a non-initialized HttpParam </summary>
+        /// <summary> Representation of a non-initialized HttpParam </summary>
         public static readonly HttpParam Empty = new HttpParam(HttpInput.Empty, HttpInput.Empty);
 
         private IHttpInput _form;
         private IHttpInput _query;
 
-    	private List<HttpInputItem> _items = new List<HttpInputItem>();
+        private List<HttpInputItem> _items = new List<HttpInputItem>();
 
-		/// <summary>Initialises the class to hold a value either from a post request or a querystring request</summary>		
+        /// <summary>Initialises the class to hold a value either from a post request or a querystring request</summary>		
         public HttpParam(IHttpInput form, IHttpInput query)
         {
             _form = form;
@@ -56,7 +56,7 @@ namespace HttpServer
         /// <returns>Item if found; otherwise HttpInputItem.EmptyLanguageNode</returns>
         public HttpInputItem this[string name]
         {
-            get 
+            get
             {
                 if (_form[name] != HttpInputItem.Empty)
                     return _form[name];
@@ -71,8 +71,8 @@ namespace HttpServer
         {
             _query = query;
         }
-        
-		internal void SetForm(HttpInput form)
+
+        internal void SetForm(HttpInput form)
         {
             _form = form;
         }
@@ -87,9 +87,9 @@ namespace HttpServer
         ///<filterpriority>1</filterpriority>
         IEnumerator<HttpInputItem> IEnumerable<HttpInputItem>.GetEnumerator()
         {
-			List<HttpInputItem> items = new List<HttpInputItem>(_query);
-			items.AddRange(_form);
-			return items.GetEnumerator();
+            List<HttpInputItem> items = new List<HttpInputItem>(_query);
+            items.AddRange(_form);
+            return items.GetEnumerator();
         }
 
         #region IEnumerable Members
@@ -104,9 +104,9 @@ namespace HttpServer
         ///<filterpriority>2</filterpriority>
         public IEnumerator GetEnumerator()
         {
-			List<HttpInputItem> items = new List<HttpInputItem>(_query);
-			items.AddRange(_form);
-        	return items.GetEnumerator();
+            List<HttpInputItem> items = new List<HttpInputItem>(_query);
+            items.AddRange(_form);
+            return items.GetEnumerator();
         }
 
         #endregion

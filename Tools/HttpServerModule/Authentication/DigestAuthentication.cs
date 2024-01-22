@@ -25,7 +25,7 @@ namespace HttpServer.Authentication
         /// </summary>
         /// <param name="authenticator">Delegate used to provide information used during authentication.</param>
         /// <param name="authenticationRequiredHandler">Delegate used to determine if authentication is required (may be null).</param>
-        public DigestAuthentication(AuthenticationHandler authenticator, AuthenticationRequiredHandler authenticationRequiredHandler) 
+        public DigestAuthentication(AuthenticationHandler authenticator, AuthenticationRequiredHandler authenticationRequiredHandler)
             : base(authenticator, authenticationRequiredHandler)
         {
         }
@@ -78,7 +78,7 @@ namespace HttpServer.Authentication
 
             bool staleNonce;
             if (options.Length > 0)
-                staleNonce = (bool) options[0];
+                staleNonce = (bool)options[0];
             else staleNonce = false;
 
             NameValueCollection reqInfo = Decode(authenticationHeader, Encoding.UTF8);
@@ -92,17 +92,17 @@ namespace HttpServer.Authentication
             if (!CheckAuthentication(realm, username, ref password, out state))
                 return null;
 
-        	string HA1;
-			if (!TokenIsHA1)
-			{
-				string A1 = String.Format("{0}:{1}:{2}", username, realm, password);
-				HA1 = GetMD5HashBinHex2(A1);
-			}
-			else
-				HA1 = password;
+            string HA1;
+            if (!TokenIsHA1)
+            {
+                string A1 = String.Format("{0}:{1}:{2}", username, realm, password);
+                HA1 = GetMD5HashBinHex2(A1);
+            }
+            else
+                HA1 = password;
 
-			string A2 = String.Format("{0}:{1}", httpVerb, reqInfo["uri"]);
-			string HA2 = GetMD5HashBinHex2(A2);
+            string A2 = String.Format("{0}:{1}", httpVerb, reqInfo["uri"]);
+            string HA2 = GetMD5HashBinHex2(A2);
             string hashedDigest = Encrypt(HA1, HA2, reqInfo["qop"],
                                           reqInfo["nonce"], reqInfo["nc"], reqInfo["cnonce"]);
 
@@ -112,11 +112,11 @@ namespace HttpServer.Authentication
             return null;
         }
 
-    	/// <summary>
-    	/// Gets or sets whether the token supplied in <see cref="AuthenticationHandler"/> is a
-    	/// HA1 generated string.
-    	/// </summary>
-    	public bool TokenIsHA1 { get; set; }
+        /// <summary>
+        /// Gets or sets whether the token supplied in <see cref="AuthenticationHandler"/> is a
+        /// HA1 generated string.
+        /// </summary>
+        public bool TokenIsHA1 { get; set; }
 
         /// <summary>
         /// Encrypts parameters into a Digest string
@@ -160,46 +160,46 @@ namespace HttpServer.Authentication
             return GetMD5HashBinHex2(unhashedDigest);
         }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="ha1">Md5 hex encoded "userName:realm:password", without the quotes.</param>
-		/// <param name="ha2">Md5 hex encoded "method:uri", without the quotes</param>
-		/// <param name="qop">Quality of Protection</param>
-		/// <param name="nonce">"Number used ONCE"</param>
-		/// <param name="nc">Hexadecimal request counter.</param>
-		/// <param name="cnonce">Client number used once</param>
-		/// <returns></returns>
-		protected virtual string Encrypt(string ha1, string ha2, string qop, string nonce, string nc, string cnonce)
-		{
-			string unhashedDigest;
-			if (qop != null)
-			{
-				unhashedDigest = String.Format("{0}:{1}:{2}:{3}:{4}:{5}",
-											   ha1,
-											   nonce,
-											   nc,
-											   cnonce,
-											   qop,
-											   ha2);
-			}
-			else
-			{
-				unhashedDigest = String.Format("{0}:{1}:{2}",
-											   ha1,
-											   nonce,
-											   ha2);
-			}
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ha1">Md5 hex encoded "userName:realm:password", without the quotes.</param>
+        /// <param name="ha2">Md5 hex encoded "method:uri", without the quotes</param>
+        /// <param name="qop">Quality of Protection</param>
+        /// <param name="nonce">"Number used ONCE"</param>
+        /// <param name="nc">Hexadecimal request counter.</param>
+        /// <param name="cnonce">Client number used once</param>
+        /// <returns></returns>
+        protected virtual string Encrypt(string ha1, string ha2, string qop, string nonce, string nc, string cnonce)
+        {
+            string unhashedDigest;
+            if (qop != null)
+            {
+                unhashedDigest = String.Format("{0}:{1}:{2}:{3}:{4}:{5}",
+                                               ha1,
+                                               nonce,
+                                               nc,
+                                               cnonce,
+                                               qop,
+                                               ha2);
+            }
+            else
+            {
+                unhashedDigest = String.Format("{0}:{1}:{2}",
+                                               ha1,
+                                               nonce,
+                                               ha2);
+            }
 
-			return GetMD5HashBinHex2(unhashedDigest);
-		}
+            return GetMD5HashBinHex2(unhashedDigest);
+        }
         private static void ManageNonces(object state)
         {
             lock (_nonces)
             {
                 foreach (KeyValuePair<string, DateTime> pair in _nonces)
                 {
-                    if (pair.Value >= DateTime.Now) 
+                    if (pair.Value >= DateTime.Now)
                         continue;
 
                     _nonces.Remove(pair.Key);
@@ -304,7 +304,7 @@ namespace HttpServer.Authentication
                     if (inQuote)
                         continue;
 
-                    if (ch == ',' || char.IsWhiteSpace(ch) || i == buffer.Length -1)
+                    if (ch == ',' || char.IsWhiteSpace(ch) || i == buffer.Length - 1)
                     {
                         if (start == -1)
                             return null;

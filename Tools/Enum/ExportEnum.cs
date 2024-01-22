@@ -18,16 +18,16 @@
         ClassementTableau = 9,
         ClassementFinal = 10,
         FeuilleCombat = 11,
-        
+
         Rapport_Sportif = 15,
         Rapport_Admin = 16,
         Tableau_Competition_Repechage = 17,
         Excel = 18,
-        
+
         Rapport_Selection = 20,
         RelationGrCh = 21,
         Resultat = 22,
-        Competition = 23,        
+        Competition = 23,
         RapportErreurJudoka = 24,
         PeseeEquipe = 25,
         ParticipantsEquipe = 26,

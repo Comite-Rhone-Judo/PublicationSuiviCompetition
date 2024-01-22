@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AppPublication.IHM.Commissaire"
         mc:Ignorable="d"
-        Title="Configuration de la Publication" Height="280" Width="760" Background="Black">
+        Title="Configuration de la Publication" Height="260" Width="760" Background="Black">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -70,14 +70,8 @@
                                                         IsEnabled="{Binding Path=IsGenerationActive, Converter={StaticResource BoolNotConverter}}"
                                                         Visibility="{Binding Path=CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}">
                     </CheckBox>
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0" ToolTip="Si cochée, provoque l'ajout du menu 'Affectations' qui liste les tapis assignées pour chaque catégories. Disponible uniquement en compétition Individuelle ou Shiai."/>
-                </StackPanel>
-                <StackPanel Grid.Row="3" Grid.Column="0"  Grid.ColumnSpan="2" Orientation="Horizontal">
-                    <CheckBox  Content="Publier 'Rencontres individuelles'" Style="{StaticResource CheckboxStyle}"
-                                                        IsChecked="{Binding Path=PublierRencontres}"
-                                                        IsEnabled="{Binding Path=IsGenerationActive, Converter={StaticResource BoolNotConverter}}">
-                    </CheckBox>
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0" ToolTip="Si cochée, provoque l'ajout du menu 'Rencontres' qui liste les rencontres individuelles par tapis. Disponible uniquement en compétition Equipe."/>
+                    <!-- TODO Sync l'affichage de l'icone -->
+                    <Image Visibility="{Binding Path=CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}" Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0" ToolTip="Si cochée, provoque l'ajout du menu 'Affectations' qui liste les tapis assignées pour chaque catégories. Disponible uniquement en compétition Individuelle ou Shiai."/>
                 </StackPanel>
             </Grid>
         </Border>

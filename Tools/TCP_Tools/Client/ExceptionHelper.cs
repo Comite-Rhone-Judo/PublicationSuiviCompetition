@@ -1,10 +1,4 @@
-﻿using log4net;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using Tools;
+﻿using System;
 using Tools.CustomException;
 using Tools.Outils;
 
@@ -21,7 +15,7 @@ namespace Tools.TCP_Tools.Client
         /// <param name="ex"></param>
         public static void ShowException(Exception ex)
         {
-            LogTools.Log(new JudoClientException(ex.Message,ex));
+            LogTools.Log(new JudoClientException(ex.Message, ex));
         }
     }
 }

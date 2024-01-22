@@ -50,10 +50,10 @@ namespace HttpServer.Sessions
         /// </summary>
         event HttpSessionClearedHandler BeforeClear;
 
-		/// <summary>
-		/// Gets keys for all values.
-		/// </summary>
-		IEnumerable<string> Keys { get; }
+        /// <summary>
+        /// Gets keys for all values.
+        /// </summary>
+        IEnumerable<string> Keys { get; }
     }
 
     /// <summary>

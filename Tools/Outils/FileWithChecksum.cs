@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using System.Xml;
-using System.Xml.Linq;
-using System.Threading.Tasks;
-using Tools.Enum;
 using System.Security.Cryptography;
+using System.Xml.Linq;
+using Tools.Enum;
 
 
 namespace Tools.Outils

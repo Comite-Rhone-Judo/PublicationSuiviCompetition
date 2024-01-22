@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Data;
-using System.Threading.Tasks;
 using System.Globalization;
+using System.Windows.Data;
 
 namespace AppPublication.Tools.Converter
 {
@@ -16,7 +12,7 @@ namespace AppPublication.Tools.Converter
             System.Windows.Visibility output = System.Windows.Visibility.Visible;
             if (value is bool)
             {
-                output =  ( (bool)value) ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+                output = ((bool)value) ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
             }
 
             return output;

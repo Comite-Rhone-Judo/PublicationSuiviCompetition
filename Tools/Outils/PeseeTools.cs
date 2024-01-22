@@ -1,6 +1,4 @@
-﻿using log4net;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO.Ports;
@@ -23,7 +21,7 @@ namespace Tools.Outils
 
         SerialPort _sp = null;
         string result = "";
-        
+
         /// <summary>
         /// Initialise une instance
         /// </summary>
@@ -62,7 +60,7 @@ namespace Tools.Outils
         /// </summary>
 
         public void ReadPesee()
-        {            
+        {
             if (_sp != null)
             {
                 //LogTools.Trace("InitPesee ReadPesee ", LogTools.Level.DEBUG);

@@ -1,9 +1,9 @@
+using HttpServer.Exceptions;
+using HttpServer.FormDecoders;
 using System;
 using System.Collections.Specialized;
 using System.IO;
 using System.Net;
-using HttpServer.Exceptions;
-using HttpServer.FormDecoders;
 
 namespace HttpServer
 {
@@ -85,15 +85,15 @@ namespace HttpServer
         /// </summary>
         HttpInput QueryString { get; }
 
-		/// <summary>
-		/// Gets a value indicating whether this <see cref="HttpRequest"/> is secure.
-		/// </summary>
-		bool Secure { get; }
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="HttpRequest"/> is secure.
+        /// </summary>
+        bool Secure { get; }
 
-		/// <summary>
+        /// <summary>
         /// Remote client's IP address and port
         /// </summary>
-		IPEndPoint RemoteEndPoint { get; }
+        IPEndPoint RemoteEndPoint { get; }
 
         /// <summary>
         /// Gets or sets requested URI.
@@ -172,11 +172,11 @@ namespace HttpServer
         /// <param name="cookies">The cookies.</param>
         void SetCookies(RequestCookies cookies);
 
-		/// <summary>
-		/// Create a response object.
-		/// </summary>
-		/// <param name="context">Context for the connected client.</param>
-		/// <returns>A new <see cref="IHttpResponse"/>.</returns>
-		IHttpResponse CreateResponse(IHttpClientContext context);
+        /// <summary>
+        /// Create a response object.
+        /// </summary>
+        /// <param name="context">Context for the connected client.</param>
+        /// <returns>A new <see cref="IHttpResponse"/>.</returns>
+        IHttpResponse CreateResponse(IHttpClientContext context);
     }
 }

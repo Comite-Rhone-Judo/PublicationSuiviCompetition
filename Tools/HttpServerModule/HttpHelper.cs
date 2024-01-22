@@ -32,24 +32,24 @@ namespace HttpServer
             if (queryString == string.Empty)
                 return HttpInput.Empty;
 
-			HttpInput input = new HttpInput("QueryString");
+            HttpInput input = new HttpInput("QueryString");
 
-        	queryString = queryString.TrimStart('?', '&');
+            queryString = queryString.TrimStart('?', '&');
 
-			// a simple value.
-			/*
+            // a simple value.
+            /*
 			if (queryString.IndexOf("&") == -1 && !queryString.Contains("%3d") && !queryString.Contains("%3D") && !queryString.Contains("="))
 			{
 				input.Add(string.Empty, queryString);
 				return input;
 			}*/
-			if (queryString.IndexOf("&") == -1 && !queryString.Contains("="))
-			{
-				input.Add(string.Empty, queryString);
-				return input;
-			}
+            if (queryString.IndexOf("&") == -1 && !queryString.Contains("="))
+            {
+                input.Add(string.Empty, queryString);
+                return input;
+            }
 
-        	int state = 0;
+            int state = 0;
             int startpos = 0;
             string name = null;
             for (int i = 0; i < queryString.Length; ++i)
@@ -73,34 +73,34 @@ namespace HttpServer
             }
 
             if (state == 0 && !input.GetEnumerator().MoveNext())
-				throw new FormatException("Not a valid query string: " + queryString);
+                throw new FormatException("Not a valid query string: " + queryString);
 
             if (startpos <= queryString.Length)
             {
-            	if (name != null)
-					Add(input, name, queryString.Substring(startpos, queryString.Length - startpos));
-				else
-					Add(input, string.Empty, queryString.Substring(startpos, queryString.Length - startpos));
+                if (name != null)
+                    Add(input, name, queryString.Substring(startpos, queryString.Length - startpos));
+                else
+                    Add(input, string.Empty, queryString.Substring(startpos, queryString.Length - startpos));
             }
-                
+
 
             return input;
         }
 
-		/// <summary>
-		/// If you string contains %2d instead of =, you have encoded your string
-		/// incorrectly. It's not a bug in the http server that it isn't decoded.
-		/// </summary>
-		/// <param name="queryStr"></param>
-		/// <param name="index"></param>
-		/// <param name="outIndex"></param>
-		/// <returns></returns>
+        /// <summary>
+        /// If you string contains %2d instead of =, you have encoded your string
+        /// incorrectly. It's not a bug in the http server that it isn't decoded.
+        /// </summary>
+        /// <param name="queryStr"></param>
+        /// <param name="index"></param>
+        /// <param name="outIndex"></param>
+        /// <returns></returns>
         private static bool IsEqual(string queryStr, ref int index, out int outIndex)
         {
             outIndex = index;
             if (queryStr[index] == '=')
                 return true;
-			return false;
+            return false;
             /*
             if (queryStr[index] == '%' && queryStr.Length > index + 2 && queryStr[index + 1] == '3'
                 && (queryStr[index + 2] == 'd' || queryStr[index + 2] == 'D'))
@@ -112,34 +112,34 @@ namespace HttpServer
             */
         }
 
-		/// <summary>
-		/// It's really simple. If you string contains %26 instead of &, you have encoded
-		/// it incorrectly. It should NOT be used as a parameter by the server.
-		/// </summary>
-		/// <param name="queryStr"></param>
-		/// <param name="index"></param>
-		/// <param name="outIndex"></param>
-		/// <returns></returns>
+        /// <summary>
+        /// It's really simple. If you string contains %26 instead of &, you have encoded
+        /// it incorrectly. It should NOT be used as a parameter by the server.
+        /// </summary>
+        /// <param name="queryStr"></param>
+        /// <param name="index"></param>
+        /// <param name="outIndex"></param>
+        /// <returns></returns>
         private static bool IsAmp(string queryStr, ref int index, out int outIndex)
         {
-			outIndex = index;
-			if (queryStr[index] == '&')
-			{
-				// should NOT be interpreted as an parameter.
-				// since it's a & in the text.
-				// else users can't use & at all.
-				if (queryStr.Length > index + 4
-					&& (queryStr[index + 1] == 'a' || queryStr[index + 1] == 'A')
-					&& (queryStr[index + 2] == 'm' || queryStr[index + 2] == 'M')
-					&& (queryStr[index + 3] == 'p' || queryStr[index + 3] == 'P')
-					&& queryStr[index + 4] == ';')
-					return false;
-				//outIndex += 1;
-				return true;
-			}
-			return false;
+            outIndex = index;
+            if (queryStr[index] == '&')
+            {
+                // should NOT be interpreted as an parameter.
+                // since it's a & in the text.
+                // else users can't use & at all.
+                if (queryStr.Length > index + 4
+                    && (queryStr[index + 1] == 'a' || queryStr[index + 1] == 'A')
+                    && (queryStr[index + 2] == 'm' || queryStr[index + 2] == 'M')
+                    && (queryStr[index + 3] == 'p' || queryStr[index + 3] == 'P')
+                    && queryStr[index + 4] == ';')
+                    return false;
+                //outIndex += 1;
+                return true;
+            }
+            return false;
 
-			/*
+            /*
             outIndex = index;
             if (queryStr[index] == '%' && queryStr.Length > index + 2 && queryStr[index + 1] == '2' &&
                 queryStr[index + 2] == '6')

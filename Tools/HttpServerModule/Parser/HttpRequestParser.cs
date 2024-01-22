@@ -1,6 +1,6 @@
+using HttpServer.Exceptions;
 using System;
 using System.Text;
-using HttpServer.Exceptions;
 
 namespace HttpServer.Parser
 {
@@ -35,14 +35,14 @@ namespace HttpServer.Parser
         /// <returns>offset to continue from.</returns>
         private int AddToBody(byte[] buffer, int offset, int count)
         {
-			// got all bytes we need, or just a few of them?
+            // got all bytes we need, or just a few of them?
             int bytesUsed = count > _bodyBytesLeft ? _bodyBytesLeft : count;
             _bodyArgs.Buffer = buffer;
             _bodyArgs.Offset = offset;
-			_bodyArgs.Count = bytesUsed;
+            _bodyArgs.Count = bytesUsed;
             BodyBytesReceived(this, _bodyArgs);
 
-			_bodyBytesLeft -= bytesUsed;
+            _bodyBytesLeft -= bytesUsed;
             if (_bodyBytesLeft == 0)
             {
                 // got a complete request.
@@ -65,16 +65,16 @@ namespace HttpServer.Parser
             CurrentState = RequestParserState.FirstLine;
         }
 
-    	/// <summary>
-    	/// Gets or sets the log writer.
-    	/// </summary>
-    	public ILogWriter LogWriter
-    	{
-			get { return _log; }
-			set { _log = value ?? NullLogWriter.Instance; }
-    	}
+        /// <summary>
+        /// Gets or sets the log writer.
+        /// </summary>
+        public ILogWriter LogWriter
+        {
+            get { return _log; }
+            set { _log = value ?? NullLogWriter.Instance; }
+        }
 
-    	/// <summary>
+        /// <summary>
         /// Parse request line
         /// </summary>
         /// <param name="value"></param>
@@ -170,8 +170,8 @@ namespace HttpServer.Parser
             // add body bytes
             if (CurrentState == RequestParserState.Body)
             {
-				// copy all remaining bytes to the beginning of the buffer.
-				//Buffer.BlockCopy(buffer, offset + bytesUsed, buffer, 0, count - bytesUsed);
+                // copy all remaining bytes to the beginning of the buffer.
+                //Buffer.BlockCopy(buffer, offset + bytesUsed, buffer, 0, count - bytesUsed);
 
 
                 return AddToBody(buffer, 0, count);
@@ -201,8 +201,8 @@ namespace HttpServer.Parser
 
             for (int currentPos = offset; currentPos < endOfBufferPos; ++currentPos)
             {
-                var ch = (char) buffer[currentPos];
-                char nextCh = endOfBufferPos > currentPos + 1 ? (char) buffer[currentPos + 1] : char.MinValue;
+                var ch = (char)buffer[currentPos];
+                char nextCh = endOfBufferPos > currentPos + 1 ? (char)buffer[currentPos + 1] : char.MinValue;
 
                 if (ch == '\r')
                     ++currentLine;
@@ -224,10 +224,10 @@ namespace HttpServer.Parser
                         }
                         if (startPos != -1 && (ch == '\r' || ch == '\n'))
                         {
-                        	int size = GetLineBreakSize(buffer, currentPos);
+                            int size = GetLineBreakSize(buffer, currentPos);
                             OnFirstLine(Encoding.UTF8.GetString(buffer, startPos, currentPos - startPos));
                             CurrentState = CurrentState + 1;
-                        	currentPos += size - 1;
+                            currentPos += size - 1;
                             handledBytes = currentPos + size - 1;
                             startPos = -1;
                         }
@@ -235,7 +235,7 @@ namespace HttpServer.Parser
                     case RequestParserState.HeaderName:
                         if (ch == '\r' || ch == '\n')
                         {
-                        	currentPos += GetLineBreakSize(buffer, currentPos);
+                            currentPos += GetLineBreakSize(buffer, currentPos);
                             if (_bodyBytesLeft == 0)
                             {
                                 CurrentState = RequestParserState.FirstLine;
@@ -289,27 +289,27 @@ namespace HttpServer.Parser
                             CurrentState = CurrentState + 1;
                         }
                         break;
-					case RequestParserState.Between:
-                		{
-                			if (ch == ' ' || ch == '\t')
-                				continue;
-                			int newLineSize = GetLineBreakSize(buffer, currentPos);
-							if (newLineSize > 0 && currentPos + newLineSize < endOfBufferPos &&
-                			    char.IsWhiteSpace((char) buffer[currentPos + newLineSize]))
-                			{
-                				++currentPos;
-                				continue;
-                			}
-                			startPos = currentPos;
-                			CurrentState = CurrentState + 1;
-                			handledBytes = currentPos;
-                			continue;
-                		}
-                	case RequestParserState.HeaderValue:
+                    case RequestParserState.Between:
+                        {
+                            if (ch == ' ' || ch == '\t')
+                                continue;
+                            int newLineSize = GetLineBreakSize(buffer, currentPos);
+                            if (newLineSize > 0 && currentPos + newLineSize < endOfBufferPos &&
+                                char.IsWhiteSpace((char)buffer[currentPos + newLineSize]))
+                            {
+                                ++currentPos;
+                                continue;
+                            }
+                            startPos = currentPos;
+                            CurrentState = CurrentState + 1;
+                            handledBytes = currentPos;
+                            continue;
+                        }
+                    case RequestParserState.HeaderValue:
                         {
                             if (ch != '\r' && ch != '\n')
                                 continue;
-                        	int newLineSize = GetLineBreakSize(buffer, currentPos);
+                            int newLineSize = GetLineBreakSize(buffer, currentPos);
                             if (startPos == -1)
                                 continue; // allow new lines before start of value
 
@@ -328,8 +328,8 @@ namespace HttpServer.Parser
 
                             // Header fields can be extended over multiple lines by preceding each extra line with at
                             // least one SP or HT.
-                            if (endOfBufferPos > currentPos + newLineSize 
-								&& (buffer[currentPos + newLineSize] == ' ' || buffer[currentPos + newLineSize] == '\t'))
+                            if (endOfBufferPos > currentPos + newLineSize
+                                && (buffer[currentPos + newLineSize] == ' ' || buffer[currentPos + newLineSize] == '\t'))
                             {
                                 if (startPos != -1)
                                     _curHeaderValue = Encoding.UTF8.GetString(buffer, startPos, currentPos - startPos);
@@ -374,24 +374,24 @@ namespace HttpServer.Parser
             return handledBytes;
         }
 
-		int GetLineBreakSize(byte[] buffer, int offset)
-		{
-			if (buffer[offset] != '\r' && buffer[offset] != '\n')
-				return 0;
+        int GetLineBreakSize(byte[] buffer, int offset)
+        {
+            if (buffer[offset] != '\r' && buffer[offset] != '\n')
+                return 0;
 
-			// linux line feed
-			if (buffer[offset] == '\n' && (buffer.Length == offset + 1 || buffer[offset + 1] != '\r'))
-				return 1;
+            // linux line feed
+            if (buffer[offset] == '\n' && (buffer.Length == offset + 1 || buffer[offset + 1] != '\r'))
+                return 1;
 
-			// win line feed
-			if (buffer[offset] == '\r' && buffer.Length > offset + 1 && buffer[offset + 1] == '\n')
-				return 2;
+            // win line feed
+            if (buffer[offset] == '\r' && buffer.Length > offset + 1 && buffer[offset + 1] == '\n')
+                return 2;
 
-			if (buffer[offset] == '\n' && buffer.Length > offset + 1 && buffer[offset + 1] == '\r')
-				return 2;
+            if (buffer[offset] == '\n' && buffer.Length > offset + 1 && buffer[offset + 1] == '\r')
+                return 2;
 
-			throw new BadRequestException("Got invalid linefeed.");
-		}
+            throw new BadRequestException("Got invalid linefeed.");
+        }
 
         /// <summary>
         /// A request have been successfully parsed.

@@ -1,6 +1,4 @@
-using KernelImpl;
 using KernelImpl.Noyau.Categories;
-using KernelImpl.Noyau.Deroulement;
 using KernelImpl.Noyau.Organisation;
 using KernelImpl.Noyau.Participants;
 using System;
@@ -16,7 +14,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class Combat :  INotifyPropertyChanged
+    public class Combat : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -39,7 +37,7 @@ namespace KernelImpl.Noyau.Deroulement
         // Retourne True si le combat peut etre selectionne (il a tout ses participants), false sinon
         public bool IsPlayable
         {
-            get { return ( (participant1 != null) && (participant1 != 0) && (participant2 != null) && (participant2!=0) && (vainqueur == null) && (vainqueur != 0)); }
+            get { return ((participant1 != null) && (participant1 != 0) && (participant2 != null) && (participant2 != 0) && (vainqueur == null) && (vainqueur != 0)); }
         }
 
         public int numero { get; set; }
@@ -237,7 +235,7 @@ namespace KernelImpl.Noyau.Deroulement
         public void Save(int? vainqueur, int score1, int score2, int penalite1, int penalite2, int nb1, int nb2,
            EtatCombattantEnum etat1, EtatCombattantEnum etat2, JudoData DC)
         {
-            
+
 
             this.vainqueur = vainqueur;
             if (this.participant1 != null && this.participant2 != null)
@@ -332,7 +330,7 @@ namespace KernelImpl.Noyau.Deroulement
             {
                 Participant p1 = DC.Deroulement.Participants.FirstOrDefault(o => o.judoka == this.vainqueur && o.phase == this.phase);
 
-                
+
                 ////----Gestion de double shido
                 if (this.penalite1 != 3 && this.penalite2 != 3 && p1 != null)
                 {
@@ -537,8 +535,8 @@ namespace KernelImpl.Noyau.Deroulement
                 //Mise à jour du tableau des repéchés
                 System.Text.RegularExpressions.Regex myRegex = new Regex("^perdant." + feuille.reference + ".[0-9]+$");
                 ICollection<Feuille> fps = (from r in DC.Deroulement.Feuilles.AsEnumerable()
-                                             where r.phase == this.phase && r.repechage && (myRegex.IsMatch(r.ref1) || myRegex.IsMatch(r.ref2))
-                                             select r).ToList();
+                                            where r.phase == this.phase && r.repechage && (myRegex.IsMatch(r.ref1) || myRegex.IsMatch(r.ref2))
+                                            select r).ToList();
                 foreach (Feuille fp in fps)
                 {
                     if (myRegex.IsMatch(fp.ref1))
@@ -697,7 +695,7 @@ namespace KernelImpl.Noyau.Deroulement
             /*
             if (this.etatJ1 == (int)EtatCombattantEnum.Normal && this.etatJ2 == (int)EtatCombattantEnum.Normal)
             {*/
-            if (this.etatJ1 != (int)EtatCombattantEnum.HansokuMakeX && this.etatJ2 != (int)EtatCombattantEnum.HansokuMakeX && 
+            if (this.etatJ1 != (int)EtatCombattantEnum.HansokuMakeX && this.etatJ2 != (int)EtatCombattantEnum.HansokuMakeX &&
                 this.etatJ1 != (int)EtatCombattantEnum.HansokuMakeH && this.etatJ2 != (int)EtatCombattantEnum.HansokuMakeH &&
                 this.etatJ1 != (int)EtatCombattantEnum.Abandon && this.etatJ2 != (int)EtatCombattantEnum.Abandon &&
                 this.etatJ1 != (int)EtatCombattantEnum.Medical && this.etatJ2 != (int)EtatCombattantEnum.Medical &&
@@ -716,14 +714,14 @@ namespace KernelImpl.Noyau.Deroulement
                 }
 
                 /// Victoires par 3 Pénalités => 10 points
-                if(penP >=3 && penV >=3)
+                if (penP >= 3 && penV >= 3)
                 {
                     // Cas peu probable ... (3 shido de charque cote ...)
                     return scoreV / 10;
                 }
                 else if (penP >= 3)
                 {
-                     return 10;
+                    return 10;
                 }
 
                 // Victoire par WAZA-ARI => 1 point
@@ -773,14 +771,14 @@ namespace KernelImpl.Noyau.Deroulement
             }
 
             // Perdu sur 3 Pénalités, A/M/F ou H: il garde le benefice s'il a un Waza-Ari de difference avec le gagnant
-            if(this.etatJ1 != (int)EtatCombattantEnum.HansokuMakeH || this.etatJ2 != (int)EtatCombattantEnum.HansokuMakeH ||
+            if (this.etatJ1 != (int)EtatCombattantEnum.HansokuMakeH || this.etatJ2 != (int)EtatCombattantEnum.HansokuMakeH ||
             this.etatJ1 != (int)EtatCombattantEnum.Abandon || this.etatJ2 != (int)EtatCombattantEnum.Abandon ||
             this.etatJ1 != (int)EtatCombattantEnum.Medical || this.etatJ2 != (int)EtatCombattantEnum.Medical ||
             this.etatJ1 != (int)EtatCombattantEnum.Forfait || this.etatJ2 != (int)EtatCombattantEnum.Forfait ||
             penP >= 3)
             {
                 // Le perdant doit avoir un Waza-ari de difference avec le gagnant
-                if(scoreP - scoreV >= 1)
+                if (scoreP - scoreV >= 1)
                 {
                     return 1;
                 }
@@ -842,7 +840,7 @@ namespace KernelImpl.Noyau.Deroulement
                 Ceintures grademin = DC.Categories.Grades.FirstOrDefault(o => o.remoteId == "MA");
                 zero = zero || ((j1?.ceinture ?? 0) < grademin.id || (j2?.ceinture ?? 0) < grademin.id);  //SI GRADE INFERIEUR A MARRON
 
-				// DGR 2022-03-26 Vu avec Eric Fauroux, en shiai on ne fait pas ce controle pour permettre le deroulement sur les 2D/3D (manque de participant)
+                // DGR 2022-03-26 Vu avec Eric Fauroux, en shiai on ne fait pas ce controle pour permettre le deroulement sur les 2D/3D (manque de participant)
                 if (DC.competition.type != (int)CompetitionTypeEnum.Shiai)
                 {
                     // A cette etape de code, le participant est forcement le vainqueur (cas contraire elimine au debut du code)
@@ -898,7 +896,7 @@ namespace KernelImpl.Noyau.Deroulement
                 }
 
                 if (score11 >= 100 || score11 >= 20)
-                {   
+                {
                     // Le participant a marquer un Ippon ou 2 waza-ari > 10 pts
                     return 10;
                 }

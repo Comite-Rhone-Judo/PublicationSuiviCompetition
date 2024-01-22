@@ -12,7 +12,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -78,7 +77,11 @@ namespace Tools.Outils
         {
             try
             {
-                return ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
+                // return ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
+                // Ajoute le remote port pour pouvoir distinguer deux clients lancés sur le meme poste
+                string ipAddr = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
+                string port = ((IPEndPoint)client.Client.RemoteEndPoint).Port.ToString();
+                return string.Format("{0}_{1}", ipAddr, port);
             }
             catch
             {
@@ -126,6 +129,18 @@ namespace Tools.Outils
 
             return valeur.Substring(start, valeur.Length - start);
 
+        }
+
+        /// <summary>
+        /// Traite une chaine pour quelle soit compatible avec une URL
+        /// Il ne s'agit pas d'un traitement d'encodage mais de remplacer les symboles dans les categories, etc.
+        /// '+' => 'p'
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static string TraiteChaineURL(string url)
+        {
+            return url.Replace("+", "p");
         }
 
         /// <summary>

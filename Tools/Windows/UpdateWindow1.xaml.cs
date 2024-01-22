@@ -131,7 +131,7 @@ namespace Tools.Windows
             if (e.Error != null)
             {
                 LogTools.Trace(new AppUpdateException("Problème MAJ.", e.Error), LogTools.Level.INFO);
-                
+
                 //LabelMessage.Text = "Une erreur est survenue: \n" + e.Error.Message;                
                 //ButOk.Visibility = Visibility.Visible;
                 //ButDownMan.Visibility = Visibility.Visible;
@@ -145,7 +145,7 @@ namespace Tools.Windows
                 ButOk.Visibility = Visibility.Visible;
                 return;
             }
-            
+
             if (e.UpdateAvailable)
             {
                 if (!e.IsUpdateRequired)

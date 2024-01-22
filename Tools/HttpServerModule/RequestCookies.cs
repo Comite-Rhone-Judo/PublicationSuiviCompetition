@@ -111,7 +111,7 @@ namespace HttpServer
         /// </summary>
         public RequestCookie this[string id]
         {
-            get 
+            get
             {
                 return _items.ContainsKey(id) ? _items[id] : null;
             }
@@ -151,10 +151,10 @@ namespace HttpServer
 
         #endregion
 
-		/// <summary>
-		/// Remove a cookie from the collection.
-		/// </summary>
-		/// <param name="cookieName">Name of cookie.</param>
+        /// <summary>
+        /// Remove a cookie from the collection.
+        /// </summary>
+        /// <param name="cookieName">Name of cookie.</param>
         public void Remove(string cookieName)
         {
             lock (_items)

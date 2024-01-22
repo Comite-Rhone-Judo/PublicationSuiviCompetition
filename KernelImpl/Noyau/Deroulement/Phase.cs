@@ -11,7 +11,7 @@ namespace KernelImpl.Noyau.Deroulement
     /// <summary>
     /// Description des Phases
     /// </summary>
-    public class Phase 
+    public class Phase
     {
         public int id { get; set; }
         public string libelle { get; set; }
@@ -101,14 +101,14 @@ namespace KernelImpl.Noyau.Deroulement
             this.nbCombatsTotal = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Phase_NbCombatsTotal));
             this.nbJudoka = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Phase_NbJudoka));
             this.nbQualifieMin = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Phase_NbQualifiesIncomplet));
-            this.nbQualifieMax = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Phase_NbQualifiesComplet));            
+            this.nbQualifieMax = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Phase_NbQualifiesComplet));
             this.nbJudokaPoule = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Phase_NbJudokaPoule));
             this.ecartement = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Phase_Ecartement));
 
             this.epreuve = XMLTools.LectureNullableInt(xinfo.Attribute(ConstantXML.Phase_Epreuve));
 
-            this.libelle = XMLTools.LectureString( xinfo.Attribute(ConstantXML.Phase_Libelle));
-            
+            this.libelle = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Phase_Libelle));
+
             this.bresilien = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Phase_Bresilien));
             this.isEquipe = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Phase_IsEquipe));
             this.barrage3 = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Phase_Barrage3));
@@ -118,7 +118,7 @@ namespace KernelImpl.Noyau.Deroulement
             this.date =
                 XMLTools.LectureDate(xinfo.Attribute(ConstantXML.Phase_Date_Tirage), "ddMMyyyy", DateTime.Now) +
                 XMLTools.LectureTime(xinfo.Attribute(ConstantXML.Phase_Time_Tirage), "HHmmss");
-            
+
         }
 
         /// <summary>

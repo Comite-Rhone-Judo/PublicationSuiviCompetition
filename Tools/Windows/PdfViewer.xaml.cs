@@ -89,7 +89,7 @@ namespace Tools.Windows
 
         public void Print()
         {
-            if(!this.pdfViewer.IsLoaded)
+            if (!this.pdfViewer.IsLoaded)
             {
                 MemoryStream stream = new MemoryStream();
                 stream.Write(_document, 0, _document.Length);

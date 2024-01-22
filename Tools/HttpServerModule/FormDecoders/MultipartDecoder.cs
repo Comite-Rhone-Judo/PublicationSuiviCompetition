@@ -35,15 +35,15 @@ namespace HttpServer.FormDecoders
         /// <exception cref="ArgumentNullException">If any parameter is null</exception>
         public HttpForm Decode(Stream stream, string contentType, Encoding encoding)
         {
-			if(stream == null)
-				throw new ArgumentNullException("stream");
-			if(string.IsNullOrEmpty(contentType))
-				throw new ArgumentNullException("contentType");
-			if(encoding == null)
-				throw new ArgumentNullException("encoding");
+            if (stream == null)
+                throw new ArgumentNullException("stream");
+            if (string.IsNullOrEmpty(contentType))
+                throw new ArgumentNullException("contentType");
+            if (encoding == null)
+                throw new ArgumentNullException("encoding");
 
-			if(!CanParse(contentType))
-				throw new InvalidOperationException("Cannot parse contentType: " + contentType);
+            if (!CanParse(contentType))
+                throw new InvalidOperationException("Cannot parse contentType: " + contentType);
 
             //multipart/form-data, boundary=AaB03x
             int pos = contentType.IndexOf("=");
@@ -53,51 +53,51 @@ namespace HttpServer.FormDecoders
             string boundry = contentType.Substring(pos + 1).Trim();
             HttpMultipart multipart = new HttpMultipart(stream, boundry, encoding);
 
-			HttpForm form = new HttpForm();
+            HttpForm form = new HttpForm();
 
             HttpMultipart.Element element;
-			while ((element = multipart.ReadNextElement()) != null)
-			{
-				if (string.IsNullOrEmpty(element.Name))
-					throw new InvalidDataException("Error parsing request. Missing value name.\nElement: " + element);
+            while ((element = multipart.ReadNextElement()) != null)
+            {
+                if (string.IsNullOrEmpty(element.Name))
+                    throw new InvalidDataException("Error parsing request. Missing value name.\nElement: " + element);
 
-				if(!string.IsNullOrEmpty(element.Filename))
-				{
-					if (string.IsNullOrEmpty(element.ContentType))
-						throw new InvalidDataException("Error parsing request. Value '" + element.Name + "' lacks a content type.");
+                if (!string.IsNullOrEmpty(element.Filename))
+                {
+                    if (string.IsNullOrEmpty(element.ContentType))
+                        throw new InvalidDataException("Error parsing request. Value '" + element.Name + "' lacks a content type.");
 
-					// Read the file data
-					byte[] buffer = new byte[element.Length];
-					stream.Seek(element.Start, SeekOrigin.Begin);
-					stream.Read(buffer, 0, (int) element.Length);
+                    // Read the file data
+                    byte[] buffer = new byte[element.Length];
+                    stream.Seek(element.Start, SeekOrigin.Begin);
+                    stream.Read(buffer, 0, (int)element.Length);
 
-					// Generate a filename
-					string filename = element.Filename;
+                    // Generate a filename
+                    string filename = element.Filename;
                     string internetCache = Environment.GetFolderPath(Environment.SpecialFolder.InternetCache);
                     // if the internet path doesn't exist, assume mono and /var/tmp
                     string path = string.IsNullOrEmpty(internetCache)
-				               ? Path.Combine("var", "tmp")
-				               : Path.Combine(internetCache.Replace("\\\\", "\\"), "tmp");
+                               ? Path.Combine("var", "tmp")
+                               : Path.Combine(internetCache.Replace("\\\\", "\\"), "tmp");
                     element.Filename = Path.Combine(path, Math.Abs(element.Filename.GetHashCode()) + ".tmp");
 
-					// If the file exists generate a new filename
-					while(File.Exists(element.Filename))
+                    // If the file exists generate a new filename
+                    while (File.Exists(element.Filename))
                         element.Filename = Path.Combine(path, Math.Abs(element.Filename.GetHashCode() + 1) + ".tmp");
 
                     if (!Directory.Exists(path))
                         Directory.CreateDirectory(path);
 
-					File.WriteAllBytes(element.Filename, buffer);
-					form.AddFile(new HttpFile(element.Name, element.Filename, element.ContentType, filename));					
-				}
-				else
-				{
-					byte[] buffer = new byte[element.Length];
-					stream.Seek(element.Start, SeekOrigin.Begin);
-					stream.Read(buffer, 0, (int)element.Length);
-					form.Add(element.Name, encoding.GetString(buffer));
-				}
-			}
+                    File.WriteAllBytes(element.Filename, buffer);
+                    form.AddFile(new HttpFile(element.Name, element.Filename, element.ContentType, filename));
+                }
+                else
+                {
+                    byte[] buffer = new byte[element.Length];
+                    stream.Seek(element.Start, SeekOrigin.Begin);
+                    stream.Read(buffer, 0, (int)element.Length);
+                    form.Add(element.Name, encoding.GetString(buffer));
+                }
+            }
 
             return form;
         }

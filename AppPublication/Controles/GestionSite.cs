@@ -1,20 +1,19 @@
 ﻿using AppPublication.Export;
+using AppPublication.Tools;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
 using System;
-using System.Net;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Xml;
-using System.Xml.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Diagnostics;
-using AppPublication.Tools;
+using System.Xml.Linq;
 using Tools.Enum;
-using Tools.Outils;
 using Tools.Export;
-using System.IO;
+using Tools.Outils;
 
 namespace AppPublication.Controles
 {
@@ -64,7 +63,9 @@ namespace AppPublication.Controles
 
         #region PROPRIETES
 
-        StatExecution _statGeneration; 
+        // TODO Ajouter date/Hr de prochaine génération
+
+        StatExecution _statGeneration;
         /// <summary>
         /// Statistique de derniere generation - lecture seule
         /// </summary>
@@ -136,8 +137,10 @@ namespace AppPublication.Controles
         /// <summary>
         /// Le site de publication local
         /// </summary>
-        public MiniSite MiniSiteLocal {
-            get {
+        public MiniSite MiniSiteLocal
+        {
+            get
+            {
                 return _siteLocal;
             }
         }
@@ -162,7 +165,7 @@ namespace AppPublication.Controles
                     NotifyPropertyChanged("InterfaceLocalPublication");
                     URLLocalPublication = CalculURLSiteLocal();
                 }
-                catch(ArgumentOutOfRangeException) { }
+                catch (ArgumentOutOfRangeException) { }
             }
         }
 
@@ -170,8 +173,10 @@ namespace AppPublication.Controles
         /// <summary>
         /// Le site de publication distant
         /// </summary>
-        public MiniSite MiniSiteDistant {
-            get {
+        public MiniSite MiniSiteDistant
+        {
+            get
+            {
                 return _siteDistant;
             }
         }
@@ -219,7 +224,8 @@ namespace AppPublication.Controles
         /// </summary>
         public int NbProchainsCombats
         {
-            get {
+            get
+            {
                 return _nbProchainsCombats;
             }
             set
@@ -267,7 +273,7 @@ namespace AppPublication.Controles
             }
         }
 
-        
+
 
         private string _urlDistant;
         /// <summary>
@@ -398,24 +404,6 @@ namespace AppPublication.Controles
                 NotifyPropertyChanged("PublierProchainsCombats");
             }
         }
-        private bool _publierRencontres = false;
-        /// <summary>
-        /// Indique si on doit publier les rencontres lors de competitions par equipe
-        /// </summary>
-        public bool PublierRencontres
-        {
-            get
-            {
-                return _publierRencontres;
-            }
-            set
-            {
-                _publierRencontres = value;
-                AppSettings.SaveSettings("PublierRencontres", _publierRencontres.ToString());
-                NotifyPropertyChanged("PublierRencontres");
-            }
-        }
-
 
         private bool _publierAffectationTapis = false;
         /// <summary>
@@ -443,7 +431,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if(null == _status)
+                if (null == _status)
                 {
                     _status = new StatusGenerationSite();
                 }
@@ -499,9 +487,6 @@ namespace AppPublication.Controles
                 valCache = AppSettings.ReadSettings("PublierAffectationTapis");
                 PublierAffectationTapis = (valCache == null) ? true : bool.Parse(valCache);
 
-                valCache = AppSettings.ReadSettings("PublierRencontres");
-                PublierRencontres = (valCache == null) ? true : bool.Parse(valCache);
-
                 valCache = AppSettings.ReadSettings("DelaiGenerationSec");
                 DelaiGenerationSec = (valCache == null) ? 30 : int.Parse(valCache);
 
@@ -542,7 +527,7 @@ namespace AppPublication.Controles
                     InterfaceLocalPublication = ipToUse;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogTools.Trace(ex);
             }
@@ -800,7 +785,7 @@ namespace AppPublication.Controles
             // Status = new StatusGenerationSite(StateGenerationEnum.Stopped);
             Status = StatusGenerationSite.Instance(StateGenerationEnum.Stopped);
         }
-        
+
         /// <summary>
         /// Declenche l'exportation
         /// </summary>
@@ -894,7 +879,6 @@ namespace AppPublication.Controles
                         listTaskGeneration.Add(AddWork(SiteEnum.AffectationTapis, null, null));
                     }
 
-
                     // On ne genere pas les informations de prochains combat si ce n'est pas necessaire
                     if (PublierProchainsCombats)
                     {
@@ -971,7 +955,8 @@ namespace AppPublication.Controles
                         doc.Save(fs);
                     }
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     LogTools.Trace(ex);
                 }
                 finally
@@ -1004,7 +989,7 @@ namespace AppPublication.Controles
                     output = ExportXML.ImportChecksumFichiers(rootElem.First());
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogTools.Trace(ex);
             }

@@ -87,11 +87,11 @@ namespace HttpServer.Rules
             {
                 if (!ShouldRedirect)
                 {
-                	request.Uri = new Uri(request.Uri, ToUrl);
-                	return false;
+                    request.Uri = new Uri(request.Uri, ToUrl);
+                    return false;
                 }
 
-            	response.Redirect(ToUrl);
+                response.Redirect(ToUrl);
                 return true;
             }
 

@@ -58,7 +58,7 @@ namespace HttpServer
         /// <param name="expires">when the cookie expires.</param>
         public ResponseCookie(RequestCookie cookie, DateTime expires)
             : this(cookie.Name, cookie.Value, expires)
-        {}
+        { }
 
         #endregion
 
@@ -73,8 +73,8 @@ namespace HttpServer
             string temp = string.Format("{0}={1}; ", HttpUtility.UrlEncode(Name), HttpUtility.UrlEncode(Value));
             if (_persistant)
             {
-				// Fixed by Albert, Team MediaPortal
-				temp += string.Format("expires={0};", _expires.ToUniversalTime().ToString("r"));
+                // Fixed by Albert, Team MediaPortal
+                temp += string.Format("expires={0};", _expires.ToUniversalTime().ToString("r"));
             }
             if (!string.IsNullOrEmpty(_path))
                 temp += string.Format("path={0}; ", _path);

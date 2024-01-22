@@ -1,12 +1,11 @@
-﻿using KernelImpl;
+﻿using AppPublication.Tools.Enum;
+using KernelImpl;
 using System;
 using System.Windows;
 using System.Windows.Input;
-using System.Collections.ObjectModel;
+using Telerik.Windows.Controls;
 using Tools.Outils;
 using Tools.Windows;
-using AppPublication.Tools.Enum;
-using Telerik.Windows.Controls;
 
 namespace AppPublication.Controles
 {
@@ -178,7 +177,7 @@ namespace AppPublication.Controles
                     _connection = new GestionConnection();
                     _stats = new GestionStatistiques();
                     _site = new GestionSite(_stats);
-                    
+
                 }
                 catch (Exception ex)
                 {

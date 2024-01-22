@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using Tools.Outils;
 
 namespace Tools.UDP_Tools
 {
     public class ServerUDP
     {
-        
+
         private int listenPort = 11000;
         // public delegate void OnDataReceiveHandler(object sender, string donnees);
         // public event OnDataReceiveHandler OnDataReceive;
@@ -54,6 +51,6 @@ namespace Tools.UDP_Tools
             {
                 listener.Close();
             }
-        }       
+        }
     }
 }

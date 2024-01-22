@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Microsoft.CSharp;
+using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
-using Microsoft.CSharp;
 
 namespace HttpServer.Templates
 {
@@ -245,7 +244,7 @@ namespace HttpServer.Templates
 
                         string substring = data.Substring(startTagPos + 15, endPos - startTagPos - 15);
                         string array, item, objectType = null;
-                        
+
                         // Get the array name
                         int fromLen = substring.IndexOf(' ');
                         if (fromLen < 0)

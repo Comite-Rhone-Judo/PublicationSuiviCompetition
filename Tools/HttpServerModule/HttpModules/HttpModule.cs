@@ -57,13 +57,13 @@ namespace HttpServer.HttpModules
             _log.Write(this, prio, message);
         }
 
-		/// <summary>
-		/// If true specifies that the module doesn't consume the processing of a request so that subsequent modules
-		/// can continue processing afterwards. Default is false.
-		/// </summary>
-		public virtual bool AllowSecondaryProcessing
-		{
-			get { return false; }
-		}
+        /// <summary>
+        /// If true specifies that the module doesn't consume the processing of a request so that subsequent modules
+        /// can continue processing afterwards. Default is false.
+        /// </summary>
+        public virtual bool AllowSecondaryProcessing
+        {
+            get { return false; }
+        }
     }
 }

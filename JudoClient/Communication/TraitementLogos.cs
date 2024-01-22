@@ -1,5 +1,4 @@
 ﻿using System.Xml.Linq;
-using Tools.Enum;
 
 namespace JudoClient.Communication
 {

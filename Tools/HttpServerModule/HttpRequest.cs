@@ -1,10 +1,10 @@
+using HttpServer.Exceptions;
+using HttpServer.FormDecoders;
 using System;
 using System.Collections.Specialized;
 using System.IO;
 using System.Net;
 using System.Text;
-using HttpServer.Exceptions;
-using HttpServer.FormDecoders;
 
 namespace HttpServer
 {
@@ -16,7 +16,7 @@ namespace HttpServer
         /// <summary>
         /// Chars used to split an URL path into multiple parts.
         /// </summary>
-        public static readonly char[] UriSplitters = new[] {'/'};
+        public static readonly char[] UriSplitters = new[] { '/' };
 
         internal IPEndPoint _remoteEndPoint;
 
@@ -53,15 +53,15 @@ namespace HttpServer
                 {
                     _queryString = HttpHelper.ParseQueryString(_uriPath.Substring(pos + 1));
                     _param.SetQueryString(_queryString);
-                	string path = _uriPath.Substring(0, pos);
-                	_uriPath = System.Web.HttpUtility.UrlDecode(path) + "?" + _uriPath.Substring(pos + 1);
+                    string path = _uriPath.Substring(0, pos);
+                    _uriPath = System.Web.HttpUtility.UrlDecode(path) + "?" + _uriPath.Substring(pos + 1);
                     UriParts = value.Substring(0, pos).Split(UriSplitters, StringSplitOptions.RemoveEmptyEntries);
                 }
                 else
                 {
-					_uriPath = System.Web.HttpUtility.UrlDecode(_uriPath);
-					UriParts = value.Split(UriSplitters, StringSplitOptions.RemoveEmptyEntries);
-				}
+                    _uriPath = System.Web.HttpUtility.UrlDecode(_uriPath);
+                    UriParts = value.Split(UriSplitters, StringSplitOptions.RemoveEmptyEntries);
+                }
             }
         }
 
@@ -256,7 +256,7 @@ namespace HttpServer
             request.Uri = _uri;
 
             var buffer = new byte[_body.Length];
-            _body.Read(buffer, 0, (int) _body.Length);
+            _body.Read(buffer, 0, (int)_body.Length);
             request.Body = new MemoryStream();
             request.Body.Write(buffer, 0, buffer.Length);
             request.Body.Seek(0, SeekOrigin.Begin);
@@ -343,16 +343,16 @@ namespace HttpServer
             Cookies = cookies;
         }
 
-    	/// <summary>
-    	/// Create a response object.
-    	/// </summary>
-    	/// <returns>A new <see cref="IHttpResponse"/>.</returns>
-    	public IHttpResponse CreateResponse(IHttpClientContext context)
-    	{
-    		return new HttpResponse(context, this);
-    	}
+        /// <summary>
+        /// Create a response object.
+        /// </summary>
+        /// <returns>A new <see cref="IHttpResponse"/>.</returns>
+        public IHttpResponse CreateResponse(IHttpClientContext context)
+        {
+            return new HttpResponse(context, this);
+        }
 
-    	/// <summary>
+        /// <summary>
         /// Called during parsing of a <see cref="IHttpRequest"/>.
         /// </summary>
         /// <param name="name">Name of the header, should not be URL encoded</param>
@@ -414,7 +414,7 @@ namespace HttpServer
                 case "expect":
                     if (value.Contains("100-continue"))
                     {
-                        
+
                     }
                     _headers.Add(name, value);
                     break;

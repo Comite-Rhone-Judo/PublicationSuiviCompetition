@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Tools.Outils;
 
 namespace Tools.Enum
-{ 
+{
     /// <summary>
     /// Enumération des constants pour la gestion des fichier
     /// </summary>
@@ -45,7 +42,7 @@ namespace Tools.Enum
             Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).Replace(@"\", "/") + @"/FRANCE-JUDO/JudoTV/";
 
         public static readonly string Extra_JudokasFile = OutilsTools.GetDataDirectory() + "Judoka.xml";
-        
+
 
         public static string SaveCSDirectory = OutilsTools.GetDataDirectory() + "Save/CS";
         public static string SavePeseeDirectory = OutilsTools.GetDataDirectory() + "Save/Pesee";
@@ -84,11 +81,12 @@ namespace Tools.Enum
 
 
         public static string FileCombats = "les_combats";
+        public static string FileRencontres = "les_rencontres";
         public static string FilePhases = "les_phases";
 
 
         public static string FileCombatsRealises = "les_combats_realises";
-        
+
         public static string FileInscription = "les_inscriptions";
         public static string FileJudoTV = "params_judo_tv";
         public static string FileParams = "params_judo_tv";

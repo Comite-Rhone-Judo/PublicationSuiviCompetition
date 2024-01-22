@@ -11,6 +11,6 @@ namespace JudoClient.Communication
 
             string result = doc.ToString(SaveOptions.None);
             client.Client.Write(result);
-        }        
+        }
     }
 }

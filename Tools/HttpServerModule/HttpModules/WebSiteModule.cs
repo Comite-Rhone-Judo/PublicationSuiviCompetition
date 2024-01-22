@@ -1,8 +1,7 @@
+using HttpServer.Sessions;
 using System;
 using System.Collections.Generic;
 using System.Net;
-using HttpServer;
-using HttpServer.Sessions;
 
 namespace HttpServer.HttpModules
 {

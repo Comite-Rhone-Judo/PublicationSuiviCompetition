@@ -1,18 +1,17 @@
 ﻿using FluentFTP;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Net.Mail;
 
 namespace Tools.Outils
 {
     public class UploadStatus
     {
-        public UploadStatus() {
+        public UploadStatus()
+        {
             IsSuccess = false;
             IsComplet = true;
             nbUpload = -1;
@@ -25,8 +24,8 @@ namespace Tools.Outils
 
 
     public class MiniSite : NotificationBase
-    {        
-        
+    {
+
         #region MEMBRES
         private FtpProfile _ftp_profile = null;     // Le profile FTP a utiliser pour les connexions
         private Action<FtpProgress> _ftpProgressCallback = null;
@@ -107,7 +106,7 @@ namespace Tools.Outils
                     _interfaceLocalPublication = value;
 
                     // Configure l'adresse du serveur de publication si on est en mode local
-                    if(IsLocal && null != _interfaceLocalPublication && null != ServerHTTP)
+                    if (IsLocal && null != _interfaceLocalPublication && null != ServerHTTP)
                     {
                         ServerHTTP.ListeningIpAddress = _interfaceLocalPublication;
                     }
@@ -125,7 +124,7 @@ namespace Tools.Outils
             }
         }
 
-        private ServeurHttp _server = null; 
+        private ServeurHttp _server = null;
         /// <summary>
         /// Le serveur HTTP de publication locale (null si distant, lecture seule)
         /// </summary>
@@ -160,7 +159,7 @@ namespace Tools.Outils
             }
         }
 
-        private bool _local = true; 
+        private bool _local = true;
         /// <summary>
         /// Indique si le site est en mode local (true) ou distant (false) - Lecture seule
         /// </summary>
@@ -172,7 +171,7 @@ namespace Tools.Outils
             }
         }
 
-        private string _ftpDistant = string.Empty; 
+        private string _ftpDistant = string.Empty;
         /// <summary>
         /// L'adresse du site FTP Distant
         /// </summary>
@@ -191,7 +190,7 @@ namespace Tools.Outils
             }
         }
 
-        private string _ftRepertoireDistant = string.Empty; 
+        private string _ftRepertoireDistant = string.Empty;
         /// <summary>
         /// Le repertoire cible sur le serveur FTP
         /// </summary>
@@ -248,7 +247,7 @@ namespace Tools.Outils
             }
         }
 
-        private string _ftpPasswordDistant = string.Empty; 
+        private string _ftpPasswordDistant = string.Empty;
         /// <summary>
         /// Mot de passe FTP au site FTP Distant
         /// </summary>
@@ -283,7 +282,7 @@ namespace Tools.Outils
             }
         }
 
-        private bool _actif = false; 
+        private bool _actif = false;
         /// <summary>
         /// Indique si le site est actif (lecture seule)
         /// </summary>
@@ -326,7 +325,7 @@ namespace Tools.Outils
         {
             get
             {
-                if(null == _status)
+                if (null == _status)
                 {
                     _status = new StatusMiniSite();
                 }
@@ -371,7 +370,7 @@ namespace Tools.Outils
                 valCache = AppSettings.ReadSettings("SynchroniseDifferences");
                 SynchroniseDifferences = (valCache == null) ? false : bool.Parse(valCache);
             }
-            catch {}
+            catch { }
         }
 
         /// <summary>
@@ -410,7 +409,7 @@ namespace Tools.Outils
                 }
 
                 // on prend la 1ere interface de la liste si elle n'est pas dans la 
-                if(!useCache)
+                if (!useCache)
                 {
                     ipToUse = InterfacesLocal.First();
                 }
@@ -547,7 +546,7 @@ namespace Tools.Outils
                         output = true;
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     LogTools.Log(ex);
                     throw ex;
@@ -601,7 +600,7 @@ namespace Tools.Outils
                     return output;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Status = new StatusMiniSite(StateMiniSiteEnum.Idle, "Configuration incorrecte", ex.Message);
                 return output;
@@ -622,7 +621,8 @@ namespace Tools.Outils
                 {
                     List<FtpListItem> ftpList = ftpClient.GetListing(RepertoireSiteFTPDistant).ToList();
                     int idx = 0;
-                    foreach (FtpListItem ftpItem in ftpList) {
+                    foreach (FtpListItem ftpItem in ftpList)
+                    {
                         switch (ftpItem.Type)
                         {
 
@@ -683,7 +683,7 @@ namespace Tools.Outils
         /// <param name="p"></param>
         private void CalculProgressionFTP(FtpProgress p)
         {
-            if(p != null)
+            if (p != null)
             {
                 CalculProgressionFTP(p.FileIndex, p.FileCount);
             }
@@ -706,7 +706,7 @@ namespace Tools.Outils
             Status.Progress = pct;
         }
 
-        
+
         /// <summary>
         /// Charge la structure sur le site FTP
         /// </summary>
@@ -740,8 +740,8 @@ namespace Tools.Outils
 
                 // Essaye de se connecter au serveur FTP
                 ftpClient.Connect(_ftp_profile);
-    
-                if(ftpClient.IsConnected)
+
+                if (ftpClient.IsConnected)
                 {
                     // La 1ere synchro est forcement complete ou si le flag de synchroniser les differences n'est pas leve
                     if (_nbSyncDistant >= 1 && SynchroniseDifferences && listFiles != null)
@@ -750,8 +750,8 @@ namespace Tools.Outils
                         output.IsSuccess = true;
                         cStatus = new StatusMiniSite(cStatus.State);
                         output.nbUpload = listFiles.Count;
-                        int idx =0;
-                        foreach( FileInfo localFileInfo in listFiles)
+                        int idx = 0;
+                        foreach (FileInfo localFileInfo in listFiles)
                         {
                             // Calculer le repertoire de destination FTP en remplacant le repertoire racine local par la racine FTP
                             string ftpFileName = GetFTPFromLocal(localFileInfo.FullName, localRootDirectory);
@@ -763,7 +763,7 @@ namespace Tools.Outils
                                                                             true,
                                                                             FtpVerify.None,
                                                                             null);
-                            if(fileUploadOut != FtpStatus.Success)
+                            if (fileUploadOut != FtpStatus.Success)
                             {
                                 // NOK car pas tous les fichiers charges
                                 output.IsSuccess = false;
@@ -776,9 +776,9 @@ namespace Tools.Outils
                             }
 
                             // Met a jour la progression du transfert
-                            CalculProgressionFTP(idx,listFiles.Count);
+                            CalculProgressionFTP(idx, listFiles.Count);
                             idx++;
-                        } 
+                        }
                     }
                     else
                     {
@@ -810,7 +810,7 @@ namespace Tools.Outils
 
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 output.IsSuccess = false;
                 string msg = (ex.InnerException != null) ? String.Format("{0} ({1})", ex.Message, ex.InnerException.Message) : ex.Message;
@@ -832,7 +832,7 @@ namespace Tools.Outils
 
             // RAZ le status apres la fin du transfert
             Status = cStatus;
-            
+
             return output;
         }
 

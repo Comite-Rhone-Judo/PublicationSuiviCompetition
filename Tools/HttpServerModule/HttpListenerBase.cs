@@ -97,7 +97,7 @@ namespace HttpServer
         /// <exception cref="Exception"><c>Exception</c>.</exception>
         private void OnAccept(IAsyncResult ar)
         {
-        	bool beginAcceptCalled = false;
+            bool beginAcceptCalled = false;
             try
             {
                 int count = Interlocked.Decrement(ref _pendingAccepts);
@@ -110,8 +110,8 @@ namespace HttpServer
 
                 Interlocked.Increment(ref _pendingAccepts);
                 _listener.BeginAcceptSocket(OnAccept, null);
-				beginAcceptCalled = true;
-				Socket socket = _listener.EndAcceptSocket(ar);
+                beginAcceptCalled = true;
+                Socket socket = _listener.EndAcceptSocket(ar);
 
                 if (!OnAcceptingSocket(socket))
                 {
@@ -137,29 +137,29 @@ namespace HttpServer
             {
                 ThrowException(err);
 
-				if (!beginAcceptCalled)
-            		RetryBeginAccept();
+                if (!beginAcceptCalled)
+                    RetryBeginAccept();
             }
         }
 
-		/// <summary>
-		/// Will try to accept connections one more time.
-		/// </summary>
-		/// <exception cref="Exception">If any exceptions is thrown.</exception>
-    	private void RetryBeginAccept()
-    	{
-    		try
-    		{
-				_logWriter.Write(this, LogPrio.Error, "Trying to accept connections again.");
-				_listener.BeginAcceptSocket(OnAccept, null);
-    		}
-			catch (Exception err)
-			{
+        /// <summary>
+        /// Will try to accept connections one more time.
+        /// </summary>
+        /// <exception cref="Exception">If any exceptions is thrown.</exception>
+        private void RetryBeginAccept()
+        {
+            try
+            {
+                _logWriter.Write(this, LogPrio.Error, "Trying to accept connections again.");
+                _listener.BeginAcceptSocket(OnAccept, null);
+            }
+            catch (Exception err)
+            {
                 ThrowException(err);
-			}
-		}
+            }
+        }
 
-    	/// <summary>
+        /// <summary>
         /// Can be used to create filtering of new connections.
         /// </summary>
         /// <param name="socket">Accepted socket</param>
@@ -187,7 +187,8 @@ namespace HttpServer
         /// </summary>
         public int Port
         {
-            get {
+            get
+            {
                 return _listener != null ? ((IPEndPoint)_listener.LocalEndpoint).Port : _port;
             }
         }
@@ -236,6 +237,6 @@ namespace HttpServer
         /// <summary>
         /// A request have been received from a <see cref="IHttpClientContext"/>.
         /// </summary>
-        public event EventHandler<RequestEventArgs> RequestReceived = delegate{};
+        public event EventHandler<RequestEventArgs> RequestReceived = delegate { };
     }
 }
