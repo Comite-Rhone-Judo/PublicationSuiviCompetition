@@ -401,6 +401,7 @@
         public const string Vue_Epreuve_Nom = "nom";
         public const string Vue_Epreuve_Nom_CategorieAge = "nom_cateage";
         public const string Vue_Epreuve_Nom_CategoriePoids = "nom_catepoids";
+        public const string Vue_Epreuve_Nom_Competition = "nom_competition";
         public const string Vue_Epreuve_PoidsMin_CategoriePoids = "poidsmin_catepoids";
         public const string Vue_Epreuve_PoidsMax_CategoriePoids = "poidsmax_catepoids";
         public const string Vue_Epreuve_Categorie_Age = "categorieAge";

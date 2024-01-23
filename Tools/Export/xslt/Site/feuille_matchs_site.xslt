@@ -13,6 +13,7 @@
 
 	<xsl:variable name="couleur1" select="//competition/@couleur1"> </xsl:variable>
 	<xsl:variable name="couleur2" select="//competition/@couleur2"> </xsl:variable>
+	<xsl:variable name="idCompetition" select="//competition/@ID"> </xsl:variable>
 	<xsl:variable name="typeCompetition" select="/competition/@type"> </xsl:variable>
 
 	<xsl:template match="/">
@@ -35,6 +36,8 @@
 			<xsl:otherwise>6</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
+
+	<xsl:variable select="count(//epreuve[@competition!=$idCompetition])!=0" name="affDetailCompetition"/>
 
 
 	<xsl:template match="/*">
@@ -78,8 +81,7 @@
 					</div>
 				</div>
 			</div>
-			<!-- TODO Ajouter le nom de l'epreuvre si c'est une epreuve et le titre de la competition -->
-
+			
 			<!-- PANNEAU DE NAVIGATION -->
 			<div class="w3-sidebar w3-bar-block w3-border-right w3-animate-left tas-navigation-panel" id="navigationPanel">
 				<button onclick="closeElement('navigationPanel')" class="w3-bar-item w3-large">Fermer &times;</button>
@@ -205,7 +207,7 @@
 						<xsl:sort select="@time_programmation" data-type="number"
 							order="ascending"/>
 
-						<!-- Affiche tous les combats de l'epreuve ou les 6 1ers du tapis -->
+						<!-- Affiche tous les combats de l'epreuve ou les n 1ers du tapis -->
 						<xsl:if test="$istapis = 'epreuve' or position() &lt; number($nbProchainsCombatsEff) or position() = number($nbProchainsCombatsEff)">
 							<xsl:call-template name="UnCombat">
 								<xsl:with-param name="combat" select="."/>
@@ -324,9 +326,16 @@
 			<td class=" w3-pale-yellow w3-small w3-card w3-cell-middle w3-center"  style="width:20%">
 				<!-- Affiche le nom de l'epreuve -->
 				<div class="w3-container">
-					<xsl:value-of select="//epreuve[@ID = $epreuve]/@nom"/>
-					<xsl:if test="$combat/feuille/@repechage = 'true'">
-						(Repêchage)
+					<header>
+						<xsl:value-of select="//epreuve[@ID = $epreuve]/@nom"/>
+						<xsl:if test="$combat/feuille/@repechage = 'true'">
+							(Repêchage)
+						</xsl:if>
+					</header>
+					<xsl:if test="$affDetailCompetition">
+						<footer class="w3-tiny">
+							<xsl:value-of select="//epreuve[@ID = $epreuve]/@nom_competition"/>
+						</footer>
 					</xsl:if>
 				</div>
 			</td>

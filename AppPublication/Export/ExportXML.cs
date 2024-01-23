@@ -622,24 +622,27 @@ namespace AppPublication.Export
             // Competition competition = DC.Organisation.Competitions.FirstOrDefault();
             // Cherche la bonne competition de cette phase
             Competition competition = null;
-            if(_phase != null)
-            { 
+            if (_phase != null)
+            {
                 Epreuve ep = DC.Organisation.Epreuves.Where(o => o.id == _phase.epreuve).FirstOrDefault();
 
-                if(ep != null)
+                if (ep != null)
                 {
                     competition = DC.Organisation.Competitions.Where(o => o.id == ep.competition).FirstOrDefault();
                 }
             }
-            if(competition == null)
+            else
+            {
+                // Pas de phase specifiee, on va chercher
+            }
+            if (competition == null)
             {
                 // Par defaut, prend la premiere
                 competition = DC.Organisation.Competitions.FirstOrDefault();
             }
 
-            XDocument doc = new XDocument();
-            XElement xcompetition = competition.ToXmlInformations();
-            doc.Add(xcompetition);
+            ICollection<int> id_compet_combats = new List<int>();   // Pour savoir les IDS de la ou des competitions des combats
+            ICollection<XElement> xTapisList = new List<XElement>();
 
             ICollection<vue_groupe> groupes = DC.Deroulement.vgroupes.ToList();
             ICollection<vue_epreuve> epreuves = DC.Organisation.vepreuves.ToList();
@@ -755,6 +758,13 @@ namespace AppPublication.Export
                     if (competition.type == (int)CompetitionTypeEnum.Equipe)
                     {
                         vue_epreuve_equipe epreuve_eq2 = epreuves_eq.FirstOrDefault(o => o.id == phase.epreuve);
+
+                        // Enregistre l'ID de la competition
+                        if (epreuve_eq2 != null && !id_compet_combats.Contains(epreuve_eq2.competition))
+                        {
+                            id_compet_combats.Add(epreuve_eq2.competition);
+                        }
+
                         if (!epreuveeq_id_ajoute.Contains(epreuve_eq2.id))
                         {
                             xtapis.Add(epreuve_eq2.ToXml(DC));
@@ -770,6 +780,13 @@ namespace AppPublication.Export
                     else
                     {
                         vue_epreuve epreuve2 = epreuves.FirstOrDefault(o => o.id == phase.epreuve);
+
+                        // Enregistre l'ID de la competition
+                        if (epreuve2 != null && !id_compet_combats.Contains(epreuve2.competition))
+                        {
+                            id_compet_combats.Add(epreuve2.competition);
+                        }
+
                         if (!epreuve_id_ajoute.Contains(epreuve2.id))
                         {
                             xtapis.Add(epreuve2.ToXml(DC));
@@ -842,8 +859,32 @@ namespace AppPublication.Export
                     }
                 }
 
-                xcompetition.Add(xtapis);
+                xTapisList.Add(xtapis); // Met l'element dans la liste pour l'attacher plus tard quand on aura valide la competition
             }
+
+            
+
+            // Verifie si l'ID de la competition utilise au debut est le bon
+            if (id_compet_combats.Count > 0)
+            {
+                if (competition.id != id_compet_combats.First())
+                {
+                    // Met la bonne competition a la place
+                    competition = DC.Organisation.Competitions.Where(o => o.id == id_compet_combats.First()).FirstOrDefault();
+                }
+            }
+
+            // Initialise l'arbre XML avec la bonne competition
+            XDocument doc = new XDocument();
+            XElement xcompetition = competition.ToXmlInformations();
+            doc.Add(xcompetition);
+
+            // Attache les tapis
+            foreach (XElement xt in xTapisList)
+            {
+                xcompetition.Add(xt);
+            }
+
             return doc.ToXmlDocument();
         }
 
