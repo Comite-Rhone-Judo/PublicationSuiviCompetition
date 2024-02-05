@@ -66,11 +66,14 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FluentFTP, Version=49.0.0.0, Culture=neutral, PublicKeyToken=f4af092b1d8df44f, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentFTP.49.0.0\lib\net472\FluentFTP.dll</HintPath>
+    <Reference Include="FluentFTP, Version=49.0.2.0, Culture=neutral, PublicKeyToken=f4af092b1d8df44f, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentFTP.49.0.2\lib\net472\FluentFTP.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=2.0.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.15\lib\net45\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -124,11 +127,13 @@
     <Compile Include="CustomException\JudoServerException.cs" />
     <Compile Include="CustomException\JudoClientException.cs" />
     <Compile Include="CustomException\WebServicesException.cs" />
+    <Compile Include="Enum\CompetitionDisciplineEnum.cs" />
     <Compile Include="Enum\DiplomeTypeEnum.cs" />
     <Compile Include="Enum\ConstantCouleur.cs" />
     <Compile Include="Enum\ConstantFile.cs" />
     <Compile Include="Enum\ConstantResource.cs" />
     <Compile Include="Enum\EpreuveSexeEnum.cs" />
+    <Compile Include="Enum\ExportDisplayModeEnum.cs" />
     <Compile Include="Enum\ServerResponseEnum.cs" />
     <Compile Include="Enum\SiteEnum.cs" />
     <Compile Include="Enum\QualifieEnum.cs" />
@@ -223,6 +228,7 @@
     <Compile Include="Outils\LimitedConcurrencyLevel.cs" />
     <Compile Include="Outils\NotificationBase.cs" />
     <Compile Include="Outils\ResourcesTools.cs" />
+    <Compile Include="Outils\ScoresJujitsu.cs" />
     <Compile Include="Outils\ServeurHttp.cs" />
     <Compile Include="Outils\MiniSite.cs" />
     <Compile Include="Outils\StatusMiniSite.cs" />
@@ -1863,7 +1869,7 @@
     <Resource Include="data\images\Tournoi_Judo.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Export\img\site\France-Judo-Rhone.png" />
+    <EmbeddedResource Include="Export\img\site\logo-France-Judo-Rhone.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Export\xslt\Site\affectation_tapis_site.xslt">
@@ -1911,6 +1917,9 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\site\logo-France-Judo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

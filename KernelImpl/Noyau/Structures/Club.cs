@@ -1,3 +1,4 @@
+using KernelImpl.Noyau.Structures;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using Tools.Enum;

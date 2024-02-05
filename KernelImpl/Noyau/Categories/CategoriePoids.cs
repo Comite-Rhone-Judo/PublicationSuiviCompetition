@@ -20,6 +20,8 @@ namespace KernelImpl.Noyau.Categories
         public int categorieAge { get; set; }
         public int sexe { get; set; }
         public bool equipe { get; set; }
+        public string discipline { get; set; }
+
 
         public void LoadXml(XElement xinfo)
         {
@@ -32,6 +34,7 @@ namespace KernelImpl.Noyau.Categories
             this.sexe = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.CatePoids_sexe));
             this.remoteId = XMLTools.LectureString(xinfo.Attribute(ConstantXML.CatePoids_remoteId));
             this.equipe = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.CatePoids_equipe));
+            this.discipline = XMLTools.LectureString(xinfo.Attribute(ConstantXML.CatePoids_discipline));
         }
 
         public XElement ToXml()
@@ -46,6 +49,7 @@ namespace KernelImpl.Noyau.Categories
             xcatepoids.SetAttributeValue(ConstantXML.CatePoids_sexe, sexe);
             xcatepoids.SetAttributeValue(ConstantXML.CatePoids_cateage, categorieAge);
             xcatepoids.SetAttributeValue(ConstantXML.CatePoids_equipe, equipe.ToString().ToLower());
+            xcatepoids.SetAttributeValue(ConstantXML.CatePoids_discipline, discipline);
             return xcatepoids;
         }
 

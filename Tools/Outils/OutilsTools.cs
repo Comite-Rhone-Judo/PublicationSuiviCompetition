@@ -17,6 +17,7 @@ using System.Windows;
 using System.Windows.Threading;
 using Telerik.Windows.Controls;
 using Tools.Windows;
+using Tools.Enum;
 
 namespace Tools.Outils
 {
@@ -539,5 +540,124 @@ namespace Tools.Outils
                 }
             }
         }
+        
+        public static string ScoreJsonToString(ScoresJujitsu scores)
+        {
+            ScoresJujitsu scoresJson = new ScoresJujitsu();
+
+            scoresJson.avantages1 = scores.avantages1;
+            scoresJson.avantages2 = scores.avantages2;
+            scoresJson.points2_1 = scores.points2_1;
+            scoresJson.points3_1 = scores.points3_1;
+            scoresJson.points4_1 = scores.points4_1;
+            scoresJson.points2_2 = scores.points2_2;
+            scoresJson.points3_2 = scores.points3_2;
+            scoresJson.points4_2 = scores.points4_2;
+            scoresJson.ippon1 = scores.ippon1;
+            scoresJson.ippon2 = scores.ippon2;
+            scoresJson.penalites1 = scores.penalites1;
+            scoresJson.penalites2 = scores.penalites2;
+
+
+            scoresJson.ippon1_1_1 = scores.ippon1_1_1;
+            scoresJson.ippon1_1_2 = scores.ippon1_1_2;
+            scoresJson.ippon1_2_1 = scores.ippon1_2_1;
+            scoresJson.ippon1_2_2 = scores.ippon1_2_2;
+            scoresJson.ippon1_3_1 = scores.ippon1_3_1;
+            scoresJson.ippon1_3_2 = scores.ippon1_3_2;
+            scoresJson.ippon2_1_1 = scores.ippon2_1_1;
+            scoresJson.ippon2_1_2 = scores.ippon2_1_2;
+            scoresJson.ippon2_2_1 = scores.ippon2_2_1;
+            scoresJson.ippon2_2_2 = scores.ippon2_2_2;
+            scoresJson.ippon2_3_1 = scores.ippon2_3_1;
+            scoresJson.ippon2_3_2 = scores.ippon2_3_2;
+            scoresJson.waza1 = scores.waza1;
+            scoresJson.waza2 = scores.waza2;
+            scoresJson.shido1 = scores.shido1;
+            scoresJson.shido2 = scores.shido2;
+            scoresJson.chui1 = scores.chui1;
+            scoresJson.chui2 = scores.chui2;
+            scoresJson.tempsMedical1 = scores.tempsMedical1;
+            scoresJson.tempsMedical2 = scores.tempsMedical2;
+            return Newtonsoft.Json.JsonConvert.SerializeObject(scoresJson);
+        }
+		
+		/*
+         * 20 points max par combat
+         * waza ari = 1 point
+         * ippon ou 2 waza ari = 10 points
+         * hansoku make = 20 points
+         * ex: 
+         * 1 ippon + 1 waza ari = 11 points
+         * 1 ippon + 2 waza ari = 20 points
+         * 3 waza ari = 11 points
+         * 2 shidos à 1 = match nul
+         */
+        public static System.Collections.Generic.List<int> getScoresProLeague(int waza1, int ippon1, int yuko1, int shido1, EtatCombattantEnum etatCombattant1, 
+            int waza2, int ippon2, int yuko2, int shido2, EtatCombattantEnum etatCombattant2)
+        {
+            System.Collections.Generic.List<int> res = new System.Collections.Generic.List<int>();
+            //int res = 0;
+
+            int score1 = getScoreProLeague(waza1, ippon1, yuko1);
+            int score2 = getScoreProLeague(waza2, ippon2, yuko2);
+
+            if (etatCombattant1 == EtatCombattantEnum.HansokuMakeX || etatCombattant1 == EtatCombattantEnum.HansokuMakeH || etatCombattant1 == EtatCombattantEnum.Forfait
+                || etatCombattant1 == EtatCombattantEnum.Abandon || etatCombattant1 == EtatCombattantEnum.Medical)
+            {
+                score2 += 20;
+            }
+            if (etatCombattant2 == EtatCombattantEnum.HansokuMakeX || etatCombattant2 == EtatCombattantEnum.HansokuMakeH || etatCombattant2 == EtatCombattantEnum.Forfait
+                || etatCombattant2 == EtatCombattantEnum.Abandon || etatCombattant2 == EtatCombattantEnum.Medical)
+            {
+                score1 += 20;
+            }
+
+            if (shido1 >= 3)
+            {
+                score2 += 20;
+            }
+            if (shido2 >= 3)
+            {
+                score1 += 20;
+            }
+
+            if (score1 > 20) score1 = 20;
+            if (score2 > 20) score2 = 20;
+
+            res.Add(score1);
+            res.Add(score2);
+
+            return res;
+        }
+        private static int getScoreProLeague(int waza, int ippon, int yuko)
+        {
+            int res = 0;
+            int scoreWaza = 0;
+            if (waza == 1)
+            {
+                scoreWaza = 1;
+            }
+            else if (waza == 2)
+            {
+                scoreWaza = 10;
+            }
+            else if (waza == 3)
+            {
+                scoreWaza = 11;
+            }
+            if (waza > 3)
+            {
+                scoreWaza = 20;
+            }
+
+            res = scoreWaza + (ippon * 10);
+            //res = scoreWaza + (ippon * 10) + (etatCombattant == EtatCombattantEnum.HansokuMakeX ? 20 : 0);
+
+            //if (res > 20) res = 20;
+
+            return res;
+        }
+
     }
 }

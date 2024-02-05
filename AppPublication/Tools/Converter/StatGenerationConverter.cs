@@ -34,7 +34,7 @@ namespace AppPublication.Tools.Converter
 
                 if (genere && theStat != null)
                 {
-                    output = string.Format("{0} ({1} sec.)", theStat.DateFin.ToString("dd/MM/yyyy HH:mm:ss"), (int)Math.Round(theStat.DelaiExecutionMs / 1000.0));
+                    output = string.Format("Dernière à {0} (en {1}s), Prochaine à {2}", theStat.DateFin.ToString("HH:mm:ss"), (int)Math.Round(theStat.DelaiExecutionMs / 1000.0), theStat.DateProchaineGeneration.ToString("HH:mm:ss"));
                 }
             }
 

@@ -21,8 +21,6 @@ namespace Tools.Export
         /// <returns></returns>
         public static string getDirectory(bool site, string epreuve_nom, string competition_nom)
         {
-            // TODO: voir pour enlever les '+' dans les noms de repertoire
-
             string directory = "";
 
             if (site)

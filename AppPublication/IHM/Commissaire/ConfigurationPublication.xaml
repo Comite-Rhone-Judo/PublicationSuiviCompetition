@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AppPublication.IHM.Commissaire"
         mc:Ignorable="d"
-        Title="Configuration de la Publication" Height="260" Width="760" Background="Black">
+        Title="Configuration de la Publication" Height="340" Width="800" Background="Black">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -45,6 +45,7 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
                     <CheckBox Content="Publier 'Prochains Combats'" Style="{StaticResource CheckboxStyle}"
@@ -64,7 +65,16 @@
                         </MultiBinding>
                     </telerik:RadNumericUpDown.IsEnabled>
                 </telerik:RadNumericUpDown>
-                <StackPanel Grid.Row="2" Grid.Column="0"  Grid.ColumnSpan="2" Orientation="Horizontal">
+                <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical" Margin="50 0 0 0">
+                    <StackPanel Orientation="Horizontal" >
+                        <Label HorizontalAlignment="Right" Content="Message d'avertissement:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
+                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Message d'avertissement affiché au début des pages prochains combats et se prépare."/>
+                    </StackPanel>
+                    <TextBox  TextWrapping="Wrap" Height="44" VerticalScrollBarVisibility="Auto" Margin="5 5 5 5" MinWidth="300" Text = "{Binding Path=MsgProchainsCombats}"/>
+                </StackPanel>
+
+
+                <StackPanel Grid.Row="3" Grid.Column="0"  Grid.ColumnSpan="2" Orientation="Horizontal">
                     <CheckBox   Content="Publier 'Affectation tapis'" Style="{StaticResource CheckboxStyle}"
                                                         IsChecked="{Binding Path=PublierAffectationTapis}"
                                                         IsEnabled="{Binding Path=IsGenerationActive, Converter={StaticResource BoolNotConverter}}"
@@ -90,6 +100,7 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
                     <Label HorizontalAlignment="Right" Content="Délai de génération:" Style="{StaticResource LabelStyle}" />
@@ -106,6 +117,15 @@
                 <telerik:RadNumericUpDown  Grid.Row="1" Grid.Column="1" Value="{Binding DelaiActualisationClientSec}"
                             Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="0 0 50 0"
                             IsEnabled="{Binding Path=IsGenerationActive, Converter={StaticResource BoolNotConverter}}"/>
+
+                <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
+                    <Label  HorizontalAlignment="Right" Content="Sélection du logo:" Style="{StaticResource LabelStyle}" />
+                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Logo a afficher dans le bandeau d'entête du site"/>
+                </StackPanel>
+                <telerik:RadComboBox Grid.Column="0" Grid.Row="3" ItemsSource="{Binding FichiersLogo}" Height="20" DisplayMemberPath="Item1" Name="LogoList" Margin="10 0 0 0" IsSynchronizedWithCurrentItem="True" SelectedItem="{Binding SelectedLogo}"/>
+                <Border Grid.Column="1" Grid.Row="2" Grid.RowSpan="2" Background="LightGray" Width="100">
+                    <Image  Source="{Binding ElementName=LogoList, Path=SelectedItem.Item2}" Width="100" />
+                </Border>
             </Grid>
         </Border>
 

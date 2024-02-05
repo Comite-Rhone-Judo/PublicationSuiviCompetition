@@ -25,21 +25,30 @@ namespace AppPublication.Export
             // Recupere le flag de la competition
             XmlNodeList listcomp = doc.GetElementsByTagName(ConstantXML.Competition);
 
-            XmlAttribute attrProchainCombat = doc.CreateAttribute(ConstantXML.publierProchainsCombats);
-            attrProchainCombat.Value = config.PublierProchainsCombats.ToString();
-            XmlAttribute attrAffectationTapis = doc.CreateAttribute(ConstantXML.publierAffectationTapis);
-            attrAffectationTapis.Value = config.PublierAffectationTapis.ToString();
-            XmlAttribute attrDelaiActualisationClient = doc.CreateAttribute(ConstantXML.delaiActualisationClientSec);
-            attrDelaiActualisationClient.Value = config.DelaiActualisationClientSec.ToString();
-            XmlAttribute attrNbProchainsCombats = doc.CreateAttribute(ConstantXML.nbProchainsCombats);
-            attrNbProchainsCombats.Value = config.NbProchainsCombats.ToString();
-
             foreach (XmlNode node in listcomp)
             {
+                XmlAttribute attrProchainCombat = doc.CreateAttribute(ConstantXML.publierProchainsCombats);
+                attrProchainCombat.Value = config.PublierProchainsCombats.ToString();
+                XmlAttribute attrAffectationTapis = doc.CreateAttribute(ConstantXML.publierAffectationTapis);
+                attrAffectationTapis.Value = config.PublierAffectationTapis.ToString();
+                XmlAttribute attrDelaiActualisationClient = doc.CreateAttribute(ConstantXML.delaiActualisationClientSec);
+                attrDelaiActualisationClient.Value = config.DelaiActualisationClientSec.ToString();
+                XmlAttribute attrNbProchainsCombats = doc.CreateAttribute(ConstantXML.nbProchainsCombats);
+                attrNbProchainsCombats.Value = config.NbProchainsCombats.ToString();
+                XmlAttribute attrMsgProchainsCombats = doc.CreateAttribute(ConstantXML.msgProchainsCombats);
+                attrMsgProchainsCombats.Value = config.MsgProchainCombats;
+                XmlAttribute attrDateGeneration = doc.CreateAttribute(ConstantXML.DateGeneration);
+                attrDateGeneration.Value = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+                XmlAttribute attrLogo = doc.CreateAttribute(ConstantXML.Logo);
+                attrLogo.Value = config.Logo;
+
                 node.Attributes.Append(attrProchainCombat);
                 node.Attributes.Append(attrAffectationTapis);
                 node.Attributes.Append(attrDelaiActualisationClient);
                 node.Attributes.Append(attrNbProchainsCombats);
+                node.Attributes.Append(attrDateGeneration);
+                node.Attributes.Append(attrMsgProchainsCombats);
+                node.Attributes.Append(attrLogo);
             }
         }
 

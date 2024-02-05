@@ -25,8 +25,9 @@
 
 	<xsl:variable select="/competition/@PublierProchainsCombats = 'True'" name="affProchainCombats"/>
 	<xsl:variable select="/competition/@PublierAffectationTapis = 'True'" name="affAffectationTapis"/>
-	<xsl:variable select="competition/@DelaiActualisationClientSec" name="delayActualisationClient"/>
+	<xsl:variable select="/competition/@DelaiActualisationClientSec" name="delayActualisationClient"/>
 	<xsl:variable select="number(competition/@NbProchainsCombats)" name="nbProchainsCombats"/>
+	<xsl:variable select="/competition/@Logo" name="logo"/>
 
 	<xsl:variable name="nbProchainsCombatsEff">
 		<xsl:choose>
@@ -70,14 +71,18 @@
 		</head>
 		<body>
 			<!-- BANDEAU DE TITRE -->
-			<div class="w3-top">
+			<div class="w3-top tas-titre-app">
 				<div class="w3-cell-row w3-light-grey">
 					<button class="w3-cell w3-button w3-xlarge w3-cell-left" onclick="openElement('navigationPanel')">☰</button>
 					<div class="w3-cell w3-cell-middle w3-center">
 						<h3>Suivi compétition</h3>
 					</div>
 					<div class="w3-cell w3-cell-middle bandeau-titre">
-						<img class="img img-bandeau-titre" src="../img/France-Judo-Rhone.png"/>
+						<img class="img img-bandeau-titre">
+							<xsl:attribute name="src">
+								<xsl:value-of select="concat('../img/',$logo)"/>
+							</xsl:attribute>
+						</img>
 					</div>
 				</div>
 			</div>
@@ -146,7 +151,17 @@
 				</xsl:if>
 			</div>
 
-					
+			<xsl:if test="not(/competition/@MsgProchainsCombats = '')">
+				<div class="w3-panel w3-khaki w3-display-container w3-card tas-msg-panel w3-cell-row">
+					<div class="w3-cell">
+						<span onclick="this.parentElement.parentElement.style.display='none'" class="w3-button w3-large w3-display-topright w3-cell-top">&times;</span>
+					</div>
+					<div class="w3-cell w3-cell-middle">
+						<xsl:value-of select="/competition/@MsgProchainsCombats"/>
+					</div>
+				</div>
+			</xsl:if>
+
 			<!-- Parcours tous les tapis trouves -->
 			<xsl:for-each select="//tapis">
 				<xsl:sort select="@tapis" data-type="number" order="ascending"/>
@@ -161,6 +176,9 @@
 				</xsl:if>
 			</xsl:for-each>
 
+			<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
+				Dernière actualisation: <xsl:value-of select="/competition/@DateGeneration"/>
+			</div>
 		</body>
 	</xsl:template>
 
@@ -329,7 +347,14 @@
 					<header>
 						<xsl:value-of select="//epreuve[@ID = $epreuve]/@nom"/>
 						<xsl:if test="$combat/feuille/@repechage = 'true'">
-							(Repêchage)
+							<xsl:choose>
+								<xsl:when test="$combat/feuille/@reference = '3.1' or $combat/feuille/@reference = '5.1' or $combat/feuille/@reference = '7.1'">
+									(Barrage)
+								</xsl:when>
+								<xsl:otherwise>
+									(Repêchage)
+								</xsl:otherwise>
+							</xsl:choose>
 						</xsl:if>
 					</header>
 					<xsl:if test="$affDetailCompetition">

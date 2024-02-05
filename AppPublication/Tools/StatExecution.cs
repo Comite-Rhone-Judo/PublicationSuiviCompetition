@@ -42,7 +42,20 @@ namespace AppPublication.Tools
                 _dateStop = value;
                 NotifyPropertyChanged("DateFin");
             }
+        }
 
+        private DateTime _dateNext;
+        public DateTime DateProchaineGeneration
+        {
+            get
+            {
+                return _dateNext;
+            }
+            set
+            {
+                _dateNext = value;
+                NotifyPropertyChanged("DateProchaineGeneration");
+            }
         }
 
         private long _delaiExecMs;

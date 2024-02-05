@@ -2,6 +2,20 @@
     height: 50px;
 }
 
+div.tas-msg-panel {
+    height: 45px;
+    z-index: 1;
+}
+
+div.tas-titre-app {
+    z-index: 2;
+}
+
+div.tas-footnote {
+    font-style: italic;
+    margin-top: 5px;
+}
+
 div.tas-competition-bandeau {
     position: relative;
     z-index: 1;
@@ -9,7 +23,7 @@ div.tas-competition-bandeau {
 
 div.tas-navigation-panel {
     display: none;
-    z-index: 2;
+    z-index: 3;
 }
 
 div.tas-entete-section {

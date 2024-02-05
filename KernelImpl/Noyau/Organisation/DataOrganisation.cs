@@ -48,6 +48,7 @@ namespace KernelImpl.Noyau.Organisation
                 }
 
                 DC.competition = _competitions.FirstOrDefault();
+                DC.competitions = _competitions.ToList();
                 ExportTools.default_competition = DC.competition.remoteId;
             }
         }

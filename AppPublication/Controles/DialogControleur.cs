@@ -206,6 +206,9 @@ namespace AppPublication.Controles
                                 {
                                     // Demarre le site en local
                                     Instance.GestionSite.MiniSiteLocal.StartSite();
+
+                                    // Force la mise a jour de l'URL
+                                    Instance.GestionSite.IdCompetition = Instance.GestionSite.IdCompetition;
                                 }
                             },
                             o =>

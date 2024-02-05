@@ -64,7 +64,8 @@ namespace KernelImpl.Noyau.Structures
             {
                 foreach (Comite comite in comites)
                 {
-                    Comite p = _comites.FirstOrDefault(o => o.id == comite.id);
+                    //Comite p = _comites.FirstOrDefault(o => o.id == comite.id);
+                    Comite p = _comites.FirstOrDefault(o => o.id == comite.id && o.ligue == comite.ligue);
                     if (p != null)
                     {
                         _comites.Remove(p);

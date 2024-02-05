@@ -267,58 +267,28 @@ namespace KernelImpl.Noyau.Deroulement
         {
             XElement xparticipant = new XElement(ConstantXML.Participant);
 
-            if (DC.competition.IsEquipe())
-            {
-                Participants.Equipe e = Equipe1(DC);
-                if (e != null)
-                {
-                    xparticipant.SetAttributeValue(ConstantXML.Participant_ID, e.id.ToString());
-                    // xparticipant.SetAttributeValue(ConstantXML.Participant_RemoteID, e.remoteID.ToString());
-                    // xparticipant.SetAttributeValue(ConstantXML.Participant_Licence, e.licence);
-                    xparticipant.SetAttributeValue(ConstantXML.Participant_Nom, e.libelle);
-                    // xparticipant.SetAttributeValue(ConstantXML.Participant_Prenom, e.prenom);
-                    // xparticipant.SetAttributeValue(ConstantXML.Participant_Sexe, e.sexe ? "F" : "M");
-                    // xparticipant.SetAttributeValue(ConstantXML.Participant_Naissance, e.naissance.ToString("ddMMyyyy"));
-                    xparticipant.SetAttributeValue(ConstantXML.Participant_Pays, e.pays);
-                    xparticipant.SetAttributeValue(ConstantXML.Participant_Club, e.club);
-                    // xparticipant.SetAttributeValue(ConstantXML.Participant_Grade, e.ceinture);
+            Participants.Judoka j = Judoka1(DC);
 
-                    /*
-                    if (e.poidsMesure > 10)
-                    {
-                        xparticipant.SetAttributeValue(ConstantXML.Participant_Poids, e.poidsMesure);
-                    }
-                    else
-                    {
-                        xparticipant.SetAttributeValue(ConstantXML.Participant_Poids, e.poids);
-                    }
-                    */
+            if (j != null)
+            {
+                xparticipant.SetAttributeValue(ConstantXML.Participant_ID, j.id.ToString());
+                xparticipant.SetAttributeValue(ConstantXML.Participant_RemoteID, j.remoteID.ToString());                
+                xparticipant.SetAttributeValue(ConstantXML.Participant_Licence, j.licence);
+                xparticipant.SetAttributeValue(ConstantXML.Participant_Nom, j.nom);
+                xparticipant.SetAttributeValue(ConstantXML.Participant_Prenom, j.prenom);
+                xparticipant.SetAttributeValue(ConstantXML.Participant_Sexe, j.sexe ? "F" : "M");
+                xparticipant.SetAttributeValue(ConstantXML.Participant_Naissance, j.naissance.ToString("ddMMyyyy"));
+                xparticipant.SetAttributeValue(ConstantXML.Participant_Pays, j.pays);
+                xparticipant.SetAttributeValue(ConstantXML.Participant_Club, j.club);
+                xparticipant.SetAttributeValue(ConstantXML.Participant_Grade, j.ceinture);
+
+                if (j.poidsMesure > 10)
+                {
+                    xparticipant.SetAttributeValue(ConstantXML.Participant_Poids, j.poidsMesure);
                 }
-            }
-            else
-            {
-                Participants.Judoka j = Judoka1(DC);
-                if (j != null)
+                else
                 {
-                    xparticipant.SetAttributeValue(ConstantXML.Participant_ID, j.id.ToString());
-                    xparticipant.SetAttributeValue(ConstantXML.Participant_RemoteID, j.remoteID.ToString());
-                    xparticipant.SetAttributeValue(ConstantXML.Participant_Licence, j.licence);
-                    xparticipant.SetAttributeValue(ConstantXML.Participant_Nom, j.nom);
-                    xparticipant.SetAttributeValue(ConstantXML.Participant_Prenom, j.prenom);
-                    xparticipant.SetAttributeValue(ConstantXML.Participant_Sexe, j.sexe ? "F" : "M");
-                    xparticipant.SetAttributeValue(ConstantXML.Participant_Naissance, j.naissance.ToString("ddMMyyyy"));
-                    xparticipant.SetAttributeValue(ConstantXML.Participant_Pays, j.pays);
-                    xparticipant.SetAttributeValue(ConstantXML.Participant_Club, j.club);
-                    xparticipant.SetAttributeValue(ConstantXML.Participant_Grade, j.ceinture);
-
-                    if (j.poidsMesure > 10)
-                    {
-                        xparticipant.SetAttributeValue(ConstantXML.Participant_Poids, j.poidsMesure);
-                    }
-                    else
-                    {
-                        xparticipant.SetAttributeValue(ConstantXML.Participant_Poids, j.poids);
-                    }
+                    xparticipant.SetAttributeValue(ConstantXML.Participant_Poids, j.poids);
                 }
             }
 

@@ -24,6 +24,8 @@ namespace KernelImpl.Noyau.Organisation
         public int anneeMax { get; set; }
         public int categorieAge { get; set; }
 
+        public int epreuveRef { get; set; }
+
         public void LoadXml(XElement xrencontre)
         {
             this.id = XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Epreuve_Equipe_ID));
@@ -37,6 +39,7 @@ namespace KernelImpl.Noyau.Organisation
             this.ceintureMax = XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Epreuve_Equipe_GradeMax));
             this.anneeMin = XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Epreuve_Equipe_AnneeMin));
             this.anneeMax = XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Epreuve_Equipe_AnneeMax));
+            this.epreuveRef = XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Epreuve_Equipe_EpreuveRef));
         }
 
         public XElement ToXml()
@@ -55,6 +58,7 @@ namespace KernelImpl.Noyau.Organisation
             xrencontre.SetAttributeValue(ConstantXML.Epreuve_Equipe_GradeMax, ceintureMax);
             xrencontre.SetAttributeValue(ConstantXML.Epreuve_Equipe_AnneeMin, anneeMin);
             xrencontre.SetAttributeValue(ConstantXML.Epreuve_Equipe_AnneeMax, anneeMax);
+            xrencontre.SetAttributeValue(ConstantXML.Epreuve_Equipe_EpreuveRef, epreuveRef);
 
             return xrencontre;
         }

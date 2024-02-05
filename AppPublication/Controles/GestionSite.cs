@@ -4,6 +4,7 @@ using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -50,6 +51,9 @@ namespace AppPublication.Controles
                 _siteDistant = new MiniSite(false);
                 _statMgr = (statMgr != null) ? statMgr : new GestionStatistiques();
 
+                // Initialise la liste des logos
+                InitFichiersLogo();
+
                 // Initialise la configuration via le cache de fichier
                 InitCacheConfig();
             }
@@ -62,8 +66,33 @@ namespace AppPublication.Controles
         #endregion
 
         #region PROPRIETES
+        
+        ObservableCollection<Tuple<string, string>> _fichiersLogo = new ObservableCollection<Tuple<string,string>>();   
+        public ObservableCollection<Tuple<string, string>> FichiersLogo
+        {
+            get {
+                return _fichiersLogo;
+            }
+            private set {
+                _fichiersLogo = value;
+                NotifyPropertyChanged("FichiersLogo");
+            }
+        }
 
-        // TODO Ajouter date/Hr de prochaine génération
+        Tuple<string, string> _selectedLogo = null;
+        public Tuple<string,string> SelectedLogo
+        {
+            get
+            {
+                return _selectedLogo;
+            }
+            set
+            {
+                _selectedLogo = value;
+                AppSettings.SaveSettings("SelectedLogo", _selectedLogo.Item1);
+                NotifyPropertyChanged("SelectedLogo");
+            }
+        }
 
         StatExecution _statGeneration;
         /// <summary>
@@ -273,6 +302,23 @@ namespace AppPublication.Controles
             }
         }
 
+        string _msgProchainsCombats = string.Empty;
+        /// <summary>
+        /// Message optionnel pour les prochains coùbats
+        /// </summary>
+        public string MsgProchainsCombats
+        {
+            get
+            {
+                return _msgProchainsCombats;
+            }
+            set
+            {
+                _msgProchainsCombats = value;
+                AppSettings.SaveSettings("MsgProchainsCombats", _msgProchainsCombats);
+                NotifyPropertyChanged("MsgProchainsCombats");
+            }
+        }
 
 
         private string _urlDistant;
@@ -405,6 +451,8 @@ namespace AppPublication.Controles
             }
         }
 
+        
+
         private bool _publierAffectationTapis = false;
         /// <summary>
         /// Indique si on doit publier la liste des prochains combats ou non
@@ -460,6 +508,22 @@ namespace AppPublication.Controles
 
         #region METHODES
 
+        private void InitFichiersLogo()
+        {
+            // Recupere le repertoire des images du site
+            DirectoryInfo di = new DirectoryInfo(ConstantFile.ExportStyle_dir);
+
+            List<Tuple<string, string>> list = new List<Tuple<string, string>>();
+            IEnumerable<FileInfo> files = di.EnumerateFiles("*logo-*.png", SearchOption.TopDirectoryOnly);
+            foreach (FileInfo fi in files)
+            {
+                list.Add( new Tuple<string, string>(fi.Name.Replace(ConstantResource.Export_site_img, ""), fi.FullName));
+            }
+
+            // Liste les fichiers logos
+            FichiersLogo = new ObservableCollection<Tuple<string, string>>(list);
+        }
+
         /// <summary>
         /// Initialise les donnees a partir du cache de fichier AppConfig
         /// </summary>
@@ -493,9 +557,29 @@ namespace AppPublication.Controles
                 valCache = AppSettings.ReadSettings("DelaiActualisationClientSec");
                 DelaiActualisationClientSec = (valCache == null) ? 30 : int.Parse(valCache);
 
+                valCache = AppSettings.ReadSettings("MsgProchainsCombats");
+                MsgProchainsCombats = (valCache == null) ? string.Empty : valCache;
+
+                // Recherche le logo dans la liste
+                if(FichiersLogo.Count >= 1)
+                {
+                    valCache = AppSettings.ReadSettings("SelectedLogo");
+                    if(valCache != null)
+                    {
+                        foreach(Tuple<string, string> fl in FichiersLogo)
+                        {
+                            if(fl.Item1 == valCache)
+                            {
+                                SelectedLogo = fl;
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 // Si la liste contient au moins un element
                 if (MiniSiteLocal.InterfacesLocal.Count >= 1)
-                {
+                { 
                     // Cherche si une interface existe dans la configuration du fichier
                     valCache = AppSettings.ReadSettings("InterfaceLocalPublication");
                     IPAddress ipToUse = null;
@@ -725,6 +809,7 @@ namespace AppPublication.Controles
 
                                 // prochaine heure de generation
                                 wakeUpTime = DateTime.Now.AddMilliseconds(delaiThread);
+                                DerniereGeneration.DateProchaineGeneration = wakeUpTime;
                             }
                             Thread.Sleep(delaiScrutationMs);
                         }
@@ -793,7 +878,7 @@ namespace AppPublication.Controles
         private List<FileWithChecksum> Exporter(GenereSiteStruct genere)
         {
             List<FileWithChecksum> urls = new List<FileWithChecksum>();
-            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec, NbProchainsCombats);
+            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Item1 : string.Empty);
 
             try
             {

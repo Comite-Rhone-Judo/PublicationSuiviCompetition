@@ -22,6 +22,8 @@
 	<xsl:variable select="/competition/@PublierProchainsCombats = 'True'" name="affProchainCombats"/>
 	<xsl:variable select="/competition/@PublierAffectationTapis = 'True'" name="affAffectationTapis"/>
 	<xsl:variable select="/competition/@DelaiActualisationClientSec" name="delayActualisationClient"/>
+	<xsl:variable select="/competition/@kinzas" name="affKinzas"/>
+	<xsl:variable select="/competition/@Logo" name="logo"/>
 
 
 	<xsl:template match="/*">
@@ -54,14 +56,18 @@
 		</head>
 		<body>
 			<!-- BANDEAU DE TITRE -->
-			<div class="w3-top">
+			<div class="w3-top tas-titre-app">
 				<div class="w3-cell-row w3-light-grey">
 					<button class="w3-cell w3-button w3-xlarge w3-cell-left" onclick="openElement('navigationPanel')">☰</button>
 					<div class="w3-cell w3-cell-middle w3-center">
 						<h3>Suivi compétition</h3>
 					</div>
 					<div class="w3-cell w3-cell-middle bandeau-titre">
-						<img class="img img-bandeau-titre" src="../img/France-Judo-Rhone.png"/>
+						<img class="img img-bandeau-titre">
+							<xsl:attribute name="src">
+								<xsl:value-of select="concat('../img/',$logo)"/>
+							</xsl:attribute>
+						</img>
 					</div>
 				</div>
 			</div>
@@ -111,6 +117,10 @@
 			<!-- Les poules -->
 			<div class="w3-card">
 				<xsl:apply-templates select="//phase/poules/poule"/>
+			</div>
+		
+			<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
+				Dernière actualisation: <xsl:value-of select="/competition/@DateGeneration"/>
 			</div>
 		</body>
 	</xsl:template>
@@ -275,9 +285,13 @@
 	<!-- Combat avec resultat -->
 	<xsl:template match="combat[@vainqueur and @vainqueur != '-1']">
 		<xsl:param name="participant1"/>
+		
+		<xsl:variable name="kinzavainqueur" select="./score[@judoka = ancestor::combat/@vainqueur]/@kinza"/>
+		<xsl:variable name="kinzaperdant" select="./score[@judoka != ancestor::combat/@vainqueur]/@kinza"/>
+
 		<xsl:variable name="participant2">
 			<xsl:if test="$participant1 != ./score[1]/@judoka">
-				<xsl:value-of select="./score[1]/@judoka"/>
+				<xsl:value-of select="./score[1]/@judoka"/>		
 			</xsl:if>
 			<xsl:if test="$participant1 != ./score[2]/@judoka">
 				<xsl:value-of select="./score[2]/@judoka"/>
@@ -286,7 +300,7 @@
 		
 		<div class="w3-padding-small">
 			<xsl:if test="$participant1 != @vainqueur">
-				<xsl:attribute name="class">w3-xxlarge </xsl:attribute>
+				<xsl:attribute name="class">w3-xxxlarge </xsl:attribute>
 				<xsl:text>X</xsl:text>
 			</xsl:if>
 			<xsl:if test="$participant1 = @vainqueur">
@@ -308,6 +322,11 @@
 								<span class="w3-text-red">
 									<xsl:value-of select="./@penvainqueur"/>
 								</span>
+								<xsl:if test="$affKinzas = 'Oui'">
+									<span class="w3-small w3-text-green">
+										(<xsl:value-of select="$kinzavainqueur"/>)
+									</span>
+								</xsl:if>
 							</xsl:if>
 						</td>
 					</tr>
@@ -328,6 +347,11 @@
 								<span class="w3-text-red">
 									<xsl:value-of select="./@penperdant"/>
 								</span>
+								<xsl:if test="$affKinzas = 'Oui'">
+									<span class="w3-small w3-text-green">
+										(<xsl:value-of select="$kinzaperdant"/>)
+									</span>
+								</xsl:if>
 							</xsl:if>
 						</td>
 					</tr>
