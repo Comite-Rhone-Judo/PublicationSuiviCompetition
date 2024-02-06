@@ -11,7 +11,7 @@ using Tools.Enum;
 namespace KernelImpl.Noyau.Participants
 {
 
-    public class vue_judoka :  INotifyPropertyChanged
+    public class vue_judoka : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -1164,7 +1164,7 @@ namespace KernelImpl.Noyau.Participants
                 this.nom_compet = "Non inscrits";
             }
 
-            if(ep2 == null)
+            if (ep2 == null)
             {
                 this.idepreuve_equipe = 0;
             }
@@ -1215,7 +1215,7 @@ namespace KernelImpl.Noyau.Participants
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_IdEpreuve, this.idepreuve.ToString());
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_LibEpreuve, this.libepreuve);
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_Qualifie0, this.qualifie0.ToString().ToLower());
-            xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_Qualifie1, this.qualifie1.ToString().ToLower());            
+            xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_Qualifie1, this.qualifie1.ToString().ToLower());
 
             return xjudoka;
         }

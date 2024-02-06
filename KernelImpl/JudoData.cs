@@ -1,5 +1,5 @@
 ﻿using KernelImpl.Noyau.Organisation;
-
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Tools.Enum;
@@ -13,12 +13,18 @@ namespace KernelImpl
         public int Port { get; set; }
 
         private Competition _competition = new Competition { type = (int)CompetitionTypeEnum.Individuel };
+		 private List<Competition> _competitions = new List<Competition>();
         public Competition competition
         {
             get { return _competition; }
             set { _competition = value; NotifyPropertyChanged("competition"); }
         }
 
+        public List<Competition> competitions
+        {
+            get { return _competitions; }
+            set { _competitions = value; }
+        }
 
         private Noyau.Structures.DataStructures _structures = null;
         public Noyau.Structures.DataStructures Structures
@@ -41,7 +47,7 @@ namespace KernelImpl
             set { _categories = value; }
         }
 
-        private  DataOrganisation _organisation = null;
+        private DataOrganisation _organisation = null;
         public DataOrganisation Organisation
         {
             get { return _organisation; }

@@ -7,7 +7,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Arbitrage
 {
-    public class Arbitre 
+    public class Arbitre
     {
         public string licence { get; set; }
         public string nom { get; set; }
@@ -48,7 +48,7 @@ namespace KernelImpl.Noyau.Arbitrage
 
             this.sexe = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Arbitre_Sexe)) == "F" ? true : false;
 
-            this.modification = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Arbitre_Modification)) ;
+            this.modification = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Arbitre_Modification));
             this.estResponsable = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Arbitre_EstResponsable));
             this.present = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Arbitre_Present));
 

@@ -6,7 +6,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"        
         Closing="MainWindow1_Closing"  Closed="MainWin_Closed_1" 
         Background="Black" Title="{Binding AppVersion, StringFormat=Application Publication Suivi de Compétition - {0}}" Name="MainWin" Focusable="True"
-        mc:Ignorable="d" SizeToContent="Width" Height="920">
+        mc:Ignorable="d" SizeToContent="Width" Height="900">
     <!--Style="{StaticResource WindowStyle}"-->
 
     <Window.Resources>
@@ -162,20 +162,14 @@
                             </StackPanel>
                             <!-- Boutons-->
                             <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
-                                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                                    <!-- <CheckBox Content="Publier 'Prochains Combats'" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.PublierProchainsCombats}" IsEnabled="{Binding Path=GestionSite.IsGenerationActive, Converter={StaticResource BoolNotConverter}}" /> -->
-                                    <CheckBox Content="Publier 'Prochains Combats'" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.PublierProchainsCombats}" IsEnabled="false" />
-                                    <CheckBox Content="Publier 'Affectation tapis'" Style="{StaticResource CheckboxStyle}"
-                                                IsChecked="{Binding Path=GestionSite.PublierAffectationTapis}"
-                                                IsEnabled="{Binding Path=GestionSite.IsGenerationActive, Converter={StaticResource BoolNotConverter}}"
-                                              Visibility="{Binding Path=GestionSite.CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    </CheckBox>
-                                </StackPanel>
-                                <Label HorizontalAlignment="Left" Content="Délai de génération:" Style="{StaticResource LabelStyle}" />
-                                <telerik:RadNumericUpDown Value="{Binding GestionSite.DelaiGenerationSec}"
-                                                          Width="100" Height="24" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="0 0 50 0"
-                                                          IsEnabled="{Binding Path=GestionSite.IsGenerationActive, Converter={StaticResource BoolNotConverter}}"/>
-                                <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 20 0"
+                                <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 60 0"
+                                    Command="{Binding Path=CmdAfficherConfiguration}" Height="35" IsEnabled="{Binding GestionSite.IsGenerationActive, Converter={StaticResource BoolNotConverter}}">
+                                    <WrapPanel Orientation="Horizontal">
+                                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/settings2-32.png" Height="25" Margin="5 0"/>
+                                        <Label Content="Configuration" />
+                                    </WrapPanel>
+                                </telerik:RadButton>
+                                <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 15 0"
                                                    Command="{Binding Path=CmdDemarrerGeneration}" Height="35">
                                     <telerik:RadButton.IsEnabled>
                                         <MultiBinding Converter="{StaticResource EtatGenerationConverter}" Mode="OneWay">
@@ -188,7 +182,7 @@
                                         <Label Content="Démarrer" />
                                     </WrapPanel>
                                 </telerik:RadButton>
-                                <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="20 0 0 0" Height="35"
+                                <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="15 0 0 0" Height="35"
                                                    Command="{Binding Path=CmdArreterGeneration}">
                                     <WrapPanel Orientation="Horizontal">
                                         <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/stop-32.png" Height="25" Margin="5 0"/>

@@ -116,7 +116,7 @@ namespace JudoClient
             int index = 0;
             foreach (string adresse in machines)
             {
-                if(bWorker != null && bWorker.CancellationPending)
+                if (bWorker != null && bWorker.CancellationPending)
                 {
                     // si on s'execute dans une tache qui doit s'arreter on quitte directement
                     return;
@@ -155,7 +155,7 @@ namespace JudoClient
                 _listeMachines.CollectionChanged += new NotifyCollectionChangedEventHandler(liste_Changes);
             }
         }
-        
+
 
         void ping_PingCompleted(object sender, PingCompletedEventArgs e)
         {
@@ -267,7 +267,7 @@ namespace JudoClient
             {
                 _recherche_en_cours = false;
                 _listeMachines.CollectionChanged -= new NotifyCollectionChangedEventHandler(liste_Changes);
-                onTermine(this, _listeMachines.Count, _listeMachines.Count(o => o.response == ServerResponseEnum.ConnectionOK)); 
+                onTermine(this, _listeMachines.Count, _listeMachines.Count(o => o.response == ServerResponseEnum.ConnectionOK));
             }
         }
 

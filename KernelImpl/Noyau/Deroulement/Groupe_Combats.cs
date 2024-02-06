@@ -8,7 +8,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class Groupe_Combats 
+    public class Groupe_Combats
     {
         public int id { get; set; }
         public int decoupage { get; set; }
@@ -62,7 +62,7 @@ namespace KernelImpl.Noyau.Deroulement
             this.horaire_fin =
                 XMLTools.LectureDate(xinfo.Attribute(ConstantXML.Groupe_Horaire_Fin_Date), "ddMMyyyy", DateTime.Now) +
                 XMLTools.LectureTime(xinfo.Attribute(ConstantXML.Groupe_Horaire_Fin_Time), "HHmmss");
-            
+
             this.verrouille = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Groupe_Verrouille));
             this.decoupage = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Groupe_Decoupage));
         }

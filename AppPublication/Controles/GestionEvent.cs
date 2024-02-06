@@ -1,7 +1,6 @@
 ﻿using AppPublication.Tools;
 using JudoClient;
 using JudoClient.Communication;
-using KernelImpl.Noyau.Deroulement;
 using System;
 using System.Linq;
 using System.Windows;
@@ -265,7 +264,7 @@ namespace AppPublication.Controles
 
             FileTools.SaveFile(doc, ConstantFile.FileJudokas);
 
-            DialogControleur DC = DialogControleur.Instance;            
+            DialogControleur DC = DialogControleur.Instance;
             DC.ServerData.Participants.lecture_epreuves_judokas(element, DC.ServerData);
             DC.ServerData.Participants.lecture_judokas(element, DC.ServerData);
         }
@@ -311,7 +310,7 @@ namespace AppPublication.Controles
             DC.ServerData.Deroulement.lecture_participants(element);
             DC.ServerData.Deroulement.lecture_decoupages(element);
             DC.ServerData.Deroulement.lecture_poules(element);
-            DC.ServerData.Deroulement.lecture_groupes(element, DC.ServerData);          
+            DC.ServerData.Deroulement.lecture_groupes(element, DC.ServerData);
         }
 
         public static void client_OnListeCombats(object sender, XElement element)
@@ -353,7 +352,19 @@ namespace AppPublication.Controles
             DialogControleur DC = DialogControleur.Instance;
             DC.ServerData.Deroulement.lecture_rencontres(element);
             DC.ServerData.Deroulement.lecture_feuilles(element);
-            DC.ServerData.Deroulement.lecture_combats(element, DC.ServerData);     
+            DC.ServerData.Deroulement.lecture_combats(element, DC.ServerData);
+        }
+
+        public static void client_onUpdateRencontres(object sender, XElement element)
+        {
+            XDocument doc = new XDocument();
+            doc.Add(element);
+            doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
+
+            FileTools.SaveFile(doc, ConstantFile.FileRencontres);
+
+            DialogControleur DC = DialogControleur.Instance;
+            DC.ServerData.Deroulement.lecture_rencontres(element);
         }
 
         public static void client_OnListeArbitrage(object sender, XElement element)

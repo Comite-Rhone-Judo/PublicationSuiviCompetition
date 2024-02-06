@@ -1,5 +1,6 @@
 ﻿
 
+using KernelImpl.Noyau.Arbitrage;
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
@@ -11,7 +12,7 @@ namespace KernelImpl.Noyau.Organisation
     /// <summary>
     /// Description des Competitions
     /// </summary>
-    public class Competition : NotificationBase
+    public class Competition
     {
         public Competition()
         {
@@ -23,6 +24,8 @@ namespace KernelImpl.Noyau.Organisation
             this.remoteId = "";
             this.codeAcces = "";
             this.type = 2;
+            this.type2 = 2;
+            this.discipline = CompetitionDisciplineEnum.Judo.ToString();
             this.nbTapis = 6;
             this.tempsCombat = 600;
             this.niveau = 0;
@@ -30,6 +33,12 @@ namespace KernelImpl.Noyau.Organisation
             this.couleur2 = "";
             this.version = "";
             this.afficheCSA = (int)TypeCSAEnum.Aucun;
+            this.afficheKinzas = false;
+            this.afficheAnimationVainqueur = false;
+            this.tempsMedical = 120;
+            this.isRandomCombat = false;
+            this.couleur1 = ConstantCouleur.Rouge.ToString();
+            this.couleur2 = ConstantCouleur.Blanc.ToString();
         }
 
 
@@ -42,6 +51,8 @@ namespace KernelImpl.Noyau.Organisation
         public string remoteId { get; set; }
         public string codeAcces { get; set; }
         public int type { get; set; }
+        public int type2 { get; set; }
+        public string discipline { get; set; }
         public int nbTapis { get; set; }
         public int tempsCombat { get; set; }
         public int niveau { get; set; }
@@ -50,6 +61,14 @@ namespace KernelImpl.Noyau.Organisation
         public string version { get; set; }
 
         public int afficheCSA { get; set; }
+
+        public bool afficheKinzas { get; set; }
+
+        public bool afficheAnimationVainqueur { get; set; }
+
+        public int tempsMedical { get; set; }
+         public bool isRandomCombat { get; set; }
+
 
         public void LoadXml(XElement xinfo)
         {
@@ -61,6 +80,10 @@ namespace KernelImpl.Noyau.Organisation
             this.date = XMLTools.LectureDate(xinfo.Attribute(ConstantXML.Competition_Date), "ddMMyyyy", DateTime.Now);
             this.remoteId = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_RemoteID));
             this.type = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_Type));
+            this.type2 = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_Type2));
+
+            this.discipline = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_Discipline));
+
             this.nbTapis = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_Tapis));
 
             this.niveau = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_Niveau));
@@ -68,6 +91,12 @@ namespace KernelImpl.Noyau.Organisation
             this.couleur1 = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_Couleur1));
             this.couleur2 = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_Couleur2));
             this.afficheCSA = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_AfficheCSA));
+
+            this.afficheKinzas = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_AfficheKinzas)) == "Oui" ? true : false;
+            this.afficheAnimationVainqueur = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_AfficheAnimationVainqueur)) == "Oui" ? true : false;
+
+            this.tempsMedical = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_TempsMedical));
+            this.isRandomCombat = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_RandomCombat)) == "Oui" ? true : false;
         }
 
         public XElement ToXmlInformations()
@@ -77,12 +106,22 @@ namespace KernelImpl.Noyau.Organisation
             xcompetition.SetAttributeValue(ConstantXML.Competition_RemoteID, remoteId.ToString());
             xcompetition.SetAttributeValue(ConstantXML.Competition_Date, date.ToString("ddMMyyyy"));
             xcompetition.SetAttributeValue(ConstantXML.Competition_Type, type.ToString());
+            xcompetition.SetAttributeValue(ConstantXML.Competition_Type2, type2.ToString());
+
+            xcompetition.SetAttributeValue(ConstantXML.Competition_Discipline, discipline.ToString());
+
+            xcompetition.SetAttributeValue(ConstantXML.Competition_Discipline, discipline);
 
             xcompetition.SetAttributeValue(ConstantXML.Competition_Niveau, niveau.ToString());
             xcompetition.SetAttributeValue(ConstantXML.Competition_Version, version.ToString());
             xcompetition.SetAttributeValue(ConstantXML.Competition_Couleur1, couleur1.ToString());
             xcompetition.SetAttributeValue(ConstantXML.Competition_Couleur2, couleur2.ToString());
             xcompetition.SetAttributeValue(ConstantXML.Competition_AfficheCSA, afficheCSA.ToString());
+            xcompetition.SetAttributeValue(ConstantXML.Competition_AfficheKinzas, afficheKinzas ? "Oui" : "Non");
+            xcompetition.SetAttributeValue(ConstantXML.Competition_AfficheAnimationVainqueur, afficheAnimationVainqueur ? "Oui" : "Non");
+
+            xcompetition.SetAttributeValue(ConstantXML.Competition_RandomCombat, isRandomCombat ? "Oui" : "Non");
+            xcompetition.SetAttributeValue(ConstantXML.Competition_TempsMedical, tempsMedical.ToString());
 
             xcompetition.Add(new XElement(ConstantXML.Competition_Titre, nom));
             xcompetition.Add(new XElement(ConstantXML.Competition_Lieu, lieu));
@@ -90,6 +129,15 @@ namespace KernelImpl.Noyau.Organisation
         }
 
 
+        public bool IsOfficielle()
+        {
+            return this.type2 == 2;
+        }
+
+        public bool IsProLeague()
+        {
+            return this.type2 == 3;
+        }
         public bool IsIndividuelle()
         {
             return this.type == (int)CompetitionTypeEnum.Individuel;

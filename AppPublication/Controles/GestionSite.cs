@@ -1,22 +1,20 @@
 ﻿using AppPublication.Export;
+using AppPublication.Tools;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
 using System;
-using System.Net;
-using System.Net.Sockets;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Xml;
-using System.Xml.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Diagnostics;
-using AppPublication.Tools;
+using System.Xml.Linq;
 using Tools.Enum;
-using Tools.Outils;
 using Tools.Export;
-using System.IO;
+using Tools.Outils;
 
 namespace AppPublication.Controles
 {
@@ -53,6 +51,9 @@ namespace AppPublication.Controles
                 _siteDistant = new MiniSite(false);
                 _statMgr = (statMgr != null) ? statMgr : new GestionStatistiques();
 
+                // Initialise la liste des logos
+                InitFichiersLogo();
+
                 // Initialise la configuration via le cache de fichier
                 InitCacheConfig();
             }
@@ -65,8 +66,35 @@ namespace AppPublication.Controles
         #endregion
 
         #region PROPRIETES
+        
+        ObservableCollection<FilteredFileInfo> _fichiersLogo = new ObservableCollection<FilteredFileInfo>();   
+        public ObservableCollection<FilteredFileInfo> FichiersLogo
+        {
+            get {
+                return _fichiersLogo;
+            }
+            private set {
+                _fichiersLogo = value;
+                NotifyPropertyChanged("FichiersLogo");
+            }
+        }
 
-        StatExecution _statGeneration; 
+        FilteredFileInfo _selectedLogo = null;
+        public FilteredFileInfo SelectedLogo
+        {
+            get
+            {
+                return _selectedLogo;
+            }
+            set
+            {
+                _selectedLogo = value;
+                AppSettings.SaveSettings("SelectedLogo", _selectedLogo.Name);
+                NotifyPropertyChanged("SelectedLogo");
+            }
+        }
+
+        StatExecution _statGeneration;
         /// <summary>
         /// Statistique de derniere generation - lecture seule
         /// </summary>
@@ -138,8 +166,10 @@ namespace AppPublication.Controles
         /// <summary>
         /// Le site de publication local
         /// </summary>
-        public MiniSite MiniSiteLocal {
-            get {
+        public MiniSite MiniSiteLocal
+        {
+            get
+            {
                 return _siteLocal;
             }
         }
@@ -164,7 +194,7 @@ namespace AppPublication.Controles
                     NotifyPropertyChanged("InterfaceLocalPublication");
                     URLLocalPublication = CalculURLSiteLocal();
                 }
-                catch(ArgumentOutOfRangeException) { }
+                catch (ArgumentOutOfRangeException) { }
             }
         }
 
@@ -172,8 +202,10 @@ namespace AppPublication.Controles
         /// <summary>
         /// Le site de publication distant
         /// </summary>
-        public MiniSite MiniSiteDistant {
-            get {
+        public MiniSite MiniSiteDistant
+        {
+            get
+            {
                 return _siteDistant;
             }
         }
@@ -215,6 +247,25 @@ namespace AppPublication.Controles
             }
         }
 
+        private int _nbProchainsCombats = 6;
+        /// <summary>
+        /// Nb de prochains combats a publier pour la chambre d'appel
+        /// </summary>
+        public int NbProchainsCombats
+        {
+            get
+            {
+                return _nbProchainsCombats;
+            }
+            set
+            {
+                _nbProchainsCombats = value;
+                NotifyPropertyChanged("NbProchainsCombats");
+                AppSettings.SaveSettings("NbProchainsCombats", _nbProchainsCombats.ToString());
+            }
+        }
+
+
         int _delaiGenerationSec = 30;
         /// <summary>
         /// Delai entre 2 generations du site
@@ -232,6 +283,43 @@ namespace AppPublication.Controles
                 NotifyPropertyChanged("DelaiGenerationSec");
             }
         }
+
+        int _delaiActualisationClientSec = 30;
+        /// <summary>
+        /// Delai entre 2 generations du site
+        /// </summary>
+        public int DelaiActualisationClientSec
+        {
+            get
+            {
+                return _delaiActualisationClientSec;
+            }
+            set
+            {
+                _delaiActualisationClientSec = value;
+                AppSettings.SaveSettings("DelaiActualisationClientSec", _delaiActualisationClientSec.ToString());
+                NotifyPropertyChanged("DelaiActualisationClientSec");
+            }
+        }
+
+        string _msgProchainsCombats = string.Empty;
+        /// <summary>
+        /// Message optionnel pour les prochains coùbats
+        /// </summary>
+        public string MsgProchainsCombats
+        {
+            get
+            {
+                return _msgProchainsCombats;
+            }
+            set
+            {
+                _msgProchainsCombats = value;
+                AppSettings.SaveSettings("MsgProchainsCombats", _msgProchainsCombats);
+                NotifyPropertyChanged("MsgProchainsCombats");
+            }
+        }
+
 
         private string _urlDistant;
         /// <summary>
@@ -363,6 +451,8 @@ namespace AppPublication.Controles
             }
         }
 
+        
+
         private bool _publierAffectationTapis = false;
         /// <summary>
         /// Indique si on doit publier la liste des prochains combats ou non
@@ -389,7 +479,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if(null == _status)
+                if (null == _status)
                 {
                     _status = new StatusGenerationSite();
                 }
@@ -418,6 +508,17 @@ namespace AppPublication.Controles
 
         #region METHODES
 
+        private void InitFichiersLogo()
+        {
+            // Recupere le repertoire des images du site
+            DirectoryInfo di = new DirectoryInfo(ConstantFile.ExportStyle_dir);
+
+            IEnumerable<FilteredFileInfo> files = di.EnumerateFiles("*logo-*.png", SearchOption.TopDirectoryOnly).Select(o => new FilteredFileInfo(o)).OrderBy(o => o.Name);
+
+            // Liste les fichiers logos
+            FichiersLogo = new ObservableCollection<FilteredFileInfo>(files);
+        }
+
         /// <summary>
         /// Initialise les donnees a partir du cache de fichier AppConfig
         /// </summary>
@@ -439,15 +540,41 @@ namespace AppPublication.Controles
                 valCache = AppSettings.ReadSettings("PublierProchainsCombats");
                 PublierProchainsCombats = (valCache == null) ? false : bool.Parse(valCache);
 
+                valCache = AppSettings.ReadSettings("NbProchainsCombats");
+                NbProchainsCombats = (valCache == null) ? 6 : int.Parse(valCache);
+
                 valCache = AppSettings.ReadSettings("PublierAffectationTapis");
                 PublierAffectationTapis = (valCache == null) ? true : bool.Parse(valCache);
 
                 valCache = AppSettings.ReadSettings("DelaiGenerationSec");
                 DelaiGenerationSec = (valCache == null) ? 30 : int.Parse(valCache);
 
+                valCache = AppSettings.ReadSettings("DelaiActualisationClientSec");
+                DelaiActualisationClientSec = (valCache == null) ? 30 : int.Parse(valCache);
+
+                valCache = AppSettings.ReadSettings("MsgProchainsCombats");
+                MsgProchainsCombats = (valCache == null) ? string.Empty : valCache;
+
+                // Recherche le logo dans la liste
+                if(FichiersLogo.Count >= 1)
+                {
+                    valCache = AppSettings.ReadSettings("SelectedLogo");
+                    if(valCache != null)
+                    {
+                        foreach(FilteredFileInfo fl in FichiersLogo)
+                        {
+                            if(fl.Name == valCache)
+                            {
+                                SelectedLogo = fl;
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 // Si la liste contient au moins un element
                 if (MiniSiteLocal.InterfacesLocal.Count >= 1)
-                {
+                { 
                     // Cherche si une interface existe dans la configuration du fichier
                     valCache = AppSettings.ReadSettings("InterfaceLocalPublication");
                     IPAddress ipToUse = null;
@@ -479,7 +606,7 @@ namespace AppPublication.Controles
                     InterfaceLocalPublication = ipToUse;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogTools.Trace(ex);
             }
@@ -677,6 +804,7 @@ namespace AppPublication.Controles
 
                                 // prochaine heure de generation
                                 wakeUpTime = DateTime.Now.AddMilliseconds(delaiThread);
+                                DerniereGeneration.DateProchaineGeneration = wakeUpTime;
                             }
                             Thread.Sleep(delaiScrutationMs);
                         }
@@ -737,7 +865,7 @@ namespace AppPublication.Controles
             // Status = new StatusGenerationSite(StateGenerationEnum.Stopped);
             Status = StatusGenerationSite.Instance(StateGenerationEnum.Stopped);
         }
-        
+
         /// <summary>
         /// Declenche l'exportation
         /// </summary>
@@ -745,6 +873,7 @@ namespace AppPublication.Controles
         private List<FileWithChecksum> Exporter(GenereSiteStruct genere)
         {
             List<FileWithChecksum> urls = new List<FileWithChecksum>();
+            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty);
 
             try
             {
@@ -752,31 +881,23 @@ namespace AppPublication.Controles
 
                 switch (genere.type)
                 {
-                    /*
-                    case SiteEnum.All:
-                        urls = ExportSite.GenereWebSite(DC);
-                        break;
-                    */
                     case SiteEnum.AllTapis:
-                        urls = ExportSite.GenereWebSiteAllTapis(DC, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation);
+                        urls = ExportSite.GenereWebSiteAllTapis(DC, cfg);
                         break;
                     case SiteEnum.Classement:
-                        urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation);
+                        urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), cfg);
                         break;
                     case SiteEnum.Index:
-                        urls = ExportSite.GenereWebSiteIndex();
+                        urls = ExportSite.GenereWebSiteIndex(cfg);
                         break;
                     case SiteEnum.Menu:
-                        urls = ExportSite.GenereWebSiteMenu(DC, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation);
+                        urls = ExportSite.GenereWebSiteMenu(DC, cfg);
                         break;
                     case SiteEnum.Phase:
-                        urls = ExportSite.GenereWebSitePhase(DC, genere.phase, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation);
-                        break;
-                    case SiteEnum.Tapis:
-                        urls = ExportSite.GenereWebSiteTapis(DC, (int)genere.tapis, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation);
+                        urls = ExportSite.GenereWebSitePhase(DC, genere.phase, cfg);
                         break;
                     case SiteEnum.AffectationTapis:
-                        urls = ExportSite.GenereWebSiteAffectation(DC, PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation);
+                        urls = ExportSite.GenereWebSiteAffectation(DC, cfg);
                         break;
                 }
             }
@@ -838,15 +959,10 @@ namespace AppPublication.Controles
                         listTaskGeneration.Add(AddWork(SiteEnum.AffectationTapis, null, null));
                     }
 
-
                     // On ne genere pas les informations de prochains combat si ce n'est pas necessaire
                     if (PublierProchainsCombats)
                     {
                         listTaskGeneration.Add(AddWork(SiteEnum.AllTapis, null, null));
-                        for (int i = 1; i <= DC.competition.nbTapis; i++)
-                        {
-                            listTaskGeneration.Add(AddWork(SiteEnum.Tapis, null, i));
-                        }
                     }
 
                     foreach (Phase phase in DC.Deroulement.Phases)
@@ -919,7 +1035,8 @@ namespace AppPublication.Controles
                         doc.Save(fs);
                     }
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     LogTools.Trace(ex);
                 }
                 finally
@@ -952,7 +1069,7 @@ namespace AppPublication.Controles
                     output = ExportXML.ImportChecksumFichiers(rootElem.First());
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogTools.Trace(ex);
             }

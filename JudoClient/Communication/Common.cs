@@ -1,5 +1,4 @@
-﻿using System;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using Tools.Enum;
 
 namespace JudoClient.Communication
@@ -10,7 +9,7 @@ namespace JudoClient.Communication
         {
             XDocument doc = new XDocument();
 
-            XElement rootElement = new XElement(ConstantXML.ServerJudo);            
+            XElement rootElement = new XElement(ConstantXML.ServerJudo);
             doc.Add(rootElement);
 
             XElement commandElement = new XElement(ConstantXML.Command, (int)command);
@@ -20,6 +19,6 @@ namespace JudoClient.Communication
             rootElement.Add(commandValeur);
 
             return doc;
-        } 
+        }
     }
 }

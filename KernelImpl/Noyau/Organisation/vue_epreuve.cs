@@ -108,6 +108,7 @@ namespace KernelImpl.Noyau.Organisation
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_PoidsMin, poidsMin);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_PoidsMax, poidsMax);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_CatePoids_RemoteId, remoteId_catepoids);
+            xepreuve.SetAttributeValue(ConstantXML.Vue_Epreuve_Nom_Competition, nom_compet);
 
             return xepreuve;
         }

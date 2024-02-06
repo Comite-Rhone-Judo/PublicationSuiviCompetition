@@ -11,6 +11,10 @@
     <Folder Include="InnoSetup\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AppPublication\AppPublication.csproj" />
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)' == 'Release' ">
     <Exec Command="$(ProjectDir)InnoSetup\iscc.exe $(ProjectDir)bin\Release\installer.iss" />
   </Target>

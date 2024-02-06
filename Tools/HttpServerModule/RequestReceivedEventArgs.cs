@@ -1,0 +1,6 @@
+namespace HttpServer
+{
+    class RequestReceivedEventArgs
+    {
+    }
+}

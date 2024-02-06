@@ -7,7 +7,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public partial class vue_combat 
+    public partial class vue_combat
     {
         public int combat_id { get; set; }
         public int combat_numero { get; set; }
@@ -27,6 +27,8 @@ namespace KernelImpl.Noyau.Deroulement
         public int combat_niveau { get; set; }
         public int combat_temps { get; set; }
         public int combat_tempsRecup { get; set; }
+
+        public string combat_discipline { get; set; }
         public int judoka1_id { get; set; }
         public string judoka1_club { get; set; }
         public string judoka1_licence { get; set; }
@@ -91,10 +93,11 @@ namespace KernelImpl.Noyau.Deroulement
             combat_programmation = combat.programmation;
             combat_debut = combat.debut;
             combat_fin = combat.fin;
+			combat_discipline = combat.discipline;
 
             // Ajout de la lecture des donnees de phase et d'epreuve
             Phase phase = null;
-            using(TimedLock.Lock((DC.Deroulement.Phases as ICollection).SyncRoot))
+            using (TimedLock.Lock((DC.Deroulement.Phases as ICollection).SyncRoot))
             {
                 phase = DC.Deroulement.Phases.FirstOrDefault(o => o.id == combat.phase);
             }

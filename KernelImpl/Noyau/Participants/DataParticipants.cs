@@ -8,7 +8,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Participants
 {
-    public class DataParticipants 
+    public class DataParticipants
     {
         private IList<Equipe> _equipes = new List<Equipe>();
         public IList<Equipe> Equipes { get { return _equipes; } }
@@ -240,7 +240,7 @@ namespace KernelImpl.Noyau.Participants
 
                 if (DC.competition.IsEquipe())
                 {
-                    foreach(Organisation.Epreuve_Equipe ep in DC.Organisation.EpreuveEquipes)
+                    foreach (Organisation.Epreuve_Equipe ep in DC.Organisation.EpreuveEquipes)
                     {
                         if (!_vjudokas_epreuve.ContainsKey(ep.id))
                         {

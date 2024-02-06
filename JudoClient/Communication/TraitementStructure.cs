@@ -41,7 +41,7 @@ namespace JudoClient.Communication
             {
                 OnListePays(_client, element);
             }
-        }        
+        }
 
         public void ListeLigues(XElement element)
         {

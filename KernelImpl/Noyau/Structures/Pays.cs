@@ -9,7 +9,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Structures
 {
-    public class Pays 
+    public class Pays
     {
         public int id { get; set; }
         public int code { get; set; }

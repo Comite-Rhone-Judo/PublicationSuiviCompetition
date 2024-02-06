@@ -48,6 +48,7 @@ namespace KernelImpl.Noyau.Organisation
                 }
 
                 DC.competition = _competitions.FirstOrDefault();
+                DC.competitions = _competitions.ToList();
                 ExportTools.default_competition = DC.competition.remoteId;
             }
         }
@@ -73,7 +74,7 @@ namespace KernelImpl.Noyau.Organisation
                     }
                     _epreuve_equipes.Add(epreuve);
                 }
-                               
+
                 lecture_vue_epreuve_equipe(DC);
             }
         }
@@ -102,7 +103,7 @@ namespace KernelImpl.Noyau.Organisation
                         _epreuves.Remove(p);
                     }
                     _epreuves.Add(epreuve);
-                }                
+                }
                 lecture_vue_epreuves(DC);
             }
 

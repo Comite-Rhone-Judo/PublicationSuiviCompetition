@@ -34,7 +34,7 @@ namespace JudoClient.Communication
             client.Client.Write(result);
         }
 
-        
+
         public static void SendResultCombat(this ClientJudo client, XElement resultcombat)
         {
             XDocument doc = Common.CreateDocument(ServerCommandEnum.ResultCombats);
@@ -48,6 +48,28 @@ namespace JudoClient.Communication
         {
             XDocument doc = Common.CreateDocument(ServerCommandEnum.ResultRencontres);
             doc.Element(ConstantXML.ServerJudo).Element(ConstantXML.Valeur).Add(resultrencontre);
+
+            string result = doc.ToString(SaveOptions.None);
+            client.Client.Write(result);
+        }
+
+        public static void SendUpdateRencontres(this ClientJudo client, IList<XElement> resultrencontres)
+        {
+            XDocument doc = Common.CreateDocument(ServerCommandEnum.UpdateRencontres);
+            foreach (XElement element in resultrencontres)
+            {
+                doc.Element(ConstantXML.ServerJudo).Element(ConstantXML.Valeur).Add(element);
+            }
+
+            string result = doc.ToString(SaveOptions.None);
+            client.Client.Write(result);
+        }
+
+        public static void SendCategoriePoidsTireeAuSort(this ClientJudo client, XElement epreuve_equipe)
+        {
+            XDocument doc = Common.CreateDocument(ServerCommandEnum.CategoriePoidsTireeAuSort);
+            doc.Element(ConstantXML.ServerJudo).Element(ConstantXML.Valeur).Add(epreuve_equipe);
+
 
             string result = doc.ToString(SaveOptions.None);
             client.Client.Write(result);
@@ -72,6 +94,16 @@ namespace JudoClient.Communication
             {
                 doc.Element(ConstantXML.ServerJudo).Element(ConstantXML.Valeur).Add(element);
             }
+
+            string result = doc.ToString(SaveOptions.None);
+            client.Client.Write(result);
+        }
+
+        public static void SendChallenge(this ClientJudo client, XElement challenge)
+        {
+            XDocument doc = Common.CreateDocument(ServerCommandEnum.ChallengeRefuse);
+            doc.Element(ConstantXML.ServerJudo).Element(ConstantXML.Valeur).Add(challenge);
+
 
             string result = doc.ToString(SaveOptions.None);
             client.Client.Write(result);

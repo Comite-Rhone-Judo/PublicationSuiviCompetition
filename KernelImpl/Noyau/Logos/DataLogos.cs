@@ -7,7 +7,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Logos
 {
-    public class DataLogos 
+    public class DataLogos
     {
         private IList<string> _fede = new List<string>();
         public IList<string> Fede { get { return _fede; } set { _fede = value; } }

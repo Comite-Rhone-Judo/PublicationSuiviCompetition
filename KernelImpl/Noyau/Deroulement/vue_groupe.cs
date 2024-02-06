@@ -7,7 +7,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public partial class vue_groupe 
+    public partial class vue_groupe
     {
         public int groupe_id { get; set; }
         public int groupe_tapis { get; set; }
@@ -38,7 +38,7 @@ namespace KernelImpl.Noyau.Deroulement
             nb_combats_restant = DC.Deroulement.Combats.Count(o => o.groupe == groupe.id && o.vainqueur == null);
 
             Phase phase = groupe.GetPhase(DC);
-            if(phase != null)
+            if (phase != null)
             {
                 phase_etat = phase.etat;
                 phase_libelle = phase.libelle;
@@ -46,14 +46,14 @@ namespace KernelImpl.Noyau.Deroulement
                 phase_id = phase.id;
 
                 Organisation.Epreuve epreuve = groupe.GetEpreuve(DC);
-                if(epreuve != null)
+                if (epreuve != null)
                 {
                     epreuve_id = epreuve.id;
                     epreuve_nom = epreuve.nom;
                     epreuve_poidsMin = epreuve.poidsMin;
                     epreuve_poidsMax = epreuve.poidsMax;
                     epreuve_libsexe = epreuve.sexe == 1 ? "F" : "M";
-                }                
+                }
             }
         }
 
@@ -112,6 +112,6 @@ namespace KernelImpl.Noyau.Deroulement
             xgroupe.SetAttributeValue(ConstantXML.Vue_Groupe_EpreuvePoidsMax, this.epreuve_poidsMax.ToString());
             xgroupe.SetAttributeValue(ConstantXML.Vue_Groupe_EpreuveLibsexe, this.epreuve_libsexe);
             return xgroupe;
-        }           
+        }
     }
 }

@@ -1,8 +1,6 @@
-﻿using AppPublication.Tools;
-using JudoClient;
+﻿using JudoClient;
 using JudoClient.Communication;
 using System;
-using System.ComponentModel;
 using System.Windows.Threading;
 using System.Xml.Linq;
 using Tools.Outils;
@@ -78,7 +76,7 @@ namespace AppPublication.Controles
             _client.OnEndConnection += GestionEvent.client_OnEndConnection;
 
             _client.TraitementConnexion.OnAcceptConnectionCOM += GestionEvent.clientjudo_OnAcceptConnectionCOM;
-            
+
             _client.TraitementStructure.OnListeStructures += GestionEvent.client_OnListeStructures;
             _client.TraitementStructure.OnUpdateStructures += GestionEvent.client_OnUpdateStructures;
 
@@ -103,6 +101,7 @@ namespace AppPublication.Controles
             _client.TraitementDeroulement.OnListeCombats += GestionEvent.client_OnListeCombats;
             _client.TraitementDeroulement.OnUpdateCombats += GestionEvent.client_OnUpdateCombats;
             _client.TraitementDeroulement.OnUpdateTapisCombats += GestionEvent.client_OnUpdateCombats2;
+            _client.TraitementDeroulement.OnUpdateRencontreReceived += GestionEvent.client_onUpdateRencontres;
 
             _client.TraitementArbitrage.OnListeArbitrage += GestionEvent.client_OnListeArbitrage;
             _client.TraitementArbitrage.OnUpdateArbitrage += GestionEvent.client_OnUpdateArbitrage;
@@ -146,7 +145,7 @@ namespace AppPublication.Controles
             if (_isconnected)
             {
                 // Verifie si le delai avant de tester la connexion est echue ou non
-                if(elapseSec > TEST_CONNECT)
+                if (elapseSec > TEST_CONNECT)
                 {
                     TesteConnection();
                 }
@@ -154,10 +153,10 @@ namespace AppPublication.Controles
             else
             {
                 // Le client n'est plus connecte, peut etre la reponse n'est pas encore recu
-                if(elapseSec > TEST_CONNECT)
+                if (elapseSec > TEST_CONNECT)
                 {
                     // Essaye de refaire une demande de connexion
-                    if(_nRetry > MAX_RETRY)
+                    if (_nRetry > MAX_RETRY)
                     {
                         // on a deja essaye plusieurs fois, on est vraiment deconnecte
                         this.Client.Client.Stop();

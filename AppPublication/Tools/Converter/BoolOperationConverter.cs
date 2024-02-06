@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Data;
 using System.Globalization;
+using System.Linq;
+using System.Windows.Data;
 
 namespace AppPublication.Tools.Converter
 {
@@ -38,14 +35,14 @@ namespace AppPublication.Tools.Converter
                     }
                 }
 
-                if(parameter.GetType() == typeof(string))
+                if (parameter.GetType() == typeof(string))
                 {
                     operation = ((string)parameter).ToLower();
                 }
 
                 if (ope1 != null && ope2 != null && !String.IsNullOrEmpty(operation))
                 {
-                    switch(operation)
+                    switch (operation)
                     {
                         case "not_a_and_b":
                             {

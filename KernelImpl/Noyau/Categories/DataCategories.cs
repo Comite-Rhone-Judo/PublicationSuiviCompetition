@@ -7,7 +7,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Categories
 {
-    public class DataCategories 
+    public class DataCategories
     {
         private IList<CategorieAge> _cAges = new List<CategorieAge>();
         public IList<CategorieAge> CAges { get { return _cAges; } }
@@ -62,7 +62,7 @@ namespace KernelImpl.Noyau.Categories
                         _cPoids.Remove(p);
                     }
                     _cPoids.Add(catepoid);
-                }               
+                }
             }
         }
 
@@ -89,7 +89,7 @@ namespace KernelImpl.Noyau.Categories
                 }
 
                 Ceintures grade = _grades.FirstOrDefault(o => o.nom == "1D");
-                if(grade != null)
+                if (grade != null)
                 {
                     OutilsTools.Grade1D_ID = grade.id;
                 }
@@ -100,7 +100,7 @@ namespace KernelImpl.Noyau.Categories
                     OutilsTools.Grade7D_ID = grade.id;
                 }
             }
-            
+
         }
     }
 }

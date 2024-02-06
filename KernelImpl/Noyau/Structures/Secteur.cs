@@ -9,7 +9,7 @@ namespace KernelImpl.Noyau.Structures
     /// <summary>
     /// Description des Secteurs
     /// </summary>
-    public class Secteur 
+    public class Secteur
     {
         public string id { get; set; }
         public string nom { get; set; }

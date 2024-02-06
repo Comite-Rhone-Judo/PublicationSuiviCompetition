@@ -7,7 +7,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Structures
 {
-    public class DataStructures 
+    public class DataStructures
     {
         private IList<Club> _clubs = new List<Club>();
         public IList<Club> Clubs { get { return _clubs; } }
@@ -43,7 +43,7 @@ namespace KernelImpl.Noyau.Structures
                         _clubs.Remove(p);
                     }
                     _clubs.Add(club);
-                }                
+                }
             }
         }
 
@@ -64,13 +64,14 @@ namespace KernelImpl.Noyau.Structures
             {
                 foreach (Comite comite in comites)
                 {
-                    Comite p = _comites.FirstOrDefault(o => o.id == comite.id);
+                    //Comite p = _comites.FirstOrDefault(o => o.id == comite.id);
+                    Comite p = _comites.FirstOrDefault(o => o.id == comite.id && o.ligue == comite.ligue);
                     if (p != null)
                     {
                         _comites.Remove(p);
                     }
                     _comites.Add(comite);
-                }                
+                }
             }
         }
 
@@ -154,7 +155,7 @@ namespace KernelImpl.Noyau.Structures
                         _pays.Remove(p);
                     }
                     _pays.Add(pays);
-                }              
+                }
             }
         }
     }

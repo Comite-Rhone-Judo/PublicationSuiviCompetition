@@ -4,7 +4,7 @@ using Tools.Enum;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class vue_epreuve_phase :   INotifyPropertyChanged
+    public class vue_epreuve_phase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -28,7 +28,7 @@ namespace KernelImpl.Noyau.Deroulement
             get
             {
                 return _id;
-            }           
+            }
         }
 
         int _type_phase = 0;
@@ -37,7 +37,7 @@ namespace KernelImpl.Noyau.Deroulement
             get
             {
                 return _type_phase;
-            }            
+            }
         }
 
         string _nom = "";
@@ -46,7 +46,7 @@ namespace KernelImpl.Noyau.Deroulement
             get
             {
                 return _nom;
-            }           
+            }
         }
 
         string _etat = "";

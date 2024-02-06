@@ -13,7 +13,7 @@ namespace KernelImpl.Noyau.Participants
     /// <summary>
     /// Description des Judokas
     /// </summary>
-    public class Judoka :  INotifyPropertyChanged
+    public class Judoka : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

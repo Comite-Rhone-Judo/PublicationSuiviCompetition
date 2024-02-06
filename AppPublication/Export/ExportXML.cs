@@ -20,19 +20,35 @@ namespace AppPublication.Export
 {
     public static class ExportXML
     {
-        public static void AddPublicationInfo(ref XmlDocument doc, bool publierProchainsCombats = false, bool publierAffectationTapis = true)
+        public static void AddPublicationInfo(ref XmlDocument doc, ConfigurationExportSite config)
         {
             // Recupere le flag de la competition
             XmlNodeList listcomp = doc.GetElementsByTagName(ConstantXML.Competition);
 
-            XmlAttribute attrProchainCombat = doc.CreateAttribute(ConstantXML.publierProchainsCombats);
-            attrProchainCombat.Value = publierProchainsCombats.ToString();
-            XmlAttribute attrAffectationTapis = doc.CreateAttribute(ConstantXML.publierAffectationTapis);
-            attrAffectationTapis.Value = publierAffectationTapis.ToString();
             foreach (XmlNode node in listcomp)
             {
+                XmlAttribute attrProchainCombat = doc.CreateAttribute(ConstantXML.publierProchainsCombats);
+                attrProchainCombat.Value = config.PublierProchainsCombats.ToString();
+                XmlAttribute attrAffectationTapis = doc.CreateAttribute(ConstantXML.publierAffectationTapis);
+                attrAffectationTapis.Value = config.PublierAffectationTapis.ToString();
+                XmlAttribute attrDelaiActualisationClient = doc.CreateAttribute(ConstantXML.delaiActualisationClientSec);
+                attrDelaiActualisationClient.Value = config.DelaiActualisationClientSec.ToString();
+                XmlAttribute attrNbProchainsCombats = doc.CreateAttribute(ConstantXML.nbProchainsCombats);
+                attrNbProchainsCombats.Value = config.NbProchainsCombats.ToString();
+                XmlAttribute attrMsgProchainsCombats = doc.CreateAttribute(ConstantXML.msgProchainsCombats);
+                attrMsgProchainsCombats.Value = config.MsgProchainCombats;
+                XmlAttribute attrDateGeneration = doc.CreateAttribute(ConstantXML.DateGeneration);
+                attrDateGeneration.Value = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+                XmlAttribute attrLogo = doc.CreateAttribute(ConstantXML.Logo);
+                attrLogo.Value = config.Logo;
+
                 node.Attributes.Append(attrProchainCombat);
                 node.Attributes.Append(attrAffectationTapis);
+                node.Attributes.Append(attrDelaiActualisationClient);
+                node.Attributes.Append(attrNbProchainsCombats);
+                node.Attributes.Append(attrDateGeneration);
+                node.Attributes.Append(attrMsgProchainsCombats);
+                node.Attributes.Append(attrLogo);
             }
         }
 
@@ -138,7 +154,7 @@ namespace AppPublication.Export
             {
                 xdoc.Root.Add(club.ToXml());
             }
-            
+
             using (TimedLock.Lock((DC.Structures.Comites as ICollection).SyncRoot))
             {
                 comites = DC.Structures.Comites.ToList();
@@ -167,7 +183,7 @@ namespace AppPublication.Export
             foreach (Ligue ligue in ligues)
             {
                 xdoc.Root.Add(ligue.ToXml());
-            }           
+            }
 
             using (TimedLock.Lock((DC.Structures.LesPays as ICollection).SyncRoot))
             {
@@ -200,7 +216,8 @@ namespace AppPublication.Export
             doc = xdoc.ToXmlDocument();
         }
 
-        public static XDocument ExportChecksumFichiers(List<FileWithChecksum> listFiles) {
+        public static XDocument ExportChecksumFichiers(List<FileWithChecksum> listFiles)
+        {
             XDocument doc = new XDocument();
 
             XElement xelemRoot = new XElement(ConstantXML.checksums);
@@ -301,7 +318,7 @@ namespace AppPublication.Export
                         XElement xphase = phase.ToXml();
                         xphases.Add(xphase);
 
-                        if(phase.etat == (int) EtatPhaseEnum.TirageValide)
+                        if (phase.etat == (int)EtatPhaseEnum.TirageValide)
                         {
                             phaseEnCours.Add(phase.id);
                         }
@@ -408,58 +425,13 @@ namespace AppPublication.Export
             return doc.ToXmlDocument();
         }
 
-
-        public static XmlDocument ExportCompetitionJudoTV(JudoData DC)
-        {
-            Competition competition = DC.Organisation.Competitions.FirstOrDefault();
-
-            XDocument doc = new XDocument();
-            XComment comment = new XComment("compétition de judo");
-            doc.Add(comment);
-            comment = new XComment("Généré le : " + System.DateTime.Now.ToString());
-
-            XElement xcompetitions = new XElement(ConstantXML.Competitions);
-            doc.Add(xcompetitions);
-
-            XElement xcompetition = competition.ToXmlInformations();
-            xcompetitions.Add(xcompetition);
-
-            XElement xepreuves = new XElement(ConstantXML.Epreuves);
-            xcompetition.Add(xepreuves);
-
-            foreach (Competition compte in DC.Organisation.Competitions)
-            {
-                if (competition.type == (int)CompetitionTypeEnum.Equipe)
-                {
-                    foreach (vue_epreuve_equipe epreuve in DC.Organisation.vepreuves_equipe.Where(o => o.competition == compte.id))
-                    {
-                        XElement xepreuve = ExportXML.ExportEpreuve(DC, epreuve);
-                        xepreuve.SetAttributeValue(ConstantXML.Competition, compte.nom);
-                        xepreuves.Add(xepreuve);
-                    }
-                }
-                else
-                {
-                    foreach (vue_epreuve epreuve in DC.Organisation.vepreuves.Where(o => o.competition == compte.id))
-                    {
-                        XElement xepreuve = ExportXML.ExportEpreuve(DC, epreuve);
-                        xepreuve.SetAttributeValue(ConstantXML.Competition, compte.nom);
-                        xepreuves.Add(xepreuve);
-                    }
-                }
-            }
-
-            XmlDocument result = doc.ToXmlDocument();
-            ExportXML.AddClubs(ref result, DC);
-
-            return result;
-        }
-
         /// <summary>
         /// Export de la compétition complète
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
+        // TODO Not used
+        /*
         public static XmlDocument ExportCompetition(JudoData DC, Competition competition)
         {
             XDocument doc = new XDocument();
@@ -551,7 +523,7 @@ namespace AppPublication.Export
 
             return result;
         }
-
+        */
 
         /// <summary>
         /// 
@@ -560,13 +532,15 @@ namespace AppPublication.Export
         /// <param name="judokas"></param>
         /// <param name="DC"></param>
         /// <returns></returns>
+        // TODO Not used
+        /*
         public static XmlDocument CreateDocumentJudokasEpreuve(i_vue_epreuve_interface epreuve, ICollection<vue_judoka> judokas, JudoData DC)
         {
             Competition competition = null;
             if (epreuve != null)
             {
                 competition = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
-                if(competition == null)
+                if (competition == null)
                 {
                     competition = DC.Organisation.Competitions.FirstOrDefault();
                 }
@@ -622,6 +596,7 @@ namespace AppPublication.Export
 
             return doc.ToXmlDocument();
         }
+        */
 
         public static XmlDocument CreateDocumentEpreuve(JudoData DC, i_vue_epreuve_interface epreuve)
         {
@@ -653,11 +628,30 @@ namespace AppPublication.Export
         public static XmlDocument CreateDocumentFeuilleCombat(JudoData DC, Phase _phase, int? tapis)
         {
             int nbtapis = DC.Organisation.Competitions.Max(o => o.nbTapis);
-            Competition competition = DC.Organisation.Competitions.FirstOrDefault();
+            // Competition competition = DC.Organisation.Competitions.FirstOrDefault();
+            // Cherche la bonne competition de cette phase
+            Competition competition = null;
+            if (_phase != null)
+            {
+                Epreuve ep = DC.Organisation.Epreuves.Where(o => o.id == _phase.epreuve).FirstOrDefault();
 
-            XDocument doc = new XDocument();
-            XElement xcompetition = competition.ToXmlInformations();
-            doc.Add(xcompetition);
+                if (ep != null)
+                {
+                    competition = DC.Organisation.Competitions.Where(o => o.id == ep.competition).FirstOrDefault();
+                }
+            }
+            else
+            {
+                // Pas de phase specifiee, on va chercher
+            }
+            if (competition == null)
+            {
+                // Par defaut, prend la premiere
+                competition = DC.Organisation.Competitions.FirstOrDefault();
+            }
+
+            ICollection<int> id_compet_combats = new List<int>();   // Pour savoir les IDS de la ou des competitions des combats
+            ICollection<XElement> xTapisList = new List<XElement>();
 
             ICollection<vue_groupe> groupes = DC.Deroulement.vgroupes.ToList();
             ICollection<vue_epreuve> epreuves = DC.Organisation.vepreuves.ToList();
@@ -738,7 +732,7 @@ namespace AppPublication.Export
                 }
 
                 List<Combat> combatList;
-                if ( (competition.afficheCSA == (int)TypeCSAEnum.Minisite) || (competition.afficheCSA == (int)TypeCSAEnum.Tous))
+                if ((competition.afficheCSA == (int)TypeCSAEnum.Minisite) || (competition.afficheCSA == (int)TypeCSAEnum.Tous))
                 {
                     // En cas d'affichage CSA on doit aussi prendre en compte les combats incomplets en attente
                     combatList = combats.Where(o => o.tapis == i
@@ -773,6 +767,13 @@ namespace AppPublication.Export
                     if (competition.type == (int)CompetitionTypeEnum.Equipe)
                     {
                         vue_epreuve_equipe epreuve_eq2 = epreuves_eq.FirstOrDefault(o => o.id == phase.epreuve);
+
+                        // Enregistre l'ID de la competition
+                        if (epreuve_eq2 != null && !id_compet_combats.Contains(epreuve_eq2.competition))
+                        {
+                            id_compet_combats.Add(epreuve_eq2.competition);
+                        }
+
                         if (!epreuveeq_id_ajoute.Contains(epreuve_eq2.id))
                         {
                             xtapis.Add(epreuve_eq2.ToXml(DC));
@@ -788,6 +789,13 @@ namespace AppPublication.Export
                     else
                     {
                         vue_epreuve epreuve2 = epreuves.FirstOrDefault(o => o.id == phase.epreuve);
+
+                        // Enregistre l'ID de la competition
+                        if (epreuve2 != null && !id_compet_combats.Contains(epreuve2.competition))
+                        {
+                            id_compet_combats.Add(epreuve2.competition);
+                        }
+
                         if (!epreuve_id_ajoute.Contains(epreuve2.id))
                         {
                             xtapis.Add(epreuve2.ToXml(DC));
@@ -860,8 +868,32 @@ namespace AppPublication.Export
                     }
                 }
 
-                xcompetition.Add(xtapis);
+                xTapisList.Add(xtapis); // Met l'element dans la liste pour l'attacher plus tard quand on aura valide la competition
             }
+
+            
+
+            // Verifie si l'ID de la competition utilise au debut est le bon
+            if (id_compet_combats.Count > 0)
+            {
+                if (competition.id != id_compet_combats.First())
+                {
+                    // Met la bonne competition a la place
+                    competition = DC.Organisation.Competitions.Where(o => o.id == id_compet_combats.First()).FirstOrDefault();
+                }
+            }
+
+            // Initialise l'arbre XML avec la bonne competition
+            XDocument doc = new XDocument();
+            XElement xcompetition = competition.ToXmlInformations();
+            doc.Add(xcompetition);
+
+            // Attache les tapis
+            foreach (XElement xt in xTapisList)
+            {
+                xcompetition.Add(xt);
+            }
+
             return doc.ToXmlDocument();
         }
 
@@ -1047,6 +1079,8 @@ namespace AppPublication.Export
             return xclassement;
         }
 
+        // TODO Not used
+        /*
         public static XmlDocument CreateDocumentPhaseRepechage(i_vue_epreuve_interface epreuve, Phase phase, JudoData DC)
         {
             Competition competition = DC.Organisation.Competitions.FirstOrDefault();
@@ -1154,13 +1188,13 @@ namespace AppPublication.Export
             xF1td1_r2.SetAttributeValue("type", "3");
             xF1tr1.Add(xF1td1_r2);
 
-            /*AJOUT*/
+            // AJOUT
             XElement xF1td_vainq = new XElement("td");
             xF1td_vainq.SetAttributeValue("rowspan", (countRowSpan(F1_1, feuilles) + countRowSpan(F1_2, feuilles) + 1).ToString());
             xF1td_vainq.SetAttributeValue("type", "4");
             xF1td_vainq.Add(xF1combat1);
             xF1tr1.Add(xF1td_vainq);
-            /*FIN AJOUT*/
+            //FIN AJOUT
 
 
             XElement xF1tr3 = new XElement("tr");
@@ -1232,13 +1266,13 @@ namespace AppPublication.Export
             xF2tr1.Add(xF2td1_r2);
 
 
-            /*AJOUT*/
+            // AJOUT
             XElement xF2td_vainq = new XElement("td");
             xF2td_vainq.SetAttributeValue("rowspan", (countRowSpan(F2_1, feuilles) + countRowSpan(F2_2, feuilles) + 1).ToString());
             xF2td_vainq.SetAttributeValue("type", "4");
             xF2td_vainq.Add(xF2combat1);
             xF2tr1.Add(xF2td_vainq);
-            /*FIN AJOUT*/
+            // FIN AJOUT
 
             XElement xF2tr3 = new XElement("tr");
             xF2table.Add(xF2tr3);
@@ -1277,7 +1311,10 @@ namespace AppPublication.Export
 
             return doc.ToXmlDocument();
         }
+        */
 
+        // TODO Not used
+        /*
         private static void ConstructFeuille(Feuille feuille, ICollection<Feuille> feuilles, XElement xtable, XElement xcombat)
         {
             if (feuille == null)
@@ -1364,7 +1401,10 @@ namespace AppPublication.Export
 
 
         }
+        */
 
+        // TODO Not used
+        /*
         private static int countRowSpan(Feuille feuille, ICollection<Feuille> feuilles)
         {
 
@@ -1377,5 +1417,6 @@ namespace AppPublication.Export
             Feuille feuille2 = feuilles.FirstOrDefault(o => o.reference == feuille.ref2);
             return countRowSpan(feuille1, feuilles) + countRowSpan(feuille2, feuilles);
         }
+        */
     }
 }

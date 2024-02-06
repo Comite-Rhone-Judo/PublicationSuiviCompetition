@@ -11,7 +11,7 @@ namespace KernelImpl.Noyau.Participants
     /// <summary>
     /// Description des Epreuve auxquelles sont inscrit les Judokas
     /// </summary>
-    public class EpreuveJudoka 
+    public class EpreuveJudoka
     {
         public int epreuve { get; set; }
         public int judoka { get; set; }

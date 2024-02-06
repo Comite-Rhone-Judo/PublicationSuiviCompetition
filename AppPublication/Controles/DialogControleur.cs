@@ -1,12 +1,11 @@
-﻿using KernelImpl;
+﻿using AppPublication.Tools.Enum;
+using KernelImpl;
 using System;
 using System.Windows;
 using System.Windows.Input;
-using System.Collections.ObjectModel;
+using Telerik.Windows.Controls;
 using Tools.Outils;
 using Tools.Windows;
-using AppPublication.Tools.Enum;
-using Telerik.Windows.Controls;
 
 namespace AppPublication.Controles
 {
@@ -18,6 +17,7 @@ namespace AppPublication.Controles
         #region MEMBRES
         private static DialogControleur _currentControleur = null;      // instance singletion
         private AppPublication.IHM.Commissaire.Statistiques _statWindow = null;
+        private AppPublication.IHM.Commissaire.ConfigurationPublication _cfgWindow = null;
         #endregion
 
         #region CONSTRUCTEUR
@@ -177,7 +177,7 @@ namespace AppPublication.Controles
                     _connection = new GestionConnection();
                     _stats = new GestionStatistiques();
                     _site = new GestionSite(_stats);
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -206,6 +206,9 @@ namespace AppPublication.Controles
                                 {
                                     // Demarre le site en local
                                     Instance.GestionSite.MiniSiteLocal.StartSite();
+
+                                    // Force la mise a jour de l'URL
+                                    Instance.GestionSite.IdCompetition = Instance.GestionSite.IdCompetition;
                                 }
                             },
                             o =>
@@ -419,7 +422,37 @@ namespace AppPublication.Controles
             }
         }
 
-        
+        private ICommand _cmdAfficherConfiguration = null;
+        /// <summary>
+        /// Commande d'affichage de la configuration
+        /// </summary>
+        public ICommand CmdAfficherConfiguration
+        {
+            get
+            {
+                if (_cmdAfficherConfiguration == null)
+                {
+                    _cmdAfficherConfiguration = new RelayCommand(
+                            o =>
+                            {
+                                if (_cfgWindow == null)
+                                {
+                                    _cfgWindow = new AppPublication.IHM.Commissaire.ConfigurationPublication(GestionSite);
+                                }
+                                _cfgWindow.ShowDialog();
+
+                                _cfgWindow = null;
+                            },
+                            o =>
+                            {
+                                return true;
+                            });
+                }
+                return _cmdAfficherConfiguration;
+            }
+        }
+
+
         #endregion
     }
 }

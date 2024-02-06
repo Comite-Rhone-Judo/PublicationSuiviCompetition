@@ -18,7 +18,7 @@ namespace KernelManager
         {
             get
             {
-                if(_data == null)
+                if (_data == null)
                 {
                     _data = CreateJudoData();
                 }

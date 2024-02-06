@@ -9,7 +9,7 @@ namespace KernelImpl.Noyau.Structures
     /// <summary>
     /// Description des Club
     /// </summary>
-    public class Club 
+    public class Club
     {
         public string id { get; set; }
         public string nomCourt { get; set; }

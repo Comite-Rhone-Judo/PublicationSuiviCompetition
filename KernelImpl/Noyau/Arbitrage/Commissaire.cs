@@ -7,7 +7,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Arbitrage
 {
-    public class Commissaire 
+    public class Commissaire
     {
         public string licence { get; set; }
         public string nom { get; set; }

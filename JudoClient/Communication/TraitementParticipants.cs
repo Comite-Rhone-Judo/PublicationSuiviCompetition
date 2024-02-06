@@ -31,7 +31,7 @@ namespace JudoClient.Communication
                 OnListeJudokas(this, element);
             }
         }
-        
+
 
         public void ListeEquipes(XElement element)
         {
@@ -79,6 +79,6 @@ namespace JudoClient.Communication
             {
                 OnUpdateEquipes(_client, element);
             }
-        }        
+        }
     }
 }

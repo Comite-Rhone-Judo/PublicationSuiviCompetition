@@ -25,6 +25,10 @@ namespace JudoClient.Communication
         public delegate void OnRencontreReceivedHandler(object sender, int rencontre);
         public event OnRencontreReceivedHandler OnRencontreReceived;
 
+        public delegate void OnUpdateRencontreReceivedHandler(object sender, XElement xelements);
+        public event OnUpdateRencontreReceivedHandler OnUpdateRencontreReceived;
+
+
         public void ListePhases(XElement element)
         {
             if (OnListePhases != null)
@@ -58,7 +62,14 @@ namespace JudoClient.Communication
                 OnRencontreReceived(_client, rencontre);
             }
         }
-                
+
+        public void UpdateRencontreReceived(XElement element)
+        {
+            if (OnUpdateRencontreReceived != null)
+            {
+                OnUpdateRencontreReceived(_client, element);
+            }
+        }
 
         public delegate void OnUpdatePhasesHandler(object sender, XElement xelements);
         public event OnUpdatePhasesHandler OnUpdatePhases;

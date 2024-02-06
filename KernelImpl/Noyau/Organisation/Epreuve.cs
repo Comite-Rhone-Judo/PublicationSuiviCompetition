@@ -13,7 +13,7 @@ namespace KernelImpl.Noyau.Organisation
     /// </summary>
     public class Epreuve
     {
-        
+
         public int id { get; set; }
         public string nom { get; set; }
         public System.DateTime debut { get; set; }
@@ -57,12 +57,12 @@ namespace KernelImpl.Noyau.Organisation
                     name += " " + xinfo.Attribute(ConstantXML.Epreuve_Sexe).Value;
                 }
             }
-            
-            
+
+
             this.nom = name;
-                //(xinfo.Attribute(ConstantXML.Epreuve_CateAge_Nom) != null ? xinfo.Attribute(ConstantXML.Epreuve_CateAge_Nom).Value : "") + " " +
-                // (xinfo.Attribute(ConstantXML.Epreuve_CatePoids_Nom) != null ? xinfo.Attribute(ConstantXML.Epreuve_CatePoids_Nom).Value : "") + " " +
-                //xinfo.Attribute(ConstantXML.Epreuve_Sexe).Value;
+            //(xinfo.Attribute(ConstantXML.Epreuve_CateAge_Nom) != null ? xinfo.Attribute(ConstantXML.Epreuve_CateAge_Nom).Value : "") + " " +
+            // (xinfo.Attribute(ConstantXML.Epreuve_CatePoids_Nom) != null ? xinfo.Attribute(ConstantXML.Epreuve_CatePoids_Nom).Value : "") + " " +
+            //xinfo.Attribute(ConstantXML.Epreuve_Sexe).Value;
             this.remoteID = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Epreuve_RemoteID));
             this.categoriePoids = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Epreuve_Categorie_Poids));
             this.competition = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Epreuve_Competition));
@@ -101,7 +101,7 @@ namespace KernelImpl.Noyau.Organisation
                 Categories.CategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == categorieAge);
                 if (cateAge != null)
                 {
-                    xepreuve.SetAttributeValue(ConstantXML.Epreuve_CateAge_Nom, cateAge.nom);                    
+                    xepreuve.SetAttributeValue(ConstantXML.Epreuve_CateAge_Nom, cateAge.nom);
                     xepreuve.SetAttributeValue(ConstantXML.Epreuve_CateAge_RemoteId, cateAge.remoteId);
                 }
             }
@@ -112,7 +112,7 @@ namespace KernelImpl.Noyau.Organisation
                 Categories.CategoriePoids catePoids = DC.Categories.CPoids.FirstOrDefault(o => o.id == categoriePoids);
                 if (catePoids != null)
                 {
-                    xepreuve.SetAttributeValue(ConstantXML.Epreuve_CatePoids_Nom, catePoids.nom);                    
+                    xepreuve.SetAttributeValue(ConstantXML.Epreuve_CatePoids_Nom, catePoids.nom);
                     xepreuve.SetAttributeValue(ConstantXML.Epreuve_CatePoids_RemoteId, catePoids.remoteId);
                 }
             }
@@ -125,7 +125,7 @@ namespace KernelImpl.Noyau.Organisation
             //Competition compet = competitions.FirstOrDefault(o => o.id == competition);
 
             return this.nom; //+ " " + (this.sexe == 0 ? "M" : "F");// cateages.FirstOrDefault(o => o.id == this.categorieAge).nom + " " +
-                //(this.sexe == 0 ? "M" : "F") + (compet != null ? (" (" + compet.nom + ")") : "");
+                             //(this.sexe == 0 ? "M" : "F") + (compet != null ? (" (" + compet.nom + ")") : "");
         }
 
         public string ToString(ICollection<Competition> competitions)

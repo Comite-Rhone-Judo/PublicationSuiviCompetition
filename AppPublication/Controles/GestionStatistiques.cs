@@ -1,10 +1,6 @@
-﻿using System;
+﻿using AppPublication.Statistiques;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tools.Outils;
-using AppPublication.Statistiques;
 
 namespace AppPublication.Controles
 {
@@ -32,10 +28,10 @@ namespace AppPublication.Controles
         #region CONSTRUCTEURS
         public GestionStatistiques()
         {
-            Dictionary < CompteurGenerationEnum, StatistiqueItem > cpt = new Dictionary<CompteurGenerationEnum, StatistiqueItem>();
-            cpt.Add(CompteurGenerationEnum.TempsGeneration, new StatistiqueItemMoyenneur("TempsGeneration","Durée de génération (Sec.)"));
+            Dictionary<CompteurGenerationEnum, StatistiqueItem> cpt = new Dictionary<CompteurGenerationEnum, StatistiqueItem>();
+            cpt.Add(CompteurGenerationEnum.TempsGeneration, new StatistiqueItemMoyenneur("TempsGeneration", "Durée de génération (Sec.)"));
             cpt.Add(CompteurGenerationEnum.DelaiGeneration, new StatistiqueItemMoyenneur("DelaiGeneration", "Délai entre génération (Sec.)"));
-            cpt.Add(CompteurGenerationEnum.NbGeneration, new StatistiqueItemCompteur("NbGeneration","Nb de génération"));
+            cpt.Add(CompteurGenerationEnum.NbGeneration, new StatistiqueItemCompteur("NbGeneration", "Nb de génération"));
             cpt.Add(CompteurGenerationEnum.NbErreurGeneration, new StatistiqueItemCompteur("NbErreurGeneration", "Nb d'erreur de génération"));
             CompteursGeneration = cpt;
 
@@ -86,7 +82,7 @@ namespace AppPublication.Controles
             }
         }
 
-        private Dictionary<CompteurSynchronisationEnum, StatistiqueItem> _compteursSynchronisationDifference = null; 
+        private Dictionary<CompteurSynchronisationEnum, StatistiqueItem> _compteursSynchronisationDifference = null;
         public Dictionary<CompteurSynchronisationEnum, StatistiqueItem> CompteursSynchronisationDifference
         {
             get
@@ -109,7 +105,8 @@ namespace AppPublication.Controles
             item.EnregistrerValeur();
         }
 
-        public void EnregistrerGeneration(float duree) {
+        public void EnregistrerGeneration(float duree)
+        {
 
             StatistiqueItem item = _compteursGeneration[CompteurGenerationEnum.NbGeneration];
             item.EnregistrerValeur();

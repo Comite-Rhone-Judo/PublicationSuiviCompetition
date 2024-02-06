@@ -11,10 +11,11 @@ namespace AppPublication.Tools.Converter
         {
             string output = "Valeur Inconnue";
             if (value != null)
-            {   
+            {
                 Enum.BusyStatusEnum status = (Enum.BusyStatusEnum)value;
 
-                switch (status) {
+                switch (status)
+                {
                     case Enum.BusyStatusEnum.InitDonneesNone:
                         {
                             output = "Valeur Inconnue";

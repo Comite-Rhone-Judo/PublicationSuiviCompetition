@@ -37,7 +37,7 @@ namespace KernelImpl.Noyau.Arbitrage
                         _commissaires.Remove(p);
                     }
                     _commissaires.Add(commissaire);
-                }               
+                }
             }
         }
 
@@ -60,7 +60,7 @@ namespace KernelImpl.Noyau.Arbitrage
                         _arbitres.Remove(p);
                     }
                     _arbitres.Add(arbitre);
-                }              
+                }
             }
         }
 
@@ -83,7 +83,7 @@ namespace KernelImpl.Noyau.Arbitrage
                         _delegues.Remove(p);
                     }
                     _delegues.Add(delegue);
-                }              
+                }
             }
         }
     }
