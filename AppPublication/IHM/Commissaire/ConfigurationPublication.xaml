@@ -34,7 +34,7 @@
         <StackPanel Grid.Row="0" Grid.Column="0" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
             <TextBlock Text="Publication" Style="{StaticResource Header1TextStyle}"/>
         </StackPanel>
-        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" BorderBrush="White" Margin="10 0 10 10">
+        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" BorderBrush="White" Margin="10 0 10 10" Width="400" Height="175">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
@@ -90,7 +90,7 @@
         <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
             <TextBlock Text="Génération" Style="{StaticResource Header1TextStyle}"/>
         </StackPanel>
-        <Border BorderThickness="1" Grid.Row="1" Grid.Column="1" BorderBrush="White" Margin="10 0 10 10">
+        <Border BorderThickness="1" Grid.Row="1" Grid.Column="1" BorderBrush="White" Margin="10 0 10 10" Width="350" Height="175">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -122,9 +122,9 @@
                     <Label  HorizontalAlignment="Right" Content="Sélection du logo:" Style="{StaticResource LabelStyle}" />
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Logo a afficher dans le bandeau d'entête du site"/>
                 </StackPanel>
-                <telerik:RadComboBox Grid.Column="0" Grid.Row="3" ItemsSource="{Binding FichiersLogo}" Height="20" DisplayMemberPath="Item1" Name="LogoList" Margin="10 0 0 0" IsSynchronizedWithCurrentItem="True" SelectedItem="{Binding SelectedLogo}"/>
-                <Border Grid.Column="1" Grid.Row="2" Grid.RowSpan="2" Background="LightGray" Width="100">
-                    <Image  Source="{Binding ElementName=LogoList, Path=SelectedItem.Item2}" Width="100" />
+                <telerik:RadComboBox Grid.Column="0" Grid.Row="3" ItemsSource="{Binding FichiersLogo}" Height="20" DisplayMemberPath="Name" Name="LogoList" Margin="10 0 0 0" IsSynchronizedWithCurrentItem="True" SelectedItem="{Binding SelectedLogo}"/>
+                <Border Grid.Column="1" Grid.Row="2" Grid.RowSpan="2" Background="LightGray" Width="120">
+                    <Image  Source="{Binding ElementName=LogoList, Path=SelectedItem.FullName}" Width="120" />
                 </Border>
             </Grid>
         </Border>

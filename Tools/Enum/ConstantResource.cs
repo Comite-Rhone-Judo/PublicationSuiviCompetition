@@ -26,6 +26,7 @@ namespace Tools.Enum
         public static readonly string Export_site_js = ConstantResource.Export + "js.";
         public static readonly string Export_Diplome = ConstantResource.Export + "img.fond.";
         public static readonly string Export_Icon = ConstantResource.Export + "img.icon.";
+        public static readonly string Export_DefaultLogo = "logo-France-Judo.png";
 
         public static readonly string Media = ResourcesTools.GetAssembyName() + ".data.media.";
         public static readonly string Media_Son = ConstantResource.Media + "son.";

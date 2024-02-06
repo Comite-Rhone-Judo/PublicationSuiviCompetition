@@ -1,4 +1,5 @@
 ﻿using System.Web.UI.WebControls;
+using Tools.Enum;
 
 namespace Tools.Export
 {
@@ -12,7 +13,7 @@ namespace Tools.Export
             DelaiActualisationClientSec = delAC;
             NbProchainsCombats = nbPC;
             MsgProchainCombats = pMsg;
-            Logo = string.IsNullOrEmpty(pLogo) ? "logo-France-Judo.png" : pLogo;
+            Logo = string.IsNullOrEmpty(pLogo) ? ConstantResource.Export_DefaultLogo : pLogo;
         }
 
         public bool PublierProchainsCombats = false;
@@ -20,6 +21,6 @@ namespace Tools.Export
         public long DelaiActualisationClientSec = 30;
         public int NbProchainsCombats = 6;
         public string MsgProchainCombats = string.Empty;
-        public string Logo = "logo-France-Judo.png";
+        public string Logo = ConstantResource.Export_DefaultLogo;
     }
 }

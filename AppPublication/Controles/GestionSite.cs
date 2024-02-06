@@ -67,8 +67,8 @@ namespace AppPublication.Controles
 
         #region PROPRIETES
         
-        ObservableCollection<Tuple<string, string>> _fichiersLogo = new ObservableCollection<Tuple<string,string>>();   
-        public ObservableCollection<Tuple<string, string>> FichiersLogo
+        ObservableCollection<FilteredFileInfo> _fichiersLogo = new ObservableCollection<FilteredFileInfo>();   
+        public ObservableCollection<FilteredFileInfo> FichiersLogo
         {
             get {
                 return _fichiersLogo;
@@ -79,8 +79,8 @@ namespace AppPublication.Controles
             }
         }
 
-        Tuple<string, string> _selectedLogo = null;
-        public Tuple<string,string> SelectedLogo
+        FilteredFileInfo _selectedLogo = null;
+        public FilteredFileInfo SelectedLogo
         {
             get
             {
@@ -89,7 +89,7 @@ namespace AppPublication.Controles
             set
             {
                 _selectedLogo = value;
-                AppSettings.SaveSettings("SelectedLogo", _selectedLogo.Item1);
+                AppSettings.SaveSettings("SelectedLogo", _selectedLogo.Name);
                 NotifyPropertyChanged("SelectedLogo");
             }
         }
@@ -513,15 +513,10 @@ namespace AppPublication.Controles
             // Recupere le repertoire des images du site
             DirectoryInfo di = new DirectoryInfo(ConstantFile.ExportStyle_dir);
 
-            List<Tuple<string, string>> list = new List<Tuple<string, string>>();
-            IEnumerable<FileInfo> files = di.EnumerateFiles("*logo-*.png", SearchOption.TopDirectoryOnly);
-            foreach (FileInfo fi in files)
-            {
-                list.Add( new Tuple<string, string>(fi.Name.Replace(ConstantResource.Export_site_img, ""), fi.FullName));
-            }
+            IEnumerable<FilteredFileInfo> files = di.EnumerateFiles("*logo-*.png", SearchOption.TopDirectoryOnly).Select(o => new FilteredFileInfo(o)).OrderBy(o => o.Name);
 
             // Liste les fichiers logos
-            FichiersLogo = new ObservableCollection<Tuple<string, string>>(list);
+            FichiersLogo = new ObservableCollection<FilteredFileInfo>(files);
         }
 
         /// <summary>
@@ -566,9 +561,9 @@ namespace AppPublication.Controles
                     valCache = AppSettings.ReadSettings("SelectedLogo");
                     if(valCache != null)
                     {
-                        foreach(Tuple<string, string> fl in FichiersLogo)
+                        foreach(FilteredFileInfo fl in FichiersLogo)
                         {
-                            if(fl.Item1 == valCache)
+                            if(fl.Name == valCache)
                             {
                                 SelectedLogo = fl;
                                 break;
@@ -878,7 +873,7 @@ namespace AppPublication.Controles
         private List<FileWithChecksum> Exporter(GenereSiteStruct genere)
         {
             List<FileWithChecksum> urls = new List<FileWithChecksum>();
-            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Item1 : string.Empty);
+            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty);
 
             try
             {
