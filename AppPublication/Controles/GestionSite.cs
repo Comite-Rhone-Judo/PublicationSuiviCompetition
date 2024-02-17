@@ -618,7 +618,7 @@ namespace AppPublication.Controles
         /// <returns></returns>
         private string CalculURLSiteDistant()
         {
-            string output = "URL indéfinie";
+            string output = "Indefinie";
 
             if (!String.IsNullOrEmpty(URLDistant))
             {
@@ -643,7 +643,7 @@ namespace AppPublication.Controles
         /// <returns></returns>
         private string CalculURLSiteLocal()
         {
-            string output = "URL indéfinie";
+            string output = "Indefinie";
 
             if (!String.IsNullOrEmpty(IdCompetition) && MiniSiteLocal.ServerHTTP != null && MiniSiteLocal.ServerHTTP.ListeningIpAddress != null && MiniSiteLocal.ServerHTTP.Port > 0)
             {

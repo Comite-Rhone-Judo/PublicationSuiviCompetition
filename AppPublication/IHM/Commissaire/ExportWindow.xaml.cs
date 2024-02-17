@@ -49,6 +49,9 @@ namespace AppPublication.IHM.Commissaire
             }*/
         }
 
+
+        
+        /*
         private void ButSite_Click_1(object sender, RoutedEventArgs e)
         {
             DialogControleur DC = DialogControleur.Instance;
@@ -71,6 +74,7 @@ namespace AppPublication.IHM.Commissaire
             }
             catch { }
         }
+        */
 
         private void MainWin_Closed_1(object sender, EventArgs e)
         {

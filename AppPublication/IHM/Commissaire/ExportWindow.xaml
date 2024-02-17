@@ -85,12 +85,24 @@
                         </Button.RenderTransform>
                     </telerik:RadButton>
 
-                    <telerik:RadButton Name="ButSite" Click="ButSite_Click_1" ToolTip="Avancement compétition" Style="{StaticResource RadButtonStyle1}"
-                                   Focusable="False" Tag="pack://application:,,,/Tools;component/data/images/icons/black/home-32.png" Margin="25 0 0 0">
+                    <telerik:RadButton Name="ButSite" ToolTip="Avancement compétition sur le site local" Style="{StaticResource RadButtonStyle1}"
+                                   Focusable="False" Tag="pack://application:,,,/Tools;component/data/images/icons/black/home-32.png" Margin="25 0 0 0"
+                                       Command="{Binding Path=CmdAfficherSiteLocal}">
                         <Button.RenderTransform>
                             <ScaleTransform ScaleX="1.0" ScaleY="1.0"></ScaleTransform>
                         </Button.RenderTransform>
                     </telerik:RadButton>
+
+                    <telerik:RadButton Name="ButSiteDistant" ToolTip="Avancement compétition sur le site distant" Style="{StaticResource RadButtonStyle1}"
+                                   Focusable="False" Tag="pack://application:,,,/Tools;component/data/images/icons/black/worldwide_location-32.png" Margin="10 0 0 0"
+                                   Command="{Binding Path=CmdAfficherSiteDistant}">
+                        <Button.RenderTransform>
+                            <ScaleTransform ScaleX="1.0" ScaleY="1.0"></ScaleTransform>
+                        </Button.RenderTransform>
+                    </telerik:RadButton>
+
+
+                    
 
                     <telerik:RadButton ToolTip="Statistiques de fonctionnement" Style="{StaticResource RadButtonStyle1}"
                                    Focusable="False" Tag="pack://application:,,,/Tools;component/data/images/icons/black/statistics-32.png" Margin="25 0 0 0"

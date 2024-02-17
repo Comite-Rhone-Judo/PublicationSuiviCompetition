@@ -4,6 +4,8 @@ using System;
 using System.Windows;
 using System.Windows.Input;
 using Telerik.Windows.Controls;
+using Tools.Enum;
+using Tools.Export;
 using Tools.Outils;
 using Tools.Windows;
 
@@ -393,6 +395,94 @@ namespace AppPublication.Controles
                 return _cmdArreterGeneration;
             }
         }
+
+        /*private void ButSite_Click_1(object sender, RoutedEventArgs e)
+        {
+            DialogControleur DC = DialogControleur.Instance;
+            try
+            {
+                string url = "";
+                if (DialogControleur.Instance.GestionSite.MiniSiteLocal.IsLocal)
+                {
+                    url = ExportTools.GetURLSiteLocal(
+                         DialogControleur.Instance.GestionSite.MiniSiteLocal.ServerHTTP.ListeningIpAddress.ToString(),
+                         DialogControleur.Instance.GestionSite.MiniSiteLocal.ServerHTTP.Port,
+                         DialogControleur.Instance.ServerData.competition.remoteId);
+                }
+                else if (!DialogControleur.Instance.GestionSite.MiniSiteLocal.IsLocal && DialogControleur.Instance.GestionSite.MiniSiteLocal.SiteFTPDistant == NetworkTools.FTP_EJUDO_SUIVI_URL)
+                {
+                    url = ExportTools.GetURLSiteFTP(DialogControleur.Instance.ServerData.competition.remoteId);
+                }
+
+                System.Diagnostics.Process.Start(url);
+            }
+            catch { }
+        }*/
+
+        private ICommand _cmdAfficherSiteLocal = null;
+        /// <summary>
+        /// Commande d'affichage du site en local
+        /// </summary>
+        public ICommand CmdAfficherSiteLocal
+        {
+            get
+            {
+                if (_cmdAfficherSiteLocal == null)
+                {
+                    _cmdAfficherSiteLocal = new RelayCommand(
+                            o =>
+                            {
+                                if (GestionSite.MiniSiteLocal.IsLocal && GestionSite.MiniSiteLocal.IsActif)
+                                {
+                                    string url = GestionSite.URLLocalPublication;
+
+                                    if (Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
+                                    {
+                                        System.Diagnostics.Process.Start(url);
+                                    }
+                                }
+                            },
+                            o =>
+                            {
+                                return GestionSite.MiniSiteLocal.IsActif && GestionSite.MiniSiteLocal.IsLocal;
+                            });
+                }
+                return _cmdAfficherSiteLocal;
+            }
+        }
+
+        private ICommand _cmdAfficherSiteDistant = null;
+        /// <summary>
+        /// Commande d'affichage du site en local
+        /// </summary>
+        public ICommand CmdAfficherSiteDistant
+        {
+            get
+            {
+                if (_cmdAfficherSiteDistant == null)
+                {
+                    _cmdAfficherSiteDistant = new RelayCommand(
+                            o =>
+                            {
+                                if (!GestionSite.MiniSiteDistant.IsLocal)
+                                {
+                                    string url = GestionSite.URLDistantPublication;
+
+                                    if(Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
+                                    {
+                                        System.Diagnostics.Process.Start(url);
+                                    }
+                                }
+                            },
+                            o =>
+                            {
+                                return !GestionSite.MiniSiteDistant.IsLocal;
+                            });
+                }
+                return _cmdAfficherSiteDistant;
+            }
+        }
+
 
         private ICommand _cmdAfficherStatistiques = null;
         /// <summary>
