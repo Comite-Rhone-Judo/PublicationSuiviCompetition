@@ -191,7 +191,7 @@ namespace Tools.Export
                     result = "classement";
                     break;
                 case ExportEnum.Site_MenuProchainCombats:
-                    result = "prochains-combats";
+                    result = "prochains_combats";
                     break;
             }
 

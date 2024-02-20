@@ -1,5 +1,7 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Collections.Generic;
 
 namespace Tools.Outils
 {
@@ -24,6 +26,26 @@ namespace Tools.Outils
         public static Stream GetAssembyResource(string name)
         {
             return assembly.GetManifestResourceStream(name);
+        }
+
+        /// <summary>
+        /// Renvoit la premiere resource de l'assembly dont le nom contient contain
+        /// </summary>
+        /// <param name="contain"></param>
+        /// <returns></returns>
+        public static Stream SearchAssemblyResource(string contain)
+        {
+            Stream output = null;
+            string[] resList = GetAssembyResourceName();
+
+            List<string> filtered = resList.Where(o => o.Contains(contain)).ToList();
+
+            if(filtered.Count > 0)
+            {
+                output = GetAssembyResource(filtered.First());
+            }
+
+            return output;
         }
 
         /// <summary>

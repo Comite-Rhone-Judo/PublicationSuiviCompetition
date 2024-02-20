@@ -42,8 +42,8 @@
 				<a href="../common/se_prepare.html">
 					<xsl:attribute name="class">
 						<xsl:choose>
-							<xsl:when test="$selectedItem = 'se_prepare'">w3-bar-item w3-button navButton</xsl:when>
-							<xsl:otherwise>w3-bar-item w3-button navButton w3-indigo</xsl:otherwise>
+							<xsl:when test="$selectedItem = 'se_prepare'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
+							<xsl:otherwise>w3-bar-item w3-button navButton</xsl:otherwise>
 						</xsl:choose>
 					</xsl:attribute>
 					Se prépare
@@ -51,8 +51,8 @@
 				<a href="../common/prochains_combats.html">
 					<xsl:attribute name="class">
 						<xsl:choose>
-							<xsl:when test="$selectedItem = 'prochains_combats'">w3-bar-item w3-button navButton</xsl:when>
-							<xsl:otherwise>w3-bar-item w3-button navButton w3-indigo</xsl:otherwise>
+							<xsl:when test="$selectedItem = 'prochains_combats'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
+							<xsl:otherwise>w3-bar-item w3-button navButton</xsl:otherwise>
 						</xsl:choose>
 					</xsl:attribute>
 					Prochains combats
@@ -62,8 +62,8 @@
 				<a href="../common/affectation_tapis.html">
 					<xsl:attribute name="class">
 						<xsl:choose>
-							<xsl:when test="$selectedItem = 'affectations_tapis'">w3-bar-item w3-button navButton</xsl:when>
-							<xsl:otherwise>w3-bar-item w3-button navButton w3-indigo</xsl:otherwise>
+							<xsl:when test="$selectedItem = 'affectations_tapis'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
+							<xsl:otherwise>w3-bar-item w3-button navButton</xsl:otherwise>
 						</xsl:choose>
 					</xsl:attribute>
 					Affectations
@@ -72,17 +72,17 @@
 			<a href="../common/avancement.html">
 				<xsl:attribute name="class">
 					<xsl:choose>
-						<xsl:when test="$selectedItem = 'avancement'">w3-bar-item w3-button navButton</xsl:when>
-						<xsl:otherwise>w3-bar-item w3-button navButton w3-indigo</xsl:otherwise>
+						<xsl:when test="$selectedItem = 'avancement'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
+						<xsl:otherwise>w3-bar-item w3-button navButton</xsl:otherwise>
 					</xsl:choose>
 				</xsl:attribute>
 				Avancements
 			</a>
-			<a href="../common/classement.html">
+			<a href="../common/classement.html"> 
 				<xsl:attribute name="class">
 					<xsl:choose>
-						<xsl:when test="$selectedItem = 'classement'">w3-bar-item w3-button navButton</xsl:when>
-						<xsl:otherwise>w3-bar-item w3-button navButton w3-indigo</xsl:otherwise>
+						<xsl:when test="$selectedItem = 'classement'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
+						<xsl:otherwise>w3-bar-item w3-button navButton</xsl:otherwise>
 					</xsl:choose>
 				</xsl:attribute>
 				Classements

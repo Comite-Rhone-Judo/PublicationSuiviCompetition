@@ -4,6 +4,8 @@
 	<!ENTITY times "&#215;">
 ]>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<xsl:import href="entete.xslt"/>
+	
 	<xsl:output method="html" indent="yes" />
 	<xsl:param name="style"></xsl:param>
 	<xsl:param name="js"></xsl:param>
@@ -53,42 +55,14 @@
 			</title>
 		</head>
 		<body>
-			<!-- BANDEAU DE TITRE -->
-			<div class="w3-top tas-titre-app">
-				<div class="w3-cell-row w3-light-grey">
-					<button class="w3-cell w3-button w3-xlarge w3-cell-left" onclick="openElement('navigationPanel')">☰</button>
-					<div class="w3-cell w3-cell-middle w3-center">
-						<h3>Suivi compétition</h3>
-					</div>
-					<div class="w3-cell w3-cell-middle bandeau-titre">
-						<img class="img img-bandeau-titre">
-							<xsl:attribute name="src">
-								<xsl:value-of select="concat('../img/',$logo)"/>
-							</xsl:attribute>
-						</img>
-					</div>
-				</div>
-			</div>
-
-			<!-- PANNEAU DE NAVIGATION -->
-			<div class="w3-sidebar w3-bar-block w3-border-right w3-animate-left tas-navigation-panel" id="navigationPanel">
-				<button onclick="closeElement('navigationPanel')" class="w3-bar-item w3-large">Fermer &times;</button>
-				<button class="w3-bar-item w3-button navButton">
-					<input class="w3-check" type="checkbox" id="cbActualiser" onclick="toggleAutoRefresh(this);"/> Actualiser
-				</button>
-				<xsl:if test="$affProchainCombats">
-					<a class="w3-bar-item w3-button navButton" href="../common/se-prepare.html">Se prépare</a>
-					<a class="w3-bar-item w3-button navButton" href="../common/prochains-combats.html">Prochains combats</a>
-				</xsl:if>
-				<xsl:if test="$affAffectationTapis">
-					<a class="w3-bar-item w3-button navButton" href="../common/affectation_tapis.html">Affectations</a>
-				</xsl:if>
-				<a class="w3-bar-item w3-button navButton w3-indigo" href="../common/avancement.html">Avancements</a>
-				<a class="w3-bar-item w3-button navButton" href="../common/classement.html">Classements</a>
-			</div>
-
-			<!-- Div vide pour aligner le contenu avec le bandeau de titre de taille fixe -->
-			<div class="w3-container tas-filler-div">&nbsp;</div>
+			<!-- ENTETE -->
+			<xsl:call-template name="entete">
+				<xsl:with-param name="logo" select="$logo"/>
+				<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
+				<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
+				<xsl:with-param name="affActualiser" select="'True'"/>
+				<xsl:with-param name="selectedItem" select="'avancement'"/>
+			</xsl:call-template>
 
 			<!-- CONTENU -->
 			<!-- Nom de la competition + Catégorie -->

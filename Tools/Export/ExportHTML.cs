@@ -46,7 +46,8 @@ namespace Tools.Export
             XmlReader xsltReader = XmlReader.Create(resource, readerSettings);
 
             XslCompiledTransform xslt = new XslCompiledTransform();
-            xslt.Load(xsltReader, settings, null);
+            InAssemblyUrlResolver resolver = new InAssemblyUrlResolver();
+            xslt.Load(xsltReader, settings, resolver);
 
             // Create the FileStream.
             try

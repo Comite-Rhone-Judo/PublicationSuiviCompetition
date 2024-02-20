@@ -53,12 +53,12 @@
 		</head>
 		<body>
 			<!-- ENTETE -->
-			<xsl:call-template name="competition">
+			<xsl:call-template name="entete">
 				<xsl:with-param name="logo" select="$logo"/>
 				<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
 				<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
-				<xsl:with-param name="affActualiser" select="True"/>
-				<xsl:with-param name="selectedItem" select="affectations_tapis"/>
+				<xsl:with-param name="affActualiser" select="'True'"/>
+				<xsl:with-param name="selectedItem" select="'affectations_tapis'"/>
 			</xsl:call-template>
 			
 			<!-- CONTENU -->
