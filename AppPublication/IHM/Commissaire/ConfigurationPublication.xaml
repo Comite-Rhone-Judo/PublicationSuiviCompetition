@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AppPublication.IHM.Commissaire"
         mc:Ignorable="d"
-        Title="Configuration de la Publication" Height="340" Width="800" Background="Black">
+        Title="Configuration de la Publication" Height="380" Width="830" Background="Black">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -34,7 +34,7 @@
         <StackPanel Grid.Row="0" Grid.Column="0" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
             <TextBlock Text="Publication" Style="{StaticResource Header1TextStyle}"/>
         </StackPanel>
-        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" BorderBrush="White" Margin="10 0 10 10" Width="400" Height="175">
+        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" BorderBrush="White" Margin="10 0 10 10" Width="400" Height="180">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
@@ -90,13 +90,15 @@
         <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
             <TextBlock Text="Génération" Style="{StaticResource Header1TextStyle}"/>
         </StackPanel>
-        <Border BorderThickness="1" Grid.Row="1" Grid.Column="1" BorderBrush="White" Margin="10 0 10 10" Width="350" Height="175">
+        <Border BorderThickness="1" Grid.Row="1" Grid.Column="1" BorderBrush="White" Margin="10 0 10 10" Width="350" Height="220">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
@@ -126,6 +128,16 @@
                 <Border Grid.Column="1" Grid.Row="2" Grid.RowSpan="2" Background="LightGray" Width="120">
                     <Image  Source="{Binding ElementName=LogoList, Path=SelectedItem.FullName}" Width="120" />
                 </Border>
+                <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal">
+                    <Label HorizontalAlignment="Right" Content="Répertoire d'export:" Style="{StaticResource LabelStyle}" />
+                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Répertoire racine dans lequel les données du site sont générées et publiés"/>
+                </StackPanel>
+                <telerik:RadButton Grid.Row="4" Grid.Column="1" Width="95" Height="30" telerik:StyleManager.Theme="Expression_Dark" Command="{Binding CmdGetRepertoireRacine}">
+                    <WrapPanel Orientation="Horizontal">
+                        <Label Content="Sélectionner ..." Foreground="White"/>
+                    </WrapPanel>
+                </telerik:RadButton>
+                <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Height="20" Margin="5 5 5 5" Text = "{Binding Path=RepertoireRacine}" IsEnabled="False"/>
             </Grid>
         </Border>
 

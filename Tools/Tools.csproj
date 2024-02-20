@@ -140,6 +140,7 @@
     <Compile Include="Enum\TypeCSAEnum.cs" />
     <Compile Include="Export\ConfigurationExportSite.cs" />
     <Compile Include="Export\ExportHTML.cs" />
+    <Compile Include="Export\ExportSiteStructure.cs" />
     <Compile Include="Export\ExportTools.cs" />
     <Compile Include="HttpServerModule\Authentication\AuthenticationModule.cs" />
     <Compile Include="HttpServerModule\Authentication\BasicAuthentication.cs" />
@@ -1920,6 +1921,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Export\img\site\logo-France-Judo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Export\xslt\Site\entete.xslt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

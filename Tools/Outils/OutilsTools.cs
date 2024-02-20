@@ -231,6 +231,11 @@ namespace Tools.Outils
             return true;
         }
 
+        public static string GetExportSiteDir(string racine)
+        {
+            return Path.Combine(Path.Combine(racine, "FRANCE-JUDO"),"site");
+        }
+
         /// <summary>
         /// Répertoire des DATA
         /// </summary>

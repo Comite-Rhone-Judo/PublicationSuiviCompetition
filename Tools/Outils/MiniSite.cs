@@ -37,7 +37,7 @@ namespace Tools.Outils
         /// Constructeur
         /// </summary>
         /// <param name="local">Mode du minisite (local = true, distant = false)</param>
-        public MiniSite(bool local = false)
+        public MiniSite(bool local)
         {
             if (local)
             {

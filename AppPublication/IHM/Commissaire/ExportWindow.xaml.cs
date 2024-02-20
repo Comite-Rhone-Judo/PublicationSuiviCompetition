@@ -5,6 +5,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using Telerik.Windows.Controls;
 using Tools.Enum;
 using Tools.Export;
@@ -28,53 +29,6 @@ namespace AppPublication.IHM.Commissaire
             NetworkConnecte.DataContext = DialogControleur.Instance;
             NetworkNonConnecte.DataContext = DialogControleur.Instance;
         }
-
-        private void RadMenuItem_Click_1(object sender, Telerik.Windows.RadRoutedEventArgs e)
-        {
-
-            //QRCode1.Height = 500;
-            string directory = ExportTools.getDirectory(true, null, null);
-            using (FileStream fs = new FileStream(directory + "qrcode.png", FileMode.Create))
-            {
-                // Telerik.Windows.Media.Imaging.ExportExtensions.ExportToImage(QRCode1, fs, new PngBitmapEncoder());
-            }
-
-            /*byte[] document = ExportTools.ExportQrCode(QRCode1.Text);
-                //DialogControleur.DC.GestionSite.ServerHTTP.IpAddress.ToString(), DialogControleur.DC.GestionSite.ServerHTTP.Port);
-
-            if (document != null)
-            {
-                PdfViewer viewer = new PdfViewer(document);
-                viewer.Show();
-            }*/
-        }
-
-
-        
-        /*
-        private void ButSite_Click_1(object sender, RoutedEventArgs e)
-        {
-            DialogControleur DC = DialogControleur.Instance;
-            try
-            {
-                string url = "";
-                if (DialogControleur.Instance.GestionSite.MiniSiteLocal.IsLocal)
-                {
-                    url = ExportTools.GetURLSiteLocal(
-                         DialogControleur.Instance.GestionSite.MiniSiteLocal.ServerHTTP.ListeningIpAddress.ToString(),
-                         DialogControleur.Instance.GestionSite.MiniSiteLocal.ServerHTTP.Port,
-                         DialogControleur.Instance.ServerData.competition.remoteId);
-                }
-                else if (!DialogControleur.Instance.GestionSite.MiniSiteLocal.IsLocal && DialogControleur.Instance.GestionSite.MiniSiteLocal.SiteFTPDistant == NetworkTools.FTP_EJUDO_SUIVI_URL)
-                {
-                    url = ExportTools.GetURLSiteFTP(DialogControleur.Instance.ServerData.competition.remoteId);
-                }
-
-                System.Diagnostics.Process.Start(url);
-            }
-            catch { }
-        }
-        */
 
         private void MainWin_Closed_1(object sender, EventArgs e)
         {
@@ -102,7 +56,6 @@ namespace AppPublication.IHM.Commissaire
             }
         }
 
-
         private void BoutonFindServer_Click_1(object sender, EventArgs e)
         {
             (new RechercheServer()).ShowDialog();
@@ -110,6 +63,30 @@ namespace AppPublication.IHM.Commissaire
         #region PRIVATE
 
         #endregion
+
+        private void QRCodeLocalCopy_Click(object sender, RoutedEventArgs e)
+        {
+            string tmpFile = Path.GetTempFileName();
+            using (FileStream fs = new FileStream(tmpFile, FileMode.Create))
+            {
+                Telerik.Windows.Media.Imaging.ExportExtensions.ExportToImage(QRCodeLocal, fs, new PngBitmapEncoder());
+                fs.Close();
+            }
+            BitmapImage img = new BitmapImage(new Uri(tmpFile));
+            Clipboard.SetImage(img);
+        }
+
+        private void QRCodeDistantCopy_Click(object sender, RoutedEventArgs e)
+        {
+            string tmpFile = Path.GetTempFileName();
+            using (FileStream fs = new FileStream(tmpFile, FileMode.Create))
+            {
+                Telerik.Windows.Media.Imaging.ExportExtensions.ExportToImage(QRCodeLocal, fs, new PngBitmapEncoder());
+                fs.Close();
+            }
+            BitmapImage img = new BitmapImage(new Uri(tmpFile));
+            Clipboard.SetImage(img);
+        }
     }
 }
 

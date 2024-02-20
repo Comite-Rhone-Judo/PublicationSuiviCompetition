@@ -202,16 +202,13 @@ namespace Tools.Outils
             //LogTools.Trace("REPERTOIRE CREE " + directory, LogTools.Level.DEBUG);
         }
 
-
-
-
-
         /// <summary>
-        /// Création des répertoires nécessaires au fonctionnement de l'application
+        /// Création des répertoires nécessaires au fonctionnement de l'application (sauf l'export du site !!)
         /// </summary>
         /// 
         public static void InitDataDirectories()
         {
+
             string directory = ConstantFile.Export_dir;
 
             FileAndDirectTools.CreateDirectorie(ConstantFile.BD_dir);
@@ -221,9 +218,8 @@ namespace Tools.Outils
             FileAndDirectTools.CreateDirectorie(ConstantFile.ExportStyleSite_dir);
             FileAndDirectTools.CreateDirectorie(ConstantFile.ExportStyleIcon_dir);
             FileAndDirectTools.CreateDirectorie(ConstantFile.ExportStyleDiplome_dir);
+            FileAndDirectTools.CreateDirectorie(ConstantFile.ExportJudoTV); 
             FileAndDirectTools.CreateDirectorie(ConstantFile.DirectorySave);
-            FileAndDirectTools.CreateDirectorie(ConstantFile.ExportSite_dir);
-            FileAndDirectTools.CreateDirectorie(ConstantFile.ExportJudoTV);
             FileAndDirectTools.CreateDirectorie(ConstantFile.SaveCSDirectory);
             FileAndDirectTools.CreateDirectorie(ConstantFile.SavePeseeDirectory);
             FileAndDirectTools.CreateDirectorie(ConstantFile.SaveCOMDirectory);

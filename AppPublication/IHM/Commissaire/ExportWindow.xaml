@@ -228,17 +228,14 @@
                                                     <Binding Path="GestionSite.MiniSiteLocal.IsActif"  Mode="OneWay"/>
                                                 </MultiBinding>
                                             </telerik:RadBarcodeQR.Text>
-                                            <telerik:RadContextMenu.ContextMenu>
-                                                <telerik:RadContextMenu>
-                                                    <telerik:RadContextMenu.Items>
-                                                        <telerik:RadMenuItem   Margin="5 0" Click="RadMenuItem_Click_1" Header="Imprimer" >
-                                                        </telerik:RadMenuItem>
-                                                    </telerik:RadContextMenu.Items>
-                                                </telerik:RadContextMenu>
-                                            </telerik:RadContextMenu.ContextMenu>
                                         </telerik:RadBarcodeQR>
                                     </WrapPanel>
-                                    <TextBox HorizontalAlignment="Right" Text="{Binding ElementName=QRCodeLocal, Path=Text, Mode=OneWay}" VerticalAlignment="Center" FontSize="20" Margin="10" MinWidth="500" IsReadOnly="True"/>
+                                    <WrapPanel Orientation="Vertical" >
+                                        <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="10 0 0 0" Width="32" HorizontalAlignment="Left" Click="QRCodeLocalCopy_Click">
+                                             <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier le QRCode"/>
+                                        </telerik:RadButton>
+                                        <TextBox HorizontalAlignment="Right" Text="{Binding ElementName=QRCodeLocal, Path=Text, Mode=OneWay}" VerticalAlignment="Center" FontSize="20" Margin="10" MinWidth="500" IsReadOnly="True"/>
+                                    </WrapPanel>
                                 </WrapPanel>
                                 <StackPanel Orientation="Horizontal" >
                                     <StackPanel Orientation="Horizontal" >
@@ -312,21 +309,14 @@
                                                     <Binding Path="GestionSite.MiniSiteDistant.IsActif"  Mode="OneWay"/>
                                                 </MultiBinding>
                                             </telerik:RadBarcodeQR.Text>
-                                            <telerik:RadContextMenu.ContextMenu>
-                                                <telerik:RadContextMenu >
-                                                    <telerik:RadContextMenu.Items>
-                                                        <telerik:RadMenuItem   Margin="5 0" Click="RadMenuItem_Click_1" Header="Imprimer" >
-                                                        </telerik:RadMenuItem>
-                                                    </telerik:RadContextMenu.Items>
-                                                </telerik:RadContextMenu>
-                                            </telerik:RadContextMenu.ContextMenu>
                                         </telerik:RadBarcodeQR>
                                     </WrapPanel>
-                                    <TextBox HorizontalAlignment="Right" Text="{Binding ElementName=QRCodeDistant, Path=Text, Mode=OneWay}" VerticalAlignment="Center" FontSize="20" Margin="10" MinWidth="500" IsReadOnly="True" />
-
-                                    
-
-
+                                    <WrapPanel Orientation="Vertical" >
+                                        <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="10 0 0 0" Width="32" HorizontalAlignment="Left" Click="QRCodeDistantCopy_Click">
+                                            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier le QRCode"/>
+                                        </telerik:RadButton>
+                                        <TextBox HorizontalAlignment="Right" Text="{Binding ElementName=QRCodeDistant, Path=Text, Mode=OneWay}" VerticalAlignment="Center" FontSize="20" Margin="10" MinWidth="500" IsReadOnly="True" />
+                                    </WrapPanel>
                                 </WrapPanel>
                                 <StackPanel Orientation="Horizontal" >
                                     <StackPanel Orientation="Horizontal" >

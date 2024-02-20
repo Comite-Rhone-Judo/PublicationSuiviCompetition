@@ -17,6 +17,7 @@ namespace Tools.Outils
         private int _port = NetworkTools.PortSiteMin;
         private HttpServer.HttpServer _server = null;
         private bool _isStart = false;
+        private string _localRoolPath = string.Empty;
 
         public static ulong _sent_data = 0;
 
@@ -49,6 +50,21 @@ namespace Tools.Outils
             private set
             {
                 _isStart = value;
+            }
+        }
+
+        public string LocalRootPath
+        {
+            get
+            {
+                return _localRoolPath;
+            }
+            set
+            {
+                if (!String.IsNullOrWhiteSpace(value) && _localRoolPath != value)
+                {
+                    _localRoolPath = value;
+                }
             }
         }
 
@@ -109,11 +125,15 @@ namespace Tools.Outils
             {
                 if (!_isStart)
                 {
+                    // Verifie que l'on dispose bien du repertoire racine
+                    if(String.IsNullOrEmpty(LocalRootPath)) { 
+                        throw new ArgumentOutOfRangeException(nameof(LocalRootPath));
+                    }
+
                     _isStart = true;
                     CreateNewInstance();
                     _server = new HttpServer.HttpServer();
-                    _server.Add(new BasicFileImgModule());
-
+                    _server.Add(new BasicFileImgModule(LocalRootPath));
 
                     // Ecoute sur l'adresse specifiee, sur toutes sinon
                     IPAddress adr = (ListeningIpAddress != null) ? ListeningIpAddress : IPAddress.Any;
@@ -148,6 +168,13 @@ namespace Tools.Outils
 
     class BasicFileImgModule : HttpModule
     {
+        private string _rootPath = string.Empty;
+
+        public BasicFileImgModule(string rootPath)
+        {
+            _rootPath = rootPath;
+        }
+
         /// <summary>
         /// Method that process the URL
         /// </summary>
@@ -166,7 +193,8 @@ namespace Tools.Outils
 
             // Verifie si on a un espace dans l'URI: les + sont substitues par des ' ' dans les URLs
             s = s.Replace(" ", "+");
-            string filename = ConstantFile.ExportSite_dir + s.Replace("site/", "");
+            // string filename = ConstantFile.ExportSite_dir + s.Replace("site/", "");
+            string filename = Path.Combine(_rootPath, s);
 
             if (File.Exists(filename))
             {

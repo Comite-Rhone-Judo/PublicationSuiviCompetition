@@ -2,6 +2,7 @@
 using AppPublication.Tools;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using System.Xml.Linq;
 using Tools.Enum;
 using Tools.Export;
@@ -27,8 +29,9 @@ namespace AppPublication.Controles
         #region MEMBRES
         private CancellationTokenSource _tokenSource;   // Token pour la gestion de la thread de lecture
         private Task _taskGeneration = null;            // La tache de generation
-        private Task _taskNettoyage = null;            // La tache de nettoyage
+        private Task _taskNettoyage = null;             // La tache de nettoyage
         private GestionStatistiques _statMgr = null;
+        private ExportSiteStructure _structure;         // La structure d'export du site
 
         /// <summary>
         /// Structure interne pour gerer les parametres de generation du site
@@ -56,6 +59,9 @@ namespace AppPublication.Controles
 
                 // Initialise la configuration via le cache de fichier
                 InitCacheConfig();
+
+                // Initialise les repertoires d'export - Pas necessaire car en lisant les valeurs en cache le changement se fait a l'initialisation de la propriete
+                // FileAndDirectTools.InitExportSiteDirectories();
             }
             catch (Exception ex)
             {
@@ -66,7 +72,76 @@ namespace AppPublication.Controles
         #endregion
 
         #region PROPRIETES
-        
+
+        private ICommand _cmdGetRepertoireRacine;
+        public ICommand CmdGetRepertoireRacine
+        {
+            get
+            {
+                if (_cmdGetRepertoireRacine == null)
+                {
+                    _cmdGetRepertoireRacine = new RelayCommand(
+                            o =>
+                            {
+                                string output = string.Empty;
+
+                                OpenFileDialog dlg = new OpenFileDialog();
+                                dlg.ValidateNames = false;
+                                dlg.CheckFileExists = false;
+                                dlg.CheckPathExists = true;
+                                dlg.FileName = "Folder Selection";
+                                dlg.InitialDirectory = (string.IsNullOrEmpty(RepertoireRacine)) ? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) : RepertoireRacine;
+                                dlg.Multiselect = false;
+                                dlg.Title = "Selectionnez un répertoire ...";
+                                if (dlg.ShowDialog() == true)
+                                {
+                                    output = Path.GetDirectoryName(dlg.FileName);
+                                }
+                                RepertoireRacine = output;
+                            },
+                            o =>
+                            {
+                                // On ne peut modifier le repertoire racine que si tous les processus sont arretes
+                                return !MiniSiteDistant.IsActif && !MiniSiteLocal.IsActif && !IsGenerationActive;
+                            });
+                }
+                return _cmdGetRepertoireRacine;
+            }
+        }
+
+        private string _repertoireRacine;
+
+        public string RepertoireRacine
+        {
+            get
+            {
+                return _repertoireRacine;
+            }
+            set
+            {
+                if (value != _repertoireRacine)
+                {
+                    _repertoireRacine = value;
+                    NotifyPropertyChanged("RepertoireRacine");
+                    AppSettings.SaveSettings("RepertoireRacine", _repertoireRacine);
+
+                    // Met a jour la constante d'export
+                    // TODO Supprimer l'usage d'une constante globale
+                    string tmp = OutilsTools.GetExportSiteDir(_repertoireRacine);
+                    ConstantFile.ExportSite_dir = tmp;
+
+                    // Initialise la structure d'export
+                    _structure = new ExportSiteStructure(tmp, IdCompetition);
+
+                    // Met a jour les repertoires de l'application
+                    InitExportSiteStructure();
+
+                    // Initialise la racine du serveur Web local
+                    MiniSiteLocal.ServerHTTP.LocalRootPath = tmp;
+                }
+            }
+        }
+
         ObservableCollection<FilteredFileInfo> _fichiersLogo = new ObservableCollection<FilteredFileInfo>();   
         public ObservableCollection<FilteredFileInfo> FichiersLogo
         {
@@ -413,6 +488,10 @@ namespace AppPublication.Controles
 
                 // On en peut publier que en individuelle
                 CanPublierAffectation = DialogControleur.Instance.ServerData.competition.IsIndividuelle();
+
+                // Met a jour la structure d'export
+                _structure.IdCompetition = value;
+
             }
         }
 
@@ -500,13 +579,21 @@ namespace AppPublication.Controles
         {
             get
             {
-                return Path.Combine(ConstantFile.ExportSite_dir, ExportTools.getFileName(ExportEnum.Site_Checksum) + ConstantFile.ExtensionXML);
+                return Path.Combine(_structure.Racine, ExportTools.getFileName(ExportEnum.Site_Checksum) + ConstantFile.ExtensionXML);
             }
         }
 
         #endregion
 
         #region METHODES
+
+        /// <summary>
+        /// Assure l'initialisation de la structure du site
+        /// </summary>
+        private void InitExportSiteStructure()
+        {
+            FileAndDirectTools.CreateDirectorie(_structure.Racine);
+        }
 
         private void InitFichiersLogo()
         {
@@ -555,8 +642,11 @@ namespace AppPublication.Controles
                 valCache = AppSettings.ReadSettings("MsgProchainsCombats");
                 MsgProchainsCombats = (valCache == null) ? string.Empty : valCache;
 
+                valCache = AppSettings.ReadSettings("RepertoireRacine");
+                RepertoireRacine = (valCache == null) ? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) : valCache;
+
                 // Recherche le logo dans la liste
-                if(FichiersLogo.Count >= 1)
+                if (FichiersLogo.Count >= 1)
                 {
                     valCache = AppSettings.ReadSettings("SelectedLogo");
                     if(valCache != null)
@@ -737,7 +827,8 @@ namespace AppPublication.Controles
                                     // Si le site distant est actif, transfere la mise a jour
                                     if (MiniSiteDistant.IsActif)
                                     {
-                                        string localRoot = Path.Combine(ConstantFile.ExportSite_dir, DialogControleur.Instance.ServerData.competition.remoteId);
+                                        // string localRoot = Path.Combine(ConstantFile.ExportSite_dir, DialogControleur.Instance.ServerData.competition.remoteId);
+                                        string localRoot = _structure.RepertoireCompetition;
 
                                         // Le site distant sur lequel charger les fichiers selon si on isole ou pas
                                         StatExecution statSync = new StatExecution();
@@ -882,22 +973,22 @@ namespace AppPublication.Controles
                 switch (genere.type)
                 {
                     case SiteEnum.AllTapis:
-                        urls = ExportSite.GenereWebSiteAllTapis(DC, cfg);
+                        urls = ExportSite.GenereWebSiteAllTapis(DC, cfg, _structure);
                         break;
                     case SiteEnum.Classement:
-                        urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), cfg);
+                        urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), cfg, _structure);
                         break;
                     case SiteEnum.Index:
-                        urls = ExportSite.GenereWebSiteIndex(cfg);
+                        urls = ExportSite.GenereWebSiteIndex(cfg, _structure);
                         break;
                     case SiteEnum.Menu:
-                        urls = ExportSite.GenereWebSiteMenu(DC, cfg);
+                        urls = ExportSite.GenereWebSiteMenu(DC, cfg, _structure);
                         break;
                     case SiteEnum.Phase:
-                        urls = ExportSite.GenereWebSitePhase(DC, genere.phase, cfg);
+                        urls = ExportSite.GenereWebSitePhase(DC, genere.phase, cfg, _structure);
                         break;
                     case SiteEnum.AffectationTapis:
-                        urls = ExportSite.GenereWebSiteAffectation(DC, cfg);
+                        urls = ExportSite.GenereWebSiteAffectation(DC, cfg, _structure);
                         break;
                 }
             }
