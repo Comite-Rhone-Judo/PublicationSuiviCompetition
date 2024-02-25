@@ -4,7 +4,7 @@
 	<!ENTITY times "&#215;">
 ]>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:import href="entete.xslt"/>
+	<xsl:import href="Tools/Export/xslt/Site/entete.xslt"/>
 	
 	<xsl:output method="html" indent="yes"/>
 	<xsl:param name="style"/>
@@ -211,7 +211,7 @@
 
 		<a class="w3-button w3-panel w3-card w3-block w3-pale-yellow w3-large w3-round-large w3-padding-small">
 			<xsl:attribute name="href">
-				<xsl:text>..</xsl:text>
+				<xsl:text>../</xsl:text>
 				<xsl:value-of select="@directory"/>
 				<xsl:text>/classement_final</xsl:text>
 				<xsl:text>.html</xsl:text>
