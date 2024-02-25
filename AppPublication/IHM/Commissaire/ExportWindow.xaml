@@ -18,6 +18,8 @@
         </ResourceDictionary>
     </Window.Resources>
 
+    <ScrollViewer  ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" >
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
@@ -431,4 +433,5 @@
             </Grid>
         </telerik:RadBusyIndicator>
     </Grid>
+    </ScrollViewer>
 </Window>
