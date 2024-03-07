@@ -86,8 +86,7 @@
                     <CheckBox Style="{StaticResource CheckboxStyle}"
                         IsChecked="{Binding Path=PouleToujoursEnColonnes, Converter={StaticResource BoolNotConverter}}"
                         IsEnabled="{Binding Path=PouleEnColonnes, Mode=OneWay}"
-                        Margin="0 0 0 0"
-                              PresentationTraceSources.TraceLevel="High">
+                        Margin="0 0 0 0">
                     </CheckBox>
                     <Label HorizontalAlignment="Right" Content="taille max. de la poule:" Style="{StaticResource LabelStyle}"/>
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Taille minimale de la poule au dessus de laquelle la disposition est en diagonale."/>
