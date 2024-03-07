@@ -1,4 +1,5 @@
 ﻿using AppPublication.Controles;
+using AppPublication.Tools.Enum;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
 using KernelImpl.Noyau.Organisation;
@@ -66,6 +67,15 @@ namespace AppPublication.Export
                 string filename2 = ExportTools.getFileName(type2);
                 string fileSave2 = Path.Combine(directory2, filename2.Replace("/", "_"));
                 XsltArgumentList argsList2 = new XsltArgumentList();
+
+                // Calcul la disposition de la poule
+                int typePoule = (int)TypePouleEnum.Diagonale;
+                if (config.PouleEnColonnes)
+                {
+                    typePoule = (config.PouleToujoursEnColonnes) ? (int)TypePouleEnum.Colonnes : (int)TypePouleEnum.Auto;
+                }
+                argsList2.AddParam("typePoule", "", typePoule);
+                argsList2.AddParam("tailleMaxPouleColonne", "", config.TailleMaxPouleColonnes);
 
                 XmlDocument xmlResultat = ExportXML.CreateDocumentPhase(i_vue_epreuve, phase, DC);
                 ExportXML.AddPublicationInfo(ref xmlResultat, config);

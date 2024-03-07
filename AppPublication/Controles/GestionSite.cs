@@ -73,6 +73,51 @@ namespace AppPublication.Controles
 
         #region PROPRIETES
 
+        private bool _pouleEnColonnes;
+        public bool PouleEnColonnes
+        {
+            get
+            {
+                return _pouleEnColonnes;
+            }
+            set
+            {
+                _pouleEnColonnes = value;
+                AppSettings.SaveSettings("PouleEnColonnes", _pouleEnColonnes.ToString());
+                NotifyPropertyChanged("PouleEnColonnes");
+            }
+        }
+
+        private bool _pouleToujoursEnColonnes;
+        public bool PouleToujoursEnColonnes
+        {
+            get
+            {
+                return _pouleToujoursEnColonnes;
+            }
+            set
+            {
+                _pouleToujoursEnColonnes = value;
+                AppSettings.SaveSettings("PouleToujoursEnColonnes", _pouleToujoursEnColonnes.ToString());
+                NotifyPropertyChanged("PouleToujoursEnColonnes");
+            }
+        }
+
+        private int  _tailleMaxPouleColonnes;
+        public int TailleMaxPouleColonnes
+        {
+            get
+            {
+                return _tailleMaxPouleColonnes;
+            }
+            set
+            {
+                _tailleMaxPouleColonnes = value;
+                AppSettings.SaveSettings("TailleMaxPouleColonnes", _tailleMaxPouleColonnes.ToString());
+                NotifyPropertyChanged("TailleMaxPouleColonnes");
+            }
+        }
+
         private ICommand _cmdGetRepertoireRacine;
         public ICommand CmdGetRepertoireRacine
         {
@@ -489,6 +534,13 @@ namespace AppPublication.Controles
                 // On en peut publier que en individuelle
                 CanPublierAffectation = DialogControleur.Instance.ServerData.competition.IsIndividuelle();
 
+                // Si on est en Shiai, par defaut on met les poules en colonnes
+                if(DialogControleur.Instance.ServerData.competition.IsShiai())
+                {
+                    PouleEnColonnes = true;
+                    PouleToujoursEnColonnes = true;
+                }
+
                 // Met a jour la structure d'export
                 _structure.IdCompetition = value;
 
@@ -641,6 +693,15 @@ namespace AppPublication.Controles
 
                 valCache = AppSettings.ReadSettings("MsgProchainsCombats");
                 MsgProchainsCombats = (valCache == null) ? string.Empty : valCache;
+
+                valCache = AppSettings.ReadSettings("PouleEnColonnes");
+                PouleEnColonnes = (valCache == null) ? false : bool.Parse(valCache);
+
+                valCache = AppSettings.ReadSettings("PouleToujoursEnColonnes");
+                PouleToujoursEnColonnes = (valCache == null) ? false : bool.Parse(valCache);
+
+                valCache = AppSettings.ReadSettings("TailleMaxPouleColonnes");
+                TailleMaxPouleColonnes = (valCache == null) ? 5 : int.Parse(valCache);
 
                 valCache = AppSettings.ReadSettings("RepertoireRacine");
                 RepertoireRacine = (valCache == null) ? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) : valCache;
@@ -964,7 +1025,7 @@ namespace AppPublication.Controles
         private List<FileWithChecksum> Exporter(GenereSiteStruct genere)
         {
             List<FileWithChecksum> urls = new List<FileWithChecksum>();
-            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty);
+            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes);
 
             try
             {

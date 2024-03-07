@@ -153,6 +153,7 @@
     <Compile Include="Tools\Converter\RunningStatusConverter.cs" />
     <Compile Include="Tools\Converter\BoolNotConverter.cs" />
     <Compile Include="Tools\Converter\ClientConverter.cs" />
+    <Compile Include="Tools\Enum\TypePouleEnum.cs" />
     <Compile Include="Tools\Enum\BusyStatusEnum.cs" />
     <Compile Include="Tools\FileTools.cs" />
     <Compile Include="Tools\FilteredFileInfo.cs" />

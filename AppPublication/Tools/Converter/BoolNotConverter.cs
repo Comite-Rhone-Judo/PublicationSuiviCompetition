@@ -21,7 +21,14 @@ namespace AppPublication.Tools.Converter
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return null;
+            if (value is bool)
+            {
+                return !(bool)value;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
