@@ -57,7 +57,7 @@
                     <Label HorizontalAlignment="Right" Content="Profondeur chambre d'appel:" Style="{StaticResource LabelStyle}" Margin="50 0 0 0"/>
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Nombres de combats à afficher dans la chambre d'appel."/>
                 </StackPanel>
-                <telerik:RadNumericUpDown  Grid.Row="1" Grid.Column="1" IsEnabled="{Binding Path=PublierProchainsCombats, Mode=OneWay}" Value="{Binding NbProchainsCombats}" Width="100" Height="20" Minimum="1" Maximum="99" SmallChange="1" HideTrailingZeros="True" Margin="5 0 5 0">
+                <telerik:RadNumericUpDown  Grid.Row="1" Grid.Column="1" IsEnabled="{Binding Path=PublierProchainsCombats, Mode=OneWay}" Value="{Binding NbProchainsCombats}" Width="80" Height="20" Minimum="1" Maximum="99" SmallChange="1" HideTrailingZeros="True" Margin="5 0 5 0">
                 </telerik:RadNumericUpDown>
                 <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical" Margin="50 0 0 0">
                     <StackPanel Orientation="Horizontal" >
@@ -77,7 +77,7 @@
                     <Image Visibility="{Binding Path=CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}" Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0" ToolTip="Si cochée, provoque l'ajout du menu 'Affectations' qui liste les tapis assignées pour chaque catégories. Disponible uniquement en compétition Individuelle ou Shiai."/>
                 </StackPanel>
                 <StackPanel Grid.Row="4" Grid.Column="0"  Grid.ColumnSpan="2" Orientation="Horizontal">
-                    <CheckBox   Content="Poule en colonnes" Style="{StaticResource CheckboxStyle}"
+                    <CheckBox   Content="Afficher les Poules en colonnes" Style="{StaticResource CheckboxStyle}"
                                         IsChecked="{Binding Path=PouleEnColonnes}">
                     </CheckBox>
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, les poules seront affichées en colonnes selon les critères. Affichage en diagonale sinon."/>
@@ -88,10 +88,10 @@
                         IsEnabled="{Binding Path=PouleEnColonnes, Mode=OneWay}"
                         Margin="0 0 0 0">
                     </CheckBox>
-                    <Label HorizontalAlignment="Right" Content="taille max. de la poule:" Style="{StaticResource LabelStyle}"/>
+                    <Label HorizontalAlignment="Right" Content="taille max. poule en colonne:" Style="{StaticResource LabelStyle}"/>
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Taille minimale de la poule au dessus de laquelle la disposition est en diagonale."/>
                 </StackPanel>
-                <telerik:RadNumericUpDown  Grid.Row="5" Grid.Column="1" Value="{Binding TailleMaxPouleColonnes}" Width="100" Height="20" Minimum="2" Maximum="999" SmallChange="1" HideTrailingZeros="True" Margin="5 0 5 0">
+                <telerik:RadNumericUpDown  Grid.Row="5" Grid.Column="1" Value="{Binding TailleMaxPouleColonnes}" Width="80" Height="20" Minimum="2" Maximum="999" SmallChange="1" HideTrailingZeros="True" Margin="5 0 5 0">
                     <telerik:RadNumericUpDown.IsEnabled>
                         <MultiBinding Converter="{StaticResource BoolOperationConverter}" ConverterParameter="not_a_and_b"  Mode="OneWay">
                             <Binding Path="PouleToujoursEnColonnes" Mode="OneWay"/>
