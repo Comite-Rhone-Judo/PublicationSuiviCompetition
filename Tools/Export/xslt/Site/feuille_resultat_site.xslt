@@ -407,6 +407,7 @@
 						</xsl:if>
 						<xsl:if test="$participant1 != $participant2">
 							<td class="w3-center w3-border w3-border-black tas-poule-combat">
+								<!-- TODO que faire si le select comporte plus d'un combat (les resultats s'empilent dans la case) -->
 								<xsl:apply-templates
 									select="//combat[ @niveau = $niveauCombat and ((score[1][@judoka = $participant1] and score[2][@judoka = $participant2]) or (score[2][@judoka = $participant1] and score[1][@judoka = $participant2]))]">
 									<xsl:with-param name="participant1" select="$participant1"/>

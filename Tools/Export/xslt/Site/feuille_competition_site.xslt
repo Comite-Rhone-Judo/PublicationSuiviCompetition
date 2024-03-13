@@ -173,7 +173,7 @@
 			</xsl:for-each>
 		</xsl:variable>
 
-		<xsl:variable name="niveaumax">
+		<xsl:variable name="niveaumin">
 			<xsl:for-each
 				select="//combat[@repechage = $repechage and generate-id() = generate-id(key('combats', @niveau)[1]) and starts-with(@reference, $prefixRef)]">
 				<xsl:sort select="@niveau" data-type="number" order="ascending"/>
@@ -183,7 +183,7 @@
 			</xsl:for-each>
 		</xsl:variable>
 
-		<xsl:variable name="niveaumin">
+		<xsl:variable name="niveaumax">
 			<xsl:for-each
 				select="//combat[@repechage = $repechage and generate-id() = generate-id(key('combats', @niveau)[1]) and starts-with(@reference, $prefixRef)]">
 				<xsl:sort select="@niveau" data-type="number" order="descending"/>
@@ -195,14 +195,14 @@
 
 		<table>
 			<xsl:attribute name="class">
-				height:<xsl:choose>
+				<xsl:choose>
 					<xsl:when test="$repechage = 'true'">
 						tas-tableau-repechage-combat
 					</xsl:when>
 					<xsl:otherwise>
 						tas-tableau-combat
 					</xsl:otherwise>
-				</xsl:choose>px;
+				</xsl:choose>
 			</xsl:attribute>
 
 			<tbody>
@@ -396,12 +396,12 @@
 				<xsl:call-template name="contenuCombat">
 					<xsl:with-param name="combat" select="."/>
 					<xsl:with-param name="rowspan" select="$p"/>
-					<xsl:with-param name="niveaumax" select="$niveaumin"/>
+					<xsl:with-param name="niveaumax" select="$niveaumax"/>
 				</xsl:call-template>
 			</td>
 		
 			<!-- Affichage de la finale -->
-			<xsl:if test="$niveau = $niveaumax">
+			<xsl:if test="$niveau = $niveaumin">
 				<td>
 					<xsl:if test="($position - 1) mod $p = 0">
 						<xsl:attribute name="rowspan">
@@ -438,7 +438,7 @@
 				<xsl:call-template name="contenuCombatRepechage">
 					<xsl:with-param name="combat" select="."/>
 					<xsl:with-param name="rowspan" select="$p"/>
-					<xsl:with-param name="niveaumax" select="$niveaumin"/>
+					<xsl:with-param name="niveaumax" select="$niveaumax"/>
 					<xsl:with-param name="filler" select="$filler"/>
 					<xsl:with-param name="spacer" select="$spacer"/>
 					<xsl:with-param name="hcombat" select="$hcombat"/>
@@ -447,7 +447,7 @@
 			</td>
 
 			<!-- Affichage de la finale -->
-			<xsl:if test="$niveau = $niveaumax">
+			<xsl:if test="$niveau = $niveaumin">
 				<td>
 					<xsl:if test="($position - 1) mod $p = 0">
 						<xsl:attribute name="rowspan">
@@ -522,6 +522,7 @@
 					<xsl:with-param name="countNiveauPrev" select="$countNiveau"/>
 					<xsl:with-param name="niveauPrev" select="$niveau"/>
 					<xsl:with-param name="niveaumax" select="$niveaumax"/>
+					<xsl:with-param name="niveaumin" select="$niveaumin"/>
 					<xsl:with-param name="fillerPrev" select="$filler"/>
 					<xsl:with-param name="spacerPrev" select="$spacer"/>
 					<xsl:with-param name="hcombatPrev" select="$hcombat"/>
@@ -550,10 +551,26 @@
 		<xsl:variable name="comite2" select="//club[@ID = $club2]/@comite"/>
 		<xsl:variable name="ligue2" select="//club[@ID = $club2]/@ligue"/>
 
-		<!-- Taille dynamique de la div qui n'est pas dans le CSS rowspan * 100px + 6px -->
-		<xsl:variable name="hdiv" select="100 * $rowspan + 6"/>
-		<!-- Taille dynamique d'une ligne qui n'est pas dans le CSS rowspan * 25px -->
-		<xsl:variable name="htr" select="25 * $rowspan"/>
+		<!-- Taille dynamique de la div qui n'est pas dans le CSS rowspan * 106px -->
+		<xsl:variable name="hdiv" select="106 * $rowspan"/>
+		<!-- Taille dynamique d'une 1ere ligne qui n'est pas dans le CSS htr(0) = 25, htrn = 106 * (rowspan -1) / 2 -->
+		<xsl:variable name="htrext">
+			<xsl:choose>
+				<xsl:when test="$rowspan = 1">25</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="(106 * ($rowspan div 2)) div 2"/>
+				</xsl:otherwise>
+			</xsl:choose>			
+		</xsl:variable>
+		<!-- Taille dynamique d'une ligne qui n'est pas dans le CSS rowspan htr(0) = 25px, htrn = 106 * (rowspan -1) / 2 - sp / 2 -->
+		<xsl:variable name="htrint">
+			<xsl:choose>
+				<xsl:when test="$rowspan = 1">25</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$htrext - 3"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 
 		<!-- DIV Contenant l'affichage du combat -->
 		<!-- une case = 1 combat (div + table de 5 lignes) avec la ligne de jonction -->
@@ -562,7 +579,7 @@
 			<table>
 				<!-- Combattant 1-->
 				<tr>
-					<xsl:attribute name="style">height:<xsl:value-of select="$htr"/>px;</xsl:attribute>
+					<xsl:attribute name="style">height:<xsl:value-of select="$htrext"/>px;</xsl:attribute>
 
 					<!-- 1ere colonne vide necessaire pour fixer les hauteurs -->
 					<td></td>
@@ -578,7 +595,7 @@
 											<xsl:otherwise>w3-card w3-container w3-pale-yellow w3-border w3-right-align tas-combattant</xsl:otherwise>
 										</xsl:choose>
 									</xsl:attribute>
-									<!-- Nom du Judoka (complet au debut et en final, uniquement initial dans les combats -->
+									<!-- Nom du Judoka (complet au debut et en final, uniquement initial dans les combats suivants -->
 									<header class="w3-small">
 										<xsl:value-of select="$judoka1/@nom"/>
 										<xsl:text disable-output-escaping="yes">&#160;</xsl:text>
@@ -666,8 +683,10 @@
 										<footer class="w3-tiny">&nbsp;</footer>
 									</xsl:if>
 								</div>
-								<!-- Affiche le score vide -->
-								<xsl:call-template name="scoreVide"/>
+								<!-- Affiche le score vide sauf si 1er tour (pas de score en 1er tour) -->
+								<xsl:if test="$combat/@niveau != $niveaumax">
+									<xsl:call-template name="scoreVide"/>
+								</xsl:if>
 							</xsl:otherwise>
 						</xsl:choose>
 					</td>
@@ -675,7 +694,7 @@
 				</tr>
 				<!-- Vertical de groupement -->
 				<tr>
-					<xsl:attribute name="style">height:<xsl:value-of select="$htr"/>px;</xsl:attribute>
+					<xsl:attribute name="style">height:<xsl:value-of select="$htrint"/>px;</xsl:attribute>
 
 					<!-- 1ere colonne vide necessaire pour fixer les hauteurs -->
 					<td></td>
@@ -694,7 +713,7 @@
 				</tr>
 				<!-- Combattant 2-->
 				<tr>
-					<xsl:attribute name="style">height:<xsl:value-of select="$htr"/>px;</xsl:attribute>
+					<xsl:attribute name="style">height:<xsl:value-of select="$htrint"/>px;</xsl:attribute>
 
 					<!-- 1ere colonne vide necessaire pour fixer les hauteurs -->
 					<td></td>
@@ -807,7 +826,7 @@
 					</td>
 				</tr>
 				<tr>
-					<xsl:attribute name="style">height:<xsl:value-of select="$htr"/>px;</xsl:attribute>
+					<xsl:attribute name="style">height:<xsl:value-of select="$htrext"/>px;</xsl:attribute>
 
 					<td></td>
 					<td></td>
