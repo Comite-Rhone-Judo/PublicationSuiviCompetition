@@ -83,7 +83,7 @@
 				<xsl:with-param name="logo" select="$logo"/>
 				<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
 				<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
-				<xsl:with-param name="affActualiser" select="'True"/>
+				<xsl:with-param name="affActualiser" select="'True'"/>
 				<xsl:with-param name="selectedItem" select="$selectedItemName"/>
 			</xsl:call-template>
 

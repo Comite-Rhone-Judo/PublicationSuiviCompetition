@@ -31,7 +31,8 @@ namespace AppPublication.Controles
 
             InitControleur();
 
-            AppVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            // AppVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            AppVersion = OutilsTools.GetVersionApp();
         }
 
         #endregion

@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 // Les informations présentes dans ce fichier sont partagees et propagees dans tous les assemblys de la solution
 // En cas d'ajout d'un nouveau projet, il convient de modifier le fichier AssemblyInfos.cs pour retirer
@@ -14,9 +15,21 @@
 // Vous pouvez spécifier toutes les valeurs ou indiquer les numéros de build et de révision par défaut 
 // en utilisant '*', comme indiqué ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyFileVersion("1.2.0.0")]
-[assembly: AssemblyVersion("1.2.0.0")]
+[assembly: AssemblyFileVersion("1.2.1.0")]
+[assembly: AssemblyVersion("1.2.1.0")]
+[assembly: AssemblyVersionTest(2)]
 
 [assembly: AssemblyCompany("FRANCE JUDO - Fédération Française de Judo et Disciplines Associées - RHONE")]
 [assembly: AssemblyCopyright("Copyright © FRANCE JUDO RHONE 2023 - Tous droits réservés")]
 [assembly: AssemblyTrademark("FRANCE JUDO - RHONE METROPOLE LYON JUDO")]
+
+
+[AttributeUsage(AttributeTargets.Assembly)]
+internal class AssemblyVersionTest : Attribute
+{
+    public int Value { get; set; }
+    public AssemblyVersionTest(int valueTest)
+    {
+        Value = valueTest;
+    }
+}

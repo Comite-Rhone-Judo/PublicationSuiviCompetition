@@ -1915,7 +1915,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Export\xslt\Site\prochains-combats_site.xslt">
+    <EmbeddedResource Include="Export\xslt\Site\prochains_combats_site.xslt">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
