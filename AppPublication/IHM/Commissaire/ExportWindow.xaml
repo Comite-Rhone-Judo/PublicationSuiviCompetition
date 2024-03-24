@@ -33,7 +33,13 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <!-- TOOLBAR -->
-                <WrapPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Left" Margin="20 10 10 10">
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                
+                        <WrapPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Margin="20 10 10 10">
                     <Grid>
                         <telerik:RadButton Name="NetworkConnecte" ToolTip="Connecter au server" Grid.Column="0"
                                    Tag="pack://application:,,,/Tools;component/data/images/icons/black/high_connection-32.png"
@@ -114,7 +120,19 @@
                         </Button.RenderTransform>
                     </telerik:RadButton>
                 </WrapPanel>
-                <!-- PAGE CONTENT -->
+
+                        <WrapPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" Margin="20 10 10 10" HorizontalAlignment="Right">
+                            <telerik:RadButton ToolTip="Manuel" Style="{StaticResource RadButtonStyle1}"
+                                Focusable="False" Tag="pack://application:,,,/Tools;component/data/images/icons/black/book-32.png" Margin="25 0 20 0"
+                                Command="{Binding Path=CmdAfficherManuel}">
+                                <Button.RenderTransform>
+                                    <ScaleTransform ScaleX="1.0" ScaleY="1.0"></ScaleTransform>
+                                </Button.RenderTransform>
+                            </telerik:RadButton>
+                        </WrapPanel>
+                    </Grid>
+
+                    <!-- PAGE CONTENT -->
                 <Grid Grid.Row="1" Margin="10 -5 10 10">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>

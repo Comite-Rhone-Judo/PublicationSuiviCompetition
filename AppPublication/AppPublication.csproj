@@ -160,6 +160,7 @@
     <Compile Include="Tools\LectureFile\LectureStructures.cs" />
     <Compile Include="Tools\StatExecution.cs" />
     <Compile Include="Tools\StatusGenerationSite.cs" />
+    <Compile Include="Tools\StreamTool.cs" />
     <Compile Include="Tools\Struct\ExportStruct.cs" />
     <Page Include="IHM\Commissaire\ConfigurationPublication.xaml">
       <SubType>Designer</SubType>
@@ -223,6 +224,7 @@
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="AppPublication_TemporaryKey.pfx" />
+    <EmbeddedResource Include="Documentation\ManuelUtilisateur.pdf" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">

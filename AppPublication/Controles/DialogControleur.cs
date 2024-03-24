@@ -1,4 +1,5 @@
-﻿using AppPublication.Tools.Enum;
+﻿using AppPublication.Tools;
+using AppPublication.Tools.Enum;
 using KernelImpl;
 using System;
 using System.Windows;
@@ -19,6 +20,7 @@ namespace AppPublication.Controles
         #region MEMBRES
         private static DialogControleur _currentControleur = null;      // instance singletion
         private AppPublication.IHM.Commissaire.Statistiques _statWindow = null;
+        private PdfViewer _manuelViewer = null;
         private AppPublication.IHM.Commissaire.ConfigurationPublication _cfgWindow = null;
         #endregion
 
@@ -484,6 +486,39 @@ namespace AppPublication.Controles
             }
         }
 
+        private ICommand _cmdAfficherManuel = null;
+        public ICommand CmdAfficherManuel
+        {
+            get
+            {
+                if (_cmdAfficherManuel == null)
+                {
+                    _cmdAfficherManuel = new RelayCommand(
+                            o =>
+                            {
+                                if (_manuelViewer == null)
+                                {
+                                    System.IO.Stream manuelStream = ResourcesTools.GetAssembyResource("AppPublication.Documentation.ManuelUtilisateur.pdf", true);
+                                    if(manuelStream != null)
+                                    {
+                                        byte[] bytes = manuelStream.ReadAllBytes();
+                                        // Fenetre de visualisation du manuel utilisateur (sans impression)
+                                        _manuelViewer = new PdfViewer(bytes, "Manuel utilisateur", false, true);
+                                    }
+                                }
+                                if (_manuelViewer != null)
+                                {
+                                    _manuelViewer.Show();
+                                }
+                            },
+                            o =>
+                            {
+                                return true;
+                            });
+                }
+                return _cmdAfficherManuel;
+            }
+        }
 
         private ICommand _cmdAfficherStatistiques = null;
         /// <summary>

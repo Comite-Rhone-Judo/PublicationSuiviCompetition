@@ -8,6 +8,7 @@ namespace Tools.Outils
     public static class ResourcesTools
     {
         private static Assembly assembly = Assembly.GetExecutingAssembly();
+        private static Assembly appAssembly = Assembly.GetEntryAssembly();
 
         /// <summary>
         /// Renvoit le nom de l'assembly courrante
@@ -23,9 +24,9 @@ namespace Tools.Outils
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static Stream GetAssembyResource(string name)
+        public static Stream GetAssembyResource(string name, bool useApp = false)
         {
-            return assembly.GetManifestResourceStream(name);
+            return (useApp) ? appAssembly.GetManifestResourceStream(name) : assembly.GetManifestResourceStream(name);
         }
 
         /// <summary>
