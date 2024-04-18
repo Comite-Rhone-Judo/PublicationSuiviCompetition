@@ -1,4 +1,5 @@
 ﻿using AppPublication.Controles;
+using AppPublication.Tools.Enum;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
 using KernelImpl.Noyau.Organisation;
@@ -21,7 +22,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <param name="phase">la phase</param>
-        public static List<FileWithChecksum> GenereWebSitePhase(JudoData DC, Phase phase, ConfigurationExportSite config)
+        public static List<FileWithChecksum> GenereWebSitePhase(JudoData DC, Phase phase, ConfigurationExportSite config, ExportSiteStructure siteStruct)
         {
             List<string> urls = new List<string>();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
@@ -39,17 +40,15 @@ namespace AppPublication.Export
             //Epreuve epreuve = DC.Epreuve.FirstOrDefault(o => o.id == phase.epreuve);
             Competition compet = DC.Organisation.Competitions.FirstOrDefault(o => o.id == i_vue_epreuve.competition);
 
-            bool site = true;
             // Ne genere que les fichiers necessaires
             if (config.PublierProchainsCombats)
             {
                 // Genere les prochains combats pour une epreuve (istapis = epreuve) via feuille_matchs_site.xslt
                 ExportEnum type = ExportEnum.Site_FeuilleCombat;
 
-                string epreuve_nom = i_vue_epreuve != null ? (i_vue_epreuve.id + "_" + i_vue_epreuve.nom) : null;
-                string directory = ExportTools.getDirectory(site, epreuve_nom, null);
+                string directory = siteStruct.RepertoireEpreuve(i_vue_epreuve.id.ToString(), i_vue_epreuve.nom);
                 string filename = ExportTools.getFileName(type);
-                string fileSave = directory + "/" + filename.Replace("/", "_");
+                string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
                 XsltArgumentList argsList = new XsltArgumentList();
                 argsList.AddParam("istapis", "", "epreuve");
 
@@ -64,11 +63,19 @@ namespace AppPublication.Export
             if (phase.typePhase == (int)TypePhaseEnum.Poule)
             {
                 ExportEnum type2 = ExportEnum.Site_Poule_Resultat;
-                string epreuve_nom2 = i_vue_epreuve != null ? (i_vue_epreuve.id + "_" + i_vue_epreuve.nom) : null;
-                string directory2 = ExportTools.getDirectory(site, epreuve_nom2, null);
+                string directory2 = siteStruct.RepertoireEpreuve(i_vue_epreuve.id.ToString(), i_vue_epreuve.nom);
                 string filename2 = ExportTools.getFileName(type2);
-                string fileSave2 = directory2 + "/" + filename2.Replace("/", "_");
+                string fileSave2 = Path.Combine(directory2, filename2.Replace("/", "_"));
                 XsltArgumentList argsList2 = new XsltArgumentList();
+
+                // Calcul la disposition de la poule
+                int typePoule = (int)TypePouleEnum.Diagonale;
+                if (config.PouleEnColonnes)
+                {
+                    typePoule = (config.PouleToujoursEnColonnes) ? (int)TypePouleEnum.Colonnes : (int)TypePouleEnum.Auto;
+                }
+                argsList2.AddParam("typePoule", "", typePoule);
+                argsList2.AddParam("tailleMaxPouleColonne", "", config.TailleMaxPouleColonnes);
 
                 XmlDocument xmlResultat = ExportXML.CreateDocumentPhase(i_vue_epreuve, phase, DC);
                 ExportXML.AddPublicationInfo(ref xmlResultat, config);
@@ -81,10 +88,9 @@ namespace AppPublication.Export
             else if (phase.typePhase == (int)TypePhaseEnum.Tableau)
             {
                 ExportEnum type2 = ExportEnum.Site_Tableau_Competition;
-                string epreuve_nom2 = i_vue_epreuve != null ? (i_vue_epreuve.id + "_" + i_vue_epreuve.nom) : null;
-                string directory2 = ExportTools.getDirectory(site, epreuve_nom2, null);
+                string directory2 = siteStruct.RepertoireEpreuve(i_vue_epreuve.id.ToString(), i_vue_epreuve.nom);
                 string filename2 = ExportTools.getFileName(type2);
-                string fileSave2 = directory2 + "/" + filename2.Replace("/", "_");
+                string fileSave2 = Path.Combine(directory2, filename2.Replace("/", "_"));
                 XsltArgumentList argsList2 = new XsltArgumentList();
 
                 XmlDocument xmlResultat = ExportXML.CreateDocumentPhase(i_vue_epreuve, phase, DC);
@@ -109,16 +115,15 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <param name="epreuve"></param>
-        public static List<FileWithChecksum> GenereWebSiteClassement(JudoData DC, i_vue_epreuve_interface epreuve, ConfigurationExportSite config)
+        public static List<FileWithChecksum> GenereWebSiteClassement(JudoData DC, i_vue_epreuve_interface epreuve, ConfigurationExportSite config, ExportSiteStructure siteStruct)
         {
-            bool site = true;
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             ExportEnum type = ExportEnum.Site_ClassementFinal;
-            string epreuve_nom = epreuve != null ? (epreuve.id + "_" + epreuve.nom) : null;
-            string directory = ExportTools.getDirectory(site, epreuve_nom, null);
+            // string epreuve_nom = epreuve != null ? (epreuve.id + "_" + epreuve.nom) : null;
+            string directory = siteStruct.RepertoireEpreuve(epreuve.id.ToString(), epreuve.nom);
             string filename = ExportTools.getFileName(type);
-            string fileSave = directory + "/" + filename.Replace("/", "_");
+            string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
             XsltArgumentList argsList = new XsltArgumentList();
 
             XmlDocument xml = ExportXML.CreateDocumentEpreuve(DC, epreuve);
@@ -138,21 +143,16 @@ namespace AppPublication.Export
         /// Génére les premiers combats de tous les tapis
         /// </summary>
         /// <param name="DC"></param>
-        public static List<FileWithChecksum> GenereWebSiteAllTapis(JudoData DC, ConfigurationExportSite config)
+        public static List<FileWithChecksum> GenereWebSiteAllTapis(JudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct)
         {
-            bool site = true;
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             // Genere les prochains combats de tous les tapis, istapis = alltapis (Se Prepare)  => feuille_matchs_site.xslt
-
-            // TODO Voir pour mettre un parametre permettant de choisir le nombre de combats par tapis a afficher
-            // TODO Ajouter une option pour afficher les combats en attente ou pas
-
             ExportEnum type = ExportEnum.Site_FeuilleCombatTapis;
-            string directory = ExportTools.getDirectory(site, null, null);
+            string directory =  siteStruct.RepertoireCommon;
             // string filename = ExportTools.getFileName(type) + "All"; //ExportTools.getFileName(type) + "_tapis_" + "All";
             string filename = ExportTools.getFileName(type);
-            string fileSave = directory + "/" + filename.Replace("/", "_");
+            string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
             XsltArgumentList argsList = new XsltArgumentList();
             argsList.AddParam("istapis", "", "alltapis");
 
@@ -174,12 +174,12 @@ namespace AppPublication.Export
         /// Génére L'index
         /// </summary>
         /// <param name="DC"></param>
-        public static List<FileWithChecksum> GenereWebSiteIndex(ConfigurationExportSite config)
+        public static List<FileWithChecksum> GenereWebSiteIndex(ConfigurationExportSite config, ExportSiteStructure siteStruct)
         {
             List<string> urls = new List<string>();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
-            string directory = ExportTools.getDirectory(true, null, null);
+            string directory = siteStruct.RepertoireCommon;
             XDocument doc = new XDocument();
 
             XElement xcompetition = new XElement(ConstantXML.Competition);
@@ -194,24 +194,26 @@ namespace AppPublication.Export
             XslCompiledTransform xslt_index = new XslCompiledTransform();
             xslt_index.Load(xsltReader);
 
+            string indexfile = Path.Combine(directory, "index.html");
+
             // Create the FileStream.
-            using (FileStream fs = new FileStream(directory + @"\index.html", FileMode.Create))
+            using (FileStream fs = new FileStream(indexfile, FileMode.Create))
             {
                 xslt_index.Transform(doc.ToXmlDocument(), null, fs);
             }
             // No need to regenerate those files, they are usually static unless they are updated
             // urls = urls.Concat(ExportTools.ExportStyleAndJS(true)).ToList();
-            urls = urls.Concat(ExportTools.ExportStyleAndJS(true)).ToList();
+            urls = urls.Concat(ExportTools.ExportEmbeddedStyleAndJS(true, siteStruct)).ToList();
 
             // Debug.WriteLine(string.Format("GenereWebSiteIndex - ExportStyleAndJS {0}", urls.Count));
 
             // No need to regenerate those files, they are usually static unless they are updated
             // urls = urls.Concat(ExportTools.ExportImg(true)).ToList();
-            urls = urls.Concat(ExportTools.ExportImg(true)).ToList();
+            urls = urls.Concat(ExportTools.ExportEmbeddedImg(true, siteStruct)).ToList();
 
             // Debug.WriteLine(string.Format("GenereWebSiteIndex - ExportImg {0}", urls.Count));
 
-            urls.Add(directory + @"\index.html");
+            urls.Add(indexfile);
 
             output = urls.Select(o => new FileWithChecksum(o)).ToList();
 
@@ -224,22 +226,21 @@ namespace AppPublication.Export
         /// Génére le menu
         /// </summary>
         /// <param name="DC"></param>
-        public static List<FileWithChecksum> GenereWebSiteMenu(JudoData DC, ConfigurationExportSite config)
+        public static List<FileWithChecksum> GenereWebSiteMenu(JudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
-            bool site = true;
             ExportEnum type;
-            string directory = ExportTools.getDirectory(site, null, null);
+            string directory = siteStruct.RepertoireCommon;
 
-            XmlDocument docmenu = ExportXML.CreateDocumentMenu(DC);
+            XmlDocument docmenu = ExportXML.CreateDocumentMenu(DC, siteStruct);
             ExportXML.AddPublicationInfo(ref docmenu, config);
 
             // Genere le menu de d'avancement
             type = ExportEnum.Site_MenuAvancement;
             XsltArgumentList argsList = new XsltArgumentList();
             string filename = ExportTools.getFileName(type);
-            string fileSave = directory + "/" + filename.Replace("/", "_");
+            string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
             ExportHTML.ToHTMLSite(docmenu, type, fileSave, argsList);
             output.Add(new FileWithChecksum(fileSave + ".html"));
 
@@ -274,15 +275,14 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static List<FileWithChecksum> GenereWebSiteAffectation(JudoData DC, ConfigurationExportSite config)
+        public static List<FileWithChecksum> GenereWebSiteAffectation(JudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
-            bool site = true;
             ExportEnum type = ExportEnum.Site_AffectationTapis;
-            string directory = ExportTools.getDirectory(site, null, null);
+            string directory = siteStruct.RepertoireCommon;
             string filename = ExportTools.getFileName(type);
-            string fileSave = directory + "/" + filename.Replace("/", "_");
+            string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
             XsltArgumentList argsList = new XsltArgumentList();
 
             XmlDocument docAffectation = ExportXML.CreateDocumentAffectationTapis(DC);

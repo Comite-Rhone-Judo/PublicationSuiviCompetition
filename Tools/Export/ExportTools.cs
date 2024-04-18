@@ -19,6 +19,8 @@ namespace Tools.Export
         /// <param name="epreuve_nom"></param>
         /// <param name="competition_nom"></param>
         /// <returns></returns>
+        // TODO Remove plus utilise car utilise uniquement des constantes
+        /*
         public static string getDirectory(bool site, string epreuve_nom, string competition_nom)
         {
             string directory = "";
@@ -56,26 +58,7 @@ namespace Tools.Export
 
             return directory;
         }
-
-        /// <summary>
-        /// Retourne le repertoire des styles (css)
-        /// </summary>
-        /// <param name="site"></param>
-        /// <returns></returns>
-        public static string getStyleDirectory(bool site)
-        {
-            string directoryStyle = "";
-
-            if (site)
-            {
-                directoryStyle = ConstantFile.ExportStyleSite_dir;
-            }
-            else
-            {
-                directoryStyle = ConstantFile.ExportStyle_dir;
-            }
-            return directoryStyle;
-        }
+        */
 
         /// <summary>
         /// Retourne le nom d'un fichier d'export
@@ -184,7 +167,7 @@ namespace Tools.Export
                     break;
                 case ExportEnum.Site_FeuilleCombatTapis:
                     // result = "tapis_";
-                    result = "se-prepare";
+                    result = "se_prepare";
                     break;
                 case ExportEnum.Site_Poule_Resultat:
                     result = "poules_resultats";
@@ -208,7 +191,7 @@ namespace Tools.Export
                     result = "classement";
                     break;
                 case ExportEnum.Site_MenuProchainCombats:
-                    result = "prochains-combats";
+                    result = "prochains_combats";
                     break;
             }
 
@@ -224,30 +207,31 @@ namespace Tools.Export
         }
 
         /// <summary>
-        /// Genere une impage pour l'export (a partir de la bibliotheque de l'application)
+        /// Genere une image pour l'export (a partir de la bibliotheque de l'application)
         /// </summary>
         /// <param name="regenere"></param>
         /// <returns></returns>
-        public static List<string> ExportImg(bool regenere)
+        public static List<string> ExportEmbeddedImg(bool regenere, ExportSiteStructure structSite)
         {
             List<string> result = new List<string>();
+            string dir = structSite.RepertoireImg;
 
-            string directory = ExportTools.getDirectory(true, null, null).Replace("common", "");
+            // string directory = ExportTools.getDirectory(true, null, null).Replace("common", "");
 
             if (regenere)
             {
-                FileAndDirectTools.DeleteDirectory(directory + "img");
+                FileAndDirectTools.DeleteDirectory(dir);
             }
 
-            if (!Directory.Exists(directory + "img"))
+            if (!Directory.Exists(dir))
             {
-                FileAndDirectTools.CreateDirectorie(directory + "img");
+                FileAndDirectTools.CreateDirectorie(dir);
 
                 foreach (string s1 in ResourcesTools.GetAssembyResourceName())
                 {
                     if (s1.Contains(ConstantResource.Export_site_img))
                     {
-                        string fileName = directory + "img/" + s1.Replace(ConstantResource.Export_site_img, "");
+                        string fileName = Path.Combine(dir, s1.Replace(ConstantResource.Export_site_img, ""));
                         var resource = ResourcesTools.GetAssembyResource(s1);
 
                         FileAndDirectTools.NeedAccessFile(fileName);
@@ -280,28 +264,30 @@ namespace Tools.Export
         /// </summary>
         /// <param name="regenere"></param>
         /// <returns></returns>
-        public static List<string> ExportStyleAndJS(bool regenere)
+        public static List<string> ExportEmbeddedStyleAndJS(bool regenere, ExportSiteStructure structSite)
         {
             List<string> result = new List<string>();
+            string dirJs = structSite.RepertoireJs;
+            string dirStyle = structSite.RepertoireStyle;
 
-            string directory = ExportTools.getDirectory(true, null, null).Replace("common", "");
+            // string directory = ExportTools.getDirectory(true, null, null).Replace("common", "");
 
             if (regenere)
             {
-                FileAndDirectTools.DeleteDirectory(directory + "style");
-                FileAndDirectTools.DeleteDirectory(directory + "js");
+                FileAndDirectTools.DeleteDirectory(dirStyle);
+                FileAndDirectTools.DeleteDirectory(dirJs);
             }
 
 
-            if (!Directory.Exists(directory + "style"))
+            if (!Directory.Exists(dirStyle))
             {
-                FileAndDirectTools.CreateDirectorie(directory + "style");
+                FileAndDirectTools.CreateDirectorie(dirStyle);
 
                 foreach (string s1 in ResourcesTools.GetAssembyResourceName())
                 {
                     if (s1.Contains(ConstantResource.Export_site_style))
                     {
-                        string fileName = directory + "style/" + s1.Replace(ConstantResource.Export_site_style, "");
+                        string fileName = Path.Combine(dirStyle, s1.Replace(ConstantResource.Export_site_style, ""));
                         var resource = ResourcesTools.GetAssembyResource(s1);
 
                         FileAndDirectTools.NeedAccessFile(fileName);
@@ -325,15 +311,15 @@ namespace Tools.Export
                 }
             }
 
-            if (!Directory.Exists(directory + "js"))
+            if (!Directory.Exists(dirJs))
             {
-                FileAndDirectTools.CreateDirectorie(directory + "js");
+                FileAndDirectTools.CreateDirectorie(dirJs);
 
                 foreach (string s1 in ResourcesTools.GetAssembyResourceName())
                 {
                     if (s1.Contains(ConstantResource.Export_site_js))
                     {
-                        string fileName = directory + "js/" + s1.Replace(ConstantResource.Export_site_js, "");
+                        string fileName = Path.Combine(dirJs,  s1.Replace(ConstantResource.Export_site_js, ""));
 
                         var resource = ResourcesTools.GetAssembyResource(s1);
 
@@ -365,7 +351,7 @@ namespace Tools.Export
         /// Recupere la liste des fichiers js
         /// </summary>
         /// <returns></returns>
-        public static string getJS()
+        public static string getEmbeddedJS()
         {
             string result = "";
 
@@ -538,7 +524,7 @@ namespace Tools.Export
                     name = ConstantResource.Export_Site_res + "avancement";
                     break;
                 case ExportEnum.Site_MenuProchainCombats:
-                    name = ConstantResource.Export_Site_res + "prochains-combats";
+                    name = ConstantResource.Export_Site_res + "prochains_combats";
                     break;
                 default:
                     return "";
@@ -561,8 +547,8 @@ namespace Tools.Export
             result = "http://";
             result += ip;
             result += ":";
-            result += port.ToString();
-            result += "/site/";
+            result += port.ToString() + "/";
+            // result += "/site/";
             result += OutilsTools.TraiteChaine(OutilsTools.SubString(nom_compet, 0, 30));
             result += "/common/index.html";
 

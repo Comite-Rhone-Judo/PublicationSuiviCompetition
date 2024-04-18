@@ -4,6 +4,7 @@
 #define MyAppName "Publication Suivi Competition"
 #define MyAppPublisher "Comité du Rhone-Lyon Metropole Judo"
 #define MyAppExeName "AppPublication.exe"
+#define MyAppConfig MyAppExeName + ".config"
 #define InstallerName "PublicationSuiviCompetitionInstaller_v" + MyAppVersion
 
 ; ################# WARNING ##############
@@ -37,10 +38,13 @@ Name: "french"; MessagesFile: "compiler:Languages\French.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
+Name: "overrideConfig"; Description: "{cm:OverrideConfig}"; GroupDescription: "{cm:PreviousInstall}"; Flags: checkedonce
 
 [Files]
 Source: "..\..\..\AppPublication\bin\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\..\AppPublication\bin\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\..\AppPublication\bin\Release\*"; Excludes:"{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\..\AppPublication\bin\Release\{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
+Source: "..\..\..\AppPublication\bin\Release\{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion; Tasks: overrideConfig
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -53,6 +57,8 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 [CustomMessages]
 AppName=Publication Suivi Compétition
 LaunchProgram=Lancer le programme de publication du suivi de compétition
+OverrideConfig=Effacer la configuration existante
+PreviousInstall=Installation précédente
 
 [Registry]
 Root: HKCU32; \

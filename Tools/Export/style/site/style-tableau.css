@@ -1,5 +1,4 @@
 ﻿div.tas-panel-tableau-combat {
-    overflow: auto;
     overflow-x: scroll;
     white-space: nowrap;
 }

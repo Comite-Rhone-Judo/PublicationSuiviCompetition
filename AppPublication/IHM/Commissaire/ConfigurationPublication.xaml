@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AppPublication.IHM.Commissaire"
         mc:Ignorable="d"
-        Title="Configuration de la Publication" Height="340" Width="800" Background="Black">
+        Title="Configuration de la Publication" Height="400" Width="830" Background="Black">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -34,7 +34,7 @@
         <StackPanel Grid.Row="0" Grid.Column="0" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
             <TextBlock Text="Publication" Style="{StaticResource Header1TextStyle}"/>
         </StackPanel>
-        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" BorderBrush="White" Margin="10 0 10 10" Width="400" Height="175">
+        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" BorderBrush="White" Margin="10 0 10 10" Width="400" Height="240">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
@@ -46,24 +46,18 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
                     <CheckBox Content="Publier 'Prochains Combats'" Style="{StaticResource CheckboxStyle}"
-                                                        IsChecked="{Binding Path=PublierProchainsCombats}"
-                                                        IsEnabled="{Binding Path=IsGenerationActive, Converter={StaticResource BoolNotConverter}}"/>
+                                                        IsChecked="{Binding Path=PublierProchainsCombats}"/>
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0" ToolTip="Si cochée, provoque l'ajout des menus 'Prochains Combats' qui liste les combats à venir par catégories et 'Se Prépare' qui liste les prochains combats sur chaque tapis selon la profondeur de la chambre d'appel."/>
                 </StackPanel>
                 <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
                     <Label HorizontalAlignment="Right" Content="Profondeur chambre d'appel:" Style="{StaticResource LabelStyle}" Margin="50 0 0 0"/>
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Nombres de combats à afficher dans la chambre d'appel."/>
                 </StackPanel>
-                <telerik:RadNumericUpDown  Grid.Row="1" Grid.Column="1" Value="{Binding NbProchainsCombats}" Width="100" Height="20" Minimum="1" Maximum="99" SmallChange="1" HideTrailingZeros="True" Margin="5 0 5 0">
-                    <telerik:RadNumericUpDown.IsEnabled>
-                        <MultiBinding Converter="{StaticResource BoolOperationConverter}" ConverterParameter="not_a_and_b"  Mode="OneWay">
-                            <Binding Path="IsGenerationActive" Mode="OneWay"/>
-                            <Binding Path="PublierProchainsCombats" Mode="OneWay"/>
-                        </MultiBinding>
-                    </telerik:RadNumericUpDown.IsEnabled>
+                <telerik:RadNumericUpDown  Grid.Row="1" Grid.Column="1" IsEnabled="{Binding Path=PublierProchainsCombats, Mode=OneWay}" Value="{Binding NbProchainsCombats}" Width="80" Height="20" Minimum="1" Maximum="99" SmallChange="1" HideTrailingZeros="True" Margin="5 0 5 0">
                 </telerik:RadNumericUpDown>
                 <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical" Margin="50 0 0 0">
                     <StackPanel Orientation="Horizontal" >
@@ -77,12 +71,35 @@
                 <StackPanel Grid.Row="3" Grid.Column="0"  Grid.ColumnSpan="2" Orientation="Horizontal">
                     <CheckBox   Content="Publier 'Affectation tapis'" Style="{StaticResource CheckboxStyle}"
                                                         IsChecked="{Binding Path=PublierAffectationTapis}"
-                                                        IsEnabled="{Binding Path=IsGenerationActive, Converter={StaticResource BoolNotConverter}}"
                                                         Visibility="{Binding Path=CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}">
                     </CheckBox>
                     <!-- TODO Sync l'affichage de l'icone -->
                     <Image Visibility="{Binding Path=CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}" Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0" ToolTip="Si cochée, provoque l'ajout du menu 'Affectations' qui liste les tapis assignées pour chaque catégories. Disponible uniquement en compétition Individuelle ou Shiai."/>
                 </StackPanel>
+                <StackPanel Grid.Row="4" Grid.Column="0"  Grid.ColumnSpan="2" Orientation="Horizontal">
+                    <CheckBox   Content="Afficher les Poules en colonnes" Style="{StaticResource CheckboxStyle}"
+                                        IsChecked="{Binding Path=PouleEnColonnes}">
+                    </CheckBox>
+                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, les poules seront affichées en colonnes selon les critères. Affichage en diagonale sinon."/>
+                </StackPanel>
+                <StackPanel Grid.Row="5" Grid.Column="0" Orientation="Horizontal" Margin="50 -5 0 0">
+                    <CheckBox Style="{StaticResource CheckboxStyle}"
+                        IsChecked="{Binding Path=PouleToujoursEnColonnes, Converter={StaticResource BoolNotConverter}}"
+                        IsEnabled="{Binding Path=PouleEnColonnes, Mode=OneWay}"
+                        Margin="0 0 0 0">
+                    </CheckBox>
+                    <Label HorizontalAlignment="Right" Content="taille max. poule en colonne:" Style="{StaticResource LabelStyle}"/>
+                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Taille minimale de la poule au dessus de laquelle la disposition est en diagonale."/>
+                </StackPanel>
+                <telerik:RadNumericUpDown  Grid.Row="5" Grid.Column="1" Value="{Binding TailleMaxPouleColonnes}" Width="80" Height="20" Minimum="2" Maximum="999" SmallChange="1" HideTrailingZeros="True" Margin="5 0 5 0">
+                    <telerik:RadNumericUpDown.IsEnabled>
+                        <MultiBinding Converter="{StaticResource BoolOperationConverter}" ConverterParameter="not_a_and_b"  Mode="OneWay">
+                            <Binding Path="PouleToujoursEnColonnes" Mode="OneWay"/>
+                            <Binding Path="PouleEnColonnes" Mode="OneWay"/>
+                        </MultiBinding>
+                    </telerik:RadNumericUpDown.IsEnabled>
+                </telerik:RadNumericUpDown>
+
             </Grid>
         </Border>
 
@@ -90,7 +107,7 @@
         <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
             <TextBlock Text="Génération" Style="{StaticResource Header1TextStyle}"/>
         </StackPanel>
-        <Border BorderThickness="1" Grid.Row="1" Grid.Column="1" BorderBrush="White" Margin="10 0 10 10" Width="350" Height="175">
+        <Border BorderThickness="1" Grid.Row="1" Grid.Column="1" BorderBrush="White" Margin="10 0 10 10" Width="350" Height="240">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -101,22 +118,22 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
                     <Label HorizontalAlignment="Right" Content="Délai de génération:" Style="{StaticResource LabelStyle}" />
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en sec. entre 2 générations du site."/>
                 </StackPanel>
                 <telerik:RadNumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding DelaiGenerationSec}"
-                          Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="0 0 50 0"
-                          IsEnabled="{Binding Path=IsGenerationActive, Converter={StaticResource BoolNotConverter}}"/>
+                          Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="0 0 50 0"/>
 
                 <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
                     <Label  HorizontalAlignment="Right" Content="Actualisation client:" Style="{StaticResource LabelStyle}" />
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en sec. d'actualisation automatique du site coté client si l'utilisateur coche la case 'Actualiser'."/>
                 </StackPanel>
                 <telerik:RadNumericUpDown  Grid.Row="1" Grid.Column="1" Value="{Binding DelaiActualisationClientSec}"
-                            Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="0 0 50 0"
-                            IsEnabled="{Binding Path=IsGenerationActive, Converter={StaticResource BoolNotConverter}}"/>
+                            Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="0 0 50 0"/>
 
                 <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
                     <Label  HorizontalAlignment="Right" Content="Sélection du logo:" Style="{StaticResource LabelStyle}" />
@@ -126,6 +143,16 @@
                 <Border Grid.Column="1" Grid.Row="2" Grid.RowSpan="2" Background="LightGray" Width="120">
                     <Image  Source="{Binding ElementName=LogoList, Path=SelectedItem.FullName}" Width="120" />
                 </Border>
+                <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal">
+                    <Label HorizontalAlignment="Right" Content="Répertoire d'export:" Style="{StaticResource LabelStyle}" />
+                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Répertoire racine dans lequel les données du site sont générées et publiés"/>
+                </StackPanel>
+                <telerik:RadButton Grid.Row="4" Grid.Column="1" Width="95" Height="30" telerik:StyleManager.Theme="Expression_Dark" Command="{Binding CmdGetRepertoireRacine}">
+                    <WrapPanel Orientation="Horizontal">
+                        <Label Content="Sélectionner ..." Foreground="White"/>
+                    </WrapPanel>
+                </telerik:RadButton>
+                <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Height="20" Margin="5 5 5 5" Text = "{Binding Path=RepertoireRacine}" IsEnabled="False"/>
             </Grid>
         </Border>
 

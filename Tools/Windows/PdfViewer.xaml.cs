@@ -18,9 +18,24 @@ namespace Tools.Windows
     {
         private byte[] _document = null;
 
-        public PdfViewer(byte[] document)
+        public PdfViewer(byte[] document, string title = "", bool allowPrint = true, bool allowSave = true)
         {
             InitializeComponent();
+
+            if(!string.IsNullOrEmpty(title))
+            {
+                this.Header += " - " + title;
+            }
+
+            if(!allowPrint)
+            {
+                PDFButton.IsEnabled = false;
+            }
+
+            if(!allowSave)
+            {
+                SaveButton.IsEnabled = false;
+            }
 
             OutilsTools.ShowInTaskbar(this);
 

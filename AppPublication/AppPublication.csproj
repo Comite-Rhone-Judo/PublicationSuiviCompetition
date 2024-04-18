@@ -75,7 +75,7 @@
     <ManifestKeyFile>AppPublication_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>AppPublication.App</StartupObject>
@@ -89,6 +89,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -152,12 +153,14 @@
     <Compile Include="Tools\Converter\RunningStatusConverter.cs" />
     <Compile Include="Tools\Converter\BoolNotConverter.cs" />
     <Compile Include="Tools\Converter\ClientConverter.cs" />
+    <Compile Include="Tools\Enum\TypePouleEnum.cs" />
     <Compile Include="Tools\Enum\BusyStatusEnum.cs" />
     <Compile Include="Tools\FileTools.cs" />
     <Compile Include="Tools\FilteredFileInfo.cs" />
     <Compile Include="Tools\LectureFile\LectureStructures.cs" />
     <Compile Include="Tools\StatExecution.cs" />
     <Compile Include="Tools\StatusGenerationSite.cs" />
+    <Compile Include="Tools\StreamTool.cs" />
     <Compile Include="Tools\Struct\ExportStruct.cs" />
     <Page Include="IHM\Commissaire\ConfigurationPublication.xaml">
       <SubType>Designer</SubType>
@@ -221,6 +224,7 @@
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="AppPublication_TemporaryKey.pfx" />
+    <EmbeddedResource Include="Documentation\ManuelUtilisateur.pdf" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">

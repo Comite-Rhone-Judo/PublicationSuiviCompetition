@@ -231,6 +231,11 @@ namespace Tools.Outils
             return true;
         }
 
+        public static string GetExportSiteDir(string racine)
+        {
+            return Path.Combine(Path.Combine(racine, "FRANCE-JUDO"),"site");
+        }
+
         /// <summary>
         /// Répertoire des DATA
         /// </summary>
@@ -264,19 +269,27 @@ namespace Tools.Outils
         /// </summary>
         /// <returns>Version</returns>
 
-        public static Version GetVersionApp()
+        public static String GetVersionApp()
         {
             if (ApplicationDeployment.IsNetworkDeployed)
             {
-                return ApplicationDeployment.CurrentDeployment.CurrentVersion;
+                return ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
             }
             else
             {
                 System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-                return assembly.GetName().Version;
+
+                String version = assembly.GetName().Version.ToString();
+
+                var myAttr = Attribute.GetCustomAttribute(assembly, typeof(AssemblyVersionTest)) as AssemblyVersionTest;
+                if (myAttr.Value > 0)
+                {
+                    version += "_test" + myAttr.Value;
+                }
+
+                return version; // assembly.GetName().Version;
             }
         }
-
 
 
         /// <summary>

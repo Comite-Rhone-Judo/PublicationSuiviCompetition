@@ -249,7 +249,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static XmlDocument CreateDocumentMenu(JudoData DC)
+        public static XmlDocument CreateDocumentMenu(JudoData DC, ExportSiteStructure siteStructure)
         {
             XDocument doc = new XDocument();
             XElement xcompetitions = new XElement(ConstantXML.Competitions);
@@ -269,7 +269,7 @@ namespace AppPublication.Export
 
                 for (int i = 0; i <= competition.nbTapis; i++)
                 {
-                    string directory = ExportTools.getDirectory(true, null, null);
+                    string directory = siteStructure.RepertoireCommon;
 
                     XElement xtapis = new XElement(ConstantXML.Tapis);
                     xtapis.SetAttributeValue(ConstantXML.Tapis, i);
@@ -299,14 +299,10 @@ namespace AppPublication.Export
                         continue;
                     }
 
-                    //i_vue_epreuve ep = vepreuves.FirstOrDefault(o => o.id == epreuve.id);
-                    string epreuve_nom = ep != null ? (ep.id + "_" + ep.nom) : null;
-                    string directory = ExportTools.getDirectory(true, epreuve_nom, null);
-                    string directory2 = ExportTools.getDirectory(true, null, null).Replace("/common", "");
-                    int index = directory.IndexOf(@"\site\");
+                    string directory = siteStructure.RepertoireEpreuve(ep.id.ToString(), ep.nom, true);
 
                     XElement xepreuve = ep.ToXml(DC);
-                    xepreuve.SetAttributeValue(ConstantXML.Directory, directory.Replace(directory2, ""));
+                    xepreuve.SetAttributeValue(ConstantXML.Directory, directory);
                     xcompetition.Add(xepreuve);
 
                     XElement xphases = new XElement(ConstantXML.Phases);

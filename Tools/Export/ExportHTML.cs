@@ -13,7 +13,7 @@ namespace Tools.Export
         {
             //argsList.AddParam("style", "", ExportTools.getStyleDirectory(site: true));
 
-            argsList.AddParam("js", "", ExportTools.getJS());
+            argsList.AddParam("js", "", ExportTools.getEmbeddedJS());
             //argsList.AddParam("menu", "", ExportTools.getDirectory(true, null, null) + @"\menu.html");
 
             // Ces fichiers sont generes en parallele par le processus de generation, le fait de les appeler ici provoque des blocages
@@ -46,7 +46,8 @@ namespace Tools.Export
             XmlReader xsltReader = XmlReader.Create(resource, readerSettings);
 
             XslCompiledTransform xslt = new XslCompiledTransform();
-            xslt.Load(xsltReader, settings, null);
+            InAssemblyUrlResolver resolver = new InAssemblyUrlResolver();
+            xslt.Load(xsltReader, settings, resolver);
 
             // Create the FileStream.
             try

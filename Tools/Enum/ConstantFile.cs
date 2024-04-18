@@ -36,8 +36,10 @@ namespace Tools.Enum
         public static string DirectorySave = OutilsTools.GetDataDirectory();
         public static readonly string RecentFiles = OutilsTools.GetDataDirectory() + @"RecentFiles.txt";
 
-        public static string ExportSite_dir =
-            Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).Replace(@"\", "/") + @"/FRANCE-JUDO/site/";
+        // TODO Remplacer par une structure dynamique
+        public static string ExportSite_dir = OutilsTools.GetExportSiteDir(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).Replace(@"\", "/"));
+        // Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).Replace(@"\", "/") + @"/FRANCE-JUDO/site/";
+        
         public static string ExportJudoTV =
             Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments).Replace(@"\", "/") + @"/FRANCE-JUDO/JudoTV/";
 
