@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Publication>
+	<Comites>
+		<Comite nom="01-AIN" libelle="01 - Ain"/>
+		<Comite nom="02-AISNE" libelle="02 - Aisne"/>
+		<Comite nom="03-ALLIER" libelle="03 - Allier"/>
+		<Comite nom="04-ALPES_HTE_PRVCE" libelle="04 - Alpes de Haute Provence"/>
+		<Comite nom="05-HAUTES_ALPES" libelle="05 - Hautes Alpes"/>
+		<Comite nom="06-ALPES_MARITIMES" libelle="06 - Alpes Maritimes"/>
+		<Comite nom="08-ARDENNES" libelle="08 - Ardennes"/>
+		<Comite nom="09-ARIEGE" libelle="09 - Ariège"/>
+		<Comite nom="10-AUBE" libelle="10 - Aube"/>
+		<Comite nom="11-AUDE" libelle="11 - Aude"/>
+		<Comite nom="12-AVEYRON" libelle="12 - Aveyron"/>
+		<Comite nom="13-BOUCHES_DU_RHONE" libelle="13 - Bouches du Rhône"/>
+		<Comite nom="14-CALVADOS" libelle="14 - Calvados"/>
+		<Comite nom="15-CANTAL" libelle="15 - Cantal"/>
+		<Comite nom="16-CHARENTE" libelle="16 - Charente"/>
+		<Comite nom="17-CHARENTE_MARITIME" libelle="17 - Charente Maritime"/>
+		<Comite nom="18-CHER" libelle="18 - Cher"/>
+		<Comite nom="19-CORREZE" libelle="19 - Corrèze"/>
+		<Comite nom="20-CORSE" libelle="20 - Corse"/>
+		<Comite nom="21-COTE_D_OR" libelle="21 - Côte d'or"/>
+		<Comite nom="22-COTES_D_ARMOR" libelle="22 - Côtes d'armor"/>
+		<Comite nom="23-CREUSE" libelle="23 - Creuse"/>
+		<Comite nom="24-DORDOGNE" libelle="24 - Dordogne"/>
+		<Comite nom="25-DOUBS" libelle="25 - Doubs"/>
+		<Comite nom="27-EURE" libelle="27 - Eure"/>
+		<Comite nom="28-EURE_ET_LOIR" libelle="28 - Eure et Loir"/>
+		<Comite nom="29-FINISTERE" libelle="29 - Finistère"/>
+		<Comite nom="30-GARD" libelle="30 - Gard"/>
+		<Comite nom="31-HAUTE_GARONNE" libelle="31 - Haute Garonne"/>
+		<Comite nom="32-GERS" libelle="32 - Gers"/>
+		<Comite nom="33-GIRONDE" libelle="33 - Gironde"/>
+		<Comite nom="34-HERAULT" libelle="34 - Hérault"/>
+		<Comite nom="35-ILLE_ET_VILAINE" libelle="35 - Ille et Vilaine"/>
+		<Comite nom="36-INDRE" libelle="36 - Indre"/>
+		<Comite nom="37-INDRE_ET_LOIRE" libelle="37 - Indre et Loire"/>
+		<Comite nom="38-ISERE" libelle="38 - Isère"/>
+		<Comite nom="39-JURA" libelle="39 - Jura"/>
+		<Comite nom="40-LANDES" libelle="40 - Landes"/>
+		<Comite nom="41-LOIR_ET_CHER" libelle="41 - Loir et Cher"/>
+		<Comite nom="42-LOIRE" libelle="42 - Loire"/>
+		<Comite nom="43-HAUTE_LOIRE" libelle="43 - Haute Loire"/>
+		<Comite nom="44-LOIRE_ATLANTIQUE" libelle="44 - Loire Atlantique"/>
+		<Comite nom="45-LOIRET" libelle="45 - Loiret"/>
+		<Comite nom="46-LOT" libelle="46 - Lot"/>
+		<Comite nom="47-LOT_ET_GARONNE" libelle="47 - Lot et Garonne"/>
+		<Comite nom="48-LOZERE" libelle="48 - Lozère"/>
+		<Comite nom="49-MAINE_ET_LOIRE" libelle="49 - Maine et Loire"/>
+		<Comite nom="50-MANCHE" libelle="50 - Manche"/>
+		<Comite nom="51-MARNE" libelle="51 - Marne"/>
+		<Comite nom="52-HAUTE_MARNE" libelle="52 - Haute Marne"/>
+		<Comite nom="53-MAYENNE" libelle="53 - Mayenne"/>
+		<Comite nom="54-MEURTHE_MOSELLE" libelle="54 - Meurthe et Moselle"/>
+		<Comite nom="55-MEUSE" libelle="55 - Meuse"/>
+		<Comite nom="56-MORBIHAN" libelle="56 - Morbihan"/>
+		<Comite nom="57-MOSELLE" libelle="57 - Moselle"/>
+		<Comite nom="58-NIEVRE" libelle="58 - Nièvre"/>
+		<Comite nom="59-NORD" libelle="59 - Nord"/>
+		<Comite nom="60-OISE" libelle="60 - Oise"/>
+		<Comite nom="61-ORNE" libelle="61 - Orne"/>
+		<Comite nom="62-PAS_DE_CALAIS" libelle="62 - Pas de Calais"/>
+		<Comite nom="63-PUY_DE_DOME" libelle="63 - Puy de Dome"/>
+		<Comite nom="64-PYRENEES_ATLANTIQUES" libelle="64 - Pyrénées Atlantiques"/>
+		<Comite nom="65-HAUTES_PYRENEES" libelle="65 - Hautes Pyrénées"/>
+		<Comite nom="66-PYRENEES_ORIENT" libelle="66 - Pyrénées Orientales"/>
+		<Comite nom="67-BAS_RHIN" libelle="67 - Bas Rhin"/>
+		<Comite nom="68-HAUT_RHIN" libelle="68 - Haut Rhin"/>
+		<Comite nom="69-RHONE" libelle="69 - Rhône"/>
+		<Comite nom="70-HAUTE_SAONE" libelle="70 - Haute Saône"/>
+		<Comite nom="71-SAONE_ET_LOIRE" libelle="71 - Saône et Loire"/>
+		<Comite nom="72-SARTHE" libelle="72 - Sarthe"/>
+		<Comite nom="73-SAVOIE" libelle="73 - Savoie"/>
+		<Comite nom="74-HAUTE_SAVOIE" libelle="74 - Haute Savoie"/>
+		<Comite nom="75-COMITE_DE_PARIS" libelle="75 - Comité de Paris"/>
+		<Comite nom="76-SEINE_MARITIME" libelle="76 - Seine Maritime"/>
+		<Comite nom="77-SEINE_ET_MARNE" libelle="77 - Seine et Marne"/>
+		<Comite nom="78-YVELINES" libelle="78 - Yvelines"/>
+		<Comite nom="79-DEUX_SEVRES" libelle="79 - Deux Sèvres"/>
+		<Comite nom="80-SOMME" libelle="80 - Somme"/>
+		<Comite nom="81-TARN" libelle="81 - Tarn"/>
+		<Comite nom="82-TARN_ET_GARONNE" libelle="82 - Tarn et Garonne"/>
+		<Comite nom="83-VAR" libelle="83 - Var"/>
+		<Comite nom="84-VAUCLUSE" libelle="84 - Vaucluse"/>
+		<Comite nom="85-VENDEE" libelle="85 - Vendée"/>
+		<Comite nom="86-VIENNE" libelle="86 - Vienne"/>
+		<Comite nom="87-HAUTE_VIENNE" libelle="87 - Haute Vienne"/>
+		<Comite nom="88-VOSGES" libelle="88 - Vosges"/>
+		<Comite nom="89-YONNE" libelle="89 - Yonne"/>
+		<Comite nom="90-TERRITOIRE_BELFORT" libelle="90 - Territoire de Belfort"/>
+		<Comite nom="91-ESSONNE" libelle="91 - Essonne"/>
+		<Comite nom="92-HAUTS_SEINE" libelle="92 - Hautes Seine"/>
+		<Comite nom="93-SEINE_ST_DENIS" libelle="93 - Seine St Denis"/>
+		<Comite nom="94-VAL_DE_MARNE" libelle="94 - Val de Marne"/>
+		<Comite nom="95-VAL_D_OISE" libelle="95 - Val d'oise"/>
+		<Comite nom="976-MAYOTTE" libelle="976 - Mayotte"/>
+		<Comite nom="DA-DROME_ARDECHE" libelle="Da - Drôme Ardèche"/>
+	</Comites>
+	<Ligues>
+		<Ligue nom="AUVERGNE-RHONE-ALPES" libelle="Auvergne-Rhône-Alpes"/>
+		<Ligue nom="BOURGOGNE-FRANCHE-COMTE" libelle="Bourgogne-Franche-Comté"/>
+		<Ligue nom="BRETAGNE" libelle="Bretagne"/>
+		<Ligue nom="CENTRE-VAL-DE-LOIRE" libelle="Centre-Val de Loire"/>
+		<Ligue nom="CORSE" libelle="Corse"/>
+		<Ligue nom="FEDERATION-FRANCAISE-AUTRES" libelle="Fédération Française Autres"/>
+		<Ligue nom="GRAND-EST" libelle="Grand Est"/>
+		<Ligue nom="GUADELOUPE" libelle="Guadeloupe"/>
+		<Ligue nom="GUYANE" libelle="Guyane"/>
+		<Ligue nom="HAUTS-DE-FRANCE" libelle="Hauts de France"/>
+		<Ligue nom="ILE-DE-FRANCE" libelle="Ile de France"/>
+		<Ligue nom="MARTINIQUE" libelle="Martinique"/>
+		<Ligue nom="NORMANDIE" libelle="Normandie"/>
+		<Ligue nom="NOUVELLE-AQUITAINE" libelle="Nouvelle Aquitaine"/>
+		<Ligue nom="NOUVELLE-CALEDONIE" libelle="Nouvelle Calédonie"/>
+		<Ligue nom="OCCITANIE" libelle="Occitanie"/>
+		<Ligue nom="PAYS-DE-LA-LOIRE" libelle="Pays de la Loire"/>
+		<Ligue nom="PROVENCE-ALPES-COTE-D-AZUR" libelle="Provence-Alpes-Côte d'azur"/>
+		<Ligue nom="REUNION" libelle="Réunion"/>
+	</Ligues>
+	<Nationales>
+		<Nationale nom="FRANCEJUDO" libelle="France Judo"/>
+	</Nationales>
+</Publication>

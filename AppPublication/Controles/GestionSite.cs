@@ -13,6 +13,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Xml;
 using System.Xml.Linq;
 using Tools.Enum;
 using Tools.Export;
@@ -56,6 +57,9 @@ namespace AppPublication.Controles
 
                 // Initialise la liste des logos
                 InitFichiersLogo();
+
+                // Initialise la configuration pour la publication simplifiee France Judo
+                InitPublicationFFJudo();
 
                 // Initialise la configuration via le cache de fichier
                 InitCacheConfig();
@@ -103,7 +107,7 @@ namespace AppPublication.Controles
             }
         }
 
-        private int  _tailleMaxPouleColonnes;
+        private int _tailleMaxPouleColonnes;
         public int TailleMaxPouleColonnes
         {
             get
@@ -187,7 +191,7 @@ namespace AppPublication.Controles
             }
         }
 
-        ObservableCollection<FilteredFileInfo> _fichiersLogo = new ObservableCollection<FilteredFileInfo>();   
+        ObservableCollection<FilteredFileInfo> _fichiersLogo = new ObservableCollection<FilteredFileInfo>();
         public ObservableCollection<FilteredFileInfo> FichiersLogo
         {
             get {
@@ -513,6 +517,54 @@ namespace AppPublication.Controles
             }
         }
 
+
+        private ObservableCollection<string> _niveauxPublicationFFJudo;
+        public ObservableCollection<string> NiveauxPublicationFFJudo
+        {
+            get
+            {
+                return _niveauxPublicationFFJudo;
+            }
+            set
+            {
+                _niveauxPublicationFFJudo = value;
+                NotifyPropertyChanged("NiveauxPublicationFFJudo");
+            }
+        }
+
+        private Dictionary<string, ObservableCollection<EntitePublicationFFJudo>> _entitesPublicationFFJudo;
+
+        public Dictionary<string, ObservableCollection<EntitePublicationFFJudo>> EntitesPublicationFFJudo
+        {
+            get
+            {
+                return _entitesPublicationFFJudo;
+            }
+            set
+            {
+                _entitesPublicationFFJudo = value;
+                NotifyPropertyChanged("EntitesPublicationFFJudo");
+            }
+        }
+
+
+        private string _niveauPublicationFFJudo;
+        public string NiveauPublicationFFJudo
+        {
+            get
+            {
+                return _niveauPublicationFFJudo;
+            }
+            set
+            {
+                _niveauPublicationFFJudo = value;
+                AppSettings.SaveSettings("NiveauPublicationFFJudo", _niveauPublicationFFJudo);
+                NotifyPropertyChanged("NiveauPublicationFFJudo");
+            }
+        }
+
+
+
         private string _idCompetition;
         /// <summary>
         /// ID de la competition en cours
@@ -659,6 +711,43 @@ namespace AppPublication.Controles
         }
 
         /// <summary>
+        /// Initialise la liste des comites et ligues pour la publication sur les serveurs France Judo
+        /// </summary>
+        private void InitPublicationFFJudo()
+        {
+            // Charge la structure XML en memoire depuis les resources
+            XmlReader structureReader = XmlReader.Create(ResourcesTools.GetAssembyResource(ConstantResource.PublicationFFJUDO));
+
+            XmlDocument doc = new XmlDocument();
+            doc.Load(structureReader);
+
+            if(doc.DocumentElement.HasChildNodes)
+            {
+                ObservableCollection<string> tmp = new ObservableCollection<string>();
+                Dictionary<string, ObservableCollection<EntitePublicationFFJudo>> tmpDict = new Dictionary<string, ObservableCollection<EntitePublicationFFJudo>>();
+
+                foreach (XmlNode node in doc.DocumentElement.ChildNodes)
+                {
+                    ObservableCollection<EntitePublicationFFJudo> tmpNiveau = new ObservableCollection<EntitePublicationFFJudo>();
+                    tmp.Add(node.Name);
+                    if (node.HasChildNodes)
+                    {
+                        foreach (XmlNode childNode in node.ChildNodes)
+                        {
+                            if (childNode.Attributes != null && childNode.Attributes["nom"] != null && childNode.Attributes["libelle"] != null)
+                            {
+                                tmpNiveau.Add(new EntitePublicationFFJudo(childNode.Attributes["nom"].Value, childNode.Attributes["libelle"].Value));
+                            }
+                        }
+                        tmpDict.Add(node.Name, tmpNiveau);
+                    }
+                }
+                NiveauxPublicationFFJudo = tmp;
+                EntitesPublicationFFJudo = tmpDict;
+            }
+        }
+
+        /// <summary>
         /// Initialise les donnees a partir du cache de fichier AppConfig
         /// </summary>
         private void InitCacheConfig()
@@ -705,6 +794,8 @@ namespace AppPublication.Controles
 
                 valCache = AppSettings.ReadSettings("RepertoireRacine");
                 RepertoireRacine = (valCache == null) ? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) : valCache;
+
+                // TODO Charger les valeurs sauvegardes pour les config FFJudo
 
                 // Recherche le logo dans la liste
                 if (FichiersLogo.Count >= 1)
