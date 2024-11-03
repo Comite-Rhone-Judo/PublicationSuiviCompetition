@@ -33,6 +33,8 @@ namespace AppPublication.Controles
         private Task _taskNettoyage = null;             // La tache de nettoyage
         private GestionStatistiques _statMgr = null;
         private ExportSiteStructure _structure;         // La structure d'export du site
+        private Dictionary<string, EntitePublicationFFJudo> _allEntitePublicationFFJudo = null;
+        private Dictionary<string, ObservableCollection<EntitePublicationFFJudo>> _allEntitesPublicationFFJudo = null;
 
         /// <summary>
         /// Structure interne pour gerer les parametres de generation du site
@@ -518,37 +520,86 @@ namespace AppPublication.Controles
         }
 
 
-        private ObservableCollection<string> _niveauxPublicationFFJudo;
-        public ObservableCollection<string> NiveauxPublicationFFJudo
+        private ObservableCollection<string> _listeNiveauxPublicationFFJudo;
+        /// <summary>
+        /// La liste des niveaux de publication
+        /// </summary>
+        public ObservableCollection<string> ListeNiveauxPublicationFFJudo
         {
             get
             {
-                return _niveauxPublicationFFJudo;
+                return _listeNiveauxPublicationFFJudo;
             }
             set
             {
-                _niveauxPublicationFFJudo = value;
-                NotifyPropertyChanged("NiveauxPublicationFFJudo");
+                _listeNiveauxPublicationFFJudo = value;
+                NotifyPropertyChanged("ListeNiveauxPublicationFFJudo");
             }
         }
 
-        private Dictionary<string, ObservableCollection<EntitePublicationFFJudo>> _entitesPublicationFFJudo;
+        private ObservableCollection<EntitePublicationFFJudo> _listeEntitesPublicationFFJudo;
 
-        public Dictionary<string, ObservableCollection<EntitePublicationFFJudo>> EntitesPublicationFFJudo
+        /// <summary>
+        /// La liste de toutes les entites de publication existantes pour le niveau de publication selectionne
+        /// </summary>
+        public ObservableCollection<EntitePublicationFFJudo> ListeEntitesPublicationFFJudo
         {
             get
             {
-                return _entitesPublicationFFJudo;
+                return _listeEntitesPublicationFFJudo;
             }
             set
             {
-                _entitesPublicationFFJudo = value;
-                NotifyPropertyChanged("EntitesPublicationFFJudo");
+                _listeEntitesPublicationFFJudo = value;
+                NotifyPropertyChanged("ListeEntitesPublicationFFJudo");
             }
         }
 
+        private EntitePublicationFFJudo _entitePublicationFFJudo;
+
+        /// <summary>
+        /// Entite de publication selectionnee
+        /// </summary>
+        public EntitePublicationFFJudo EntitePublicationFFJudo
+        {
+            get
+            {
+                return _entitePublicationFFJudo;
+            }
+            set
+            {
+                _entitePublicationFFJudo = value;
+                if (value != null)
+                {
+                    // Garde en memoire la derniere valeur sauvegardee pour ce niveau
+                    _allEntitePublicationFFJudo[_niveauPublicationFFJudo] = value;
+                    AppSettings.SaveSettings("EntitePublicationFFJudo", _entitePublicationFFJudo.Nom);
+                }
+                NotifyPropertyChanged("EntitePublicationFFJudo");
+            }
+        }
+
+
+        /// <summary>
+        /// Les entites de publication selectionnees par niveau
+        /// </summary>
+        public Dictionary<string, EntitePublicationFFJudo> AllEntitePublicationFFJudo
+        {
+            get
+            {
+                return _allEntitePublicationFFJudo;
+            }
+            set
+            {
+                _allEntitePublicationFFJudo = value;
+                NotifyPropertyChanged("AllEntitePublicationFFJudo");
+            }
+        }
 
         private string _niveauPublicationFFJudo;
+        /// <summary>
+        /// Le niveau de publication selectionne
+        /// </summary>
         public string NiveauPublicationFFJudo
         {
             get
@@ -559,11 +610,25 @@ namespace AppPublication.Controles
             {
                 _niveauPublicationFFJudo = value;
                 AppSettings.SaveSettings("NiveauPublicationFFJudo", _niveauPublicationFFJudo);
+
+                // Ajuste la liste des entites et restaure le dernier element selectionne pour ce niveau
+                ObservableCollection<EntitePublicationFFJudo> ent = null;
+                try
+                {
+                    ent = _allEntitesPublicationFFJudo[_niveauPublicationFFJudo];
+                }
+                catch {
+                    ent = null;
+                }
+                finally
+                {
+                    ListeEntitesPublicationFFJudo = ent;
+                    EntitePublicationFFJudo = _allEntitePublicationFFJudo[_niveauPublicationFFJudo];
+                }
+
                 NotifyPropertyChanged("NiveauPublicationFFJudo");
             }
         }
-
-
 
         private string _idCompetition;
         /// <summary>
@@ -724,12 +789,12 @@ namespace AppPublication.Controles
             if(doc.DocumentElement.HasChildNodes)
             {
                 ObservableCollection<string> tmp = new ObservableCollection<string>();
-                Dictionary<string, ObservableCollection<EntitePublicationFFJudo>> tmpDict = new Dictionary<string, ObservableCollection<EntitePublicationFFJudo>>();
+                _allEntitePublicationFFJudo = new Dictionary<string, EntitePublicationFFJudo>();
+                _allEntitesPublicationFFJudo = new Dictionary<string, ObservableCollection<EntitePublicationFFJudo>>();
 
                 foreach (XmlNode node in doc.DocumentElement.ChildNodes)
                 {
                     ObservableCollection<EntitePublicationFFJudo> tmpNiveau = new ObservableCollection<EntitePublicationFFJudo>();
-                    tmp.Add(node.Name);
                     if (node.HasChildNodes)
                     {
                         foreach (XmlNode childNode in node.ChildNodes)
@@ -739,11 +804,17 @@ namespace AppPublication.Controles
                                 tmpNiveau.Add(new EntitePublicationFFJudo(childNode.Attributes["nom"].Value, childNode.Attributes["libelle"].Value));
                             }
                         }
-                        tmpDict.Add(node.Name, tmpNiveau);
+
+                        // On ne tient compte d'un niveau que s'il a des entites en dessous
+                        if (tmpNiveau.Count > 0)
+                        {
+                            tmp.Add(node.Name);
+                            _allEntitePublicationFFJudo.Add(node.Name, tmpNiveau.First());
+                            _allEntitesPublicationFFJudo.Add(node.Name, tmpNiveau);
+                        }
                     }
                 }
-                NiveauxPublicationFFJudo = tmp;
-                EntitesPublicationFFJudo = tmpDict;
+                ListeNiveauxPublicationFFJudo = tmp;
             }
         }
 
@@ -752,101 +823,33 @@ namespace AppPublication.Controles
         /// </summary>
         private void InitCacheConfig()
         {
-            string valCache = string.Empty;
-
             try
             {
-                valCache = AppSettings.ReadSettings("URLDistant");
-                URLDistant = (valCache == null) ? String.Empty : valCache;
 
-                valCache = AppSettings.ReadSettings("IsolerCompetition");
-                IsolerCompetition = (valCache == null) ? false : bool.Parse(valCache);
+                URLDistant = AppSettings.ReadSetting("URLDistant", string.Empty);
+                IsolerCompetition = AppSettings.ReadSetting("IsolerCompetition", false);
+                RepertoireRacineSiteFTPDistant = AppSettings.ReadSetting("RepertoireRacineSiteFTPDistant", string.Empty);
+                PublierProchainsCombats = AppSettings.ReadSetting("PublierProchainsCombats", false);
+                NbProchainsCombats = AppSettings.ReadSetting("NbProchainsCombats", 6);
+                PublierAffectationTapis = AppSettings.ReadSetting("PublierAffectationTapis", true);
+                DelaiGenerationSec = AppSettings.ReadSetting("DelaiGenerationSec", 30);
+                DelaiActualisationClientSec = AppSettings.ReadSetting("DelaiActualisationClientSec", 30);
+                MsgProchainsCombats = AppSettings.ReadSetting("MsgProchainsCombats", string.Empty);
+                PouleEnColonnes = AppSettings.ReadSetting("PouleEnColonnes", false);
+                PouleToujoursEnColonnes = AppSettings.ReadSetting("PouleToujoursEnColonnes", false);
+                TailleMaxPouleColonnes = AppSettings.ReadSetting("TailleMaxPouleColonnes", 5);
+                RepertoireRacine = AppSettings.ReadSetting("RepertoireRacine", Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
 
-                valCache = AppSettings.ReadSettings("RepertoireRacineSiteFTPDistant");
-                RepertoireRacineSiteFTPDistant = (valCache == null) ? String.Empty : valCache;
-
-                valCache = AppSettings.ReadSettings("PublierProchainsCombats");
-                PublierProchainsCombats = (valCache == null) ? false : bool.Parse(valCache);
-
-                valCache = AppSettings.ReadSettings("NbProchainsCombats");
-                NbProchainsCombats = (valCache == null) ? 6 : int.Parse(valCache);
-
-                valCache = AppSettings.ReadSettings("PublierAffectationTapis");
-                PublierAffectationTapis = (valCache == null) ? true : bool.Parse(valCache);
-
-                valCache = AppSettings.ReadSettings("DelaiGenerationSec");
-                DelaiGenerationSec = (valCache == null) ? 30 : int.Parse(valCache);
-
-                valCache = AppSettings.ReadSettings("DelaiActualisationClientSec");
-                DelaiActualisationClientSec = (valCache == null) ? 30 : int.Parse(valCache);
-
-                valCache = AppSettings.ReadSettings("MsgProchainsCombats");
-                MsgProchainsCombats = (valCache == null) ? string.Empty : valCache;
-
-                valCache = AppSettings.ReadSettings("PouleEnColonnes");
-                PouleEnColonnes = (valCache == null) ? false : bool.Parse(valCache);
-
-                valCache = AppSettings.ReadSettings("PouleToujoursEnColonnes");
-                PouleToujoursEnColonnes = (valCache == null) ? false : bool.Parse(valCache);
-
-                valCache = AppSettings.ReadSettings("TailleMaxPouleColonnes");
-                TailleMaxPouleColonnes = (valCache == null) ? 5 : int.Parse(valCache);
-
-                valCache = AppSettings.ReadSettings("RepertoireRacine");
-                RepertoireRacine = (valCache == null) ? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) : valCache;
-
-                // TODO Charger les valeurs sauvegardes pour les config FFJudo
+                // Charge les valeurs pour la publication FFJudo. On doit faire le niveau en 1er pour
+                // avoir la bonne liste d'entites ensuite
+                NiveauPublicationFFJudo = AppSettings.ReadSetting<string>("NiveauPublicationFFJudo", ListeNiveauxPublicationFFJudo, o => o);
+                EntitePublicationFFJudo = AppSettings.ReadSetting<EntitePublicationFFJudo>("EntitePublicationFFJudo", ListeEntitesPublicationFFJudo, o => o.Nom);
 
                 // Recherche le logo dans la liste
-                if (FichiersLogo.Count >= 1)
-                {
-                    valCache = AppSettings.ReadSettings("SelectedLogo");
-                    if(valCache != null)
-                    {
-                        foreach(FilteredFileInfo fl in FichiersLogo)
-                        {
-                            if(fl.Name == valCache)
-                            {
-                                SelectedLogo = fl;
-                                break;
-                            }
-                        }
-                    }
-                }
+                SelectedLogo = AppSettings.ReadSetting<FilteredFileInfo>("SelectedLogo", FichiersLogo, o => o.Name);
 
-                // Si la liste contient au moins un element
-                if (MiniSiteLocal.InterfacesLocal.Count >= 1)
-                { 
-                    // Cherche si une interface existe dans la configuration du fichier
-                    valCache = AppSettings.ReadSettings("InterfaceLocalPublication");
-                    IPAddress ipToUse = null;
-                    bool useCache = false;
-
-                    if (valCache != null)
-                    {
-                        try
-                        {
-                            // Lit l'adresse dans le fichier et verifie qu'elle est dans la liste
-                            ipToUse = IPAddress.Parse(valCache);
-                            useCache = MiniSiteLocal.InterfacesLocal.Contains(ipToUse);
-                        }
-                        catch (Exception ex)
-                        {
-                            // Soit l'IP configuree est incorrecte, soit elle n'est pas dans la liste
-                            useCache = false;
-                            LogTools.Log(ex);
-                        }
-                    }
-
-                    // on prend la 1ere interface de la liste si elle n'est pas dans la 
-                    if (!useCache)
-                    {
-                        ipToUse = MiniSiteLocal.InterfacesLocal.First();
-                    }
-
-                    // Assigne la valeur (en dernier pour eviter les bindings successifs)
-                    InterfaceLocalPublication = ipToUse;
-                }
+                // Recherche l'interface de publication
+                InterfaceLocalPublication = AppSettings.ReadSetting<IPAddress>("InterfaceLocalPublication", MiniSiteLocal.InterfacesLocal, o => o.ToString());
             }
             catch (Exception ex)
             {

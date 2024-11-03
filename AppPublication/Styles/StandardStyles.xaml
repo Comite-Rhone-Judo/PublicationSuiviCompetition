@@ -84,6 +84,14 @@
         <Setter Property="FontWeight"  Value="Bold"/>
     </Style>
 
+    <Style x:Key="DropDownStyle" TargetType="{x:Type telerik:RadComboBox}">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontFamily" Value="{telerik:Windows8Resource ResourceKey=FontFamily}" />
+        <Setter Property="Margin"  Value="5"/>
+        <Setter Property="VerticalAlignment"  Value="Center"/>
+        <Setter Property="HorizontalAlignment"  Value="Left"/>
+    </Style>
+
     <Style x:Key="CheckboxStyle" TargetType="CheckBox">
         <Setter Property="Foreground" Value="#EEEEEE" />
         <Setter Property="FontSize" Value="14" />

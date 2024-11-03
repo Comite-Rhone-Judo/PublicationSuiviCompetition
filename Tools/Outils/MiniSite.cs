@@ -355,19 +355,19 @@ namespace Tools.Outils
 
             try
             {
-                valCache = AppSettings.ReadSettings("SiteFTPDistant");
+                valCache = AppSettings.ReadSetting("SiteFTPDistant");
                 SiteFTPDistant = (valCache == null) ? String.Empty : valCache;
 
-                valCache = AppSettings.ReadSettings("LoginSiteFTPDistant");
+                valCache = AppSettings.ReadSetting("LoginSiteFTPDistant");
                 LoginSiteFTPDistant = (valCache == null) ? String.Empty : valCache;
 
-                valCache = AppSettings.ReadSettings("PasswordSiteFTPDistant");
+                valCache = AppSettings.ReadSetting("PasswordSiteFTPDistant");
                 PasswordSiteFTPDistant = (valCache == null) ? String.Empty : valCache;
 
-                valCache = AppSettings.ReadSettings("ModeActifFTPDistant");
+                valCache = AppSettings.ReadSetting("ModeActifFTPDistant");
                 ModeActifFTPDistant = (valCache == null) ? false : bool.Parse(valCache);
 
-                valCache = AppSettings.ReadSettings("SynchroniseDifferences");
+                valCache = AppSettings.ReadSetting("SynchroniseDifferences");
                 SynchroniseDifferences = (valCache == null) ? false : bool.Parse(valCache);
             }
             catch { }
@@ -388,7 +388,7 @@ namespace Tools.Outils
             if (InterfacesLocal.Count >= 1)
             {
                 // Cherche si une interface existe dans la configuration du fichier
-                string valCache = AppSettings.ReadSettings("InterfaceLocalPublication");
+                string valCache = AppSettings.ReadSetting("InterfaceLocalPublication");
                 IPAddress ipToUse = null;
                 bool useCache = false;
 

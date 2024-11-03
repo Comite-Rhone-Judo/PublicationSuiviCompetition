@@ -273,7 +273,7 @@
                                     <Label HorizontalAlignment="Left" Content="Parametres:" Style="{StaticResource HeaderStyle}" />
                                     <StackPanel Orientation="Horizontal" >
                                         <Label Content="Adresse de publication:" Margin="10" Style="{StaticResource LabelStyle}"/>
-                                        <ComboBox Height="22" MinWidth="200" Margin="5"
+                                        <telerik:RadComboBox Height="22" MinWidth="200" Style="{StaticResource DropDownStyle}"
                                           ItemsSource="{Binding Path=GestionSite.MiniSiteLocal.InterfacesLocal}"
                                           SelectedItem = "{Binding Path=GestionSite.InterfaceLocalPublication}"
                                           IsEnabled="{Binding Path=GestionSite.MiniSiteLocal.IsActif, Converter={StaticResource BoolNotConverter}}"/>
@@ -369,55 +369,75 @@
                                     <Label HorizontalAlignment="Left" Content="Parametres:" Style="{StaticResource HeaderStyle}" />
                                     <telerik:RadTabControl telerik:StyleManager.Theme="Expression_Dark" AllTabsEqualHeight="True" Height="250" Margin="10 0 10 0">
                                         <telerik:RadTabControl.Items>
+                                            <telerik:RadTabItem Header="France Judo">
+                                                <telerik:RadTabItem.Content>
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="auto"/>
+                                                            <ColumnDefinition Width="161"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="auto"/>
+                                                            <RowDefinition Height="auto"/>
+                                                            <RowDefinition Height="auto"/>
+                                                        </Grid.RowDefinitions>
+                                                        <Label Grid.Column="0" Grid.Row="0" Content="Niveau de publication:" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center"/>
+                                                        <telerik:RadComboBox Grid.Column="1" Grid.Row="0" Style="{StaticResource DropDownStyle}" MinWidth="120"
+                                                                             ItemsSource="{Binding Path=GestionSite.ListeNiveauxPublicationFFJudo}"
+                                                                             SelectedValue="{Binding Path=GestionSite.NiveauPublicationFFJudo}"/>
+                                                        <Label Grid.Column="0" Grid.Row="1" Content="Entité de publication:" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center"/>
+                                                        <telerik:RadComboBox Grid.Column="1" Grid.Row="1" Style="{StaticResource DropDownStyle}" MinWidth="180"
+                                                                             ItemsSource="{Binding Path=GestionSite.ListeEntitesPublicationFFJudo}" DisplayMemberPath="Libelle"
+                                                                             SelectedItem="{Binding Path=GestionSite.EntitePublicationFFJudo}"/>
+                                                    </Grid>
+                                                </telerik:RadTabItem.Content>
+                                            </telerik:RadTabItem>
                                             <telerik:RadTabItem Header="Personnalisée" >
                                                 <telerik:RadTabItem.Content>
                                                     <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="62"/>
-                                                        <ColumnDefinition Width="161.647"/>
-                                                        <ColumnDefinition Width="auto"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="auto"/>
-                                                        <RowDefinition Height="auto"/>
-                                                        <RowDefinition Height="auto"/>
-                                                        <RowDefinition Height="auto"/>
-                                                        <RowDefinition Height="auto"/>
-                                                    </Grid.RowDefinitions>
-                                                    <Label Grid.Column="0" Content="Racine du site de publication:" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2" HorizontalAlignment="Center"/>
-                                                    <TextBox Grid.Row="0" Grid.Column="2" TextWrapping="Wrap" Height="22" Margin="5,13,5,14" MinWidth="300"
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="62"/>
+                                                            <ColumnDefinition Width="161.647"/>
+                                                            <ColumnDefinition Width="auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="auto"/>
+                                                            <RowDefinition Height="auto"/>
+                                                            <RowDefinition Height="auto"/>
+                                                            <RowDefinition Height="auto"/>
+                                                            <RowDefinition Height="auto"/>
+                                                        </Grid.RowDefinitions>
+                                                        <Label Grid.Column="0" Content="Racine du site de publication:" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2" HorizontalAlignment="Center"/>
+                                                        <TextBox Grid.Row="0" Grid.Column="2" TextWrapping="Wrap" Height="22" Margin="5,13,5,14" MinWidth="300"
                                          Text = "{Binding Path=GestionSite.URLDistant}"
                                          IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
-                                                    <Label Grid.Row="1" Grid.Column="0" Content="Adresse du site FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
-                                                    <TextBox Grid.Row="1" Grid.Column="2" TextWrapping="Wrap" Height="22" Margin="5,13,5,13" MinWidth="300"
+                                                        <Label Grid.Row="1" Grid.Column="0" Content="Adresse du site FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
+                                                        <TextBox Grid.Row="1" Grid.Column="2" TextWrapping="Wrap" Height="22" Margin="5,13,5,13" MinWidth="300"
                                          Text = "{Binding Path=GestionSite.MiniSiteDistant.SiteFTPDistant}"
                                          IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
-                                                    <Label Grid.Row="2" Grid.Column="0" Content="Répertoire distant FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
-                                                    <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="0,48,0,48" Grid.RowSpan="3">
-                                                        <TextBox  TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
+                                                        <Label Grid.Row="2" Grid.Column="0" Content="Répertoire distant FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
+                                                        <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="0,48,0,48" Grid.RowSpan="3">
+                                                            <TextBox  TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
                                          Text = "{Binding Path=GestionSite.RepertoireRacineSiteFTPDistant}"
                                          IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
-                                                        <CheckBox Content="Isoler les compétitions" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.IsolerCompetition}" IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" />
-                                                    </StackPanel>
-                                                    <Label Grid.Row="3" Grid.Column="0" Content="Login FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
-                                                    <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal">
-                                                        <TextBox TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
+                                                            <CheckBox Content="Isoler les compétitions" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.IsolerCompetition}" IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" />
+                                                        </StackPanel>
+                                                        <Label Grid.Row="3" Grid.Column="0" Content="Login FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
+                                                        <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal">
+                                                            <TextBox TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
                                             Text = "{Binding Path=GestionSite.MiniSiteDistant.LoginSiteFTPDistant}"
                                             IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
-                                                        <CheckBox Content="Mode FTP Actif" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.MiniSiteDistant.ModeActifFTPDistant}" IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" />
-                                                    </StackPanel>
-                                                    <Label Grid.Row="4" Grid.Column="0" Content="Mot de passe FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
-                                                    <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal" Margin="0,48,0,0" Grid.RowSpan="2">
-                                                        <TextBox TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
+                                                            <CheckBox Content="Mode FTP Actif" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.MiniSiteDistant.ModeActifFTPDistant}" IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" />
+                                                        </StackPanel>
+                                                        <Label Grid.Row="4" Grid.Column="0" Content="Mot de passe FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
+                                                        <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal" Margin="0,48,0,0" Grid.RowSpan="2">
+                                                            <TextBox TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
                                             Text = "{Binding Path=GestionSite.MiniSiteDistant.PasswordSiteFTPDistant}"
                                             IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
-                                                        <CheckBox Content="Sync. les differences" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.MiniSiteDistant.SynchroniseDifferences}" IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" />
-                                                    </StackPanel>
-                                                </Grid>
+                                                            <CheckBox Content="Sync. les differences" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.MiniSiteDistant.SynchroniseDifferences}" IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" />
+                                                        </StackPanel>
+                                                    </Grid>
                                                 </telerik:RadTabItem.Content>
-                                            </telerik:RadTabItem>
-                                            <telerik:RadTabItem Header="France Judo">
-
                                             </telerik:RadTabItem>
                                         </telerik:RadTabControl.Items>
                                     </telerik:RadTabControl>

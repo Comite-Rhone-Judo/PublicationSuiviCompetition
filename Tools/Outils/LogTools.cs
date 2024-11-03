@@ -1,4 +1,4 @@
-﻿using log4net;
+﻿using NLog;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -50,9 +50,12 @@ namespace Tools.Outils
         /// <summary>
         /// Define a static logger variable so that it references
         /// </summary>
-        public static ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        public static Logger Logger { get { return _logger; } }
+
         static readonly object lockerLog = new object();
 
+        // TODO reprendre les fonctions de Log, on peut utiliser directement les fonctions de NLog
         /// <summary>
         /// Enregistre dans le fichier de LOG l'exception
         /// </summary>
@@ -120,13 +123,13 @@ namespace Tools.Outils
                     case Level.FATAL:
                         foreach (string message in messages)
                         {
-                            log.Fatal(message);
+                            Logger.Fatal(message);
                         }
                         break;
                     case Level.ERROR:
                         foreach (string message in messages)
                         {
-                            log.Error(message);
+                            Logger.Error(message);
                         }
                         break;
                     case Level.WARN:
@@ -134,7 +137,7 @@ namespace Tools.Outils
                         {
                             foreach (string message in messages)
                             {
-                                log.Warn(message);
+                                Logger.Warn(message);
                             }
                         }
                         break;
@@ -143,7 +146,7 @@ namespace Tools.Outils
                         {
                             foreach (string message in messages)
                             {
-                                log.Info(message);
+                                Logger.Info(message);
                             }
                         }
                         break;
@@ -152,14 +155,14 @@ namespace Tools.Outils
                         {
                             foreach (string message in messages)
                             {
-                                log.Debug(message);
+                                Logger.Debug(message);
                             }
                         }
                         break;
                     default:
                         foreach (string message in messages)
                         {
-                            log.Error(message);
+                            Logger.Error(message);
                         }
                         break;
                 }
@@ -288,6 +291,7 @@ namespace Tools.Outils
         }
 
 
+        // TODO A remplacer par la creation du package
         /// <summary>
         /// Récupère le fichier de LOG
         /// </summary>
@@ -330,6 +334,15 @@ namespace Tools.Outils
             }
         }
 
+        /// <summary>
+        /// TODO ajouter la fonction pour faire un zip des traces + copie sur le bureau pour envoie
+        /// </summary>
+        public static void PackageLog()
+        {
+
+        }
+
+        // TODO A supprimer, c'est inutile
         /// <summary>
         /// EnvoiLog : Envoie par MAIL les différents logs 
         /// </summary>

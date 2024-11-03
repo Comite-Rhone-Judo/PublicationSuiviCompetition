@@ -19,7 +19,6 @@ namespace AppPublication
         public App()
         {
             // BasicConfigurator.Configure();
-            log4net.Config.XmlConfigurator.Configure();
 
             LogTools.Trace("App is starting");
 
