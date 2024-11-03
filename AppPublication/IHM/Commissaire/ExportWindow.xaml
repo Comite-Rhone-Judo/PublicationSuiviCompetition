@@ -6,7 +6,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"        
         Closing="MainWindow1_Closing"  Closed="MainWin_Closed_1" 
         Background="Black" Title="{Binding AppVersion, StringFormat=Application Publication Suivi de Compétition - {0}}" Name="MainWin" Focusable="True"
-        mc:Ignorable="d" SizeToContent="Width" Height="900">
+        mc:Ignorable="d" SizeToContent="Width" Height="900"
+        DataContextChanged="Window_DataContextChanged">
     <!--Style="{StaticResource WindowStyle}"-->
 
     <Window.Resources>
@@ -369,26 +370,34 @@
                                     <Label HorizontalAlignment="Left" Content="Parametres:" Style="{StaticResource HeaderStyle}" />
                                     <telerik:RadTabControl telerik:StyleManager.Theme="Expression_Dark" AllTabsEqualHeight="True" Height="250" Margin="10 0 10 0">
                                         <telerik:RadTabControl.Items>
-                                            <telerik:RadTabItem Header="France Judo">
+                                            <telerik:RadTabItem Header="France Judo" IsSelected="{Binding Path=GestionSite.MiniSiteDistant.EasyConfig, Mode=OneWayToSource}">
                                                 <telerik:RadTabItem.Content>
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="auto"/>
-                                                            <ColumnDefinition Width="161"/>
+                                                            <ColumnDefinition Width="auto"/>
                                                         </Grid.ColumnDefinitions>
                                                         <Grid.RowDefinitions>
                                                             <RowDefinition Height="auto"/>
                                                             <RowDefinition Height="auto"/>
                                                             <RowDefinition Height="auto"/>
                                                         </Grid.RowDefinitions>
-                                                        <Label Grid.Column="0" Grid.Row="0" Content="Niveau de publication:" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center"/>
-                                                        <telerik:RadComboBox Grid.Column="1" Grid.Row="0" Style="{StaticResource DropDownStyle}" MinWidth="120"
-                                                                             ItemsSource="{Binding Path=GestionSite.ListeNiveauxPublicationFFJudo}"
-                                                                             SelectedValue="{Binding Path=GestionSite.NiveauPublicationFFJudo}"/>
-                                                        <Label Grid.Column="0" Grid.Row="1" Content="Entité de publication:" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center"/>
+                                                        <Label Grid.Column="0" Content="Niveau de publication:" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right"/>
+                                                        <telerik:RadComboBox Grid.Column="1" Style="{StaticResource DropDownStyle}" MinWidth="120"
+                                                                             ItemsSource="{Binding Path=GestionSite.MiniSiteDistant.ListeNiveauxPublicationFFJudo}"
+                                                                             SelectedValue="{Binding Path=GestionSite.MiniSiteDistant.NiveauPublicationFFJudo}" Margin="5,0,0,0"
+                                                                             IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                                        <Label Grid.Column="0" Grid.Row="1" Content="Entité de publication:" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right"/>
                                                         <telerik:RadComboBox Grid.Column="1" Grid.Row="1" Style="{StaticResource DropDownStyle}" MinWidth="180"
-                                                                             ItemsSource="{Binding Path=GestionSite.ListeEntitesPublicationFFJudo}" DisplayMemberPath="Libelle"
-                                                                             SelectedItem="{Binding Path=GestionSite.EntitePublicationFFJudo}"/>
+                                                                             ItemsSource="{Binding Path=GestionSite.MiniSiteDistant.ListeEntitesPublicationFFJudo}" DisplayMemberPath="Libelle"
+                                                                             SelectedItem="{Binding Path=GestionSite.MiniSiteDistant.EntitePublicationFFJudo}" Margin="5,0,0,0"
+                                                                             IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                                        <Label Grid.Column="0" Grid.Row="2" Content="Mot de passe:" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right"/>
+                                                        <telerik:RadPasswordBox Name="EasyConfigPwd" Grid.Column="1" Grid.Row="2" TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
+                                                                Text = "{Binding Path=GestionSite.MiniSiteDistant.PasswordSiteFTPDistant}"
+                                                                WatermarkContent="Entrer votre mot de passe"
+                                                                ShowPasswordButtonVisibility="Auto"
+                                                                IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
                                                     </Grid>
                                                 </telerik:RadTabItem.Content>
                                             </telerik:RadTabItem>
@@ -431,9 +440,10 @@
                                                         </StackPanel>
                                                         <Label Grid.Row="4" Grid.Column="0" Content="Mot de passe FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
                                                         <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal" Margin="0,48,0,0" Grid.RowSpan="2">
-                                                            <TextBox TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
-                                            Text = "{Binding Path=GestionSite.MiniSiteDistant.PasswordSiteFTPDistant}"
-                                            IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                                            <telerik:RadPasswordBox Name="AdvancedPwd" TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
+                                                                WatermarkContent="Entrez votre mot de passe"
+                                                                ShowPasswordButtonVisibility="Auto"
+                                                                IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
                                                             <CheckBox Content="Sync. les differences" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.MiniSiteDistant.SynchroniseDifferences}" IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" />
                                                         </StackPanel>
                                                     </Grid>
@@ -443,7 +453,15 @@
                                     </telerik:RadTabControl>
                                 </StackPanel>
                                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                                    <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="0 0 20 0" Command="{Binding Path=CmdDemarrerSiteDistant}">
+                                    <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="0 0 20 0"
+                                                       Command="{Binding Path=CmdDemarrerSiteDistant}">
+                                        <Button.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource PassthroughConverter}" Mode="OneWay">
+                                                <Binding ElementName="EasyConfigPwd"/>
+                                                <Binding ElementName="AdvancedPwd"/>
+                                            </MultiBinding>
+                                        </Button.CommandParameter>
+
                                         <telerik:RadButton.IsEnabled>
                                             <MultiBinding Converter="{StaticResource EtatPublicationConverter}" Mode="OneWay">
                                                 <Binding Path="GestionSite.MiniSiteDistant.IsChanged" Mode="OneWay"/>

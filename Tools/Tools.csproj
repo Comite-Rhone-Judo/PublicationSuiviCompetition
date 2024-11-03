@@ -81,6 +81,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xaml">
@@ -224,6 +225,8 @@
     <Compile Include="HttpServerModule\Templates\TemplateEngine.cs" />
     <Compile Include="Outils\AppSettings.cs" />
     <Compile Include="Outils\BlockingCounter.cs" />
+    <Compile Include="Outils\Encryption.cs" />
+    <Compile Include="Outils\EntitePublicationFFJudo.cs" />
     <Compile Include="Outils\FileAndDirectTools.cs" />
     <Compile Include="Outils\FileWithChecksum.cs" />
     <Compile Include="Outils\FileWithChecksumComparer.cs" />

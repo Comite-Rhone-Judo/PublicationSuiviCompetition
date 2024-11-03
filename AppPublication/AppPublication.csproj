@@ -87,6 +87,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -141,6 +142,7 @@
     <Compile Include="Statistiques\StatistiqueItemCompteur.cs" />
     <Compile Include="Statistiques\StatistiqueItemMoyenneur.cs" />
     <Compile Include="Tools\Converter\AppStatusConverter.cs" />
+    <Compile Include="Tools\Converter\PassthroughConverter.cs" />
     <Compile Include="Tools\Converter\BoolOperationConverter.cs" />
     <Compile Include="Tools\Converter\BoolToVisibilityConverter.cs" />
     <Compile Include="Tools\Converter\DisplayURLStatusConverter.cs" />

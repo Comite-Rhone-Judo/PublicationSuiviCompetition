@@ -268,6 +268,21 @@ namespace AppPublication.Controles
                             {
                                 if (Instance.GestionSite.MiniSiteDistant != null && !Instance.GestionSite.MiniSiteDistant.IsActif)
                                 {
+                                    // Extrait le mode de passe des controles passes en parametres (1er = FranceJudo, 2nd = Advanced)
+                                    if (o.GetType() == typeof(Tuple<object, object>))
+                                    {
+                                        Tuple<object, object> tuple = (Tuple<object, object>)o;
+
+                                        if(tuple.Item1 != null && tuple.Item1.GetType() == typeof(RadPasswordBox))
+                                        {
+                                            Instance.GestionSite.MiniSiteDistant.PasswordPublicationFFJudo = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item1).SecurePassword);
+                                        }
+                                        if (tuple.Item2 != null && tuple.Item2.GetType() == typeof(RadPasswordBox))
+                                        {
+                                            Instance.GestionSite.MiniSiteDistant.PasswordSiteFTPDistant = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item2).SecurePassword);
+                                        }
+                                    }
+
                                     // Demarre le site en local
                                     Instance.GestionSite.MiniSiteDistant.StartSite();
                                 }

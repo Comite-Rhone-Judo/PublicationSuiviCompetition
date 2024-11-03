@@ -7,7 +7,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Telerik.Windows.Controls;
-using Tools.Enum;
+using Tools.Outils;
 using Tools.Export;
 using Tools.Windows;
 
@@ -86,6 +86,17 @@ namespace AppPublication.IHM.Commissaire
             }
             BitmapImage img = new BitmapImage(new Uri(tmpFile));
             Clipboard.SetImage(img);
+        }
+
+        private void Window_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            // On doit configurer les mots de passe par defaut ici car le composant Password ne supporte pas le Binding sur cette propriete
+            if(e!= null && e.NewValue != null && e.NewValue.GetType() == typeof(DialogControleur) )
+            {
+                DialogControleur dc = (DialogControleur)e.NewValue;
+                this.AdvancedPwd.Password = dc.GestionSite.MiniSiteDistant.PasswordSiteFTPDistant;
+                this.EasyConfigPwd.Password = dc.GestionSite.MiniSiteDistant.PasswordPublicationFFJudo;
+            }
         }
     }
 }

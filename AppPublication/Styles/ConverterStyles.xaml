@@ -24,4 +24,5 @@
     <Converter:DisplayURLStatusConverter x:Key="DisplayURLStatusConverter" />
     <Converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <Converter:BoolOperationConverter x:Key="BoolOperationConverter" />
+    <Converter:PassthroughConverter x:Key="PassthroughConverter" />
 </ResourceDictionary>
