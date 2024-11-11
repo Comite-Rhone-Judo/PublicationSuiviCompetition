@@ -20,11 +20,13 @@ namespace AppPublication
         {
             // BasicConfigurator.Configure();
 
-            LogTools.Trace("App is starting");
+            // LogTools.Trace("App is starting");
+            LogTools.LogStartup();
 
             CultureInfo culture = new CultureInfo("fr");
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
+
 
             //Window8Palette
             //Windows8Palette.Palette.AccentColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
@@ -90,7 +92,7 @@ namespace AppPublication
         void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             // Process unhandled exception
-            LogTools.Log(e.Exception);
+            LogTools.Error(e.Exception);
 
             // Prevent default unhandled exception processing
             e.Handled = true;

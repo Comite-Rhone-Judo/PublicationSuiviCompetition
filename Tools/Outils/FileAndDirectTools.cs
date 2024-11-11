@@ -137,7 +137,7 @@ namespace Tools.Outils
             }
             catch (Exception ex)
             {
-                LogTools.Trace(ex, LogTools.Level.WARN);
+                LogTools.Warning(ex);
             }
 
             return false;
@@ -168,7 +168,7 @@ namespace Tools.Outils
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Trace(ex, LogTools.Level.WARN);
+                    LogTools.Error(ex);
                 }
 
                 return false;
@@ -196,7 +196,7 @@ namespace Tools.Outils
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Log(ex, LogTools.Level.FATAL);
+                    LogTools.Fatal(ex);
                 }
             }
             //LogTools.Trace("REPERTOIRE CREE " + directory, LogTools.Level.DEBUG);

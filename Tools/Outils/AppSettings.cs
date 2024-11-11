@@ -172,7 +172,7 @@ namespace Tools.Outils
                 {
                     // la valeur lue n'existe pas dans la liste source, on prend la valeur par defaut (1er element)
                     output = sourceList.First();
-                    LogTools.Log(ex);
+                    LogTools.Error(ex);
                 }
             }
 

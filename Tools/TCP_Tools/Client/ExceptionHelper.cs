@@ -15,7 +15,7 @@ namespace Tools.TCP_Tools.Client
         /// <param name="ex"></param>
         public static void ShowException(Exception ex)
         {
-            LogTools.Log(new JudoClientException(ex.Message, ex));
+            LogTools.Error(new JudoClientException(ex.Message, ex));
         }
     }
 }

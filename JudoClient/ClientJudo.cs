@@ -423,7 +423,7 @@ namespace JudoClient
             }
             catch (Exception ex)
             {
-                LogTools.Log(ex);
+                LogTools.Error(ex);
             }
         }
     }

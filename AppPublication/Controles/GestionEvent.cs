@@ -123,7 +123,7 @@ namespace AppPublication.Controles
             }
             catch (Exception ex)
             {
-                LogTools.Log(ex);
+                LogTools.Error(ex);
             }
             finally
             {
@@ -144,7 +144,7 @@ namespace AppPublication.Controles
             }
             catch (Exception ex)
             {
-                LogTools.Log(ex);
+                LogTools.Error(ex);
             }
         }
 

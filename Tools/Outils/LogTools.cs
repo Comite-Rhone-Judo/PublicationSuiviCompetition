@@ -15,6 +15,7 @@ using Telerik.Windows.Zip;
 using Tools.CustomException;
 using Tools.Enum;
 using Tools.Windows;
+using NLog.Fluent;
 
 namespace Tools.Outils
 {
@@ -29,247 +30,42 @@ namespace Tools.Outils
             DEBUG = 4
         }
 
-        private static readonly string _email = "seguin@critt-informatique.fr";
-        private static readonly string _pass = "seguin86";
-
-        private static readonly string _host = "ex2.mail.ovh.net";
-        private static readonly int _port = 587;
-        private static readonly bool _useDefaultCredentials = true;
-        private static readonly bool _enableSsl = false;
-
-
-        private static readonly string _separatorHeader = "__________________________________________________________________________________________________________________________";
-        private static readonly string _separatorTrace = " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ";
-
-        private static readonly string _header1 = "      ";
-        private static readonly string _header2 = Environment.MachineName + " " + Environment.UserName;
-        public static string HeaderType = "";
-        public static string HeaderCompetition = "";
-        private static string _version = "[TAS] v." + OutilsTools.GetVersionApp().ToString();
-
         /// <summary>
         /// Define a static logger variable so that it references
         /// </summary>
         private static Logger _logger = NLog.LogManager.GetCurrentClassLogger();
-        public static Logger Logger { get { return _logger; } }
+        // private static Logger Logger { get { return _logger; } }
 
-        static readonly object lockerLog = new object();
+        #region PROXY vers le Logger
 
-        // TODO reprendre les fonctions de Log, on peut utiliser directement les fonctions de NLog
-        /// <summary>
-        /// Enregistre dans le fichier de LOG l'exception
-        /// </summary>
-        /// <param name="ex">l'exception</param>
+        public static void Error(string msg) { _logger.Error(msg); }
 
-        public static void Trace(Exception ex, Level level = Level.ERROR)
+        public static void Error(Exception ex) { _logger.Error(ex); }
+
+        public static void Warning(string msg) { _logger.Warn(msg); }
+
+        public static void Warning(Exception ex) { _logger.Warn(ex); }
+
+        public static void Info(string msg) { _logger.Info(msg); }
+
+        public static void Info(Exception ex) { _logger.Info(ex); }
+
+        public static void Fatal(string msg) { _logger.Fatal(msg); }
+
+        public static void Fatal(Exception ex) { _logger.Fatal(ex); }
+
+        public static void Debug(string msg) { _logger.Debug(msg); }
+
+        public static void Debug(Exception ex) { _logger.Debug(ex); }
+
+        #endregion
+
+        public static void LogStartup() 
         {
-            List<string> messages = new List<string>();
-
-            messages.Add(_separatorHeader);
-            messages.Add(_version + "    " + DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"));
-            messages.Add(HeaderType + _header1 + " - " + level.ToString());
-            if (!string.IsNullOrWhiteSpace(HeaderCompetition)) { messages.Add(HeaderCompetition); }
-            messages.Add("");
-
-            Exception ex2 = ex;
-            while (ex2 != null)
-            {
-                if (!String.IsNullOrWhiteSpace(ex2.Message))
-                {
-                    foreach (string text in ex2.Message.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries))
-                    {
-                        messages.Add(text);
-                    }
-                }
-
-                if (!String.IsNullOrWhiteSpace(ex2.StackTrace))
-                {
-                    foreach (string text in ex2.StackTrace.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries))
-                    {
-                        messages.Add(text);
-                    }
-                }
-
-                ex2 = ex2.InnerException;
-                if (ex2 != null)
-                {
-                    messages.Add(_separatorTrace);
-                }
-            }
-            Trace(messages, level);
+            _logger.Info("-----------------------------------------------------------------------------------------------------");
+            _logger.Info("App Publication is starting - Version " + OutilsTools.GetVersionApp().ToString());
         }
 
-        public static void Trace(string message, Level level = Level.ERROR)
-        {
-            List<string> messages = new List<string>();
-
-            messages.Add(_separatorHeader);
-            messages.Add(HeaderType + _header1 + DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss") + " - " + level.ToString());
-            messages.Add("");
-
-            foreach (string text in message.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                messages.Add(text);
-            }
-            Trace(messages, level);
-        }
-
-        private static void Trace(List<string> messages, Level level = Level.ERROR)
-        {
-            using (TimedLock.Lock(lockerLog))
-            {
-                switch (level)
-                {
-                    case Level.FATAL:
-                        foreach (string message in messages)
-                        {
-                            Logger.Fatal(message);
-                        }
-                        break;
-                    case Level.ERROR:
-                        foreach (string message in messages)
-                        {
-                            Logger.Error(message);
-                        }
-                        break;
-                    case Level.WARN:
-                        if (OutilsTools.IsDebug)
-                        {
-                            foreach (string message in messages)
-                            {
-                                Logger.Warn(message);
-                            }
-                        }
-                        break;
-                    case Level.INFO:
-                        if (OutilsTools.IsDebug)
-                        {
-                            foreach (string message in messages)
-                            {
-                                Logger.Info(message);
-                            }
-                        }
-                        break;
-                    case Level.DEBUG:
-                        if (OutilsTools.IsDebug)
-                        {
-                            foreach (string message in messages)
-                            {
-                                Logger.Debug(message);
-                            }
-                        }
-                        break;
-                    default:
-                        foreach (string message in messages)
-                        {
-                            Logger.Error(message);
-                        }
-                        break;
-                }
-            }
-        }
-
-
-        static ICollection<Type> types = new List<Type>
-        {
-            typeof(SocketException),
-            typeof(JudoClientException),
-            typeof(JudoServerException)
-        };
-
-        static ICollection<string> messages = new List<string>
-        {
-            "TcpClient",
-            "Socket",
-            "RenderTransform.ScaleX"
-        };
-
-        private static bool IsNonTraiteException(Exception ex)
-        {
-            Exception ex2 = ex;
-            while (ex2 != null)
-            {
-                foreach (Type type in types)
-                {
-                    if (ex2.GetType() == type)
-                    {
-                        return true;
-                    }
-                }
-
-                foreach (string message in messages)
-                {
-                    if (ex2.Message != null && ex2.Message.Contains(message))
-                    {
-                        return true;
-                    }
-                    if (ex2.StackTrace != null && ex2.StackTrace.Contains(message))
-                    {
-                        return true;
-                    }
-                }
-
-                ex2 = ex2.InnerException;
-            }
-            return false;
-        }
-
-        private struct ContainsException
-        {
-            public Exception exept { get; set; }
-            public DateTime date { get; set; }
-        }
-
-        private static IList<ContainsException> exceptions = new List<ContainsException>();
-
-        private static bool IsContainsException(Exception ex)
-        {
-            string ex1 = ex.Message + " " + ex.StackTrace;
-            foreach (ContainsException ex2 in exceptions)
-            {
-                if ((DateTime.Now - ex2.date).TotalMinutes > 15)
-                {
-                    break;
-                }
-
-                if (ex1 == (ex2.exept.Message + " " + ex2.exept.StackTrace))
-                {
-                    return true;
-                }
-            }
-
-            exceptions.Add(new ContainsException { exept = ex, date = DateTime.Now });
-            return false;
-        }
-
-        /// <summary>
-        /// Enregistre dans le fichier de LOG l'exception et l'affiche dans une fenêtre
-        /// </summary>
-        /// <param name="ex">l'exception</param>
-
-        public static void Log(Exception ex, LogTools.Level level = LogTools.Level.ERROR)
-        {
-            if (LogTools.IsContainsException(ex))
-            {
-                return;
-            }
-
-            if (!LogTools.IsNonTraiteException(ex))
-            {
-                LogTools.Trace(ex, level);
-
-                string message = "";
-                //message += "Erreur\n";
-                message += ex.Message + "\n\n";
-                message += "Une erreur est survenue. Un mail automatique va être transmis lors de votre prochaine connexion, à l\'administrateur de l'application.";
-
-                LogTools.PrintAlert(message, "Erreur", "OK");
-            }
-            else
-            {
-                LogTools.Trace(ex, LogTools.Level.INFO);
-            }
-        }
 
         /// <summary>
         /// Affiche un message d'alert (trace l'alerte dans le fichier de LOG)
@@ -277,7 +73,7 @@ namespace Tools.Outils
         /// <param name="message"></param>
         public static void Alert(string message, string header = "Attention", string button = "OK")
         {
-            LogTools.Trace(message, Level.WARN);
+            LogTools.Warning(message);
             PrintAlert(message, header, button);
         }
 
@@ -295,7 +91,7 @@ namespace Tools.Outils
         /// <summary>
         /// Récupère le fichier de LOG
         /// </summary>
-
+        /*
         public static void EnregistreLog()
         {
             SaveFileDialog dialog = new SaveFileDialog();
@@ -333,9 +129,10 @@ namespace Tools.Outils
                 }
             }
         }
+        */
 
         /// <summary>
-        /// TODO ajouter la fonction pour faire un zip des traces + copie sur le bureau pour envoie
+        /// TODO ajouter la fonction pour faire un zip des traces + copie sur le bureau pour copie
         /// </summary>
         public static void PackageLog()
         {
@@ -346,6 +143,8 @@ namespace Tools.Outils
         /// <summary>
         /// EnvoiLog : Envoie par MAIL les différents logs 
         /// </summary>
+        // Plus d'envoit de mail en direct
+        /*
         public static void EnvoiLog()
         {
             try
@@ -418,7 +217,10 @@ namespace Tools.Outils
             {
             }
         }
+        */
 
+        // On ne travaille plus par envoie de mail directement depuis l'application
+        /*
         public static void Envoie(MailMessage mail)
         {
             SmtpClient client = new SmtpClient();
@@ -445,5 +247,6 @@ namespace Tools.Outils
             {
             }
         }
+        */
     }
 }

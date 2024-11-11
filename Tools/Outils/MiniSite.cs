@@ -603,7 +603,7 @@ namespace Tools.Outils
                     {
                         // Soit l'IP configuree est incorrecte, soit elle n'est pas dans la liste
                         useCache = false;
-                        LogTools.Log(ex);
+                        LogTools.Error(ex);
                     }
                 }
 
@@ -693,7 +693,7 @@ namespace Tools.Outils
             {
                 lStatusMsg = "Erreur au demarrage";
                 lStatusDetail = ex.Message;
-                LogTools.Log(ex);
+                LogTools.Error(ex);
             }
 
             // Met a jour les status du minisite
@@ -718,7 +718,7 @@ namespace Tools.Outils
             catch (Exception ex)
             {
                 Status = new StatusMiniSite(StateMiniSiteEnum.Stopped, "Erreur lors de l'arrêt");
-                LogTools.Log(ex);
+                LogTools.Error(ex);
             }
         }
 
@@ -749,7 +749,7 @@ namespace Tools.Outils
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Log(ex);
+                    LogTools.Error(ex);
                     throw ex;
                 }
                 finally
@@ -858,7 +858,7 @@ namespace Tools.Outils
             catch (Exception ex)
             {
                 cStatus = new StatusMiniSite(cStatus.State, "Erreur FTP", ex.Message);
-                LogTools.Log(ex);
+                LogTools.Error(ex);
             }
             finally
             {
@@ -1016,7 +1016,7 @@ namespace Tools.Outils
                 output.IsSuccess = false;
                 string msg = (ex.InnerException != null) ? String.Format("{0} ({1})", ex.Message, ex.InnerException.Message) : ex.Message;
                 cStatus = new StatusMiniSite(cStatus.State, "Erreur FTP", msg);
-                LogTools.Log(ex);
+                LogTools.Error(ex);
             }
             finally
             {

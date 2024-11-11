@@ -29,7 +29,6 @@ namespace AppPublication.Controles
         private DialogControleur()
         {
             FileAndDirectTools.InitDataDirectories();
-            LogTools.HeaderType = "PC PUBLICATION";
 
             InitControleur();
 
@@ -186,7 +185,7 @@ namespace AppPublication.Controles
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Log(ex);
+                    LogTools.Error(ex);
                 }
             }));
         }

@@ -66,7 +66,7 @@ namespace AppPublication.Controles
             }
             catch (Exception ex)
             {
-                LogTools.Log(ex);
+                LogTools.Error(ex);
             }
         }
 
@@ -692,7 +692,7 @@ namespace AppPublication.Controles
             }
             catch (Exception ex)
             {
-                LogTools.Trace(ex);
+                LogTools.Error(ex);
             }
         }
 
@@ -989,7 +989,7 @@ namespace AppPublication.Controles
             }
             catch (Exception ex)
             {
-                LogTools.Trace(ex);
+                LogTools.Error(ex);
             }
 
             return urls;
@@ -1072,7 +1072,7 @@ namespace AppPublication.Controles
                     }
                     catch (Exception ex)
                     {
-                        LogTools.Trace(ex);
+                        LogTools.Error(ex);
                     }
                 }
             }
@@ -1123,7 +1123,7 @@ namespace AppPublication.Controles
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Trace(ex);
+                    LogTools.Error(ex);
                 }
                 finally
                 {
@@ -1157,7 +1157,7 @@ namespace AppPublication.Controles
             }
             catch (Exception ex)
             {
-                LogTools.Trace(ex);
+                LogTools.Error(ex);
             }
 
             return output;
