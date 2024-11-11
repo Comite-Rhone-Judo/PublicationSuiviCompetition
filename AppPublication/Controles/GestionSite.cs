@@ -172,9 +172,7 @@ namespace AppPublication.Controles
                     AppSettings.SaveSetting("RepertoireRacine", _repertoireRacine);
 
                     // Met a jour la constante d'export
-                    // TODO Supprimer l'usage d'une constante globale
                     string tmp = OutilsTools.GetExportSiteDir(_repertoireRacine);
-                    ConstantFile.ExportSite_dir = tmp;
 
                     // Initialise la structure d'export
                     _structure = new ExportSiteStructure(tmp, IdCompetition);
