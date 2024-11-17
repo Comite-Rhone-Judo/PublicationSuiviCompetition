@@ -1,8 +1,8 @@
-﻿using NLog;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Sockets;
@@ -11,25 +11,19 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
-using Telerik.Windows.Zip;
 using Tools.CustomException;
 using Tools.Enum;
 using Tools.Windows;
+using NLog;
 using NLog.Fluent;
+using NLog.Targets;
+using System.Linq;
+using Telerik.Windows.Documents.Fixed.Model.Editing.Lists;
 
 namespace Tools.Outils
 {
     public static class LogTools
     {
-        public enum Level : int
-        {
-            FATAL = 0,
-            ERROR = 1,
-            WARN = 2,
-            INFO = 3,
-            DEBUG = 4
-        }
-
         /// <summary>
         /// Define a static logger variable so that it references
         /// </summary>
@@ -37,6 +31,9 @@ namespace Tools.Outils
         // private static Logger Logger { get { return _logger; } }
 
         #region PROXY vers le Logger
+
+        // Access direct au Logger NLog
+        public static Logger Logger { get { return _logger; } }
 
         public static void Error(string msg) { _logger.Error(msg); }
 
@@ -67,6 +64,57 @@ namespace Tools.Outils
         }
 
 
+        private static string _logDirectory;
+        
+        /// <summary>
+        /// Propriete exposant le repertoire de trace extrait dynamiquement depuis le fichier de configuration
+        /// </summary>
+        public static string LogDirectory
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_logDirectory))
+                {
+                    _logDirectory = GetLogDirectory();
+                }
+                return _logDirectory;
+            }
+        }
+
+        /// <summary>
+        /// Recherche le nom du fichier de trace dans le fichier de configuration NLog
+        /// </summary>
+        /// <param name="target">Le nom de la cible dans le fichier de trace, par defaut "logFile"</param>
+        /// <returns>Le nom du repertoire cible</returns>
+        private static string GetLogDirectory(string target = "logFile")
+        {
+            string output = string.Empty;
+
+            try
+            {
+                // Extrait la configuration NLog pour trouver la cible demandee
+                Target logTarget = LogManager.Configuration.FindTargetByName(target);
+                if (logTarget != null && logTarget.GetType() != typeof(FileTarget))
+                {
+                    // Recupere le nom du fichier
+                    FileTarget logFileTarget = (FileTarget)logTarget;
+                    string logFileName = logFileTarget.FileName.Render(LogEventInfo.CreateNullEvent());
+
+                    // Extrait les informations du fichier pour avoir le nom du repertoire parent
+                    FileInfo info = new FileInfo(logFileName);
+
+                    output = info.DirectoryName;
+                }
+             }
+            catch (Exception ex)
+            {
+                _logger.Error("Impossible de lire la configuration NLog pour extraire le repertoire cible", ex);
+            }
+
+            return output;
+        }
+
+
         /// <summary>
         /// Affiche un message d'alert (trace l'alerte dans le fichier de LOG)
         /// </summary>
@@ -86,167 +134,37 @@ namespace Tools.Outils
             }));
         }
 
-
-        // TODO A remplacer par la creation du package
         /// <summary>
-        /// Récupère le fichier de LOG
+        /// Package le contenu du repertoire de log dans une archive compressee Zip
         /// </summary>
-        /*
-        public static void EnregistreLog()
+        /// <param name="targetArchiveName">Nom de l'archive cible (path absolu avec extension)</param>
+        /// <param name="onlyToday">True pour ne prendre en compte que les fichiers du jour, False prend tous les fichiers</param>
+        public static void PackageLog(string targetArchiveName, bool onlyToday = false)
         {
-            SaveFileDialog dialog = new SaveFileDialog();
-            dialog.Filter = "Zip File | *.zip";
-            bool? dialogResult = dialog.ShowDialog();
-            if (dialogResult == true)
+            try
             {
-                // Recupere le nom du fichier zip de destination
-                string zipFileName = dialog.FileName;
-                using (Stream stream = File.Open(zipFileName, FileMode.Create))
+                // Recupere le repertoire de Log
+                DirectoryInfo logDir = new DirectoryInfo(LogDirectory);
+
+                // Recupere la liste des fichiers a prendre en compte
+                List<FileInfo> logFiles = onlyToday ? logDir.GetFiles("*.*", SearchOption.TopDirectoryOnly).Where(f => f.CreationTime >= DateTime.Today).ToList() : logDir.GetFiles("*.*", SearchOption.TopDirectoryOnly).ToList();
+
+                // Ouvre l'archive Zip
+                using (Stream stream = File.Open(targetArchiveName, FileMode.Create))
                 {
                     using (ZipArchive archive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: false, entryNameEncoding: null))
                     {
-                        foreach (string file in Directory.GetFiles(ConstantFile.Log))
+                        // Ajoute les fichiers a l'archive Zip
+                        foreach (FileInfo file in logFiles)
                         {
-                            if (file.Contains("__copy"))
-                            {
-                                continue;
-                            }
-                            string file2 = Path.GetDirectoryName(file) + "/" + Path.GetFileNameWithoutExtension(file) + "__copy1" + Path.GetExtension(file);
-                            File.Copy(file, file2, true);
-
-                            using (FileStream fs1 = File.OpenRead(file2))
-                            {
-                                using (ZipArchiveEntry entry = archive.CreateEntry(Path.GetFileName(file)))
-                                {
-                                    using (Stream entryStream = entry.Open())
-                                    {
-                                        fs1.CopyTo(entryStream);
-                                    }
-                                }
-                            }
+                            archive.CreateEntryFromFile(file.FullName, file.Name);
                         }
                     }
                 }
             }
-        }
-        */
-
-        /// <summary>
-        /// TODO ajouter la fonction pour faire un zip des traces + copie sur le bureau pour copie
-        /// </summary>
-        public static void PackageLog()
-        {
-
-        }
-
-        // TODO A supprimer, c'est inutile
-        /// <summary>
-        /// EnvoiLog : Envoie par MAIL les différents logs 
-        /// </summary>
-        // Plus d'envoit de mail en direct
-        /*
-        public static void EnvoiLog()
-        {
-            try
-            {
-                bool envoi = OutilsTools.IsDebug;
-
-                MailMessage mail = new MailMessage();
-                mail.From = new MailAddress(_email);
-                mail.To.Add(new MailAddress(_email));
-                mail.IsBodyHtml = true;
-
-                string body = "";
-                string pattern = @"([0-9]{4}\-[0-9]{2}\-[0-9]{2})";
-                Regex regex = new Regex(pattern);
-
-                foreach (string file in Directory.GetFiles(ConstantFile.Log))
-                {
-                    if (file.Contains("__copy"))
-                    {
-                        continue;
-                    }
-
-                    string file2 = Path.GetDirectoryName(file) + "/" + Path.GetFileNameWithoutExtension(file) + "__copy1" + Path.GetExtension(file);
-                    File.Copy(file, file2, true);
-
-                    string file_copy = Path.GetDirectoryName(file) + "/" + Path.GetFileNameWithoutExtension(file) + "__copy2" + Path.GetExtension(file);
-                    if (!File.Exists(file_copy))
-                    {
-                        using (FileStream st = File.Create(file_copy))
-                        {
-
-                        }
-                    }
-
-
-                    Encoding enc = FileAndDirectTools.GetFileEncoding(file2);
-
-                    using (StreamReader reader = new StreamReader(file2, enc, true))
-                    {
-                        using (StreamReader reader_copy = new StreamReader(file_copy, enc, true))
-                        {
-                            while (!reader.EndOfStream)
-                            {
-                                string line = reader.ReadLine();
-                                string line_copy = reader_copy.ReadLine();
-                                if (line != null && line_copy != null && line_copy == line)
-                                {
-                                    continue;
-                                }
-
-                                if (OutilsTools.IsDebug || line.Contains("ERROR") || line.Contains("FATAL"))
-                                {
-                                    envoi = true;
-                                }
-                                body += line + "<br/>";
-                            }
-                        }
-                    }
-                }
-
-                if (!string.IsNullOrWhiteSpace(body) && envoi)
-                {
-                    mail.Body = body;
-                    mail.Subject = "[TAS] v." + OutilsTools.GetVersionApp().ToString() + " " + Environment.MachineName + " " + Environment.UserName;
-                    Thread thread = new Thread(new ThreadStart(() => Envoie(mail)));
-                    thread.Start();
-                }
-            }
-            catch
-            {
+            catch (Exception e) {
+                Alert("Impossible de creer l'archive Zip contenant les fichiers de trace de l'application");
             }
         }
-        */
-
-        // On ne travaille plus par envoie de mail directement depuis l'application
-        /*
-        public static void Envoie(MailMessage mail)
-        {
-            SmtpClient client = new SmtpClient();
-            client.Host = _host;
-            client.Port = _port;
-            client.UseDefaultCredentials = _useDefaultCredentials;
-            client.EnableSsl = _enableSsl;
-            client.Credentials = new NetworkCredential(_email, _pass);
-            try
-            {
-                client.Send(mail);
-                foreach (string file in Directory.GetFiles(ConstantFile.Log))
-                {
-                    if (file.Contains("__copy"))
-                    {
-                        continue;
-                    }
-
-                    string file2 = Path.GetDirectoryName(file) + "/" + Path.GetFileNameWithoutExtension(file) + "__copy2" + Path.GetExtension(file);
-                    File.Copy(file, file2, true);
-                }
-            }
-            catch
-            {
-            }
-        }
-        */
     }
 }
