@@ -1,0 +1,75 @@
+﻿<telerik:RadWindow x:Class="AppPublication.IHM.Commissaire.InformationsView"
+       xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AppPublication.IHM.Commissaire"
+        mc:Ignorable="d"
+        Header="Informations" Height="380" Width="600"
+        WindowStartupLocation="CenterScreen" 
+        CanClose="True" CanMove="True" ResizeMode="NoResize" 
+        WindowState="Normal" Name="UI" Background="Black" SizeToContent="True">
+
+    <telerik:RadWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/AppPublication;component/Styles/StandardStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </telerik:RadWindow.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- PANEL GENERATION -->
+        <StackPanel Grid.Row="0" Grid.Column="0" Style="{StaticResource Header1Style}" Margin="10,10,10,10" Visibility="Visible" >
+            <TextBlock Text="Information sur l'application" Style="{StaticResource Header1TextStyle}"/>
+        </StackPanel>
+        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" BorderBrush="White" Margin="10 0 10 10">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Style="{StaticResource ContentTextStyle}">
+                    <TextBlock.Text>
+                        Ce logiciel est un composant de la solution de gestion de compétition « Gestion de compétition 2.0 » de France Judo. Il permet de générer un site web permettant au public, aux coachs de suivre le déroulement d'une compétition gérée par "Gestion de compétition 2.0" depuis un Smartphone, une tablette ou un ordinateur.
+                    </TextBlock.Text>
+                </TextBlock>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource LabelStyle}" Content="Version:"/>
+                    <TextBlock Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Style="{StaticResource ContentTextStyle}" Text="{Binding AppInformation.AppVersion}"/>
+                    <Label Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" Style="{StaticResource LabelStyle}" Content="Editeur:"/>
+                    <TextBlock Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Style="{StaticResource ContentTextStyle}" Text="{Binding AppInformation.AppCompany}"/>
+                    <Label Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" Style="{StaticResource LabelStyle}" Content="Copyright:"/>
+                    <TextBlock Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Style="{StaticResource ContentTextStyle}" Text="{Binding AppInformation.AppCopyright}"/>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <StackPanel Grid.Column="0" Grid.Row="2" HorizontalAlignment="Stretch" Orientation="Horizontal">
+            <Label HorizontalAlignment="Right" Style="{StaticResource LabelStyle}" Content="Données de diagnostiques:"/>
+            <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  Width="120" IsDefault="True" Margin="20 0 0 0" Command="{Binding Path=CmdGenererTracesIncident}">
+                <WrapPanel Orientation="Horizontal">
+                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/archive-32.png" Height="25" Margin="5 0"/>
+                    <Label Content="Générer" />
+                </WrapPanel>
+            </telerik:RadButton>
+        </StackPanel>
+        
+    </Grid>
+</telerik:RadWindow>

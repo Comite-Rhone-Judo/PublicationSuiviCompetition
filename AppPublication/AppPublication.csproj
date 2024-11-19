@@ -135,12 +135,16 @@
     <Compile Include="IHM\Commissaire\ConfigurationPublication.xaml.cs">
       <DependentUpon>ConfigurationPublication.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IHM\Commissaire\Statistiques.xaml.cs">
-      <DependentUpon>Statistiques.xaml</DependentUpon>
+    <Compile Include="IHM\Commissaire\InformationsView.xaml.cs">
+      <DependentUpon>InformationsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="IHM\Commissaire\StatistiquesView.xaml.cs">
+      <DependentUpon>StatistiquesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Statistiques\StatistiqueItem.cs" />
     <Compile Include="Statistiques\StatistiqueItemCompteur.cs" />
     <Compile Include="Statistiques\StatistiqueItemMoyenneur.cs" />
+    <Compile Include="Tools\AppInformation.cs" />
     <Compile Include="Tools\Converter\AppStatusConverter.cs" />
     <Compile Include="Tools\Converter\PassthroughConverter.cs" />
     <Compile Include="Tools\Converter\BoolOperationConverter.cs" />
@@ -170,7 +174,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="IHM\Commissaire\Statistiques.xaml">
+    <Page Include="IHM\Commissaire\InformationsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="IHM\Commissaire\StatistiquesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

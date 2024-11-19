@@ -6,9 +6,9 @@ namespace AppPublication.IHM.Commissaire
     /// <summary>
     /// Logique d'interaction pour Statistiques.xaml
     /// </summary>
-    public partial class Statistiques : RadWindow
+    public partial class StatistiquesView : RadWindow
     {
-        public Statistiques(GestionStatistiques statDataContext)
+        public StatistiquesView(GestionStatistiques statDataContext)
         {
             if (statDataContext != null)
             {

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"        
         Closing="MainWindow1_Closing"  Closed="MainWin_Closed_1" 
-        Background="Black" Title="{Binding AppVersion, StringFormat=Application Publication Suivi de Compétition - {0}}" Name="MainWin" Focusable="True"
+        Background="Black" Title="{Binding AppInformation.AppVersion, StringFormat=Application Publication Suivi de Compétition - {0}}" Name="MainWin" Focusable="True"
         mc:Ignorable="d" SizeToContent="Width" Height="900"
         DataContextChanged="Window_DataContextChanged">
     <!--Style="{StaticResource WindowStyle}"-->
@@ -88,7 +88,7 @@
 
                             <telerik:RadButton Name="BoutonFindServer" Click="BoutonFindServer_Click_1" 
                                    Tag="pack://application:,,,/Tools;component/data/images/icons/black/notebook-32.png" 
-                                   Margin="5 0 0 0" Style="{StaticResource RadButtonStyle1}" ToolTip="Trouver le server">
+                                   Margin="10 0 0 0" Style="{StaticResource RadButtonStyle1}" ToolTip="Trouver le server">
                                 <Button.RenderTransform>
                                     <ScaleTransform ScaleX="1.0" ScaleY="1.0"></ScaleTransform>
                                 </Button.RenderTransform>
@@ -123,8 +123,15 @@
                         </WrapPanel>
 
                         <WrapPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" Margin="20 10 10 10" HorizontalAlignment="Right">
+                            <telerik:RadButton ToolTip="Information sur le logiciel" Style="{StaticResource RadButtonStyle1}"
+                                Focusable="False" Tag="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Margin="25 0 0 0"
+                                Command="{Binding Path=CmdAfficherInformations}">
+                                <Button.RenderTransform>
+                                    <ScaleTransform ScaleX="1.0" ScaleY="1.0"></ScaleTransform>
+                                </Button.RenderTransform>
+                            </telerik:RadButton>
                             <telerik:RadButton ToolTip="Manuel" Style="{StaticResource RadButtonStyle1}"
-                                Focusable="False" Tag="pack://application:,,,/Tools;component/data/images/icons/black/book-32.png" Margin="25 0 20 0"
+                                Focusable="False" Tag="pack://application:,,,/Tools;component/data/images/icons/black/book-32.png" Margin="10 0 20 0"
                                 Command="{Binding Path=CmdAfficherManuel}">
                                 <Button.RenderTransform>
                                     <ScaleTransform ScaleX="1.0" ScaleY="1.0"></ScaleTransform>

@@ -60,7 +60,7 @@ namespace Tools.Outils
         public static void LogStartup() 
         {
             _logger.Info("-----------------------------------------------------------------------------------------------------");
-            _logger.Info("App Publication is starting - Version " + OutilsTools.GetVersionApp().ToString());
+            _logger.Info("App Publication is starting - Version " + OutilsTools.GetVersionInformation().ToString());
         }
 
 

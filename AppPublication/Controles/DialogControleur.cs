@@ -19,7 +19,8 @@ namespace AppPublication.Controles
     {
         #region MEMBRES
         private static DialogControleur _currentControleur = null;      // instance singletion
-        private AppPublication.IHM.Commissaire.Statistiques _statWindow = null;
+        private AppPublication.IHM.Commissaire.StatistiquesView _statWindow = null;
+        private AppPublication.IHM.Commissaire.InformationsView _infoWindow = null;
         private PdfViewer _manuelViewer = null;
         private AppPublication.IHM.Commissaire.ConfigurationPublication _cfgWindow = null;
         #endregion
@@ -32,27 +33,29 @@ namespace AppPublication.Controles
 
             InitControleur();
 
-            // AppVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            AppVersion = OutilsTools.GetVersionApp();
+            // Initialise les informations de l'application
+            AppInformation = AppInformation.Instance;
         }
 
         #endregion
 
         #region PROPRIETES
 
-        private string _appVersion = string.Empty;
-        public string AppVersion
+        private AppInformation _appInformation = null;
+
+        public AppInformation AppInformation
         {
             get
             {
-                return _appVersion;
+                return _appInformation;
             }
-            private set
-            {
-                _appVersion = value;
-                NotifyPropertyChanged("AppVersion");
+            private set { 
+                _appInformation = value;
+                NotifyPropertyChanged("AppInformation");
             }
         }
+
+
 
         /// <summary>
         /// Acces a l'instance du singleton - Lecture seule
@@ -500,6 +503,31 @@ namespace AppPublication.Controles
             }
         }
 
+        private ICommand _cmdAfficherInformations = null;
+        public ICommand CmdAfficherInformations
+        {
+            get
+            {
+                if (_cmdAfficherInformations == null)
+                {
+                    _cmdAfficherInformations = new RelayCommand(
+                            o =>
+                            {
+                                if (_infoWindow == null)
+                                {
+                                    _infoWindow = new AppPublication.IHM.Commissaire.InformationsView();
+                                }
+                                _infoWindow.Show();
+                            },
+                            o =>
+                            {
+                                return true;
+                            });
+                }
+                return _cmdAfficherInformations;
+            }
+        }
+
         private ICommand _cmdAfficherManuel = null;
         public ICommand CmdAfficherManuel
         {
@@ -549,7 +577,7 @@ namespace AppPublication.Controles
                             {
                                 if (_statWindow == null)
                                 {
-                                    _statWindow = new AppPublication.IHM.Commissaire.Statistiques(GestionStatistiques);
+                                    _statWindow = new AppPublication.IHM.Commissaire.StatistiquesView(GestionStatistiques);
                                 }
                                 _statWindow.Show();
                             },
@@ -592,6 +620,29 @@ namespace AppPublication.Controles
             }
         }
 
+        private ICommand _cmdGenererTracesIncident = null;
+        /// <summary>
+        /// Commande d'affichage de la configuration
+        /// </summary>
+        public ICommand CmdGenererTracesIncident
+        {
+            get
+            {
+                if (_cmdGenererTracesIncident == null)
+                {
+                    _cmdGenererTracesIncident = new RelayCommand(
+                            o =>
+                            {
+                                // TODO Ajouter la generation du package de trace via LogTools
+                            },
+                            o =>
+                            {
+                                return true;
+                            });
+                }
+                return _cmdGenererTracesIncident;
+            }
+        }
 
         #endregion
     }
