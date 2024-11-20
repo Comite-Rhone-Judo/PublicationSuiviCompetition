@@ -94,7 +94,7 @@ namespace Tools.Outils
             {
                 // Extrait la configuration NLog pour trouver la cible demandee
                 Target logTarget = LogManager.Configuration.FindTargetByName(target);
-                if (logTarget != null && logTarget.GetType() != typeof(FileTarget))
+                if (logTarget != null && logTarget.GetType() == typeof(FileTarget))
                 {
                     // Recupere le nom du fichier
                     FileTarget logFileTarget = (FileTarget)logTarget;
@@ -157,13 +157,24 @@ namespace Tools.Outils
                         // Ajoute les fichiers a l'archive Zip
                         foreach (FileInfo file in logFiles)
                         {
-                            archive.CreateEntryFromFile(file.FullName, file.Name);
+                            ZipArchiveEntry fileEntry = archive.CreateEntry(file.Name);
+                            using (Stream outStream = fileEntry.Open())
+                            {
+                                using (Stream inStream = File.Open(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                                {
+                                    inStream.CopyTo(outStream);
+                                }
+                            }
+                            
+                            // On ne peut pas utiliser ce code directement car le fichier est en cours d'utilisation
+                            // archive.CreateEntryFromFile(file.FullName, file.Name);
                         }
                     }
                 }
             }
-            catch (Exception e) {
-                Alert("Impossible de creer l'archive Zip contenant les fichiers de trace de l'application");
+            catch (Exception ex) {
+                LogTools.Logger.Error("Impossible de creer l'archive Zip contenant les fichiers de trace de l'application vers '{0}'", targetArchiveName, ex);
+                throw new Exception("Impossible de creer l'archive Zip contenant les fichiers de trace de l'application", ex);
             }
         }
     }

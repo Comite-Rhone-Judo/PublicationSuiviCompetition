@@ -2,6 +2,7 @@
 using AppPublication.Tools.Enum;
 using KernelImpl;
 using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using Telerik.Windows.Controls;
@@ -633,7 +634,30 @@ namespace AppPublication.Controles
                     _cmdGenererTracesIncident = new RelayCommand(
                             o =>
                             {
-                                // TODO Ajouter la generation du package de trace via LogTools
+                                string msg = string.Empty;
+
+                                try
+                                {
+                                    // Par defaut, on va generer le fichier sur le bureau
+                                    string destDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+
+                                    string destZip = string.Format("LogAppPublication_{0:yyyyMMdd-HHmmss}.zip",DateTime.Now);
+
+                                    string fulldestZip = Path.Combine(destDir, destZip);
+
+                                    LogTools.PackageLog(fulldestZip);
+
+                                    msg = string.Format("Les traces de l'application sont disponibles sur le bureau dans l'archive '{0}'. Vous pouvez joindre ce fichier au rapport d'incident.", destZip);
+                                }
+                                catch (Exception ex)
+                                {
+                                    LogTools.Logger.Error("Impossible de creer l'archive de trace de l'application '{0}'", o, ex);
+                                    msg = string.Format("Impossibles de créer l'archive des traces de l'application. Consultez le fichier de trace ou contacter le support technique.");
+                                }
+                                finally
+                                {
+                                    MessageBox.Show(msg, "Information", MessageBoxButton.OK);
+                                }
                             },
                             o =>
                             {
