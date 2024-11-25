@@ -28,11 +28,15 @@ namespace AppPublication.Controles
 
         public static void clientjudo_OnAcceptConnectionCOM(object sender, XElement element)
         {
+            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             DialogControleur.Instance.Connection.Client.DemandeStructures();
         }
 
         public static void client_OnListeStructures(object sender, XElement element)
         {
+            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             XDocument doc = new XDocument();
             doc.Add(element);
             doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
@@ -55,6 +59,8 @@ namespace AppPublication.Controles
 
         public static void client_OnUpdateStructures(object sender, XElement element)
         {
+            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             XDocument doc = new XDocument();
             doc.Add(element);
             doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
@@ -69,6 +75,8 @@ namespace AppPublication.Controles
 
         public static void client_OnListeCategories(object sender, XElement element)
         {
+            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             XDocument doc = new XDocument();
             doc.Add(element);
             doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
@@ -92,6 +100,8 @@ namespace AppPublication.Controles
 
         public static void client_OnUpdateCategories(object sender, XElement element)
         {
+            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             XDocument doc = new XDocument();
             doc.Add(element);
             doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
@@ -105,6 +115,8 @@ namespace AppPublication.Controles
 
         public static void client_OnListeLogos(object sender, XElement element)
         {
+            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             XDocument doc = new XDocument();
             doc.Add(element);
             doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
@@ -133,6 +145,8 @@ namespace AppPublication.Controles
 
         public static void client_OnUpdateLogos(object sender, XElement element)
         {
+            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             XDocument doc = new XDocument();
             doc.Add(element);
             doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
@@ -150,6 +164,8 @@ namespace AppPublication.Controles
 
         public static void client_OnListeOrganisation(object sender, XElement element)
         {
+            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             XDocument doc = new XDocument();
             doc.Add(element);
             doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
@@ -183,6 +199,8 @@ namespace AppPublication.Controles
 
         public static void client_OnUpdateOrganisation(object sender, XElement element)
         {
+            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             XDocument doc = new XDocument();
             doc.Add(element);
             doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
@@ -201,6 +219,8 @@ namespace AppPublication.Controles
 
         public static void client_OnListeEquipes(object sender, XElement element)
         {
+            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             XDocument doc = new XDocument();
             doc.Add(element);
             doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
@@ -223,6 +243,8 @@ namespace AppPublication.Controles
 
         public static void client_OnUpdateEquipes(object sender, XElement element)
         {
+            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             XDocument doc = new XDocument();
             doc.Add(element);
             doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
@@ -237,6 +259,8 @@ namespace AppPublication.Controles
 
         public static void client_OnListeJudokas(object sender, XElement element)
         {
+            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             XDocument doc = new XDocument();
             doc.Add(element);
             doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
@@ -258,6 +282,8 @@ namespace AppPublication.Controles
 
         public static void client_OnUpdateJudokas(object sender, XElement element)
         {
+            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             XDocument doc = new XDocument();
             doc.Add(element);
             doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
@@ -268,10 +294,11 @@ namespace AppPublication.Controles
             DC.ServerData.Participants.lecture_epreuves_judokas(element, DC.ServerData);
             DC.ServerData.Participants.lecture_judokas(element, DC.ServerData);
         }
-
-
+        
         public static void client_OnListePhases(object sender, XElement element)
         {
+            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             XDocument doc = new XDocument();
             doc.Add(element);
             doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
@@ -298,6 +325,8 @@ namespace AppPublication.Controles
 
         public static void client_OnUpdatePhases(object sender, XElement element)
         {
+            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             XDocument doc = new XDocument();
             doc.Add(element);
             doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
@@ -315,6 +344,8 @@ namespace AppPublication.Controles
 
         public static void client_OnListeCombats(object sender, XElement element)
         {
+            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             XDocument doc = new XDocument();
             doc.Add(element);
             doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
@@ -343,6 +374,8 @@ namespace AppPublication.Controles
 
         public static void client_OnUpdateCombats(object sender, XElement element)
         {
+            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             XDocument doc = new XDocument();
             doc.Add(element);
             doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
@@ -357,6 +390,8 @@ namespace AppPublication.Controles
 
         public static void client_onUpdateRencontres(object sender, XElement element)
         {
+            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             XDocument doc = new XDocument();
             doc.Add(element);
             doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
@@ -369,6 +404,8 @@ namespace AppPublication.Controles
 
         public static void client_OnListeArbitrage(object sender, XElement element)
         {
+            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             XDocument doc = new XDocument();
             doc.Add(element);
             doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
@@ -389,6 +426,8 @@ namespace AppPublication.Controles
 
         public static void client_OnUpdateArbitrage(object sender, XElement element)
         {
+            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             XDocument doc = new XDocument();
             doc.Add(element);
             doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));

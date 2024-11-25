@@ -6,6 +6,7 @@ using KernelImpl.Noyau.Organisation;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Web.UI.WebControls;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Xsl;
@@ -55,6 +56,7 @@ namespace AppPublication.Export
                 XmlDocument xmlFeuilleCombat = ExportXML.CreateDocumentFeuilleCombat(DC, phase, null);
                 ExportXML.AddPublicationInfo(ref xmlFeuilleCombat, config);
                 ExportXML.AddClubs(ref xmlFeuilleCombat, DC);
+                LogTools.Logger.Debug("XML genere: '{0}'", xmlFeuilleCombat.InnerXml);
 
                 ExportHTML.ToHTMLSite(xmlFeuilleCombat, type, fileSave, argsList);
                 urls.Add(fileSave + ".html");
@@ -81,6 +83,7 @@ namespace AppPublication.Export
                 ExportXML.AddPublicationInfo(ref xmlResultat, config);
                 ExportXML.AddCeintures(ref xmlResultat, DC);
                 ExportXML.AddClubs(ref xmlResultat, DC);
+                LogTools.Logger.Debug("XML genere: '{0}'", xmlResultat.InnerXml);
 
                 ExportHTML.ToHTMLSite(xmlResultat, type2, fileSave2, argsList2);
                 urls.Add(fileSave2 + ".html");
@@ -97,6 +100,7 @@ namespace AppPublication.Export
                 ExportXML.AddPublicationInfo(ref xmlResultat, config);
                 ExportXML.AddCeintures(ref xmlResultat, DC);
                 ExportXML.AddClubs(ref xmlResultat, DC);
+                LogTools.Logger.Debug("XML genere: '{0}'", xmlResultat.InnerXml);
 
                 ExportHTML.ToHTMLSite(xmlResultat, type2, fileSave2, argsList2);
                 urls.Add(fileSave2 + ".html");
@@ -128,8 +132,9 @@ namespace AppPublication.Export
 
             XmlDocument xml = ExportXML.CreateDocumentEpreuve(DC, epreuve);
             ExportXML.AddPublicationInfo(ref xml, config);
-
             ExportXML.AddClubs(ref xml, DC);
+            LogTools.Logger.Debug("XML genere: '{0}'", xml.InnerXml);
+
             ExportHTML.ToHTMLSite(xml, type, fileSave, argsList);
             // return new List<string> { fileSave + ".html" };
 
@@ -158,8 +163,8 @@ namespace AppPublication.Export
 
             XmlDocument xml = ExportXML.CreateDocumentFeuilleCombat(DC, null, null);
             ExportXML.AddPublicationInfo(ref xml, config);
-
             ExportXML.AddClubs(ref xml, DC);
+            LogTools.Logger.Debug("XML genere: '{0}'", xml.InnerXml);
 
             ExportHTML.ToHTMLSite(xml, type, fileSave, argsList);
             // return new List<string> { fileSave + ".html" };
@@ -235,6 +240,7 @@ namespace AppPublication.Export
 
             XmlDocument docmenu = ExportXML.CreateDocumentMenu(DC, siteStruct);
             ExportXML.AddPublicationInfo(ref docmenu, config);
+            LogTools.Logger.Debug("XML genere: '{0}'", docmenu.InnerXml);
 
             // Genere le menu de d'avancement
             type = ExportEnum.Site_MenuAvancement;
@@ -287,6 +293,7 @@ namespace AppPublication.Export
 
             XmlDocument docAffectation = ExportXML.CreateDocumentAffectationTapis(DC);
             ExportXML.AddPublicationInfo(ref docAffectation, config);
+            LogTools.Logger.Debug("XML genere: '{0}'", docAffectation.InnerXml);
 
             ExportHTML.ToHTMLSite(docAffectation, type, fileSave, argsList);
 

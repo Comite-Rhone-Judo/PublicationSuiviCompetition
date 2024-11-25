@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AppPublication.IHM.Commissaire"
         mc:Ignorable="d"
-        Header="Informations" Height="380" Width="600"
+        Header="Informations" Height="380" Width="620"
         WindowStartupLocation="CenterScreen" 
         CanClose="True" CanMove="True" ResizeMode="NoResize" 
         WindowState="Normal" Name="UI" Background="Black" SizeToContent="True">
@@ -63,12 +63,16 @@
 
         <StackPanel Grid.Column="0" Grid.Row="2" HorizontalAlignment="Stretch" Orientation="Horizontal">
             <Label HorizontalAlignment="Right" Style="{StaticResource LabelStyle}" Content="Données de diagnostiques:"/>
+            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="-5 0 0 0" ToolTip="Permet de générer une archive Zip sur le bureau contenant les fichiers de traces de l'application pour permettre un diagnostique du comportement. A utiliser pour compléter le signalement d'un incident."/>
             <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  Width="120" IsDefault="True" Margin="20 0 0 0" Command="{Binding Path=CmdGenererTracesIncident}">
                 <WrapPanel Orientation="Horizontal">
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/archive-32.png" Height="25" Margin="5 0"/>
                     <Label Content="Générer" />
                 </WrapPanel>
             </telerik:RadButton>
+            <CheckBox Content="Activer les traces détaillées" IsChecked="{Binding Path=TracesDebugOn}" Style="{StaticResource CheckboxStyle}" Margin="20 0 0 0"/>
+            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cocher, permet d'activier les traces les plus détaillées de l'application. Attention, cette option peut ralentir l'application du fait des nombreuses informations écrites sur disques. A utiliser uniquement à des fin de diagnostique."/>
+
         </StackPanel>
         
     </Grid>

@@ -309,5 +309,26 @@ namespace Tools.Outils
                 }
             }
         }
+
+        /// <summary>
+        /// Combine 2 paths en un seul en prenant compte les caracteres de separation
+        /// </summary>
+        /// <param name="path1">Path de debut</param>
+        /// <param name="path2">Path de fin</param>
+        /// <returns></returns>
+        public static string PathJoin(string path1, string path2)
+        {
+            if (string.IsNullOrEmpty(path1))
+            {
+                return path2;
+            }
+
+            if (string.IsNullOrEmpty(path2))
+            {
+                return path1;
+            }
+
+            return path1.TrimEnd(Path.PathSeparator) + Path.PathSeparator + path2.TrimStart(Path.PathSeparator);
+        }
     }
 }

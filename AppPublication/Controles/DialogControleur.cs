@@ -161,6 +161,25 @@ namespace AppPublication.Controles
             }
         }
 
+        private bool _tracesDebugOn  =false;
+        /// <summary>
+        /// Indique si les traces avancees sont activees
+        /// </summary>
+        public bool TracesDebugOn
+        {
+            get
+            {
+                return _tracesDebugOn;
+            }
+            set
+            {
+                _tracesDebugOn = value;
+                NotifyPropertyChanged("TracesDebugOn");
+
+                LogTools.ConfigureDebugLevel(_tracesDebugOn);
+            }
+        }
+
         #endregion
 
         #region METHODES
@@ -210,10 +229,10 @@ namespace AppPublication.Controles
                     _cmdDemarrerSiteLocal = new RelayCommand(
                             o =>
                             {
-                                if (Instance.GestionSite.MiniSiteLocal != null && !Instance.GestionSite.MiniSiteLocal.IsActif)
+                                if (Instance.GestionSite.SiteLocal != null && !Instance.GestionSite.SiteLocal.IsActif)
                                 {
                                     // Demarre le site en local
-                                    Instance.GestionSite.MiniSiteLocal.StartSite();
+                                    Instance.GestionSite.SiteLocal.StartSite();
 
                                     // Force la mise a jour de l'URL
                                     Instance.GestionSite.IdCompetition = Instance.GestionSite.IdCompetition;
@@ -241,15 +260,15 @@ namespace AppPublication.Controles
                     _cmdArreterSiteLocal = new RelayCommand(
                             o =>
                             {
-                                if (Instance.GestionSite.MiniSiteLocal != null && Instance.GestionSite.MiniSiteLocal.IsActif)
+                                if (Instance.GestionSite.SiteLocal != null && Instance.GestionSite.SiteLocal.IsActif)
                                 {
                                     // Demarre le site en local
-                                    Instance.GestionSite.MiniSiteLocal.StopSite();
+                                    Instance.GestionSite.SiteLocal.StopSite();
                                 }
                             },
                             o =>
                             {
-                                return Instance.GestionSite.MiniSiteLocal.IsActif;
+                                return Instance.GestionSite.SiteLocal.IsActif;
                             });
                 }
                 return _cmdArreterSiteLocal;
@@ -269,7 +288,7 @@ namespace AppPublication.Controles
                     _cmdDemarrerSiteDistant = new RelayCommand(
                             o =>
                             {
-                                if (Instance.GestionSite.MiniSiteDistant != null && !Instance.GestionSite.MiniSiteDistant.IsActif)
+                                if (Instance.GestionSite.SiteDistantSelectionne != null && !Instance.GestionSite.SiteDistantSelectionne.IsActif)
                                 {
                                     // Extrait le mode de passe des controles passes en parametres (1er = FranceJudo, 2nd = Advanced)
                                     if (o.GetType() == typeof(Tuple<object, object>))
@@ -278,16 +297,16 @@ namespace AppPublication.Controles
 
                                         if(tuple.Item1 != null && tuple.Item1.GetType() == typeof(RadPasswordBox))
                                         {
-                                            Instance.GestionSite.MiniSiteDistant.PasswordPublicationFFJudo = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item1).SecurePassword);
+                                            Instance.GestionSite.SiteFranceJudo.PasswordSiteFTPDistant = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item1).SecurePassword);
                                         }
                                         if (tuple.Item2 != null && tuple.Item2.GetType() == typeof(RadPasswordBox))
                                         {
-                                            Instance.GestionSite.MiniSiteDistant.PasswordSiteFTPDistant = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item2).SecurePassword);
+                                            Instance.GestionSite.SiteDistant.PasswordSiteFTPDistant = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item2).SecurePassword);
                                         }
                                     }
 
-                                    // Demarre le site en local
-                                    Instance.GestionSite.MiniSiteDistant.StartSite();
+                                    // Demarre le site distant selectione
+                                    Instance.GestionSite.SiteDistantSelectionne.StartSite();
                                 }
                             },
                             o =>
@@ -312,15 +331,15 @@ namespace AppPublication.Controles
                     _cmdArreterSiteDistant = new RelayCommand(
                             o =>
                             {
-                                if (Instance.GestionSite.MiniSiteDistant != null && Instance.GestionSite.MiniSiteDistant.IsActif)
+                                if (Instance.GestionSite.SiteDistantSelectionne != null && Instance.GestionSite.SiteDistantSelectionne.IsActif)
                                 {
-                                    // Demarre le site en local
-                                    Instance.GestionSite.MiniSiteDistant.StopSite();
+                                    // Arrete le site concernee
+                                    Instance.GestionSite.SiteDistantSelectionne.StopSite();
                                 }
                             },
                             o =>
                             {
-                                return Instance.GestionSite.MiniSiteDistant.IsActif;
+                                return Instance.GestionSite.SiteDistantSelectionne.IsActif;
                             });
                 }
                 return _cmdArreterSiteDistant;
@@ -340,7 +359,7 @@ namespace AppPublication.Controles
                     _cmdNettoyerSiteDistant = new RelayCommand(
                             o =>
                             {
-                                if (Instance.GestionSite.MiniSiteDistant != null && !Instance.GestionSite.MiniSiteDistant.IsActif)
+                                if ( Instance.GestionSite.SiteDistantSelectionne != null && !Instance.GestionSite.SiteDistantSelectionne.IsActif)
                                 {
                                     DialogParameters param = new DialogParameters();
                                     param.OkButtonContent = "Oui";
@@ -354,7 +373,7 @@ namespace AppPublication.Controles
                                     if (win.DialogResult.HasValue && (bool)win.DialogResult)
                                     {
                                         // Nettoyer le site distant
-                                        // Instance.GestionSite.MiniSiteDistant.NettoyerSite();
+                                        // Instance.GestionSite.SiteDistant.NettoyerSite();
                                         GestionSite.StartNettoyage();
                                     }
                                 }
@@ -362,7 +381,7 @@ namespace AppPublication.Controles
                             o =>
                             {
                                 return true;
-                                // return !Instance.GestionSite.MiniSiteDistant.IsActif && !Instance.GestionSite.MiniSiteDistant.IsCleaning;
+                                // return !Instance.GestionSite.SiteDistant.IsActif && !Instance.GestionSite.SiteDistant.IsCleaning;
                             });
                 }
                 return _cmdNettoyerSiteDistant;
@@ -423,14 +442,14 @@ namespace AppPublication.Controles
             try
             {
                 string url = "";
-                if (DialogControleur.Instance.GestionSite.MiniSiteLocal.IsLocal)
+                if (DialogControleur.Instance.GestionSite.SiteLocal.IsLocal)
                 {
                     url = ExportTools.GetURLSiteLocal(
-                         DialogControleur.Instance.GestionSite.MiniSiteLocal.ServerHTTP.ListeningIpAddress.ToString(),
-                         DialogControleur.Instance.GestionSite.MiniSiteLocal.ServerHTTP.Port,
+                         DialogControleur.Instance.GestionSite.SiteLocal.ServerHTTP.ListeningIpAddress.ToString(),
+                         DialogControleur.Instance.GestionSite.SiteLocal.ServerHTTP.Port,
                          DialogControleur.Instance.ServerData.competition.remoteId);
                 }
-                else if (!DialogControleur.Instance.GestionSite.MiniSiteLocal.IsLocal && DialogControleur.Instance.GestionSite.MiniSiteLocal.SiteFTPDistant == NetworkTools.FTP_EJUDO_SUIVI_URL)
+                else if (!DialogControleur.Instance.GestionSite.SiteLocal.IsLocal && DialogControleur.Instance.GestionSite.SiteLocal.SiteFTPDistant == NetworkTools.FTP_EJUDO_SUIVI_URL)
                 {
                     url = ExportTools.GetURLSiteFTP(DialogControleur.Instance.ServerData.competition.remoteId);
                 }
@@ -453,7 +472,7 @@ namespace AppPublication.Controles
                     _cmdAfficherSiteLocal = new RelayCommand(
                             o =>
                             {
-                                if (GestionSite.MiniSiteLocal.IsLocal && GestionSite.MiniSiteLocal.IsActif)
+                                if (GestionSite.SiteLocal.IsLocal && GestionSite.SiteLocal.IsActif)
                                 {
                                     string url = GestionSite.URLLocalPublication;
 
@@ -465,7 +484,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return GestionSite.MiniSiteLocal.IsActif && GestionSite.MiniSiteLocal.IsLocal;
+                                return GestionSite.SiteLocal.IsActif && GestionSite.SiteLocal.IsLocal;
                             });
                 }
                 return _cmdAfficherSiteLocal;
@@ -485,7 +504,7 @@ namespace AppPublication.Controles
                     _cmdAfficherSiteDistant = new RelayCommand(
                             o =>
                             {
-                                if (!GestionSite.MiniSiteDistant.IsLocal)
+                                if (!GestionSite.SiteDistantSelectionne.IsLocal)
                                 {
                                     string url = GestionSite.URLDistantPublication;
 
@@ -497,7 +516,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return !GestionSite.MiniSiteDistant.IsLocal;
+                                return !GestionSite.SiteDistantSelectionne.IsLocal;
                             });
                 }
                 return _cmdAfficherSiteDistant;
@@ -518,7 +537,11 @@ namespace AppPublication.Controles
                                 {
                                     _infoWindow = new AppPublication.IHM.Commissaire.InformationsView();
                                 }
-                                _infoWindow.Show();
+                                if (_infoWindow != null)
+                                {
+                                    _infoWindow.IsTopmost = true;
+                                    _infoWindow.Show();
+                                }
                             },
                             o =>
                             {
@@ -552,6 +575,7 @@ namespace AppPublication.Controles
                                 if (_manuelViewer != null)
                                 {
                                     _manuelViewer.Show();
+                                    _manuelViewer.BringToFront();
                                 }
                             },
                             o =>
@@ -580,7 +604,12 @@ namespace AppPublication.Controles
                                 {
                                     _statWindow = new AppPublication.IHM.Commissaire.StatistiquesView(GestionStatistiques);
                                 }
-                                _statWindow.Show();
+
+                                if (_statWindow != null)
+                                {
+                                    _statWindow.Show();
+                                    _statWindow.BringToFront();
+                                }
                             },
                             o =>
                             {
@@ -608,9 +637,11 @@ namespace AppPublication.Controles
                                 {
                                     _cfgWindow = new AppPublication.IHM.Commissaire.ConfigurationPublication(GestionSite);
                                 }
-                                _cfgWindow.ShowDialog();
-
-                                _cfgWindow = null;
+                                if (_cfgWindow != null)
+                                {
+                                    _cfgWindow.ShowDialog();
+                                    _cfgWindow = null;
+                                }
                             },
                             o =>
                             {
@@ -656,7 +687,11 @@ namespace AppPublication.Controles
                                 }
                                 finally
                                 {
-                                    MessageBox.Show(msg, "Information", MessageBoxButton.OK);
+                                    AlertWindow win = new AlertWindow("Infomation", msg);
+                                    if (win != null)
+                                    {
+                                        win.ShowDialog();
+                                    }
                                 }
                             },
                             o =>

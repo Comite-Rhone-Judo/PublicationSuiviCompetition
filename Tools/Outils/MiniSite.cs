@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Sockets;
 using System.Security;
@@ -30,23 +31,44 @@ namespace Tools.Outils
 
     public class MiniSite : NotificationBase
     {
+        #region CONSTANTES
+        private const string kSettingSiteFTPDistant = "SiteFTPDistant";
+        private const string kSettingLoginSiteFTPDistant = "LoginSiteFTPDistant";
+        private const string kSettingPasswordSiteFTPDistant = "PasswordSiteFTPDistant";
+        private const string kSettingModeActifFTPDistant = "ModeActifFTPDistant";
+        private const string kSettingSynchroniseDifferences = "SynchroniseDifferences";
+        private const string kSettingInterfaceLocalPublication ="InterfaceLocalPublication";
+
+        #endregion
 
         #region MEMBRES
         private FtpProfile _ftp_profile = null;     // Le profile FTP a utiliser pour les connexions
         private Action<FtpProgress> _ftpProgressCallback = null;
         private long _nbSyncDistant = 0;
-        private Dictionary<string, EntitePublicationFFJudo> _allEntitePublicationFFJudo = null;
-        private Dictionary<string, ObservableCollection<EntitePublicationFFJudo>> _allEntitesPublicationFFJudo = null;
+        private string _instanceName = string.Empty;
 
         #endregion
 
         #region CONSTRUCTEURS
+
+
+
+
+
         /// <summary>
         /// Constructeur
         /// </summary>
         /// <param name="local">Mode du minisite (local = true, distant = false)</param>
-        public MiniSite(bool local)
+        /// <param name="instanceName">Nom de l'instance</param>
+        /// <param name="cacheCfg">True pour activer la mise en cache de la configuration</param>
+        /// <param name="cachePwd">True pour activer la mise en cache du mot de passe</param>
+        public MiniSite(bool local, string instanceName = "", bool cacheCfg = true, bool cachePwd = true)
         {
+            // Initialise les caracteristiques du MiniSite
+            InstanceName = instanceName;
+            CacheConfig = cacheCfg;
+            CachePassword = cachePwd;
+
             if (local)
             {
                 // Configure un site web local
@@ -57,9 +79,6 @@ namespace Tools.Outils
             }
             else
             {
-                // Initialise la configuration pour la publication simplifiee France Judo
-                InitPublicationFFJudo();
-
                 // Site distant
                 InitConfigFTP();
 
@@ -81,130 +100,19 @@ namespace Tools.Outils
 
         #region PROPRIETES
 
-        private bool _easyConfig;
-
-        public bool EasyConfig
-        {
-            get
-            {
-                return _easyConfig;
-            }
-            set
-            {
-                _easyConfig = value;
-                AppSettings.SaveSetting("EasyConfig", _easyConfig.ToString());
-                NotifyPropertyChanged("EasyConfig");
-            }
-        }
-
-        private ObservableCollection<string> _listeNiveauxPublicationFFJudo;
         /// <summary>
-        /// La liste des niveaux de publication
+        /// Indique le nom de l'instance du Minisite
         /// </summary>
-        public ObservableCollection<string> ListeNiveauxPublicationFFJudo
+        public string InstanceName
         {
             get
             {
-                return _listeNiveauxPublicationFFJudo;
+                return _instanceName;
             }
-            set
+            private set
             {
-                _listeNiveauxPublicationFFJudo = value;
-                NotifyPropertyChanged("ListeNiveauxPublicationFFJudo");
-            }
-        }
-
-        private ObservableCollection<EntitePublicationFFJudo> _listeEntitesPublicationFFJudo;
-
-        /// <summary>
-        /// La liste de toutes les entites de publication existantes pour le niveau de publication selectionne
-        /// </summary>
-        public ObservableCollection<EntitePublicationFFJudo> ListeEntitesPublicationFFJudo
-        {
-            get
-            {
-                return _listeEntitesPublicationFFJudo;
-            }
-            set
-            {
-                _listeEntitesPublicationFFJudo = value;
-                NotifyPropertyChanged("ListeEntitesPublicationFFJudo");
-            }
-        }
-
-        private EntitePublicationFFJudo _entitePublicationFFJudo;
-
-        /// <summary>
-        /// Entite de publication selectionnee
-        /// </summary>
-        public EntitePublicationFFJudo EntitePublicationFFJudo
-        {
-            get
-            {
-                return _entitePublicationFFJudo;
-            }
-            set
-            {
-                _entitePublicationFFJudo = value;
-                if (value != null)
-                {
-                    // Garde en memoire la derniere valeur sauvegardee pour ce niveau
-                    _allEntitePublicationFFJudo[_niveauPublicationFFJudo] = value;
-                    AppSettings.SaveSetting("EntitePublicationFFJudo", _entitePublicationFFJudo.Nom);
-                }
-                NotifyPropertyChanged("EntitePublicationFFJudo");
-            }
-        }
-
-
-        /// <summary>
-        /// Les entites de publication selectionnees par niveau
-        /// </summary>
-        public Dictionary<string, EntitePublicationFFJudo> AllEntitePublicationFFJudo
-        {
-            get
-            {
-                return _allEntitePublicationFFJudo;
-            }
-            set
-            {
-                _allEntitePublicationFFJudo = value;
-                NotifyPropertyChanged("AllEntitePublicationFFJudo");
-            }
-        }
-
-        private string _niveauPublicationFFJudo;
-        /// <summary>
-        /// Le niveau de publication selectionne
-        /// </summary>
-        public string NiveauPublicationFFJudo
-        {
-            get
-            {
-                return _niveauPublicationFFJudo;
-            }
-            set
-            {
-                _niveauPublicationFFJudo = value;
-                AppSettings.SaveSetting("NiveauPublicationFFJudo", _niveauPublicationFFJudo);
-
-                // Ajuste la liste des entites et restaure le dernier element selectionne pour ce niveau
-                ObservableCollection<EntitePublicationFFJudo> ent = null;
-                try
-                {
-                    ent = _allEntitesPublicationFFJudo[_niveauPublicationFFJudo];
-                }
-                catch
-                {
-                    ent = null;
-                }
-                finally
-                {
-                    ListeEntitesPublicationFFJudo = ent;
-                    EntitePublicationFFJudo = _allEntitePublicationFFJudo[_niveauPublicationFFJudo];
-                }
-
-                NotifyPropertyChanged("NiveauPublicationFFJudo");
+                _instanceName = value;
+                NotifyPropertyChanged("InstanceName");
             }
         }
 
@@ -248,9 +156,9 @@ namespace Tools.Outils
                     {
                         ServerHTTP.ListeningIpAddress = _interfaceLocalPublication;
                     }
-                    if (_interfaceLocalPublication != null)
+                    if (_interfaceLocalPublication != null && CacheConfig)
                     {
-                        AppSettings.SaveSetting("InterfaceLocalPublication", _interfaceLocalPublication.ToString());
+                        AppSettings.SaveSetting(kSettingInterfaceLocalPublication, _interfaceLocalPublication.ToString(), _instanceName);
                     }
                     NotifyPropertyChanged("InterfaceLocalPublication");
                     IsChanged = true;
@@ -309,6 +217,40 @@ namespace Tools.Outils
             }
         }
 
+        bool _cacheConfig = false;
+        /// <summary>
+        /// Indique si les donnees de configuration doivent etre gardees en cache
+        /// </summary>
+        public bool CacheConfig
+        {
+            get
+            {
+                return _cacheConfig;
+            }
+            private set
+            {
+                _cacheConfig = value;
+                NotifyPropertyChanged("CacheConfig");
+            }
+        }
+
+        bool _cachePassword = false;
+        /// <summary>
+        /// Indique si le mot de passe doit etre gardees en cache
+        /// </summary>
+        public bool CachePassword
+        {
+            get
+            {
+                return _cachePassword;
+            }
+            private set
+            {
+                _cachePassword = value;
+                NotifyPropertyChanged("CachePassword");
+            }
+        }
+
         private string _ftpDistant = string.Empty;
         /// <summary>
         /// L'adresse du site FTP Distant
@@ -322,7 +264,10 @@ namespace Tools.Outils
             set
             {
                 _ftpDistant = value;
-                AppSettings.SaveSetting("SiteFTPDistant", _ftpDistant);
+                if (CacheConfig)
+                {
+                    AppSettings.SaveSetting(kSettingSiteFTPDistant, _ftpDistant, _instanceName);
+                }
                 NotifyPropertyChanged("SiteFTPDistant");
                 IsChanged = true;
             }
@@ -359,7 +304,10 @@ namespace Tools.Outils
             set
             {
                 _ftpLoginDistant = value;
-                AppSettings.SaveSetting("LoginSiteFTPDistant", _ftpLoginDistant);
+                if (CacheConfig)
+                {
+                    AppSettings.SaveSetting(kSettingLoginSiteFTPDistant, _ftpLoginDistant, _instanceName);
+                }
                 NotifyPropertyChanged("LoginSiteFTPDistant");
                 IsChanged = true;
             }
@@ -379,7 +327,10 @@ namespace Tools.Outils
             set
             {
                 _modeFTPActif = value;
-                AppSettings.SaveSetting("ModeActifFTPDistant", _modeFTPActif.ToString());
+                if (CacheConfig)
+                {
+                    AppSettings.SaveSetting(kSettingModeActifFTPDistant, _modeFTPActif.ToString(), _instanceName);
+                }
                 NotifyPropertyChanged("ModeActifFTPDistant");
                 IsChanged = true;
             }
@@ -398,32 +349,14 @@ namespace Tools.Outils
             set
             {
                 _ftpPasswordDistant = value;
-                AppSettings.SaveEncryptedSetting("PasswordSiteFTPDistant", _ftpPasswordDistant);
+                if (CachePassword)
+                {
+                    AppSettings.SaveEncryptedSetting(kSettingPasswordSiteFTPDistant, _ftpPasswordDistant, _instanceName);
+                }
                 NotifyPropertyChanged("PasswordSiteFTPDistant");
                 IsChanged = true;
             }
-        }
-
-        private string _passwordPublicationFFJudo = string.Empty;
-        /// <summary>
-        /// Mot de passe FTP au site France Judo
-        /// </summary>
-        public string PasswordPublicationFFJudo
-        {
-            get
-            {
-                return _passwordPublicationFFJudo;
-            }
-            set
-            {
-                _passwordPublicationFFJudo = value;
-                AppSettings.SaveEncryptedSetting("PasswordPublicationFFJudo", _passwordPublicationFFJudo);
-                NotifyPropertyChanged("PasswordPublicationFFJudo");
-                IsChanged = true;
-            }
-        }
-
-        
+        }  
 
         private bool _syncDiff = false;
         public bool SynchroniseDifferences
@@ -435,7 +368,10 @@ namespace Tools.Outils
             set
             {
                 _syncDiff = value;
-                AppSettings.SaveSetting("SynchroniseDifferences", _syncDiff.ToString());
+                if (CacheConfig)
+                {
+                    AppSettings.SaveSetting(kSettingSynchroniseDifferences, _syncDiff.ToString(), _instanceName);
+                }
                 NotifyPropertyChanged("SynchroniseDifferences");
                 IsChanged = true;
             }
@@ -505,48 +441,7 @@ namespace Tools.Outils
 
         #region METHODES
 
-        /// <summary>
-        /// Initialise la liste des comites et ligues pour la publication sur les serveurs France Judo
-        /// </summary>
-        private void InitPublicationFFJudo()
-        {
-            // Charge la structure XML en memoire depuis les resources
-            XmlReader structureReader = XmlReader.Create(ResourcesTools.GetAssembyResource(ConstantResource.PublicationFFJUDO));
-
-            XmlDocument doc = new XmlDocument();
-            doc.Load(structureReader);
-
-            if (doc.DocumentElement.HasChildNodes)
-            {
-                ObservableCollection<string> tmp = new ObservableCollection<string>();
-                _allEntitePublicationFFJudo = new Dictionary<string, EntitePublicationFFJudo>();
-                _allEntitesPublicationFFJudo = new Dictionary<string, ObservableCollection<EntitePublicationFFJudo>>();
-
-                foreach (XmlNode node in doc.DocumentElement.ChildNodes)
-                {
-                    ObservableCollection<EntitePublicationFFJudo> tmpNiveau = new ObservableCollection<EntitePublicationFFJudo>();
-                    if (node.HasChildNodes)
-                    {
-                        foreach (XmlNode childNode in node.ChildNodes)
-                        {
-                            if (childNode.Attributes != null && childNode.Attributes["nom"] != null && childNode.Attributes["libelle"] != null)
-                            {
-                                tmpNiveau.Add(new EntitePublicationFFJudo(childNode.Attributes["nom"].Value, childNode.Attributes["libelle"].Value));
-                            }
-                        }
-
-                        // On ne tient compte d'un niveau que s'il a des entites en dessous
-                        if (tmpNiveau.Count > 0)
-                        {
-                            tmp.Add(node.Name);
-                            _allEntitePublicationFFJudo.Add(node.Name, tmpNiveau.First());
-                            _allEntitesPublicationFFJudo.Add(node.Name, tmpNiveau);
-                        }
-                    }
-                }
-                ListeNiveauxPublicationFFJudo = tmp;
-            }
-        }
+       
 
         /// <summary>
         /// Initialise la configuraiton FTP a partir du cache de fichier AppConfig
@@ -557,17 +452,11 @@ namespace Tools.Outils
 
             try
             {
-                SiteFTPDistant = AppSettings.ReadSetting("SiteFTPDistant", string.Empty);
-                LoginSiteFTPDistant = AppSettings.ReadSetting("LoginSiteFTPDistant", string.Empty);
-                PasswordSiteFTPDistant = AppSettings.ReadEncryptedSetting("PasswordSiteFTPDistant", string.Empty);
-                PasswordPublicationFFJudo = AppSettings.ReadEncryptedSetting("PasswordPublicationFFJudo", string.Empty);
-                ModeActifFTPDistant = AppSettings.ReadSetting("ModeActifFTPDistant", false);
-                SynchroniseDifferences = AppSettings.ReadSetting("SynchroniseDifferences", false);
-                EasyConfig = AppSettings.ReadSetting("EasyConfig", true);
-                // Charge les valeurs pour la publication FFJudo. On doit faire le niveau en 1er pour
-                // avoir la bonne liste d'entites ensuite
-                NiveauPublicationFFJudo = AppSettings.ReadSetting<string>("NiveauPublicationFFJudo", ListeNiveauxPublicationFFJudo, o => o);
-                EntitePublicationFFJudo = AppSettings.ReadSetting<EntitePublicationFFJudo>("EntitePublicationFFJudo", ListeEntitesPublicationFFJudo, o => o.Nom);
+                SiteFTPDistant = AppSettings.ReadSetting(kSettingSiteFTPDistant, string.Empty, _instanceName);
+                LoginSiteFTPDistant = AppSettings.ReadSetting(kSettingLoginSiteFTPDistant, string.Empty, _instanceName);
+                PasswordSiteFTPDistant = AppSettings.ReadEncryptedSetting(kSettingPasswordSiteFTPDistant, string.Empty, _instanceName);
+                ModeActifFTPDistant = AppSettings.ReadSetting(kSettingModeActifFTPDistant, false, _instanceName);
+                SynchroniseDifferences = AppSettings.ReadSetting(kSettingSynchroniseDifferences, false, _instanceName);
             }
             catch { }
         }
@@ -587,7 +476,7 @@ namespace Tools.Outils
             if (InterfacesLocal.Count >= 1)
             {
                 // Cherche si une interface existe dans la configuration du fichier
-                string valCache = AppSettings.ReadSetting("InterfaceLocalPublication");
+                string valCache = AppSettings.ReadSetting(kSettingInterfaceLocalPublication, _instanceName);
                 IPAddress ipToUse = null;
                 bool useCache = false;
 
@@ -603,7 +492,7 @@ namespace Tools.Outils
                     {
                         // Soit l'IP configuree est incorrecte, soit elle n'est pas dans la liste
                         useCache = false;
-                        LogTools.Error(ex);
+                        LogTools.Debug(ex);
                     }
                 }
 
@@ -665,7 +554,6 @@ namespace Tools.Outils
                 }
                 else
                 {
-                    // TODO Ajouter la gestion du mode Easy/Advanced
                     // Serveur distant
                     try
                     {
@@ -728,7 +616,6 @@ namespace Tools.Outils
         /// <returns></returns>
         private bool CheckConfigurationSiteDistant()
         {
-            // TODO Ajouter la gestion du mode Easy/Advanced
             bool output = false;
             if (!String.IsNullOrEmpty(SiteFTPDistant) && !String.IsNullOrEmpty(LoginSiteFTPDistant) && !string.IsNullOrEmpty(PasswordSiteFTPDistant))
             {

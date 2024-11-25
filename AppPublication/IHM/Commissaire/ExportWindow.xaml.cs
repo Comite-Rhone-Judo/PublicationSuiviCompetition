@@ -94,8 +94,8 @@ namespace AppPublication.IHM.Commissaire
             if(e!= null && e.NewValue != null && e.NewValue.GetType() == typeof(DialogControleur) )
             {
                 DialogControleur dc = (DialogControleur)e.NewValue;
-                this.AdvancedPwd.Password = dc.GestionSite.MiniSiteDistant.PasswordSiteFTPDistant;
-                this.EasyConfigPwd.Password = dc.GestionSite.MiniSiteDistant.PasswordPublicationFFJudo;
+                this.AdvancedPwd.Password = dc.GestionSite.SiteDistant.PasswordSiteFTPDistant;
+                this.EasyConfigPwd.Password = dc.GestionSite.SiteFranceJudo.PasswordSiteFTPDistant;
             }
         }
     }

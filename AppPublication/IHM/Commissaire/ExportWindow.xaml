@@ -253,7 +253,7 @@
                                                 <telerik:RadBarcodeQR.Text>
                                                     <MultiBinding Converter="{StaticResource DisplayURLStatusConverter}" Mode="OneWay">
                                                         <Binding Path="GestionSite.URLLocalPublication"  Mode="OneWay"/>
-                                                        <Binding Path="GestionSite.MiniSiteLocal.IsActif"  Mode="OneWay"/>
+                                                        <Binding Path="GestionSite.SiteLocal.IsActif"  Mode="OneWay"/>
                                                     </MultiBinding>
                                                 </telerik:RadBarcodeQR.Text>
                                             </telerik:RadBarcodeQR>
@@ -268,13 +268,13 @@
                                     <StackPanel Orientation="Horizontal" >
                                         <StackPanel Orientation="Horizontal" >
                                             <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
-                                            <Rectangle Margin="0" Height="15" Width="15" Style="{StaticResource RunningStatusStyle}" DataContext="{Binding Path=GestionSite.MiniSiteLocal}"/>
-                                            <Label HorizontalAlignment="Left" Content="{Binding Path=GestionSite.MiniSiteLocal.IsActif, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
+                                            <Rectangle Margin="0" Height="15" Width="15" Style="{StaticResource RunningStatusStyle}" DataContext="{Binding Path=GestionSite.SiteLocal}"/>
+                                            <Label HorizontalAlignment="Left" Content="{Binding Path=GestionSite.SiteLocal.IsActif, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
                                         </StackPanel>
                                         <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                         <StackPanel Orientation="Horizontal" >
                                             <Label HorizontalAlignment="Left" Content="Statut:" Style="{StaticResource LabelStyle}" />
-                                            <Label HorizontalAlignment="Left" Content="{Binding GestionSite.MiniSiteLocal.Status.Message}" Style="{StaticResource LabelStyleValue}" />
+                                            <Label HorizontalAlignment="Left" Content="{Binding GestionSite.SiteLocal.Status.Message}" Style="{StaticResource LabelStyleValue}" />
                                         </StackPanel>
                                     </StackPanel>
                                     <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="1" Stretch="Fill"/>
@@ -282,9 +282,9 @@
                                     <StackPanel Orientation="Horizontal" >
                                         <Label Content="Adresse de publication:" Margin="10" Style="{StaticResource LabelStyle}"/>
                                         <telerik:RadComboBox Height="22" MinWidth="200" Style="{StaticResource DropDownStyle}"
-                                          ItemsSource="{Binding Path=GestionSite.MiniSiteLocal.InterfacesLocal}"
+                                          ItemsSource="{Binding Path=GestionSite.SiteLocal.InterfacesLocal}"
                                           SelectedItem = "{Binding Path=GestionSite.InterfaceLocalPublication}"
-                                          IsEnabled="{Binding Path=GestionSite.MiniSiteLocal.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                          IsEnabled="{Binding Path=GestionSite.SiteLocal.IsActif, Converter={StaticResource BoolNotConverter}}"/>
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
@@ -292,8 +292,8 @@
                                                     Command="{Binding Path=CmdDemarrerSiteLocal}">
                                         <telerik:RadButton.IsEnabled>
                                             <MultiBinding Converter="{StaticResource EtatPublicationConverter}" Mode="OneWay">
-                                                <Binding Path="GestionSite.MiniSiteLocal.IsChanged" Mode="OneWay"/>
-                                                <Binding Path="GestionSite.MiniSiteLocal" Mode="OneWay"/>
+                                                <Binding Path="GestionSite.SiteLocal.IsChanged" Mode="OneWay"/>
+                                                <Binding Path="GestionSite.SiteLocal" Mode="OneWay"/>
                                                 <Binding Path="ServerData.competition" Mode="OneWay"/>
                                             </MultiBinding>
                                         </telerik:RadButton.IsEnabled>
@@ -334,7 +334,7 @@
                                                 <telerik:RadBarcodeQR.Text>
                                                     <MultiBinding Converter="{StaticResource DisplayURLStatusConverter}" Mode="OneWay">
                                                         <Binding Path="GestionSite.URLDistantPublication"  Mode="OneWay"/>
-                                                        <Binding Path="GestionSite.MiniSiteDistant.IsActif"  Mode="OneWay"/>
+                                                        <Binding Path="GestionSite.SiteDistantSelectionne.IsActif"  Mode="OneWay"/>
                                                     </MultiBinding>
                                                 </telerik:RadBarcodeQR.Text>
                                             </telerik:RadBarcodeQR>
@@ -349,18 +349,18 @@
                                     <StackPanel Orientation="Horizontal" >
                                         <StackPanel Orientation="Horizontal" >
                                             <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
-                                            <Rectangle Margin="0" Height="15" Width="15" Style="{StaticResource RunningStatusStyle}" DataContext="{Binding Path=GestionSite.MiniSiteDistant, Mode=OneWay}"/>
-                                            <Label HorizontalAlignment="Left" Content="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
+                                            <Rectangle Margin="0" Height="15" Width="15" Style="{StaticResource RunningStatusStyle}" DataContext="{Binding Path=GestionSite.SiteDistantSelectionne, Mode=OneWay}"/>
+                                            <Label HorizontalAlignment="Left" Content="{Binding Path=GestionSite.SiteDistantSelectionne.IsActif, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
                                         </StackPanel>
                                         <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                         <StackPanel Orientation="Horizontal" >
                                             <Label HorizontalAlignment="Left" Content="Statut:" Style="{StaticResource LabelStyle}" />
-                                            <Ellipse Margin="0" Height="15" Width="15" Style="{StaticResource OperationStatusStyle}" DataContext="{Binding Path=GestionSite.MiniSiteDistant.Status, Mode=OneWay}"/>
+                                            <Ellipse Margin="0" Height="15" Width="15" Style="{StaticResource OperationStatusStyle}" DataContext="{Binding Path=GestionSite.SiteDistantSelectionne.Status, Mode=OneWay}"/>
                                             <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                                                <Label HorizontalAlignment="Left" Width="140" Content="{Binding GestionSite.MiniSiteDistant.Status.Message, Mode=OneWay}" Style="{StaticResource LabelStyleValue}" />
-                                                <telerik:RadProgressBar Orientation="Horizontal" Width="140" Height="8" Margin="0 -10 0 0" Minimum="0" Maximum="100" Style="{StaticResource StatusProgressBarStyle}" DataContext="{Binding Path=GestionSite.MiniSiteDistant.Status, Mode=OneWay}" />
+                                                <Label HorizontalAlignment="Left" Width="140" Content="{Binding GestionSite.SiteDistantSelectionne.Status.Message, Mode=OneWay}" Style="{StaticResource LabelStyleValue}" />
+                                                <telerik:RadProgressBar Orientation="Horizontal" Width="140" Height="8" Margin="0 -10 0 0" Minimum="0" Maximum="100" Style="{StaticResource StatusProgressBarStyle}" DataContext="{Binding Path=GestionSite.SiteDistantSelectionne.Status, Mode=OneWay}" />
                                             </StackPanel>
-                                            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="25" Margin="5 0" DataContext="{Binding Path=GestionSite.MiniSiteDistant.Status, Mode=OneWay}" Style="{StaticResource InfoTooltipStyle}"/>
+                                            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="25" Margin="5 0" DataContext="{Binding Path=GestionSite.SiteDistantSelectionne.Status, Mode=OneWay}" Style="{StaticResource InfoTooltipStyle}"/>
                                         </StackPanel>
                                         <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                         <StackPanel Orientation="Horizontal" >
@@ -374,91 +374,93 @@
                                         </StackPanel>
                                     </StackPanel>
                                     <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="1" Stretch="Fill"/>
-                                    <Label HorizontalAlignment="Left" Content="Parametres:" Style="{StaticResource HeaderStyle}" />
-                                    <telerik:RadTabControl telerik:StyleManager.Theme="Expression_Dark" AllTabsEqualHeight="True" Height="250" Margin="10 0 10 0">
-                                        <telerik:RadTabControl.Items>
-                                            <telerik:RadTabItem Header="France Judo" IsSelected="{Binding Path=GestionSite.MiniSiteDistant.EasyConfig, Mode=OneWayToSource}">
-                                                <telerik:RadTabItem.Content>
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="auto"/>
-                                                            <ColumnDefinition Width="auto"/>
-                                                        </Grid.ColumnDefinitions>
-                                                        <Grid.RowDefinitions>
-                                                            <RowDefinition Height="auto"/>
-                                                            <RowDefinition Height="auto"/>
-                                                            <RowDefinition Height="auto"/>
-                                                        </Grid.RowDefinitions>
-                                                        <Label Grid.Column="0" Content="Niveau de publication:" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right"/>
-                                                        <telerik:RadComboBox Grid.Column="1" Style="{StaticResource DropDownStyle}" MinWidth="120"
-                                                                             ItemsSource="{Binding Path=GestionSite.MiniSiteDistant.ListeNiveauxPublicationFFJudo}"
-                                                                             SelectedValue="{Binding Path=GestionSite.MiniSiteDistant.NiveauPublicationFFJudo}" Margin="5,0,0,0"
-                                                                             IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
-                                                        <Label Grid.Column="0" Grid.Row="1" Content="Entité de publication:" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right"/>
-                                                        <telerik:RadComboBox Grid.Column="1" Grid.Row="1" Style="{StaticResource DropDownStyle}" MinWidth="180"
-                                                                             ItemsSource="{Binding Path=GestionSite.MiniSiteDistant.ListeEntitesPublicationFFJudo}" DisplayMemberPath="Libelle"
-                                                                             SelectedItem="{Binding Path=GestionSite.MiniSiteDistant.EntitePublicationFFJudo}" Margin="5,0,0,0"
-                                                                             IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
-                                                        <Label Grid.Column="0" Grid.Row="2" Content="Mot de passe:" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right"/>
-                                                        <telerik:RadPasswordBox Name="EasyConfigPwd" Grid.Column="1" Grid.Row="2" TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
-                                                                Text = "{Binding Path=GestionSite.MiniSiteDistant.PasswordSiteFTPDistant}"
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label HorizontalAlignment="Left" Content="Parametres:" Style="{StaticResource HeaderStyle}" />
+                                        <CheckBox Content="Configuration avancée" IsChecked="{Binding Path=GestionSite.AdvancedConfig}" Style="{StaticResource CheckboxStyle}">
+                                            <CheckBox.IsEnabled>
+                                                <MultiBinding Converter="{StaticResource BoolOperationConverter}" ConverterParameter="a_and_not_b"  Mode="OneWay">
+                                                    <Binding Path="GestionSite.EasyConfigDisponible" Mode="OneWay"/>
+                                                    <Binding Path="GestionSite.SiteDistantSelectionne.IsActif" Mode="OneWay"/>
+                                                </MultiBinding>
+                                            </CheckBox.IsEnabled>
+                                        </CheckBox>
+                                    </StackPanel>
+                                    <CheckBox Content="Isoler les compétitions" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.IsolerCompetition}" IsEnabled="{Binding Path=GestionSite.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" Margin="10 0 0 0"/>
+                                    <StackPanel Visibility="{Binding Path=GestionSite.EasyConfig, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="auto"/>
+                                                <ColumnDefinition Width="auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="auto"/>
+                                                <RowDefinition Height="auto"/>
+                                                <RowDefinition Height="auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Label Grid.Column="0" Content="Niveau de publication:" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right"/>
+                                            <telerik:RadComboBox Grid.Column="1" Style="{StaticResource DropDownStyle}" MinWidth="120"
+                                                                             ItemsSource="{Binding Path=GestionSite.ListeNiveauxPublicationFFJudo}"
+                                                                             SelectedValue="{Binding Path=GestionSite.NiveauPublicationFFJudo}" Margin="5,0,0,0"
+                                                                             IsEnabled="{Binding Path=GestionSite.SiteFranceJudo.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                            <Label Grid.Column="0" Grid.Row="1" Content="Entité de publication:" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right"/>
+                                            <telerik:RadComboBox Grid.Column="1" Grid.Row="1" Style="{StaticResource DropDownStyle}" MinWidth="180"
+                                                                             ItemsSource="{Binding Path=GestionSite.ListeEntitesPublicationFFJudo}" DisplayMemberPath="Libelle"
+                                                                             SelectedItem="{Binding Path=GestionSite.EntitePublicationFFJudo}" Margin="5,0,0,0"
+                                                                             IsEnabled="{Binding Path=GestionSite.SiteFranceJudo.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                            <Label Grid.Column="0" Grid.Row="2" Content="Mot de passe:" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right"/>
+                                            <telerik:RadPasswordBox Name="EasyConfigPwd" Grid.Column="1" Grid.Row="2" TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
+                                                                Text = "{Binding Path=GestionSite.SiteFranceJudo.PasswordSiteFTPDistant}"
                                                                 WatermarkContent="Entrer votre mot de passe"
                                                                 ShowPasswordButtonVisibility="Auto"
-                                                                IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
-                                                    </Grid>
-                                                </telerik:RadTabItem.Content>
-                                            </telerik:RadTabItem>
-                                            <telerik:RadTabItem Header="Personnalisée" >
-                                                <telerik:RadTabItem.Content>
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="62"/>
-                                                            <ColumnDefinition Width="161.647"/>
-                                                            <ColumnDefinition Width="auto"/>
-                                                        </Grid.ColumnDefinitions>
-                                                        <Grid.RowDefinitions>
-                                                            <RowDefinition Height="auto"/>
-                                                            <RowDefinition Height="auto"/>
-                                                            <RowDefinition Height="auto"/>
-                                                            <RowDefinition Height="auto"/>
-                                                            <RowDefinition Height="auto"/>
-                                                        </Grid.RowDefinitions>
-                                                        <Label Grid.Column="0" Content="Racine du site de publication:" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2" HorizontalAlignment="Center"/>
-                                                        <TextBox Grid.Row="0" Grid.Column="2" TextWrapping="Wrap" Height="22" Margin="5,13,5,14" MinWidth="300"
+                                                                IsEnabled="{Binding Path=GestionSite.SiteFranceJudo.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                        </Grid>
+                                    </StackPanel>
+                                    <StackPanel Visibility="{Binding Path=GestionSite.AdvancedConfig, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="62"/>
+                                                <ColumnDefinition Width="161.647"/>
+                                                <ColumnDefinition Width="auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="auto"/>
+                                                <RowDefinition Height="auto"/>
+                                                <RowDefinition Height="auto"/>
+                                                <RowDefinition Height="auto"/>
+                                                <RowDefinition Height="auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Label Grid.Column="0" Content="Racine du site de publication:" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2" HorizontalAlignment="Center"/>
+                                            <TextBox Grid.Row="0" Grid.Column="2" TextWrapping="Wrap" Height="22" Margin="5,13,5,14" MinWidth="300"
                                          Text = "{Binding Path=GestionSite.URLDistant}"
-                                         IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
-                                                        <Label Grid.Row="1" Grid.Column="0" Content="Adresse du site FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
-                                                        <TextBox Grid.Row="1" Grid.Column="2" TextWrapping="Wrap" Height="22" Margin="5,13,5,13" MinWidth="300"
-                                         Text = "{Binding Path=GestionSite.MiniSiteDistant.SiteFTPDistant}"
-                                         IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
-                                                        <Label Grid.Row="2" Grid.Column="0" Content="Répertoire distant FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
-                                                        <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="0,48,0,48" Grid.RowSpan="3">
-                                                            <TextBox  TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
+                                         IsEnabled="{Binding Path=GestionSite.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                            <Label Grid.Row="1" Grid.Column="0" Content="Adresse du site FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
+                                            <TextBox Grid.Row="1" Grid.Column="2" TextWrapping="Wrap" Height="22" Margin="5,13,5,13" MinWidth="300"
+                                         Text = "{Binding Path=GestionSite.SiteDistant.SiteFTPDistant}"
+                                         IsEnabled="{Binding Path=GestionSite.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                            <Label Grid.Row="2" Grid.Column="0" Content="Répertoire distant FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
+                                            <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="0,48,0,48" Grid.RowSpan="3">
+                                                <TextBox  TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
                                          Text = "{Binding Path=GestionSite.RepertoireRacineSiteFTPDistant}"
-                                         IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
-                                                            <CheckBox Content="Isoler les compétitions" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.IsolerCompetition}" IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" />
-                                                        </StackPanel>
-                                                        <Label Grid.Row="3" Grid.Column="0" Content="Login FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
-                                                        <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal">
-                                                            <TextBox TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
-                                            Text = "{Binding Path=GestionSite.MiniSiteDistant.LoginSiteFTPDistant}"
-                                            IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
-                                                            <CheckBox Content="Mode FTP Actif" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.MiniSiteDistant.ModeActifFTPDistant}" IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" />
-                                                        </StackPanel>
-                                                        <Label Grid.Row="4" Grid.Column="0" Content="Mot de passe FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
-                                                        <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal" Margin="0,48,0,0" Grid.RowSpan="2">
-                                                            <telerik:RadPasswordBox Name="AdvancedPwd" TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
+                                         IsEnabled="{Binding Path=GestionSite.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                            </StackPanel>
+                                            <Label Grid.Row="3" Grid.Column="0" Content="Login FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
+                                            <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal">
+                                                <TextBox TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
+                                            Text = "{Binding Path=GestionSite.SiteDistant.LoginSiteFTPDistant}"
+                                            IsEnabled="{Binding Path=GestionSite.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                                <CheckBox Content="Mode FTP Actif" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.SiteDistant.ModeActifFTPDistant}" IsEnabled="{Binding Path=GestionSite.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" />
+                                            </StackPanel>
+                                            <Label Grid.Row="4" Grid.Column="0" Content="Mot de passe FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
+                                            <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal" Margin="0,48,0,0" Grid.RowSpan="2">
+                                                <telerik:RadPasswordBox Name="AdvancedPwd" TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
                                                                 WatermarkContent="Entrez votre mot de passe"
                                                                 ShowPasswordButtonVisibility="Auto"
-                                                                IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
-                                                            <CheckBox Content="Sync. les differences" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.MiniSiteDistant.SynchroniseDifferences}" IsEnabled="{Binding Path=GestionSite.MiniSiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" />
-                                                        </StackPanel>
-                                                    </Grid>
-                                                </telerik:RadTabItem.Content>
-                                            </telerik:RadTabItem>
-                                        </telerik:RadTabControl.Items>
-                                    </telerik:RadTabControl>
-                                </StackPanel>
+                                                                IsEnabled="{Binding Path=GestionSite.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                                <CheckBox Content="Sync. les differences" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.SiteDistant.SynchroniseDifferences}" IsEnabled="{Binding Path=GestionSite.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </StackPanel>
+                                                                    </StackPanel>
                                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="0 0 20 0"
                                                        Command="{Binding Path=CmdDemarrerSiteDistant}">
@@ -471,8 +473,8 @@
 
                                         <telerik:RadButton.IsEnabled>
                                             <MultiBinding Converter="{StaticResource EtatPublicationConverter}" Mode="OneWay">
-                                                <Binding Path="GestionSite.MiniSiteDistant.IsChanged" Mode="OneWay"/>
-                                                <Binding Path="GestionSite.MiniSiteDistant" Mode="OneWay"/>
+                                                <Binding Path="GestionSite.SiteDistantSelectionne.IsChanged" Mode="OneWay"/>
+                                                <Binding Path="GestionSite.SiteDistantSelectionne" Mode="OneWay"/>
                                                 <Binding Path="ServerData.competition" Mode="OneWay"/>
                                             </MultiBinding>
                                         </telerik:RadButton.IsEnabled>
@@ -494,8 +496,8 @@
                                         </WrapPanel>
                                         <telerik:RadButton.IsEnabled>
                                             <MultiBinding Converter="{StaticResource BoolOperationConverter}" ConverterParameter="not_a_and_not_b"  Mode="OneWay">
-                                                <Binding Path="GestionSite.MiniSiteDistant.IsActif" Mode="OneWay"/>
-                                                <Binding Path="GestionSite.MiniSiteDistant.IsCleaning" Mode="OneWay"/>
+                                                <Binding Path="GestionSite.SiteDistantSelectionne.IsActif" Mode="OneWay"/>
+                                                <Binding Path="GestionSite.SiteDistantSelectionne.IsCleaning" Mode="OneWay"/>
                                             </MultiBinding>
                                         </telerik:RadButton.IsEnabled>
                                     </telerik:RadButton>

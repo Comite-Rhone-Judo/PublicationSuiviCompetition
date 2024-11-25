@@ -19,16 +19,25 @@ using NLog.Fluent;
 using NLog.Targets;
 using System.Linq;
 using Telerik.Windows.Documents.Fixed.Model.Editing.Lists;
+using NLog.Layouts;
 
 namespace Tools.Outils
 {
     public static class LogTools
     {
+        #region CONSTANTES
+        private const string kloggingLevelVariable = "loggingLevel";
+        #endregion
+
+        #region MEMBRES
         /// <summary>
         /// Define a static logger variable so that it references
         /// </summary>
         private static Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static Layout _previousLogLevel = null;
         // private static Logger Logger { get { return _logger; } }
+
+        #endregion
 
         #region PROXY vers le Logger
 
@@ -63,6 +72,28 @@ namespace Tools.Outils
             _logger.Info("App Publication is starting - Version " + OutilsTools.GetVersionInformation().ToString());
         }
 
+        /// <summary>
+        /// Configure le niveau de trace au maximum si enable = true, au niveau configure dans le fichier sinon
+        /// </summary>
+        /// <param name="enable">Active (true) ou desactive (False) le niveau de trace</param>
+        public static void ConfigureDebugLevel(bool enable)
+        {
+            if (enable)
+            {
+                // Sauvegarde l'etat actuel du niveau de trace
+                _previousLogLevel = LogManager.Configuration.Variables[kloggingLevelVariable];
+
+                // Force le niveau de trace a Debug
+                LogManager.Configuration.Variables[kloggingLevelVariable] = LogLevel.Debug.ToString();
+            }
+            else
+            {
+                // Remet en place le niveau de trace precedent
+                LogManager.Configuration.Variables[kloggingLevelVariable] = _previousLogLevel;
+            }
+
+            LogManager.ReconfigExistingLoggers(); // Explicit refresh of Layouts and updates active Logger-objects
+        }
 
         private static string _logDirectory;
         
