@@ -19,6 +19,7 @@ namespace Tools.Outils
             {
                 if (++index > 20)
                 {
+                    LogTools.Logger.Debug("Impossible d'obtenir l'access au fichier '{0}'", file);
                     throw new UnauthorizedAccessException();
                 }
                 Thread.Sleep(100);

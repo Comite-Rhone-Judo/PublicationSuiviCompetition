@@ -116,10 +116,31 @@ namespace Tools.Outils
                 // lecture de la valeur dans le fichier de configuration
                 string valCache = AppSettings.ReadRawSetting(key, prefix);
 
+                output = AppSettings.FindSetting<T>(valCache, sourceList, predicate);
+            }
+
+            return output;
+        }
+
+        /// <summary>
+        /// Recherche une valeur de parametre dans une liste predefinie. Retourne le 1er de la liste si la valeur du parametre n'existe pas dans la liste
+        /// </summary>
+        /// <typeparam name="T">Type du parametre</typeparam>
+        /// <param name="value">Valeur du parametre</param>
+        /// <param name="sourceList">Liste source</param>
+        /// <param name="predicate">Fonction permettant de mapper T >> String </param>
+        /// <returns></returns>
+        public static T FindSetting<T>(string value, IEnumerable<T> sourceList, Func<T, string> predicate) where T : class
+        {
+            T output = null;
+
+            // Si la liste est vide, on ne peut rien faire
+            if (sourceList != null && sourceList.Count() > 0)
+            {
                 try
                 {
                     // Cherche si la valeur lue existe dans la liste source
-                    output = sourceList.Where(o => predicate(o) == valCache).First();
+                    output = sourceList.Where(o => predicate(o) == value).First();
                 }
                 catch (Exception ex)
                 {

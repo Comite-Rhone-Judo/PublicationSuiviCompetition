@@ -118,7 +118,7 @@
 		<Ligue nom="PROVENCE-ALPES-COTE-D-AZUR" libelle="Provence - Alpes - Cote d'Azur" login="ftpPROVENCE-ALPES-COTE-D-AZUR" racine="SuiviCompetition/Ligues/PROVENCE-ALPES-COTE-D-AZUR"/>
 		<Ligue nom="REUNION" libelle="Réunion" login="ftpREUNION" racine="SuiviCompetition/Ligues/REUNION"/>
 	</Ligues>
-	<Nationales echelon="5">
+	<Nationaux echelon="5">
 		<Nationale nom="FRANCEJUDO" libelle="France Judo" login="ftp" racine="SuiviCompetition/FRANCEJUDO"/>
-	</Nationales>
+	</Nationaux>
 </Publication>

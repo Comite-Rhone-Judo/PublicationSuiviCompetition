@@ -961,8 +961,6 @@ namespace AppPublication.Controles
             FichiersLogo = new ObservableCollection<FilteredFileInfo>(files);
         }
 
-        // TODO modifier pour prendre en charge des parametre supplementaires (site FTP, login, etc.)
-
         /// <summary>
         /// Initialise la liste des comites et ligues pour la publication sur les serveurs France Judo
         /// </summary>
@@ -1036,8 +1034,7 @@ namespace AppPublication.Controles
             catch(Exception ex)
             {
                 // On ne peut pas initialiser le mode EasyConfig
-                LogTools.Logger.Debug("Desactivation du mode easyConfig - Configuration absente ou incorrecte", ex);
-                // TODO Ajouter un flag pour desactiver le mode easyCondfig
+                LogTools.Logger.Error("Desactivation du mode easyConfig - Configuration absente ou incorrecte", ex);
                 EasyConfig = false;
                 EasyConfigDisponible = false;
             }
@@ -1063,11 +1060,21 @@ namespace AppPublication.Controles
                 PouleToujoursEnColonnes = AppSettings.ReadSetting(kSettingPouleToujoursEnColonnes, false);
                 TailleMaxPouleColonnes = AppSettings.ReadSetting(kSettingTailleMaxPouleColonnes, 5);
                 RepertoireRacine = AppSettings.ReadSetting(kSettingRepertoireRacine, Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
-                EasyConfig = AppSettings.ReadSetting(kSettingEasyConfig, true);
-                // Charge les valeurs pour la publication FFJudo. On doit faire le niveau en 1er pour
-                // avoir la bonne liste d'entites ensuite
-                NiveauPublicationFFJudo = AppSettings.ReadRawSetting<string>(kSettingNiveauPublicationFFJudo, ListeNiveauxPublicationFFJudo, o => o);
-                EntitePublicationFFJudo = AppSettings.ReadRawSetting<EntitePublicationFFJudo>(kSettingEntitePublicationFFJudo, ListeEntitesPublicationFFJudo, o => o.Nom);
+
+                // Charge les valeurs pour la publication FFJudo
+                if (EasyConfigDisponible)
+                {
+                    EasyConfig = AppSettings.ReadSetting(kSettingEasyConfig, true);
+
+                    // On charge le nom de l'entite en 1er car sinon, en initialisant la liste des niveaux, on fait un reset de la valeur de l'entite a la 1ere de la liste du niveau
+                    string tmp = AppSettings.ReadRawSetting(kSettingEntitePublicationFFJudo);
+
+                    // Charge le niveau selectionne
+                    NiveauPublicationFFJudo = AppSettings.ReadRawSetting<string>(kSettingNiveauPublicationFFJudo, ListeNiveauxPublicationFFJudo, o => o);
+
+                    // Recherche l'entite a partir de la valeur initiale lue
+                    EntitePublicationFFJudo = AppSettings.FindSetting<EntitePublicationFFJudo>(tmp, ListeEntitesPublicationFFJudo, o => o.Nom);                    
+                }
 
                 // Recherche le logo dans la liste
                 SelectedLogo = AppSettings.ReadRawSetting<FilteredFileInfo>(kSettingSelectedLogo, FichiersLogo, o => o.Name);
@@ -1305,7 +1312,10 @@ namespace AppPublication.Controles
 
                                 // prochaine heure de generation
                                 wakeUpTime = DateTime.Now.AddMilliseconds(delaiThread);
-                                DerniereGeneration.DateProchaineGeneration = wakeUpTime;
+
+                                StatExecution tmp = DerniereGeneration;
+                                tmp.DateProchaineGeneration = wakeUpTime;
+                                DerniereGeneration = tmp;
                             }
                             Thread.Sleep(delaiScrutationMs);
                         }
@@ -1404,7 +1414,7 @@ namespace AppPublication.Controles
             }
             catch (Exception ex)
             {
-                LogTools.Error(ex);
+                LogTools.Logger.Error("Erreur rencontree lors de l'export", ex);
             }
 
             return urls;
