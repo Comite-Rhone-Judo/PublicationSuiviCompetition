@@ -10,6 +10,7 @@ namespace AppPublication.Tools
         {
             DateDemarrage = DateTime.Now;
             DateFin = DateTime.Now;
+            DateProchaineGeneration = DateTime.MinValue;
             DelaiExecutionMs = 0;
         }
         #endregion
