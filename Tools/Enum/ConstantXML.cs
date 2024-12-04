@@ -56,6 +56,7 @@
         public const string nbProchainsCombats = "NbProchainsCombats";
         public const string msgProchainsCombats = "MsgProchainsCombats";
         public const string DateGeneration = "DateGeneration";
+        public const string AppVersion = "AppVersion";
         public const string Logo = "Logo";
 
         public const string checksums = "Checksums";

@@ -153,7 +153,7 @@
 
 			<!-- Info d'actualisation -->
 			<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
-				Dernière actualisation: <xsl:value-of select="/competition/@DateGeneration"/>
+				v<xsl:value-of select="/competition/@AppVersion"/> - Dernière actualisation: <xsl:value-of select="/competition/@DateGeneration"/>
 			</div>
 		</body>
 	</xsl:template>

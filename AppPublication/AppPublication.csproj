@@ -65,9 +65,7 @@
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-  </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup>
     <ManifestCertificateThumbprint>9C39AA171DFCECA8008F6C39E70C754B9415D2DF</ManifestCertificateThumbprint>
   </PropertyGroup>
@@ -79,6 +77,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>AppPublication.App</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EPPlus">

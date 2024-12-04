@@ -39,6 +39,8 @@ namespace AppPublication.Export
                 attrMsgProchainsCombats.Value = config.MsgProchainCombats;
                 XmlAttribute attrDateGeneration = doc.CreateAttribute(ConstantXML.DateGeneration);
                 attrDateGeneration.Value = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+                XmlAttribute attrAppVersion = doc.CreateAttribute(ConstantXML.AppVersion);
+                attrAppVersion.Value = Tools.AppInformation.Instance.AppVersion;
                 XmlAttribute attrLogo = doc.CreateAttribute(ConstantXML.Logo);
                 attrLogo.Value = config.Logo;
 
@@ -49,6 +51,7 @@ namespace AppPublication.Export
                 node.Attributes.Append(attrDateGeneration);
                 node.Attributes.Append(attrMsgProchainsCombats);
                 node.Attributes.Append(attrLogo);
+                node.Attributes.Append(attrAppVersion);
             }
         }
 
