@@ -127,13 +127,13 @@
 						<xsl:when test="count(//combats/combat[@niveau = '2' and @phase = $phasePoule and @reference  = $noPoule]) > 0">
 							<xsl:call-template name="templatePoule">
 								<xsl:with-param name="niveau" select="1"/>
-								<xsl:with-param name="numero" select="$noPoule"/>
+								<xsl:with-param name="numeroPoule" select="$noPoule"/>
 								<xsl:with-param name="phase" select="$phasePoule"/>
 								<xsl:with-param name="dispositionPoule" select="$dispositionPoule"/>
 							</xsl:call-template>
 							<xsl:call-template name="templatePoule">
 								<xsl:with-param name="niveau" select="2"/> 
-								<xsl:with-param name="numero" select="$noPoule"/>
+								<xsl:with-param name="numeroPoule" select="$noPoule"/>
 								<xsl:with-param name="phase" select="$phasePoule"/>
 								<xsl:with-param name="dispositionPoule" select="$dispositionPoule"/>
 							</xsl:call-template>
@@ -141,7 +141,7 @@
 						<xsl:otherwise>
 							<xsl:call-template name="templatePoule">
 								<xsl:with-param name="niveau" select="0"/>
-								<xsl:with-param name="numero" select="$noPoule"/>
+								<xsl:with-param name="numeroPoule" select="$noPoule"/>
 								<xsl:with-param name="phase" select="$phasePoule"/>
 								<xsl:with-param name="dispositionPoule" select="$dispositionPoule"/>
 							</xsl:call-template>
@@ -163,7 +163,7 @@
 	<xsl:template name="templatePoule" match="poule">
 		<!-- niveau: 0 = poule simple, 1 = poule principale, 2 = Poule complementaire -->
 		<xsl:param name="niveau"/>
-		<xsl:param name="numero"/>
+		<xsl:param name="numeroPoule"/>
 		<xsl:param name="phase"/>
 		<xsl:param name="dispositionPoule"/>
 		
@@ -181,10 +181,10 @@
 				<xsl:attribute name="onclick">
 					<xsl:choose>
 						<xsl:when test="$niveau > 1">
-							<xsl:value-of select="concat('toggleElement(',$apos,'pouleCompl',$numero,$apos,')')"/>
+							<xsl:value-of select="concat('toggleElement(',$apos,'pouleCompl',$numeroPoule,$apos,')')"/>
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:value-of select="concat('toggleElement(',$apos,'poule',$numero,$apos,')')"/>
+							<xsl:value-of select="concat('toggleElement(',$apos,'poule',$numeroPoule,$apos,')')"/>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:attribute>
@@ -192,10 +192,10 @@
 					<xsl:attribute name="id">
 						<xsl:choose>
 							<xsl:when test="$niveau > 1">
-								<xsl:value-of select="concat('pouleCompl',$numero,'Collapse')"/>
+								<xsl:value-of select="concat('pouleCompl',$numeroPoule,'Collapse')"/>
 							</xsl:when>
 							<xsl:otherwise>
-								<xsl:value-of select="concat('poule',$numero,'Collapse')"/>
+								<xsl:value-of select="concat('poule',$numeroPoule,'Collapse')"/>
 							</xsl:otherwise>
 						</xsl:choose>
 					</xsl:attribute>
@@ -204,23 +204,23 @@
 					<xsl:attribute name="id">
 						<xsl:choose>
 							<xsl:when test="$niveau > 1">
-								<xsl:value-of select="concat('pouleCompl',$numero,'Expand')"/>
+								<xsl:value-of select="concat('pouleCompl',$numeroPoule,'Expand')"/>
 							</xsl:when>
 							<xsl:otherwise>
-								<xsl:value-of select="concat('poule',$numero,'Expand')"/>
+								<xsl:value-of select="concat('poule',$numeroPoule,'Expand')"/>
 							</xsl:otherwise>
 						</xsl:choose>
 					</xsl:attribute>
 				</img>
 				<xsl:choose>
 					<xsl:when test="$niveau > 1">
-						<xsl:value-of select="concat('Poule&nbsp;',$numero, ' (Complémentaire)')"/>
+						<xsl:value-of select="concat('Poule&nbsp;',$numeroPoule, ' (Complémentaire)')"/>
 					</xsl:when>
 					<xsl:when test="$niveau = 1">
-						<xsl:value-of select="concat('Poule&nbsp;',$numero, ' (Principale)')"/>
+						<xsl:value-of select="concat('Poule&nbsp;',$numeroPoule, ' (Principale)')"/>
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:value-of select="concat('Poule&nbsp;',$numero)"/>
+						<xsl:value-of select="concat('Poule&nbsp;',$numeroPoule)"/>
 					</xsl:otherwise>
 				</xsl:choose>
 			</button>
@@ -231,10 +231,10 @@
 			  <xsl:attribute name="id">
 				  <xsl:choose>
 					  <xsl:when test="$niveau > 1">
-						  <xsl:value-of select="concat('pouleCompl',$numero)"/>
+						  <xsl:value-of select="concat('pouleCompl',$numeroPoule)"/>
 					  </xsl:when>
 					  <xsl:otherwise>
-						  <xsl:value-of select="concat('poule',$numero)"/>
+						  <xsl:value-of select="concat('poule',$numeroPoule)"/>
 					  </xsl:otherwise>
 				  </xsl:choose>
 			  </xsl:attribute>
@@ -249,20 +249,20 @@
 						<xsl:choose>
 							<xsl:when test="$dispositionPoule = 2">
 								<!-- Disposition en colonne, les entetes sont les combats -->
-								<xsl:for-each select="//combat[ @niveau = $niveauCombat and @phase = $phase and @reference = $numero]">
-									<xsl:sort select="@numero" order="ascending"/>
+								<xsl:for-each select="//combat[ @niveau = $niveauCombat and @phase = $phase and @reference = $numeroPoule]">
+									<xsl:sort select="@numero" data-type="number" order="ascending"/>
 
 									<!-- Calcul les positions des judokas -->
 									<xsl:variable name="posj1">
 										<xsl:call-template name="positionJudoka">
-											<xsl:with-param name="noPoule" select="$numero"/>
+											<xsl:with-param name="noPoule" select="$numeroPoule"/>
 											<xsl:with-param name="idJudoka" select="./score[1]/@judoka"/>
 										</xsl:call-template>
 									</xsl:variable>
 
 									<xsl:variable name="posj2">
 										<xsl:call-template name="positionJudoka">
-											<xsl:with-param name="noPoule" select="$numero"/>
+											<xsl:with-param name="noPoule" select="$numeroPoule"/>
 											<xsl:with-param name="idJudoka" select="./score[2]/@judoka"/>
 										</xsl:call-template>
 									</xsl:variable>
@@ -279,7 +279,7 @@
 							</xsl:when>
 							<xsl:otherwise>
 								<!-- Disposition en diagonale, les entetes sont les participants -->
-								<xsl:for-each select="key('participants', $numero)">
+								<xsl:for-each select="key('participants', $numeroPoule)">
 									<td class="tas-poule-heading-combat">
 										<div class="w3-center w3-padding-small">
 											<span class="w3-badge w3-light-grey">
@@ -307,9 +307,9 @@
                     </tr>
 
 					<!-- Template par ligne de participant -->
-					<xsl:apply-templates select="key('participants', $numero)">
+					<xsl:apply-templates select="key('participants', $numeroPoule)">
 							<xsl:sort select="@position" data-type="number" order="ascending"/>
-							<xsl:with-param name="poule" select="$numero"/>
+							<xsl:with-param name="poule" select="$numeroPoule"/>
 							<xsl:with-param name="phase" select="$phase"/>
 							<xsl:with-param name="dispositionPoule" select="$dispositionPoule"/>
 						<xsl:with-param name="niveauCombat" select="$niveauCombat"/>
@@ -372,7 +372,7 @@
 				<!-- Disposition en colonnes -->
 				<xsl:when test="$dispositionPoule = 2">
 					<xsl:for-each select="//combat[ @niveau = $niveauCombat and @phase = $phase and @reference = $poule]">
-						<xsl:sort select="numero" order="ascending"/>
+						<xsl:sort select="numero" data-type="number" order="ascending"/>
 
 						<xsl:variable name="combatj1" select="./score[1]/@judoka"/>
 						<xsl:variable name="combatj2" select="./score[2]/@judoka"/>

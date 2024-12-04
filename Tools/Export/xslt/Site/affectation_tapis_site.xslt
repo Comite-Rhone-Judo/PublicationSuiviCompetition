@@ -219,7 +219,7 @@
 						<xsl:when test="count(./TapisEpreuve/tapis) > 1">
 							<xsl:text>Tapis&#32;</xsl:text>
 							<xsl:for-each select="./TapisEpreuve/tapis">
-								<xsl:sort select="./@no_tapis"/>
+								<xsl:sort select="./@no_tapis" data-type="number"/>
 								<xsl:value-of select="./@no_tapis"/>
 								<xsl:if test="position() &lt; last() - 1">
 									<xsl:text>, </xsl:text>
@@ -232,7 +232,7 @@
 						<xsl:when test="count(./TapisEpreuve/tapis) = 1">
 							<xsl:text>Tapis&#32;</xsl:text>
 							<xsl:for-each select="./TapisEpreuve/tapis">
-								<xsl:sort select="./@no_tapis"/>
+								<xsl:sort select="./@no_tapis" data-type="number"/>
 								<xsl:value-of select="./@no_tapis"/>
 							</xsl:for-each>
 						</xsl:when>
