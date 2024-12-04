@@ -896,11 +896,11 @@ namespace AppPublication.Controles
             }
             set
             {
-                if (!_publierAffectationTapis != value)
+                if (_publierAffectationTapis != value)
                 {
                     _publierAffectationTapis = value;
                     AppSettings.SaveSetting(kSettingPublierAffectationTapis, _publierAffectationTapis.ToString());
-                    NotifyPropertyChanged("_publierAffectationTapis");
+                    NotifyPropertyChanged("PublierAffectationTapis");
                 }
             }
         }

@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AppPublication.IHM.Commissaire"
         mc:Ignorable="d"
-        Header="Informations" Height="380" Width="620"
+        Header="Informations" Height="415" Width="620"
         WindowStartupLocation="CenterScreen" 
         CanClose="True" CanMove="True" ResizeMode="NoResize" 
         WindowState="Normal" Name="UI" Background="Black" SizeToContent="True">
@@ -50,6 +50,7 @@
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <Label Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource LabelStyle}" Content="Version:"/>
                     <TextBlock Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Style="{StaticResource ContentTextStyle}" Text="{Binding AppInformation.AppVersion}"/>
@@ -57,6 +58,8 @@
                     <TextBlock Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Style="{StaticResource ContentTextStyle}" Text="{Binding AppInformation.AppCompany}"/>
                     <Label Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" Style="{StaticResource LabelStyle}" Content="Copyright:"/>
                     <TextBlock Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Style="{StaticResource ContentTextStyle}" Text="{Binding AppInformation.AppCopyright}"/>
+                    <Label Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" Style="{StaticResource LabelStyle}" Content="Auteur:"/>
+                    <TextBlock Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" Style="{StaticResource ContentTextStyle}" Text="D. GARRIVIER (avec l'autorisation de France Judo)"/>
                 </Grid>
             </StackPanel>
         </Border>
