@@ -1774,6 +1774,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Export\xslt\Site\qrcode.xslt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -1925,6 +1926,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Export\xslt\Site\entete.xslt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Export\xslt\Site\participants_site.xslt">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

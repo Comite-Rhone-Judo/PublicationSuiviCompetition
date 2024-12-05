@@ -27,6 +27,7 @@
 
 	<xsl:variable select="/competition/@PublierProchainsCombats = 'True'" name="affProchainCombats"/>
 	<xsl:variable select="/competition/@PublierAffectationTapis = 'True'" name="affAffectationTapis"/>
+	<xsl:variable select="/competition[@PublierParticipants = 'True']" name="affParticipants"/>
 	<xsl:variable select="/competition/@DelaiActualisationClientSec" name="delayActualisationClient"/>
 	<xsl:variable select="number(competition/@NbProchainsCombats)" name="nbProchainsCombats"/>
 	<xsl:variable select="/competition/@Logo" name="logo"/>
@@ -83,6 +84,7 @@
 				<xsl:with-param name="logo" select="$logo"/>
 				<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
 				<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
+				<xsl:with-param name="affParticipants" select="$affParticipants"/>
 				<xsl:with-param name="affActualiser" select="'True'"/>
 				<xsl:with-param name="selectedItem" select="$selectedItemName"/>
 			</xsl:call-template>

@@ -31,6 +31,8 @@ namespace AppPublication.Export
                 attrProchainCombat.Value = config.PublierProchainsCombats.ToString();
                 XmlAttribute attrAffectationTapis = doc.CreateAttribute(ConstantXML.publierAffectationTapis);
                 attrAffectationTapis.Value = config.PublierAffectationTapis.ToString();
+                XmlAttribute attrParticipants = doc.CreateAttribute(ConstantXML.publierParticipants);
+                attrParticipants.Value = config.PublierParticpants.ToString();
                 XmlAttribute attrDelaiActualisationClient = doc.CreateAttribute(ConstantXML.delaiActualisationClientSec);
                 attrDelaiActualisationClient.Value = config.DelaiActualisationClientSec.ToString();
                 XmlAttribute attrNbProchainsCombats = doc.CreateAttribute(ConstantXML.nbProchainsCombats);
@@ -44,6 +46,7 @@ namespace AppPublication.Export
 
                 node.Attributes.Append(attrProchainCombat);
                 node.Attributes.Append(attrAffectationTapis);
+                node.Attributes.Append(attrParticipants);
                 node.Attributes.Append(attrDelaiActualisationClient);
                 node.Attributes.Append(attrNbProchainsCombats);
                 node.Attributes.Append(attrDateGeneration);

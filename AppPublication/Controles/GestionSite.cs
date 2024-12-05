@@ -602,6 +602,48 @@ namespace AppPublication.Controles
             }
         }
 
+        private bool _publierParticipants = false;
+        /// <summary>
+        /// Indique si on doit publier la liste des participants
+        /// </summary>
+        public bool PublierParticipants
+        {
+            get
+            {
+                return _publierParticipants;
+            }
+            set
+            {
+                if (_publierParticipants != value)
+                {
+                    _publierParticipants = value;
+                    AppSettings.SaveSettings("PublierParticipants", _publierParticipants.ToString());
+                    NotifyPropertyChanged("PublierParticipants");
+                }
+            }
+        }
+
+        private bool _participantsParClub = false;
+        /// <summary>
+        /// Indique si on doit grouper les participants par club
+        /// </summary>
+        public bool ParticipantsParClub
+        {
+            get
+            {
+                return _participantsParClub;
+            }
+            set
+            {
+                if (_participantsParClub != value)
+                {
+                    _participantsParClub = value;
+                    AppSettings.SaveSettings("ParticipantsParClub", _participantsParClub.ToString());
+                    NotifyPropertyChanged("ParticipantsParClub");
+                }
+            }
+        }
+
         private StatusGenerationSite _status;
         /// <summary>
         /// Le statut de generation du site
@@ -1025,7 +1067,7 @@ namespace AppPublication.Controles
         private List<FileWithChecksum> Exporter(GenereSiteStruct genere)
         {
             List<FileWithChecksum> urls = new List<FileWithChecksum>();
-            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes);
+            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierParticipants, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes);
 
             try
             {
