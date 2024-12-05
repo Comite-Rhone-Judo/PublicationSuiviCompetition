@@ -40,6 +40,8 @@ namespace AppPublication.Controles
         private const string kSettingIsolerCompetition = "IsolerCompetition";
         private const string kSettingRepertoireRacineSiteFTPDistant = "RepertoireRacineSiteFTPDistant";
         private const string kSettingPublierProchainsCombats = "PublierProchainsCombats";
+        private const string kSettingPublierParticipants = "PublierParticipants";
+        private const string kSettingParticipantsParClub = "ParticipantsParClub";
         private const string kSettingNbProchainsCombats = "NbProchainsCombats";
         private const string kSettingPublierAffectationTapis = "PublierAffectationTapis";
         private const string kSettingDelaiGenerationSec = "DelaiGenerationSec";
@@ -920,7 +922,7 @@ namespace AppPublication.Controles
                 if (_publierParticipants != value)
                 {
                     _publierParticipants = value;
-                    AppSettings.SaveSettings("PublierParticipants", _publierParticipants.ToString());
+                    AppSettings.SaveSetting(kSettingPublierParticipants, _publierParticipants.ToString());
                     NotifyPropertyChanged("PublierParticipants");
                 }
             }
@@ -941,7 +943,7 @@ namespace AppPublication.Controles
                 if (_participantsParClub != value)
                 {
                     _participantsParClub = value;
-                    AppSettings.SaveSettings("ParticipantsParClub", _participantsParClub.ToString());
+                    AppSettings.SaveSetting(kSettingParticipantsParClub, _participantsParClub.ToString());
                     NotifyPropertyChanged("ParticipantsParClub");
                 }
             }
@@ -1093,6 +1095,8 @@ namespace AppPublication.Controles
                 IsolerCompetition = AppSettings.ReadSetting(kSettingIsolerCompetition, false);
                 RepertoireRacineSiteFTPDistant = AppSettings.ReadSetting(kSettingRepertoireRacineSiteFTPDistant, string.Empty);
                 PublierProchainsCombats = AppSettings.ReadSetting(kSettingPublierProchainsCombats, false);
+                PublierParticipants = AppSettings.ReadSetting(kSettingPublierParticipants, false);
+                ParticipantsParClub = AppSettings.ReadSetting(kSettingParticipantsParClub, false);
                 NbProchainsCombats = AppSettings.ReadSetting(kSettingNbProchainsCombats, 6);
                 PublierAffectationTapis = AppSettings.ReadSetting(kSettingPublierAffectationTapis, true);
                 DelaiGenerationSec = AppSettings.ReadSetting(kSettingDelaiGenerationSec, 30);
