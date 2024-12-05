@@ -1778,6 +1778,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Export\xslt\Site\qrcode.xslt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -1931,6 +1932,10 @@
     <EmbeddedResource Include="Export\xslt\Site\entete.xslt" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Export\xslt\Site\participants_site.xslt">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <EmbeddedResource Include="data\data\PublicationFFJudo.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

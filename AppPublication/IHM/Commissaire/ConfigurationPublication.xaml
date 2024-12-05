@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AppPublication.IHM.Commissaire"
         mc:Ignorable="d"
-        Title="Configuration de la Publication" Height="400" Width="830" Background="Black">
+        Title="Configuration de la Publication" Height="430" Width="830" Background="Black">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -17,7 +17,7 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <Grid Margin="10 0 10 10">
+    <Grid Margin="10,0,10,-5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="auto"/>
@@ -34,13 +34,15 @@
         <StackPanel Grid.Row="0" Grid.Column="0" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
             <TextBlock Text="Publication" Style="{StaticResource Header1TextStyle}"/>
         </StackPanel>
-        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" BorderBrush="White" Margin="10 0 10 10" Width="400" Height="240">
+        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" BorderBrush="White" Margin="10 0 10 10" Width="400" Height="290">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
@@ -73,7 +75,6 @@
                                                         IsChecked="{Binding Path=PublierAffectationTapis}"
                                                         Visibility="{Binding Path=CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}">
                     </CheckBox>
-                    <!-- TODO Sync l'affichage de l'icone -->
                     <Image Visibility="{Binding Path=CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}" Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0" ToolTip="Si cochée, provoque l'ajout du menu 'Affectations' qui liste les tapis assignées pour chaque catégories. Disponible uniquement en compétition Individuelle ou Shiai."/>
                 </StackPanel>
                 <StackPanel Grid.Row="4" Grid.Column="0"  Grid.ColumnSpan="2" Orientation="Horizontal">
@@ -91,6 +92,24 @@
                     <Label HorizontalAlignment="Right" Content="taille max. poule en colonne:" Style="{StaticResource LabelStyle}"/>
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Taille minimale de la poule au dessus de laquelle la disposition est en diagonale."/>
                 </StackPanel>
+
+                <StackPanel Grid.Row="6" Grid.Column="0"  Grid.ColumnSpan="2" Orientation="Horizontal">
+                    <CheckBox   Content="Publier 'Participants'" Style="{StaticResource CheckboxStyle}"
+                        IsChecked="{Binding Path=PublierParticpants}">
+                    </CheckBox>
+                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, provoque l'ajout du menu 'Particpants' qui liste les participants, leurs statuts et leurs combats à venir. Disponible uniquement en compétition Individuelle ou Shiai."/>
+                </StackPanel>
+                <StackPanel Grid.Row="7" Grid.Column="0" Orientation="Horizontal" Margin="50 -5 0 0">
+                    <CheckBox Style="{StaticResource CheckboxStyle}"
+                        IsChecked="{Binding Path=ParticipantsParClub}"
+                        IsEnabled="{Binding Path=PublierParticipants, Mode=OneWay}"
+                        Margin="0 0 0 0">
+                    </CheckBox>
+                    <Label HorizontalAlignment="Right" Content="Grouper par club" Style="{StaticResource LabelStyle}"/>
+                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, regroupe les participants par Club pour le recherche. Par groupe alphabétique sinon."/>
+                </StackPanel>
+
+
                 <telerik:RadNumericUpDown  Grid.Row="5" Grid.Column="1" Value="{Binding TailleMaxPouleColonnes}" Width="80" Height="20" Minimum="2" Maximum="999" SmallChange="1" HideTrailingZeros="True" Margin="5 0 5 0">
                     <telerik:RadNumericUpDown.IsEnabled>
                         <MultiBinding Converter="{StaticResource BoolOperationConverter}" ConverterParameter="not_a_and_b"  Mode="OneWay">
@@ -107,7 +126,7 @@
         <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
             <TextBlock Text="Génération" Style="{StaticResource Header1TextStyle}"/>
         </StackPanel>
-        <Border BorderThickness="1" Grid.Row="1" Grid.Column="1" BorderBrush="White" Margin="10 0 10 10" Width="350" Height="240">
+        <Border BorderThickness="1" Grid.Row="1" Grid.Column="1" BorderBrush="White" Margin="10 0 10 10" Width="350" Height="290">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>

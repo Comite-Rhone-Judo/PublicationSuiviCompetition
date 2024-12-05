@@ -9,6 +9,7 @@
 		<xsl:param name="logo"/>
 		<xsl:param name="affProchainCombats"/>
 		<xsl:param name="affAffectationTapis"/>
+		<xsl:param name="affParticipants"/>
 		<xsl:param name="affActualiser"/>
 		<xsl:param name="selectedItem"/>
 		<xsl:variable name="apos">'</xsl:variable>
@@ -88,6 +89,17 @@
 				Classements
 			</a>
 		</div>
+		<xsl:if test="$affParticipants  or $affParticipants = 'True'">
+			<a href="../common/participants.html">
+				<xsl:attribute name="class">
+					<xsl:choose>
+						<xsl:when test="$selectedItem = 'participants'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
+						<xsl:otherwise>w3-bar-item w3-button navButton</xsl:otherwise>
+					</xsl:choose>
+				</xsl:attribute>
+				Participants
+			</a>
+		</xsl:if>
 
 		<!-- Div vide pour aligner le contenu avec le bandeau de titre de taille fixe -->
 		<div class="w3-container tas-filler-div">&nbsp;</div>

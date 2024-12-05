@@ -20,6 +20,7 @@
 
 	<xsl:variable select="count(/competitions/competition[@PublierProchainsCombats = 'True']) > 0" name="affProchainCombats"/>
 	<xsl:variable select="count(/competitions/competition[@PublierAffectationTapis = 'True']) > 0" name="affAffectationTapis"/>
+	<xsl:variable select="count(/competitions/competition[@PublierParticipants = 'True']) > 0" name="affParticipants"/>
 	<xsl:variable select="/competitions/competition[1]/@Logo" name="logo"/>
 
 	<xsl:template match="/*">
@@ -55,6 +56,7 @@
 				<xsl:with-param name="logo" select="$logo"/>
 				<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
 				<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
+				<xsl:with-param name="affParticipants" select="$affParticipants"/>
 				<xsl:with-param name="affActualiser" select="'False'"/>
 				<xsl:with-param name="selectedItem" select="'avancement'"/>
 			</xsl:call-template>

@@ -52,6 +52,7 @@
 
         public const string publierProchainsCombats = "PublierProchainsCombats";
         public const string publierAffectationTapis = "PublierAffectationTapis";
+        public const string publierParticipants = "PublierParticipants";
         public const string delaiActualisationClientSec = "DelaiActualisationClientSec";
         public const string nbProchainsCombats = "NbProchainsCombats";
         public const string msgProchainsCombats = "MsgProchainsCombats";
