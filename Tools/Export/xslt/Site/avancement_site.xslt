@@ -80,7 +80,7 @@
 
 			<xsl:if test="count(/competitions/competition)>0">
 				<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
-					Dernière actualisation: <xsl:value-of select="/competitions/competition[1]/@DateGeneration"/>
+					v<xsl:value-of select="/competitions/competition[1]/@AppVersion"/> - Dernière actualisation: <xsl:value-of select="/competitions/competition[1]/@DateGeneration"/>
 				</div>
 			</xsl:if>
 

@@ -65,9 +65,7 @@
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-  </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup>
     <ManifestCertificateThumbprint>9C39AA171DFCECA8008F6C39E70C754B9415D2DF</ManifestCertificateThumbprint>
   </PropertyGroup>
@@ -80,17 +78,19 @@
   <PropertyGroup>
     <StartupObject>AppPublication.App</StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EPPlus">
       <HintPath>..\packages\EPPlus.dll</HintPath>
     </Reference>
-    <Reference Include="log4net, Version=2.0.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\packages\log4net.2.0.15\lib\net45\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xaml">
@@ -137,13 +137,18 @@
     <Compile Include="IHM\Commissaire\ConfigurationPublication.xaml.cs">
       <DependentUpon>ConfigurationPublication.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IHM\Commissaire\Statistiques.xaml.cs">
-      <DependentUpon>Statistiques.xaml</DependentUpon>
+    <Compile Include="IHM\Commissaire\InformationsView.xaml.cs">
+      <DependentUpon>InformationsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="IHM\Commissaire\StatistiquesView.xaml.cs">
+      <DependentUpon>StatistiquesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Statistiques\StatistiqueItem.cs" />
     <Compile Include="Statistiques\StatistiqueItemCompteur.cs" />
     <Compile Include="Statistiques\StatistiqueItemMoyenneur.cs" />
+    <Compile Include="Tools\AppInformation.cs" />
     <Compile Include="Tools\Converter\AppStatusConverter.cs" />
+    <Compile Include="Tools\Converter\PassthroughConverter.cs" />
     <Compile Include="Tools\Converter\BoolOperationConverter.cs" />
     <Compile Include="Tools\Converter\BoolToVisibilityConverter.cs" />
     <Compile Include="Tools\Converter\DisplayURLStatusConverter.cs" />
@@ -153,6 +158,7 @@
     <Compile Include="Tools\Converter\RunningStatusConverter.cs" />
     <Compile Include="Tools\Converter\BoolNotConverter.cs" />
     <Compile Include="Tools\Converter\ClientConverter.cs" />
+    <Compile Include="Tools\EntitePublicationFFJudo.cs" />
     <Compile Include="Tools\Enum\TypePouleEnum.cs" />
     <Compile Include="Tools\Enum\BusyStatusEnum.cs" />
     <Compile Include="Tools\FileTools.cs" />
@@ -170,7 +176,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="IHM\Commissaire\Statistiques.xaml">
+    <Page Include="IHM\Commissaire\InformationsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="IHM\Commissaire\StatistiquesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -225,7 +235,7 @@
     <None Include="app.config" />
     <None Include="AppPublication_TemporaryKey.pfx" />
     <EmbeddedResource Include="Documentation\ManuelUtilisateur.pdf" />
-    <None Include="packages.config" />
+    <None Include="Documentation\PublicationSuiviCompetition - Manuel d%27utilisation.pptx" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -265,6 +275,11 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NLog">
+      <Version>5.3.4</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

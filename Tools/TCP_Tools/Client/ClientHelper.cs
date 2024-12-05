@@ -135,12 +135,22 @@ namespace Tools.TCP_Tools.Client
                     return;
                 }
 
-                if (client.GetStream() != null)
+                NetworkStream stream = null;
+                try
                 {
-                    client.GetStream().Dispose();
+                   stream  = client.GetStream();
+                }
+                catch
+                {
+                    stream = null;
+                }
+
+                if (stream != null)
+                {
+                    stream.Dispose();
                     if (client.Client.Connected)
                     {
-                        client.GetStream().Close();
+                        stream.Close();
                     }
                 }
 

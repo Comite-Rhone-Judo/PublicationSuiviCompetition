@@ -90,7 +90,7 @@ namespace Tools.Outils
             }
             catch (Exception ex)
             {
-                LogTools.Trace(ex);
+                LogTools.Error(ex);
             }
             finally
             {
@@ -120,7 +120,7 @@ namespace Tools.Outils
             {
                 FtpWebResponse response = (FtpWebResponse)ex.Response;
                 response.Close();
-                LogTools.Trace(ex);
+                LogTools.Error(ex);
             }
         }
     }

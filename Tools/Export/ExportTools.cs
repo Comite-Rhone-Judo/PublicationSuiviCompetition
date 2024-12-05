@@ -12,55 +12,6 @@ namespace Tools.Export
         public static string default_competition = null;
 
         /// <summary>
-        /// Retourne le repertoire de destination d'un fichier d'export en fonction de son type et de son contenu
-        /// Le repertoire est cree s'il n'existe pas
-        /// </summary>
-        /// <param name="site"></param>
-        /// <param name="epreuve_nom"></param>
-        /// <param name="competition_nom"></param>
-        /// <returns></returns>
-        // TODO Remove plus utilise car utilise uniquement des constantes
-        /*
-        public static string getDirectory(bool site, string epreuve_nom, string competition_nom)
-        {
-            string directory = "";
-
-            if (site)
-            {
-                directory = ConstantFile.ExportSite_dir;
-            }
-            else
-            {
-                directory = ConstantFile.Export_dir;
-            }
-
-            directory += OutilsTools.TraiteChaine(OutilsTools.SubString(default_competition, 0, 30)) + "/";
-
-            if (string.IsNullOrWhiteSpace(epreuve_nom) && string.IsNullOrWhiteSpace(competition_nom))
-            {
-                directory = directory + "common";
-            }
-            else if (!string.IsNullOrWhiteSpace(competition_nom) && string.IsNullOrWhiteSpace(epreuve_nom))
-            {
-                string nom = OutilsTools.SubString(competition_nom, 0, 30);
-                directory = directory + OutilsTools.TraiteChaine(nom);
-            }
-            else
-            {
-                string nom = "" + epreuve_nom;
-                directory = directory + OutilsTools.SubString(OutilsTools.TraiteChaine(nom), 0, 30);
-            }
-            
-            // Remplace les symboles le necessitant (+ des categories de poids, etc.)
-            directory = OutilsTools.TraiteChaineURL(directory);
-
-            FileAndDirectTools.CreateDirectorie(directory);
-
-            return directory;
-        }
-        */
-
-        /// <summary>
         /// Retourne le nom d'un fichier d'export
         /// </summary>
         /// <param name="type"></param>

@@ -87,7 +87,8 @@ namespace Tools.Windows
                 {
                     //LabelMessage.Text = "Connection internet innexistante ou trop faible débit.\nImpossible de vérifier la disponibilité d\'une MAJ.";
                     //ButOk.Visibility = Visibility.Visible;
-                    LogTools.Trace(new AppUpdateException("Connection internet innexistante ou trop faible débit."), LogTools.Level.INFO);
+                    // LogTools.Trace(new AppUpdateException("Connection internet inexistante ou trop faible débit."), LogTools.Level.INFO);
+                    LogTools.Info(new AppUpdateException("Connection internet inexistante ou trop faible débit."));
                     OK();
                     return;
                 }
@@ -130,7 +131,8 @@ namespace Tools.Windows
         {
             if (e.Error != null)
             {
-                LogTools.Trace(new AppUpdateException("Problème MAJ.", e.Error), LogTools.Level.INFO);
+                // LogTools.Trace(new AppUpdateException("Problème MAJ.", e.Error), LogTools.Level.INFO);
+                LogTools.Info(new AppUpdateException("Problème MAJ.", e.Error));
 
                 //LabelMessage.Text = "Une erreur est survenue: \n" + e.Error.Message;                
                 //ButOk.Visibility = Visibility.Visible;
@@ -193,7 +195,7 @@ namespace Tools.Windows
             else if (e.Error != null)
             {
                 LabelMessage.Text = "La mise à jour n\'a pas pu s\'effectuer. Une erreur est survenue: \n" + e.Error.Message;
-                LogTools.Trace(new AppUpdateException("Problème MAJ.", e.Error), LogTools.Level.INFO);
+                LogTools.Info(new AppUpdateException("Problème MAJ.", e.Error));
                 ButOk.Visibility = Visibility.Visible;
                 ButDownMan.Visibility = Visibility.Visible;
                 return;

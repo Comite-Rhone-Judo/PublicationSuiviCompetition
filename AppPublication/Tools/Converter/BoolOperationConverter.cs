@@ -49,6 +49,11 @@ namespace AppPublication.Tools.Converter
                                 output = !ope1.Value && ope2.Value;
                                 break;
                             }
+                        case "a_and_not_b":
+                            {
+                                output = ope1.Value && !ope2.Value;
+                                break;
+                            }
                         case "not_a_and_not_b":
                             {
                                 output = !ope1.Value && !ope2.Value;
