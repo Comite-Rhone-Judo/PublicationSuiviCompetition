@@ -135,7 +135,6 @@ namespace AppPublication.Controles
             }
         }
 
-
         private bool _easyConfig;
 
         /// <summary>
@@ -386,17 +385,13 @@ namespace AppPublication.Controles
                             {
                                 string output = string.Empty;
 
-                                OpenFileDialog dlg = new OpenFileDialog();
-                                dlg.ValidateNames = false;
-                                dlg.CheckFileExists = false;
-                                dlg.CheckPathExists = true;
-                                dlg.FileName = "Folder Selection";
-                                dlg.InitialDirectory = (string.IsNullOrEmpty(RepertoireRacine)) ? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) : RepertoireRacine;
-                                dlg.Multiselect = false;
-                                dlg.Title = "Selectionnez un répertoire ...";
-                                if (dlg.ShowDialog() == true)
+                                System.Windows.Forms.FolderBrowserDialog dlg = new System.Windows.Forms.FolderBrowserDialog();
+
+                                dlg.Description = "Sélectionner un répertoire ...";
+                                dlg.ShowNewFolderButton = true;
+                                if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                                 {
-                                    output = Path.GetDirectoryName(dlg.FileName);
+                                    output = dlg.SelectedPath;
                                 }
                                 RepertoireRacine = output;
                             },
@@ -832,6 +827,7 @@ namespace AppPublication.Controles
 
                     // On en peut publier que en individuelle
                     CanPublierAffectation = DialogControleur.Instance.ServerData.competition.IsIndividuelle();
+                    CanPublierParticipants = DialogControleur.Instance.ServerData.competition.IsIndividuelle() || DialogControleur.Instance.ServerData.competition.IsShiai();
 
                     // Si on est en Shiai, par defaut on met les poules en colonnes
                     if (DialogControleur.Instance.ServerData.competition.IsShiai())
@@ -862,6 +858,25 @@ namespace AppPublication.Controles
                 NotifyPropertyChanged("CanPublierAffectation");
             }
         }
+
+        private bool _canPublierParticipants = true;
+        /// <summary>
+        /// Indique si on peut publier les participants ou non
+        /// </summary>
+        public bool CanPublierParticipants
+        {
+            get
+            {
+                return _canPublierParticipants;
+            }
+            private set
+            {
+                _canPublierParticipants = value;
+                NotifyPropertyChanged("CanPublierParticipants");
+            }
+        }
+
+        
 
         private bool _publierProchainsCombats = false;
         /// <summary>
@@ -1430,7 +1445,7 @@ namespace AppPublication.Controles
         private List<FileWithChecksum> Exporter(GenereSiteStruct genere)
         {
             List<FileWithChecksum> urls = new List<FileWithChecksum>();
-            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierParticipants, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes);
+            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierParticipants && CanPublierParticipants, ParticipantsParClub, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes);
 
             try
             {
@@ -1455,6 +1470,9 @@ namespace AppPublication.Controles
                         break;
                     case SiteEnum.AffectationTapis:
                         urls = ExportSite.GenereWebSiteAffectation(DC, cfg, _structure);
+                        break;
+                    case SiteEnum.Participants:
+                        urls = ExportSite.GenereWebSiteParticipants(DC, cfg, _structure);
                         break;
                 }
             }
@@ -1520,6 +1538,11 @@ namespace AppPublication.Controles
                     if (PublierProchainsCombats)
                     {
                         listTaskGeneration.Add(AddWork(SiteEnum.AllTapis, null, null));
+                    }
+
+                    if(PublierParticipants && CanPublierParticipants)
+                    {
+                        listTaskGeneration.Add(AddWork(SiteEnum.Participants, null, null));
                     }
 
                     foreach (Phase phase in DC.Deroulement.Phases)

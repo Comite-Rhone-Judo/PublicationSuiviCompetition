@@ -3,8 +3,39 @@
 	<!ENTITY nbsp "&#160;">
 	<!ENTITY times "&#215;">
 ]>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:dt="http://example.com/2008/data">
 	<xsl:import href="Tools/Export/xslt/Site/entete.xslt"/>
+
+	<dt:data>
+		<alphabet>
+			<lettre>A</lettre>
+			<lettre>B</lettre>
+			<lettre>C</lettre>
+			<lettre>D</lettre>
+			<lettre>E</lettre>
+			<lettre>F</lettre>
+			<lettre>G</lettre>
+			<lettre>H</lettre>
+			<lettre>I</lettre>
+			<lettre>J</lettre>
+			<lettre>K</lettre>
+			<lettre>L</lettre>
+			<lettre>M</lettre>
+			<lettre>N</lettre>
+			<lettre>O</lettre>
+			<lettre>P</lettre>
+			<lettre>Q</lettre>
+			<lettre>R</lettre>
+			<lettre>S</lettre>
+			<lettre>T</lettre>
+			<lettre>U</lettre>
+			<lettre>V</lettre>
+			<lettre>W</lettre>
+			<lettre>X</lettre>
+			<lettre>Y</lettre>
+			<lettre>Z</lettre>
+		</alphabet>
+	</dt:data>
 	
 	<xsl:output method="html" indent="yes"/>
 	<xsl:param name="style"/>
@@ -71,7 +102,7 @@
 			<xsl:for-each select="/competitions/competition">
 				<xsl:if test="count(./epreuve) > 0">
 					<xsl:variable name="compet" select="@ID"/>
-					<xsl:call-template name="competition">
+					<xsl:call-template name="competition_alphabetique">
 						<xsl:with-param name="idcompetition" select="$compet"/>
 					</xsl:call-template>
 				</xsl:if>
@@ -79,7 +110,7 @@
 
 			<xsl:if test="count(/competitions/competition)>0">
 				<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
-					Dernière actualisation: <xsl:value-of select="/competitions/competition[1]/@DateGeneration"/>
+					v<xsl:value-of select="/competition/@AppVersion"/> - Dernière actualisation: <xsl:value-of select="/competitions/competition[1]/@DateGeneration"/>
 				</div>
 			</xsl:if>
 
@@ -87,12 +118,12 @@
 	</xsl:template>
 
 	<!-- TEMPLATES -->
-	<!-- Un bloc -->
-	<xsl:template name="competition">
+	<!-- Template pour le groupement alphabetique -->
+	<xsl:template name="competition_alphabetique">
 		<xsl:param name="idcompetition"/>
 		<xsl:variable name="apos">'</xsl:variable>
 		<xsl:variable name="prefixPanel">
-			<xsl:value-of select="concat('AvancementComp',$idcompetition,'ContentPanel')"/>
+			<xsl:value-of select="concat('ParticipantsComp',$idcompetition,'ContentPanel')"/>
 		</xsl:variable>
 
 		<!-- Nom de la competition -->
@@ -102,7 +133,140 @@
 			</h4>
 		</div>
 
-		<div id="Avancements" class="w3-container w3-border pane w3-animate-left">
+		<div id="Participants" class="w3-container w3-border pane w3-animate-left">
+			<!-- une ligne de cellule pour occuper toute le largeur de l'ecran -->
+			<div class="w3-cell-row">
+				<!-- Chaque panneau est un panel contenant une carte, utilise cell + mobile pour gerer horizontal/vertical selon la taille de l'ecran -->
+				<!-- Categorie F -->
+				<!-- TODO Modifier pour prendre en compte les participans et pas les epreuves -->
+				<xsl:if test="count(./epreuve[@sexe = 'F']) > 0">
+					<div class="w3-panel w3-cell w3-mobile">
+						<!-- La carte des donnees elle meme -->
+						<div class="w3-card">
+							<!-- entete avec un bouton permet d'ouvrir fermer le contenu de la carte -->
+							<header class="w3-bar w3-light-green w3-large">
+								<button class="w3-bar-item w3-light-green">
+									<xsl:attribute name="onclick">
+										<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel,'F',$apos,')')"/>
+									</xsl:attribute>
+									<img class="img" width="25" src="../img/up_circular-32.png">
+										<xsl:attribute name="id">
+											<xsl:value-of select="concat($prefixPanel,'F', 'Collapse')"/>
+										</xsl:attribute>
+									</img>
+									<img class="img" width="25" src="../img/down_circular-32.png" style="display: none;">
+										<xsl:attribute name="id">
+											<xsl:value-of select="concat($prefixPanel,'F', 'Expand')"/>
+										</xsl:attribute>
+									</img>
+									Catégorie Féminine
+								</button>
+							</header>
+							<!-- Ajouter les lettres -->
+							<div class="w3-container" style="display:none;">
+								<xsl:attribute name="id">
+									<xsl:value-of select="concat($prefixPanel,'F')"/>
+								</xsl:attribute>
+
+								<xsl:for-each select="document('')/xsl:stylesheet/dt:data/alphabet/lettre">
+									<a class="w3-button w3-badge w3-pale-yellow w3-large w3-round-large w3-padding-small">
+										<xsl:attribute name="href">
+											<xsl:text>test</xsl:text>
+											<xsl:value-of select="."/>
+											<xsl:text>.html</xsl:text>
+										</xsl:attribute>
+										<xsl:value-of select="."/>
+									</a>
+								</xsl:for-each>	
+								</div>
+						</div>
+					</div>
+				</xsl:if>
+				<!-- Categorie M -->
+				<xsl:if test="count(./epreuve[@sexe = 'M']) > 0">
+					<div class="w3-panel w3-cell w3-mobile">
+						<div class="w3-card">
+							<header class="w3-bar w3-light-green w3-large">
+								<button class="w3-bar-item w3-light-green">
+									<xsl:attribute name="onclick">
+										<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel,'M',$apos,')')"/>
+									</xsl:attribute>
+									<img class="img" width="25" src="../img/up_circular-32.png">
+										<xsl:attribute name="id">
+											<xsl:value-of select="concat($prefixPanel,'M', 'Collapse')"/>
+										</xsl:attribute>
+									</img>
+									<img class="img" width="25" src="../img/down_circular-32.png" style="display: none;">
+										<xsl:attribute name="id">
+											<xsl:value-of select="concat($prefixPanel,'M', 'Expand')"/>
+										</xsl:attribute>
+									</img>
+									Catégorie Masculine
+								</button>
+							</header>
+							<!-- Ajouter les lettres -->
+							<div class="w3-container" style="display:none;">
+								<xsl:attribute name="id">
+									<xsl:value-of select="concat($prefixPanel,'M')"/>
+								</xsl:attribute>
+								<xsl:apply-templates select="./epreuve[@sexe = 'M']"/>
+							</div>
+						</div>
+					</div>
+				</xsl:if>
+				<!-- Sans Categorie -->
+				<xsl:if test="count(./epreuve[not(@sexe)]) > 0">
+					<div class="w3-panel w3-cell w3-mobile">
+						<div class="w3-card">
+							<header class="w3-bar w3-light-green w3-large">
+								<button class="w3-bar-item w3-light-green">
+									<xsl:attribute name="onclick">
+										<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel,$apos,')')"/>
+									</xsl:attribute>
+									<img class="img" width="25" src="../img/up_circular-32.png">
+										<xsl:attribute name="id">
+											<xsl:value-of select="concat($prefixPanel,'Collapse')"/>
+										</xsl:attribute>
+									</img>
+									<img class="img" width="25" src="../img/down_circular-32.png" style="display: none;">
+										<xsl:attribute name="id">
+											<xsl:value-of select="concat($prefixPanel,'Expand')"/>
+										</xsl:attribute>
+									</img>
+									Sans Catégorie
+								</button>
+							</header>
+							<!-- Ajouter les lettres -->
+							<div class="w3-container" style="display:none;">
+								<xsl:attribute name="id">
+									<xsl:value-of select="$prefixPanel"/>
+								</xsl:attribute>
+								<xsl:apply-templates select="./epreuve[not(@sexe)]"/>
+							</div>
+						</div>
+					</div>
+				</xsl:if>
+			</div>
+		</div>
+
+	</xsl:template>
+
+	<!-- Template pour le groupement par Club -->
+	<xsl:template name="competition_par_club">
+		<xsl:param name="idcompetition"/>
+		<xsl:variable name="apos">'</xsl:variable>
+		<xsl:variable name="prefixPanel">
+			<xsl:value-of select="concat('ParticipantsComp',$idcompetition,'ContentPanel')"/>
+		</xsl:variable>
+
+		<!-- Nom de la competition -->
+		<div class="w3-container w3-blue w3-center tas-competition-bandeau">
+			<h4>
+				<xsl:value-of select="./titre"/>
+			</h4>
+		</div>
+
+		<div id="Participants" class="w3-container w3-border pane w3-animate-left">
 			<!-- une ligne de cellule pour occuper toute le largeur de l'ecran -->
 			<div class="w3-cell-row">
 				<!-- Chaque panneau est un panel contenant une carte, utilise cell + mobile pour gerer horizontal/vertical selon la taille de l'ecran -->
@@ -207,10 +371,12 @@
 	</xsl:template>
 	
 		<!-- Bouton avancement par epreuve -->
-	<xsl:template name="avancement_epreuve" match="epreuve">
+	<xsl:template name="participants_epreuve" match="epreuve">
 		<!-- <xsl:variable select="number(./@typePhase)" name="type1"/> -->
 		<!--<xsl:variable select="number(./@typePhase)" name="type2"/>-->
 
+		<!-- TODO Modifier les liens et les repertoires pour les participants -->
+		
 		<xsl:if test="count(./phases/phase[number(@typePhase) = 1]) > 0">
 			<a class="w3-button w3-panel w3-card w3-block w3-pale-yellow w3-large w3-round-large w3-padding-small">
 				<xsl:attribute name="href">

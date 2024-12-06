@@ -300,5 +300,30 @@ namespace AppPublication.Export
             output.Add(new FileWithChecksum(fileSave + ".html"));
             return output;
         }
+
+        /// <summary>
+        /// Genere la page des participants
+        /// </summary>
+        /// <param name="DC"></param>
+        /// <returns></returns>
+        public static List<FileWithChecksum> GenereWebSiteParticipants(JudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct)
+        {
+            List<FileWithChecksum> output = new List<FileWithChecksum>();
+
+            ExportEnum type = ExportEnum.Site_Participants;
+            string directory = siteStruct.RepertoireCommon;
+            string filename = ExportTools.getFileName(type);
+            string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
+            XsltArgumentList argsList = new XsltArgumentList();
+
+            XmlDocument docAffectation = ExportXML.CreateDocumentAffectationTapis(DC);
+            ExportXML.AddPublicationInfo(ref docAffectation, config);
+            LogTools.Logger.Debug("XML genere: '{0}'", docAffectation.InnerXml);
+
+            ExportHTML.ToHTMLSite(docAffectation, type, fileSave, argsList);
+
+            output.Add(new FileWithChecksum(fileSave + ".html"));
+            return output;
+        }
     }
 }

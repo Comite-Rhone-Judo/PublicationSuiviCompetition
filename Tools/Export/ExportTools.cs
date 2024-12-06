@@ -144,6 +144,9 @@ namespace Tools.Export
                 case ExportEnum.Site_MenuProchainCombats:
                     result = "prochains_combats";
                     break;
+                case ExportEnum.Site_Participants:
+                    result = "participants";
+                    break;
             }
 
             result = result.Replace(' ', '_');
@@ -468,6 +471,9 @@ namespace Tools.Export
                 case ExportEnum.Site_AffectationTapis:
                     name = ConstantResource.Export_Site_res + "affectation_tapis";
                     break;
+                case ExportEnum.Site_Participants:
+                    name = ConstantResource.Export_Site_res + "participants";
+                    break;
                 case ExportEnum.Site_MenuClassement:
                     name = ConstantResource.Export_Site_res + "classement";
                     break;
@@ -477,6 +483,7 @@ namespace Tools.Export
                 case ExportEnum.Site_MenuProchainCombats:
                     name = ConstantResource.Export_Site_res + "prochains_combats";
                     break;
+
                 default:
                     return "";
             }
