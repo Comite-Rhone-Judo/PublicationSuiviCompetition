@@ -384,17 +384,13 @@ namespace AppPublication.Controles
                             {
                                 string output = string.Empty;
 
-                                OpenFileDialog dlg = new OpenFileDialog();
-                                dlg.ValidateNames = false;
-                                dlg.CheckFileExists = false;
-                                dlg.CheckPathExists = true;
-                                dlg.FileName = "Folder Selection";
-                                dlg.InitialDirectory = (string.IsNullOrEmpty(RepertoireRacine)) ? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) : RepertoireRacine;
-                                dlg.Multiselect = false;
-                                dlg.Title = "Selectionnez un répertoire ...";
-                                if (dlg.ShowDialog() == true)
+                                System.Windows.Forms.FolderBrowserDialog dlg = new System.Windows.Forms.FolderBrowserDialog();
+
+                                dlg.Description = "Sélectionner le répertoire à utiliser pour les exports";
+                                dlg.ShowNewFolderButton = true;
+                                if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                                 {
-                                    output = Path.GetDirectoryName(dlg.FileName);
+                                    output = dlg.SelectedPath;
                                 }
                                 RepertoireRacine = output;
                             },
