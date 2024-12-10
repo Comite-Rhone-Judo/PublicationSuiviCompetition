@@ -158,7 +158,7 @@ namespace KernelImpl.Noyau.Participants
             j1.club = this.club;
             j1.nom = "Judoka " + judoka;
             j1.prenom = "(" + epreuve.nom + ")";
-            j1.sexe = epreuve.sexe == 1 ? true : false;
+            j1.sexe = epreuve.sexe == (int)EpreuveSexeEnum.Feminine ? true : false;
             j1.equipe = this.id;
             j1.naissance = new DateTime(epreuve.anneeMin, 01, 01);
             j1.passeport = false;

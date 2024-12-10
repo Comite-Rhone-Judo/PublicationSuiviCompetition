@@ -6,7 +6,6 @@
     public enum EpreuveSexeEnum
     {
         Feminine = 1,
-        Masculin = 2,
-        Mixte = 3
+        Masculin = 0
     }
 }

@@ -285,6 +285,7 @@ namespace AppPublication.Export
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
+            ExportXML.CreateDocumentParticipants(DC, true, siteStruct);
             ExportEnum type = ExportEnum.Site_AffectationTapis;
             string directory = siteStruct.RepertoireCommon;
             string filename = ExportTools.getFileName(type);

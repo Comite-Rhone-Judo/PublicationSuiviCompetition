@@ -387,7 +387,7 @@ namespace AppPublication.Controles
 
                                 System.Windows.Forms.FolderBrowserDialog dlg = new System.Windows.Forms.FolderBrowserDialog();
 
-                                dlg.Description = "Sélectionner un répertoire ...";
+                                dlg.Description = "Sélectionner le répertoire à utiliser pour les exports";
                                 dlg.ShowNewFolderButton = true;
                                 if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                                 {

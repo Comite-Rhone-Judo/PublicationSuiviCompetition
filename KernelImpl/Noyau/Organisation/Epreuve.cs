@@ -73,7 +73,7 @@ namespace KernelImpl.Noyau.Organisation
             this.anneeMin = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Epreuve_AnneeMin));
             this.anneeMax = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Epreuve_AnneeMax));
             this.categorieAge = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Epreuve_Categorie_Age));
-            this.sexe = (xinfo.Attribute(ConstantXML.Epreuve_Sexe).Value == "M" ? 0 : 1);
+            this.sexe = (xinfo.Attribute(ConstantXML.Epreuve_Sexe).Value == "M" ? (int) EpreuveSexeEnum.Masculin : (int) EpreuveSexeEnum.Feminine);
             this.epreuve_equipe = XMLTools.LectureNullableInt(xinfo.Attribute(ConstantXML.Epreuve_EquipeEP));
         }
 

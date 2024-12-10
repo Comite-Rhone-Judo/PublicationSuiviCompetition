@@ -72,6 +72,12 @@
         public const string Structure_ID = "ID";
         public const string Structure_RemoteID = "remoteID";
         public const string Structure_Nom = "nom";
+        public const string GroupeParticipants_groupes = "groupesParticipants";
+        public const string GroupeParticipants_groupe = "groupeParticipants";
+        public const string GroupeParticipants_sexe = "sexe";
+        public const string GroupeParticipants_id = "id";
+        public const string GroupeParticipants_type = "type";
+        public const string GroupeParticipants_competition = "competition";
 
         //Compétition 
         public const string Competition = "competition";

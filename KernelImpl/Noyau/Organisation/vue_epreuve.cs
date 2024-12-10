@@ -54,7 +54,7 @@ namespace KernelImpl.Noyau.Organisation
             sexe = epreuve.sexe;
             categorieAge = epreuve.categorieAge;
 
-            lib_sexe = epreuve.sexe == 1 ? "F" : "M";
+            lib_sexe = epreuve.sexe == (int) EpreuveSexeEnum.Feminine ? "F" : "M";
 
             Categories.CategoriePoids c_poids = DC.Categories.CPoids.FirstOrDefault(o => o.id == epreuve.categoriePoids);
 

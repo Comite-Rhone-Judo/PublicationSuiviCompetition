@@ -332,6 +332,49 @@ namespace AppPublication.Export
         }
 
         /// <summary>
+        public static XmlDocument CreateDocumentParticipants(JudoData DC, bool groupeClub, ExportSiteStructure siteStructure)
+        {
+            XDocument doc = new XDocument();
+            XElement xcompetitions = new XElement(ConstantXML.Competitions);
+            doc.Add(xcompetitions);
+            IList<Competition> competitions = DC.Organisation.Competitions.ToList();
+            IList<Club> clubs = DC.Structures.Clubs.ToList();
+            foreach (Competition competition in competitions)
+            {
+                if (competition.IsShiai() || competition.IsIndividuelle())
+                {
+                    XElement xcompetition = competition.ToXmlInformations();
+                    xcompetitions.Add(xcompetition);
+                    XElement xgroupesP = new XElement(ConstantXML.GroupeParticipants_groupes);
+                    foreach (int s in Enum.GetValues(typeof(EpreuveSexeEnum)))
+                    {
+                        IList<Epreuve> epreuves = DC.Organisation.Epreuves.Where(ep => ep.competition == competition.id && ep.sexe == s).ToList();
+                        if (groupeClub)
+                        {
+                            IList<string> clubEp = DC.Participants.vjudokas.Join(epreuves, vj => vj.idepreuve, ep => ep.id, (vj, ep) => vj).Select(o => o.club).Distinct().ToList();
+                            foreach (string club in clubEp)
+                            {
+                                XElement xgroupeP = new XElement(ConstantXML.GroupeParticipants_groupe);
+                                xgroupeP.SetAttributeValue(ConstantXML.GroupeParticipants_competition, competition.id);
+                                xgroupeP.SetAttributeValue(ConstantXML.GroupeParticipants_sexe, s);
+                                xgroupeP.SetAttributeValue(ConstantXML.GroupeParticipants_type, "Club");
+                                xgroupeP.SetAttributeValue(ConstantXML.GroupeParticipants_id, club);
+                                xgroupesP.Add(xgroupeP);
+                            }
+                        }
+                        else
+                        {
+                            string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                            foreach (char c in alphabet)
+                            {
+                            }
+                        }
+                    }
+                    xcompetition.Add(xgroupesP);
+                }
+            }
+            return doc.ToXmlDocument();
+        }
         /// Document XML contenant les informations pour les generations des affectations de tapis
         /// </summary>
         /// <param name="DC"></param>
