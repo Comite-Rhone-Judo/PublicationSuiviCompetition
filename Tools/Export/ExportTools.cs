@@ -9,8 +9,6 @@ namespace Tools.Export
 {
     public static class ExportTools
     {
-        public const int kTailleMaxIdCompetition = 30;
-        public const int kTailleMaxNomCompetition = 30;
 
         public static string default_competition = null;
 
@@ -485,71 +483,6 @@ namespace Tools.Export
             }
 
             return name;
-        }
-
-        /// <summary>
-        /// Calcul d'URL du site en local en fonction de la competition en cours
-        /// </summary>
-        /// <param name="ip"></param>
-        /// <param name="port"></param>
-        /// <param name="nom_compet"></param>
-        /// <returns></returns>
-        public static string GetURLSiteLocal(string ip, int port, string nom_compet)
-        {
-            string result = "";
-
-            result = "http://";
-            result += ip;
-            result += ":";
-            result += port.ToString() + "/";
-            // result += "/site/";
-            result += OutilsTools.TraiteChaine(OutilsTools.SubString(nom_compet, 0, ExportTools.kTailleMaxIdCompetition));
-            result += "/common/index.html";
-
-            return result;
-        }
-
-        /// <summary>
-        /// Calcul d'URL du site FTP en fonction de la competition
-        /// </summary>
-        /// <param name="nom_compet"></param>
-        /// <returns></returns>
-        public static string GetURLSiteFTP(string nom_compet)
-        {
-            string result = NetworkTools.HTTP_SUIVI_URL;
-            result += OutilsTools.TraiteChaine(OutilsTools.SubString(nom_compet, 0, ExportTools.kTailleMaxIdCompetition));
-            result += "/common/index.html";
-
-            return result;
-        }
-
-        /// <summary>
-        /// Calcul d'URL du site distant en fonction de la competition en cours
-        /// </summary>
-        /// <param name="urlRacine"></param>
-        /// <param name="nom_compet"></param>
-        /// <returns></returns>
-        public static string GetURLSiteDistant(string urlRacine, string nom_compet)
-        {
-
-            Uri root = new Uri(urlRacine);
-
-            string suffix = OutilsTools.TraiteChaine(OutilsTools.SubString(nom_compet, 0, ExportTools.kTailleMaxIdCompetition));
-            suffix += "/common/index.html";
-
-            // Uri suffixUri = new Uri(suffix);
-
-            Uri fullUri = new Uri(root, suffix);
-
-            return fullUri.ToString();
-
-            /*
-            string result = urlRacine;
-            result += OutilsTools.TraiteChaine(OutilsTools.SubString(nom_compet, 0, 30));
-            result += "/common/index.html";
-
-            return result;
-            */
         }
     }
 }

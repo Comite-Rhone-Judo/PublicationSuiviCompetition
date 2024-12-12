@@ -19,6 +19,7 @@ using System.Web.Configuration;
 using System.Windows.Input;
 using System.Xml;
 using System.Xml.Linq;
+using Telerik.Windows.Controls;
 using Tools.Enum;
 using Tools.Export;
 using Tools.Outils;
@@ -53,7 +54,6 @@ namespace AppPublication.Controles
         private const string kSettingEntitePublicationFFJudo = "EntitePublicationFFJudo";
         private const string kSettingSelectedLogo = "SelectedLogo";
         private const string kSettingInterfaceLocalPublication = "InterfaceLocalPublication";
-
         #endregion
 
         #region MEMBRES
@@ -628,10 +628,17 @@ namespace AppPublication.Controles
                 if (_isolerCompetition != value)
                 {
                     _isolerCompetition = value;
-                    NotifyPropertyChanged("IsolerCompetition");
                     AppSettings.SaveSetting(kSettingIsolerCompetition, _isolerCompetition.ToString());
+
+                    // Met a jour la structure d'export
+                    if (_structure != null)
+                    {
+                        _structure.CompetitionIsolee = _isolerCompetition;
+                    }
+                    NotifyPropertyChanged("IsolerCompetition");
                     URLDistantPublication = CalculURLSiteDistant();
                     SiteDistantSelectionne.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
+
                 }
             }
         }
@@ -820,6 +827,14 @@ namespace AppPublication.Controles
                 {
                     _idCompetition = value;
                     NotifyPropertyChanged("IdCompetition");
+
+                    // Met a jour la structure d'export
+                    if (_structure != null)
+                    {
+                        _structure.IdCompetition = value;
+                    }
+
+                    // Recalcul les valeurs des URLs et répertoires distants
                     SiteDistantSelectionne.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
                     URLDistantPublication = CalculURLSiteDistant();
                     URLLocalPublication = CalculURLSiteLocal();
@@ -833,9 +848,6 @@ namespace AppPublication.Controles
                         PouleEnColonnes = true;
                         PouleToujoursEnColonnes = true;
                     }
-
-                    // Met a jour la structure d'export
-                    _structure.IdCompetition = value;
                 }
             }
         }
@@ -930,7 +942,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                return Path.Combine(_structure.Racine, ExportTools.getFileName(ExportEnum.Site_Checksum) + ConstantFile.ExtensionXML);
+                return Path.Combine(_structure.RepertoireRacine, ExportTools.getFileName(ExportEnum.Site_Checksum) + ConstantFile.ExtensionXML);
             }
         }
 
@@ -943,7 +955,10 @@ namespace AppPublication.Controles
         /// </summary>
         private void InitExportSiteStructure()
         {
-            FileAndDirectTools.CreateDirectorie(_structure.Racine);
+            if (_structure != null)
+            {
+                FileAndDirectTools.CreateDirectorie(_structure.RepertoireRacine);
+            }
         }
 
         private void InitFichiersLogo()
@@ -1043,6 +1058,10 @@ namespace AppPublication.Controles
         {
             try
             {
+                // On lit le repertoire racine en 1er afin de pouvoir initialiser la structure du site
+                RepertoireRacine = AppSettings.ReadSetting(kSettingRepertoireRacine, Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+
+                // Les autres parametres peuvent suivre
                 URLDistant = AppSettings.ReadSetting(kSettingURLDistant, string.Empty);
                 IsolerCompetition = AppSettings.ReadSetting(kSettingIsolerCompetition, false);
                 RepertoireRacineSiteFTPDistant = AppSettings.ReadSetting(kSettingRepertoireRacineSiteFTPDistant, string.Empty);
@@ -1055,7 +1074,6 @@ namespace AppPublication.Controles
                 PouleEnColonnes = AppSettings.ReadSetting(kSettingPouleEnColonnes, false);
                 PouleToujoursEnColonnes = AppSettings.ReadSetting(kSettingPouleToujoursEnColonnes, false);
                 TailleMaxPouleColonnes = AppSettings.ReadSetting(kSettingTailleMaxPouleColonnes, 5);
-                RepertoireRacine = AppSettings.ReadSetting(kSettingRepertoireRacine, Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
 
                 // Charge les valeurs pour la publication FFJudo
                 if (EasyConfigDisponible)
@@ -1107,19 +1125,9 @@ namespace AppPublication.Controles
             // Selectionne l'URL en fonction du type de configuration
             string urlBase = (AdvancedConfig) ? URLDistant : easyConfigUrl;
 
-            if (!String.IsNullOrEmpty(urlBase))
+            if (!String.IsNullOrEmpty(urlBase) && _structure != null)
             {
-                if (IsolerCompetition)
-                {
-                    if (!String.IsNullOrEmpty(IdCompetition))
-                    {
-                        output = ExportTools.GetURLSiteDistant(urlBase, IdCompetition);
-                    }
-                }
-                else
-                {
-                    output = ExportTools.GetURLSiteDistant(urlBase, "courante");
-                }
+                output = (new Uri(new Uri(urlBase), _structure.UrlPathIndex)).ToString();
             }
             return output;
         }
@@ -1132,11 +1140,11 @@ namespace AppPublication.Controles
         {
             string output = "Indefinie";
 
-            if (!String.IsNullOrEmpty(IdCompetition) && SiteLocal.ServerHTTP != null && SiteLocal.ServerHTTP.ListeningIpAddress != null && SiteLocal.ServerHTTP.Port > 0)
+            if (!String.IsNullOrEmpty(IdCompetition) && SiteLocal.ServerHTTP != null && SiteLocal.ServerHTTP.ListeningIpAddress != null && SiteLocal.ServerHTTP.Port > 0 && _structure != null)
             {
-                output = ExportTools.GetURLSiteLocal(SiteLocal.ServerHTTP.ListeningIpAddress.ToString(),
-                                                        SiteLocal.ServerHTTP.Port,
-                                                        IdCompetition);
+                string urlBase = string.Format("http://{0}:{1}/", SiteLocal.ServerHTTP.ListeningIpAddress.ToString(), SiteLocal.ServerHTTP.Port);
+
+                output = (new Uri(new Uri(urlBase), _structure.UrlPathIndex)).ToString();
             }
 
             return output;
@@ -1160,20 +1168,11 @@ namespace AppPublication.Controles
                 repRoot = string.Empty;
             }
 
-            if (!String.IsNullOrEmpty(repRoot))
+            if (!String.IsNullOrEmpty(repRoot) && _structure != null)
             {
-                if (IsolerCompetition)
-                {
-                    if (!String.IsNullOrEmpty(IdCompetition))
-                    {
-                        output = Path.Combine(repRoot, OutilsTools.SubString(IdCompetition, 0, ExportTools.kTailleMaxIdCompetition));
-                    }
-                }
-                else
-                {
-                    output = Path.Combine(repRoot, "courante");
-                }
+                output = FileAndDirectTools.PathJoin(repRoot, _structure.UrlPathCompetition);
             }
+            
             return output;
         }
 

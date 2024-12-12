@@ -18,6 +18,8 @@ namespace AppPublication.Export
 {
     public static class ExportSite
     {
+        private const int kTailleMaxNomCompetition = 30;
+
         /// <summary>
         /// Génére les éléments donnés d'une phase
         /// </summary>
@@ -188,7 +190,7 @@ namespace AppPublication.Export
             XDocument doc = new XDocument();
 
             XElement xcompetition = new XElement(ConstantXML.Competition);
-            xcompetition.SetAttributeValue(ConstantXML.Competition_Titre, OutilsTools.TraiteChaine(OutilsTools.SubString(DialogControleur.Instance.ServerData.competition.nom, 0, ExportTools.kTailleMaxNomCompetition)));
+            xcompetition.SetAttributeValue(ConstantXML.Competition_Titre, OutilsTools.TraiteChaine(OutilsTools.SubString(DialogControleur.Instance.ServerData.competition.nom, 0, kTailleMaxNomCompetition)));
 
             doc.Add(xcompetition);
 

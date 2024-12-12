@@ -1226,7 +1226,7 @@ namespace KernelImpl.Noyau.Deroulement
             }
             catch (Exception ex)
             {
-                LogTools.Trace(ex, LogTools.Level.ERROR);
+                LogTools.Error(ex);
                 return 0;
             }
         }

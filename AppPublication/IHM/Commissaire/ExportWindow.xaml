@@ -159,8 +159,8 @@
                         <!-- Entete -->
                         <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
                             <TextBlock Text="Génération du suivi de la compétition" Style="{StaticResource Header1TextStyle}"/>
-                            <TextBlock Text="{Binding ServerData.competition.nom, StringFormat={}{0}}" Style="{StaticResource Header1TextStyle}"/>
-                            <TextBlock Text="{Binding ServerData.competition.remoteId, StringFormat={}({0})}" Style="{StaticResource Header1TextStyle}"/>
+                            <TextBlock Text="{Binding ServerData.competition.nom}" Style="{StaticResource Header1TextStyle}"/>
+                            <TextBlock Text="{Binding ServerData.competition.remoteId}" Style="{StaticResource Header1TextStyle}"/>
                         </StackPanel>
                         <!-- Contenu -->
                         <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="White" Margin="10 0 10 10">

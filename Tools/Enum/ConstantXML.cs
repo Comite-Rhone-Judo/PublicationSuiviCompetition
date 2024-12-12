@@ -91,6 +91,7 @@
         public const string Competition_Tapis = "tapis";
         public const string Competition_AfficheCSA = "afficheCSA";
         public const string Competition_AfficheKinzas = "kinzas";
+        public const string Competition_AfficheAutoTempsRecuperation = "afficheAutoTempsRecuperation";
         public const string Competition_AfficheAnimationVainqueur = "animationVainqueur";
         public const string Competition_RandomCombat = "randomCombat";
         public const string Competition_TempsPause = "tempsPause";
@@ -167,6 +168,8 @@
         public const string Combat_PointsGRCH = "pointsGRCH";
         public const string Combat_PointsGRCH1 = "pointsGRCH1";
         public const string Combat_PointsGRCH2 = "pointsGRCH2";
+        public const string Combat_cumulPointsGRCH1 = "cumulPointsGRCH1";
+        public const string Combat_cumulPointsGRCH2 = "cumulPointsGRCH2";
         public const string Combat_Phase = "phase";
         public const string Combat_Detail = "detail";
         public const string Combat_Challenge1Refused = "challenge1Refused";
@@ -201,8 +204,11 @@
         public const string Combat_PenPerdant = "penperdant";
         public const string Combat_FirstRencontre = "firstrencontre";
         public const string Combat_FirstRencontreLib = "firstrencontrelib";
+        public const string Combat_KinzaVainqueur = "kinzavainqueur";
+        public const string Combat_KinzaPerdant = "kinzaperdant";
 
         public const string Combat_IsPlayable = "isPlayable";
+        public const string Combat_LibEpreuveEquipe = "lib_epreuve_equipe";
 
         //Epreuves 
         public const string Epreuves = "epreuves";
@@ -299,6 +305,7 @@
         public const string Judoka_QualifieE1 = "qualifieE1";
         public const string Judoka_Equipe = "idEquipe";
         public const string Judoka_Points = "corg";
+        public const string Judoka_PointsRestant = "pointsRestant";
         public const string Judoka_Serie = "serie";
         public const string Judoka_Serie2 = "serie2";
         public const string Judoka_Observation = "observation";
@@ -620,6 +627,7 @@
         public const string Rencontre_Ippon2 = "ippon2";
         public const string Rencontre_GoldenScore = "goldenScore";
         public const string Rencontre_IsNewRencontre = "isNewRencontre";
+        public const string Rencontre_EstDecisif = "estDecisif";
         
 
         public const string Rencontre_TempsCombat = "tempsCombat";
@@ -651,5 +659,7 @@
         public const string Vue_Groupe_EpreuvePoidsMin = "epreuve_poidsMin";
         public const string Vue_Groupe_EpreuvePoidsMax = "epreuve_poidsMax";
         public const string Vue_Groupe_EpreuveLibsexe = "epreuve_libsexe";
+        public const string Vue_Groupe_Discipline = "discipline";
+        public const string Vue_Groupe_EpreuveAge = "epreuve_age";
     }
 }
