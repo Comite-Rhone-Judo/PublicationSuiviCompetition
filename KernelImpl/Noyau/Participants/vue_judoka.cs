@@ -11,7 +11,7 @@ using Tools.Enum;
 namespace KernelImpl.Noyau.Participants
 {
 
-    public class vue_judoka : INotifyPropertyChanged
+    public class vue_judoka :  INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -999,11 +999,370 @@ namespace KernelImpl.Noyau.Participants
             }
         }
 
+        public bool isPresent
+        {
+            get { return this.EstPresent(); }
+        }
+
+        public bool EstPresent()
+        {
+            return this.etat == (int)EtatJudokaEnum.AuPoids || this.etat == (int)EtatJudokaEnum.HorsCategorie || this.etat == (int)EtatJudokaEnum.HorsPoids;
+        }
 
         public vue_judoka(Judoka judoka, JudoData DC)
         {
             EpreuveJudoka ej = DC.Participants.EJS.FirstOrDefault(o => o.judoka == judoka.id);
             Epreuve ep = ej != null ? DC.Organisation.Epreuves.FirstOrDefault(o => o.id == ej.epreuve) : null;
+            Ceintures ceinture = DC.Categories.Grades.FirstOrDefault(o => o.id == judoka.ceinture);
+            CategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == judoka.categorie);
+            Competition compet = ep != null ? DC.Organisation.Competitions.FirstOrDefault(o => o.id == ep.competition) : null;
+            Equipe equipe = DC.Participants.Equipes.FirstOrDefault(o => o.id == judoka.equipe);
+            Epreuve_Equipe ep2 = ep != null ? DC.Organisation.EpreuveEquipes.FirstOrDefault(o => o.id == ep.epreuve_equipe) : null;
+
+            this.id = judoka.id;
+            this.licence = judoka.licence;
+            this.nom = judoka.nom;
+            this.prenom = judoka.prenom;
+            this.ceinture = judoka.ceinture;
+            this.naissance = judoka.naissance;
+            this.sexe = judoka.sexe;
+            this.categorie = judoka.categorie;
+            this.modification = judoka.modification;
+            this.club = judoka.club;
+            this.pays = judoka.pays;
+            this.datePesee = judoka.datePesee;
+            this.present = judoka.present;
+            this.passeport = judoka.passeport;
+            this.modeControle = judoka.modeControle;
+            this.modePesee = judoka.modePesee;
+            this.remoteId = judoka.remoteID;
+            this.poidsMesure = judoka.poidsMesure;
+            this.poidsKg = judoka.poidsKg;
+            this.poids = judoka.poids;
+            this.annee = judoka.naissance.Year;
+            this.equipe = judoka.equipe;
+            this.lib_equipe = equipe != null ? equipe.libelle : "";
+
+
+            if (ceinture != null)
+            {
+                this.nomCeinture = ceinture.nom;
+                this.couleur1 = ceinture.couleur1;
+                this.couleur2 = ceinture.couleur2;
+            }
+            else
+            {
+                this.nomCeinture = "";
+                this.couleur1 = "";
+                this.couleur2 = "";
+            }
+
+            if (cateAge != null)
+            {
+                this.nomCategorieAge = cateAge.nom;
+                this.anneeMin = cateAge.anneeMin;
+                this.anneeMax = cateAge.anneeMax;
+            }
+            else
+            {
+                this.nomCategorieAge = "";
+                this.anneeMin = 0;
+                this.anneeMax = 0;
+            }
+
+            if (judoka.sexe)
+            {
+                this.lib_sexe = "F";
+            }
+            else
+            {
+                this.lib_sexe = "M";
+            }
+
+
+            if (ep != null)
+            {
+                this.poidsMin = ep.poidsMin;
+                this.poidsMax = ep.poidsMax;
+                this.libepreuve = ep.nom;
+                this.idepreuve = ep.id;
+                this.idcompet = ep.competition;
+            }
+            else
+            {
+                this.poidsMin = 0;
+                this.poidsMax = 0;
+                this.libepreuve = "aucune";
+                this.idepreuve = 0;
+                this.idcompet = 0;
+            }
+
+            if (ej != null)
+            {
+                this.etat = ej.etat;
+                this.serie = ej.serie;
+                this.serie2 = ej.serie2;
+                this.observation = ej.observation;
+                this.classement = ej.classement;
+                this.serie2 = ej.serie2;
+                this.observation = ej.observation;
+                this.classement = ej.classement;
+                this.points = ej.points;
+            }
+            else
+            {
+                this.serie = 0;
+                this.etat = (int)EtatJudokaEnum.Aucun;
+                this.serie2 = 0;
+                this.observation = 0;
+                this.classement = 0;
+                this.points = 0;
+            }
+
+            Club club = DC.Structures.Clubs.FirstOrDefault(o => o.id == judoka.club);
+
+            if (club != null)
+            {
+                this.clubNomCourt = club.nomCourt;
+                this.clubNom = club.nom;
+
+                Comite comite = DC.Structures.Comites.FirstOrDefault(o => o.id == club.comite && o.ligue == club.ligue);
+                if (comite != null)
+                {
+                    this.comiteNomCourt = club.comite;
+                    this.comiteNom = club.comite;
+                }
+                else
+                {
+                    this.comiteNomCourt = "0";
+                    this.comiteNom = "";
+                }
+
+                Ligue ligue = DC.Structures.Ligues.FirstOrDefault(o => o.id == club.ligue);
+                if (ligue != null)
+                {
+                    this.ligue = ligue.id;
+                    this.ligueNom = ligue.nom;
+                    this.ligueNomCourt = ligue.nomCourt;
+                }
+                else
+                {
+                    this.ligue = "";
+                    this.ligueNom = "";
+                    this.ligueNomCourt = "";
+                }
+
+            }
+            else
+            {
+                this.comiteNomCourt = "0";
+                this.comiteNom = "";
+                this.ligue = "";
+                this.ligueNom = "";
+                this.ligueNomCourt = "";
+                this.clubNomCourt = judoka.club;
+                this.clubNom = judoka.club;
+            }
+
+            if (compet != null)
+            {
+                this.nom_compet = compet.nom;
+            }
+            else
+            {
+                this.nom_compet = "Non inscrits";
+            }
+
+            if(ep2 == null)
+            {
+                this.idepreuve_equipe = 0;
+            }
+            else
+            {
+                this.idepreuve_equipe = ep2.id;
+            }
+        }
+
+        public vue_judoka(Judoka judoka, Epreuve epreuve, JudoData DC)
+        {
+            EpreuveJudoka ej = DC.Participants.EJS.FirstOrDefault(o => o.judoka == judoka.id && o.epreuve == epreuve.id);
+            Epreuve ep = ej != null ? DC.Organisation.Epreuves.FirstOrDefault(o => o.id == ej.epreuve) : null;
+            Ceintures ceinture = DC.Categories.Grades.FirstOrDefault(o => o.id == judoka.ceinture);
+            CategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == judoka.categorie);
+            Competition compet = ep != null ? DC.Organisation.Competitions.FirstOrDefault(o => o.id == ep.competition) : null;
+            Equipe equipe = DC.Participants.Equipes.FirstOrDefault(o => o.id == judoka.equipe);
+            Epreuve_Equipe ep2 = ep != null ? DC.Organisation.EpreuveEquipes.FirstOrDefault(o => o.id == ep.epreuve_equipe) : null;
+
+            this.id = judoka.id;
+            this.licence = judoka.licence;
+            this.nom = judoka.nom;
+            this.prenom = judoka.prenom;
+            this.ceinture = judoka.ceinture;
+            this.naissance = judoka.naissance;
+            this.sexe = judoka.sexe;
+            this.categorie = judoka.categorie;
+            this.modification = judoka.modification;
+            this.club = judoka.club;
+            this.pays = judoka.pays;
+            this.datePesee = judoka.datePesee;
+            this.present = judoka.present;
+            this.passeport = judoka.passeport;
+            this.modeControle = judoka.modeControle;
+            this.modePesee = judoka.modePesee;
+            this.remoteId = judoka.remoteID;
+            this.poidsMesure = judoka.poidsMesure;
+            this.poidsKg = judoka.poidsKg;
+            this.poids = judoka.poids;
+            this.annee = judoka.naissance.Year;
+            this.equipe = judoka.equipe;
+            this.lib_equipe = equipe != null ? equipe.libelle : "";
+
+
+            if (ceinture != null)
+            {
+                this.nomCeinture = ceinture.nom;
+                this.couleur1 = ceinture.couleur1;
+                this.couleur2 = ceinture.couleur2;
+            }
+            else
+            {
+                this.nomCeinture = "";
+                this.couleur1 = "";
+                this.couleur2 = "";
+            }
+
+            if (cateAge != null)
+            {
+                this.nomCategorieAge = cateAge.nom;
+                this.anneeMin = cateAge.anneeMin;
+                this.anneeMax = cateAge.anneeMax;
+            }
+            else
+            {
+                this.nomCategorieAge = "";
+                this.anneeMin = 0;
+                this.anneeMax = 0;
+            }
+
+            if (judoka.sexe)
+            {
+                this.lib_sexe = "F";
+            }
+            else
+            {
+                this.lib_sexe = "M";
+            }
+
+
+            if (ep != null)
+            {
+                this.poidsMin = ep.poidsMin;
+                this.poidsMax = ep.poidsMax;
+                this.libepreuve = ep.nom;
+                this.idepreuve = ep.id;
+                this.idcompet = ep.competition;
+            }
+            else
+            {
+                this.poidsMin = 0;
+                this.poidsMax = 0;
+                this.libepreuve = "aucune";
+                this.idepreuve = 0;
+                this.idcompet = 0;
+            }
+
+            if (ej != null)
+            {
+                this.etat = ej.etat;
+                this.serie = ej.serie;
+                this.serie2 = ej.serie2;
+                this.observation = ej.observation;
+                this.classement = ej.classement;
+                this.serie2 = ej.serie2;
+                this.observation = ej.observation;
+                this.classement = ej.classement;
+                this.points = ej.points;
+            }
+            else
+            {
+                this.serie = 0;
+                this.etat = (int)EtatJudokaEnum.Aucun;
+                this.serie2 = 0;
+                this.observation = 0;
+                this.classement = 0;
+                this.points = 0;
+            }
+
+            Club club = DC.Structures.Clubs.FirstOrDefault(o => o.id == judoka.club);
+
+            if (club != null)
+            {
+                this.clubNomCourt = club.nomCourt;
+                this.clubNom = club.nom;
+
+                Comite comite = DC.Structures.Comites.FirstOrDefault(o => o.id == club.comite && o.ligue == club.ligue);
+                if (comite != null)
+                {
+                    this.comiteNomCourt = club.comite;
+                    this.comiteNom = club.comite;
+                }
+                else
+                {
+                    this.comiteNomCourt = "0";
+                    this.comiteNom = "";
+                }
+
+                Ligue ligue = DC.Structures.Ligues.FirstOrDefault(o => o.id == club.ligue);
+                if (ligue != null)
+                {
+                    this.ligue = ligue.id;
+                    this.ligueNom = ligue.nom;
+                    this.ligueNomCourt = ligue.nomCourt;
+                }
+                else
+                {
+                    this.ligue = "";
+                    this.ligueNom = "";
+                    this.ligueNomCourt = "";
+                }
+
+            }
+            else
+            {
+                this.comiteNomCourt = "0";
+                this.comiteNom = "";
+                this.ligue = "";
+                this.ligueNom = "";
+                this.ligueNomCourt = "";
+                this.clubNomCourt = judoka.club;
+                this.clubNom = judoka.club;
+            }
+
+            if (compet != null)
+            {
+                this.nom_compet = compet.nom;
+            }
+            else
+            {
+                this.nom_compet = "Non inscrits";
+            }
+
+            if (ep2 == null)
+            {
+                this.idepreuve_equipe = 0;
+            }
+            else
+            {
+                this.idepreuve_equipe = ep2.id;
+            }
+        }
+
+        public vue_judoka(Judoka judoka, Epreuve epreuve, vue_judoka old_vj, JudoData DC)
+        {
+            EpreuveJudoka ej = DC.Participants.EJS.FirstOrDefault(o => o.judoka == judoka.id && o.epreuve == old_vj.idepreuve);
+
+            //Epreuve ep = ej != null ? DC.Organisation.Epreuves.FirstOrDefault(o => o.id == ej.epreuve) : null;
+            Epreuve ep = epreuve;
             Ceintures ceinture = DC.Categories.Grades.FirstOrDefault(o => o.id == judoka.ceinture);
             CategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == judoka.categorie);
             Competition compet = ep != null ? DC.Organisation.Competitions.FirstOrDefault(o => o.id == ep.competition) : null;
@@ -1215,7 +1574,7 @@ namespace KernelImpl.Noyau.Participants
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_IdEpreuve, this.idepreuve.ToString());
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_LibEpreuve, this.libepreuve);
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_Qualifie0, this.qualifie0.ToString().ToLower());
-            xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_Qualifie1, this.qualifie1.ToString().ToLower());
+            xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_Qualifie1, this.qualifie1.ToString().ToLower());            
 
             return xjudoka;
         }

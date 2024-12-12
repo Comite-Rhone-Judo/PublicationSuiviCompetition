@@ -1166,7 +1166,7 @@ namespace AppPublication.Controles
                 {
                     if (!String.IsNullOrEmpty(IdCompetition))
                     {
-                        output = Path.Combine(repRoot, IdCompetition);
+                        output = Path.Combine(repRoot, OutilsTools.SubString(IdCompetition, 0, ExportTools.kTailleMaxIdCompetition));
                     }
                 }
                 else

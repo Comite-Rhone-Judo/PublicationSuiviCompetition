@@ -268,8 +268,15 @@ namespace KernelImpl.Noyau.Participants
             {
                 foreach (Judoka judoka in _judokas)
                 {
-                    vue_judoka p = _vue_judokas.FirstOrDefault(o => o.id == judoka.id);
-                    vue_judoka vj = new vue_judoka(judoka, DC);
+                    List<vue_judoka> vues_judoka = _vue_judokas.Where(o => o.id == judoka.id).ToList();
+                    List<EpreuveJudoka> epreuvesJudoka = DC.Participants.EJS.Where(o => o.judoka == judoka.id).ToList();
+                    foreach (EpreuveJudoka epreuve_judoka in epreuvesJudoka)
+                    {
+                        Organisation.Epreuve epreuve = DC.Organisation.Epreuves.FirstOrDefault(o => o.id == epreuve_judoka.epreuve);
+                        if(!(epreuve is null))
+                        {
+                            vue_judoka p = _vue_judokas.FirstOrDefault(o => o.id == judoka.id && o.idepreuve == epreuve.id);
+                            vue_judoka vj = new vue_judoka(judoka, epreuve, DC);
                     if (p != null)
                     {
                         _vue_judokas.Remove(p);
@@ -287,6 +294,8 @@ namespace KernelImpl.Noyau.Participants
 
                     int id = vj.idepreuve_equipe != 0 ? vj.idepreuve_equipe : vj.idepreuve;
                     _vjudokas_epreuve[id].Add(vj);
+                }
+            }
                 }
             }
         }

@@ -9,6 +9,9 @@ namespace Tools.Export
 {
     public static class ExportTools
     {
+        public const int kTailleMaxIdCompetition = 30;
+        public const int kTailleMaxNomCompetition = 30;
+
         public static string default_competition = null;
 
         /// <summary>
@@ -500,7 +503,7 @@ namespace Tools.Export
             result += ":";
             result += port.ToString() + "/";
             // result += "/site/";
-            result += OutilsTools.TraiteChaine(OutilsTools.SubString(nom_compet, 0, 30));
+            result += OutilsTools.TraiteChaine(OutilsTools.SubString(nom_compet, 0, ExportTools.kTailleMaxIdCompetition));
             result += "/common/index.html";
 
             return result;
@@ -514,7 +517,7 @@ namespace Tools.Export
         public static string GetURLSiteFTP(string nom_compet)
         {
             string result = NetworkTools.HTTP_SUIVI_URL;
-            result += OutilsTools.TraiteChaine(OutilsTools.SubString(nom_compet, 0, 30));
+            result += OutilsTools.TraiteChaine(OutilsTools.SubString(nom_compet, 0, ExportTools.kTailleMaxIdCompetition));
             result += "/common/index.html";
 
             return result;
@@ -531,7 +534,7 @@ namespace Tools.Export
 
             Uri root = new Uri(urlRacine);
 
-            string suffix = OutilsTools.TraiteChaine(OutilsTools.SubString(nom_compet, 0, 30));
+            string suffix = OutilsTools.TraiteChaine(OutilsTools.SubString(nom_compet, 0, ExportTools.kTailleMaxIdCompetition));
             suffix += "/common/index.html";
 
             // Uri suffixUri = new Uri(suffix);

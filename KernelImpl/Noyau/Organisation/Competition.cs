@@ -34,6 +34,7 @@ namespace KernelImpl.Noyau.Organisation
             this.version = "";
             this.afficheCSA = (int)TypeCSAEnum.Aucun;
             this.afficheKinzas = false;
+            this.afficheAutoTempsRecuperation = true;
             this.afficheAnimationVainqueur = false;
             this.tempsMedical = 120;
             this.isRandomCombat = false;
@@ -63,6 +64,7 @@ namespace KernelImpl.Noyau.Organisation
         public int afficheCSA { get; set; }
 
         public bool afficheKinzas { get; set; }
+        public bool afficheAutoTempsRecuperation { get; set; }
 
         public bool afficheAnimationVainqueur { get; set; }
 
@@ -93,6 +95,7 @@ namespace KernelImpl.Noyau.Organisation
             this.afficheCSA = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_AfficheCSA));
 
             this.afficheKinzas = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_AfficheKinzas)) == "Oui" ? true : false;
+            this.afficheAutoTempsRecuperation = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_AfficheAutoTempsRecuperation)) == "Oui" ? true : false;
             this.afficheAnimationVainqueur = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_AfficheAnimationVainqueur)) == "Oui" ? true : false;
 
             this.tempsMedical = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_TempsMedical));
@@ -118,6 +121,7 @@ namespace KernelImpl.Noyau.Organisation
             xcompetition.SetAttributeValue(ConstantXML.Competition_Couleur2, couleur2.ToString());
             xcompetition.SetAttributeValue(ConstantXML.Competition_AfficheCSA, afficheCSA.ToString());
             xcompetition.SetAttributeValue(ConstantXML.Competition_AfficheKinzas, afficheKinzas ? "Oui" : "Non");
+            xcompetition.SetAttributeValue(ConstantXML.Competition_AfficheAutoTempsRecuperation, afficheAutoTempsRecuperation ? "Oui" : "Non");
             xcompetition.SetAttributeValue(ConstantXML.Competition_AfficheAnimationVainqueur, afficheAnimationVainqueur ? "Oui" : "Non");
 
             xcompetition.SetAttributeValue(ConstantXML.Competition_RandomCombat, isRandomCombat ? "Oui" : "Non");

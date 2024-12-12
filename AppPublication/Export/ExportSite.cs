@@ -188,7 +188,7 @@ namespace AppPublication.Export
             XDocument doc = new XDocument();
 
             XElement xcompetition = new XElement(ConstantXML.Competition);
-            xcompetition.SetAttributeValue(ConstantXML.Competition_Titre, OutilsTools.TraiteChaine(OutilsTools.SubString(DialogControleur.Instance.ServerData.competition.nom, 0, 30)));
+            xcompetition.SetAttributeValue(ConstantXML.Competition_Titre, OutilsTools.TraiteChaine(OutilsTools.SubString(DialogControleur.Instance.ServerData.competition.nom, 0, ExportTools.kTailleMaxNomCompetition)));
 
             doc.Add(xcompetition);
 

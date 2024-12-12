@@ -16,7 +16,7 @@ namespace Tools.Export
         private string _rootDir = string.Empty;
         private string _rootCompetDir = string.Empty;
         private string _idCompetition = string.Empty;
-        private const int _maxLen = 30;
+        private const int _maxLen = ExportTools.kTailleMaxIdCompetition;
         #endregion
 
         #region CONSTRUCTEURS

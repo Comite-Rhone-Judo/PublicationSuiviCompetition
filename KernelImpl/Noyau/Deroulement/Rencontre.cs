@@ -358,13 +358,15 @@ namespace KernelImpl.Noyau.Deroulement
         public bool goldenScore { get; set; }
         public bool isNewRencontre { get; set; }
 
+        public bool estDecisif { get; set; }
         // Retourne True si le combat peut etre selectionne (il a tout ses participants), false sinon
         public bool IsPlayable
         {
             get { return ((judoka1 != null) && (judoka1 != 0) && (judoka2 != null) && (judoka2 != 0) && (vainqueur == null) && (vainqueur != 0)); }
         }
 
-        public void Save(int? vainqueur, int score1, int score2, int penalite1, int penalite2, int ippon1, int ippon2, EtatCombattantEnum etat1, EtatCombattantEnum etat2)
+        public void Save(int? vainqueur, int score1, int score2, int penalite1, int penalite2, int ippon1, int ippon2,EtatCombattantEnum etat1, EtatCombattantEnum etat2,
+            bool isProLeague)
         {
             //DialogControleur DC = Controles.DialogControleur.currentControleur;
 
@@ -453,16 +455,24 @@ namespace KernelImpl.Noyau.Deroulement
                 }
                 else if (this.etatJ1 != (int)EtatCombattantEnum.Normal)
                 {
-                    /* this.score2 = 100;
-                     this.score1 = 0;*/
+                    if (!isProLeague)
+                    {
+                        this.score2 = 100;//16092024
+                        this.score1 = 0;//16092024
+                    }
+                   
                     this.vainqueur = this.judoka2;
 
 
                 }
                 else if (this.etatJ2 != (int)EtatCombattantEnum.Normal)
                 {
-                    /* this.score1 = 100;
-                     this.score2 = 0;*/
+                    if (!isProLeague)
+                    {
+                        this.score1 = 100;//16092024
+                        this.score2 = 0;//16092024
+                    }
+                    
                     this.vainqueur = this.judoka1;
                 }
             }
@@ -547,7 +557,47 @@ namespace KernelImpl.Noyau.Deroulement
 
             IList<Rencontre> rencontres = DC.Deroulement.Rencontres.Where(o => o.combat == this.combat).ToList();
 
-            if (rencontres.Count(o => o.vainqueur == null) == 0)
+            bool combatDecisifProLeagueEnAttente = false;
+            if (DC.competition.IsProLeague())
+            {
+                Combat c = DC.Deroulement.Combats.FirstOrDefault(o => o.id == this.combat);
+                if(!(c is null))
+                {
+                    Feuille feuille = DC.Deroulement.Feuilles.FirstOrDefault(o => o.combat == this.combat);
+                    if (feuille != null) //TABLEAU
+                    {
+                        int niveau = (int)Math.Pow(2, c.niveau - 1);
+                        if (niveau == 1 || niveau == 2 || niveau == 4)
+                        {
+                            IList<Rencontre> rencontresTmp = DC.Deroulement.Rencontres.Where(o => o.combat == this.combat).ToList();
+                            bool egaliteCombat = false;
+                            int combatScore1 = 0;
+                            int combatScore2 = 0;
+                            int nbVictoire1 = 0;
+                            int nbVictoire2 = 0;
+                            foreach (Rencontre r in rencontresTmp)
+                            {
+                                combatScore1 += r.score1;
+                                combatScore2 += r.score2;
+                                if (r.judoka1 == r.vainqueur)
+                                {
+                                    nbVictoire1++;
+                                }
+                                if (r.judoka2 == r.vainqueur)
+                                {
+                                    nbVictoire2++;
+                                }
+                            }
+                            if (combatScore1 == combatScore2 && nbVictoire1 == nbVictoire2)
+                            {
+                                egaliteCombat = true;
+                                combatDecisifProLeagueEnAttente = true;
+                            }
+                        }
+                    }
+                }
+            }
+            if (rencontres.Count(o => o.vainqueur == null) == 0 && !combatDecisifProLeagueEnAttente)//si toutes les rencontres d'un combat sont terminés
             {
                 Combat combat = DC.Deroulement.Combats.FirstOrDefault(o => o.id == this.combat);
 
@@ -585,6 +635,8 @@ namespace KernelImpl.Noyau.Deroulement
                 {
                     Phase phase = DC.Deroulement.Phases.FirstOrDefault(o => o.id == combat.phase);
 
+                    int nbVictoireDecisif1 = 0;
+                    int nbVictoireDecisif2 = 0;
 
                     foreach (Rencontre rencontre in rencontres)
                     {
@@ -596,25 +648,41 @@ namespace KernelImpl.Noyau.Deroulement
                         Participants.Judoka judoka = DC.Participants.Judokas.FirstOrDefault(p => p.id == rencontre.vainqueur);
                         if (judoka == null)
                         {
+                            if (!rencontre.estDecisif)
+                            {
                             cumul1 += rencontre.score1;
                             cumul2 += rencontre.score2;
+                            }
                         }
                         else
                         {
                             if (judoka.equipe == combat.participant1)
                             {
+                                if (!rencontre.estDecisif)
+                                {
                                 score1++;
                                 cumul1 += rencontre.score1;
                                 cumul2 += rencontre.score2;
+                                }
+                                else
+                                {
+                                    nbVictoireDecisif1++;
+                                }
                             }
                             if (judoka.equipe == combat.participant2)
                             {
+                                if (!rencontre.estDecisif)
+                                {
                                 score2++;
                                 cumul1 += rencontre.score1;
                                 cumul2 += rencontre.score2;
                             }
+                                else
+                                {
+                                    nbVictoireDecisif2++;
                         }
-
+                            }
+                        }
                         #region old
                         /*if (rencontre.penalite1 == 1 && rencontre.penalite2 == 1) //si 2 shidos à 1 = match nul
                         {
@@ -688,21 +756,21 @@ namespace KernelImpl.Noyau.Deroulement
                     //cumul1 += bonusIppon1 * 6; //1 point de bonus pour 6 ippon marqués sur toutes les rencontres du combat de l'équipe 1
                     //cumul2 += bonusIppon2 * 6; //1 point de bonus pour 6 ippon marqués sur toutes les rencontres du combat de l'équipe 2
 
-                    if (score1 > score2)//nb de victoire
+                    if ((score1 + nbVictoireDecisif1) > (score2 + nbVictoireDecisif2))//nb de victoire
                     {
                         v = combat.participant1;
                     }
-                    else if (score2 > score1)
+                    else if ((score2 + nbVictoireDecisif2) > (score1 + nbVictoireDecisif1))
                     {
                         v = combat.participant2;
                     }
-                    else if (score1 == score2)
+                    else if ((score1 + nbVictoireDecisif1) == (score2 + nbVictoireDecisif2))
                     {
                         if (cumul1 > cumul2) //nb points marqués
                         {
                             v = combat.participant1;
                         }
-                        else
+                        else if(cumul2 > cumul1)
                         {
                             v = combat.participant2;
                         }
@@ -835,8 +903,9 @@ namespace KernelImpl.Noyau.Deroulement
 
             /* if (this.etatJ1 == (int)EtatCombattantEnum.Normal && this.etatJ2 == (int)EtatCombattantEnum.Normal)
             {*/
-            if (this.etatJ1 != (int)EtatCombattantEnum.HansokuMakeX && this.etatJ2 != (int)EtatCombattantEnum.HansokuMakeX &&
-                this.etatJ1 != (int)EtatCombattantEnum.HansokuMakeH && this.etatJ2 != (int)EtatCombattantEnum.HansokuMakeH)
+            //if (this.etatJ1 != (int)EtatCombattantEnum.HansokuMakeX && this.etatJ2 != (int)EtatCombattantEnum.HansokuMakeX &&
+            //    this.etatJ1 != (int)EtatCombattantEnum.HansokuMakeH && this.etatJ2 != (int)EtatCombattantEnum.HansokuMakeH)
+                if (this.etatJ1 == (int)EtatCombattantEnum.Normal && this.etatJ2 == (int)EtatCombattantEnum.Normal)
             {
                 if ((this.judoka1 == null && this.judoka2 == this.vainqueur) || (this.judoka2 == null && this.judoka1 == this.vainqueur))
                 {
@@ -1004,6 +1073,7 @@ namespace KernelImpl.Noyau.Deroulement
             this.goldenScore = XMLTools.LectureBool(xrencontre.Attribute(ConstantXML.Rencontre_GoldenScore));
             this.isNewRencontre = XMLTools.LectureBool(xrencontre.Attribute(ConstantXML.Rencontre_IsNewRencontre));
             
+            this.estDecisif = XMLTools.LectureBool(xrencontre.Attribute(ConstantXML.Rencontre_EstDecisif));
         }
 
         public XElement ToXml()
@@ -1045,6 +1115,7 @@ namespace KernelImpl.Noyau.Deroulement
 
             xrencontre.SetAttributeValue(ConstantXML.Rencontre_GoldenScore, goldenScore);
             xrencontre.SetAttributeValue(ConstantXML.Rencontre_IsNewRencontre, isNewRencontre);
+            xrencontre.SetAttributeValue(ConstantXML.Rencontre_EstDecisif, estDecisif);
 
             return xrencontre;
         }

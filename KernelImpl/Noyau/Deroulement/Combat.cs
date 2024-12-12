@@ -100,6 +100,8 @@ namespace KernelImpl.Noyau.Deroulement
         public int ippon1 { get; set; }
         public int ippon2 { get; set; }
 
+        public string couleur1 { get; set; }
+        public string couleur2 { get; set; }
         public void LoadXml(XElement xinfo)
         {
             this.id = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Combat_ID));
@@ -220,6 +222,8 @@ namespace KernelImpl.Noyau.Deroulement
             xcombat.SetAttributeValue(ConstantXML.Combat_ScorePerdant, GetScorePerdant(DC));
             xcombat.SetAttributeValue(ConstantXML.Combat_PenVainqueur, GetPenaliteVainqueur());
             xcombat.SetAttributeValue(ConstantXML.Combat_PenPerdant, GetPenalitePerdant());
+            xcombat.SetAttributeValue(ConstantXML.Combat_KinzaVainqueur, GetKinzaVainqueur());
+            xcombat.SetAttributeValue(ConstantXML.Combat_KinzaPerdant, GetKinzaPerdant());
 
             xcombat.SetAttributeValue(ConstantXML.Combat_Kinza1, kinza1.ToString());
             xcombat.SetAttributeValue(ConstantXML.Combat_Kinza2, kinza2.ToString());
@@ -1222,7 +1226,7 @@ namespace KernelImpl.Noyau.Deroulement
             }
             catch (Exception ex)
             {
-                LogTools.Error(ex);
+                LogTools.Trace(ex, LogTools.Level.ERROR);
                 return 0;
             }
         }
@@ -1342,6 +1346,8 @@ namespace KernelImpl.Noyau.Deroulement
             {
                 return nbV + "v." + score.ToString("00");
             }
+
+            // TODO Vérifier ici car on n'a pas le bon alignement 00 sur des poules et un . apparait dans le score
 
             // string res = score.ToString("000");
             string res = (score / 10).ToString("00");
