@@ -96,7 +96,9 @@ namespace KernelImpl.Noyau.Deroulement
         public int pointsGRCH2 { get; set; }
 
         public int tempsRecupFinal { get; set; }
+
         public string discipline { get; set; }
+
         public int ippon1 { get; set; }
         public int ippon2 { get; set; }
 
@@ -413,7 +415,7 @@ namespace KernelImpl.Noyau.Deroulement
                 {
                     if (p1 != null)
                     {
-                        if (DC.competition.discipline == CompetitionDisciplineEnum.Judo.ToString2())
+                        if (DC.competition.disciplineId == CompetitionDisciplineEnum.Judo)
                         {
                             p1.cumulPoints = p1.cumulPoints + this.CalculeScore();
                         }
@@ -441,7 +443,7 @@ namespace KernelImpl.Noyau.Deroulement
                             this.pointsGRCH2 = pointsGRCH == -1 ? 0 : pointsGRCH;
                             this.pointsGRCH1 = 0;
                         }
-                        if (DC.competition.discipline != CompetitionDisciplineEnum.Judo.ToString2())
+                        if (DC.competition.disciplineId != CompetitionDisciplineEnum.Judo)
                         {
                             //jujitsu
                             if(pointsGRCH == -1)
@@ -461,7 +463,7 @@ namespace KernelImpl.Noyau.Deroulement
                     }
                     if (p2 != null)
                     {
-                        if (DC.competition.discipline == CompetitionDisciplineEnum.Judo.ToString2())
+                        if (DC.competition.disciplineId == CompetitionDisciplineEnum.Judo)
                         {
                             p2.cumulPoints = p2.cumulPoints + this.CalculeScorePerdant();
                         }
@@ -982,7 +984,7 @@ namespace KernelImpl.Noyau.Deroulement
                 zero = zero || participant == null || participant == 0;     // Participant inconnu
                 zero = zero || this.vainqueur == null;                      // pas de vainqueur identifie
                 zero = zero || this.vainqueur != participant;               // Si le judoka n'est pas le vainqueur (perdant = 0 pts)
-                if (DC.competition.discipline  == CompetitionDisciplineEnum.Judo.ToString2())
+                if (DC.competition.disciplineId  == CompetitionDisciplineEnum.Judo)
                 {
                     zero = zero || (this.score1 < 10 && this.score2 < 10);      // Si aucun Waza-Ari ou Ippon dans les scores
                 }
@@ -1014,7 +1016,7 @@ namespace KernelImpl.Noyau.Deroulement
                 }
 
                 Ceintures grademin = DC.Categories.Grades.FirstOrDefault(o => o.remoteId == "MA");
-                if (DC.competition.discipline == CompetitionDisciplineEnum.Judo.ToString2())
+                if (DC.competition.disciplineId == CompetitionDisciplineEnum.Judo)
                 {
                     zero = zero || ((j1?.ceinture ?? 0) < grademin.id || (j2?.ceinture ?? 0) < grademin.id);  //SI GRADE INFERIEUR A MARRON
                 }
@@ -1061,7 +1063,7 @@ namespace KernelImpl.Noyau.Deroulement
                     zero = zero || (j2?.id == participant && j2?.ceinture > j1?.ceinture);  //SI GRADE INFERIEUR
                 }
 
-                if (DC.competition.discipline == CompetitionDisciplineEnum.Judo.ToString2())
+                if (DC.competition.disciplineId == CompetitionDisciplineEnum.Judo)
                 {
                     // Les comnbats de barrage en individuelle ne marque pas de points
                     zero = zero || (this.reference.StartsWith("3.")); //SI COMBAT DE BARRAGE
@@ -1113,7 +1115,7 @@ namespace KernelImpl.Noyau.Deroulement
                 }
 
 
-                if (DC.competition.discipline == CompetitionDisciplineEnum.Judo.ToString2())
+                if (DC.competition.disciplineId == CompetitionDisciplineEnum.Judo)
                 {
                     if (score11 >= 100 || score11 >= 20)
                     {
@@ -1131,7 +1133,7 @@ namespace KernelImpl.Noyau.Deroulement
                     ScoresJujitsu scoresJson = Newtonsoft.Json.JsonConvert.DeserializeObject<ScoresJujitsu>(this.scoresJujitsu);
                     if (scoresJson is null) scoresJson = new ScoresJujitsu();
 
-                    if (DC.competition.discipline == CompetitionDisciplineEnum.JujitsuCombat.ToString2())
+                    if (DC.competition.disciplineId == CompetitionDisciplineEnum.JujitsuCombat)
                     {
                         if (participant == participant1)
                         {
@@ -1244,7 +1246,7 @@ namespace KernelImpl.Noyau.Deroulement
             int score = 0;
             int pen = 0;
 
-            if (DC.competition.discipline == CompetitionDisciplineEnum.Judo.ToString2())
+            if (DC.competition.disciplineId == CompetitionDisciplineEnum.Judo)
             {
                 if (this.vainqueur == this.participant1)
                 {
@@ -1325,7 +1327,7 @@ namespace KernelImpl.Noyau.Deroulement
             int score = 0;
             int nbV = 0;
 
-            if (DC.competition.discipline == CompetitionDisciplineEnum.Judo.ToString2())
+            if (DC.competition.disciplineId == CompetitionDisciplineEnum.Judo)
             {
                 if (this.vainqueur == this.participant2)
                 {
@@ -1346,8 +1348,6 @@ namespace KernelImpl.Noyau.Deroulement
             {
                 return nbV + "v." + score.ToString("00");
             }
-
-            // TODO Vérifier ici car on n'a pas le bon alignement 00 sur des poules et un . apparait dans le score
 
             // string res = score.ToString("000");
             string res = (score / 10).ToString("00");
@@ -1382,7 +1382,7 @@ namespace KernelImpl.Noyau.Deroulement
         public int? getVainqueur(EtatCombattantEnum etat1, EtatCombattantEnum etat2, JudoData DC)
         {
             int? res = null;
-            if (DC.competition.discipline == CompetitionDisciplineEnum.Judo.ToString2())
+            if (DC.competition.disciplineId == CompetitionDisciplineEnum.Judo)
             {
                 if (etat1 == EtatCombattantEnum.Decision)
                 {
@@ -1428,7 +1428,7 @@ namespace KernelImpl.Noyau.Deroulement
                 ScoresJujitsu scoresJson = Newtonsoft.Json.JsonConvert.DeserializeObject<ScoresJujitsu>(this.scoresJujitsu);
                 if (scoresJson is null) scoresJson = new ScoresJujitsu();
 
-                if (DC.competition.discipline == CompetitionDisciplineEnum.JujitsuCombat.ToString2())
+                if (DC.competition.disciplineId == CompetitionDisciplineEnum.JujitsuCombat)
                 {
                     int nbPartiesValideesJujitsuCombat1 = scoresJson.NbPartiesValides(1);
                     int nbPartiesValideesJujitsuCombat2 = scoresJson.NbPartiesValides(2);

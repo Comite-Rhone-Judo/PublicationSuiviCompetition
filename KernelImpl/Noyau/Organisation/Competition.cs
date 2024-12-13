@@ -25,7 +25,7 @@ namespace KernelImpl.Noyau.Organisation
             this.codeAcces = "";
             this.type = 2;
             this.type2 = 2;
-            this.discipline = CompetitionDisciplineEnum.Judo.ToString();
+            this.discipline = CompetitionDisciplineEnum.Judo.ToString2();
             this.nbTapis = 6;
             this.tempsCombat = 600;
             this.niveau = 0;
@@ -53,7 +53,30 @@ namespace KernelImpl.Noyau.Organisation
         public string codeAcces { get; set; }
         public int type { get; set; }
         public int type2 { get; set; }
-        public string discipline { get; set; }
+
+        private string _discipline;
+        private CompetitionDisciplineEnum _disciplineEnum;
+        public string discipline
+        {
+            get { return _discipline; }
+            set
+            {
+                _discipline = value;
+                _disciplineEnum = _discipline.ByString2();
+            }
+        }
+
+        public CompetitionDisciplineEnum disciplineId
+        {
+            get
+            {
+                return _disciplineEnum;
+            }
+            private set
+            {
+                _disciplineEnum = value;
+            }
+        }
         public int nbTapis { get; set; }
         public int tempsCombat { get; set; }
         public int niveau { get; set; }
@@ -110,9 +133,7 @@ namespace KernelImpl.Noyau.Organisation
             xcompetition.SetAttributeValue(ConstantXML.Competition_Date, date.ToString("ddMMyyyy"));
             xcompetition.SetAttributeValue(ConstantXML.Competition_Type, type.ToString());
             xcompetition.SetAttributeValue(ConstantXML.Competition_Type2, type2.ToString());
-
-            xcompetition.SetAttributeValue(ConstantXML.Competition_Discipline, discipline.ToString());
-
+  
             xcompetition.SetAttributeValue(ConstantXML.Competition_Discipline, discipline);
 
             xcompetition.SetAttributeValue(ConstantXML.Competition_Niveau, niveau.ToString());
