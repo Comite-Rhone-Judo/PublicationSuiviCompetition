@@ -216,6 +216,59 @@ namespace AppPublication.Controles
         #endregion
 
         #region COMMANDES
+
+
+
+        
+
+        private ICommand _cmdCopyUrlLocal = null;
+        /// <summary>
+        /// Commande de copy de l'URL local dans la presse papier
+        /// </summary>
+        public ICommand CmdCopyUrlLocal
+        {
+            get
+            {
+                if (_cmdCopyUrlLocal == null)
+                {
+                    _cmdCopyUrlLocal = new RelayCommand(
+                            o =>
+                            {
+                                Clipboard.SetText(GestionSite.URLLocalPublication);
+                            },
+                            o =>
+                            {
+                                return true;
+                            });
+                }
+                return _cmdCopyUrlLocal;
+            }
+        }
+
+        private ICommand _cmdCopyUrlDistant = null;
+        /// <summary>
+        /// Commande de copy de l'URL local dans la presse papier
+        /// </summary>
+        public ICommand CmdCopyUrlDistant
+        {
+            get
+            {
+                if (_cmdCopyUrlDistant == null)
+                {
+                    _cmdCopyUrlDistant = new RelayCommand(
+                            o =>
+                            {
+                                Clipboard.SetText(GestionSite.URLDistantPublication);
+                            },
+                            o =>
+                            {
+                                return true;
+                            });
+                }
+                return _cmdCopyUrlDistant;
+            }
+        }
+
         private ICommand _cmdDemarrerSiteLocal = null;
         /// <summary>
         /// Command de demarrage du site local

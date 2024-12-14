@@ -262,7 +262,14 @@
                                             <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="10 0 0 0" Width="32" HorizontalAlignment="Left" Click="QRCodeLocalCopy_Click">
                                                 <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier le QRCode"/>
                                             </telerik:RadButton>
-                                            <TextBox HorizontalAlignment="Right" Text="{Binding ElementName=QRCodeLocal, Path=Text, Mode=OneWay}" VerticalAlignment="Center" FontSize="20" Margin="10" MinWidth="500" IsReadOnly="True"/>
+                                            <WrapPanel Orientation="Horizontal" >
+                                                <Border BorderThickness="1" BorderBrush="Gray" Margin="10 10 10 10">
+                                                    <TextBlock Text="{Binding ElementName=QRCodeLocal, Path=Text, Mode=OneWay}" Style="{StaticResource TextBoxTextStyle}" Width="430" Margin=" 0 0 0 0"/>
+                                                </Border>
+                                                <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="0 0 10 0" Width="32" Height="32" HorizontalAlignment="Right" Command="{Binding Path=CmdCopyUrlLocal}">
+                                                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier l'URL"/>
+                                                </telerik:RadButton>
+                                            </WrapPanel>
                                         </WrapPanel>
                                     </WrapPanel>
                                     <StackPanel Orientation="Horizontal" >
@@ -343,7 +350,14 @@
                                             <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="10 0 0 0" Width="32" HorizontalAlignment="Left" Click="QRCodeDistantCopy_Click">
                                                 <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier le QRCode"/>
                                             </telerik:RadButton>
-                                            <TextBox HorizontalAlignment="Right" Text="{Binding ElementName=QRCodeDistant, Path=Text, Mode=OneWay}" VerticalAlignment="Center" FontSize="20" Margin="10" MinWidth="500" IsReadOnly="True" />
+                                            <WrapPanel Orientation="Horizontal" >
+                                                <Border BorderThickness="1" BorderBrush="Gray" Margin="10 10 10 10">
+                                                    <TextBlock Text="{Binding ElementName=QRCodeDistant, Path=Text, Mode=OneWay}" Style="{StaticResource TextBoxTextStyle}" Width="430" Margin=" 0 0 0 0"/>
+                                                </Border>
+                                                <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="0 0 10 0" Width="32" Height="32" HorizontalAlignment="Right" Command="{Binding XPath=CmdCopyUrlDistant}">
+                                                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier l'URL"/>
+                                                </telerik:RadButton>
+                                            </WrapPanel>
                                         </WrapPanel>
                                     </WrapPanel>
                                     <StackPanel Orientation="Horizontal" >
