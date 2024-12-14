@@ -3,8 +3,6 @@ using AppPublication.Tools;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
 using KernelImpl.Noyau.Structures;
-using Microsoft.Win32;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,13 +14,17 @@ using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Configuration;
+using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media.Imaging;
 using System.Xml;
 using System.Xml.Linq;
 using Telerik.Windows.Controls;
 using Tools.Enum;
 using Tools.Export;
 using Tools.Outils;
+using Tools.Windows;
 
 namespace AppPublication.Controles
 {
@@ -372,7 +374,101 @@ namespace AppPublication.Controles
             }
         }
 
+
+        private ICommand _cmdAjouterLogo;
+        
+        /// <summary>
+        /// Commande permettant d'ajouter un logo dans la liste
+        /// </summary>
+        public ICommand CmdAjouterLogo
+        {
+            get
+            {
+                if (_cmdAjouterLogo == null)
+                {
+                    _cmdAjouterLogo = new RelayCommand(
+                            o =>
+                            {
+                                bool allFileOk = true;
+
+                                OpenFileDialog op = new OpenFileDialog();  
+                                op.Title = "Sélectionner une image";  
+                                op.Filter = "Portable Network Graphic (*.png)|*.png";
+                                op.Multiselect = true;
+                                op.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+                                op.RestoreDirectory = true;
+                                if (op.ShowDialog() == DialogResult.OK)
+                                {
+                                    foreach(string imgFile in op.FileNames)
+                                    {
+                                        try
+                                        {
+                                            if (imgFile.ToLower().Contains("logo"))
+                                            {
+                                                int w, h;
+
+                                                using (var stream = new FileStream(imgFile, FileMode.Open, FileAccess.Read, FileShare.Read))
+                                                {
+                                                    var bitmapFrame = BitmapFrame.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.None);
+                                                    w = bitmapFrame.PixelWidth;
+                                                    h = bitmapFrame.PixelHeight;
+
+                                                    // Verifie la taille de l'image
+                                                    if (w <= 200 && h <= 200)
+                                                    {
+                                                        FilteredFileInfo newItem = new FilteredFileInfo(new FileInfo(imgFile));
+
+                                                        // Copy le fichier dans le répertoire de travail de l'application
+                                                        File.Copy(newItem.FullName, Path.Combine(ConstantFile.ExportStyle_dir, newItem.Name));
+
+                                                        // Actualise la liste des logos
+                                                        FichiersLogo.Add(newItem);
+                                                    }
+                                                    else
+                                                    {
+                                                        LogTools.Logger.Debug("Fichier '{0}' ignore - taille {1}x{2} incorrecte", imgFile, w, h);
+                                                        allFileOk = false;
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                LogTools.Logger.Debug("Fichier '{0}' ignore - Nom ne contient pas 'logo'", imgFile);
+                                                allFileOk = false;
+                                            }
+                                        }
+                                        catch(Exception ex)
+                                        {
+                                            LogTools.Logger.Debug("Fichier '{0}' ignore - Exception lors de la lecture du format", imgFile, ex);
+                                            allFileOk = false;
+                                        }
+                                    }
+
+                                    if(!allFileOk)
+                                    {
+                                        AlertWindow win = new AlertWindow("Infomation", "Certains fichiers n'ont pas put être chargé. Veuillez vérifier les noms, formats et dimensions");
+                                        if (win != null)
+                                        {
+                                            win.ShowDialog();
+                                        }
+                                    }
+                                }
+
+                            },
+                            o =>
+                            {
+                                // On ne peut modifier le repertoire racine que si tous les processus sont arretes
+                                return !SiteDistantSelectionne.IsActif && !SiteLocal.IsActif && !IsGenerationActive;
+                            });
+                }
+                return _cmdAjouterLogo;
+            }
+        }
+
         private ICommand _cmdGetRepertoireRacine;
+        /// <summary>
+        /// Commande pour gérer la selection du repertoire Racine
+        /// </summary>
         public ICommand CmdGetRepertoireRacine
         {
             get
@@ -384,7 +480,7 @@ namespace AppPublication.Controles
                             {
                                 string output = string.Empty;
 
-                                System.Windows.Forms.FolderBrowserDialog dlg = new System.Windows.Forms.FolderBrowserDialog();
+                                System.Windows.Forms.FolderBrowserDialog dlg = new FolderBrowserDialog();
 
                                 dlg.Description = "Sélectionner le répertoire à utiliser pour les exports";
                                 dlg.ShowNewFolderButton = true;
@@ -964,9 +1060,7 @@ namespace AppPublication.Controles
         private void InitFichiersLogo()
         {
             // Recupere le repertoire des images du site
-            DirectoryInfo di = new DirectoryInfo(ConstantFile.ExportStyle_dir);
-
-            IEnumerable<FilteredFileInfo> files = di.EnumerateFiles("*logo-*.png", SearchOption.TopDirectoryOnly).Select(o => new FilteredFileInfo(o)).OrderBy(o => o.Name);
+            IEnumerable<FilteredFileInfo> files = ExportTools.EnumerateCustomLogoFiles().Select(o => new FilteredFileInfo(o)).OrderBy(o => o.Name);
 
             // Liste les fichiers logos
             FichiersLogo = new ObservableCollection<FilteredFileInfo>(files);
