@@ -68,7 +68,7 @@ namespace AppPublication.Controles
         private Dictionary<string, ObservableCollection<EntitePublicationFFJudo>> _allEntitesPublicationFFJudo = null;
 
         private string _ftpEasyConfig = string.Empty;   // Le serveur FTP EasyConfig
-        private string _httpEasyConfig = string.Empty;  // Le serveur http EasyConfig
+        private Uri _httpEasyConfig = null;  // Le serveur http EasyConfig
 
         /// <summary>
         /// Structure interne pour gerer les parametres de generation du site
@@ -150,13 +150,14 @@ namespace AppPublication.Controles
             set
             {
                 // On ne peut changer la valeur que si le site en cours n'est pas actif
-                if (!SiteDistantSelectionne.IsActif)
+                if (SiteDistantSelectionne == null || (SiteDistantSelectionne != null || !SiteDistantSelectionne.IsActif))
                 {
                     if (_easyConfig != value)
                     {
                         _easyConfig = value;
                         AppSettings.SaveSetting(kSettingEasyConfig, _easyConfig.ToString());
                         NotifyPropertyChanged("EasyConfig");
+                        SiteDistantSelectionne = CalculSiteDistantSelectionne();
                     }
                 }
             }
@@ -175,6 +176,7 @@ namespace AppPublication.Controles
             {
                 EasyConfig = !value;
                 NotifyPropertyChanged("AdvancedConfig");
+                SiteDistantSelectionne = CalculSiteDistantSelectionne();
             }
         }
 
@@ -182,11 +184,18 @@ namespace AppPublication.Controles
         /// <summary>
         /// Le MiniSite selectionne en fonction du mode de configuration
         /// </summary>
+
+        private MiniSite _siteDistantSelectionne;
         public MiniSite SiteDistantSelectionne
         {
             get
             {
-                return (EasyConfig) ? SiteFranceJudo : SiteDistant;
+                return _siteDistantSelectionne;
+            }
+            private set
+            {
+                _siteDistantSelectionne = value;
+                NotifyPropertyChanged("SiteDistantSelectionne");
             }
         }
 
@@ -1081,18 +1090,20 @@ namespace AppPublication.Controles
 
                 // Charge les informations sur le serveur de publication depuis l'element racine
                 // <Publication ftp="ftp.ffjudo.com" http="http://ftp.ffjudo.com">
-                if (doc.DocumentElement == null || doc.DocumentElement.Name != "Publication")
+                if (doc.DocumentElement == null || doc.DocumentElement.Name != ConstantXML.EasyConfig_Racine)
                 {
                     throw new NullReferenceException("Racine du fichier de configuration inconnue ou manquante");
                 }
                 XmlElement root = doc.DocumentElement;
 
-                if (root.Attributes == null || root.Attributes["ftp"] == null || string.IsNullOrEmpty(root.Attributes["ftp"].Value) || root.Attributes["http"] == null || string.IsNullOrEmpty(root.Attributes["http"].Value))
+                if (root.Attributes == null || root.Attributes[ConstantXML.EasyConfig_Racine_Ftp] == null
+                    || string.IsNullOrEmpty(root.Attributes[ConstantXML.EasyConfig_Racine_Ftp].Value)
+                    || root.Attributes[ConstantXML.EasyConfig_Racine_Http] == null || string.IsNullOrEmpty(root.Attributes[ConstantXML.EasyConfig_Racine_Http].Value))
                 {
                     throw new NullReferenceException("Attributs manquants a la racine");
                 }
-                _ftpEasyConfig = root.Attributes["ftp"].Value;
-                _httpEasyConfig = root.Attributes["http"].Value;
+                _ftpEasyConfig = root.Attributes[ConstantXML.EasyConfig_Racine_Ftp].Value;
+                _httpEasyConfig = new Uri(root.Attributes[ConstantXML.EasyConfig_Racine_Http].Value);
 
                 // Parcours les elements
                 if (doc.DocumentElement.HasChildNodes)
@@ -1105,21 +1116,26 @@ namespace AppPublication.Controles
                     foreach (XmlNode node in doc.DocumentElement.ChildNodes)
                     {
                         ObservableCollection<EntitePublicationFFJudo> tmpNiveau = new ObservableCollection<EntitePublicationFFJudo>();
-                        if (node.HasChildNodes && node.Attributes != null && node.Attributes["echelon"] != null)
+                        if (node.HasChildNodes && node.Attributes != null && node.Attributes[ConstantXML.EasyConfig_Entite_Echelon] != null)
                         {
                             // Element commun pour la suite
-                            int ech = int.Parse(node.Attributes["echelon"].Value);
+                            int ech = int.Parse(node.Attributes[ConstantXML.EasyConfig_Entite_Echelon].Value);
 
                             foreach (XmlNode childNode in node.ChildNodes)
                             {
                                 // Parcours les differentes entites
-                                if (childNode.Attributes != null && childNode.Attributes["nom"] != null && childNode.Attributes["libelle"] != null && childNode.Attributes["login"] != null && childNode.Attributes["racine"] != null)
+                                if (childNode.Attributes != null && childNode.Attributes[ConstantXML.EasyConfig_Entite_Nom] != null
+                                    && childNode.Attributes[ConstantXML.EasyConfig_Entite_Libelle] != null
+                                    && childNode.Attributes[ConstantXML.EasyConfig_Entite_Login] != null
+                                    && childNode.Attributes[ConstantXML.EasyConfig_Entite_RacineFtp] != null
+                                    && childNode.Attributes[ConstantXML.EasyConfig_Entite_RacineHttp] != null)
                                 {
-                                    tmpNiveau.Add(new EntitePublicationFFJudo(childNode.Attributes["nom"].Value,
-                                                                                childNode.Attributes["libelle"].Value,
+                                    tmpNiveau.Add(new EntitePublicationFFJudo(childNode.Attributes[ConstantXML.EasyConfig_Entite_Nom].Value,
+                                                                                childNode.Attributes[ConstantXML.EasyConfig_Entite_Libelle].Value,
                                                                                 ech,
-                                                                                childNode.Attributes["login"].Value,
-                                                                                childNode.Attributes["racine"].Value));
+                                                                                childNode.Attributes[ConstantXML.EasyConfig_Entite_Login].Value,
+                                                                                childNode.Attributes[ConstantXML.EasyConfig_Entite_RacineFtp].Value,
+                                                                                childNode.Attributes[ConstantXML.EasyConfig_Entite_RacineHttp].Value));
                                 }
                             }
 
@@ -1155,19 +1171,6 @@ namespace AppPublication.Controles
                 // On lit le repertoire racine en 1er afin de pouvoir initialiser la structure du site
                 RepertoireRacine = AppSettings.ReadSetting(kSettingRepertoireRacine, Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
 
-                // Les autres parametres peuvent suivre
-                URLDistant = AppSettings.ReadSetting(kSettingURLDistant, string.Empty);
-                IsolerCompetition = AppSettings.ReadSetting(kSettingIsolerCompetition, false);
-                RepertoireRacineSiteFTPDistant = AppSettings.ReadSetting(kSettingRepertoireRacineSiteFTPDistant, string.Empty);
-                PublierProchainsCombats = AppSettings.ReadSetting(kSettingPublierProchainsCombats, false);
-                NbProchainsCombats = AppSettings.ReadSetting(kSettingNbProchainsCombats, 6);
-                PublierAffectationTapis = AppSettings.ReadSetting(kSettingPublierAffectationTapis, true);
-                DelaiGenerationSec = AppSettings.ReadSetting(kSettingDelaiGenerationSec, 30);
-                DelaiActualisationClientSec = AppSettings.ReadSetting(kSettingDelaiActualisationClientSec, 30);
-                MsgProchainsCombats = AppSettings.ReadSetting(kSettingMsgProchainsCombats, string.Empty);
-                PouleEnColonnes = AppSettings.ReadSetting(kSettingPouleEnColonnes, false);
-                PouleToujoursEnColonnes = AppSettings.ReadSetting(kSettingPouleToujoursEnColonnes, false);
-                TailleMaxPouleColonnes = AppSettings.ReadSetting(kSettingTailleMaxPouleColonnes, 5);
 
                 // Charge les valeurs pour la publication FFJudo
                 if (EasyConfigDisponible)
@@ -1183,6 +1186,21 @@ namespace AppPublication.Controles
                     // Recherche l'entite a partir de la valeur initiale lue
                     EntitePublicationFFJudo = AppSettings.FindSetting<EntitePublicationFFJudo>(tmp, ListeEntitesPublicationFFJudo, o => o.Nom);                    
                 }
+
+                // Les autres parametres peuvent suivre
+                URLDistant = AppSettings.ReadSetting(kSettingURLDistant, string.Empty);
+                IsolerCompetition = AppSettings.ReadSetting(kSettingIsolerCompetition, false);
+                RepertoireRacineSiteFTPDistant = AppSettings.ReadSetting(kSettingRepertoireRacineSiteFTPDistant, string.Empty);
+                PublierProchainsCombats = AppSettings.ReadSetting(kSettingPublierProchainsCombats, false);
+                NbProchainsCombats = AppSettings.ReadSetting(kSettingNbProchainsCombats, 6);
+                PublierAffectationTapis = AppSettings.ReadSetting(kSettingPublierAffectationTapis, true);
+                DelaiGenerationSec = AppSettings.ReadSetting(kSettingDelaiGenerationSec, 30);
+                DelaiActualisationClientSec = AppSettings.ReadSetting(kSettingDelaiActualisationClientSec, 30);
+                MsgProchainsCombats = AppSettings.ReadSetting(kSettingMsgProchainsCombats, string.Empty);
+                PouleEnColonnes = AppSettings.ReadSetting(kSettingPouleEnColonnes, false);
+                PouleToujoursEnColonnes = AppSettings.ReadSetting(kSettingPouleToujoursEnColonnes, false);
+                TailleMaxPouleColonnes = AppSettings.ReadSetting(kSettingTailleMaxPouleColonnes, 5);
+
 
                 // Recherche le logo dans la liste
                 SelectedLogo = AppSettings.ReadRawSetting<FilteredFileInfo>(kSettingSelectedLogo, FichiersLogo, o => o.Name);
@@ -1204,23 +1222,35 @@ namespace AppPublication.Controles
         {
             string output = "Indefinie";
             string easyConfigUrl = string.Empty;
+            string urlBase = string.Empty;
 
-            // Extrait l'URL EasyConfig si possible
-            try
+            // Selectionne en fonction du type de configuration
+            if (EasyConfig)
             {
-                Uri root = new Uri(_httpEasyConfig);
-                Uri fullUri = new Uri(root, SiteFranceJudo.RepertoireSiteFTPDistant);
-                easyConfigUrl = fullUri.ToString();
+                // Extrait l'URL EasyConfig si possible
+                try
+                {
+                    Uri fullUri = new Uri(_httpEasyConfig, EntitePublicationFFJudo.RacineHttp);
+                    urlBase = fullUri.ToString();
+                }
+                catch
+                {
+                    urlBase = string.Empty;
+                }
             }
-            catch {
-                easyConfigUrl = string.Empty;
-            }
-
-            // Selectionne l'URL en fonction du type de configuration
-            string urlBase = (AdvancedConfig) ? URLDistant : easyConfigUrl;
-
-            if (!String.IsNullOrEmpty(urlBase) && _structure != null)
+            else
             {
+                urlBase = URLDistant;
+            }
+
+            if (!String.IsNullOrEmpty(urlBase) && _structure != null && !String.IsNullOrEmpty(_structure.UrlPathIndex))
+            {
+                // On verifie que le dernier caractere est bien un "/" car sinon la concatenation va ignorer le dernier element du path
+                if(urlBase.Last() != '/')
+                {
+                    urlBase += '/';
+                }
+
                 output = (new Uri(new Uri(urlBase), _structure.UrlPathIndex)).ToString();
             }
             return output;
@@ -1245,6 +1275,15 @@ namespace AppPublication.Controles
         }
 
         /// <summary>
+        /// Retourne le site distant selectionne
+        /// </summary>
+        /// <returns></returns>
+        private MiniSite CalculSiteDistantSelectionne()
+        {
+            return (EasyConfig)? SiteFranceJudo : SiteDistant;
+        }
+
+        /// <summary>
         /// Calcul le repertoire sur le site distant en fonction de la configuration
         /// </summary>
         /// <returns></returns>
@@ -1255,7 +1294,7 @@ namespace AppPublication.Controles
 
             try
             {
-                repRoot = (AdvancedConfig) ? RepertoireRacineSiteFTPDistant : EntitePublicationFFJudo.RepertoireFtp;
+                repRoot = (AdvancedConfig) ? RepertoireRacineSiteFTPDistant : EntitePublicationFFJudo.RacineFtp;
             }
             catch
             {
@@ -1283,6 +1322,9 @@ namespace AppPublication.Controles
             SiteFranceJudo.SynchroniseDifferences = true;
             // Calcul le repertoire distant en fonction de la competition
             SiteFranceJudo.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
+
+            // Recalcul l'URL distante
+            URLDistantPublication = CalculURLSiteDistant();
         }
 
         /// <summary>

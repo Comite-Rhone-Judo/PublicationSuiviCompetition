@@ -307,7 +307,7 @@ namespace Tools.Export
         /// <returns></returns>
         private string GetCompetUrlPath()
         {
-            return (_isolate) ? kCourante : GetUrlPath(_rootCompetDir);
+            return (_isolate) ? GetUrlPath(_rootCompetDir) : kCourante ;
         }
         #endregion
     }

@@ -354,7 +354,7 @@
                                                 <Border BorderThickness="1" BorderBrush="Gray" Margin="10 10 10 10">
                                                     <TextBlock Text="{Binding ElementName=QRCodeDistant, Path=Text, Mode=OneWay}" Style="{StaticResource TextBoxTextStyle}" Width="430" Margin=" 0 0 0 0"/>
                                                 </Border>
-                                                <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="0 0 10 0" Width="32" Height="32" HorizontalAlignment="Right" Command="{Binding XPath=CmdCopyUrlDistant}">
+                                                <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="0 0 10 0" Width="32" Height="32" HorizontalAlignment="Right" Command="{Binding Path=CmdCopyUrlDistant}">
                                                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier l'URL"/>
                                                 </telerik:RadButton>
                                             </WrapPanel>

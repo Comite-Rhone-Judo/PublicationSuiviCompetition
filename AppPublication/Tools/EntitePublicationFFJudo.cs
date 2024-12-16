@@ -15,6 +15,7 @@ namespace Tools.Outils
         private int _echelon;
         private string _login;
         private string _repFtp;
+        private string _repHttp;
 
         public string Nom
         {
@@ -54,7 +55,7 @@ namespace Tools.Outils
             }
         }
 
-        public string RepertoireFtp
+        public string RacineFtp
         {
             get
             {
@@ -63,7 +64,20 @@ namespace Tools.Outils
             set
             {
                 _repFtp = value;
-                NotifyPropertyChanged(nameof(RepertoireFtp));
+                NotifyPropertyChanged(nameof(RacineFtp));
+            }
+        }
+
+        public string RacineHttp
+        {
+            get
+            {
+                return _repHttp;
+            }
+            set
+            {
+                _repHttp = value;
+                NotifyPropertyChanged(nameof(RacineHttp));
             }
         }
 
@@ -80,13 +94,14 @@ namespace Tools.Outils
             }
         }
 
-        public EntitePublicationFFJudo(string nom, string libelle, int echelon, string login, string rep)
+        public EntitePublicationFFJudo(string nom, string libelle, int echelon, string login, string repFtp, string racineHttp)
         {
             _nom = nom;
             _libelle = libelle;
             _echelon = echelon;
             _login = login;
-            _repFtp = rep;
+            _repFtp = repFtp;
+            _repHttp = racineHttp;
         }
     }
 }

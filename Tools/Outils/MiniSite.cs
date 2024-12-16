@@ -799,7 +799,6 @@ namespace Tools.Outils
         /// Charge la structure sur le site FTP
         /// </summary>
         /// <param name="localRootDirectory">Repertoire dont le contenu doit etre charge</param>
-        /// <param name="distantDirectory">Repertoire distant (par rapport à la racine), "" pour charger directement a la racine</param>
         /// <returns></returns>
         public UploadStatus UploadSite(string localRootDirectory, List<FileInfo> listFiles = null)
         {

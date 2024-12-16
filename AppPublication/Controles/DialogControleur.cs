@@ -234,11 +234,14 @@ namespace AppPublication.Controles
                     _cmdCopyUrlLocal = new RelayCommand(
                             o =>
                             {
-                                Clipboard.SetText(GestionSite.URLLocalPublication);
+                                if (GestionSite.SiteLocal.IsActif)
+                                {
+                                    Clipboard.SetText(GestionSite.URLLocalPublication);
+                                }
                             },
                             o =>
                             {
-                                return true;
+                                return GestionSite.SiteLocal.IsActif;
                             });
                 }
                 return _cmdCopyUrlLocal;
@@ -258,11 +261,14 @@ namespace AppPublication.Controles
                     _cmdCopyUrlDistant = new RelayCommand(
                             o =>
                             {
-                                Clipboard.SetText(GestionSite.URLDistantPublication);
+                                if (GestionSite.SiteDistantSelectionne.IsActif)
+                                {
+                                    Clipboard.SetText(GestionSite.URLDistantPublication);
+                                }
                             },
                             o =>
                             {
-                                return true;
+                                return GestionSite.SiteDistantSelectionne.IsActif;
                             });
                 }
                 return _cmdCopyUrlDistant;

@@ -661,5 +661,17 @@
         public const string Vue_Groupe_EpreuveLibsexe = "epreuve_libsexe";
         public const string Vue_Groupe_Discipline = "discipline";
         public const string Vue_Groupe_EpreuveAge = "epreuve_age";
+
+        // Config FFJUDO Publicaiton
+        public const string EasyConfig_Racine = "Publication";
+        public const string EasyConfig_Racine_Ftp = "ftp";
+        public const string EasyConfig_Racine_Http = "http";
+        public const string EasyConfig_Entite_Echelon = "echelon";
+        public const string EasyConfig_Entite_Nom = "nom";
+        public const string EasyConfig_Entite_Libelle = "libelle";
+        public const string EasyConfig_Entite_Login = "login";
+        public const string EasyConfig_Entite_RacineFtp = "racineFtp";
+        public const string EasyConfig_Entite_RacineHttp = "racineHttp";
+
     }
 }
