@@ -261,14 +261,14 @@ namespace AppPublication.Controles
                     _cmdCopyUrlDistant = new RelayCommand(
                             o =>
                             {
-                                if (GestionSite.SiteDistantSelectionne.IsActif)
+                                if (GestionSite.SiteDistantSelectionne != null && GestionSite.SiteDistantSelectionne.IsActif)
                                 {
                                     Clipboard.SetText(GestionSite.URLDistantPublication);
                                 }
                             },
                             o =>
                             {
-                                return GestionSite.SiteDistantSelectionne.IsActif;
+                                return (GestionSite.SiteDistantSelectionne != null) ? GestionSite.SiteDistantSelectionne.IsActif : false;
                             });
                 }
                 return _cmdCopyUrlDistant;
@@ -398,7 +398,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return Instance.GestionSite.SiteDistantSelectionne.IsActif;
+                                return (Instance.GestionSite.SiteDistantSelectionne != null) ?  Instance.GestionSite.SiteDistantSelectionne.IsActif : false;
                             });
                 }
                 return _cmdArreterSiteDistant;
@@ -563,7 +563,7 @@ namespace AppPublication.Controles
                     _cmdAfficherSiteDistant = new RelayCommand(
                             o =>
                             {
-                                if (!GestionSite.SiteDistantSelectionne.IsLocal)
+                                if ( (GestionSite.SiteDistantSelectionne != null) && !GestionSite.SiteDistantSelectionne.IsLocal)
                                 {
                                     string url = GestionSite.URLDistantPublication;
 
@@ -575,7 +575,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return !GestionSite.SiteDistantSelectionne.IsLocal;
+                                return (GestionSite.SiteDistantSelectionne != null) ? !GestionSite.SiteDistantSelectionne.IsLocal : false;
                             });
                 }
                 return _cmdAfficherSiteDistant;

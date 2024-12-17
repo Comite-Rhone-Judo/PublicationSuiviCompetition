@@ -466,8 +466,8 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                // On ne peut modifier le repertoire racine que si tous les processus sont arretes
-                                return !SiteDistantSelectionne.IsActif && !SiteLocal.IsActif && !IsGenerationActive;
+                                // Meme si le site est demarre on peut ajouter un logo, il n'est pas pris automatiquement enc compte
+                                return true;
                             });
                 }
                 return _cmdAjouterLogo;
@@ -502,7 +502,7 @@ namespace AppPublication.Controles
                             o =>
                             {
                                 // On ne peut modifier le repertoire racine que si tous les processus sont arretes
-                                return !SiteDistantSelectionne.IsActif && !SiteLocal.IsActif && !IsGenerationActive;
+                                return (SiteDistantSelectionne != null) ? !SiteDistantSelectionne.IsActif && !SiteLocal.IsActif && !IsGenerationActive : true;
                             });
                 }
                 return _cmdGetRepertoireRacine;
@@ -1077,6 +1077,8 @@ namespace AppPublication.Controles
 
         /// <summary>
         /// Initialise la liste des comites et ligues pour la publication sur les serveurs France Judo
+        /// Une adresse Web sera definie par http://{Attribut "http" de <Publication>}/{Attribut "racineHttp" de <Entite>}/{ID competition ou "courante"}/...
+        /// L'adresse de destination FTP sera definie par ftp://{Attribut "ftp" de <Publication>}/{Attribut "racineFtp" de <Entite>}/{ID competition ou "courante"}/...
         /// </summary>
         private void InitPublicationFFJudo()
         {
@@ -1383,7 +1385,7 @@ namespace AppPublication.Controles
                                     DerniereGeneration = statGeneration;
 
                                     // Si le site distant est actif, transfere la mise a jour
-                                    if (SiteDistantSelectionne.IsActif)
+                                    if ( SiteDistantSelectionne != null &&  SiteDistantSelectionne.IsActif)
                                     {
                                         // string localRoot = Path.Combine(ConstantFile.ExportSite_dir, DialogControleur.Instance.ServerData.competition.remoteId);
                                         string localRoot = _structure.RepertoireCompetition;
@@ -1475,8 +1477,11 @@ namespace AppPublication.Controles
                 {
                     _taskNettoyage = Task.Factory.StartNew(() =>
                     {
-                        // Nettoyer le site distant
-                        SiteDistantSelectionne.NettoyerSite();
+                        if (SiteDistantSelectionne != null)
+                        {
+                            // Nettoyer le site distant
+                            SiteDistantSelectionne.NettoyerSite();
+                        }
                     });
                 }
                 catch (Exception ex)

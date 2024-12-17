@@ -17,7 +17,7 @@ using System.Reflection;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyFileVersion("1.3.0.0")]
 [assembly: AssemblyVersion("1.3.0.0")]
-[assembly: AssemblyVersionTest(2)]
+[assembly: AssemblyVersionBeta(3)]
 
 [assembly: AssemblyCompany("FRANCE JUDO - Fédération Française de Judo et Disciplines Associées - RHONE")]
 [assembly: AssemblyCopyright("Copyright © FRANCE JUDO RHONE 2023 - Tous droits réservés")]
@@ -25,10 +25,10 @@ using System.Reflection;
 
 
 [AttributeUsage(AttributeTargets.Assembly)]
-internal class AssemblyVersionTest : Attribute
+internal class AssemblyVersionBeta : Attribute
 {
     public int Value { get; set; }
-    public AssemblyVersionTest(int valueTest)
+    public AssemblyVersionBeta(int valueTest)
     {
         Value = valueTest;
     }
