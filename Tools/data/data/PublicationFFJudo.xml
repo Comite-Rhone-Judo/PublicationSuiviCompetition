@@ -119,6 +119,6 @@
 		<Ligue nom="REUNION" libelle="Réunion" login="ftpREUNION" racineFtp="/" racineHttp="SuiviCompetition/Ligues/REUNION"/>
 	</Ligues>
 	<Nationaux echelon="5">
-		<Nationale nom="FRANCEJUDO" libelle="France Judo" login="ftp" racine="SuiviCompetition/FRANCEJUDO"/>
+		<Nationale nom="FRANCEJUDO" libelle="France Judo" login="ftp-national" racineFtp="/" racineHttp="SuiviCompetition/FRANCEJUDO"/>
 	</Nationaux>
 </Publication>
