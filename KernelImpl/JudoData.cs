@@ -17,7 +17,7 @@ namespace KernelImpl
         public Competition competition
         {
             get { return _competition; }
-            set { _competition = value; NotifyPropertyChanged("competition"); }
+            set { _competition = value; NotifyPropertyChanged(); }
         }
 
         public List<Competition> competitions

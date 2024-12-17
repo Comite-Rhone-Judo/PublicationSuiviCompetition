@@ -89,21 +89,33 @@ namespace Tools.Outils
         /// <param name="enable">Active (true) ou desactive (False) le niveau de trace</param>
         public static void ConfigureDebugLevel(bool enable)
         {
-            if (enable)
+            try
             {
-                // Sauvegarde l'etat actuel du niveau de trace
-                _previousLogLevel = LogManager.Configuration.Variables[kloggingLevelVariable];
+                if (enable)
+                {
+                    // Sauvegarde l'etat actuel du niveau de trace
+                    _previousLogLevel = LogManager.Configuration.Variables[kloggingLevelVariable];
 
-                // Force le niveau de trace a Debug
-                LogManager.Configuration.Variables[kloggingLevelVariable] = LogLevel.Debug.ToString();
+                    // Force le niveau de trace a Debug
+                    LogManager.Configuration.Variables[kloggingLevelVariable] = LogLevel.Debug.ToString();
+
+                    _logger.Info("Niveau de trace configure a Debug");
+                }
+                else
+                {
+                    // Remet en place le niveau de trace precedent
+                    LogManager.Configuration.Variables[kloggingLevelVariable] = _previousLogLevel;
+
+                    _logger.Info("Niveau de trace configure a {0}", _previousLogLevel);
+
+                }
+
+                LogManager.ReconfigExistingLoggers(); // Explicit refresh of Layouts and updates active Logger-objects
             }
-            else
+            catch (Exception ex)
             {
-                // Remet en place le niveau de trace precedent
-                LogManager.Configuration.Variables[kloggingLevelVariable] = _previousLogLevel;
+                _logger.Error("Erreur lors de la modification de la configuration du logger", ex);
             }
-
-            LogManager.ReconfigExistingLoggers(); // Explicit refresh of Layouts and updates active Logger-objects
         }
 
         private static string _logDirectory;

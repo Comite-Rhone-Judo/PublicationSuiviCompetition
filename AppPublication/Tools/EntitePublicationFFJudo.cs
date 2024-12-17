@@ -26,7 +26,7 @@ namespace Tools.Outils
             set
             {
                 _nom = value;
-                NotifyPropertyChanged(nameof(Nom));
+                NotifyPropertyChanged();
             }
         }
 
@@ -39,7 +39,7 @@ namespace Tools.Outils
             set
             {
                 _libelle = value;
-                NotifyPropertyChanged(nameof(Libelle));
+                NotifyPropertyChanged();
             }
         }
         public string Login
@@ -51,7 +51,7 @@ namespace Tools.Outils
             set
             {
                 _login = value;
-                NotifyPropertyChanged(nameof(Login));
+                NotifyPropertyChanged();
             }
         }
 
@@ -64,7 +64,7 @@ namespace Tools.Outils
             set
             {
                 _repFtp = value;
-                NotifyPropertyChanged(nameof(RacineFtp));
+                NotifyPropertyChanged();
             }
         }
 
@@ -77,7 +77,7 @@ namespace Tools.Outils
             set
             {
                 _repHttp = value;
-                NotifyPropertyChanged(nameof(RacineHttp));
+                NotifyPropertyChanged();
             }
         }
 
@@ -90,7 +90,7 @@ namespace Tools.Outils
             set
             {
                 _echelon = value;
-                NotifyPropertyChanged(nameof(Echelon));
+                NotifyPropertyChanged();
             }
         }
 

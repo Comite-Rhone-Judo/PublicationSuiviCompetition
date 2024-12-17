@@ -52,7 +52,7 @@ namespace AppPublication.Controles
             }
             private set { 
                 _appInformation = value;
-                NotifyPropertyChanged("AppInformation");
+                NotifyPropertyChanged();
             }
         }
 
@@ -90,7 +90,7 @@ namespace AppPublication.Controles
             set
             {
                 _busyStatus = value;
-                NotifyPropertyChanged("BusyStatus");
+                NotifyPropertyChanged();
             }
         }
 
@@ -157,7 +157,7 @@ namespace AppPublication.Controles
             set
             {
                 _isBusy = value;
-                NotifyPropertyChanged("IsBusy");
+                NotifyPropertyChanged();
             }
         }
 
@@ -174,7 +174,7 @@ namespace AppPublication.Controles
             set
             {
                 _tracesDebugOn = value;
-                NotifyPropertyChanged("TracesDebugOn");
+                NotifyPropertyChanged();
 
                 LogTools.ConfigureDebugLevel(_tracesDebugOn);
             }

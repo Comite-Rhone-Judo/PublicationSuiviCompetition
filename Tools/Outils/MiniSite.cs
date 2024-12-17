@@ -112,7 +112,7 @@ namespace Tools.Outils
             private set
             {
                 _instanceName = value;
-                NotifyPropertyChanged("InstanceName");
+                NotifyPropertyChanged();
             }
         }
 
@@ -129,7 +129,7 @@ namespace Tools.Outils
             private set
             {
                 _interfacesLocal = value;
-                NotifyPropertyChanged("InterfacesLocal");
+                NotifyPropertyChanged();
             }
         }
 
@@ -160,7 +160,7 @@ namespace Tools.Outils
                     {
                         AppSettings.SaveSetting(kSettingInterfaceLocalPublication, _interfaceLocalPublication.ToString(), _instanceName);
                     }
-                    NotifyPropertyChanged("InterfaceLocalPublication");
+                    NotifyPropertyChanged();
                     IsChanged = true;
                 }
                 else
@@ -183,7 +183,7 @@ namespace Tools.Outils
             private set
             {
                 _server = value;
-                NotifyPropertyChanged("ServerHTTP");
+                NotifyPropertyChanged();
                 IsChanged = true;
             }
         }
@@ -201,7 +201,7 @@ namespace Tools.Outils
             set
             {
                 _isChanged = true;
-                NotifyPropertyChanged("IsChanged");
+                NotifyPropertyChanged();
             }
         }
 
@@ -230,7 +230,7 @@ namespace Tools.Outils
             private set
             {
                 _cacheConfig = value;
-                NotifyPropertyChanged("CacheConfig");
+                NotifyPropertyChanged();
             }
         }
 
@@ -247,7 +247,7 @@ namespace Tools.Outils
             private set
             {
                 _cachePassword = value;
-                NotifyPropertyChanged("CachePassword");
+                NotifyPropertyChanged();
             }
         }
 
@@ -268,7 +268,7 @@ namespace Tools.Outils
                 {
                     AppSettings.SaveSetting(kSettingSiteFTPDistant, _ftpDistant, _instanceName);
                 }
-                NotifyPropertyChanged("SiteFTPDistant");
+                NotifyPropertyChanged();
                 IsChanged = true;
             }
         }
@@ -286,7 +286,7 @@ namespace Tools.Outils
             set
             {
                 _ftRepertoireDistant = value;
-                NotifyPropertyChanged("RepertoireSiteFTPDistant");
+                NotifyPropertyChanged();
                 IsChanged = true;
             }
         }
@@ -308,7 +308,7 @@ namespace Tools.Outils
                 {
                     AppSettings.SaveSetting(kSettingLoginSiteFTPDistant, _ftpLoginDistant, _instanceName);
                 }
-                NotifyPropertyChanged("LoginSiteFTPDistant");
+                NotifyPropertyChanged();
                 IsChanged = true;
             }
         }
@@ -331,7 +331,7 @@ namespace Tools.Outils
                 {
                     AppSettings.SaveSetting(kSettingModeActifFTPDistant, _modeFTPActif.ToString(), _instanceName);
                 }
-                NotifyPropertyChanged("ModeActifFTPDistant");
+                NotifyPropertyChanged();
                 IsChanged = true;
             }
         }
@@ -353,7 +353,7 @@ namespace Tools.Outils
                 {
                     AppSettings.SaveEncryptedSetting(kSettingPasswordSiteFTPDistant, _ftpPasswordDistant, _instanceName);
                 }
-                NotifyPropertyChanged("PasswordSiteFTPDistant");
+                NotifyPropertyChanged();
                 IsChanged = true;
             }
         }  
@@ -372,7 +372,7 @@ namespace Tools.Outils
                 {
                     AppSettings.SaveSetting(kSettingSynchroniseDifferences, _syncDiff.ToString(), _instanceName);
                 }
-                NotifyPropertyChanged("SynchroniseDifferences");
+                NotifyPropertyChanged();
                 IsChanged = true;
             }
         }
@@ -390,7 +390,7 @@ namespace Tools.Outils
             private set
             {
                 _actif = value;
-                NotifyPropertyChanged("IsActif");
+                NotifyPropertyChanged();
                 IsChanged = true;
             }
         }
@@ -408,7 +408,7 @@ namespace Tools.Outils
             private set
             {
                 _cleaning = value;
-                NotifyPropertyChanged("IsCleaning");
+                NotifyPropertyChanged();
             }
         }
 
@@ -429,7 +429,7 @@ namespace Tools.Outils
             private set
             {
                 _status = value;
-                NotifyPropertyChanged("Status");
+                NotifyPropertyChanged();
 
                 // Actualise l'etat d'activite du site
                 IsActif = !(_status.State == StateMiniSiteEnum.Stopped);

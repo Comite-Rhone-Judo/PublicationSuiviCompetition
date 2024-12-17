@@ -45,7 +45,7 @@
             set
             {
                 _state = value;
-                NotifyPropertyChanged("State");
+                NotifyPropertyChanged();
             }
         }
 
@@ -62,7 +62,7 @@
             set
             {
                 _msg = value;
-                NotifyPropertyChanged("Message");
+                NotifyPropertyChanged();
             }
         }
 
@@ -79,7 +79,7 @@
             private set
             {
                 _msgDetaille = value;
-                NotifyPropertyChanged("MessageDetaille");
+                NotifyPropertyChanged();
             }
         }
 
@@ -93,7 +93,7 @@
             set
             {
                 _progress = value;
-                NotifyPropertyChanged("Progress");
+                NotifyPropertyChanged();
 
                 if (_progress > -1)
                 {
@@ -116,7 +116,7 @@
             private set
             {
                 _progressunknown = value;
-                NotifyPropertyChanged("IsProgressUnknown");
+                NotifyPropertyChanged();
             }
         }
         #endregion

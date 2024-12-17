@@ -130,7 +130,7 @@ namespace AppPublication.Controles
                 if (_easyConfigDisponible != value)
                 {
                     _easyConfigDisponible = value;
-                    NotifyPropertyChanged("EasyConfigDisponible");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -156,7 +156,7 @@ namespace AppPublication.Controles
                     {
                         _easyConfig = value;
                         AppSettings.SaveSetting(kSettingEasyConfig, _easyConfig.ToString());
-                        NotifyPropertyChanged("EasyConfig");
+                        NotifyPropertyChanged();
                         SiteDistantSelectionne = CalculSiteDistantSelectionne();
                     }
                 }
@@ -175,7 +175,7 @@ namespace AppPublication.Controles
             set
             {
                 EasyConfig = !value;
-                NotifyPropertyChanged("AdvancedConfig");
+                NotifyPropertyChanged();
                 SiteDistantSelectionne = CalculSiteDistantSelectionne();
             }
         }
@@ -195,7 +195,7 @@ namespace AppPublication.Controles
             private set
             {
                 _siteDistantSelectionne = value;
-                NotifyPropertyChanged("SiteDistantSelectionne");
+                NotifyPropertyChanged();
             }
         }
 
@@ -214,7 +214,7 @@ namespace AppPublication.Controles
                 if (_listeNiveauxPublicationFFJudo != value)
                 {
                     _listeNiveauxPublicationFFJudo = value;
-                    NotifyPropertyChanged("ListeNiveauxPublicationFFJudo");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -235,7 +235,7 @@ namespace AppPublication.Controles
                 if (_listeEntitesPublicationFFJudo != value)
                 {
                     _listeEntitesPublicationFFJudo = value;
-                    NotifyPropertyChanged("ListeEntitesPublicationFFJudo");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -265,7 +265,7 @@ namespace AppPublication.Controles
                         // On Calcul les parametres FTP en fonction de l'entite selectionne
                         GenereConfigFTPFranceJudo(value);
                     }
-                    NotifyPropertyChanged("EntitePublicationFFJudo");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -285,7 +285,7 @@ namespace AppPublication.Controles
                 if (_allEntitePublicationFFJudo != value)
                 {
                     _allEntitePublicationFFJudo = value;
-                    NotifyPropertyChanged("AllEntitePublicationFFJudo");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -324,7 +324,7 @@ namespace AppPublication.Controles
                         EntitePublicationFFJudo = _allEntitePublicationFFJudo[_niveauPublicationFFJudo];
                     }
 
-                    NotifyPropertyChanged("NiveauPublicationFFJudo");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -342,7 +342,7 @@ namespace AppPublication.Controles
                 {
                     _pouleEnColonnes = value;
                     AppSettings.SaveSetting(kSettingPouleEnColonnes, _pouleEnColonnes.ToString());
-                    NotifyPropertyChanged("PouleEnColonnes");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -360,7 +360,7 @@ namespace AppPublication.Controles
                 {
                     _pouleToujoursEnColonnes = value;
                     AppSettings.SaveSetting(kSettingPouleToujoursEnColonnes, _pouleToujoursEnColonnes.ToString());
-                    NotifyPropertyChanged("PouleToujoursEnColonnes");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -378,7 +378,7 @@ namespace AppPublication.Controles
                 {
                     _tailleMaxPouleColonnes = value;
                     AppSettings.SaveSetting(kSettingTailleMaxPouleColonnes, _tailleMaxPouleColonnes.ToString());
-                    NotifyPropertyChanged("TailleMaxPouleColonnes");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -522,7 +522,7 @@ namespace AppPublication.Controles
                 if (value != _repertoireRacine)
                 {
                     _repertoireRacine = value;
-                    NotifyPropertyChanged("RepertoireRacine");
+                    NotifyPropertyChanged();
                     AppSettings.SaveSetting(kSettingRepertoireRacine, _repertoireRacine);
 
                     // Met a jour la constante d'export
@@ -550,7 +550,7 @@ namespace AppPublication.Controles
                 if (_fichiersLogo != value)
                 {
                     _fichiersLogo = value;
-                    NotifyPropertyChanged("FichiersLogo");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -568,7 +568,7 @@ namespace AppPublication.Controles
                 {
                     _selectedLogo = value;
                     AppSettings.SaveSetting(kSettingSelectedLogo, _selectedLogo.Name);
-                    NotifyPropertyChanged("SelectedLogo");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -586,7 +586,7 @@ namespace AppPublication.Controles
             private set
             {
                 _statGeneration = value;
-                NotifyPropertyChanged("DerniereGeneration");
+                NotifyPropertyChanged();
             }
         }
 
@@ -603,7 +603,7 @@ namespace AppPublication.Controles
             private set
             {
                 _statSyncDistant = value;
-                NotifyPropertyChanged("DerniereSynchronisation");
+                NotifyPropertyChanged();
             }
         }
 
@@ -620,7 +620,7 @@ namespace AppPublication.Controles
             private set
             {
                 _siteGenere = value;
-                NotifyPropertyChanged("SiteGenere");
+                NotifyPropertyChanged();
             }
         }
 
@@ -637,7 +637,7 @@ namespace AppPublication.Controles
             private set
             {
                 _siteSynchronise = value;
-                NotifyPropertyChanged("SiteSynchronise");
+                NotifyPropertyChanged();
             }
         }
 
@@ -670,7 +670,7 @@ namespace AppPublication.Controles
                 {
                     SiteLocal.InterfaceLocalPublication = value;
                     AppSettings.SaveSetting(kSettingInterfaceLocalPublication, SiteLocal.InterfaceLocalPublication.ToString());
-                    NotifyPropertyChanged("InterfaceLocalPublication");
+                    NotifyPropertyChanged();
                     URLLocalPublication = CalculURLSiteLocal();
                 }
                 catch (ArgumentOutOfRangeException) { }
@@ -714,7 +714,7 @@ namespace AppPublication.Controles
             private set
             {
                 _generationActive = value;
-                NotifyPropertyChanged("IsGenerationActive");
+                NotifyPropertyChanged();
             }
         }
 
@@ -740,7 +740,7 @@ namespace AppPublication.Controles
                     {
                         _structure.CompetitionIsolee = _isolerCompetition;
                     }
-                    NotifyPropertyChanged("IsolerCompetition");
+                    NotifyPropertyChanged();
                     URLDistantPublication = CalculURLSiteDistant();
                     SiteDistantSelectionne.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
 
@@ -763,7 +763,7 @@ namespace AppPublication.Controles
                 if (_nbProchainsCombats != value)
                 {
                     _nbProchainsCombats = value;
-                    NotifyPropertyChanged("NbProchainsCombats");
+                    NotifyPropertyChanged();
                     AppSettings.SaveSetting(kSettingNbProchainsCombats, _nbProchainsCombats.ToString());
                 }
             }
@@ -786,7 +786,7 @@ namespace AppPublication.Controles
                 {
                     _delaiGenerationSec = value;
                     AppSettings.SaveSetting(kSettingDelaiGenerationSec, _delaiGenerationSec.ToString());
-                    NotifyPropertyChanged("DelaiGenerationSec");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -807,7 +807,7 @@ namespace AppPublication.Controles
                 {
                     _delaiActualisationClientSec = value;
                     AppSettings.SaveSetting(kSettingDelaiActualisationClientSec, _delaiActualisationClientSec.ToString());
-                    NotifyPropertyChanged("DelaiActualisationClientSec");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -828,7 +828,7 @@ namespace AppPublication.Controles
                 {
                     _msgProchainsCombats = value;
                     AppSettings.SaveSetting(kSettingMsgProchainsCombats, _msgProchainsCombats);
-                    NotifyPropertyChanged("MsgProchainsCombats");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -850,7 +850,7 @@ namespace AppPublication.Controles
                 {
                     _urlDistant = value;
                     AppSettings.SaveSetting(kSettingURLDistant, _urlDistant);
-                    NotifyPropertyChanged("URLDistant");
+                    NotifyPropertyChanged();
                     URLDistantPublication = CalculURLSiteDistant();
                 }
             }
@@ -869,7 +869,7 @@ namespace AppPublication.Controles
             private set
             {
                 _urlDistantPublication = value;
-                NotifyPropertyChanged("URLDistantPublication");
+                NotifyPropertyChanged();
             }
         }
 
@@ -886,7 +886,7 @@ namespace AppPublication.Controles
             private set
             {
                 _urlLocalPublication = value;
-                NotifyPropertyChanged("URLLocalPublication");
+                NotifyPropertyChanged();
             }
         }
 
@@ -907,7 +907,7 @@ namespace AppPublication.Controles
                 {
                     _ftpRepertoireRacineDistant = value;
                     AppSettings.SaveSetting(kSettingRepertoireRacineSiteFTPDistant, _ftpRepertoireRacineDistant);
-                    NotifyPropertyChanged("RepertoireRacineSiteFTPDistant");
+                    NotifyPropertyChanged();
                     SiteDistant.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();   // Ce parametre ne concerne pas le site FranceJudo
                 }
             }
@@ -931,7 +931,7 @@ namespace AppPublication.Controles
                 if (_idCompetition != value)
                 {
                     _idCompetition = value;
-                    NotifyPropertyChanged("IdCompetition");
+                    NotifyPropertyChanged();
 
                     // Met a jour la structure d'export
                     if (_structure != null)
@@ -970,7 +970,7 @@ namespace AppPublication.Controles
             private set
             {
                 _canPublierAffectation = value;
-                NotifyPropertyChanged("CanPublierAffectation");
+                NotifyPropertyChanged();
             }
         }
 
@@ -990,7 +990,7 @@ namespace AppPublication.Controles
                 {
                     _publierProchainsCombats = value;
                     AppSettings.SaveSetting(kSettingPublierProchainsCombats, _publierProchainsCombats.ToString());
-                    NotifyPropertyChanged("PublierProchainsCombats");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -1013,7 +1013,7 @@ namespace AppPublication.Controles
                 {
                     _publierAffectationTapis = value;
                     AppSettings.SaveSetting(kSettingPublierAffectationTapis, _publierAffectationTapis.ToString());
-                    NotifyPropertyChanged("PublierAffectationTapis");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -1035,7 +1035,7 @@ namespace AppPublication.Controles
             set
             {
                 _status = value;
-                NotifyPropertyChanged("Status");
+                NotifyPropertyChanged();
                 IsGenerationActive = !(_status.State == StateGenerationEnum.Stopped);
             }
         }
