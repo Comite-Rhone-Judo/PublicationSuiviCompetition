@@ -23,6 +23,9 @@ namespace AppPublication
             // LogTools.Trace("App is starting");
             LogTools.LogStartup();
 
+            // Assure que le logger est bien configure
+            Controles.DialogControleur.Instance.CanManageTracesDebug = LogTools.IsConfigured;
+
             CultureInfo culture = new CultureInfo("fr");
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;

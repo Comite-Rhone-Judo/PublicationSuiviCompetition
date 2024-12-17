@@ -78,3 +78,27 @@ Root: HKLM64; \
     Subkey: "SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"; \
     ValueType: String; ValueName: "{app}\{#MyAppExeName}"; ValueData: "~ RUNASADMIN"; \
     Flags: uninsdeletekeyifempty uninsdeletevalue; Check: IsWin64
+
+; NOTE Ajoute un message car le format du fichier de configuration a change
+[Code]
+const
+  NoteHeight = 50;
+
+procedure InitializeWizard;
+var
+  Note: TNewStaticText;
+begin
+  WizardForm.TasksList.Height := WizardForm.TasksList.Height - NoteHeight;
+
+  Note := TNewStaticText.Create(WizardForm);
+  Note.Parent := WizardForm.SelectTasksPage;
+  Note.AutoSize := False;
+  Note.SetBounds(
+    WizardForm.TasksList.Left,
+    WizardForm.TasksList.Top + WizardForm.TasksList.Height,
+    WizardForm.TasksList.Width,
+    NoteHeight
+  );
+  Note.Font.Color := clRed;
+  Note.Caption := 'Activez <Effacer la configuration existante> si la version précédente' + #13#10 + 'est antérieure a la version 1.3.0.0. Dans le cas contraire' + #13#10 + 'des dysfonctionnements peuvent apparaitre.';
+end;

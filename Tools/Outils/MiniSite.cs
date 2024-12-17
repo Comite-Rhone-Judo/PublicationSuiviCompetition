@@ -902,7 +902,7 @@ namespace Tools.Outils
                 output.IsSuccess = false;
                 string msg = (ex.InnerException != null) ? String.Format("{0} ({1})", ex.Message, ex.InnerException.Message) : ex.Message;
                 cStatus = new StatusMiniSite(cStatus.State, "Erreur FTP", msg);
-                LogTools.Error(ex);
+                LogTools.Logger.Error("Erreur lors de upload FTP", ex);
             }
             finally
             {

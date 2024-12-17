@@ -180,6 +180,20 @@ namespace AppPublication.Controles
             }
         }
 
+        private bool _canTraceDebug;
+        public bool CanManageTracesDebug
+        {
+            get
+            {
+                return _canTraceDebug;
+            }
+            set
+            {
+                _canTraceDebug = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         #endregion
 
         #region METHODES
@@ -755,7 +769,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return true;
+                                return CanManageTracesDebug;
                             });
                 }
                 return _cmdGenererTracesIncident;

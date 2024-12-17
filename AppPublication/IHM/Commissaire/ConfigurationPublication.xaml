@@ -73,13 +73,13 @@
                                                         IsChecked="{Binding Path=PublierAffectationTapis}"
                                                         Visibility="{Binding Path=CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}">
                     </CheckBox>
-                    <Image Visibility="{Binding Path=CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}" Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0" ToolTip="Si cochée, provoque l'ajout du menu 'Affectations' qui liste les tapis assignées pour chaque catégories. Disponible uniquement en compétition Individuelle ou Shiai."/>
+                    <Image Visibility="{Binding Path=CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}" Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0" ToolTip="Si cochée, provoque l'ajout du menu 'Affectations' qui liste les tapis assignés pour chaque catégories. Disponible uniquement en compétition Individuelle ou Shiai."/>
                 </StackPanel>
                 <StackPanel Grid.Row="4" Grid.Column="0"  Grid.ColumnSpan="2" Orientation="Horizontal">
                     <CheckBox   Content="Afficher les Poules en colonnes" Style="{StaticResource CheckboxStyle}"
                                         IsChecked="{Binding Path=PouleEnColonnes}">
                     </CheckBox>
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, les poules seront affichées en colonnes selon les critères. Affichage en diagonale sinon."/>
+                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, les poules seront affichées en colonnes selon les critères de taille. Affichage en diagonale sinon."/>
                 </StackPanel>
                 <StackPanel Grid.Row="5" Grid.Column="0" Orientation="Horizontal" Margin="50 -5 0 0">
                     <CheckBox Style="{StaticResource CheckboxStyle}"
@@ -155,7 +155,7 @@
 
                 <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal">
                     <Label Content="Répertoire d'export:" Style="{StaticResource LabelStyle}" />
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Répertoire racine dans lequel les données du site sont générées et publiés"/>
+                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Répertoire racine (local) dans lequel les données du site sont générées et publiées"/>
                 </StackPanel>
                 <telerik:RadButton Grid.Row="4" Grid.Column="1" Width="95" Height="30" telerik:StyleManager.Theme="Expression_Dark" Command="{Binding CmdGetRepertoireRacine}" Margin="-20 10 10 0">
                     <WrapPanel Orientation="Horizontal">

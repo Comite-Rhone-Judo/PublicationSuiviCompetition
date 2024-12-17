@@ -73,6 +73,17 @@ namespace Tools.Outils
         }
 
         /// <summary>
+        /// Retourne l'etat de configuration du logger
+        /// </summary>
+        public static bool IsConfigured
+        {
+            get
+            {
+                return LogManager.Configuration != null;
+            }
+        }
+
+        /// <summary>
         /// Configure le niveau de trace au maximum si enable = true, au niveau configure dans le fichier sinon
         /// </summary>
         /// <param name="enable">Active (true) ou desactive (False) le niveau de trace</param>

@@ -6,7 +6,7 @@ namespace Tools.Outils
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual void NotifyPropertyChanged(string propertyName)
+        protected virtual void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
