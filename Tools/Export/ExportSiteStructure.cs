@@ -15,19 +15,17 @@ namespace Tools.Export
     public class ExportSiteStructure
     {
         #region MEMBRES
-        private const string kCourante = "courante";
-        private const string kCommon = "common";
-        private const string kImg = "img";
-        private const string kJs = "js";
-        private const string kStyle = "style";
-        private const string kIndex = "index.html";
+        public const string kCourante = "courante";
+        public const string kCommon = "common";
+        public const string kImg = "img";
+        public const string kJs = "js";
+        public const string kStyle = "style";
+        public const string kIndex = "index.html";
 
         private string _rootDir = string.Empty;
         private string _rootCompetDir = string.Empty;
-        private string _rootCompetUrlPath = String.Empty;
         private string _idCompetition = string.Empty;
         private int _maxLen = 30;
-        private bool _isolate = false; 
         #endregion
 
         #region CONSTRUCTEURS
@@ -36,40 +34,16 @@ namespace Tools.Export
         /// </summary>
         /// <param name="racine"></param>
         /// <param name="idCompetition"></param>
-        /// <param name="isoleCompet"></param>
         /// <param name="maxlen"></param>
         public ExportSiteStructure(string racine, string idCompetition, int maxlen = 30)
         {
             _rootDir = racine;
             IdCompetition = idCompetition;
             _maxLen = maxlen;
-            _isolate = false;
         }
         #endregion
 
         #region PROPRIETES
-
-        /// <summary>
-        /// Indique si les competitions sont isolees cote serveur Web
-        /// </summary>
-        public bool CompetitionIsolee
-        {
-            get
-            {
-                return _isolate;
-            }
-            set
-            {
-                if (_isolate != value)
-                {
-                    _isolate = value;
-
-                    // Calcul le path URL en fonction de l'isolation ou non
-                    _rootCompetUrlPath = GetCompetUrlPath();
-                }
-            }
-        }
-
         /// <summary>
         /// Identifiant de la competition consideree
         /// </summary>
@@ -81,15 +55,12 @@ namespace Tools.Export
             }
             set
             {
-                if (!String.IsNullOrWhiteSpace(value) && _idCompetition != value)
+                if (!String.IsNullOrWhiteSpace(value) &&! string.IsNullOrEmpty(value) )
                 {
                     _idCompetition = value;
 
                     // Calcul la racine locale de la competition
                     RepertoireCompetition = GetRootCompetition();
-
-                    // Calcul le path URL en fonction de l'isolation ou non
-                    _rootCompetUrlPath = GetCompetUrlPath();
                 }
             }
         }
@@ -124,17 +95,6 @@ namespace Tools.Export
         }
 
         /// <summary>
-        /// Le chemin URL pour la competition configuree
-        /// </summary>
-        public string UrlPathCompetition
-        {
-            get
-            {
-                return _rootCompetUrlPath;
-            }
-        }
-
-        /// <summary>
         /// Retourne le repertoire Common de la competition configuree
         /// </summary>
         public string RepertoireCommon
@@ -142,28 +102,6 @@ namespace Tools.Export
             get
             {
                 return FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, kCommon));
-            }
-        }
-
-        /// <summary>
-        /// Le chemin URL de Common de la competition configuree
-        /// </summary>
-        public string UrlPathCommon
-        {
-            get
-            {
-                return FileAndDirectTools.PathJoin(_rootCompetUrlPath, kCommon);
-            }
-        }
-
-        /// <summary>
-        /// Le chemin URL de l'index de la competition configuree
-        /// </summary>
-        public string UrlPathIndex
-        {
-            get
-            {
-                return FileAndDirectTools.PathJoin(UrlPathCommon, kIndex);
             }
         }
 
@@ -179,17 +117,6 @@ namespace Tools.Export
         }
 
         /// <summary>
-        /// Retourne l'URL path du repertoire image
-        /// </summary>
-        public string UrlPathImg
-        {
-            get
-            {
-                return FileAndDirectTools.PathJoin(UrlPathCompetition, kImg);
-            }
-        }
-
-        /// <summary>
         /// Retourne le repertoire js
         /// </summary>
         public string RepertoireJs
@@ -201,17 +128,6 @@ namespace Tools.Export
         }
 
         /// <summary>
-        /// Retourne l'URL path du repertoire Js
-        /// </summary>
-        public string UrlPathJs
-        {
-            get
-            {
-                return FileAndDirectTools.PathJoin(UrlPathCompetition, kJs);
-            }
-        }
-
-        /// <summary>
         /// Retourne le repertoire style
         /// </summary>
         public string RepertoireStyle
@@ -219,17 +135,6 @@ namespace Tools.Export
             get
             {
                 return FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, kStyle));
-            }
-        }
-
-        /// <summary>
-        /// Retourne l'URL path du repertoire Style
-        /// </summary>
-        public string UrlPathStyle
-        {
-            get
-            {
-                return FileAndDirectTools.PathJoin(UrlPathCompetition, kStyle);
             }
         }
 
@@ -281,34 +186,6 @@ namespace Tools.Export
             return OutilsTools.TraiteChaineURL(Path.Combine(_rootDir, OutilsTools.TraiteChaine(OutilsTools.SubString(_idCompetition, 0, _maxLen))));
         }
 
-        /// <summary>
-        /// Calcul le path URL a partir d'un repertoire du site (par rapport a la racine du site)
-        /// </summary>
-        /// <param name="repertoire"></param>
-        /// <returns></returns>
-        private string GetUrlPath(string repertoire)
-        {
-            string output = String.Empty;
-            try
-            {
-                return repertoire.Replace(RepertoireRacine, "").Remove(0, 1);
-            }
-            catch
-            {
-                output = string.Empty;
-            }
-
-            return output;
-        }
-
-        /// <summary>
-        /// Retourne l'URL racine de la competition
-        /// </summary>
-        /// <returns></returns>
-        private string GetCompetUrlPath()
-        {
-            return (_isolate) ? GetUrlPath(_rootCompetDir) : kCourante ;
-        }
         #endregion
     }
 }

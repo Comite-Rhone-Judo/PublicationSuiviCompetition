@@ -143,6 +143,7 @@
     <Compile Include="Enum\TypeCSAEnum.cs" />
     <Compile Include="Export\ConfigurationExportSite.cs" />
     <Compile Include="Export\ExportHTML.cs" />
+    <Compile Include="Export\ExportSiteUrls.cs" />
     <Compile Include="Export\ExportSiteStructure.cs" />
     <Compile Include="Export\ExportTools.cs" />
     <Compile Include="Export\InAssemblyUrlResolver.cs" />

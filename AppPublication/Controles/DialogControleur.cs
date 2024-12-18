@@ -3,6 +3,7 @@ using AppPublication.Tools.Enum;
 using KernelImpl;
 using System;
 using System.IO;
+using System.Security.Policy;
 using System.Windows;
 using System.Windows.Input;
 using Telerik.Windows.Controls;
@@ -313,7 +314,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return true;
+                                return !String.IsNullOrEmpty(Instance.GestionSite.IdCompetition) && !Instance.GestionSite.SiteLocal.IsActif;
                             });
                 }
                 return _cmdDemarrerSiteLocal;
@@ -557,7 +558,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return GestionSite.SiteLocal.IsActif && GestionSite.SiteLocal.IsLocal;
+                                return  GestionSite.SiteLocal.IsActif && GestionSite.SiteLocal.IsLocal;
                             });
                 }
                 return _cmdAfficherSiteLocal;
@@ -589,7 +590,8 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return (GestionSite.SiteDistantSelectionne != null) ? !GestionSite.SiteDistantSelectionne.IsLocal : false;
+                                // on ne peut pas ouvrir l'URL si on n'est pas connecte a une competition
+                                return (GestionSite.SiteDistantSelectionne != null) ? !GestionSite.SiteDistantSelectionne.IsLocal && !String.IsNullOrEmpty(Instance.GestionSite.IdCompetition) : false;
                             });
                 }
                 return _cmdAfficherSiteDistant;

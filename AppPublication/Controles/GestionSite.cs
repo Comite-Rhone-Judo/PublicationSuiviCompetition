@@ -63,7 +63,9 @@ namespace AppPublication.Controles
         private Task _taskGeneration = null;            // La tache de generation
         private Task _taskNettoyage = null;             // La tache de nettoyage
         private GestionStatistiques _statMgr = null;
-        private ExportSiteStructure _structure;         // La structure d'export du site
+        private ExportSiteStructure _structureRepertoires;         // La structure d'export du site
+        private ExportSiteUrls _structureSiteLocal;                 // la structure d'export du site local
+        private ExportSiteUrls _structureSiteDistant;                 // la structure d'export du site distant
         private Dictionary<string, EntitePublicationFFJudo> _allEntitePublicationFFJudo = null;
         private Dictionary<string, ObservableCollection<EntitePublicationFFJudo>> _allEntitesPublicationFFJudo = null;
 
@@ -113,7 +115,6 @@ namespace AppPublication.Controles
         #endregion
 
         #region PROPRIETES
-
         private bool _easyConfigDisponible;
 
         /// <summary>
@@ -152,13 +153,10 @@ namespace AppPublication.Controles
                 // On ne peut changer la valeur que si le site en cours n'est pas actif
                 if (SiteDistantSelectionne == null || (SiteDistantSelectionne != null || !SiteDistantSelectionne.IsActif))
                 {
-                    if (_easyConfig != value)
-                    {
-                        _easyConfig = value;
-                        AppSettings.SaveSetting(kSettingEasyConfig, _easyConfig.ToString());
-                        NotifyPropertyChanged();
-                        SiteDistantSelectionne = CalculSiteDistantSelectionne();
-                    }
+                    _easyConfig = value;
+                    AppSettings.SaveSetting(kSettingEasyConfig, _easyConfig.ToString());
+                    NotifyPropertyChanged();
+                    SiteDistantSelectionne = CalculSiteDistantSelectionne();
                 }
             }
         }
@@ -528,8 +526,10 @@ namespace AppPublication.Controles
                     // Met a jour la constante d'export
                     string tmp = OutilsTools.GetExportSiteDir(_repertoireRacine);
 
-                    // Initialise la structure d'export
-                    _structure = new ExportSiteStructure(tmp, IdCompetition);
+                    // Initialise les structures d'export
+                    _structureRepertoires = new ExportSiteStructure(tmp, IdCompetition);
+                    _structureSiteDistant = new ExportSiteUrls(_structureRepertoires);
+                    _structureSiteLocal = new ExportSiteUrls(_structureRepertoires);
 
                     // Met a jour les repertoires de l'application
                     InitExportSiteStructure();
@@ -730,20 +730,19 @@ namespace AppPublication.Controles
             }
             set
             {
-                if (_isolerCompetition != value)
+                _isolerCompetition = value;
+                AppSettings.SaveSetting(kSettingIsolerCompetition, _isolerCompetition.ToString());
+
+                // Met a jour la structure d'export
+                if (_structureSiteDistant != null)
                 {
-                    _isolerCompetition = value;
-                    AppSettings.SaveSetting(kSettingIsolerCompetition, _isolerCompetition.ToString());
-
-                    // Met a jour la structure d'export
-                    if (_structure != null)
-                    {
-                        _structure.CompetitionIsolee = _isolerCompetition;
-                    }
-                    NotifyPropertyChanged();
-                    URLDistantPublication = CalculURLSiteDistant();
+                    _structureSiteDistant.CompetitionIsolee = _isolerCompetition;
+                }
+                NotifyPropertyChanged();
+                URLDistantPublication = CalculURLSiteDistant();
+                if (SiteDistantSelectionne != null)
+                {
                     SiteDistantSelectionne.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
-
                 }
             }
         }
@@ -916,7 +915,7 @@ namespace AppPublication.Controles
 
         
 
-        private string _idCompetition;
+        private string _idCompetition = string.Empty;
         /// <summary>
         /// ID de la competition en cours
         /// </summary>
@@ -928,31 +927,31 @@ namespace AppPublication.Controles
             }
             set
             {
-                if (_idCompetition != value)
+                _idCompetition = value;
+                NotifyPropertyChanged();
+
+                // Met a jour la structure d'export
+                if (_structureRepertoires != null)
                 {
-                    _idCompetition = value;
-                    NotifyPropertyChanged();
+                    _structureRepertoires.IdCompetition = value;
+                }
 
-                    // Met a jour la structure d'export
-                    if (_structure != null)
-                    {
-                        _structure.IdCompetition = value;
-                    }
-
-                    // Recalcul les valeurs des URLs et répertoires distants
+                // Recalcul les valeurs des URLs et répertoires distants
+                if (SiteDistantSelectionne != null)
+                {
                     SiteDistantSelectionne.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
-                    URLDistantPublication = CalculURLSiteDistant();
-                    URLLocalPublication = CalculURLSiteLocal();
+                }
+                URLDistantPublication = CalculURLSiteDistant();
+                URLLocalPublication = CalculURLSiteLocal();
 
-                    // On en peut publier que en individuelle
-                    CanPublierAffectation = DialogControleur.Instance.ServerData.competition.IsIndividuelle();
+                // On en peut publier que en individuelle
+                CanPublierAffectation = DialogControleur.Instance.ServerData.competition.IsIndividuelle();
 
-                    // Si on est en Shiai, par defaut on met les poules en colonnes
-                    if (DialogControleur.Instance.ServerData.competition.IsShiai())
-                    {
-                        PouleEnColonnes = true;
-                        PouleToujoursEnColonnes = true;
-                    }
+                // Si on est en Shiai, par defaut on met les poules en colonnes
+                if (DialogControleur.Instance.ServerData.competition.IsShiai())
+                {
+                    PouleEnColonnes = true;
+                    PouleToujoursEnColonnes = true;
                 }
             }
         }
@@ -1047,7 +1046,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                return Path.Combine(_structure.RepertoireRacine, ExportTools.getFileName(ExportEnum.Site_Checksum) + ConstantFile.ExtensionXML);
+                return Path.Combine(_structureRepertoires.RepertoireRacine, ExportTools.getFileName(ExportEnum.Site_Checksum) + ConstantFile.ExtensionXML);
             }
         }
 
@@ -1060,9 +1059,9 @@ namespace AppPublication.Controles
         /// </summary>
         private void InitExportSiteStructure()
         {
-            if (_structure != null)
+            if (_structureRepertoires != null)
             {
-                FileAndDirectTools.CreateDirectorie(_structure.RepertoireRacine);
+                FileAndDirectTools.CreateDirectorie(_structureRepertoires.RepertoireRacine);
             }
         }
 
@@ -1245,7 +1244,7 @@ namespace AppPublication.Controles
                 urlBase = URLDistant;
             }
 
-            if (!String.IsNullOrEmpty(urlBase) && _structure != null && !String.IsNullOrEmpty(_structure.UrlPathIndex))
+            if (!String.IsNullOrEmpty(urlBase) && _structureSiteDistant != null && !String.IsNullOrEmpty(_structureSiteDistant.UrlPathIndex))
             {
                 // On verifie que le dernier caractere est bien un "/" car sinon la concatenation va ignorer le dernier element du path
                 if(urlBase.Last() != '/')
@@ -1253,7 +1252,7 @@ namespace AppPublication.Controles
                     urlBase += '/';
                 }
 
-                output = (new Uri(new Uri(urlBase), _structure.UrlPathIndex)).ToString();
+                output = (new Uri(new Uri(urlBase), _structureSiteDistant.UrlPathIndex)).ToString();
             }
             return output;
         }
@@ -1266,11 +1265,11 @@ namespace AppPublication.Controles
         {
             string output = "Indefinie";
 
-            if (!String.IsNullOrEmpty(IdCompetition) && SiteLocal.ServerHTTP != null && SiteLocal.ServerHTTP.ListeningIpAddress != null && SiteLocal.ServerHTTP.Port > 0 && _structure != null)
+            if (!String.IsNullOrEmpty(IdCompetition) && SiteLocal.ServerHTTP != null && SiteLocal.ServerHTTP.ListeningIpAddress != null && SiteLocal.ServerHTTP.Port > 0 && _structureSiteLocal != null)
             {
                 string urlBase = string.Format("http://{0}:{1}/", SiteLocal.ServerHTTP.ListeningIpAddress.ToString(), SiteLocal.ServerHTTP.Port);
 
-                output = (new Uri(new Uri(urlBase), _structure.UrlPathIndex)).ToString();
+                output = (new Uri(new Uri(urlBase), _structureSiteLocal.UrlPathIndex)).ToString();
             }
 
             return output;
@@ -1303,9 +1302,9 @@ namespace AppPublication.Controles
                 repRoot = string.Empty;
             }
 
-            if (!String.IsNullOrEmpty(repRoot) && _structure != null)
+            if (!String.IsNullOrEmpty(repRoot) && _structureSiteDistant != null)
             {
-                output = FileAndDirectTools.PathJoin(repRoot, _structure.UrlPathCompetition);
+                output = FileAndDirectTools.PathJoin(repRoot, _structureSiteDistant.UrlPathCompetition);
             }
             
             return output;
@@ -1388,7 +1387,7 @@ namespace AppPublication.Controles
                                     if ( SiteDistantSelectionne != null &&  SiteDistantSelectionne.IsActif)
                                     {
                                         // string localRoot = Path.Combine(ConstantFile.ExportSite_dir, DialogControleur.Instance.ServerData.competition.remoteId);
-                                        string localRoot = _structure.RepertoireCompetition;
+                                        string localRoot = _structureRepertoires.RepertoireCompetition;
 
                                         // Le site distant sur lequel charger les fichiers selon si on isole ou pas
                                         StatExecution statSync = new StatExecution();
@@ -1529,22 +1528,22 @@ namespace AppPublication.Controles
                 switch (genere.type)
                 {
                     case SiteEnum.AllTapis:
-                        urls = ExportSite.GenereWebSiteAllTapis(DC, cfg, _structure);
+                        urls = ExportSite.GenereWebSiteAllTapis(DC, cfg, _structureRepertoires);
                         break;
                     case SiteEnum.Classement:
-                        urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), cfg, _structure);
+                        urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), cfg, _structureRepertoires);
                         break;
                     case SiteEnum.Index:
-                        urls = ExportSite.GenereWebSiteIndex(cfg, _structure);
+                        urls = ExportSite.GenereWebSiteIndex(cfg, _structureRepertoires);
                         break;
                     case SiteEnum.Menu:
-                        urls = ExportSite.GenereWebSiteMenu(DC, cfg, _structure);
+                        urls = ExportSite.GenereWebSiteMenu(DC, cfg, _structureRepertoires);
                         break;
                     case SiteEnum.Phase:
-                        urls = ExportSite.GenereWebSitePhase(DC, genere.phase, cfg, _structure);
+                        urls = ExportSite.GenereWebSitePhase(DC, genere.phase, cfg, _structureRepertoires);
                         break;
                     case SiteEnum.AffectationTapis:
-                        urls = ExportSite.GenereWebSiteAffectation(DC, cfg, _structure);
+                        urls = ExportSite.GenereWebSiteAffectation(DC, cfg, _structureRepertoires);
                         break;
                 }
             }
