@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Caching;
+using Telerik.Windows.Controls;
 using Tools.Outils;
 
 namespace Tools.Export
@@ -25,6 +27,8 @@ namespace Tools.Export
         private string _rootDir = string.Empty;
         private string _rootCompetDir = string.Empty;
         private string _idCompetition = string.Empty;
+        private bool _isFullyConfigured = false;             // Indique l'etat de configuration 
+        private bool _asRootDir = false;
         private int _maxLen = 30;
         #endregion
 
@@ -38,7 +42,7 @@ namespace Tools.Export
         public ExportSiteStructure(string racine, string idCompetition, int maxlen = 30)
         {
             _rootDir = racine;
-            IdCompetition = idCompetition;
+            IdCompetition = idCompetition;  // L'assignation va automatiquement calculer si la configuration est correcte (full & root)
             _maxLen = maxlen;
         }
         #endregion
@@ -51,17 +55,44 @@ namespace Tools.Export
         {
             get
             {
+                IsConfiguredGuardRail();
                 return _idCompetition;
             }
             set
             {
-                if (!String.IsNullOrWhiteSpace(value) &&! string.IsNullOrEmpty(value) )
-                {
-                    _idCompetition = value;
+                _idCompetition = value;
 
+                // Valide l'etat de la configuration
+                GetConfigurationStatus();
+
+                // Calcul le repertoire de la competition seulement si la structure est bien configuree
+                if (IsFullyConfigured)
+                {
                     // Calcul la racine locale de la competition
                     RepertoireCompetition = GetRootCompetition();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Retourne l'etat de configuration de la structure
+        /// </summary>
+        public bool IsFullyConfigured
+        {
+            get
+            {
+                return _isFullyConfigured;
+            }
+        }
+
+        /// <summary>
+        /// Retourne si la structure possede au moins un repertoire racine
+        /// </summary>
+        public bool AsRootDir
+        {
+            get
+            {
+                return _asRootDir;
             }
         }
 
@@ -72,6 +103,8 @@ namespace Tools.Export
         {
             get
             {
+                // On peut accéder a la racine en cas de configuration partielle
+                IsConfiguredGuardRail(false);
                 return _rootDir;
             }
         }
@@ -83,6 +116,7 @@ namespace Tools.Export
         {
             get
             {
+                IsConfiguredGuardRail();
                 return _rootCompetDir;
             }
             private set
@@ -101,6 +135,7 @@ namespace Tools.Export
         {
             get
             {
+                IsConfiguredGuardRail();
                 return FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, kCommon));
             }
         }
@@ -112,6 +147,7 @@ namespace Tools.Export
         {
             get
             {
+                IsConfiguredGuardRail();
                 return FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, kImg));
             }
         }
@@ -123,6 +159,7 @@ namespace Tools.Export
         {
             get
             {
+                IsConfiguredGuardRail();
                 return FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, kJs));
             }
         }
@@ -134,6 +171,7 @@ namespace Tools.Export
         {
             get
             {
+                IsConfiguredGuardRail();
                 return FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, kStyle));
             }
         }
@@ -151,7 +189,9 @@ namespace Tools.Export
         /// <exception cref="NullReferenceException"></exception>
         public string RepertoireEpreuve(string idEpreuve, string nomEpreuve, bool relatif = false)
         {
-            if(string.IsNullOrWhiteSpace(idEpreuve) || string.IsNullOrWhiteSpace(nomEpreuve))
+            IsConfiguredGuardRail();
+
+            if (string.IsNullOrWhiteSpace(idEpreuve) || string.IsNullOrWhiteSpace(nomEpreuve))
             {
                 throw new NullReferenceException();
             }
@@ -184,6 +224,49 @@ namespace Tools.Export
         {
             // Path absolu avec traitement des caracteres URL (+, etc.)
             return OutilsTools.TraiteChaineURL(Path.Combine(_rootDir, OutilsTools.TraiteChaine(OutilsTools.SubString(_idCompetition, 0, _maxLen))));
+        }
+
+        /// <summary>
+        /// Check si la configuration permet l'acces a cette information
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
+        private void IsConfiguredGuardRail(bool full = true)
+        {
+            if (full && !_isFullyConfigured)
+            {
+                LogTools.Logger.Debug("Tentative d'acces a un ExportSiteStructure non configure");
+
+                throw new InvalidOperationException("La structure de repertoire n'est pas complement configuree");
+            }
+            if (!full && !_asRootDir)
+            {
+                LogTools.Logger.Debug("Tentative d'acces a un ExportSiteStructure sans racine");
+
+                throw new InvalidOperationException("La structure de repertoire n'est pas configuree");
+            }
+        }
+
+        /// <summary>
+        /// Calcul l'etat de la configuration de la structure
+        /// </summary>
+        private void GetConfigurationStatus()
+        {
+            bool idCompetOk = !String.IsNullOrWhiteSpace(_idCompetition) && !string.IsNullOrEmpty(_idCompetition);
+            bool rootDirOk = !String.IsNullOrWhiteSpace(_rootDir) && !string.IsNullOrEmpty(_rootDir);
+
+            if(rootDirOk)
+            {
+                try
+                {
+                    _ = Path.GetFullPath(_rootDir);
+                }
+                catch {
+                    rootDirOk = false;
+                }
+            }
+
+            _asRootDir = rootDirOk;
+            _isFullyConfigured =  idCompetOk && rootDirOk;
         }
 
         #endregion

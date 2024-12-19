@@ -390,7 +390,8 @@
                                             </CheckBox.IsEnabled>
                                         </CheckBox>
                                     </StackPanel>
-                                    <CheckBox Content="Isoler les compétitions" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.IsolerCompetition}" IsEnabled="{Binding Path=GestionSite.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" Margin="10 0 0 0"/>
+                                    <CheckBox Content="Isoler les compétitions" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.IsolerCompetition}" IsEnabled="{Binding Path=GestionSite.SiteDistantSelectionne.IsActif, Converter={StaticResource BoolNotConverter}}" Margin="10 0 0 0"/>
+                                    <!-- ZONE EASY CONFIG -->
                                     <StackPanel Visibility="{Binding Path=GestionSite.EasyConfig, Converter={StaticResource BoolToVisibilityConverter}}">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -402,6 +403,7 @@
                                                 <RowDefinition Height="auto"/>
                                                 <RowDefinition Height="auto"/>
                                             </Grid.RowDefinitions>
+                                            
                                             <Label Grid.Column="0" Content="Niveau de publication:" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right"/>
                                             <telerik:RadComboBox Grid.Column="1" Style="{StaticResource DropDownStyle}" MinWidth="120"
                                                                              ItemsSource="{Binding Path=GestionSite.ListeNiveauxPublicationFFJudo}"
@@ -420,6 +422,7 @@
                                                                 IsEnabled="{Binding Path=GestionSite.SiteFranceJudo.IsActif, Converter={StaticResource BoolNotConverter}}"/>
                                         </Grid>
                                     </StackPanel>
+                                    <!-- ZONE CONFIG AVANCEE -->
                                     <StackPanel Visibility="{Binding Path=GestionSite.AdvancedConfig, Converter={StaticResource BoolToVisibilityConverter}}">
                                         <Grid>
                                             <Grid.ColumnDefinitions>

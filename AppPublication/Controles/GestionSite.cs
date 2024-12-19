@@ -151,11 +151,12 @@ namespace AppPublication.Controles
             set
             {
                 // On ne peut changer la valeur que si le site en cours n'est pas actif
-                if (SiteDistantSelectionne == null || (SiteDistantSelectionne != null || !SiteDistantSelectionne.IsActif))
+                if (SiteDistantSelectionne == null || !SiteDistantSelectionne.IsActif)
                 {
                     _easyConfig = value;
                     AppSettings.SaveSetting(kSettingEasyConfig, _easyConfig.ToString());
                     NotifyPropertyChanged();
+                    // Met a jour le site distant selectionne
                     SiteDistantSelectionne = CalculSiteDistantSelectionne();
                 }
             }
@@ -174,7 +175,8 @@ namespace AppPublication.Controles
             {
                 EasyConfig = !value;
                 NotifyPropertyChanged();
-                SiteDistantSelectionne = CalculSiteDistantSelectionne();
+                // Inutile, le fait de faire le set sur EasyConfig suffit a mettre a jour le site selectionne
+                // SiteDistantSelectionne = CalculSiteDistantSelectionne();
             }
         }
 
@@ -193,6 +195,8 @@ namespace AppPublication.Controles
             private set
             {
                 _siteDistantSelectionne = value;
+                // Il faut recalculer l'URL du site de publication car on vient de changer de site
+                URLDistantPublication = CalculURLSiteDistant();
                 NotifyPropertyChanged();
             }
         }
@@ -1046,7 +1050,19 @@ namespace AppPublication.Controles
         {
             get
             {
-                return Path.Combine(_structureRepertoires.RepertoireRacine, ExportTools.getFileName(ExportEnum.Site_Checksum) + ConstantFile.ExtensionXML);
+                string output = string.Empty;
+                // Normalement on ne devrait pas avoir de probleme d'exception ici avec la structure de repertoire
+                try
+                {
+                    output = Path.Combine(_structureRepertoires.RepertoireRacine, ExportTools.getFileName(ExportEnum.Site_Checksum) + ConstantFile.ExtensionXML);
+                }
+                catch (Exception ex)
+                {
+                    output = string.Empty;
+                    LogTools.Logger.Error("Impossible de calculer le nom du fichier Checksum", ex);
+                }
+
+                return output;
             }
         }
 
@@ -1225,34 +1241,45 @@ namespace AppPublication.Controles
             string easyConfigUrl = string.Empty;
             string urlBase = string.Empty;
 
-            // Selectionne en fonction du type de configuration
-            if (EasyConfig)
+            try
             {
-                // Extrait l'URL EasyConfig si possible
-                try
+                // Selectionne en fonction du type de configuration
+                if (EasyConfig)
                 {
-                    Uri fullUri = new Uri(_httpEasyConfig, EntitePublicationFFJudo.RacineHttp);
-                    urlBase = fullUri.ToString();
+                    // Extrait l'URL EasyConfig si possible
+                    try
+                    {
+                        if (EntitePublicationFFJudo != null)
+                        {
+                            Uri fullUri = new Uri(_httpEasyConfig, EntitePublicationFFJudo.RacineHttp);
+                            urlBase = fullUri.ToString();
+                        }
+                    }
+                    catch
+                    {
+                        urlBase = string.Empty;
+                    }
                 }
-                catch
+                else
                 {
-                    urlBase = string.Empty;
-                }
-            }
-            else
-            {
-                urlBase = URLDistant;
-            }
-
-            if (!String.IsNullOrEmpty(urlBase) && _structureSiteDistant != null && !String.IsNullOrEmpty(_structureSiteDistant.UrlPathIndex))
-            {
-                // On verifie que le dernier caractere est bien un "/" car sinon la concatenation va ignorer le dernier element du path
-                if(urlBase.Last() != '/')
-                {
-                    urlBase += '/';
+                    urlBase = URLDistant;
                 }
 
-                output = (new Uri(new Uri(urlBase), _structureSiteDistant.UrlPathIndex)).ToString();
+                if (!String.IsNullOrEmpty(urlBase) && _structureSiteDistant != null && !String.IsNullOrEmpty(_structureSiteDistant.UrlPathIndex))
+                {
+                    // On verifie que le dernier caractere est bien un "/" car sinon la concatenation va ignorer le dernier element du path
+                    if (urlBase.Last() != '/')
+                    {
+                        urlBase += '/';
+                    }
+
+                    output = (new Uri(new Uri(urlBase), _structureSiteDistant.UrlPathIndex)).ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                output = string.Empty;
+                LogTools.Logger.Error("Impossible de calculer l'URL du site distant",ex);
             }
             return output;
         }
@@ -1265,13 +1292,20 @@ namespace AppPublication.Controles
         {
             string output = "Indefinie";
 
-            if (!String.IsNullOrEmpty(IdCompetition) && SiteLocal.ServerHTTP != null && SiteLocal.ServerHTTP.ListeningIpAddress != null && SiteLocal.ServerHTTP.Port > 0 && _structureSiteLocal != null)
+            try
             {
-                string urlBase = string.Format("http://{0}:{1}/", SiteLocal.ServerHTTP.ListeningIpAddress.ToString(), SiteLocal.ServerHTTP.Port);
+                if (!String.IsNullOrEmpty(IdCompetition) && SiteLocal.ServerHTTP != null && SiteLocal.ServerHTTP.ListeningIpAddress != null && SiteLocal.ServerHTTP.Port > 0 && _structureSiteLocal != null)
+                {
+                    string urlBase = string.Format("http://{0}:{1}/", SiteLocal.ServerHTTP.ListeningIpAddress.ToString(), SiteLocal.ServerHTTP.Port);
 
-                output = (new Uri(new Uri(urlBase), _structureSiteLocal.UrlPathIndex)).ToString();
+                    output = (new Uri(new Uri(urlBase), _structureSiteLocal.UrlPathIndex)).ToString();
+                }
             }
-
+            catch (Exception ex)
+            {
+                output = string.Empty;
+                LogTools.Logger.Error("Impossible de calculer l'URL du site local", ex);
+            }
             return output;
         }
 
@@ -1304,7 +1338,15 @@ namespace AppPublication.Controles
 
             if (!String.IsNullOrEmpty(repRoot) && _structureSiteDistant != null)
             {
-                output = FileAndDirectTools.PathJoin(repRoot, _structureSiteDistant.UrlPathCompetition);
+                try
+                {
+                    output = FileAndDirectTools.PathJoin(repRoot, _structureSiteDistant.UrlPathCompetition);
+                }
+                catch
+                {
+                    // on a essayer de traiter une structure non configuree
+                    output = string.Empty;
+                }
             }
             
             return output;

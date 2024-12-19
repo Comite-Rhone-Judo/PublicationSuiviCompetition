@@ -454,7 +454,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return (Instance.GestionSite.SiteDistantSelectionne == null) ? false : !Instance.GestionSite.SiteDistant.IsActif && !Instance.GestionSite.SiteDistant.IsCleaning;
+                                return (Instance.GestionSite.SiteDistantSelectionne == null) ? false : !Instance.GestionSite.SiteDistantSelectionne.IsActif && !Instance.GestionSite.SiteDistantSelectionne.IsCleaning;
                             });
                 }
                 return _cmdNettoyerSiteDistant;
