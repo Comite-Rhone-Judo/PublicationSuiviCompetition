@@ -203,7 +203,7 @@
                                 <!-- Boutons-->
                                 <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 60 0"
-                                    Command="{Binding Path=CmdAfficherConfiguration}" Height="35" IsEnabled="{Binding GestionSite.IsGenerationActive, Converter={StaticResource BoolNotConverter}}">
+                                    Command="{Binding Path=CmdAfficherConfiguration}" Height="35">
                                         <WrapPanel Orientation="Horizontal">
                                             <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/settings2-32.png" Height="25" Margin="5 0"/>
                                             <Label Content="Configuration" />
@@ -211,12 +211,6 @@
                                     </telerik:RadButton>
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 15 0"
                                                    Command="{Binding Path=CmdDemarrerGeneration}" Height="35">
-                                        <telerik:RadButton.IsEnabled>
-                                            <MultiBinding Converter="{StaticResource EtatGenerationConverter}" Mode="OneWay">
-                                                <Binding Path="GestionSite.IsGenerationActive" Mode="OneWay"/>
-                                                <Binding Path="ServerData.competition" Mode="OneWay"/>
-                                            </MultiBinding>
-                                        </telerik:RadButton.IsEnabled>
                                         <WrapPanel Orientation="Horizontal">
                                             <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/play-32.png" Height="25" Margin="5 0"/>
                                             <Label Content="Démarrer" />
@@ -259,7 +253,9 @@
                                             </telerik:RadBarcodeQR>
                                         </WrapPanel>
                                         <WrapPanel Orientation="Vertical" >
-                                            <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="10 0 0 0" Width="32" HorizontalAlignment="Left" Click="QRCodeLocalCopy_Click">
+                                            <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="10 0 0 0" Width="32" HorizontalAlignment="Left"
+                                                               Click="QRCodeLocalCopy_Click"
+                                                               IsEnabled="{Binding Path=GestionSite.SiteLocal.IsActif}">
                                                 <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier le QRCode"/>
                                             </telerik:RadButton>
                                             <WrapPanel Orientation="Horizontal" >
@@ -297,13 +293,6 @@
                                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 20 0"
                                                     Command="{Binding Path=CmdDemarrerSiteLocal}">
-                                        <telerik:RadButton.IsEnabled>
-                                            <MultiBinding Converter="{StaticResource EtatPublicationConverter}" Mode="OneWay">
-                                                <Binding Path="GestionSite.SiteLocal.IsChanged" Mode="OneWay"/>
-                                                <Binding Path="GestionSite.SiteLocal" Mode="OneWay"/>
-                                                <Binding Path="ServerData.competition" Mode="OneWay"/>
-                                            </MultiBinding>
-                                        </telerik:RadButton.IsEnabled>
                                         <WrapPanel Orientation="Horizontal">
                                             <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/play-32.png" Height="25" Margin="5 0"/>
                                             <Label Content="Démarrer" />
@@ -347,7 +336,9 @@
                                             </telerik:RadBarcodeQR>
                                         </WrapPanel>
                                         <WrapPanel Orientation="Vertical" >
-                                            <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="10 0 0 0" Width="32" HorizontalAlignment="Left" Click="QRCodeDistantCopy_Click">
+                                            <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="10 0 0 0" Width="32" HorizontalAlignment="Left"
+                                                               Click="QRCodeDistantCopy_Click"
+                                                               IsEnabled="{Binding Path=GestionSite.SiteDistantSelectionne.IsActif}">
                                                 <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier le QRCode"/>
                                             </telerik:RadButton>
                                             <WrapPanel Orientation="Horizontal" >
@@ -484,14 +475,6 @@
                                                 <Binding ElementName="AdvancedPwd"/>
                                             </MultiBinding>
                                         </Button.CommandParameter>
-
-                                        <telerik:RadButton.IsEnabled>
-                                            <MultiBinding Converter="{StaticResource EtatPublicationConverter}" Mode="OneWay">
-                                                <Binding Path="GestionSite.SiteDistantSelectionne.IsChanged" Mode="OneWay"/>
-                                                <Binding Path="GestionSite.SiteDistantSelectionne" Mode="OneWay"/>
-                                                <Binding Path="ServerData.competition" Mode="OneWay"/>
-                                            </MultiBinding>
-                                        </telerik:RadButton.IsEnabled>
                                         <WrapPanel Orientation="Horizontal">
                                             <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/play-32.png" Height="25" Margin="5 0"/>
                                             <Label Content="Démarrer" />
@@ -508,12 +491,6 @@
                                             <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/trash-32.png" Height="25" Margin="5 0"/>
                                             <Label Content="Nettoyer" />
                                         </WrapPanel>
-                                        <telerik:RadButton.IsEnabled>
-                                            <MultiBinding Converter="{StaticResource BoolOperationConverter}" ConverterParameter="not_a_and_not_b"  Mode="OneWay">
-                                                <Binding Path="GestionSite.SiteDistantSelectionne.IsActif" Mode="OneWay"/>
-                                                <Binding Path="GestionSite.SiteDistantSelectionne.IsCleaning" Mode="OneWay"/>
-                                            </MultiBinding>
-                                        </telerik:RadButton.IsEnabled>
                                     </telerik:RadButton>
                                 </StackPanel>
                             </Grid>
