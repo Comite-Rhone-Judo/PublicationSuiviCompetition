@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Text;
@@ -32,12 +33,25 @@ namespace Tools.Export
         /// <param name="maxlen"></param>
         public ExportSiteUrls(ExportSiteStructure localStructure)
         {
+            if(localStructure == null)
+            {
+                throw new ArgumentNullException("Impossible d'initialiser une structure de site avec une structure de repertoire null");
+            }
+
             _parentStructure = localStructure;
             _isolate = true;
         }
         #endregion
 
         #region PROPRIETES
+
+        public bool IsConfigured
+        {
+            get
+            {
+                return (_parentStructure == null) ? false : _parentStructure.IsFullyConfigured;
+            }
+        }
 
         /// <summary>
         /// Indique si les competitions sont isolees cote serveur Web
@@ -62,6 +76,7 @@ namespace Tools.Export
         {
             get
             {
+                IsConfiguredGuardRail();
                 return GetCompetUrlPath();  // Calcul le path URL en fonction de l'isolation ou non
             }
         }
@@ -73,6 +88,7 @@ namespace Tools.Export
         {
             get
             {
+                IsConfiguredGuardRail();
                 return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportSiteStructure.kCommon);
             }
         }
@@ -84,6 +100,7 @@ namespace Tools.Export
         {
             get
             {
+                IsConfiguredGuardRail();
                 return FileAndDirectTools.PathJoin(UrlPathCommon, ExportSiteStructure.kIndex);
             }
         }
@@ -95,6 +112,7 @@ namespace Tools.Export
         {
             get
             {
+                IsConfiguredGuardRail();
                 return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportSiteStructure.kImg);
             }
         }
@@ -106,6 +124,7 @@ namespace Tools.Export
         {
             get
             {
+                IsConfiguredGuardRail();
                 return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportSiteStructure.kJs);
             }
         }
@@ -117,6 +136,7 @@ namespace Tools.Export
         {
             get
             {
+                IsConfiguredGuardRail();
                 return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportSiteStructure.kStyle);
             }
         }
@@ -135,7 +155,7 @@ namespace Tools.Export
             string output = String.Empty;
             try
             {
-                if (_parentStructure != null)
+                if (_parentStructure != null && _parentStructure.IsFullyConfigured)
                 {
                     return repertoire.Replace(_parentStructure.RepertoireRacine, "").Remove(0, 1);
                 }
@@ -155,10 +175,13 @@ namespace Tools.Export
         private string GetCompetUrlPath()
         {
             // On doit verifier si le parent n'a pas change son ID
-            if(_idCompetitionLast != _parentStructure.IdCompetition)
+            if (_parentStructure != null && _parentStructure.IsFullyConfigured)
             {
-                _idCompetitionLast = _parentStructure.IdCompetition;
-                CalculCompetUrlPath();
+                if (_idCompetitionLast != _parentStructure.IdCompetition)
+                {
+                    _idCompetitionLast = _parentStructure.IdCompetition;
+                    CalculCompetUrlPath();
+                }
             }
 
             return _rootCompetUrlPath;
@@ -168,9 +191,20 @@ namespace Tools.Export
         /// </summary>
         private void CalculCompetUrlPath()
         {
-            _rootCompetUrlPath = (_isolate) ? GetUrlPath(_parentStructure.RepertoireCompetition) : kCourante;
+            if (_parentStructure != null && _parentStructure.IsFullyConfigured)
+            {
+                _rootCompetUrlPath = (_isolate) ? GetUrlPath(_parentStructure.RepertoireCompetition) : kCourante;
+            }
         }
 
+        private void IsConfiguredGuardRail()
+        {
+            if (_parentStructure == null || !_parentStructure.IsFullyConfigured)
+            {
+                LogTools.Logger.Debug("Tentative d'acces a un ExportSiteUrl non configure");
+                throw new InvalidOperationException("La structure de site n'est pas configuree");
+            }
+        }
         #endregion
     }
 }

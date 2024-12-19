@@ -314,7 +314,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return !String.IsNullOrEmpty(Instance.GestionSite.IdCompetition) && !Instance.GestionSite.SiteLocal.IsActif;
+                                return !String.IsNullOrEmpty(Instance.GestionSite.IdCompetition) && !Instance.GestionSite.SiteLocal.IsActif && Instance.GestionSite.SiteLocal.IsChanged;
                             });
                 }
                 return _cmdDemarrerSiteLocal;
@@ -385,7 +385,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return true;
+                                return (Instance.GestionSite.SiteDistantSelectionne == null) ? false : !Instance.GestionSite.SiteDistantSelectionne.IsActif && !String.IsNullOrEmpty(Instance.GestionSite.IdCompetition);
                             });
                 }
                 return _cmdDemarrerSiteDistant;
@@ -454,8 +454,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return true;
-                                // return !Instance.GestionSite.SiteDistant.IsActif && !Instance.GestionSite.SiteDistant.IsCleaning;
+                                return (Instance.GestionSite.SiteDistantSelectionne == null) ? false : !Instance.GestionSite.SiteDistantSelectionne.IsActif && !Instance.GestionSite.SiteDistantSelectionne.IsCleaning;
                             });
                 }
                 return _cmdNettoyerSiteDistant;
@@ -479,7 +478,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return true;
+                                return !String.IsNullOrEmpty(Instance.GestionSite.IdCompetition) && !Instance.GestionSite.IsGenerationActive;
                             });
                 }
                 return _cmdDemarrerGeneration;
@@ -720,7 +719,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return true;
+                                return !Instance.GestionSite.IsGenerationActive;
                             });
                 }
                 return _cmdAfficherConfiguration;

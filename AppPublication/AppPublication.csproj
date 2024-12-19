@@ -154,8 +154,6 @@
     <Compile Include="Tools\Converter\BoolToVisibilityConverter.cs" />
     <Compile Include="Tools\Converter\DisplayURLStatusConverter.cs" />
     <Compile Include="Tools\Converter\StatGenerationConverter.cs" />
-    <Compile Include="Tools\Converter\EtatGenerationConverter.cs" />
-    <Compile Include="Tools\Converter\EtatPublicationConverter.cs" />
     <Compile Include="Tools\Converter\RunningStatusConverter.cs" />
     <Compile Include="Tools\Converter\BoolNotConverter.cs" />
     <Compile Include="Tools\Converter\ClientConverter.cs" />
