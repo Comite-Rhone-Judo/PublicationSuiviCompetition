@@ -53,6 +53,7 @@
         public const string publierProchainsCombats = "PublierProchainsCombats";
         public const string publierAffectationTapis = "PublierAffectationTapis";
         public const string publierParticipants = "PublierParticipants";
+        public const string ParticipantsParEntite = "ParticipantsParEntite";
         public const string delaiActualisationClientSec = "DelaiActualisationClientSec";
         public const string nbProchainsCombats = "NbProchainsCombats";
         public const string msgProchainsCombats = "MsgProchainsCombats";
@@ -72,10 +73,16 @@
         public const string Structure_ID = "ID";
         public const string Structure_RemoteID = "remoteID";
         public const string Structure_Nom = "nom";
+
         public const string GroupeParticipants_groupes = "groupesParticipants";
         public const string GroupeParticipants_groupe = "groupeParticipants";
+
         public const string GroupeParticipants_sexe = "sexe";
         public const string GroupeParticipants_id = "id";
+        public const string GroupeParticipants_entite = "entite";
+        public const string GroupeParticipants_judokas = "judokas";
+        public const string GroupeParticipants_epreuves = "epreuves";
+        public const string GroupeParticipants_combats = "combats";
         public const string GroupeParticipants_type = "type";
         public const string GroupeParticipants_competition = "competition";
 
@@ -464,6 +471,7 @@
         public const string Vue_Judoka_ClubNomCourt = "clubnomcourt";
         public const string Vue_Judoka_ClubNom = "clubnom";
 
+        public const string Vue_Judoka_Comite = "comite";
         public const string Vue_Judoka_ComiteNomCourt = "comitenomcourt";
         public const string Vue_Judoka_ComiteNom = "comitenom";
 

@@ -91,6 +91,17 @@ namespace Tools.Export
         }
 
         /// <summary>
+        /// Retourne le repertoire Participants
+        /// </summary>
+        public string RepertoireParticipants
+        {
+            get
+            {
+                return FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, "participants"));
+            }
+        }
+
+        /// <summary>
         /// Retourne le repertoire image
         /// </summary>
         public string RepertoireImg
@@ -126,6 +137,39 @@ namespace Tools.Export
         #endregion
 
         #region
+        // TODO Ajouter le repetoire Participants
+
+        /// <summary>
+        /// Retourne le repertoire d'un groupe
+        /// </summary>
+        /// <param name="idGroupe">Id du groupe</param>
+        /// <param name="relatif">True si le repertoire est relatif a celui de la competition, False si absolu</param>
+        /// <returns></returns>
+        /// <exception cref="NullReferenceException"></exception>
+        public string RepertoireGroupeParticipants(string idGroupe, bool relatif = false)
+        {
+            if (string.IsNullOrWhiteSpace(idGroupe))
+            {
+                throw new NullReferenceException();
+            }
+
+            // On calcul le path complet pour faire le controle d'existence
+            string directory = Path.Combine(RepertoireParticipants, OutilsTools.TraiteChaine(idGroupe));
+            directory = FiltreEtControleRepertoire(directory);
+
+            return (relatif) ? directory.Replace(RepertoireCompetition, "").Remove(0, 1) : directory;
+        }
+
+
+
+        /// <summary>
+        /// Retourne le repertoire d'une epreuve
+        /// </summary>
+        /// <param name="idEpreuve">Id de l'epreuve</param>
+        /// <param name="nomEpreuve">Nom de l'epreuve</param>
+        /// <param name="relatif">True si le repertoire est relatif a celui de la competition, False si absolu</param>
+        /// <returns></returns>
+        /// <exception cref="NullReferenceException"></exception>
         public string RepertoireEpreuve(string idEpreuve, string nomEpreuve, bool relatif = false)
         {
             if(string.IsNullOrWhiteSpace(idEpreuve) || string.IsNullOrWhiteSpace(nomEpreuve))

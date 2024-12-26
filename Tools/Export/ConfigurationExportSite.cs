@@ -10,8 +10,8 @@ namespace Tools.Export
         {
             PublierProchainsCombats = pubPC;
             PublierAffectationTapis = pubAT;
-            PublierParticpants = pubP;
-            ParticipantsParClub = partClub;
+            PublierParticipants = pubP;
+            ParticipantsParEntite = partClub;
             DelaiActualisationClientSec = delAC;
             NbProchainsCombats = nbPC;
             MsgProchainCombats = pMsg;
@@ -23,8 +23,8 @@ namespace Tools.Export
 
         public bool PublierProchainsCombats = false;
         public bool PublierAffectationTapis = true;
-        public bool PublierParticpants = false;
-        public bool ParticipantsParClub = true;
+        public bool PublierParticipants = false;
+        public bool ParticipantsParEntite = true;
         public long DelaiActualisationClientSec = 30;
         public int NbProchainsCombats = 6;
         public string MsgProchainCombats = string.Empty;

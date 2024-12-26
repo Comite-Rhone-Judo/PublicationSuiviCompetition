@@ -18,9 +18,9 @@
 		</html>
 	</xsl:template>
 
-	<xsl:variable select="count(/competitions/competition[@PublierProchainsCombats = 'True']) > 0" name="affProchainCombats"/>
-	<xsl:variable select="count(/competitions/competition[@PublierAffectationTapis = 'True']) > 0" name="affAffectationTapis"/>
-	<xsl:variable select="count(/competitions/competition[@PublierParticipants = 'True']) > 0" name="affParticipants"/>
+	<xsl:variable select="count(/competitions/competition[@PublierProchainsCombats = 'true']) > 0" name="affProchainCombats"/>
+	<xsl:variable select="count(/competitions/competition[@PublierAffectationTapis = 'true']) > 0" name="affAffectationTapis"/>
+	<xsl:variable select="count(/competitions/competition[@PublierParticipants = 'true']) > 0" name="affParticipants"/>
 	<xsl:variable select="/competitions/competition[1]/@Logo" name="logo"/>
 
 	<xsl:template match="/*">
@@ -57,7 +57,7 @@
 				<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
 				<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
 				<xsl:with-param name="affParticipants" select="$affParticipants"/>
-				<xsl:with-param name="affActualiser" select="'False'"/>
+				<xsl:with-param name="affActualiser" select="false()"/>
 				<xsl:with-param name="selectedItem" select="'avancement'"/>
 			</xsl:call-template>
 
@@ -118,12 +118,12 @@
 									<xsl:attribute name="onclick">
 										<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel,'F',$apos,')')"/>
 									</xsl:attribute>
-									<img class="img" width="25" src="../img/up_circular-32.png">
+									<img class="img" width="25" src="../img/up_circular-32.png" style="display: none;">
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'F', 'Collapse')"/>
 										</xsl:attribute>
 									</img>
-									<img class="img" width="25" src="../img/down_circular-32.png" style="display: none;">
+									<img class="img" width="25" src="../img/down_circular-32.png">
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'F', 'Expand')"/>
 										</xsl:attribute>
@@ -149,12 +149,12 @@
 									<xsl:attribute name="onclick">
 										<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel,'M',$apos,')')"/>
 									</xsl:attribute>
-									<img class="img" width="25" src="../img/up_circular-32.png">
+									<img class="img" width="25" src="../img/up_circular-32.png" style="display: none;">
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'M', 'Collapse')"/>
 										</xsl:attribute>
 									</img>
-									<img class="img" width="25" src="../img/down_circular-32.png" style="display: none;">
+									<img class="img" width="25" src="../img/down_circular-32.png" >
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'M', 'Expand')"/>
 										</xsl:attribute>
@@ -180,12 +180,12 @@
 									<xsl:attribute name="onclick">
 										<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel,$apos,')')"/>
 									</xsl:attribute>
-									<img class="img" width="25" src="../img/up_circular-32.png">
+									<img class="img" width="25" src="../img/up_circular-32.png" style="display: none;">
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'Collapse')"/>
 										</xsl:attribute>
 									</img>
-									<img class="img" width="25" src="../img/down_circular-32.png" style="display: none;">
+									<img class="img" width="25" src="../img/down_circular-32.png" >
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'Expand')"/>
 										</xsl:attribute>

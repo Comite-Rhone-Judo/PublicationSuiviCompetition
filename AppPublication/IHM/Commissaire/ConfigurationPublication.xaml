@@ -103,14 +103,14 @@
                 </StackPanel>
                 <StackPanel Grid.Row="7" Grid.Column="0" Orientation="Horizontal" Margin="50 -5 0 0">
                     <CheckBox Style="{StaticResource CheckboxStyle}"
-                        IsChecked="{Binding Path=ParticipantsParClub}"
+                        IsChecked="{Binding Path=ParticipantsParEntite, Converter={StaticResource BoolNotConverter}}"
                         IsEnabled="{Binding Path=PublierParticipants, Mode=OneWay}"
                         Visibility="{Binding Path=CanPublierParticipants, Converter={StaticResource BoolToVisibilityConverter}}"
                         Margin="0 0 0 0">
                     </CheckBox>
-                    <Label HorizontalAlignment="Right" Content="Grouper par club" Style="{StaticResource LabelStyle}"
+                    <Label HorizontalAlignment="Right" Content="Grouper par nom" Style="{StaticResource LabelStyle}"
                            Visibility="{Binding Path=CanPublierParticipants, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, regroupe les participants par Club pour le recherche. Par groupe alphabétique sinon."
+                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, regroupe les participants par Nom pour la recherche. Par entité (club/Comité/ligue/Pays) sinon."
                            Visibility="{Binding Path=CanPublierParticipants, Converter={StaticResource BoolToVisibilityConverter}}"/>
                 </StackPanel>
 

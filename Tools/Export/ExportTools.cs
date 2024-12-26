@@ -145,6 +145,9 @@ namespace Tools.Export
                     result = "prochains_combats";
                     break;
                 case ExportEnum.Site_Participants:
+                    result = "groupe_participants";
+                    break;
+                case ExportEnum.Site_MenuParticipants:
                     result = "participants";
                     break;
             }
@@ -472,6 +475,9 @@ namespace Tools.Export
                     name = ConstantResource.Export_Site_res + "affectation_tapis";
                     break;
                 case ExportEnum.Site_Participants:
+                    name = ConstantResource.Export_Site_res + "participants";
+                    break;
+                case ExportEnum.Site_MenuParticipants:
                     name = ConstantResource.Export_Site_res + "participants";
                     break;
                 case ExportEnum.Site_MenuClassement:

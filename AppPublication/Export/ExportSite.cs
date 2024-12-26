@@ -3,6 +3,7 @@ using AppPublication.Tools.Enum;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
 using KernelImpl.Noyau.Organisation;
+using AppPublication.ExtensionNoyau;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -231,14 +232,14 @@ namespace AppPublication.Export
         /// Génére le menu
         /// </summary>
         /// <param name="DC"></param>
-        public static List<FileWithChecksum> GenereWebSiteMenu(JudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct)
+        public static List<FileWithChecksum> GenereWebSiteMenu(JudoData DC, ExtensionJudoData EDC, ConfigurationExportSite config, ExportSiteStructure siteStruct)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             ExportEnum type;
             string directory = siteStruct.RepertoireCommon;
 
-            XmlDocument docmenu = ExportXML.CreateDocumentMenu(DC, siteStruct);
+            XmlDocument docmenu = ExportXML.CreateDocumentMenu(DC, EDC, siteStruct);
             ExportXML.AddPublicationInfo(ref docmenu, config);
             LogTools.Logger.Debug("XML genere: '{0}'", docmenu.InnerXml);
 
@@ -269,6 +270,21 @@ namespace AppPublication.Export
                 output.Add(new FileWithChecksum(fileSavePc + ".html"));
             }
 
+            // Genere le menu participants
+            if (config.PublierParticipants)
+            {
+                // Ajoute les informations necessaire pour les participants
+                ExportXML.AddPublicationInfo(ref docmenu, config);
+                ExportXML.AddClubs(ref docmenu, DC);
+
+                type = ExportEnum.Site_MenuParticipants;
+                XsltArgumentList argsListPc = new XsltArgumentList();
+                string filenamePc = ExportTools.getFileName(type);
+                string fileSavePc = directory + "/" + filenamePc.Replace("/", "_");
+                ExportHTML.ToHTMLSite(docmenu, type, fileSavePc, argsListPc);
+                output.Add(new FileWithChecksum(fileSavePc + ".html"));
+            }
+
             // Debug.WriteLine(string.Format("GenereWebSiteMenu {0}", output.Count));
             return output;
 
@@ -285,7 +301,6 @@ namespace AppPublication.Export
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
-            ExportXML.CreateDocumentParticipants(DC, true, siteStruct);
             ExportEnum type = ExportEnum.Site_AffectationTapis;
             string directory = siteStruct.RepertoireCommon;
             string filename = ExportTools.getFileName(type);
@@ -307,21 +322,24 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static List<FileWithChecksum> GenereWebSiteParticipants(JudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct)
+        public static List<FileWithChecksum> GenereWebSiteParticipants(JudoData DC, ExtensionJudoData EDC, ConfigurationExportSite config, ExportSiteStructure siteStruct)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
+            // TODO Changer le repertoire et le fichier de destination
             ExportEnum type = ExportEnum.Site_Participants;
             string directory = siteStruct.RepertoireCommon;
             string filename = ExportTools.getFileName(type);
             string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
             XsltArgumentList argsList = new XsltArgumentList();
 
-            XmlDocument docAffectation = ExportXML.CreateDocumentAffectationTapis(DC);
-            ExportXML.AddPublicationInfo(ref docAffectation, config);
-            LogTools.Logger.Debug("XML genere: '{0}'", docAffectation.InnerXml);
+            XmlDocument docParticipants = ExportXML.CreateDocumentParticipants(DC, EDC, config.ParticipantsParEntite, siteStruct);
+            ExportXML.AddPublicationInfo(ref docParticipants, config);
+            ExportXML.AddClubs(ref docParticipants, DC);
 
-            ExportHTML.ToHTMLSite(docAffectation, type, fileSave, argsList);
+            LogTools.Logger.Debug("XML genere: '{0}'", docParticipants.InnerXml);
+
+            ExportHTML.ToHTMLSite(docParticipants, type, fileSave, argsList);
 
             output.Add(new FileWithChecksum(fileSave + ".html"));
             return output;

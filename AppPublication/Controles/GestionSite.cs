@@ -41,7 +41,7 @@ namespace AppPublication.Controles
         private const string kSettingRepertoireRacineSiteFTPDistant = "RepertoireRacineSiteFTPDistant";
         private const string kSettingPublierProchainsCombats = "PublierProchainsCombats";
         private const string kSettingPublierParticipants = "PublierParticipants";
-        private const string kSettingParticipantsParClub = "ParticipantsParClub";
+        private const string kSettingParticipantsParEntite = "ParticipantsParEntite";
         private const string kSettingNbProchainsCombats = "NbProchainsCombats";
         private const string kSettingPublierAffectationTapis = "PublierAffectationTapis";
         private const string kSettingDelaiGenerationSec = "DelaiGenerationSec";
@@ -872,7 +872,7 @@ namespace AppPublication.Controles
             private set
             {
                 _canPublierParticipants = value;
-                NotifyPropertyChanged("CanPublierParticipants");
+                NotifyPropertyChanged();
             }
         }
 
@@ -938,28 +938,28 @@ namespace AppPublication.Controles
                 {
                     _publierParticipants = value;
                     AppSettings.SaveSetting(kSettingPublierParticipants, _publierParticipants.ToString());
-                    NotifyPropertyChanged("PublierParticipants");
+                    NotifyPropertyChanged();
                 }
             }
         }
 
-        private bool _participantsParClub = false;
+        private bool _participantsParEntite = false;
         /// <summary>
         /// Indique si on doit grouper les participants par club
         /// </summary>
-        public bool ParticipantsParClub
+        public bool ParticipantsParEntite
         {
             get
             {
-                return _participantsParClub;
+                return _participantsParEntite;
             }
             set
             {
-                if (_participantsParClub != value)
+                if (_participantsParEntite != value)
                 {
-                    _participantsParClub = value;
-                    AppSettings.SaveSetting(kSettingParticipantsParClub, _participantsParClub.ToString());
-                    NotifyPropertyChanged("ParticipantsParClub");
+                    _participantsParEntite = value;
+                    AppSettings.SaveSetting(kSettingParticipantsParEntite, _participantsParEntite.ToString());
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -1111,7 +1111,7 @@ namespace AppPublication.Controles
                 RepertoireRacineSiteFTPDistant = AppSettings.ReadSetting(kSettingRepertoireRacineSiteFTPDistant, string.Empty);
                 PublierProchainsCombats = AppSettings.ReadSetting(kSettingPublierProchainsCombats, false);
                 PublierParticipants = AppSettings.ReadSetting(kSettingPublierParticipants, false);
-                ParticipantsParClub = AppSettings.ReadSetting(kSettingParticipantsParClub, false);
+                ParticipantsParEntite = AppSettings.ReadSetting(kSettingParticipantsParEntite, false);
                 NbProchainsCombats = AppSettings.ReadSetting(kSettingNbProchainsCombats, 6);
                 PublierAffectationTapis = AppSettings.ReadSetting(kSettingPublierAffectationTapis, true);
                 DelaiGenerationSec = AppSettings.ReadSetting(kSettingDelaiGenerationSec, 30);
@@ -1445,11 +1445,12 @@ namespace AppPublication.Controles
         private List<FileWithChecksum> Exporter(GenereSiteStruct genere)
         {
             List<FileWithChecksum> urls = new List<FileWithChecksum>();
-            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierParticipants && CanPublierParticipants, ParticipantsParClub, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes);
+            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierParticipants && CanPublierParticipants, ParticipantsParEntite, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes);
 
             try
             {
                 JudoData DC = DialogControleur.Instance.ServerData;
+                ExtensionNoyau.ExtensionJudoData EDC = DialogControleur.Instance.ExtendedServerData;
 
                 switch (genere.type)
                 {
@@ -1463,7 +1464,7 @@ namespace AppPublication.Controles
                         urls = ExportSite.GenereWebSiteIndex(cfg, _structure);
                         break;
                     case SiteEnum.Menu:
-                        urls = ExportSite.GenereWebSiteMenu(DC, cfg, _structure);
+                        urls = ExportSite.GenereWebSiteMenu(DC, EDC, cfg, _structure);
                         break;
                     case SiteEnum.Phase:
                         urls = ExportSite.GenereWebSitePhase(DC, genere.phase, cfg, _structure);
@@ -1472,7 +1473,7 @@ namespace AppPublication.Controles
                         urls = ExportSite.GenereWebSiteAffectation(DC, cfg, _structure);
                         break;
                     case SiteEnum.Participants:
-                        urls = ExportSite.GenereWebSiteParticipants(DC, cfg, _structure);
+                        urls = ExportSite.GenereWebSiteParticipants(DC, EDC, cfg, _structure);
                         break;
                 }
             }
@@ -1497,6 +1498,7 @@ namespace AppPublication.Controles
 
             if (IsGenerationActive)
             {
+                // TODO Voir si ici on ne doit pas ajouter une information sur le partie participants
                 GenereSiteStruct export = new GenereSiteStruct
                 {
                     type = type,
@@ -1523,6 +1525,10 @@ namespace AppPublication.Controles
             if (IsGenerationActive)
             {
                 JudoData DC = DialogControleur.Instance.ServerData;
+                ExtensionNoyau.ExtensionJudoData EDC = DialogControleur.Instance.ExtendedServerData;
+                // Initialise les groupements
+                EDC.Deroulement.GetGroupesParticipant(DC);
+
                 if (DC.Organisation.Competitions.Count > 0)
                 {
                     List<Task<List<FileWithChecksum>>> listTaskGeneration = new List<Task<List<FileWithChecksum>>>();
@@ -1540,10 +1546,13 @@ namespace AppPublication.Controles
                         listTaskGeneration.Add(AddWork(SiteEnum.AllTapis, null, null));
                     }
 
+                    /*
                     if(PublierParticipants && CanPublierParticipants)
                     {
+                        // TODO Ajoute rla parti pour generer les fichiers de chaque groupement
                         listTaskGeneration.Add(AddWork(SiteEnum.Participants, null, null));
                     }
+                    */
 
                     foreach (Phase phase in DC.Deroulement.Phases)
                     {

@@ -34,12 +34,12 @@
 		<!-- PANNEAU DE NAVIGATION -->
 		<div class="w3-sidebar w3-bar-block w3-border-right w3-animate-left tas-navigation-panel" id="navigationPanel">
 			<button onclick="closeElement('navigationPanel')" class="w3-bar-item w3-large">Fermer &times;</button>
-			<xsl:if test="$affActualiser or $affActualiser = 'True'">
+			<xsl:if test="$affActualiser">
 				<button class="w3-bar-item w3-button navButton">
 					<input class="w3-check" type="checkbox" id="cbActualiser" onclick="toggleAutoRefresh(this);"/> Actualiser
 				</button>
 			</xsl:if>
-			<xsl:if test="$affProchainCombats   or $affProchainCombats = 'True'">
+			<xsl:if test="$affProchainCombats">
 				<a href="../common/se_prepare.html">
 					<xsl:attribute name="class">
 						<xsl:choose>
@@ -59,7 +59,7 @@
 					Prochains combats
 				</a>
 			</xsl:if>
-			<xsl:if test="$affAffectationTapis  or $affAffectationTapis = 'True'">
+			<xsl:if test="$affAffectationTapis">
 				<a href="../common/affectation_tapis.html">
 					<xsl:attribute name="class">
 						<xsl:choose>
@@ -88,18 +88,18 @@
 				</xsl:attribute>
 				Classements
 			</a>
+			<xsl:if test="$affParticipants">
+				<a href="../common/participants.html">
+					<xsl:attribute name="class">
+						<xsl:choose>
+							<xsl:when test="$selectedItem = 'participants'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
+							<xsl:otherwise>w3-bar-item w3-button navButton</xsl:otherwise>
+						</xsl:choose>
+					</xsl:attribute>
+					Participants
+				</a>
+			</xsl:if>
 		</div>
-		<xsl:if test="$affParticipants  or $affParticipants = 'True'">
-			<a href="../common/participants.html">
-				<xsl:attribute name="class">
-					<xsl:choose>
-						<xsl:when test="$selectedItem = 'participants'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
-						<xsl:otherwise>w3-bar-item w3-button navButton</xsl:otherwise>
-					</xsl:choose>
-				</xsl:attribute>
-				Participants
-			</a>
-		</xsl:if>
 
 		<!-- Div vide pour aligner le contenu avec le bandeau de titre de taille fixe -->
 		<div class="w3-container tas-filler-div">&nbsp;</div>
