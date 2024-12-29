@@ -1252,6 +1252,8 @@ namespace KernelImpl.Noyau.Participants
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_Ligue, this.ligue);
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_LigueNomCourt, this.ligueNomCourt);
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_LigueNom, this.ligueNom);
+            xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_Pays, this.pays);
+
 
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_IdEpreuve, this.idepreuve.ToString());
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_LibEpreuve, this.libepreuve);

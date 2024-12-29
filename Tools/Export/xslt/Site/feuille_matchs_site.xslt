@@ -204,7 +204,6 @@
 	<!-- TEMPLATE UN COMBAT -->
 	<xsl:template name="UnCombat">
 		<xsl:param name="combat"/>
-		<xsl:param name="img"/>
 
 		<xsl:variable name="epreuve" select="$combat/@epreuve"/>
 		<xsl:variable name="phase" select="$combat/@phase"/>

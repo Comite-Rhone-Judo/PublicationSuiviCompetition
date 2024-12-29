@@ -30,5 +30,13 @@ namespace AppPublication.ExtensionNoyau
             set { _deroulement = value; }
         }
         #endregion
+
+        #region METHODES
+        public void SyncAll()
+        {
+            Deroulement.SyncAll(_serverData);
+        }
+
+        #endregion
     }
 }

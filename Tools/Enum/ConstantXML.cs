@@ -54,6 +54,7 @@
         public const string publierAffectationTapis = "PublierAffectationTapis";
         public const string publierParticipants = "PublierParticipants";
         public const string ParticipantsParEntite = "ParticipantsParEntite";
+        public const string ParticipantsAbsents = "ParticipantsAbsents";
         public const string delaiActualisationClientSec = "DelaiActualisationClientSec";
         public const string nbProchainsCombats = "NbProchainsCombats";
         public const string msgProchainsCombats = "MsgProchainsCombats";
@@ -478,6 +479,8 @@
         public const string Vue_Judoka_Ligue = "ligue";
         public const string Vue_Judoka_LigueNomCourt = "liguenomcourt";
         public const string Vue_Judoka_LigueNom = "liguenom";
+        
+        public const string Vue_Judoka_Pays = "pays";
 
         public const string Vue_Judoka_IdEpreuve = "idepreuve";
         public const string Vue_Judoka_LibEpreuve = "libepreuve";

@@ -475,7 +475,7 @@ namespace Tools.Export
                     name = ConstantResource.Export_Site_res + "affectation_tapis";
                     break;
                 case ExportEnum.Site_Participants:
-                    name = ConstantResource.Export_Site_res + "participants";
+                    name = ConstantResource.Export_Site_res + "groupe_participants";
                     break;
                 case ExportEnum.Site_MenuParticipants:
                     name = ConstantResource.Export_Site_res + "participants";

@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AppPublication.IHM.Commissaire"
         mc:Ignorable="d"
-        Title="Configuration de la Publication" Height="450" Width="830" Background="Black">
+        Title="Configuration de la Publication" Height="480" Width="820" Background="Black">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -34,13 +34,14 @@
         <StackPanel Grid.Row="0" Grid.Column="0" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
             <TextBlock Text="Publication" Style="{StaticResource Header1TextStyle}"/>
         </StackPanel>
-        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" BorderBrush="White" Margin="10 0 10 10" Width="400" Height="290">
+        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" BorderBrush="White" Margin="10 0 10 10" Width="400" Height="320">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
@@ -113,6 +114,18 @@
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, regroupe les participants par Nom pour la recherche. Par entité (club/Comité/ligue/Pays) sinon."
                            Visibility="{Binding Path=CanPublierParticipants, Converter={StaticResource BoolToVisibilityConverter}}"/>
                 </StackPanel>
+                <StackPanel Grid.Row="8" Grid.Column="0" Orientation="Horizontal" Margin="50 -15 0 0">
+                    <CheckBox Style="{StaticResource CheckboxStyle}"
+                        IsChecked="{Binding Path=ParticipantsAbsents, Converter={StaticResource BoolNotConverter}}"
+                        IsEnabled="{Binding Path=PublierParticipants, Mode=OneWay}"
+                        Visibility="{Binding Path=CanPublierParticipants, Converter={StaticResource BoolToVisibilityConverter}}"
+                        Margin="0 0 0 0">
+                    </CheckBox>
+                    <Label HorizontalAlignment="Right" Content="Afficher les absents" Style="{StaticResource LabelStyle}"
+                           Visibility="{Binding Path=CanPublierParticipants, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affichera les judokas absents."
+                           Visibility="{Binding Path=CanPublierParticipants, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                </StackPanel>
 
 
                 <telerik:RadNumericUpDown  Grid.Row="5" Grid.Column="1" Value="{Binding TailleMaxPouleColonnes}" Width="80" Height="20" Minimum="2" Maximum="999" SmallChange="1" HideTrailingZeros="True" Margin="5 0 5 0">
@@ -131,13 +144,14 @@
         <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
             <TextBlock Text="Génération" Style="{StaticResource Header1TextStyle}"/>
         </StackPanel>
-        <Border BorderThickness="1" Grid.Row="1" Grid.Column="1" BorderBrush="White" Margin="10 0 10 10" Width="350" Height="290">
+        <Border BorderThickness="1" Grid.Row="1" Grid.Column="1" BorderBrush="White" Margin="10 0 10 10" Width="350" Height="320">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
@@ -152,31 +166,31 @@
                 <telerik:RadNumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding DelaiGenerationSec}"
                           Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="0 0 50 0"/>
 
-                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
+                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="0 10 0 0">
                     <Label  HorizontalAlignment="Right" Content="Actualisation client:" Style="{StaticResource LabelStyle}" />
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en sec. d'actualisation automatique du site coté client si l'utilisateur coche la case 'Actualiser'."/>
                 </StackPanel>
                 <telerik:RadNumericUpDown  Grid.Row="1" Grid.Column="1" Value="{Binding DelaiActualisationClientSec}"
                             Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="0 0 50 0"/>
 
-                <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
+                <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Margin="0 10 0 0">
                     <Label  HorizontalAlignment="Right" Content="Sélection du logo:" Style="{StaticResource LabelStyle}" />
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Logo a afficher dans le bandeau d'entête du site"/>
                 </StackPanel>
                 <telerik:RadComboBox Grid.Column="0" Grid.Row="3" ItemsSource="{Binding FichiersLogo}" Height="20" DisplayMemberPath="Name" Name="LogoList" Margin="10 0 0 0" IsSynchronizedWithCurrentItem="True" SelectedItem="{Binding SelectedLogo}"/>
-                <Border Grid.Column="1" Grid.Row="2" Grid.RowSpan="2" Background="LightGray" Width="120">
+                <Border Grid.Column="1" Grid.Row="2" Grid.RowSpan="2" Background="LightGray" Width="120" Margin="0 10 0 0">
                     <Image  Source="{Binding ElementName=LogoList, Path=SelectedItem.FullName}" Width="120" />
                 </Border>
-                <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal">
+                <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal" Margin="0 10 0 0">
                     <Label HorizontalAlignment="Right" Content="Répertoire d'export:" Style="{StaticResource LabelStyle}" />
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Répertoire racine dans lequel les données du site sont générées et publiés"/>
                 </StackPanel>
-                <telerik:RadButton Grid.Row="4" Grid.Column="1" Width="95" Height="30" telerik:StyleManager.Theme="Expression_Dark" Command="{Binding CmdGetRepertoireRacine}">
+                <telerik:RadButton Grid.Row="6" Grid.Column="0" Width="95" Height="30" telerik:StyleManager.Theme="Expression_Dark" Command="{Binding CmdGetRepertoireRacine}" Margin="-70 0 0 0">
                     <WrapPanel Orientation="Horizontal">
                         <Label Content="Sélectionner ..." Foreground="White"/>
                     </WrapPanel>
                 </telerik:RadButton>
-                <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Height="20" Margin="5 5 5 5" Text = "{Binding Path=RepertoireRacine}" IsEnabled="False"/>
+                <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Height="20" Margin="5 -10 5 5" Text = "{Binding Path=RepertoireRacine}" IsEnabled="False"/>
             </Grid>
         </Border>
 

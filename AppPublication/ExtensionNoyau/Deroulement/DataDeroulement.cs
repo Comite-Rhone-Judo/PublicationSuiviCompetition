@@ -29,6 +29,11 @@ namespace AppPublication.ExtensionNoyau.Deroulement
             }
         }
 
+        public void SyncAll(JudoData DC)
+        {
+            GetGroupesParticipant(DC);
+        }
+
         /// <summary>
         /// Genere la liste des groupes pour un niveau donne
         /// </summary>

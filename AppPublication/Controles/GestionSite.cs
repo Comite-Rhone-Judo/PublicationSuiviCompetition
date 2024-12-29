@@ -3,6 +3,7 @@ using AppPublication.Tools;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
 using KernelImpl.Noyau.Structures;
+using AppPublication.ExtensionNoyau.Deroulement;
 using Microsoft.Win32;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using System;
@@ -22,6 +23,7 @@ using System.Xml.Linq;
 using Tools.Enum;
 using Tools.Export;
 using Tools.Outils;
+using KernelImpl.Noyau.Organisation;
 
 namespace AppPublication.Controles
 {
@@ -41,6 +43,7 @@ namespace AppPublication.Controles
         private const string kSettingRepertoireRacineSiteFTPDistant = "RepertoireRacineSiteFTPDistant";
         private const string kSettingPublierProchainsCombats = "PublierProchainsCombats";
         private const string kSettingPublierParticipants = "PublierParticipants";
+        private const string kSettingParticipantsAbsents = "participantsAbsents";
         private const string kSettingParticipantsParEntite = "ParticipantsParEntite";
         private const string kSettingNbProchainsCombats = "NbProchainsCombats";
         private const string kSettingPublierAffectationTapis = "PublierAffectationTapis";
@@ -78,6 +81,7 @@ namespace AppPublication.Controles
             public SiteEnum type { get; set; }
             public Phase phase { get; set; }
             public int? tapis { get; set; }
+            public GroupeParticipants groupeParticipant { get; set; }
         }
         #endregion
 
@@ -922,6 +926,8 @@ namespace AppPublication.Controles
             }
         }
 
+
+
         private bool _publierParticipants = false;
         /// <summary>
         /// Indique si on doit publier la liste des participants
@@ -938,6 +944,28 @@ namespace AppPublication.Controles
                 {
                     _publierParticipants = value;
                     AppSettings.SaveSetting(kSettingPublierParticipants, _publierParticipants.ToString());
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private bool _participantsAbsents = false;
+
+        /// <summary>
+        /// Indique si on doit publier les judokas absents
+        /// </summary>
+        public bool ParticipantsAbsents
+        {
+            get
+            {
+                return _participantsAbsents;
+            }
+            set
+            {
+                if (_participantsAbsents != value)
+                {
+                    _participantsAbsents = value;
+                    AppSettings.SaveSetting(kSettingParticipantsAbsents, _participantsAbsents.ToString());
                     NotifyPropertyChanged();
                 }
             }
@@ -1111,6 +1139,7 @@ namespace AppPublication.Controles
                 RepertoireRacineSiteFTPDistant = AppSettings.ReadSetting(kSettingRepertoireRacineSiteFTPDistant, string.Empty);
                 PublierProchainsCombats = AppSettings.ReadSetting(kSettingPublierProchainsCombats, false);
                 PublierParticipants = AppSettings.ReadSetting(kSettingPublierParticipants, false);
+                ParticipantsAbsents = AppSettings.ReadSetting(kSettingParticipantsAbsents, false);
                 ParticipantsParEntite = AppSettings.ReadSetting(kSettingParticipantsParEntite, false);
                 NbProchainsCombats = AppSettings.ReadSetting(kSettingNbProchainsCombats, 6);
                 PublierAffectationTapis = AppSettings.ReadSetting(kSettingPublierAffectationTapis, true);
@@ -1442,10 +1471,9 @@ namespace AppPublication.Controles
         /// Declenche l'exportation
         /// </summary>
         /// <param name="genere">Type d'exportation</param>
-        private List<FileWithChecksum> Exporter(GenereSiteStruct genere)
+        private List<FileWithChecksum> Exporter(GenereSiteStruct genere, ConfigurationExportSite cfg)
         {
             List<FileWithChecksum> urls = new List<FileWithChecksum>();
-            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierParticipants && CanPublierParticipants, ParticipantsParEntite, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes);
 
             try
             {
@@ -1473,7 +1501,7 @@ namespace AppPublication.Controles
                         urls = ExportSite.GenereWebSiteAffectation(DC, cfg, _structure);
                         break;
                     case SiteEnum.Participants:
-                        urls = ExportSite.GenereWebSiteParticipants(DC, EDC, cfg, _structure);
+                        urls = ExportSite.GenereWebSiteParticipants(DC, EDC, genere.groupeParticipant, cfg, _structure);
                         break;
                 }
             }
@@ -1491,8 +1519,9 @@ namespace AppPublication.Controles
         /// <param name="type"></param>
         /// <param name="phase"></param>
         /// <param name="tapis"></param>
+        /// <param name="groupeP">Identifiant du groupe de participant</param>
         /// <returns></returns>
-        public Task<List<FileWithChecksum>> AddWork(SiteEnum type, Phase phase, int? tapis)
+        public Task<List<FileWithChecksum>> AddWork(SiteEnum type, Phase phase, int? tapis, ConfigurationExportSite cfg, GroupeParticipants groupeP = null)
         {
             Task<List<FileWithChecksum>> output = null;
 
@@ -1503,12 +1532,13 @@ namespace AppPublication.Controles
                 {
                     type = type,
                     phase = phase,
-                    tapis = tapis
+                    tapis = tapis,
+                    groupeParticipant = groupeP
                 };
 
                 output = OutilsTools.Factory.StartNew(() =>
                 {
-                    return Exporter(export);
+                    return Exporter(export, cfg);
                 });
             }
 
@@ -1522,42 +1552,54 @@ namespace AppPublication.Controles
         public List<FileWithChecksum> GenereAll()
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
+            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierParticipants && CanPublierParticipants, ParticipantsAbsents, ParticipantsParEntite, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes);
+
             if (IsGenerationActive)
             {
                 JudoData DC = DialogControleur.Instance.ServerData;
                 ExtensionNoyau.ExtensionJudoData EDC = DialogControleur.Instance.ExtendedServerData;
-                // Initialise les groupements
-                EDC.Deroulement.GetGroupesParticipant(DC);
+                // Initialise les extended data
+                EDC.SyncAll();
 
                 if (DC.Organisation.Competitions.Count > 0)
                 {
                     List<Task<List<FileWithChecksum>>> listTaskGeneration = new List<Task<List<FileWithChecksum>>>();
 
-                    listTaskGeneration.Add(AddWork(SiteEnum.Index, null, null));
-                    listTaskGeneration.Add(AddWork(SiteEnum.Menu, null, null));
+                    listTaskGeneration.Add(AddWork(SiteEnum.Index, null, null, cfg, null));
+                    listTaskGeneration.Add(AddWork(SiteEnum.Menu, null, null, cfg, null));
                     if (PublierAffectationTapis && CanPublierAffectation)
                     {
-                        listTaskGeneration.Add(AddWork(SiteEnum.AffectationTapis, null, null));
+                        listTaskGeneration.Add(AddWork(SiteEnum.AffectationTapis, null, null, cfg, null));
                     }
 
                     // On ne genere pas les informations de prochains combat si ce n'est pas necessaire
                     if (PublierProchainsCombats)
                     {
-                        listTaskGeneration.Add(AddWork(SiteEnum.AllTapis, null, null));
+                        listTaskGeneration.Add(AddWork(SiteEnum.AllTapis, null, null, cfg, null));
                     }
 
-                    /*
+                    
                     if(PublierParticipants && CanPublierParticipants)
                     {
-                        // TODO Ajoute rla parti pour generer les fichiers de chaque groupement
-                        listTaskGeneration.Add(AddWork(SiteEnum.Participants, null, null));
-                    }
-                    */
+                        // Initialise les donnees de generation
+                        ExportSite.InitSharedData(DC, EDC, cfg);
+
+                        foreach(Competition comp in DC.Organisation.Competitions)
+                        {
+                            // Recupere les groupes en fonction du type de groupement
+                            int typeGrp = ParticipantsParEntite ? comp.niveau : (int) EchelonEnum.Aucun;
+                            List<GroupeParticipants> groupesP = EDC.Deroulement.GroupesParticipants.Where(g => g.Competition == comp.id && g.Type == typeGrp).ToList();
+                            foreach(GroupeParticipants g in groupesP)
+                            {
+                                listTaskGeneration.Add(AddWork(SiteEnum.Participants, null, null, cfg, g));
+                            }
+                        }
+                    }                    
 
                     foreach (Phase phase in DC.Deroulement.Phases)
                     {
-                        listTaskGeneration.Add(AddWork(SiteEnum.Phase, phase, null));
-                        listTaskGeneration.Add(AddWork(SiteEnum.Classement, phase, null));
+                        listTaskGeneration.Add(AddWork(SiteEnum.Phase, phase, null, cfg, null));
+                        listTaskGeneration.Add(AddWork(SiteEnum.Classement, phase, null, cfg, null));
                     }
 
                     try
