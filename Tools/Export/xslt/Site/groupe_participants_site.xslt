@@ -11,6 +11,12 @@
 	<xsl:param name="js"></xsl:param>
 	<xsl:param name="idgroupe"></xsl:param>
 	<xsl:param name="idcompetition"></xsl:param>
+	<xsl:param name="imgPath"/>
+	<xsl:param name="jsPath"/>
+	<xsl:param name="cssPath"/>
+	<xsl:param name="commonPath"/>
+	<xsl:param name="competitionPath"/>
+
 
 	<xsl:template match="/">
 		<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
@@ -52,12 +58,28 @@
 			<meta http-equiv="Expires" content="0"/>
 
 			<!-- Feuille de style W3.CSS -->
-			<link type="text/css" rel="stylesheet" href="../style/w3.css"/>
-			<link type="text/css" rel="stylesheet" href="../style/style-common.css"/>
-			<link type="text/css" rel="stylesheet" href="../style/style-tableau.css"/>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'w3.css')"/>
+				</xsl:attribute>
+			</link>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'style-common.css')"/>
+				</xsl:attribute>
+			</link>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'style-tableau.css')"/>
+				</xsl:attribute>
+			</link>
 
 			<!-- Script de navigation par defaut -->
-			<script src="../js/site-display.js"></script>
+			<script>
+				<xsl:attribute name="src">
+					<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
+				</xsl:attribute>
+			</script>
 
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
@@ -78,6 +100,8 @@
 				<xsl:with-param name="affParticipants" select="true()"/>
 				<xsl:with-param name="affActualiser" select="true()"/>
 				<xsl:with-param name="selectedItem" select="'participants'"/>
+				<xsl:with-param name="pathToImg" select="$imgPath"/>
+				<xsl:with-param name="pathToCommon" select="$commonPath"/>
 			</xsl:call-template>
 
 			<!-- CONTENU -->
@@ -226,12 +250,18 @@
 					<xsl:attribute name="onclick">
 						<xsl:value-of select="concat('toggleElement(',$apos,'judoka',@id,$apos,')')"/>
 					</xsl:attribute>
-					<img class="img" width="25" src="../img/up_circular-32.png"  style="display: none;">
+					<img class="img" width="25" style="display: none;">
+						<xsl:attribute name="src">
+							<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
+						</xsl:attribute>
 						<xsl:attribute name="id">
 							<xsl:value-of select="concat('judoka',$idJudoka,'Collapse')"/>
 						</xsl:attribute>
 					</img>
-					<img class="img" width="25" src="../img/down_circular-32.png">
+					<img class="img" width="25">
+						<xsl:attribute name="src">
+							<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
+						</xsl:attribute>
 						<xsl:attribute name="id">
 							<xsl:value-of select="concat('judoka',$idJudoka,'Expand')"/>
 						</xsl:attribute>
@@ -267,7 +297,6 @@
 															<xsl:for-each select="$selectedCompetition/combats/combat[(score[1]/@judoka = $idJudoka or score[2]/@judoka = $idJudoka) and @epreuve = $idEpreuve]">
 																<xsl:sort select="@time_programmation" data-type="number" order="ascending"/>
 																<xsl:call-template name="UnCombat">
-																	<xsl:with-param name="idJudoka" select="$idJudoka"/>
 																	<xsl:with-param name="niveau" select="$niveau"/>
 																</xsl:call-template>
 															</xsl:for-each>
@@ -310,7 +339,6 @@
 	<!-- TEMPLATE UN COMBAT -->
 	<xsl:template name="UnCombat" match="combat">
 		<xsl:param name="niveau"></xsl:param>
-		<xsl:param name="idJudoka"></xsl:param>
 
 		<xsl:variable name="epreuve" select="./@epreuve"/>
 		<xsl:variable name="phase" select="./@phase"/>
@@ -357,7 +385,11 @@
 					<xsl:choose>
 						<xsl:when test="$judoka1 = 'null'">
 							<!-- Combat en attente-->
-							<img class="img" src="../img/sablier.png" width="25" />
+							<img class="img" width="25">
+								<xsl:attribute name="src">
+									<xsl:value-of select="concat($imgPath, 'sablier.png')"/>
+								</xsl:attribute>							
+							</img>
 							<xsl:text disable-output-escaping="yes">&#032;En Attente</xsl:text>
 						</xsl:when>
 						<xsl:otherwise>
@@ -367,31 +399,33 @@
 								<xsl:value-of select="ancestor::competition/judokas/judoka[@id = $judoka1]/@prenom"/>
 							</header>
 							<footer class="w3-tiny">
-								<!-- On n'affiche par le club/Comite/... du judoka selectionne -->
-									<xsl:if test="$judoka1 != $idJudoka">
-									<xsl:choose>
-										<!-- Niveau Club 2 -->
-										<xsl:when test="$niveau = 2">
-											<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
-										</xsl:when>
-										<!-- Niveau Departement 3 -->										
-										<xsl:when test="$niveau = 3">
-											<xsl:value-of select="//comite[@ID = $comite1]/nomCourt"/>
-										</xsl:when>
-										<!-- Niveau Ligue 4 -->
-										<xsl:when test="$niveau = 4">
-											<xsl:value-of select="//ligue[@ID = $ligue1]/nomCourt"/>
-										</xsl:when>
-										<!-- Niveau National 5 -->
-										<!-- Niveau International 6 -->
-										<xsl:when test="$niveau = 5 or $niveau = 6">
-											<xsl:value-of select="//pays[@ID = $pays1]/@abr3"/>
-										</xsl:when>										
-										<!-- Par defaut, on prend le club -->
-										<xsl:otherwise>
-										</xsl:otherwise>
-									</xsl:choose>
-								</xsl:if>
+								<xsl:choose>
+									<!-- Niveau Club 2 -->
+									<xsl:when test="$niveau = 2">
+										<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
+									</xsl:when>
+									<!-- Niveau Departement 3 -->										
+									<xsl:when test="$niveau = 3">
+										<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
+										<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+										<xsl:value-of select="//comite[@ID = $comite1]/nomCourt"/>
+									</xsl:when>
+									<!-- Niveau Ligue 4 -->
+									<xsl:when test="$niveau = 4">
+										<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
+										<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+										<xsl:value-of select="//ligue[@ID = $ligue1]/nomCourt"/>
+									</xsl:when>
+									<!-- Niveau National 5 -->
+									<!-- Niveau International 6 -->
+									<xsl:when test="$niveau = 5 or $niveau = 6">
+										<xsl:value-of select="//pays[@ID = $pays1]/@abr3"/>
+									</xsl:when>										
+									<!-- Par defaut, on prend le club -->
+									<xsl:otherwise>
+										<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
+									</xsl:otherwise>
+								</xsl:choose>
 							</footer>
 						</xsl:otherwise>
 					</xsl:choose>
@@ -432,8 +466,12 @@
 					<xsl:choose>
 						<xsl:when test="$judoka2 = 'null'">
 							<!-- Combat en attente-->
-							<img class="img" src="../img/sablier.png" width="25" />
-							<xsl:text disable-output-escaping="yes">&#032;En Attente</xsl:text>
+							<img class="img" width="25">
+								<xsl:attribute name="src">
+									<xsl:value-of select="concat($imgPath, 'sablier.png')"/>
+								</xsl:attribute>
+							</img>
+								<xsl:text disable-output-escaping="yes">&#032;En Attente</xsl:text>
 						</xsl:when>
 						<xsl:otherwise>
 							<header>
@@ -442,33 +480,36 @@
 								<xsl:value-of select="ancestor::competition/judokas/judoka[@id = $judoka2]/@prenom"/>
 							</header>
 							<footer class="w3-tiny">
-								<!-- On n'affiche par le club/Comite/... du judoka selectionne -->
-								<xsl:if test="not($judoka2 = $idJudoka)">
-									<xsl:choose>
-										<!-- Niveau Club 2 -->
-										<xsl:when test="$niveau = 2">
-											<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
-										</xsl:when>
-										<!-- Niveau Departement 3 -->										
-										<xsl:when test="$niveau = 3">
-											<xsl:value-of select="//comite[@ID = $comite2]/nomCourt"/>
-										</xsl:when>
-										<!-- Niveau Ligue 4 -->
-										<xsl:when test="$niveau = 4">
-											<xsl:value-of select="//ligue[@ID = $ligue2]/nomCourt"/>
-										</xsl:when>
-										<!-- Niveau National 5 -->
-										<!-- Niveau International 6 -->
-										<xsl:when test="$niveau = 5 or $niveau = 6">
-											<xsl:value-of select="//pays[@ID = $pays2]/@abr3"/>
-										</xsl:when>										
-										<!-- Par defaut, on prend le club -->
-										<xsl:otherwise>
-										</xsl:otherwise>
-									</xsl:choose>
-								</xsl:if>
+								<xsl:choose>
+									<!-- Niveau Club 2 -->
+									<xsl:when test="$niveau = 2">
+										<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
+									</xsl:when>
+									<!-- Niveau Departement 3 -->										
+									<xsl:when test="$niveau = 3">
+										<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
+										<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+										<xsl:value-of select="//comite[@ID = $comite2]/nomCourt"/>
+									</xsl:when>
+									<!-- Niveau Ligue 4 -->
+									<xsl:when test="$niveau = 4">
+										<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
+										<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+										<xsl:value-of select="//ligue[@ID = $ligue2]/nomCourt"/>
+									</xsl:when>
+									<!-- Niveau National 5 -->
+									<!-- Niveau International 6 -->
+									<xsl:when test="$niveau = 5 or $niveau = 6">
+										<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
+										<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+										<xsl:value-of select="//pays[@ID = $pays2]/@abr3"/>
+									</xsl:when>										
+									<!-- Par defaut, on prend le club -->
+									<xsl:otherwise>
+										<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
+									</xsl:otherwise>
+								</xsl:choose>
 							</footer>
-							
 						</xsl:otherwise>
 					</xsl:choose>
 				</div>

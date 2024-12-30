@@ -5,12 +5,18 @@
 ]>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:import href="Tools/Export/xslt/Site/entete.xslt"/>
-	
+
 	<xsl:output method="html" indent="yes" />
 	<xsl:param name="style"></xsl:param>
 	<xsl:param name="js"></xsl:param>
 	<xsl:param name="istapis"/>
-	
+	<xsl:param name="imgPath"/>
+	<xsl:param name="jsPath"/>
+	<xsl:param name="cssPath"/>
+	<xsl:param name="commonPath"/>
+	<xsl:param name="competitionPath"/>
+
+
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 
 	<xsl:variable name="couleur1" select="//competition/@couleur1"> </xsl:variable>
@@ -61,12 +67,28 @@
 			<meta http-equiv="Expires" content="0"/>
 
 			<!-- Feuille de style W3.CSS -->
-			<link type="text/css" rel="stylesheet" href="../style/w3.css"/>
-			<link type="text/css" rel="stylesheet" href="../style/style-common.css"/>
-			<link type="text/css" rel="stylesheet" href="../style/style-tableau.css"/>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'w3.css')"/>
+				</xsl:attribute>
+			</link>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'style-common.css')"/>
+				</xsl:attribute>
+			</link>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'style-tableau.css')"/>
+				</xsl:attribute>
+			</link>
 
 			<!-- Script de navigation par defaut -->
-			<script src="../js/site-display.js"></script>
+			<script>
+				<xsl:attribute name="src">
+					<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
+				</xsl:attribute>
+			</script>
 
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
@@ -87,6 +109,8 @@
 				<xsl:with-param name="affParticipants" select="$affParticipants"/>
 				<xsl:with-param name="affActualiser" select="true()"/>
 				<xsl:with-param name="selectedItem" select="$selectedItemName"/>
+				<xsl:with-param name="pathToImg" select="$imgPath"/>
+				<xsl:with-param name="pathToCommon" select="$commonPath"/>
 			</xsl:call-template>
 
 			<!-- CONTENU -->
@@ -131,7 +155,7 @@
 				<!-- On ne prend en compte que les tapis avec des combats -->
 				<xsl:if test="@tapis != 0 and ($istapis != 'epreuve' or count(./combats/combat) &gt; 0)">
 					<xsl:variable name="tapis" select="@tapis"/>
-					
+
 					<xsl:call-template name="UnTapis">
 						<xsl:with-param name="notapis" select="$tapis"/>
 					</xsl:call-template>
@@ -146,7 +170,7 @@
 
 	<!-- TEMPLATES -->
 
-	
+
 	<!-- TEMPLATE UN TAPIS -->
 	<xsl:template name="UnTapis">
 		<xsl:param name="notapis"/>
@@ -159,12 +183,18 @@
 				<xsl:attribute name="onclick">
 					<xsl:value-of select="concat('toggleElement(',$apos,'tapis',$notapis,$apos,')')"/>
 				</xsl:attribute>
-				<img class="img" width="25" src="../img/up_circular-32.png">
+				<img class="img" width="25">
+					<xsl:attribute name="src">
+						<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
+					</xsl:attribute>
 					<xsl:attribute name="id">
 						<xsl:value-of select="concat('tapis',$notapis,'Collapse')"/>
 					</xsl:attribute>
 				</img>
-				<img class="img" width="25" src="../img/down_circular-32.png" style="display: none;" >
+				<img class="img" width="25" style="display: none;" >
+					<xsl:attribute name="src">
+						<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
+					</xsl:attribute>
 					<xsl:attribute name="id">
 						<xsl:value-of select="concat('tapis',$notapis,'Expand')"/>
 					</xsl:attribute>
@@ -200,7 +230,7 @@
 
 		</div>
 	</xsl:template>
-	
+
 	<!-- TEMPLATE UN COMBAT -->
 	<xsl:template name="UnCombat">
 		<xsl:param name="combat"/>
@@ -222,192 +252,200 @@
 
 		<!-- Si un des ID judoka vaut zero, c'est une place vide. Si judoka est null, c'est pas encore de combattant, on n'affiche rien -->
 		<xsl:if test="count($combat/score[@judoka = 0]) = 0">
-		<tr>
-			<td style="width:40%">
-				<xsl:attribute name="class">
-					<xsl:choose>
-						<xsl:when test="$participant1 = 'null'">
-							<xsl:text disable-output-escaping="yes">w3-sand w3-small w3-card w3-center</xsl:text>
-						</xsl:when>
-						<xsl:otherwise>
-							<!-- Le participant n'est pas null on peut prendre en compte la couleur de ceinture -->
-							<xsl:choose>
-								<xsl:when test="$couleur1 = 'Bleu'">
-									<xsl:text disable-output-escaping="yes">w3-blue w3-small w3-card w3-right-align</xsl:text>
-								</xsl:when>
-								<xsl:when test="$couleur1 = 'Rouge'">
-									<xsl:text disable-output-escaping="yes">w3-red w3-small w3-card w3-right-align</xsl:text>
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:text disable-output-escaping="yes">w3-grey w3-small w3-card w3-right-align</xsl:text>
-								</xsl:otherwise>
-							</xsl:choose>
-						</xsl:otherwise>
-					</xsl:choose>
-				</xsl:attribute>
-				<!-- Affiche le nom du Judoka s'il n'est pas null, "En Attente" sinon -->
-				<div class="w3-container">
-					<xsl:choose>
-						<xsl:when test="$participant1 = 'null'">
-							<!-- Combat en attente-->
-							<img class="img" src="../img/sablier.png" width="25" />
-							<xsl:text disable-output-escaping="yes">&#032;En Attente</xsl:text>
-						</xsl:when>
-						<xsl:otherwise>
-							<header>
-								<xsl:value-of select="ancestor::tapis[1]/participants/participant[@judoka = $participant1]/descendant::*[1]/@nom"/>
-								<xsl:text disable-output-escaping="yes">&#032;</xsl:text>
-								<xsl:value-of select="ancestor::tapis[1]/participants/participant[@judoka = $participant1]/descendant::*[1]/@prenom"/>
-							</header>
-							<footer class="w3-tiny">
-								<xsl:variable name="ecartement1"
-									select="//phase[@id = $phase]/@ecartement"/>
+			<tr>
+				<td style="width:40%">
+					<xsl:attribute name="class">
+						<xsl:choose>
+							<xsl:when test="$participant1 = 'null'">
+								<xsl:text disable-output-escaping="yes">w3-sand w3-small w3-card w3-center</xsl:text>
+							</xsl:when>
+							<xsl:otherwise>
+								<!-- Le participant n'est pas null on peut prendre en compte la couleur de ceinture -->
 								<xsl:choose>
-									<xsl:when test="$ecartement1 = '3'">
-										<xsl:if test="$typeCompetition != '1'">
-											<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
-											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="$comite1"/>
-										</xsl:if>
-										<xsl:if test="$typeCompetition = '1'">
-											<xsl:value-of select="$comite1"/>
-										</xsl:if>
-
+									<xsl:when test="$couleur1 = 'Bleu'">
+										<xsl:text disable-output-escaping="yes">w3-blue w3-small w3-card w3-right-align</xsl:text>
 									</xsl:when>
-
-									<xsl:when test="$ecartement1 = '4'">
-										<xsl:if test="$typeCompetition != '1'">
-											<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
-											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="//ligue[@ID = $ligue1]/nomCourt"/>
-										</xsl:if>
-										<xsl:if test="$typeCompetition = '1'">
-											<xsl:value-of select="//ligue[@ID = $ligue1]/nomCourt"/>
-										</xsl:if>
+									<xsl:when test="$couleur1 = 'Rouge'">
+										<xsl:text disable-output-escaping="yes">w3-red w3-small w3-card w3-right-align</xsl:text>
 									</xsl:when>
-
 									<xsl:otherwise>
-										<xsl:if test="$typeCompetition != '1'">
-											<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
-											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="$comite1"/>
-										</xsl:if>
-										<xsl:if test="$typeCompetition = '1'">
-											<xsl:value-of select="$comite1"/>
-										</xsl:if>
+										<xsl:text disable-output-escaping="yes">w3-grey w3-small w3-card w3-right-align</xsl:text>
 									</xsl:otherwise>
 								</xsl:choose>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:attribute>
+					<!-- Affiche le nom du Judoka s'il n'est pas null, "En Attente" sinon -->
+					<div class="w3-container">
+						<xsl:choose>
+							<xsl:when test="$participant1 = 'null'">
+								<!-- Combat en attente-->
+								<img class="img" width="25">
+									<xsl:attribute name="src">
+										<xsl:value-of select="concat($imgPath, 'sablier.png')"/>
+									</xsl:attribute>
+								</img>
+								<xsl:text disable-output-escaping="yes">&#032;En Attente</xsl:text>
+							</xsl:when>
+							<xsl:otherwise>
+								<header>
+									<xsl:value-of select="ancestor::tapis[1]/participants/participant[@judoka = $participant1]/descendant::*[1]/@nom"/>
+									<xsl:text disable-output-escaping="yes">&#032;</xsl:text>
+									<xsl:value-of select="ancestor::tapis[1]/participants/participant[@judoka = $participant1]/descendant::*[1]/@prenom"/>
+								</header>
+								<footer class="w3-tiny">
+									<xsl:variable name="ecartement1"
+										select="//phase[@id = $phase]/@ecartement"/>
+									<xsl:choose>
+										<xsl:when test="$ecartement1 = '3'">
+											<xsl:if test="$typeCompetition != '1'">
+												<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
+												<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+												<xsl:value-of select="$comite1"/>
+											</xsl:if>
+											<xsl:if test="$typeCompetition = '1'">
+												<xsl:value-of select="$comite1"/>
+											</xsl:if>
+
+										</xsl:when>
+
+										<xsl:when test="$ecartement1 = '4'">
+											<xsl:if test="$typeCompetition != '1'">
+												<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
+												<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+												<xsl:value-of select="//ligue[@ID = $ligue1]/nomCourt"/>
+											</xsl:if>
+											<xsl:if test="$typeCompetition = '1'">
+												<xsl:value-of select="//ligue[@ID = $ligue1]/nomCourt"/>
+											</xsl:if>
+										</xsl:when>
+
+										<xsl:otherwise>
+											<xsl:if test="$typeCompetition != '1'">
+												<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
+												<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+												<xsl:value-of select="$comite1"/>
+											</xsl:if>
+											<xsl:if test="$typeCompetition = '1'">
+												<xsl:value-of select="$comite1"/>
+											</xsl:if>
+										</xsl:otherwise>
+									</xsl:choose>
+								</footer>
+							</xsl:otherwise>
+						</xsl:choose>
+					</div>
+				</td>
+				<td class=" w3-pale-yellow w3-small w3-card w3-cell-middle w3-center"  style="width:20%">
+					<!-- Affiche le nom de l'epreuve -->
+					<div class="w3-container">
+						<header>
+							<xsl:value-of select="//epreuve[@ID = $epreuve]/@nom"/>
+							<xsl:if test="$combat/feuille/@repechage = 'true'">
+								<xsl:choose>
+									<xsl:when test="$combat/feuille/@reference = '3.1' or $combat/feuille/@reference = '5.1' or $combat/feuille/@reference = '7.1'">
+										(Barrage)
+									</xsl:when>
+									<xsl:otherwise>
+										(Repêchage)
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:if>
+						</header>
+						<xsl:if test="$affDetailCompetition">
+							<footer class="w3-tiny">
+								<xsl:value-of select="//epreuve[@ID = $epreuve]/@nom_competition"/>
 							</footer>
-						</xsl:otherwise>
-					</xsl:choose>
-				</div>
-			</td>
-			<td class=" w3-pale-yellow w3-small w3-card w3-cell-middle w3-center"  style="width:20%">
-				<!-- Affiche le nom de l'epreuve -->
-				<div class="w3-container">
-					<header>
-						<xsl:value-of select="//epreuve[@ID = $epreuve]/@nom"/>
-						<xsl:if test="$combat/feuille/@repechage = 'true'">
-							<xsl:choose>
-								<xsl:when test="$combat/feuille/@reference = '3.1' or $combat/feuille/@reference = '5.1' or $combat/feuille/@reference = '7.1'">
-									(Barrage)
-								</xsl:when>
-								<xsl:otherwise>
-									(Repêchage)
-								</xsl:otherwise>
-							</xsl:choose>
 						</xsl:if>
-					</header>
-					<xsl:if test="$affDetailCompetition">
-						<footer class="w3-tiny">
-							<xsl:value-of select="//epreuve[@ID = $epreuve]/@nom_competition"/>
-						</footer>
-					</xsl:if>
-				</div>
-			</td>
-			<td style="width:40%">
-				<xsl:attribute name="class">
-					<xsl:choose>
-						<xsl:when test="$participant2 = 'null'">
-							<xsl:text disable-output-escaping="yes">w3-sand w3-small w3-card w3-center</xsl:text>
-						</xsl:when>
-						<xsl:otherwise>
-							<!-- Le participant n'est pas null on peut prendre en compte la couleur de ceinture -->
-							<xsl:choose>
-								<xsl:when test="$couleur2 = 'Bleu'">
-									<xsl:text disable-output-escaping="yes">w3-blue w3-small w3-card w3-left-align</xsl:text>
-								</xsl:when>
-
-								<xsl:when test="$couleur2 = 'Rouge'">
-									<xsl:text disable-output-escaping="yes">w3-red w3-small w3-card w3-left-align</xsl:text>
-								</xsl:when>
-
-								<xsl:otherwise>
-									<xsl:text disable-output-escaping="yes">w3-light-gray w3-small w3-card w3-left-align</xsl:text>
-								</xsl:otherwise>
-							</xsl:choose>
-						</xsl:otherwise>
-					</xsl:choose>
-				</xsl:attribute>				
-				<!-- Affiche le nom du Judoka s'il n'est pas null, "En Attente" sinon -->
-				<div class="w3-container">
-					<xsl:choose>
-						<xsl:when test="$participant2 = 'null'">
-							<!-- Combat en attente-->
-							<img class="img" src="../img/sablier.png" width="25" />
-							<xsl:text disable-output-escaping="yes">&#032;En Attente</xsl:text>
-						</xsl:when>
-						<xsl:otherwise>
-							<header>
-								<xsl:value-of select="ancestor::tapis[1]/participants/participant[@judoka = $participant2]/descendant::*[1]/@nom"/>
-								<xsl:text disable-output-escaping="yes">&#032;</xsl:text>
-								<xsl:value-of select="ancestor::tapis[1]/participants/participant[@judoka = $participant2]/descendant::*[1]/@prenom"/>
-							</header>
-							<footer class="w3-tiny">
-								<xsl:variable name="ecartement2"
-											select="//phase[@id = $phase]/@ecartement"/>
+					</div>
+				</td>
+				<td style="width:40%">
+					<xsl:attribute name="class">
+						<xsl:choose>
+							<xsl:when test="$participant2 = 'null'">
+								<xsl:text disable-output-escaping="yes">w3-sand w3-small w3-card w3-center</xsl:text>
+							</xsl:when>
+							<xsl:otherwise>
+								<!-- Le participant n'est pas null on peut prendre en compte la couleur de ceinture -->
 								<xsl:choose>
-									<xsl:when test="$ecartement2 = '3'">
-										<xsl:if test="$typeCompetition != '1'">
-											<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
-											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="$comite2"/>
-										</xsl:if>
-										<xsl:if test="$typeCompetition = '1'">
-											<xsl:value-of select="$comite2"/>
-										</xsl:if>
+									<xsl:when test="$couleur2 = 'Bleu'">
+										<xsl:text disable-output-escaping="yes">w3-blue w3-small w3-card w3-left-align</xsl:text>
 									</xsl:when>
 
-									<xsl:when test="$ecartement2 = '4'">
-										<xsl:if test="$typeCompetition != '1'">
-											<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
-											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="//ligue[@ID = $ligue2]/nomCourt"/>
-										</xsl:if>
-										<xsl:if test="$typeCompetition = '1'">
-											<xsl:value-of select="//ligue[@ID = $ligue2]/nomCourt"/>
-										</xsl:if>
+									<xsl:when test="$couleur2 = 'Rouge'">
+										<xsl:text disable-output-escaping="yes">w3-red w3-small w3-card w3-left-align</xsl:text>
 									</xsl:when>
 
 									<xsl:otherwise>
-										<xsl:if test="$typeCompetition != '1'">
-											<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
-											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="$comite2"/>
-										</xsl:if>
-										<xsl:if test="$typeCompetition = '1'">
-											<xsl:value-of select="$comite2"/>
-										</xsl:if>
+										<xsl:text disable-output-escaping="yes">w3-light-gray w3-small w3-card w3-left-align</xsl:text>
 									</xsl:otherwise>
 								</xsl:choose>
-							</footer>
-						</xsl:otherwise>
-					</xsl:choose>
-				</div>
-			</td>
-		</tr>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:attribute>
+					<!-- Affiche le nom du Judoka s'il n'est pas null, "En Attente" sinon -->
+					<div class="w3-container">
+						<xsl:choose>
+							<xsl:when test="$participant2 = 'null'">
+								<!-- Combat en attente-->
+								<img class="img" width="25">
+									<xsl:attribute name="src">
+										<xsl:value-of select="concat($imgPath, 'sablier.png')"/>
+									</xsl:attribute>
+								</img>
+								<xsl:text disable-output-escaping="yes">&#032;En Attente</xsl:text>
+							</xsl:when>
+							<xsl:otherwise>
+								<header>
+									<xsl:value-of select="ancestor::tapis[1]/participants/participant[@judoka = $participant2]/descendant::*[1]/@nom"/>
+									<xsl:text disable-output-escaping="yes">&#032;</xsl:text>
+									<xsl:value-of select="ancestor::tapis[1]/participants/participant[@judoka = $participant2]/descendant::*[1]/@prenom"/>
+								</header>
+								<footer class="w3-tiny">
+									<xsl:variable name="ecartement2"
+												select="//phase[@id = $phase]/@ecartement"/>
+									<xsl:choose>
+										<xsl:when test="$ecartement2 = '3'">
+											<xsl:if test="$typeCompetition != '1'">
+												<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
+												<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+												<xsl:value-of select="$comite2"/>
+											</xsl:if>
+											<xsl:if test="$typeCompetition = '1'">
+												<xsl:value-of select="$comite2"/>
+											</xsl:if>
+										</xsl:when>
+
+										<xsl:when test="$ecartement2 = '4'">
+											<xsl:if test="$typeCompetition != '1'">
+												<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
+												<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+												<xsl:value-of select="//ligue[@ID = $ligue2]/nomCourt"/>
+											</xsl:if>
+											<xsl:if test="$typeCompetition = '1'">
+												<xsl:value-of select="//ligue[@ID = $ligue2]/nomCourt"/>
+											</xsl:if>
+										</xsl:when>
+
+										<xsl:otherwise>
+											<xsl:if test="$typeCompetition != '1'">
+												<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
+												<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+												<xsl:value-of select="$comite2"/>
+											</xsl:if>
+											<xsl:if test="$typeCompetition = '1'">
+												<xsl:value-of select="$comite2"/>
+											</xsl:if>
+										</xsl:otherwise>
+									</xsl:choose>
+								</footer>
+							</xsl:otherwise>
+						</xsl:choose>
+					</div>
+				</td>
+			</tr>
 		</xsl:if>
 
 	</xsl:template>
-	
+
 </xsl:stylesheet>

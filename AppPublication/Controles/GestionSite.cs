@@ -73,6 +73,8 @@ namespace AppPublication.Controles
         private string _ftpEasyConfig = string.Empty;   // Le serveur FTP EasyConfig
         private string _httpEasyConfig = string.Empty;  // Le serveur http EasyConfig
 
+        private long _generationCounter = 0;
+
         /// <summary>
         /// Structure interne pour gerer les parametres de generation du site
         /// </summary>
@@ -1556,6 +1558,9 @@ namespace AppPublication.Controles
 
             if (IsGenerationActive)
             {
+                if (_generationCounter < long.MaxValue) { _generationCounter++; }                
+                LogTools.Logger.Debug("Lancement de la {0}eme generation du site", _generationCounter);
+
                 JudoData DC = DialogControleur.Instance.ServerData;
                 ExtensionNoyau.ExtensionJudoData EDC = DialogControleur.Instance.ExtendedServerData;
                 // Initialise les extended data
@@ -1564,6 +1569,9 @@ namespace AppPublication.Controles
                 if (DC.Organisation.Competitions.Count > 0)
                 {
                     List<Task<List<FileWithChecksum>>> listTaskGeneration = new List<Task<List<FileWithChecksum>>>();
+
+                    // Initialise les donnees partagees de generation
+                    ExportSite.InitSharedData(DC, EDC, cfg);
 
                     listTaskGeneration.Add(AddWork(SiteEnum.Index, null, null, cfg, null));
                     listTaskGeneration.Add(AddWork(SiteEnum.Menu, null, null, cfg, null));
@@ -1581,9 +1589,6 @@ namespace AppPublication.Controles
                     
                     if(PublierParticipants && CanPublierParticipants)
                     {
-                        // Initialise les donnees de generation
-                        ExportSite.InitSharedData(DC, EDC, cfg);
-
                         foreach(Competition comp in DC.Organisation.Competitions)
                         {
                             // Recupere les groupes en fonction du type de groupement

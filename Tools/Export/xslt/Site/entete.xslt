@@ -12,6 +12,9 @@
 		<xsl:param name="affParticipants"/>
 		<xsl:param name="affActualiser"/>
 		<xsl:param name="selectedItem"/>
+		<xsl:param name="pathToImg"/>
+		<xsl:param name="pathToCommon"/>
+
 		<xsl:variable name="apos">'</xsl:variable>
 		
 		<!-- BANDEAU DE TITRE -->
@@ -24,7 +27,7 @@
 				<div class="w3-cell w3-cell-middle bandeau-titre">
 					<img class="img img-bandeau-titre">
 						<xsl:attribute name="src">
-							<xsl:value-of select="concat('../img/',$logo)"/>
+							<xsl:value-of select="concat($pathToImg, $logo)"/>
 						</xsl:attribute>
 					</img>
 				</div>
@@ -40,7 +43,10 @@
 				</button>
 			</xsl:if>
 			<xsl:if test="$affProchainCombats">
-				<a href="../common/se_prepare.html">
+				<a>
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($pathToCommon, 'se_prepare.html')"/>
+					</xsl:attribute>
 					<xsl:attribute name="class">
 						<xsl:choose>
 							<xsl:when test="$selectedItem = 'se_prepare'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
@@ -49,7 +55,10 @@
 					</xsl:attribute>
 					Se prépare
 				</a>
-				<a href="../common/prochains_combats.html">
+				<a>
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($pathToCommon, 'prochains_combats.html')"/>
+					</xsl:attribute>
 					<xsl:attribute name="class">
 						<xsl:choose>
 							<xsl:when test="$selectedItem = 'prochains_combats'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
@@ -60,7 +69,10 @@
 				</a>
 			</xsl:if>
 			<xsl:if test="$affAffectationTapis">
-				<a href="../common/affectation_tapis.html">
+				<a>
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($pathToCommon, 'affectation_tapis.html')"/>
+					</xsl:attribute>
 					<xsl:attribute name="class">
 						<xsl:choose>
 							<xsl:when test="$selectedItem = 'affectations_tapis'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
@@ -70,7 +82,10 @@
 					Affectations
 				</a>
 			</xsl:if>
-			<a href="../common/avancement.html">
+			<a>
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($pathToCommon, 'avancement.html')"/>
+				</xsl:attribute>
 				<xsl:attribute name="class">
 					<xsl:choose>
 						<xsl:when test="$selectedItem = 'avancement'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
@@ -79,7 +94,10 @@
 				</xsl:attribute>
 				Avancements
 			</a>
-			<a href="../common/classement.html"> 
+			<a>
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($pathToCommon, 'classement.html')"/>
+				</xsl:attribute>
 				<xsl:attribute name="class">
 					<xsl:choose>
 						<xsl:when test="$selectedItem = 'classement'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
@@ -89,7 +107,10 @@
 				Classements
 			</a>
 			<xsl:if test="$affParticipants">
-				<a href="../common/participants.html">
+				<a>
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($pathToCommon, 'participants.html')"/>
+					</xsl:attribute>
 					<xsl:attribute name="class">
 						<xsl:choose>
 							<xsl:when test="$selectedItem = 'participants'">w3-bar-item w3-button navButton w3-indigo</xsl:when>

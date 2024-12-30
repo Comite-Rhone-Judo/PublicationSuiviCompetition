@@ -116,7 +116,7 @@
                 </StackPanel>
                 <StackPanel Grid.Row="8" Grid.Column="0" Orientation="Horizontal" Margin="50 -15 0 0">
                     <CheckBox Style="{StaticResource CheckboxStyle}"
-                        IsChecked="{Binding Path=ParticipantsAbsents, Converter={StaticResource BoolNotConverter}}"
+                        IsChecked="{Binding Path=ParticipantsAbsents}"
                         IsEnabled="{Binding Path=PublierParticipants, Mode=OneWay}"
                         Visibility="{Binding Path=CanPublierParticipants, Converter={StaticResource BoolToVisibilityConverter}}"
                         Margin="0 0 0 0">

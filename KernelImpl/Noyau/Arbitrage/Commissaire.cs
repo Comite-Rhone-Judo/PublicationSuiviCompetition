@@ -73,7 +73,7 @@ namespace KernelImpl.Noyau.Arbitrage
 
             this.naissance = XMLTools.LectureDate(xinfo.Attribute(ConstantXML.Commissaire_Naissance), "ddMMyyyy", DateTime.Now);
 
-            this.sexe = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Commissaire_Sexe));
+            this.sexeEnum = new EpreuveSexe(XMLTools.LectureString(xinfo.Attribute(ConstantXML.Commissaire_Sexe)));
 
             this.modification = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Commissaire_Modification));
             this.estResponsable = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Commissaire_EstResponsable));

@@ -59,6 +59,7 @@ namespace AppPublication.Export
                 node.Attributes.Append(attrAffectationTapis);
                 node.Attributes.Append(attrParticipants);
                 node.Attributes.Append(attrParticipantsParEntite);
+                node.Attributes.Append(attrParticipantsAbsents);
                 node.Attributes.Append(attrDelaiActualisationClient);
                 node.Attributes.Append(attrNbProchainsCombats);
                 node.Attributes.Append(attrDateGeneration);

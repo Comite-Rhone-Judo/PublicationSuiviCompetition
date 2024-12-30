@@ -80,6 +80,17 @@ namespace Tools.Export
         }
 
         /// <summary>
+        /// Le repertoire de la competition relatif a la racine
+        /// </summary>
+        public string RepertoireCompetitionRelatif
+        {
+            get
+            {
+                return GetRelativePath(RepertoireCompetition);
+            }
+        }
+
+        /// <summary>
         /// Retourne le repertoire Common
         /// </summary>
         public string RepertoireCommon
@@ -89,6 +100,18 @@ namespace Tools.Export
                 return FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, "common"));
             }
         }
+
+        /// <summary>
+        /// Le repertoireCommon relatif a la racine
+        /// </summary>
+        public string RepertoireCommonRelatif
+        {
+            get
+            {
+                return GetRelativePath(RepertoireCommon);
+            }
+        }
+
 
         /// <summary>
         /// Retourne le repertoire Participants
@@ -102,6 +125,18 @@ namespace Tools.Export
         }
 
         /// <summary>
+        /// Le repertoire des participants relatif a la racine
+        /// </summary>
+        public string RepertoireParticipantsRelatif
+        {
+            get
+            {
+                return GetRelativePath(RepertoireParticipants);
+            }
+        }
+
+
+        /// <summary>
         /// Retourne le repertoire image
         /// </summary>
         public string RepertoireImg
@@ -111,6 +146,18 @@ namespace Tools.Export
                 return FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, "img"));
             }
         }
+
+        /// <summary>
+        /// Le repertoire Img relatif a la racine
+        /// </summary>
+        public string RepertoireImgRelatif
+        {
+            get
+            {
+                return GetRelativePath(RepertoireImg);
+            }
+        }
+
 
         /// <summary>
         /// Retourne le repertoire js
@@ -124,20 +171,42 @@ namespace Tools.Export
         }
 
         /// <summary>
-        /// Retourne le repertoire style
+        /// Le repertoire Js relatif a la racine
         /// </summary>
-        public string RepertoireStyle
+        public string RepertoireJsRelatif
         {
             get
             {
-                return FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, "style"));
+                return GetRelativePath(RepertoireJs);
+            }
+        }
+
+
+        /// <summary>
+        /// Retourne le repertoire style
+        /// </summary>
+        public string RepertoireCss
+        {
+            get
+            {
+                return FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, "css"));
+            }
+        }
+
+        /// <summary>
+        /// Le repertoire de la competition relatif a la racine
+        /// </summary>
+        public string RepertoireCssRelatif
+        {
+            get
+            {
+                return GetRelativePath(RepertoireCss);
             }
         }
 
         #endregion
 
-        #region
-        // TODO Ajouter le repetoire Participants
+        #region METHODES
 
         /// <summary>
         /// Retourne le repertoire d'un groupe
@@ -191,7 +260,12 @@ namespace Tools.Export
 
         #region METHODES INTERNES
 
-        private string FiltreEtControleRepertoire(string repertoire)
+       /// <summary>
+       /// Verifie le nom du repertoire et assure la creation de ce dernier sur le disque (avec le nom filtre)
+       /// </summary>
+       /// <param name="repertoire"></param>
+       /// <returns></returns>
+       private string FiltreEtControleRepertoire(string repertoire)
         {
             // Path absolu avec traitement des caracteres URL (+, etc.)
             string output = OutilsTools.TraiteChaineURL(repertoire);
@@ -202,9 +276,31 @@ namespace Tools.Export
             return output;
         }
 
+        /// <summary>
+        /// Calcule la racune de la competition
+        /// </summary>
+        /// <returns></returns>
         private string GetRootCompetition()
         {
             return Path.Combine(_rootDir, OutilsTools.TraiteChaine(OutilsTools.SubString(_idCompetition, 0, _maxLen)));
+        }
+
+        /// <summary>
+        /// Retourne le repertoire relatif par rapport a la racine du site (ajoute un / a la fin systematiquement)
+        /// {Racine}/{ID Competition | courante}/{Path} ==> {ID Competition | courante}/{Path}/
+        /// </summary>
+        /// <param name="fullPath"></param>
+        /// <returns></returns>
+        private string GetRelativePath(string fullPath)
+        {
+            string output = fullPath.Replace(Racine, "").Remove(0, 1);
+
+            if (output.Last() != Path.DirectorySeparatorChar)
+            {
+                output += Path.DirectorySeparatorChar;
+            }
+
+            return output;
         }
         #endregion
     }

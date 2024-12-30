@@ -5,10 +5,16 @@
 ]>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:dt="http://example.com/2008/data">
 	<xsl:import href="Tools/Export/xslt/Site/entete.xslt"/>
-	
+
 	<xsl:output method="html" indent="yes"/>
 	<xsl:param name="style"/>
 	<xsl:param name="js"/>
+	<xsl:param name="imgPath"/>
+	<xsl:param name="jsPath"/>
+	<xsl:param name="cssPath"/>
+	<xsl:param name="commonPath"/>
+	<xsl:param name="competitionPath"/>
+
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 	<xsl:template match="/">
@@ -25,7 +31,7 @@
 
 	<xsl:template match="/*">
 		<xsl:variable name="apos">'</xsl:variable>
-		
+
 		<!-- ENTETE HTML -->
 		<head>
 			<META http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -36,11 +42,23 @@
 			<meta http-equiv="Expires" content="0"/>
 
 			<!-- Feuille de style W3.CSS -->
-			<link type="text/css" rel="stylesheet" href="../style/w3.css"/>
-			<link type="text/css" rel="stylesheet" href="../style/style-common.css"/>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'w3.css')"/>
+				</xsl:attribute>
+			</link>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'style-common.css')"/>
+				</xsl:attribute>
+			</link>
 
 			<!-- Script de navigation par defaut -->
-			<script src="../js/site-display.js"/>
+			<script>
+				<xsl:attribute name="src">
+					<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
+				</xsl:attribute>
+			</script>
 
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
@@ -59,6 +77,8 @@
 				<xsl:with-param name="affParticipants" select="true()"/>
 				<xsl:with-param name="affActualiser" select="false()"/>
 				<xsl:with-param name="selectedItem" select="'participants'"/>
+				<xsl:with-param name="pathToImg" select="$imgPath"/>
+				<xsl:with-param name="pathToCommon" select="$commonPath"/>
 			</xsl:call-template>
 
 			<!-- CONTENU -->
@@ -67,7 +87,7 @@
 					<div class="w3-panel w3-pale-green w3-bottombar w3-border-green w3-border w3-center w3-large"> Veuillez patienter le tirage des épreuves </div>
 				</div>
 			</xsl:if>
-			
+
 			<!-- Boucle global sur les competitions en cours -->
 			<xsl:for-each select="/competitions/competition">
 				<xsl:if test="count(./groupesParticipants/groupeParticipants) > 0">
@@ -81,7 +101,7 @@
 
 			<xsl:if test="count(/competitions/competition)>0">
 				<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
-					v<xsl:value-of select="/competition/@AppVersion"/> - Dernière actualisation: <xsl:value-of select="/competitions/competition[1]/@DateGeneration"/>
+					v<xsl:value-of select="/competitions/competition[1]/@AppVersion"/> - Dernière actualisation: <xsl:value-of select="/competitions/competition[1]/@DateGeneration"/>
 				</div>
 			</xsl:if>
 
@@ -93,12 +113,12 @@
 	<xsl:template name="competition">
 		<xsl:param name="idcompetition"/>
 		<xsl:param name="parEntite"/>
-		
+
 		<xsl:variable name="apos">'</xsl:variable>
 		<xsl:variable name="prefixPanel">
 			<xsl:value-of select="concat('ParticipantsComp',$idcompetition,'ContentPanel')"/>
 		</xsl:variable>
-		
+
 		<xsl:variable name="typeGroupe">
 			<xsl:choose>
 				<!-- Selection par Entite: le niveau de competition donne le type d'entite -->
@@ -111,7 +131,7 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		
+
 
 		<!-- Nom de la competition -->
 		<div class="w3-container w3-blue w3-center tas-competition-bandeau">
@@ -136,12 +156,18 @@
 									<xsl:attribute name="onclick">
 										<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel,'F',$apos,')')"/>
 									</xsl:attribute>
-									<img class="img" width="25" src="../img/up_circular-32.png" style="display: none;">
+									<img class="img" width="25" style="display: none;">
+										<xsl:attribute name="src">
+											<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
+										</xsl:attribute>
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'F', 'Collapse')"/>
 										</xsl:attribute>
 									</img>
-									<img class="img" width="25" src="../img/down_circular-32.png">
+									<img class="img" width="25">
+										<xsl:attribute name="src">
+											<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
+										</xsl:attribute>
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'F', 'Expand')"/>
 										</xsl:attribute>
@@ -168,12 +194,18 @@
 									<xsl:attribute name="onclick">
 										<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel,'M',$apos,')')"/>
 									</xsl:attribute>
-									<img class="img" width="25" src="../img/up_circular-32.png" style="display: none;">
+									<img class="img" width="25" style="display: none;">
+										<xsl:attribute name="src">
+											<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
+										</xsl:attribute>
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'M', 'Collapse')"/>
 										</xsl:attribute>
 									</img>
-									<img class="img" width="25" src="../img/down_circular-32.png">
+									<img class="img" width="25">
+										<xsl:attribute name="src">
+											<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
+										</xsl:attribute>
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'M', 'Expand')"/>
 										</xsl:attribute>
@@ -200,12 +232,18 @@
 									<xsl:attribute name="onclick">
 										<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel,$apos,')')"/>
 									</xsl:attribute>
-									<img class="img" width="25" src="../img/up_circular-32.png" style="display: none;">
+									<img class="img" width="25" style="display: none;">
+										<xsl:attribute name="src">
+											<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
+										</xsl:attribute>
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'Collapse')"/>
 										</xsl:attribute>
 									</img>
-									<img class="img" width="25" src="../img/down_circular-32.png">
+									<img class="img" width="25">
+										<xsl:attribute name="src">
+											<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
+										</xsl:attribute>
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'Expand')"/>
 										</xsl:attribute>
@@ -232,24 +270,36 @@
 		<!-- Determine le nom a afficher selon le niveau de la competition -->
 		<xsl:variable name="entiteId">
 			<xsl:value-of select="./@entite"/>
-		</xsl:variable>	
+		</xsl:variable>
 		<xsl:variable name="entiteNom">
 			<xsl:choose>
 				<!-- Niveau Aucun (par Nom) 1 -->
-				<xsl:when test="./@type = 1"><xsl:value-of select="$entiteId"/></xsl:when>
+				<xsl:when test="./@type = 1">
+					<xsl:value-of select="$entiteId"/>
+				</xsl:when>
 				<!-- Niveau Club 2 -->
-				<xsl:when test="./@type = 2"><xsl:value-of select="//club[@ID = $entiteId]/nom"/></xsl:when>
+				<xsl:when test="./@type = 2">
+					<xsl:value-of select="//club[@ID = $entiteId]/nom"/>
+				</xsl:when>
 				<!-- Niveau Departement 3 -->
-				<xsl:when test="./@type = 3"><xsl:value-of select="//comite[@ID = $entiteId]/nom"/></xsl:when>
+				<xsl:when test="./@type = 3">
+					<xsl:value-of select="//comite[@ID = $entiteId]/nom"/>
+				</xsl:when>
 				<!-- Niveau Ligue 3 -->
-				<xsl:when test="./@type = 4"><xsl:value-of select="//ligue[@ID = $entiteId]/nom"/></xsl:when>
+				<xsl:when test="./@type = 4">
+					<xsl:value-of select="//ligue[@ID = $entiteId]/nom"/>
+				</xsl:when>
 				<!-- Niveau National 5 -->
 				<!-- Niveau International 6 -->
-				<xsl:when test="./@type = 5 or ./@type = 6"><xsl:value-of select="//pays[@ID = $entiteId]/@nom"/></xsl:when>
+				<xsl:when test="./@type = 5 or ./@type = 6">
+					<xsl:value-of select="//pays[@ID = $entiteId]/@nom"/>
+				</xsl:when>
 				<!-- Par defaut, on prend le club -->
-				<xsl:otherwise><xsl:value-of select="//club[@ID = $entiteId]/nom"/></xsl:otherwise>
+				<xsl:otherwise>
+					<xsl:value-of select="//club[@ID = $entiteId]/nom"/>
+				</xsl:otherwise>
 			</xsl:choose>
-		</xsl:variable>	
+		</xsl:variable>
 		<div>
 			<xsl:attribute name="class">
 				<xsl:choose>
@@ -267,9 +317,7 @@
 					</xsl:choose>
 				</xsl:attribute>
 				<xsl:attribute name="href">
-					<xsl:text>../participants/</xsl:text>
-					<xsl:value-of select="@id"/>
-					<xsl:text>/groupe_participants.html</xsl:text>
+					<xsl:value-of select="concat($competitionPath, 'participants/', @id, '/groupe_participants.html')"/>
 				</xsl:attribute>
 				<!-- Utilise le nom de l'entite retenue en fonction du niveau -->
 				<xsl:value-of select="$entiteNom"/>
