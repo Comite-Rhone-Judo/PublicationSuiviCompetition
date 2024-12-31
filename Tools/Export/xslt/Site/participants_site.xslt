@@ -3,7 +3,7 @@
 	<!ENTITY nbsp "&#160;">
 	<!ENTITY times "&#215;">
 ]>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:dt="http://example.com/2008/data">
 	<xsl:import href="Tools/Export/xslt/Site/entete.xslt"/>
 
 	<xsl:output method="html" indent="yes"/>
@@ -26,7 +26,7 @@
 
 	<xsl:variable select="count(/competitions/competition[@PublierProchainsCombats = 'true']) > 0" name="affProchainCombats"/>
 	<xsl:variable select="count(/competitions/competition[@PublierAffectationTapis = 'true']) > 0" name="affAffectationTapis"/>
-	<xsl:variable select="count(/competitions/competition[@PublierParticipants = 'true']) > 0" name="affParticipants"/>
+	<xsl:variable select="count(/competitions/competition[@ParticipantsParEntite = 'true']) > 0" name="affParticipantsParEntite"/>
 	<xsl:variable select="/competitions/competition[1]/@Logo" name="logo"/>
 
 	<xsl:template match="/*">
@@ -65,7 +65,7 @@
 				<xsl:value-of select="$js"/>
 			</script>
 			<title>
-				Suivi Compétition - Avancement
+				Suivi Compétition - Participants
 			</title>
 		</head>
 		<body>
@@ -74,15 +74,15 @@
 				<xsl:with-param name="logo" select="$logo"/>
 				<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
 				<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
-				<xsl:with-param name="affParticipants" select="$affParticipants"/>
+				<xsl:with-param name="affParticipants" select="true()"/>
 				<xsl:with-param name="affActualiser" select="false()"/>
-				<xsl:with-param name="selectedItem" select="'avancement'"/>
+				<xsl:with-param name="selectedItem" select="'participants'"/>
 				<xsl:with-param name="pathToImg" select="$imgPath"/>
 				<xsl:with-param name="pathToCommon" select="$commonPath"/>
 			</xsl:call-template>
 
 			<!-- CONTENU -->
-			<xsl:if test="count(/competitions/competition)=0 or count(//epreuve)=0">
+			<xsl:if test="count(/competitions/competition)=0 or count(//groupeParticipants)=0">
 				<div class="w3-container w3-border">
 					<div class="w3-panel w3-pale-green w3-bottombar w3-border-green w3-border w3-center w3-large"> Veuillez patienter le tirage des épreuves </div>
 				</div>
@@ -90,10 +90,11 @@
 
 			<!-- Boucle global sur les competitions en cours -->
 			<xsl:for-each select="/competitions/competition">
-				<xsl:if test="count(./epreuve) > 0">
+				<xsl:if test="count(./groupesParticipants/groupeParticipants) > 0">
 					<xsl:variable name="compet" select="@ID"/>
 					<xsl:call-template name="competition">
 						<xsl:with-param name="idcompetition" select="$compet"/>
+						<xsl:with-param name="parEntite" select="$affParticipantsParEntite"/>
 					</xsl:call-template>
 				</xsl:if>
 			</xsl:for-each>
@@ -108,13 +109,29 @@
 	</xsl:template>
 
 	<!-- TEMPLATES -->
-	<!-- Un bloc -->
+	<!-- Template pour le groupement -->
 	<xsl:template name="competition">
 		<xsl:param name="idcompetition"/>
+		<xsl:param name="parEntite"/>
+
 		<xsl:variable name="apos">'</xsl:variable>
 		<xsl:variable name="prefixPanel">
-			<xsl:value-of select="concat('AvancementComp',$idcompetition,'ContentPanel')"/>
+			<xsl:value-of select="concat('ParticipantsComp',$idcompetition,'ContentPanel')"/>
 		</xsl:variable>
+
+		<xsl:variable name="typeGroupe">
+			<xsl:choose>
+				<!-- Selection par Entite: le niveau de competition donne le type d'entite -->
+				<xsl:when test="$parEntite">
+					<xsl:value-of select="./@niveau"/>
+				</xsl:when>
+				<!-- Selection par Nom: Niveau = 1-->
+				<xsl:otherwise>
+					<xsl:value-of select="1"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+
 
 		<!-- Nom de la competition -->
 		<div class="w3-container w3-blue w3-center tas-competition-bandeau">
@@ -123,12 +140,13 @@
 			</h4>
 		</div>
 
-		<div id="Avancements" class="w3-container w3-border pane w3-animate-left">
+		<div id="Participants" class="w3-container w3-border pane w3-animate-left">
 			<!-- une ligne de cellule pour occuper toute le largeur de l'ecran -->
 			<div class="w3-cell-row">
 				<!-- Chaque panneau est un panel contenant une carte, utilise cell + mobile pour gerer horizontal/vertical selon la taille de l'ecran -->
 				<!-- Categorie F -->
-				<xsl:if test="count(./epreuve[@sexe = 'F']) > 0">
+				<!-- TODO Modifier pour prendre en compte les participans et pas les epreuves -->
+				<xsl:if test="count(./groupesParticipants/groupeParticipants[@sexe = 'F']) > 0">
 					<div class="w3-panel w3-cell w3-mobile">
 						<!-- La carte des donnees elle meme -->
 						<div class="w3-card">
@@ -157,17 +175,18 @@
 									Catégorie Féminine
 								</button>
 							</header>
-							<div class="w3-container" style="display:none;">
+							<!-- Ajouter les groupes -->
+							<div class="w3-row w3-container" style="display:none;">
 								<xsl:attribute name="id">
-									<xsl:value-of select="concat($prefixPanel,'F')"/>
+									<xsl:value-of select="concat($prefixPanel,'M')"/>
 								</xsl:attribute>
-								<xsl:apply-templates select="./epreuve[@sexe = 'F']"/>
+								<xsl:apply-templates select="./groupesParticipants/groupeParticipants[@sexe = 'F' and @type=$typeGroupe]"/>
 							</div>
 						</div>
 					</div>
 				</xsl:if>
 				<!-- Categorie M -->
-				<xsl:if test="count(./epreuve[@sexe = 'M']) > 0">
+				<xsl:if test="count(./groupesParticipants/groupeParticipants[@sexe = 'M']) > 0">
 					<div class="w3-panel w3-cell w3-mobile">
 						<div class="w3-card">
 							<header class="w3-bar w3-light-green w3-large">
@@ -194,17 +213,18 @@
 									Catégorie Masculine
 								</button>
 							</header>
-							<div class="w3-container" style="display:none;">
+							<!-- Ajouter les groupes -->
+							<div class="w3-row w3-container" style="display:none;">
 								<xsl:attribute name="id">
 									<xsl:value-of select="concat($prefixPanel,'M')"/>
 								</xsl:attribute>
-								<xsl:apply-templates select="./epreuve[@sexe = 'M']"/>
+								<xsl:apply-templates select="./groupesParticipants/groupeParticipants[@sexe = 'M' and @type=$typeGroupe]"/>
 							</div>
 						</div>
 					</div>
 				</xsl:if>
 				<!-- Sans Categorie -->
-				<xsl:if test="count(./epreuve[not(@sexe)]) > 0">
+				<xsl:if test="count(./groupesParticipants/groupeParticipants[not(@sexe)]) > 0">
 					<div class="w3-panel w3-cell w3-mobile">
 						<div class="w3-card">
 							<header class="w3-bar w3-light-green w3-large">
@@ -231,45 +251,77 @@
 									Sans Catégorie
 								</button>
 							</header>
-							<div class="w3-container" style="display:none;">
+							<!-- Ajouter les groupes  -->
+							<div class="w3-row w3-container" style="display:none;">
 								<xsl:attribute name="id">
 									<xsl:value-of select="$prefixPanel"/>
 								</xsl:attribute>
-								<xsl:apply-templates select="./epreuve[not(@sexe)]"/>
+								<xsl:apply-templates select="./groupesParticipants/groupeParticipants[not(@sexe) and @type=$typeGroupe]"/>
 							</div>
 						</div>
 					</div>
 				</xsl:if>
 			</div>
 		</div>
-
 	</xsl:template>
 
-	<!-- Bouton avancement par epreuve -->
-	<xsl:template name="avancement_epreuve" match="epreuve">
-		<!-- <xsl:variable select="number(./@typePhase)" name="type1"/> -->
-		<!--<xsl:variable select="number(./@typePhase)" name="type2"/>-->
-
-		<xsl:if test="count(./phases/phase[number(@typePhase) = 1]) > 0">
-			<a class="w3-button w3-panel w3-card w3-block w3-pale-yellow w3-large w3-round-large w3-padding-small">
-				<!-- TODO a remplacer par concat -->
-				<xsl:attribute name="href">
-					<xsl:value-of select="concat($competitionPath, @directory, '/poules_resultats.html')"/>
+	<!-- Bouton groupement -->
+	<xsl:template name="groupement" match="groupeParticipants">
+		<!-- Determine le nom a afficher selon le niveau de la competition -->
+		<xsl:variable name="entiteId">
+			<xsl:value-of select="./@entite"/>
+		</xsl:variable>
+		<xsl:variable name="entiteNom">
+			<xsl:choose>
+				<!-- Niveau Aucun (par Nom) 1 -->
+				<xsl:when test="./@type = 1">
+					<xsl:value-of select="$entiteId"/>
+				</xsl:when>
+				<!-- Niveau Club 2 -->
+				<xsl:when test="./@type = 2">
+					<xsl:value-of select="//club[@ID = $entiteId]/nom"/>
+				</xsl:when>
+				<!-- Niveau Departement 3 -->
+				<xsl:when test="./@type = 3">
+					<xsl:value-of select="//comite[@ID = $entiteId]/nom"/>
+				</xsl:when>
+				<!-- Niveau Ligue 3 -->
+				<xsl:when test="./@type = 4">
+					<xsl:value-of select="//ligue[@ID = $entiteId]/nom"/>
+				</xsl:when>
+				<!-- Niveau National 5 -->
+				<!-- Niveau International 6 -->
+				<xsl:when test="./@type = 5 or ./@type = 6">
+					<xsl:value-of select="//pays[@ID = $entiteId]/@nom"/>
+				</xsl:when>
+				<!-- Par defaut, on prend le club -->
+				<xsl:otherwise>
+					<xsl:value-of select="//club[@ID = $entiteId]/nom"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<div>
+			<xsl:attribute name="class">
+				<xsl:choose>
+					<!-- Affiche les noms par Lettre avec un bouton circulaire -->
+					<xsl:when test="./@type = '1'">w3-col s3 m2 l1 w3-center w3-padding</xsl:when>
+					<xsl:otherwise></xsl:otherwise>
+				</xsl:choose>
+			</xsl:attribute>
+			<a>
+				<xsl:attribute name="class">
+					<xsl:choose>
+						<!-- Affiche les noms par Lettre avec un bouton circulaire -->
+						<xsl:when test="./@type = '1'">w3-button w3-card w3-circle w3-xlarge w3-pale-yellow </xsl:when>
+						<xsl:otherwise>w3-button w3-panel w3-card w3-block w3-pale-yellow w3-small w3-round-large w3-padding-small</xsl:otherwise>
+					</xsl:choose>
 				</xsl:attribute>
-				<xsl:value-of select="./@libelle"/>
-				<xsl:value-of select="./@nom"/>
-				<xsl:text>&#32;Poules</xsl:text>
-			</a>
-		</xsl:if>
-		<xsl:if test="count(./phases/phase[number(@typePhase) = 2]) > 0">
-			<a class="w3-button w3-panel w3-card w3-block w3-pale-yellow w3-large w3-round-large w3-padding-small">
 				<xsl:attribute name="href">
-					<xsl:value-of select="concat($competitionPath, @directory, '/tableau_competition.html')"/>
+					<xsl:value-of select="concat($competitionPath, 'participants/', @id, '/groupe_participants.html')"/>
 				</xsl:attribute>
-				<xsl:value-of select="./@libelle"/>
-				<xsl:value-of select="./@nom"/>
-				<xsl:text>&#32;Tableau</xsl:text>
+				<!-- Utilise le nom de l'entite retenue en fonction du niveau -->
+				<xsl:value-of select="$entiteNom"/>
 			</a>
-		</xsl:if>
+		</div>
 	</xsl:template>
 </xsl:stylesheet>

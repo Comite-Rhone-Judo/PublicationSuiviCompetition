@@ -145,6 +145,23 @@ namespace AppPublication.Controles
             }
         }
 
+        private ExtensionNoyau.ExtensionJudoData _extendedServerData;
+        /// <summary>
+        /// Le bloc de donnees recupere du serveur
+        /// </summary>
+        public ExtensionNoyau.ExtensionJudoData ExtendedServerData
+        {
+            get
+            {
+                if (_extendedServerData == null)
+                {
+                    _extendedServerData = new ExtensionNoyau.ExtensionJudoData(ServerData);
+                }
+                return _extendedServerData;
+            }
+        }
+
+
         private bool _isBusy;
         /// <summary>
         /// Indique si l'application est occupee (chargement de données)

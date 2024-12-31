@@ -52,7 +52,7 @@ namespace KernelImpl.Noyau.Deroulement
                     epreuve_nom = epreuve.nom;
                     epreuve_poidsMin = epreuve.poidsMin;
                     epreuve_poidsMax = epreuve.poidsMax;
-                    epreuve_libsexe = epreuve.sexe == 1 ? "F" : "M";
+                    epreuve_libsexe = epreuve.sexeEnum.ToString();
                 }
             }
         }

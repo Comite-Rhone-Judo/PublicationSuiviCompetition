@@ -56,6 +56,8 @@
         Site_Checksum = 113,
         Site_MenuClassement = 114,
         Site_MenuAvancement = 115,
-        Site_MenuProchainCombats = 116
+        Site_MenuProchainCombats = 116,
+        Site_MenuParticipants = 117,
+        Site_Participants = 118
     }
 }
