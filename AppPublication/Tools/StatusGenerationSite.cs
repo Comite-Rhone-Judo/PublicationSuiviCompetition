@@ -52,7 +52,7 @@ namespace AppPublication.Tools
             set
             {
                 _state = value;
-                NotifyPropertyChanged("State");
+                NotifyPropertyChanged();
                 if (_state != StateGenerationEnum.Idle)
                 {
                     _nextGenSec = -1;
@@ -74,7 +74,7 @@ namespace AppPublication.Tools
             private set
             {
                 _msg = value;
-                NotifyPropertyChanged("Message");
+                NotifyPropertyChanged();
             }
         }
 
@@ -88,7 +88,7 @@ namespace AppPublication.Tools
             set
             {
                 _progress = value;
-                NotifyPropertyChanged("Progress");
+                NotifyPropertyChanged();
 
                 if (_progress > -1)
                 {
@@ -111,7 +111,7 @@ namespace AppPublication.Tools
             set
             {
                 _nextGenSec = value;
-                NotifyPropertyChanged("NextGenerationSec");
+                NotifyPropertyChanged();
                 CalculMessage();
             }
         }
@@ -126,7 +126,7 @@ namespace AppPublication.Tools
             private set
             {
                 _progressunknown = value;
-                NotifyPropertyChanged("IsProgressUnknown");
+                NotifyPropertyChanged();
             }
         }
         #endregion

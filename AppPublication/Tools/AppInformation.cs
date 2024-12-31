@@ -41,7 +41,7 @@ namespace AppPublication.Tools
             private set
             {
                 _appVersion = value;
-                NotifyPropertyChanged("AppVersion");
+                NotifyPropertyChanged();
             }
         }
 
@@ -55,7 +55,7 @@ namespace AppPublication.Tools
             private set
             {
                 _appCompany = value;
-                NotifyPropertyChanged("AppCompany");
+                NotifyPropertyChanged();
             }
         }
 
@@ -69,7 +69,7 @@ namespace AppPublication.Tools
             private set
             {
                 _appCopyright = value;
-                NotifyPropertyChanged("AppCopyright");
+                NotifyPropertyChanged();
             }
         }
 
@@ -83,7 +83,7 @@ namespace AppPublication.Tools
             private set
             {
                 _appTrademark = value;
-                NotifyPropertyChanged("AppTrademark");
+                NotifyPropertyChanged();
             }
         }
 

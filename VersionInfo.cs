@@ -25,10 +25,10 @@ using System.Reflection;
 
 
 [AttributeUsage(AttributeTargets.Assembly)]
-internal class AssemblyVersionTest : Attribute
+internal class AssemblyVersionBeta : Attribute
 {
     public int Value { get; set; }
-    public AssemblyVersionTest(int valueTest)
+    public AssemblyVersionBeta(int valueTest)
     {
         Value = valueTest;
     }

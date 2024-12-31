@@ -17,12 +17,17 @@ using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Configuration;
+using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media.Imaging;
 using System.Xml;
 using System.Xml.Linq;
+using Telerik.Windows.Controls;
 using Tools.Enum;
 using Tools.Export;
 using Tools.Outils;
+using Tools.Windows;
 using KernelImpl.Noyau.Organisation;
 
 namespace AppPublication.Controles
@@ -59,7 +64,6 @@ namespace AppPublication.Controles
         private const string kSettingEntitePublicationFFJudo = "EntitePublicationFFJudo";
         private const string kSettingSelectedLogo = "SelectedLogo";
         private const string kSettingInterfaceLocalPublication = "InterfaceLocalPublication";
-
         #endregion
 
         #region MEMBRES
@@ -67,12 +71,14 @@ namespace AppPublication.Controles
         private Task _taskGeneration = null;            // La tache de generation
         private Task _taskNettoyage = null;             // La tache de nettoyage
         private GestionStatistiques _statMgr = null;
-        private ExportSiteStructure _structure;         // La structure d'export du site
+        private ExportSiteStructure _structureRepertoires;         // La structure d'export du site
+        private ExportSiteUrls _structureSiteLocal;                 // la structure d'export du site local
+        private ExportSiteUrls _structureSiteDistant;                 // la structure d'export du site distant
         private Dictionary<string, EntitePublicationFFJudo> _allEntitePublicationFFJudo = null;
         private Dictionary<string, ObservableCollection<EntitePublicationFFJudo>> _allEntitesPublicationFFJudo = null;
 
         private string _ftpEasyConfig = string.Empty;   // Le serveur FTP EasyConfig
-        private string _httpEasyConfig = string.Empty;  // Le serveur http EasyConfig
+        private Uri _httpEasyConfig = null;  // Le serveur http EasyConfig
 
         private long _generationCounter = 0;
 
@@ -120,7 +126,6 @@ namespace AppPublication.Controles
         #endregion
 
         #region PROPRIETES
-
         private bool _easyConfigDisponible;
 
         /// <summary>
@@ -137,7 +142,7 @@ namespace AppPublication.Controles
                 if (_easyConfigDisponible != value)
                 {
                     _easyConfigDisponible = value;
-                    NotifyPropertyChanged("EasyConfigDisponible");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -156,14 +161,13 @@ namespace AppPublication.Controles
             set
             {
                 // On ne peut changer la valeur que si le site en cours n'est pas actif
-                if (!SiteDistantSelectionne.IsActif)
+                if (SiteDistantSelectionne == null || !SiteDistantSelectionne.IsActif)
                 {
-                    if (_easyConfig != value)
-                    {
-                        _easyConfig = value;
-                        AppSettings.SaveSetting(kSettingEasyConfig, _easyConfig.ToString());
-                        NotifyPropertyChanged("EasyConfig");
-                    }
+                    _easyConfig = value;
+                    AppSettings.SaveSetting(kSettingEasyConfig, _easyConfig.ToString());
+                    NotifyPropertyChanged();
+                    // Met a jour le site distant selectionne
+                    SiteDistantSelectionne = CalculSiteDistantSelectionne();
                 }
             }
         }
@@ -180,7 +184,9 @@ namespace AppPublication.Controles
             set
             {
                 EasyConfig = !value;
-                NotifyPropertyChanged("AdvancedConfig");
+                NotifyPropertyChanged();
+                // Inutile, le fait de faire le set sur EasyConfig suffit a mettre a jour le site selectionne
+                // SiteDistantSelectionne = CalculSiteDistantSelectionne();
             }
         }
 
@@ -188,11 +194,20 @@ namespace AppPublication.Controles
         /// <summary>
         /// Le MiniSite selectionne en fonction du mode de configuration
         /// </summary>
+
+        private MiniSite _siteDistantSelectionne;
         public MiniSite SiteDistantSelectionne
         {
             get
             {
-                return (EasyConfig) ? SiteFranceJudo : SiteDistant;
+                return _siteDistantSelectionne;
+            }
+            private set
+            {
+                _siteDistantSelectionne = value;
+                // Il faut recalculer l'URL du site de publication car on vient de changer de site
+                URLDistantPublication = CalculURLSiteDistant();
+                NotifyPropertyChanged();
             }
         }
 
@@ -211,7 +226,7 @@ namespace AppPublication.Controles
                 if (_listeNiveauxPublicationFFJudo != value)
                 {
                     _listeNiveauxPublicationFFJudo = value;
-                    NotifyPropertyChanged("ListeNiveauxPublicationFFJudo");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -232,7 +247,7 @@ namespace AppPublication.Controles
                 if (_listeEntitesPublicationFFJudo != value)
                 {
                     _listeEntitesPublicationFFJudo = value;
-                    NotifyPropertyChanged("ListeEntitesPublicationFFJudo");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -262,7 +277,7 @@ namespace AppPublication.Controles
                         // On Calcul les parametres FTP en fonction de l'entite selectionne
                         GenereConfigFTPFranceJudo(value);
                     }
-                    NotifyPropertyChanged("EntitePublicationFFJudo");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -282,7 +297,7 @@ namespace AppPublication.Controles
                 if (_allEntitePublicationFFJudo != value)
                 {
                     _allEntitePublicationFFJudo = value;
-                    NotifyPropertyChanged("AllEntitePublicationFFJudo");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -321,7 +336,7 @@ namespace AppPublication.Controles
                         EntitePublicationFFJudo = _allEntitePublicationFFJudo[_niveauPublicationFFJudo];
                     }
 
-                    NotifyPropertyChanged("NiveauPublicationFFJudo");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -339,7 +354,7 @@ namespace AppPublication.Controles
                 {
                     _pouleEnColonnes = value;
                     AppSettings.SaveSetting(kSettingPouleEnColonnes, _pouleEnColonnes.ToString());
-                    NotifyPropertyChanged("PouleEnColonnes");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -357,7 +372,7 @@ namespace AppPublication.Controles
                 {
                     _pouleToujoursEnColonnes = value;
                     AppSettings.SaveSetting(kSettingPouleToujoursEnColonnes, _pouleToujoursEnColonnes.ToString());
-                    NotifyPropertyChanged("PouleToujoursEnColonnes");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -375,12 +390,106 @@ namespace AppPublication.Controles
                 {
                     _tailleMaxPouleColonnes = value;
                     AppSettings.SaveSetting(kSettingTailleMaxPouleColonnes, _tailleMaxPouleColonnes.ToString());
-                    NotifyPropertyChanged("TailleMaxPouleColonnes");
+                    NotifyPropertyChanged();
                 }
             }
         }
 
+
+        private ICommand _cmdAjouterLogo;
+        
+        /// <summary>
+        /// Commande permettant d'ajouter un logo dans la liste
+        /// </summary>
+        public ICommand CmdAjouterLogo
+        {
+            get
+            {
+                if (_cmdAjouterLogo == null)
+                {
+                    _cmdAjouterLogo = new RelayCommand(
+                            o =>
+                            {
+                                bool allFileOk = true;
+
+                                OpenFileDialog op = new OpenFileDialog();  
+                                op.Title = "Sélectionner une image";  
+                                op.Filter = "Portable Network Graphic (*.png)|*.png";
+                                op.Multiselect = true;
+                                op.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+                                op.RestoreDirectory = true;
+                                if (op.ShowDialog() == DialogResult.OK)
+                                {
+                                    foreach(string imgFile in op.FileNames)
+                                    {
+                                        try
+                                        {
+                                            if (imgFile.ToLower().Contains("logo"))
+                                            {
+                                                int w, h;
+
+                                                using (var stream = new FileStream(imgFile, FileMode.Open, FileAccess.Read, FileShare.Read))
+                                                {
+                                                    var bitmapFrame = BitmapFrame.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.None);
+                                                    w = bitmapFrame.PixelWidth;
+                                                    h = bitmapFrame.PixelHeight;
+
+                                                    // Verifie la taille de l'image
+                                                    if (w <= 200 && h <= 200)
+                                                    {
+                                                        FilteredFileInfo newItem = new FilteredFileInfo(new FileInfo(imgFile));
+
+                                                        // Copy le fichier dans le répertoire de travail de l'application
+                                                        File.Copy(newItem.FullName, Path.Combine(ConstantFile.ExportStyle_dir, newItem.Name));
+
+                                                        // Actualise la liste des logos
+                                                        FichiersLogo.Add(newItem);
+                                                    }
+                                                    else
+                                                    {
+                                                        LogTools.Logger.Debug("Fichier '{0}' ignore - taille {1}x{2} incorrecte", imgFile, w, h);
+                                                        allFileOk = false;
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                LogTools.Logger.Debug("Fichier '{0}' ignore - Nom ne contient pas 'logo'", imgFile);
+                                                allFileOk = false;
+                                            }
+                                        }
+                                        catch(Exception ex)
+                                        {
+                                            LogTools.Logger.Debug("Fichier '{0}' ignore - Exception lors de la lecture du format", imgFile, ex);
+                                            allFileOk = false;
+                                        }
+                                    }
+
+                                    if(!allFileOk)
+                                    {
+                                        AlertWindow win = new AlertWindow("Infomation", "Certains fichiers n'ont pas put être chargé. Veuillez vérifier les noms, formats et dimensions");
+                                        if (win != null)
+                                        {
+                                            win.ShowDialog();
+                                        }
+                                    }
+                                }
+
+                            },
+                            o =>
+                            {
+                                // Meme si le site est demarre on peut ajouter un logo, il n'est pas pris automatiquement enc compte
+                                return true;
+                            });
+                }
+                return _cmdAjouterLogo;
+            }
+        }
+
         private ICommand _cmdGetRepertoireRacine;
+        /// <summary>
+        /// Commande pour gérer la selection du repertoire Racine
+        /// </summary>
         public ICommand CmdGetRepertoireRacine
         {
             get
@@ -392,8 +501,8 @@ namespace AppPublication.Controles
                             {
                                 string output = string.Empty;
 
+                                System.Windows.Forms.FolderBrowserDialog dlg = new FolderBrowserDialog();
                                 System.Windows.Forms.FolderBrowserDialog dlg = new System.Windows.Forms.FolderBrowserDialog();
-
                                 dlg.Description = "Sélectionner le répertoire à utiliser pour les exports";
                                 dlg.ShowNewFolderButton = true;
                                 if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -405,7 +514,7 @@ namespace AppPublication.Controles
                             o =>
                             {
                                 // On ne peut modifier le repertoire racine que si tous les processus sont arretes
-                                return !SiteDistantSelectionne.IsActif && !SiteLocal.IsActif && !IsGenerationActive;
+                                return (SiteDistantSelectionne != null) ? !SiteDistantSelectionne.IsActif && !SiteLocal.IsActif && !IsGenerationActive : true;
                             });
                 }
                 return _cmdGetRepertoireRacine;
@@ -425,14 +534,16 @@ namespace AppPublication.Controles
                 if (value != _repertoireRacine)
                 {
                     _repertoireRacine = value;
-                    NotifyPropertyChanged("RepertoireRacine");
+                    NotifyPropertyChanged();
                     AppSettings.SaveSetting(kSettingRepertoireRacine, _repertoireRacine);
 
                     // Met a jour la constante d'export
                     string tmp = OutilsTools.GetExportSiteDir(_repertoireRacine);
 
-                    // Initialise la structure d'export
-                    _structure = new ExportSiteStructure(tmp, IdCompetition);
+                    // Initialise les structures d'export
+                    _structureRepertoires = new ExportSiteStructure(tmp, IdCompetition);
+                    _structureSiteDistant = new ExportSiteUrls(_structureRepertoires);
+                    _structureSiteLocal = new ExportSiteUrls(_structureRepertoires);
 
                     // Met a jour les repertoires de l'application
                     InitExportSiteStructure();
@@ -453,7 +564,7 @@ namespace AppPublication.Controles
                 if (_fichiersLogo != value)
                 {
                     _fichiersLogo = value;
-                    NotifyPropertyChanged("FichiersLogo");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -471,7 +582,7 @@ namespace AppPublication.Controles
                 {
                     _selectedLogo = value;
                     AppSettings.SaveSetting(kSettingSelectedLogo, _selectedLogo.Name);
-                    NotifyPropertyChanged("SelectedLogo");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -489,7 +600,7 @@ namespace AppPublication.Controles
             private set
             {
                 _statGeneration = value;
-                NotifyPropertyChanged("DerniereGeneration");
+                NotifyPropertyChanged();
             }
         }
 
@@ -506,7 +617,7 @@ namespace AppPublication.Controles
             private set
             {
                 _statSyncDistant = value;
-                NotifyPropertyChanged("DerniereSynchronisation");
+                NotifyPropertyChanged();
             }
         }
 
@@ -523,7 +634,7 @@ namespace AppPublication.Controles
             private set
             {
                 _siteGenere = value;
-                NotifyPropertyChanged("SiteGenere");
+                NotifyPropertyChanged();
             }
         }
 
@@ -540,7 +651,7 @@ namespace AppPublication.Controles
             private set
             {
                 _siteSynchronise = value;
-                NotifyPropertyChanged("SiteSynchronise");
+                NotifyPropertyChanged();
             }
         }
 
@@ -573,7 +684,7 @@ namespace AppPublication.Controles
                 {
                     SiteLocal.InterfaceLocalPublication = value;
                     AppSettings.SaveSetting(kSettingInterfaceLocalPublication, SiteLocal.InterfaceLocalPublication.ToString());
-                    NotifyPropertyChanged("InterfaceLocalPublication");
+                    NotifyPropertyChanged();
                     URLLocalPublication = CalculURLSiteLocal();
                 }
                 catch (ArgumentOutOfRangeException) { }
@@ -617,7 +728,7 @@ namespace AppPublication.Controles
             private set
             {
                 _generationActive = value;
-                NotifyPropertyChanged("IsGenerationActive");
+                NotifyPropertyChanged();
             }
         }
 
@@ -633,12 +744,18 @@ namespace AppPublication.Controles
             }
             set
             {
-                if (_isolerCompetition != value)
+                _isolerCompetition = value;
+                AppSettings.SaveSetting(kSettingIsolerCompetition, _isolerCompetition.ToString());
+
+                // Met a jour la structure d'export
+                if (_structureSiteDistant != null)
                 {
-                    _isolerCompetition = value;
-                    NotifyPropertyChanged("IsolerCompetition");
-                    AppSettings.SaveSetting(kSettingIsolerCompetition, _isolerCompetition.ToString());
-                    URLDistantPublication = CalculURLSiteDistant();
+                    _structureSiteDistant.CompetitionIsolee = _isolerCompetition;
+                }
+                NotifyPropertyChanged();
+                URLDistantPublication = CalculURLSiteDistant();
+                if (SiteDistantSelectionne != null)
+                {
                     SiteDistantSelectionne.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
                 }
             }
@@ -659,7 +776,7 @@ namespace AppPublication.Controles
                 if (_nbProchainsCombats != value)
                 {
                     _nbProchainsCombats = value;
-                    NotifyPropertyChanged("NbProchainsCombats");
+                    NotifyPropertyChanged();
                     AppSettings.SaveSetting(kSettingNbProchainsCombats, _nbProchainsCombats.ToString());
                 }
             }
@@ -682,7 +799,7 @@ namespace AppPublication.Controles
                 {
                     _delaiGenerationSec = value;
                     AppSettings.SaveSetting(kSettingDelaiGenerationSec, _delaiGenerationSec.ToString());
-                    NotifyPropertyChanged("DelaiGenerationSec");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -725,7 +842,7 @@ namespace AppPublication.Controles
                 {
                     _delaiActualisationClientSec = value;
                     AppSettings.SaveSetting(kSettingDelaiActualisationClientSec, _delaiActualisationClientSec.ToString());
-                    NotifyPropertyChanged("DelaiActualisationClientSec");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -746,7 +863,7 @@ namespace AppPublication.Controles
                 {
                     _msgProchainsCombats = value;
                     AppSettings.SaveSetting(kSettingMsgProchainsCombats, _msgProchainsCombats);
-                    NotifyPropertyChanged("MsgProchainsCombats");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -768,7 +885,7 @@ namespace AppPublication.Controles
                 {
                     _urlDistant = value;
                     AppSettings.SaveSetting(kSettingURLDistant, _urlDistant);
-                    NotifyPropertyChanged("URLDistant");
+                    NotifyPropertyChanged();
                     URLDistantPublication = CalculURLSiteDistant();
                 }
             }
@@ -787,7 +904,7 @@ namespace AppPublication.Controles
             private set
             {
                 _urlDistantPublication = value;
-                NotifyPropertyChanged("URLDistantPublication");
+                NotifyPropertyChanged();
             }
         }
 
@@ -804,7 +921,7 @@ namespace AppPublication.Controles
             private set
             {
                 _urlLocalPublication = value;
-                NotifyPropertyChanged("URLLocalPublication");
+                NotifyPropertyChanged();
             }
         }
 
@@ -825,7 +942,7 @@ namespace AppPublication.Controles
                 {
                     _ftpRepertoireRacineDistant = value;
                     AppSettings.SaveSetting(kSettingRepertoireRacineSiteFTPDistant, _ftpRepertoireRacineDistant);
-                    NotifyPropertyChanged("RepertoireRacineSiteFTPDistant");
+                    NotifyPropertyChanged();
                     SiteDistant.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();   // Ce parametre ne concerne pas le site FranceJudo
                 }
             }
@@ -834,7 +951,7 @@ namespace AppPublication.Controles
 
         
 
-        private string _idCompetition;
+        private string _idCompetition = string.Empty;
         /// <summary>
         /// ID de la competition en cours
         /// </summary>
@@ -846,27 +963,34 @@ namespace AppPublication.Controles
             }
             set
             {
-                if (_idCompetition != value)
-                {
-                    _idCompetition = value;
-                    NotifyPropertyChanged("IdCompetition");
-                    SiteDistantSelectionne.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
-                    URLDistantPublication = CalculURLSiteDistant();
-                    URLLocalPublication = CalculURLSiteLocal();
+                _idCompetition = value;
+                NotifyPropertyChanged();
 
-                    // On en peut publier que en individuelle
+                // Met a jour la structure d'export
+                if (_structureRepertoires != null)
+                {
+                    _structureRepertoires.IdCompetition = value;
+                }
+
+                // Recalcul les valeurs des URLs et répertoires distants
+                if (SiteDistantSelectionne != null)
+                {
+                    SiteDistantSelectionne.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
+                }
+                URLDistantPublication = CalculURLSiteDistant();
+                URLLocalPublication = CalculURLSiteLocal();
+                    // On ne peut publier que en individuelle
                     CanPublierAffectation = DialogControleur.Instance.ServerData.competition.IsIndividuelle();
                     CanPublierParticipants = DialogControleur.Instance.ServerData.competition.IsIndividuelle() || DialogControleur.Instance.ServerData.competition.IsShiai();
 
-                    // Si on est en Shiai, par defaut on met les poules en colonnes
-                    if (DialogControleur.Instance.ServerData.competition.IsShiai())
-                    {
-                        PouleEnColonnes = true;
-                        PouleToujoursEnColonnes = true;
-                    }
+                // On en peut publier que en individuelle
+                CanPublierAffectation = DialogControleur.Instance.ServerData.competition.IsIndividuelle();
 
-                    // Met a jour la structure d'export
-                    _structure.IdCompetition = value;
+                // Si on est en Shiai, par defaut on met les poules en colonnes
+                if (DialogControleur.Instance.ServerData.competition.IsShiai())
+                {
+                    PouleEnColonnes = true;
+                    PouleToujoursEnColonnes = true;
                 }
             }
         }
@@ -884,7 +1008,7 @@ namespace AppPublication.Controles
             private set
             {
                 _canPublierAffectation = value;
-                NotifyPropertyChanged("CanPublierAffectation");
+                NotifyPropertyChanged();
             }
         }
 
@@ -923,7 +1047,7 @@ namespace AppPublication.Controles
                 {
                     _publierProchainsCombats = value;
                     AppSettings.SaveSetting(kSettingPublierProchainsCombats, _publierProchainsCombats.ToString());
-                    NotifyPropertyChanged("PublierProchainsCombats");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -946,7 +1070,7 @@ namespace AppPublication.Controles
                 {
                     _publierAffectationTapis = value;
                     AppSettings.SaveSetting(kSettingPublierAffectationTapis, _publierAffectationTapis.ToString());
-                    NotifyPropertyChanged("PublierAffectationTapis");
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -1034,7 +1158,7 @@ namespace AppPublication.Controles
             set
             {
                 _status = value;
-                NotifyPropertyChanged("Status");
+                NotifyPropertyChanged();
                 IsGenerationActive = !(_status.State == StateGenerationEnum.Stopped);
             }
         }
@@ -1046,7 +1170,19 @@ namespace AppPublication.Controles
         {
             get
             {
-                return Path.Combine(_structure.Racine, ExportTools.getFileName(ExportEnum.Site_Checksum) + ConstantFile.ExtensionXML);
+                string output = string.Empty;
+                // Normalement on ne devrait pas avoir de probleme d'exception ici avec la structure de repertoire
+                try
+                {
+                    output = Path.Combine(_structureRepertoires.RepertoireRacine, ExportTools.getFileName(ExportEnum.Site_Checksum) + ConstantFile.ExtensionXML);
+                }
+                catch (Exception ex)
+                {
+                    output = string.Empty;
+                    LogTools.Logger.Error("Impossible de calculer le nom du fichier Checksum", ex);
+                }
+
+                return output;
             }
         }
 
@@ -1059,15 +1195,16 @@ namespace AppPublication.Controles
         /// </summary>
         private void InitExportSiteStructure()
         {
-            FileAndDirectTools.CreateDirectorie(_structure.Racine);
+            if (_structureRepertoires != null)
+            {
+                FileAndDirectTools.CreateDirectorie(_structureRepertoires.RepertoireRacine);
+            }
         }
 
         private void InitFichiersLogo()
         {
             // Recupere le repertoire des images du site
-            DirectoryInfo di = new DirectoryInfo(ConstantFile.ExportStyle_dir);
-
-            IEnumerable<FilteredFileInfo> files = di.EnumerateFiles("*logo-*.png", SearchOption.TopDirectoryOnly).Select(o => new FilteredFileInfo(o)).OrderBy(o => o.Name);
+            IEnumerable<FilteredFileInfo> files = ExportTools.EnumerateCustomLogoFiles().Select(o => new FilteredFileInfo(o)).OrderBy(o => o.Name);
 
             // Liste les fichiers logos
             FichiersLogo = new ObservableCollection<FilteredFileInfo>(files);
@@ -1075,6 +1212,8 @@ namespace AppPublication.Controles
 
         /// <summary>
         /// Initialise la liste des comites et ligues pour la publication sur les serveurs France Judo
+        /// Une adresse Web sera definie par http://{Attribut "http" de <Publication>}/{Attribut "racineHttp" de <Entite>}/{ID competition ou "courante"}/...
+        /// L'adresse de destination FTP sera definie par ftp://{Attribut "ftp" de <Publication>}/{Attribut "racineFtp" de <Entite>}/{ID competition ou "courante"}/...
         /// </summary>
         private void InitPublicationFFJudo()
         {
@@ -1088,18 +1227,20 @@ namespace AppPublication.Controles
 
                 // Charge les informations sur le serveur de publication depuis l'element racine
                 // <Publication ftp="ftp.ffjudo.com" http="http://ftp.ffjudo.com">
-                if (doc.DocumentElement == null || doc.DocumentElement.Name != "Publication")
+                if (doc.DocumentElement == null || doc.DocumentElement.Name != ConstantXML.EasyConfig_Racine)
                 {
                     throw new NullReferenceException("Racine du fichier de configuration inconnue ou manquante");
                 }
                 XmlElement root = doc.DocumentElement;
 
-                if (root.Attributes == null || root.Attributes["ftp"] == null || string.IsNullOrEmpty(root.Attributes["ftp"].Value) || root.Attributes["http"] == null || string.IsNullOrEmpty(root.Attributes["http"].Value))
+                if (root.Attributes == null || root.Attributes[ConstantXML.EasyConfig_Racine_Ftp] == null
+                    || string.IsNullOrEmpty(root.Attributes[ConstantXML.EasyConfig_Racine_Ftp].Value)
+                    || root.Attributes[ConstantXML.EasyConfig_Racine_Http] == null || string.IsNullOrEmpty(root.Attributes[ConstantXML.EasyConfig_Racine_Http].Value))
                 {
                     throw new NullReferenceException("Attributs manquants a la racine");
                 }
-                _ftpEasyConfig = root.Attributes["ftp"].Value;
-                _httpEasyConfig = root.Attributes["http"].Value;
+                _ftpEasyConfig = root.Attributes[ConstantXML.EasyConfig_Racine_Ftp].Value;
+                _httpEasyConfig = new Uri(root.Attributes[ConstantXML.EasyConfig_Racine_Http].Value);
 
                 // Parcours les elements
                 if (doc.DocumentElement.HasChildNodes)
@@ -1112,21 +1253,26 @@ namespace AppPublication.Controles
                     foreach (XmlNode node in doc.DocumentElement.ChildNodes)
                     {
                         ObservableCollection<EntitePublicationFFJudo> tmpNiveau = new ObservableCollection<EntitePublicationFFJudo>();
-                        if (node.HasChildNodes && node.Attributes != null && node.Attributes["echelon"] != null)
+                        if (node.HasChildNodes && node.Attributes != null && node.Attributes[ConstantXML.EasyConfig_Entite_Echelon] != null)
                         {
                             // Element commun pour la suite
-                            int ech = int.Parse(node.Attributes["echelon"].Value);
+                            int ech = int.Parse(node.Attributes[ConstantXML.EasyConfig_Entite_Echelon].Value);
 
                             foreach (XmlNode childNode in node.ChildNodes)
                             {
                                 // Parcours les differentes entites
-                                if (childNode.Attributes != null && childNode.Attributes["nom"] != null && childNode.Attributes["libelle"] != null && childNode.Attributes["login"] != null && childNode.Attributes["racine"] != null)
+                                if (childNode.Attributes != null && childNode.Attributes[ConstantXML.EasyConfig_Entite_Nom] != null
+                                    && childNode.Attributes[ConstantXML.EasyConfig_Entite_Libelle] != null
+                                    && childNode.Attributes[ConstantXML.EasyConfig_Entite_Login] != null
+                                    && childNode.Attributes[ConstantXML.EasyConfig_Entite_RacineFtp] != null
+                                    && childNode.Attributes[ConstantXML.EasyConfig_Entite_RacineHttp] != null)
                                 {
-                                    tmpNiveau.Add(new EntitePublicationFFJudo(childNode.Attributes["nom"].Value,
-                                                                                childNode.Attributes["libelle"].Value,
+                                    tmpNiveau.Add(new EntitePublicationFFJudo(childNode.Attributes[ConstantXML.EasyConfig_Entite_Nom].Value,
+                                                                                childNode.Attributes[ConstantXML.EasyConfig_Entite_Libelle].Value,
                                                                                 ech,
-                                                                                childNode.Attributes["login"].Value,
-                                                                                childNode.Attributes["racine"].Value));
+                                                                                childNode.Attributes[ConstantXML.EasyConfig_Entite_Login].Value,
+                                                                                childNode.Attributes[ConstantXML.EasyConfig_Entite_RacineFtp].Value,
+                                                                                childNode.Attributes[ConstantXML.EasyConfig_Entite_RacineHttp].Value));
                                 }
                             }
 
@@ -1159,22 +1305,7 @@ namespace AppPublication.Controles
         {
             try
             {
-                URLDistant = AppSettings.ReadSetting(kSettingURLDistant, string.Empty);
-                IsolerCompetition = AppSettings.ReadSetting(kSettingIsolerCompetition, false);
-                RepertoireRacineSiteFTPDistant = AppSettings.ReadSetting(kSettingRepertoireRacineSiteFTPDistant, string.Empty);
-                PublierProchainsCombats = AppSettings.ReadSetting(kSettingPublierProchainsCombats, false);
-                PublierParticipants = AppSettings.ReadSetting(kSettingPublierParticipants, false);
-                ParticipantsAbsents = AppSettings.ReadSetting(kSettingParticipantsAbsents, false);
-                ParticipantsParEntite = AppSettings.ReadSetting(kSettingParticipantsParEntite, false);
-                NbProchainsCombats = AppSettings.ReadSetting(kSettingNbProchainsCombats, 6);
-                PublierAffectationTapis = AppSettings.ReadSetting(kSettingPublierAffectationTapis, true);
-                DelaiGenerationSec = AppSettings.ReadSetting(kSettingDelaiGenerationSec, 30);
-                EffacerAuDemarrage = AppSettings.ReadSetting(kSettingEffacerAuDemarrage, true);
-                DelaiActualisationClientSec = AppSettings.ReadSetting(kSettingDelaiActualisationClientSec, 30);
-                MsgProchainsCombats = AppSettings.ReadSetting(kSettingMsgProchainsCombats, string.Empty);
-                PouleEnColonnes = AppSettings.ReadSetting(kSettingPouleEnColonnes, false);
-                PouleToujoursEnColonnes = AppSettings.ReadSetting(kSettingPouleToujoursEnColonnes, false);
-                TailleMaxPouleColonnes = AppSettings.ReadSetting(kSettingTailleMaxPouleColonnes, 5);
+                // On lit le repertoire racine en 1er afin de pouvoir initialiser la structure du site
                 RepertoireRacine = AppSettings.ReadSetting(kSettingRepertoireRacine, Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
 
                 // Charge les valeurs pour la publication FFJudo
@@ -1191,6 +1322,25 @@ namespace AppPublication.Controles
                     // Recherche l'entite a partir de la valeur initiale lue
                     EntitePublicationFFJudo = AppSettings.FindSetting<EntitePublicationFFJudo>(tmp, ListeEntitesPublicationFFJudo, o => o.Nom);                    
                 }
+
+                // Les autres parametres peuvent suivre
+                URLDistant = AppSettings.ReadSetting(kSettingURLDistant, string.Empty);
+                IsolerCompetition = AppSettings.ReadSetting(kSettingIsolerCompetition, false);
+                RepertoireRacineSiteFTPDistant = AppSettings.ReadSetting(kSettingRepertoireRacineSiteFTPDistant, string.Empty);
+                PublierProchainsCombats = AppSettings.ReadSetting(kSettingPublierProchainsCombats, false);
+                NbProchainsCombats = AppSettings.ReadSetting(kSettingNbProchainsCombats, 6);
+                PublierAffectationTapis = AppSettings.ReadSetting(kSettingPublierAffectationTapis, true);
+                PublierParticipants = AppSettings.ReadSetting(kSettingPublierParticipants, false);
+                ParticipantsAbsents = AppSettings.ReadSetting(kSettingParticipantsAbsents, false);
+                ParticipantsParEntite = AppSettings.ReadSetting(kSettingParticipantsParEntite, false);
+                DelaiGenerationSec = AppSettings.ReadSetting(kSettingDelaiGenerationSec, 30);
+                EffacerAuDemarrage = AppSettings.ReadSetting(kSettingEffacerAuDemarrage, true);
+                DelaiActualisationClientSec = AppSettings.ReadSetting(kSettingDelaiActualisationClientSec, 30);
+                MsgProchainsCombats = AppSettings.ReadSetting(kSettingMsgProchainsCombats, string.Empty);
+                PouleEnColonnes = AppSettings.ReadSetting(kSettingPouleEnColonnes, false);
+                PouleToujoursEnColonnes = AppSettings.ReadSetting(kSettingPouleToujoursEnColonnes, false);
+                TailleMaxPouleColonnes = AppSettings.ReadSetting(kSettingTailleMaxPouleColonnes, 5);
+
 
                 // Recherche le logo dans la liste
                 SelectedLogo = AppSettings.ReadRawSetting<FilteredFileInfo>(kSettingSelectedLogo, FichiersLogo, o => o.Name);
@@ -1212,34 +1362,47 @@ namespace AppPublication.Controles
         {
             string output = "Indefinie";
             string easyConfigUrl = string.Empty;
+            string urlBase = string.Empty;
 
-            // Extrait l'URL EasyConfig si possible
             try
             {
-                Uri root = new Uri(_httpEasyConfig);
-                Uri fullUri = new Uri(root, SiteFranceJudo.RepertoireSiteFTPDistant);
-                easyConfigUrl = fullUri.ToString();
-            }
-            catch {
-                easyConfigUrl = string.Empty;
-            }
-
-            // Selectionne l'URL en fonction du type de configuration
-            string urlBase = (AdvancedConfig) ? URLDistant : easyConfigUrl;
-
-            if (!String.IsNullOrEmpty(urlBase))
-            {
-                if (IsolerCompetition)
+                // Selectionne en fonction du type de configuration
+                if (EasyConfig)
                 {
-                    if (!String.IsNullOrEmpty(IdCompetition))
+                    // Extrait l'URL EasyConfig si possible
+                    try
                     {
-                        output = ExportTools.GetURLSiteDistant(urlBase, IdCompetition);
+                        if (EntitePublicationFFJudo != null)
+                        {
+                            Uri fullUri = new Uri(_httpEasyConfig, EntitePublicationFFJudo.RacineHttp);
+                            urlBase = fullUri.ToString();
+                        }
+                    }
+                    catch
+                    {
+                        urlBase = string.Empty;
                     }
                 }
                 else
                 {
-                    output = ExportTools.GetURLSiteDistant(urlBase, "courante");
+                    urlBase = URLDistant;
                 }
+
+                if (!String.IsNullOrEmpty(urlBase) && _structureSiteDistant != null && !String.IsNullOrEmpty(_structureSiteDistant.UrlPathIndex))
+                {
+                    // On verifie que le dernier caractere est bien un "/" car sinon la concatenation va ignorer le dernier element du path
+                    if (urlBase.Last() != '/')
+                    {
+                        urlBase += '/';
+                    }
+
+                    output = (new Uri(new Uri(urlBase), _structureSiteDistant.UrlPathIndex)).ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                output = string.Empty;
+                LogTools.Logger.Error("Impossible de calculer l'URL du site distant",ex);
             }
             return output;
         }
@@ -1252,14 +1415,30 @@ namespace AppPublication.Controles
         {
             string output = "Indefinie";
 
-            if (!String.IsNullOrEmpty(IdCompetition) && SiteLocal.ServerHTTP != null && SiteLocal.ServerHTTP.ListeningIpAddress != null && SiteLocal.ServerHTTP.Port > 0)
+            try
             {
-                output = ExportTools.GetURLSiteLocal(SiteLocal.ServerHTTP.ListeningIpAddress.ToString(),
-                                                        SiteLocal.ServerHTTP.Port,
-                                                        IdCompetition);
-            }
+                if (!String.IsNullOrEmpty(IdCompetition) && SiteLocal.ServerHTTP != null && SiteLocal.ServerHTTP.ListeningIpAddress != null && SiteLocal.ServerHTTP.Port > 0 && _structureSiteLocal != null)
+                {
+                    string urlBase = string.Format("http://{0}:{1}/", SiteLocal.ServerHTTP.ListeningIpAddress.ToString(), SiteLocal.ServerHTTP.Port);
 
+                    output = (new Uri(new Uri(urlBase), _structureSiteLocal.UrlPathIndex)).ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                output = string.Empty;
+                LogTools.Logger.Error("Impossible de calculer l'URL du site local", ex);
+            }
             return output;
+        }
+
+        /// <summary>
+        /// Retourne le site distant selectionne
+        /// </summary>
+        /// <returns></returns>
+        private MiniSite CalculSiteDistantSelectionne()
+        {
+            return (EasyConfig)? SiteFranceJudo : SiteDistant;
         }
 
         /// <summary>
@@ -1273,27 +1452,26 @@ namespace AppPublication.Controles
 
             try
             {
-                repRoot = (AdvancedConfig) ? RepertoireRacineSiteFTPDistant : EntitePublicationFFJudo.RepertoireFtp;
+                repRoot = (AdvancedConfig) ? RepertoireRacineSiteFTPDistant : EntitePublicationFFJudo.RacineFtp;
             }
             catch
             {
                 repRoot = string.Empty;
             }
 
-            if (!String.IsNullOrEmpty(repRoot))
+            if (!String.IsNullOrEmpty(repRoot) && _structureSiteDistant != null)
             {
-                if (IsolerCompetition)
+                try
                 {
-                    if (!String.IsNullOrEmpty(IdCompetition))
-                    {
-                        output = Path.Combine(repRoot, IdCompetition);
-                    }
+                    output = FileAndDirectTools.PathJoin(repRoot, _structureSiteDistant.UrlPathCompetition);
                 }
-                else
+                catch
                 {
-                    output = Path.Combine(repRoot, "courante");
+                    // on a essayer de traiter une structure non configuree
+                    output = string.Empty;
                 }
             }
+            
             return output;
         }
 
@@ -1310,6 +1488,9 @@ namespace AppPublication.Controles
             SiteFranceJudo.SynchroniseDifferences = true;
             // Calcul le repertoire distant en fonction de la competition
             SiteFranceJudo.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
+
+            // Recalcul l'URL distante
+            URLDistantPublication = CalculURLSiteDistant();
         }
 
         /// <summary>
@@ -1384,10 +1565,10 @@ namespace AppPublication.Controles
                                     DerniereGeneration = statGeneration;
 
                                     // Si le site distant est actif, transfere la mise a jour
-                                    if (SiteDistantSelectionne.IsActif)
+                                    if ( SiteDistantSelectionne != null &&  SiteDistantSelectionne.IsActif)
                                     {
                                         // string localRoot = Path.Combine(ConstantFile.ExportSite_dir, DialogControleur.Instance.ServerData.competition.remoteId);
-                                        string localRoot = _structure.RepertoireCompetition;
+                                        string localRoot = _structureRepertoires.RepertoireCompetition;
 
                                         // Le site distant sur lequel charger les fichiers selon si on isole ou pas
                                         StatExecution statSync = new StatExecution();
@@ -1476,8 +1657,11 @@ namespace AppPublication.Controles
                 {
                     _taskNettoyage = Task.Factory.StartNew(() =>
                     {
-                        // Nettoyer le site distant
-                        SiteDistantSelectionne.NettoyerSite();
+                        if (SiteDistantSelectionne != null)
+                        {
+                            // Nettoyer le site distant
+                            SiteDistantSelectionne.NettoyerSite();
+                        }
                     });
                 }
                 catch (Exception ex)
@@ -1525,25 +1709,25 @@ namespace AppPublication.Controles
                 switch (genere.type)
                 {
                     case SiteEnum.AllTapis:
-                        urls = ExportSite.GenereWebSiteAllTapis(DC, cfg, _structure);
+                        urls = ExportSite.GenereWebSiteAllTapis(DC, cfg, _structureRepertoires);
                         break;
                     case SiteEnum.Classement:
-                        urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), cfg, _structure);
+                        urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), cfg, _structureRepertoires);
                         break;
                     case SiteEnum.Index:
-                        urls = ExportSite.GenereWebSiteIndex(cfg, _structure);
+                        urls = ExportSite.GenereWebSiteIndex(cfg, _structureRepertoires);
                         break;
                     case SiteEnum.Menu:
-                        urls = ExportSite.GenereWebSiteMenu(DC, EDC, cfg, _structure);
+                        urls = ExportSite.GenereWebSiteMenu(DC, cfg, _structureRepertoires);
                         break;
                     case SiteEnum.Phase:
-                        urls = ExportSite.GenereWebSitePhase(DC, genere.phase, cfg, _structure);
+                        urls = ExportSite.GenereWebSitePhase(DC, genere.phase, cfg, _structureRepertoires);
                         break;
                     case SiteEnum.AffectationTapis:
-                        urls = ExportSite.GenereWebSiteAffectation(DC, cfg, _structure);
+                        urls = ExportSite.GenereWebSiteAffectation(DC, cfg, _structureRepertoires);
                         break;
                     case SiteEnum.Participants:
-                        urls = ExportSite.GenereWebSiteParticipants(DC, EDC, genere.groupeParticipant, cfg, _structure);
+                        urls = ExportSite.GenereWebSiteParticipants(DC, EDC, genere.groupeParticipant, cfg, _structureRepertoires);
                         break;
                 }
             }

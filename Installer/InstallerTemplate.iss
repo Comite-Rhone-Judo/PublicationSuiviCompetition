@@ -6,6 +6,7 @@
 #define MyAppExeName "AppPublication.exe"
 #define MyAppConfig MyAppExeName + ".config"
 #define InstallerName "PublicationSuiviCompetitionInstaller_v" + MyAppVersion
+#define MinVersionCompatible "1.3.0.0"
 
 ; ################# WARNING ##############
 ; Do Not configure MyAppVersion, it will be added automatically using PreBuild Event
@@ -38,13 +39,18 @@ Name: "french"; MessagesFile: "compiler:Languages\French.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
-Name: "overrideConfig"; Description: "{cm:OverrideConfig}"; GroupDescription: "{cm:PreviousInstall}"; Flags: checkedonce
+; L'utilisateur peut choisir d'écraser le fichier de configuration si ce dernier est compatible avec la version actuelle
+Name: "useroverrideConfig"; Description: "{cm:OverrideConfig}"; GroupDescription: "{cm:PreviousInstall}"; Flags: checkedonce; Check: IsVersionCompatible
 
 [Files]
 Source: "..\..\..\AppPublication\bin\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\..\AppPublication\bin\Release\*"; Excludes:"{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+; Deploit le fichier de configuration s'il n'existe pas
 Source: "..\..\..\AppPublication\bin\Release\{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
-Source: "..\..\..\AppPublication\bin\Release\{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion; Tasks: overrideConfig
+; Deploit le fichier de configuration au choix de l'utilisateur (la tache peut etre desactivee si elle n'est pas compatible avec la version du fichier)
+Source: "..\..\..\AppPublication\bin\Release\{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion; Tasks: useroverrideConfig
+; Force le deploiement du fichier de configuration s'il n'est pas compatible
+Source: "..\..\..\AppPublication\bin\Release\{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion; Check: IsForceConfigOverride
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -78,3 +84,152 @@ Root: HKLM64; \
     Subkey: "SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"; \
     ValueType: String; ValueName: "{app}\{#MyAppExeName}"; ValueData: "~ RUNASADMIN"; \
     Flags: uninsdeletekeyifempty uninsdeletevalue; Check: IsWin64
+
+; NOTE Ajoute un message car le format du fichier de configuration a change
+[Code]
+const
+  NoteHeight = 50;
+  DisplayVersionValue = 'DisplayVersion';
+  VersionSep = '.';
+  VersionBeta = '-beta';
+
+var
+  gForceConfigOverride: Boolean;
+  gCompatibleConfig: Boolean;
+
+{Affiche un message complementaire dans l'installeur} 
+{ procedure InitializeWizard;
+var
+  Note: TNewStaticText;
+begin
+  if(gCompatibleConfig) then
+  begin
+    WizardForm.TasksList.Height := WizardForm.TasksList.Height - NoteHeight;
+
+    Note := TNewStaticText.Create(WizardForm);
+    Note.Parent := WizardForm.SelectTasksPage;
+    Note.AutoSize := False;
+    Note.SetBounds(
+      WizardForm.TasksList.Left,
+      WizardForm.TasksList.Top + WizardForm.TasksList.Height,
+      WizardForm.TasksList.Width,
+      NoteHeight
+    );
+    Note.Font.Color := clRed;
+    Note.Caption := 'Activez <Effacer la configuration existante> si la version précédente' + #13#10 + 'est antérieure a la version 1.3.0.0. Dans le cas contraire' + #13#10 + 'des dysfonctionnements peuvent apparaitre.';
+  end;
+end; }
+
+{Extrait le 1er digit de version d'une chaine, la chaine est tronquee et retourne le digit trouve}
+function GetDigitVersion(var V: String) : Integer;
+var
+  P, n: integer;
+begin
+  n := -1;
+  P := Pos(VersionSep, V);
+  if P > 0 then
+  begin
+    n := StrToInt(Copy(V, 1, P - 1));
+    Delete(V, 1, P);
+  end
+  else
+  begin
+    { Pas de . trouve dans la chaine, on doit etre a la fin}
+    if V <> '' then
+    begin
+      n := StrToInt(V);
+      V := '';
+    end
+    else
+    begin
+      n := 0;
+    end;
+  end;
+
+  Result := n;
+end; 
+
+{Nettoie les eventuels -beta en fin de numero}
+procedure CleanVersion(var V: String);
+var
+  p: Integer;
+  len: Longint;
+begin
+  len := Length(V);
+  p := Pos(VersionBeta, V);
+  if p > 0 then
+  begin
+    {il y a bien un flag beta sur le numero de version}
+    Delete(V, p, len - p + 1);
+end
+end;
+
+{Compare 2 version sous forme de chaine}
+function CompareVersion(V1, V2: string): Integer;
+var
+  N1, N2: Integer;
+begin
+  Result := 0;
+  
+  {Nettoie les eventuels -beta en fin de numero}
+  CleanVersion(V1);
+  CleanVersion(V2);
+  Log(Format('Versions a comparer: %s %s', [V1, V2]));
+
+  while (Result = 0) and ((V1 <> '') or (V2 <> '')) do
+  begin
+    N1 := GetDigitVersion(V1);
+    N2 := GetDigitVersion(V2);
+    Log(Format('Digit de version: %d %d', [N1, N2]));
+
+    if N1 < N2 then Result := -1
+      else
+    if N1 > N2 then Result := 1;
+  end;
+end;
+
+{Retourne l'etat de la version}
+function IsVersionCompatible: Boolean;
+begin
+  Result := gCompatibleConfig;
+end;
+function IsForceConfigOverride: Boolean;
+begin
+  Result := gForceConfigOverride;
+end;
+
+{Event lors de l'initialisation de l'installeur}
+function InitializeSetup(): Boolean;
+var
+  PrevVersion, CurVersion, AppKey, UninstallKey, MinVersion: string;
+  res: Integer;
+begin
+    Log('InitializeSetup');
+    AppKey := '{#SetupSetting('AppId')}';
+    {Supprime un '{' au debut }
+    Delete(AppKey, 1, 1); 
+    
+    MinVersion := '{#MinVersionCompatible}';
+    UninstallKey := 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\' + AppKey + '_is1';
+    Log(Format('UninstallKey %s', [UninstallKey]));
+
+  if RegQueryStringValue(HKLM, UninstallKey, DisplayVersionValue, PrevVersion) or
+     RegQueryStringValue(HKCU, UninstallKey, DisplayVersionValue, PrevVersion) then
+  begin
+    Log(Format('Previous version %s', [PrevVersion]));
+    CurVersion := '{#SetupSetting('AppVersion')}';
+    Log(Format('Installing version %s', [CurVersion]));
+    Log(Format('Min version requise %s', [MinVersion]));
+
+    {Compare la version installee avec la version mininmale pour garder le fichier de configuration}
+    res := CompareVersion(PrevVersion, MinVersion);
+
+    gForceConfigOverride := (res < 0 );
+    gCompatibleConfig := (res >= 0);
+
+    if gForceConfigOverride then Log('Version precedente non compatible a ecraser')
+      else Log('Version precedente compatible le user peut choisir')
+  end;
+
+  Result := True;
+end;

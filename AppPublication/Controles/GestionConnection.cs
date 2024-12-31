@@ -49,7 +49,7 @@ namespace AppPublication.Controles
                 _client = value;
                 _isconnected = true;
 
-                NotifyPropertyChanged("Client");
+                NotifyPropertyChanged();
                 setClient();
             }
         }

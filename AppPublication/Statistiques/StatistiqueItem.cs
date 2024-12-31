@@ -26,7 +26,7 @@ namespace AppPublication.Statistiques
             protected set
             {
                 _nom = value;
-                NotifyPropertyChanged("Nom");
+                NotifyPropertyChanged();
             }
         }
 
@@ -40,7 +40,7 @@ namespace AppPublication.Statistiques
             protected set
             {
                 _libelle = value;
-                NotifyPropertyChanged("Libelle");
+                NotifyPropertyChanged();
             }
         }
 
@@ -54,7 +54,7 @@ namespace AppPublication.Statistiques
             protected set
             {
                 _valeur = value;
-                NotifyPropertyChanged("Valeur");
+                NotifyPropertyChanged();
             }
         }
 
@@ -69,7 +69,7 @@ namespace AppPublication.Statistiques
             protected set
             {
                 _max = value;
-                NotifyPropertyChanged("Max");
+                NotifyPropertyChanged();
             }
         }
 
@@ -83,7 +83,7 @@ namespace AppPublication.Statistiques
             protected set
             {
                 _moy = value;
-                NotifyPropertyChanged("Moy");
+                NotifyPropertyChanged();
             }
         }
 
@@ -97,7 +97,7 @@ namespace AppPublication.Statistiques
             protected set
             {
                 _min = value;
-                NotifyPropertyChanged("Min");
+                NotifyPropertyChanged();
             }
         }
 

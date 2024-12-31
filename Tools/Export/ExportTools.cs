@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Tools.Enum;
 using Tools.Outils;
@@ -9,6 +10,7 @@ namespace Tools.Export
 {
     public static class ExportTools
     {
+
         public static string default_competition = null;
 
         /// <summary>
@@ -168,7 +170,7 @@ namespace Tools.Export
         /// </summary>
         /// <param name="regenere"></param>
         /// <returns></returns>
-        public static List<string> ExportEmbeddedImg(bool regenere, ExportSiteStructure structSite)
+        public static List<string> ExportEmbeddedImg(bool regenere, bool addCustom, ExportSiteStructure structSite)
         {
             List<string> result = new List<string>();
             string dir = structSite.RepertoireImg;
@@ -210,11 +212,39 @@ namespace Tools.Export
                         result.Add(fileName);
                     }
                 }
+
+                // Si on doit ajouter des fichiers personnalises
+                if (addCustom)
+                {
+                    // Enumere les fichiers dans le repertoire de travail
+                    List<FileInfo> customFiles = EnumerateCustomLogoFiles();
+
+                    // Copie les nouveaux fichiers trouves
+                    foreach (FileInfo cfile in customFiles)
+                    {
+                        // il faut tenir compte du nom compose pour les resources
+                        string destFile = Path.Combine(dir, cfile.Name.Replace(ConstantResource.Export_site_img, ""));
+                        if (!result.Contains(destFile))
+                        {
+                            File.Copy(cfile.FullName, destFile);
+                            result.Add(destFile);
+                        }
+                    }
+                }
             }
 
             return result;
         }
 
+        /// <summary>
+        /// Enumerer les fichiers image de type Logo se trouvant dans le repertoire de travail de l'application
+        /// </summary>
+        /// <returns></returns>
+        public static List<FileInfo> EnumerateCustomLogoFiles()
+        {
+            DirectoryInfo di = new DirectoryInfo(ConstantFile.ExportStyle_dir);
+            return di.EnumerateFiles("*.png", SearchOption.TopDirectoryOnly).Where(o => o.Name.ToLower().Contains("logo")).ToList();
+        }
 
         /// <summary>
         /// Exporte les fichiers js et css
@@ -495,71 +525,6 @@ namespace Tools.Export
             }
 
             return name;
-        }
-
-        /// <summary>
-        /// Calcul d'URL du site en local en fonction de la competition en cours
-        /// </summary>
-        /// <param name="ip"></param>
-        /// <param name="port"></param>
-        /// <param name="nom_compet"></param>
-        /// <returns></returns>
-        public static string GetURLSiteLocal(string ip, int port, string nom_compet)
-        {
-            string result = "";
-
-            result = "http://";
-            result += ip;
-            result += ":";
-            result += port.ToString() + "/";
-            // result += "/site/";
-            result += OutilsTools.TraiteChaine(OutilsTools.SubString(nom_compet, 0, 30));
-            result += "/common/index.html";
-
-            return result;
-        }
-
-        /// <summary>
-        /// Calcul d'URL du site FTP en fonction de la competition
-        /// </summary>
-        /// <param name="nom_compet"></param>
-        /// <returns></returns>
-        public static string GetURLSiteFTP(string nom_compet)
-        {
-            string result = NetworkTools.HTTP_SUIVI_URL;
-            result += OutilsTools.TraiteChaine(OutilsTools.SubString(nom_compet, 0, 30));
-            result += "/common/index.html";
-
-            return result;
-        }
-
-        /// <summary>
-        /// Calcul d'URL du site distant en fonction de la competition en cours
-        /// </summary>
-        /// <param name="urlRacine"></param>
-        /// <param name="nom_compet"></param>
-        /// <returns></returns>
-        public static string GetURLSiteDistant(string urlRacine, string nom_compet)
-        {
-
-            Uri root = new Uri(urlRacine);
-
-            string suffix = OutilsTools.TraiteChaine(OutilsTools.SubString(nom_compet, 0, 30));
-            suffix += "/common/index.html";
-
-            // Uri suffixUri = new Uri(suffix);
-
-            Uri fullUri = new Uri(root, suffix);
-
-            return fullUri.ToString();
-
-            /*
-            string result = urlRacine;
-            result += OutilsTools.TraiteChaine(OutilsTools.SubString(nom_compet, 0, 30));
-            result += "/common/index.html";
-
-            return result;
-            */
         }
     }
 }

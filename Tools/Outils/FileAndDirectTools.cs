@@ -335,7 +335,7 @@ namespace Tools.Outils
                 return path1;
             }
 
-            return path1.TrimEnd(Path.PathSeparator) + Path.PathSeparator + path2.TrimStart(Path.PathSeparator);
+            return path1.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar + path2.TrimStart(Path.DirectorySeparatorChar);
         }
     }
 }

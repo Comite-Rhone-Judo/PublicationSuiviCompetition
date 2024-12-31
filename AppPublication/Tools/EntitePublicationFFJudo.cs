@@ -15,6 +15,7 @@ namespace Tools.Outils
         private int _echelon;
         private string _login;
         private string _repFtp;
+        private string _repHttp;
 
         public string Nom
         {
@@ -25,7 +26,7 @@ namespace Tools.Outils
             set
             {
                 _nom = value;
-                NotifyPropertyChanged(nameof(Nom));
+                NotifyPropertyChanged();
             }
         }
 
@@ -38,7 +39,7 @@ namespace Tools.Outils
             set
             {
                 _libelle = value;
-                NotifyPropertyChanged(nameof(Libelle));
+                NotifyPropertyChanged();
             }
         }
         public string Login
@@ -50,11 +51,11 @@ namespace Tools.Outils
             set
             {
                 _login = value;
-                NotifyPropertyChanged(nameof(Login));
+                NotifyPropertyChanged();
             }
         }
 
-        public string RepertoireFtp
+        public string RacineFtp
         {
             get
             {
@@ -63,7 +64,20 @@ namespace Tools.Outils
             set
             {
                 _repFtp = value;
-                NotifyPropertyChanged(nameof(RepertoireFtp));
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string RacineHttp
+        {
+            get
+            {
+                return _repHttp;
+            }
+            set
+            {
+                _repHttp = value;
+                NotifyPropertyChanged();
             }
         }
 
@@ -76,17 +90,18 @@ namespace Tools.Outils
             set
             {
                 _echelon = value;
-                NotifyPropertyChanged(nameof(Echelon));
+                NotifyPropertyChanged();
             }
         }
 
-        public EntitePublicationFFJudo(string nom, string libelle, int echelon, string login, string rep)
+        public EntitePublicationFFJudo(string nom, string libelle, int echelon, string login, string repFtp, string racineHttp)
         {
             _nom = nom;
             _libelle = libelle;
             _echelon = echelon;
             _login = login;
-            _repFtp = rep;
+            _repFtp = repFtp;
+            _repHttp = racineHttp;
         }
     }
 }

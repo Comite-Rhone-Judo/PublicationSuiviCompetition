@@ -123,35 +123,7 @@ namespace KernelImpl.Noyau.Deroulement
 			combat_discipline = combat.discipline;
 
             // Ajout de la lecture des donnees de phase et d'epreuve
-            Phase phase = null;
-            using (TimedLock.Lock((DC.Deroulement.Phases as ICollection).SyncRoot))
-            {
-                phase = DC.Deroulement.Phases.FirstOrDefault(o => o.id == combat.phase);
-            }
-            if (phase != null)
-            {
-                phase_id = phase.id;
-                phase_libelle = phase.libelle;
-                phase_type = phase.typePhase;
-                phase_etat = phase.etat;
 
-                Organisation.Epreuve epreuve = null;
-                using (TimedLock.Lock((DC.Organisation.Epreuves as ICollection).SyncRoot))
-                {
-                    epreuve = DC.Organisation.Epreuves.FirstOrDefault(o => o.id == phase.epreuve);
-                }
-                if (epreuve != null)
-                {
-                    epreuve_id = epreuve.id;
-                    epreuve_nom = epreuve.nom;
-                    epreuve_poidsMin = epreuve.poidsMin;
-                    epreuve_poidsMax = epreuve.poidsMax;
-                    epreuve_ceintureMin = epreuve.ceintureMin;
-                    epreuve_ceintureMax = epreuve.ceintureMax;
-                    epreuve_anneeMin = epreuve.anneeMin;
-                    epreuve_anneeMax = epreuve.anneeMax;
-                }
-            }
 
             if ((CompetitionTypeEnum)DC.competition.type != CompetitionTypeEnum.Equipe)
             {

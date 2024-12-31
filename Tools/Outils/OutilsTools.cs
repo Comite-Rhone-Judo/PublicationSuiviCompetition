@@ -282,10 +282,10 @@ namespace Tools.Outils
 
                 String version = assembly.GetName().Version.ToString();
 
-                var myAttr = Attribute.GetCustomAttribute(assembly, typeof(AssemblyVersionTest)) as AssemblyVersionTest;
+                var myAttr = Attribute.GetCustomAttribute(assembly, typeof(AssemblyVersionBeta)) as AssemblyVersionBeta;
                 if (myAttr.Value > 0)
                 {
-                    version += "_test" + myAttr.Value;
+                    version += String.Format("-beta{0:00}", myAttr.Value);
                 }
 
                 return version; // assembly.GetName().Version;

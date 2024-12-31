@@ -343,11 +343,11 @@
 
 					<!-- Template par ligne de participant -->
 					<xsl:apply-templates select="key('participants', $numeroPoule)">
-						<xsl:sort select="@position" data-type="number" order="ascending"/>
-						<xsl:with-param name="poule" select="$numeroPoule"/>
-						<xsl:with-param name="phase" select="$phase"/>
-						<xsl:with-param name="dispositionPoule" select="$dispositionPoule"/>
-						<xsl:with-param name="niveauCombat" select="$niveauCombat"/>
+							<xsl:sort select="@position" data-type="number" order="ascending"/>
+							<xsl:with-param name="poule" select="$numeroPoule"/>
+							<xsl:with-param name="phase" select="$phase"/>
+							<xsl:with-param name="dispositionPoule" select="$dispositionPoule"/>
+							<xsl:with-param name="niveauCombat" select="$niveauCombat"/>
 					</xsl:apply-templates>
 				</tbody>
 			</table>
@@ -407,7 +407,7 @@
 				<!-- Disposition en colonnes -->
 				<xsl:when test="$dispositionPoule = 2">
 					<xsl:for-each select="//combat[ @niveau = $niveauCombat and @phase = $phase and @reference = $poule]">
-						<xsl:sort select="numero" data-type="number" order="ascending"/>
+						<xsl:sort select="@numero" data-type="number" order="ascending"/>
 
 						<xsl:variable name="combatj1" select="./score[1]/@judoka"/>
 						<xsl:variable name="combatj2" select="./score[2]/@judoka"/>

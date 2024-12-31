@@ -1,124 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Publication ftp="ftp.ffjudo.com" http="http://ftp.ffjudo.com">
+<Publication ftp="ftp.ffjudo.com" http="http://ftp.ffjudo.com/">
 	<Comites echelon="3" racine="SuiviCompetition/Comites">
-		<Comite nom="01-AIN" libelle="01 - Ain" login="ftp01-AIN" racine="SuiviCompetition/Comites/01-AIN"/>
-		<Comite nom="02-AISNE" libelle="02 - Aisne" login="ftp02-AISNE" racine="SuiviCompetition/Comites/02-AISNE"/>
-		<Comite nom="03-ALLIER" libelle="03 - Allier" login="ftp03-ALLIER" racine="SuiviCompetition/Comites/03-ALLIER"/>
-		<Comite nom="04-ALPES_HTE_PRVCE" libelle="04 - Alpes-de-Haute-Provence" login="ftp04-ALPES_HTE_PRVCE" racine="SuiviCompetition/Comites/04-ALPES_HTE_PRVCE"/>
-		<Comite nom="05-HAUTES_ALPES" libelle="05 - Hautes-Alpes" login="ftp05-HAUTES_ALPES" racine="SuiviCompetition/Comites/05-HAUTES_ALPES"/>
-		<Comite nom="06-ALPES_MARITIMES" libelle="06 - Alpes-Maritimes" login="ftp06-ALPES_MARITIMES" racine="SuiviCompetition/Comites/06-ALPES_MARITIMES"/>
-		<Comite nom="08-ARDENNES" libelle="08 - Ardennes" login="ftp08-ARDENNES" racine="SuiviCompetition/Comites/08-ARDENNES"/>
-		<Comite nom="09-ARIEGE" libelle="09 - Ariège" login="ftp09-ARIEGE" racine="SuiviCompetition/Comites/09-ARIEGE"/>
-		<Comite nom="10-AUBE" libelle="10 - Aube" login="ftp10-AUBE" racine="SuiviCompetition/Comites/10-AUBE"/>
-		<Comite nom="11-AUDE" libelle="11 - Aude" login="ftp11-AUDE" racine="SuiviCompetition/Comites/11-AUDE"/>
-		<Comite nom="12-AVEYRON" libelle="12 - Aveyron" login="ftp12-AVEYRON" racine="SuiviCompetition/Comites/12-AVEYRON"/>
-		<Comite nom="13-BOUCHES_DU_RHONE" libelle="13 - Bouches du Rhône" login="ftp13-BOUCHES_DU_RHONE" racine="SuiviCompetition/Comites/13-BOUCHES_DU_RHONE"/>
-		<Comite nom="14-CALVADOS" libelle="14 - Calvados" login="ftp14-CALVADOS" racine="SuiviCompetition/Comites/14-CALVADOS"/>
-		<Comite nom="15-CANTAL" libelle="15 - Cantal" login="ftp15-CANTAL" racine="SuiviCompetition/Comites/15-CANTAL"/>
-		<Comite nom="16-CHARENTE" libelle="16 - Charente" login="ftp16-CHARENTE" racine="SuiviCompetition/Comites/16-CHARENTE"/>
-		<Comite nom="17-CHARENTE_MARITIME" libelle="17 - Charente-Maritime" login="ftp17-CHARENTE_MARITIME" racine="SuiviCompetition/Comites/17-CHARENTE_MARITIME"/>
-		<Comite nom="18-CHER" libelle="18 - Cher" login="ftp18-CHER" racine="SuiviCompetition/Comites/18-CHER"/>
-		<Comite nom="19-CORREZE" libelle="19 - Corrèze" login="ftp19-CORREZE" racine="SuiviCompetition/Comites/19-CORREZE"/>
-		<Comite nom="20-CORSE" libelle="20 - Corse" login="ftp20-CORSE" racine="SuiviCompetition/Comites/20-CORSE"/>
-		<Comite nom="21-COTE_D_OR" libelle="21 - Côte d'Or" login="ftp21-COTE_D_OR" racine="SuiviCompetition/Comites/21-COTE_D_OR"/>
-		<Comite nom="22-COTES_D_ARMOR" libelle="22 - Côtes-d'Armor" login="ftp22-COTES_D_ARMOR" racine="SuiviCompetition/Comites/22-COTES_D_ARMOR"/>
-		<Comite nom="23-CREUSE" libelle="23 - Creuse" login="ftp23-CREUSE" racine="SuiviCompetition/Comites/23-CREUSE"/>
-		<Comite nom="24-DORDOGNE" libelle="24 - Dordogne" login="ftp24-DORDOGNE" racine="SuiviCompetition/Comites/24-DORDOGNE"/>
-		<Comite nom="25-DOUBS" libelle="25 - Doubs" login="ftp25-DOUBS" racine="SuiviCompetition/Comites/25-DOUBS"/>
-		<Comite nom="27-EURE" libelle="27 - Eure" login="ftp27-EURE" racine="SuiviCompetition/Comites/27-EURE"/>
-		<Comite nom="28-EURE_ET_LOIR" libelle="28 - Eure-et-Loir" login="ftp28-EURE_ET_LOIR" racine="SuiviCompetition/Comites/28-EURE_ET_LOIR"/>
-		<Comite nom="29-FINISTERE" libelle="29 - Finistère" login="ftp29-FINISTERE" racine="SuiviCompetition/Comites/29-FINISTERE"/>
-		<Comite nom="30-GARD" libelle="30 - Gard" login="ftp30-GARD" racine="SuiviCompetition/Comites/30-GARD"/>
-		<Comite nom="31-HAUTE_GARONNE" libelle="31 - Haute-Garonne" login="ftp31-HAUTE_GARONNE" racine="SuiviCompetition/Comites/31-HAUTE_GARONNE"/>
-		<Comite nom="32-GERS" libelle="32 - Gers" login="ftp32-GERS" racine="SuiviCompetition/Comites/32-GERS"/>
-		<Comite nom="33-GIRONDE" libelle="33 - Gironde" login="ftp33-GIRONDE" racine="SuiviCompetition/Comites/33-GIRONDE"/>
-		<Comite nom="34-HERAULT" libelle="34 - Hérault" login="ftp34-HERAULT" racine="SuiviCompetition/Comites/34-HERAULT"/>
-		<Comite nom="35-ILLE_ET_VILAINE" libelle="35 - Ille-et-Vilaine" login="ftp35-ILLE_ET_VILAINE" racine="SuiviCompetition/Comites/35-ILLE_ET_VILAINE"/>
-		<Comite nom="36-INDRE" libelle="36 - Indre" login="ftp36-INDRE" racine="SuiviCompetition/Comites/36-INDRE"/>
-		<Comite nom="37-INDRE_ET_LOIRE" libelle="37 - Indre-et-Loire" login="ftp37-INDRE_ET_LOIRE" racine="SuiviCompetition/Comites/37-INDRE_ET_LOIRE"/>
-		<Comite nom="38-ISERE" libelle="38 - Isère" login="ftp38-ISERE" racine="SuiviCompetition/Comites/38-ISERE"/>
-		<Comite nom="39-JURA" libelle="39 - Jura" login="ftp39-JURA" racine="SuiviCompetition/Comites/39-JURA"/>
-		<Comite nom="40-LANDES" libelle="40 - Landes" login="ftp40-LANDES" racine="SuiviCompetition/Comites/40-LANDES"/>
-		<Comite nom="41-LOIR_ET_CHER" libelle="41 - Loir-et-Cher" login="ftp41-LOIR_ET_CHER" racine="SuiviCompetition/Comites/41-LOIR_ET_CHER"/>
-		<Comite nom="42-LOIRE" libelle="42 - Loire" login="ftp42-LOIRE" racine="SuiviCompetition/Comites/42-LOIRE"/>
-		<Comite nom="43-HAUTE_LOIRE" libelle="43 - Haute-Loire" login="ftp43-HAUTE_LOIRE" racine="SuiviCompetition/Comites/43-HAUTE_LOIRE"/>
-		<Comite nom="44-LOIRE_ATLANTIQUE" libelle="44 - Loire-Atlantique" login="ftp44-LOIRE_ATLANTIQUE" racine="SuiviCompetition/Comites/44-LOIRE_ATLANTIQUE"/>
-		<Comite nom="45-LOIRET" libelle="45 - Loiret" login="ftp45-LOIRET" racine="SuiviCompetition/Comites/45-LOIRET"/>
-		<Comite nom="46-LOT" libelle="46 - Lot" login="ftp46-LOT" racine="SuiviCompetition/Comites/46-LOT"/>
-		<Comite nom="47-LOT_ET_GARONNE" libelle="47 - Lot-et-Garonne" login="ftp47-LOT_ET_GARONNE" racine="SuiviCompetition/Comites/47-LOT_ET_GARONNE"/>
-		<Comite nom="48-LOZERE" libelle="48 - Lozère" login="ftp48-LOZERE" racine="SuiviCompetition/Comites/48-LOZERE"/>
-		<Comite nom="49-MAINE_ET_LOIRE" libelle="49 - Maine-et-Loire" login="ftp49-MAINE_ET_LOIRE" racine="SuiviCompetition/Comites/49-MAINE_ET_LOIRE"/>
-		<Comite nom="50-MANCHE" libelle="50 - Manche" login="ftp50-MANCHE" racine="SuiviCompetition/Comites/50-MANCHE"/>
-		<Comite nom="51-MARNE" libelle="51 - Marne" login="ftp51-MARNE" racine="SuiviCompetition/Comites/51-MARNE"/>
-		<Comite nom="52-HAUTE_MARNE" libelle="52 - Haute-Marne" login="ftp52-HAUTE_MARNE" racine="SuiviCompetition/Comites/52-HAUTE_MARNE"/>
-		<Comite nom="53-MAYENNE" libelle="53 - Mayenne" login="ftp53-MAYENNE" racine="SuiviCompetition/Comites/53-MAYENNE"/>
-		<Comite nom="54-MEURTHE_MOSELLE" libelle="54 - Meurthe-et-Moselle" login="ftp54-MEURTHE_MOSELLE" racine="SuiviCompetition/Comites/54-MEURTHE_MOSELLE"/>
-		<Comite nom="55-MEUSE" libelle="55 - Meuse" login="ftp55-MEUSE" racine="SuiviCompetition/Comites/55-MEUSE"/>
-		<Comite nom="56-MORBIHAN" libelle="56 - Morbihan" login="ftp56-MORBIHAN" racine="SuiviCompetition/Comites/56-MORBIHAN"/>
-		<Comite nom="57-MOSELLE" libelle="57 - Moselle" login="ftp57-MOSELLE" racine="SuiviCompetition/Comites/57-MOSELLE"/>
-		<Comite nom="58-NIEVRE" libelle="58 - Nièvre" login="ftp58-NIEVRE" racine="SuiviCompetition/Comites/58-NIEVRE"/>
-		<Comite nom="59-NORD" libelle="59 - Nord" login="ftp59-NORD" racine="SuiviCompetition/Comites/59-NORD"/>
-		<Comite nom="60-OISE" libelle="60 - Oise" login="ftp60-OISE" racine="SuiviCompetition/Comites/60-OISE"/>
-		<Comite nom="61-ORNE" libelle="61 - Orne" login="ftp61-ORNE" racine="SuiviCompetition/Comites/61-ORNE"/>
-		<Comite nom="62-PAS_DE_CALAIS" libelle="62 - Pas-de-Calais" login="ftp62-PAS_DE_CALAIS" racine="SuiviCompetition/Comites/62-PAS_DE_CALAIS"/>
-		<Comite nom="63-PUY_DE_DOME" libelle="63 - Puy-de-Dôme" login="ftp63-PUY_DE_DOME" racine="SuiviCompetition/Comites/63-PUY_DE_DOME"/>
-		<Comite nom="64-PYRENEES_ATLANTIQUES" libelle="64 - Pyrénées-Atlantiques" login="ftp64-PYRENEES_ATLANTIQUES" racine="SuiviCompetition/Comites/64-PYRENEES_ATLANTIQUES"/>
-		<Comite nom="65-HAUTES_PYRENEES" libelle="65 - Hautes-Pyrénées" login="ftp65-HAUTES_PYRENEES" racine="SuiviCompetition/Comites/65-HAUTES_PYRENEES"/>
-		<Comite nom="66-PYRENEES_ORIENT" libelle="66 - Pyrénées-Orientales" login="ftp66-PYRENEES_ORIENT" racine="SuiviCompetition/Comites/66-PYRENEES_ORIENT"/>
-		<Comite nom="67-BAS_RHIN" libelle="67 - Bas-Rhin" login="ftp67-BAS_RHIN" racine="SuiviCompetition/Comites/67-BAS_RHIN"/>
-		<Comite nom="68-HAUT_RHIN" libelle="68 - Haut-Rhin" login="ftp68-HAUT_RHIN" racine="SuiviCompetition/Comites/68-HAUT_RHIN"/>
-		<Comite nom="69-RHONE" libelle="69 - Rhône" login="ftp69-RHONE" racine="SuiviCompetition/Comites/69-RHONE"/>
-		<Comite nom="70-HAUTE_SAONE" libelle="70 - Haute-Saône" login="ftp70-HAUTE_SAONE" racine="SuiviCompetition/Comites/70-HAUTE_SAONE"/>
-		<Comite nom="71-SAONE_ET_LOIRE" libelle="71 - Saône-et-Loire" login="ftp71-SAONE_ET_LOIRE" racine="SuiviCompetition/Comites/71-SAONE_ET_LOIRE"/>
-		<Comite nom="72-SARTHE" libelle="72 - Sarthe" login="ftp72-SARTHE" racine="SuiviCompetition/Comites/72-SARTHE"/>
-		<Comite nom="73-SAVOIE" libelle="73 - Savoie" login="ftp73-SAVOIE" racine="SuiviCompetition/Comites/73-SAVOIE"/>
-		<Comite nom="74-HAUTE_SAVOIE" libelle="74 - Haute-Savoie" login="ftp74-HAUTE_SAVOIE" racine="SuiviCompetition/Comites/74-HAUTE_SAVOIE"/>
-		<Comite nom="75-COMITE_DE_PARIS" libelle="75 - Comité de Paris" login="ftp75-COMITE_DE_PARIS" racine="SuiviCompetition/Comites/75-COMITE_DE_PARIS"/>
-		<Comite nom="76-SEINE_MARITIME" libelle="76 - Seine-Maritime" login="ftp76-SEINE_MARITIME" racine="SuiviCompetition/Comites/76-SEINE_MARITIME"/>
-		<Comite nom="77-SEINE_ET_MARNE" libelle="77 - Seine-et-Marne" login="ftp77-SEINE_ET_MARNE" racine="SuiviCompetition/Comites/77-SEINE_ET_MARNE"/>
-		<Comite nom="78-YVELINES" libelle="78 - Yvelines" login="ftp78-YVELINES" racine="SuiviCompetition/Comites/78-YVELINES"/>
-		<Comite nom="79-DEUX_SEVRES" libelle="79 - Deux-Sèvres" login="ftp79-DEUX_SEVRES" racine="SuiviCompetition/Comites/79-DEUX_SEVRES"/>
-		<Comite nom="80-SOMME" libelle="80 - Somme" login="ftp80-SOMME" racine="SuiviCompetition/Comites/80-SOMME"/>
-		<Comite nom="81-TARN" libelle="81 - Tarn" login="ftp81-TARN" racine="SuiviCompetition/Comites/81-TARN"/>
-		<Comite nom="82-TARN_ET_GARONNE" libelle="82 - Tarn-et-Garonne" login="ftp82-TARN_ET_GARONNE" racine="SuiviCompetition/Comites/82-TARN_ET_GARONNE"/>
-		<Comite nom="83-VAR" libelle="83 - Var" login="ftp83-VAR" racine="SuiviCompetition/Comites/83-VAR"/>
-		<Comite nom="84-VAUCLUSE" libelle="84 - Vaucluse" login="ftp84-VAUCLUSE" racine="SuiviCompetition/Comites/84-VAUCLUSE"/>
-		<Comite nom="85-VENDEE" libelle="85 - Vendée" login="ftp85-VENDEE" racine="SuiviCompetition/Comites/85-VENDEE"/>
-		<Comite nom="86-VIENNE" libelle="86 - Vienne" login="ftp86-VIENNE" racine="SuiviCompetition/Comites/86-VIENNE"/>
-		<Comite nom="87-HAUTE_VIENNE" libelle="87 - Haute-Vienne" login="ftp87-HAUTE_VIENNE" racine="SuiviCompetition/Comites/87-HAUTE_VIENNE"/>
-		<Comite nom="88-VOSGES" libelle="88 - Vosges" login="ftp88-VOSGES" racine="SuiviCompetition/Comites/88-VOSGES"/>
-		<Comite nom="89-YONNE" libelle="89 - Yonne" login="ftp89-YONNE" racine="SuiviCompetition/Comites/89-YONNE"/>
-		<Comite nom="90-TERRITOIRE_BELFORT" libelle="90 - Territoire de Belfort" login="ftp90-TERRITOIRE_BELFORT" racine="SuiviCompetition/Comites/90-TERRITOIRE_BELFORT"/>
-		<Comite nom="91-ESSONNE" libelle="91 - Essonne" login="ftp91-ESSONNE" racine="SuiviCompetition/Comites/91-ESSONNE"/>
-		<Comite nom="92-HAUTS_SEINE" libelle="92 - Hauts-de-Seine" login="ftp92-HAUTS_SEINE" racine="SuiviCompetition/Comites/92-HAUTS_SEINE"/>
-		<Comite nom="93-SEINE_ST_DENIS" libelle="93 - Seine-Saint-Denis" login="ftp93-SEINE_ST_DENIS" racine="SuiviCompetition/Comites/93-SEINE_ST_DENIS"/>
-		<Comite nom="94-VAL_DE_MARNE" libelle="94 - Val-de-Marne" login="ftp94-VAL_DE_MARNE" racine="SuiviCompetition/Comites/94-VAL_DE_MARNE"/>
-		<Comite nom="95-VAL_D_OISE" libelle="95 - Val-d'Oise" login="ftp95-VAL_D_OISE" racine="SuiviCompetition/Comites/95-VAL_D_OISE"/>
-		<Comite nom="976-MAYOTTE" libelle="976 - Mayotte" login="ftp976-MAYOTTE" racine="SuiviCompetition/Comites/976-MAYOTTE"/>
-		<Comite nom="DA-DROME_ARDECHE" libelle="DA - Drôme-Ardèche" login="ftpDA-DROME_ARDECHE" racine="SuiviCompetition/Comites/DA-DROME_ARDECHE"/>
+		<Comite nom="01-AIN" libelle="01 - Ain" login="ftp01-AIN" racineFtp="/" racineHttp="SuiviCompetition/Comites/01-AIN/"/>
+		<Comite nom="02-AISNE" libelle="02 - Aisne" login="ftp02-AISNE" racineFtp="/" racineHttp="SuiviCompetition/Comites/02-AISNE/"/>
+		<Comite nom="03-ALLIER" libelle="03 - Allier" login="ftp03-ALLIER" racineFtp="/" racineHttp="SuiviCompetition/Comites/03-ALLIER/"/>
+		<Comite nom="04-ALPES_HTE_PRVCE" libelle="04 - Alpes-de-Haute-Provence" login="ftp04-ALPES_HTE_PRVCE" racineFtp="/" racineHttp="SuiviCompetition/Comites/04-ALPES_HTE_PRVCE/"/>
+		<Comite nom="05-HAUTES_ALPES" libelle="05 - Hautes-Alpes" login="ftp05-HAUTES_ALPES" racineFtp="/" racineHttp="SuiviCompetition/Comites/05-HAUTES_ALPES/"/>
+		<Comite nom="06-ALPES_MARITIMES" libelle="06 - Alpes-Maritimes" login="ftp06-ALPES_MARITIMES" racineFtp="/" racineHttp="SuiviCompetition/Comites/06-ALPES_MARITIMES/"/>
+		<Comite nom="08-ARDENNES" libelle="08 - Ardennes" login="ftp08-ARDENNES" racineFtp="/" racineHttp="SuiviCompetition/Comites/08-ARDENNES/"/>
+		<Comite nom="09-ARIEGE" libelle="09 - Ariège" login="ftp09-ARIEGE" racineFtp="/" racineHttp="SuiviCompetition/Comites/09-ARIEGE/"/>
+		<Comite nom="10-AUBE" libelle="10 - Aube" login="ftp10-AUBE" racineFtp="/" racineHttp="SuiviCompetition/Comites/10-AUBE/"/>
+		<Comite nom="11-AUDE" libelle="11 - Aude" login="ftp11-AUDE" racineFtp="/" racineHttp="SuiviCompetition/Comites/11-AUDE/"/>
+		<Comite nom="12-AVEYRON" libelle="12 - Aveyron" login="ftp12-AVEYRON" racineFtp="/" racineHttp="SuiviCompetition/Comites/12-AVEYRON/"/>
+		<Comite nom="13-BOUCHES_DU_RHONE" libelle="13 - Bouches du Rhône" login="ftp13-BOUCHES_DU_RHONE" racineFtp="/" racineHttp="SuiviCompetition/Comites/13-BOUCHES_DU_RHONE/"/>
+		<Comite nom="14-CALVADOS" libelle="14 - Calvados" login="ftp14-CALVADOS" racineFtp="/" racineHttp="SuiviCompetition/Comites/14-CALVADOS/"/>
+		<Comite nom="15-CANTAL" libelle="15 - Cantal" login="ftp15-CANTAL" racineFtp="/" racineHttp="SuiviCompetition/Comites/15-CANTAL/"/>
+		<Comite nom="16-CHARENTE" libelle="16 - Charente" login="ftp16-CHARENTE" racineFtp="/" racineHttp="SuiviCompetition/Comites/16-CHARENTE/"/>
+		<Comite nom="17-CHARENTE_MARITIME" libelle="17 - Charente-Maritime" login="ftp17-CHARENTE_MARITIME" racineFtp="/" racineHttp="SuiviCompetition/Comites/17-CHARENTE_MARITIME/"/>
+		<Comite nom="18-CHER" libelle="18 - Cher" login="ftp18-CHER" racineFtp="/" racineHttp="SuiviCompetition/Comites/18-CHER/"/>
+		<Comite nom="19-CORREZE" libelle="19 - Corrèze" login="ftp19-CORREZE" racineFtp="/" racineHttp="SuiviCompetition/Comites/19-CORREZE/"/>
+		<Comite nom="20-CORSE" libelle="20 - Corse" login="ftp20-CORSE" racineFtp="/" racineHttp="SuiviCompetition/Comites/20-CORSE/"/>
+		<Comite nom="21-COTE_D_OR" libelle="21 - Côte d'Or" login="ftp21-COTE_D_OR" racineFtp="/" racineHttp="SuiviCompetition/Comites/21-COTE_D_OR/"/>
+		<Comite nom="22-COTES_D_ARMOR" libelle="22 - Côtes-d'Armor" login="ftp22-COTES_D_ARMOR" racineFtp="/" racineHttp="SuiviCompetition/Comites/22-COTES_D_ARMOR/"/>
+		<Comite nom="23-CREUSE" libelle="23 - Creuse" login="ftp23-CREUSE" racineFtp="/" racineHttp="SuiviCompetition/Comites/23-CREUSE/"/>
+		<Comite nom="24-DORDOGNE" libelle="24 - Dordogne" login="ftp24-DORDOGNE" racineFtp="/" racineHttp="SuiviCompetition/Comites/24-DORDOGNE/"/>
+		<Comite nom="25-DOUBS" libelle="25 - Doubs" login="ftp25-DOUBS" racineFtp="/" racineHttp="SuiviCompetition/Comites/25-DOUBS/"/>
+		<Comite nom="27-EURE" libelle="27 - Eure" login="ftp27-EURE" racineFtp="/" racineHttp="SuiviCompetition/Comites/27-EURE/"/>
+		<Comite nom="28-EURE_ET_LOIR" libelle="28 - Eure-et-Loir" login="ftp28-EURE_ET_LOIR" racineFtp="/" racineHttp="SuiviCompetition/Comites/28-EURE_ET_LOIR/"/>
+		<Comite nom="29-FINISTERE" libelle="29 - Finistère" login="ftp29-FINISTERE" racineFtp="/" racineHttp="SuiviCompetition/Comites/29-FINISTERE/"/>
+		<Comite nom="30-GARD" libelle="30 - Gard" login="ftp30-GARD" racineFtp="/" racineHttp="SuiviCompetition/Comites/30-GARD/"/>
+		<Comite nom="31-HAUTE_GARONNE" libelle="31 - Haute-Garonne" login="ftp31-HAUTE_GARONNE" racineFtp="/" racineHttp="SuiviCompetition/Comites/31-HAUTE_GARONNE/"/>
+		<Comite nom="32-GERS" libelle="32 - Gers" login="ftp32-GERS" racineFtp="/" racineHttp="SuiviCompetition/Comites/32-GERS/"/>
+		<Comite nom="33-GIRONDE" libelle="33 - Gironde" login="ftp33-GIRONDE" racineFtp="/" racineHttp="SuiviCompetition/Comites/33-GIRONDE/"/>
+		<Comite nom="34-HERAULT" libelle="34 - Hérault" login="ftp34-HERAULT" racineFtp="/" racineHttp="SuiviCompetition/Comites/34-HERAULT/"/>
+		<Comite nom="35-ILLE_ET_VILAINE" libelle="35 - Ille-et-Vilaine" login="ftp35-ILLE_ET_VILAINE" racineFtp="/" racineHttp="SuiviCompetition/Comites/35-ILLE_ET_VILAINE/"/>
+		<Comite nom="36-INDRE" libelle="36 - Indre" login="ftp36-INDRE" racineFtp="/" racineHttp="SuiviCompetition/Comites/36-INDRE/"/>
+		<Comite nom="37-INDRE_ET_LOIRE" libelle="37 - Indre-et-Loire" login="ftp37-INDRE_ET_LOIRE" racineFtp="/" racineHttp="SuiviCompetition/Comites/37-INDRE_ET_LOIRE/"/>
+		<Comite nom="38-ISERE" libelle="38 - Isère" login="ftp38-ISERE" racineFtp="/" racineHttp="SuiviCompetition/Comites/38-ISERE/"/>
+		<Comite nom="39-JURA" libelle="39 - Jura" login="ftp39-JURA" racineFtp="/" racineHttp="SuiviCompetition/Comites/39-JURA/"/>
+		<Comite nom="40-LANDES" libelle="40 - Landes" login="ftp40-LANDES" racineFtp="/" racineHttp="SuiviCompetition/Comites/40-LANDES/"/>
+		<Comite nom="41-LOIR_ET_CHER" libelle="41 - Loir-et-Cher" login="ftp41-LOIR_ET_CHER" racineFtp="/" racineHttp="SuiviCompetition/Comites/41-LOIR_ET_CHER/"/>
+		<Comite nom="42-LOIRE" libelle="42 - Loire" login="ftp42-LOIRE" racineFtp="/" racineHttp="SuiviCompetition/Comites/42-LOIRE/"/>
+		<Comite nom="43-HAUTE_LOIRE" libelle="43 - Haute-Loire" login="ftp43-HAUTE_LOIRE" racineFtp="/" racineHttp="SuiviCompetition/Comites/43-HAUTE_LOIRE/"/>
+		<Comite nom="44-LOIRE_ATLANTIQUE" libelle="44 - Loire-Atlantique" login="ftp44-LOIRE_ATLANTIQUE" racineFtp="/" racineHttp="SuiviCompetition/Comites/44-LOIRE_ATLANTIQUE/"/>
+		<Comite nom="45-LOIRET" libelle="45 - Loiret" login="ftp45-LOIRET" racineFtp="/" racineHttp="SuiviCompetition/Comites/45-LOIRET/"/>
+		<Comite nom="46-LOT" libelle="46 - Lot" login="ftp46-LOT" racineFtp="/" racineHttp="SuiviCompetition/Comites/46-LOT/"/>
+		<Comite nom="47-LOT_ET_GARONNE" libelle="47 - Lot-et-Garonne" login="ftp47-LOT_ET_GARONNE" racineFtp="/" racineHttp="SuiviCompetition/Comites/47-LOT_ET_GARONNE/"/>
+		<Comite nom="48-LOZERE" libelle="48 - Lozère" login="ftp48-LOZERE" racineFtp="/" racineHttp="SuiviCompetition/Comites/48-LOZERE/"/>
+		<Comite nom="49-MAINE_ET_LOIRE" libelle="49 - Maine-et-Loire" login="ftp49-MAINE_ET_LOIRE" racineFtp="/" racineHttp="SuiviCompetition/Comites/49-MAINE_ET_LOIRE/"/>
+		<Comite nom="50-MANCHE" libelle="50 - Manche" login="ftp50-MANCHE" racineFtp="/" racineHttp="SuiviCompetition/Comites/50-MANCHE/"/>
+		<Comite nom="51-MARNE" libelle="51 - Marne" login="ftp51-MARNE" racineFtp="/" racineHttp="SuiviCompetition/Comites/51-MARNE/"/>
+		<Comite nom="52-HAUTE_MARNE" libelle="52 - Haute-Marne" login="ftp52-HAUTE_MARNE" racineFtp="/" racineHttp="SuiviCompetition/Comites/52-HAUTE_MARNE/"/>
+		<Comite nom="53-MAYENNE" libelle="53 - Mayenne" login="ftp53-MAYENNE" racineFtp="/" racineHttp="SuiviCompetition/Comites/53-MAYENNE/"/>
+		<Comite nom="54-MEURTHE_MOSELLE" libelle="54 - Meurthe-et-Moselle" login="ftp54-MEURTHE_MOSELLE" racineFtp="/" racineHttp="SuiviCompetition/Comites/54-MEURTHE_MOSELLE/"/>
+		<Comite nom="55-MEUSE" libelle="55 - Meuse" login="ftp55-MEUSE" racineFtp="/" racineHttp="SuiviCompetition/Comites/55-MEUSE/"/>
+		<Comite nom="56-MORBIHAN" libelle="56 - Morbihan" login="ftp56-MORBIHAN" racineFtp="/" racineHttp="SuiviCompetition/Comites/56-MORBIHAN/"/>
+		<Comite nom="57-MOSELLE" libelle="57 - Moselle" login="ftp57-MOSELLE" racineFtp="/" racineHttp="SuiviCompetition/Comites/57-MOSELLE/"/>
+		<Comite nom="58-NIEVRE" libelle="58 - Nièvre" login="ftp58-NIEVRE" racineFtp="/" racineHttp="SuiviCompetition/Comites/58-NIEVRE/"/>
+		<Comite nom="59-NORD" libelle="59 - Nord" login="ftp59-NORD" racineFtp="/" racineHttp="SuiviCompetition/Comites/59-NORD/"/>
+		<Comite nom="60-OISE" libelle="60 - Oise" login="ftp60-OISE" racineFtp="/" racineHttp="SuiviCompetition/Comites/60-OISE/"/>
+		<Comite nom="61-ORNE" libelle="61 - Orne" login="ftp61-ORNE" racineFtp="/" racineHttp="SuiviCompetition/Comites/61-ORNE/"/>
+		<Comite nom="62-PAS_DE_CALAIS" libelle="62 - Pas-de-Calais" login="ftp62-PAS_DE_CALAIS" racineFtp="/" racineHttp="SuiviCompetition/Comites/62-PAS_DE_CALAIS/"/>
+		<Comite nom="63-PUY_DE_DOME" libelle="63 - Puy-de-Dôme" login="ftp63-PUY_DE_DOME" racineFtp="/" racineHttp="SuiviCompetition/Comites/63-PUY_DE_DOME/"/>
+		<Comite nom="64-PYRENEES_ATLANTIQUES" libelle="64 - Pyrénées-Atlantiques" login="ftp64-PYRENEES_ATLANTIQUES" racineFtp="/" racineHttp="SuiviCompetition/Comites/64-PYRENEES_ATLANTIQUES/"/>
+		<Comite nom="65-HAUTES_PYRENEES" libelle="65 - Hautes-Pyrénées" login="ftp65-HAUTES_PYRENEES" racineFtp="/" racineHttp="SuiviCompetition/Comites/65-HAUTES_PYRENEES/"/>
+		<Comite nom="66-PYRENEES_ORIENT" libelle="66 - Pyrénées-Orientales" login="ftp66-PYRENEES_ORIENT" racineFtp="/" racineHttp="SuiviCompetition/Comites/66-PYRENEES_ORIENT/"/>
+		<Comite nom="67-BAS_RHIN" libelle="67 - Bas-Rhin" login="ftp67-BAS_RHIN" racineFtp="/" racineHttp="SuiviCompetition/Comites/67-BAS_RHIN/"/>
+		<Comite nom="68-HAUT_RHIN" libelle="68 - Haut-Rhin" login="ftp68-HAUT_RHIN" racineFtp="/" racineHttp="SuiviCompetition/Comites/68-HAUT_RHIN/"/>
+		<Comite nom="69-RHONE" libelle="69 - Rhône" login="ftp69-RHONE" racineFtp="/" racineHttp="SuiviCompetition/Comites/69-RHONE/"/>
+		<Comite nom="70-HAUTE_SAONE" libelle="70 - Haute-Saône" login="ftp70-HAUTE_SAONE" racineFtp="/" racineHttp="SuiviCompetition/Comites/70-HAUTE_SAONE/"/>
+		<Comite nom="71-SAONE_ET_LOIRE" libelle="71 - Saône-et-Loire" login="ftp71-SAONE_ET_LOIRE" racineFtp="/" racineHttp="SuiviCompetition/Comites/71-SAONE_ET_LOIRE/"/>
+		<Comite nom="72-SARTHE" libelle="72 - Sarthe" login="ftp72-SARTHE" racineFtp="/" racineHttp="SuiviCompetition/Comites/72-SARTHE/"/>
+		<Comite nom="73-SAVOIE" libelle="73 - Savoie" login="ftp73-SAVOIE" racineFtp="/" racineHttp="SuiviCompetition/Comites/73-SAVOIE/"/>
+		<Comite nom="74-HAUTE_SAVOIE" libelle="74 - Haute-Savoie" login="ftp74-HAUTE_SAVOIE" racineFtp="/" racineHttp="SuiviCompetition/Comites/74-HAUTE_SAVOIE/"/>
+		<Comite nom="75-COMITE_DE_PARIS" libelle="75 - Comité de Paris" login="ftp75-COMITE_DE_PARIS" racineFtp="/" racineHttp="SuiviCompetition/Comites/75-COMITE_DE_PARIS/"/>
+		<Comite nom="76-SEINE_MARITIME" libelle="76 - Seine-Maritime" login="ftp76-SEINE_MARITIME" racineFtp="/" racineHttp="SuiviCompetition/Comites/76-SEINE_MARITIME/"/>
+		<Comite nom="77-SEINE_ET_MARNE" libelle="77 - Seine-et-Marne" login="ftp77-SEINE_ET_MARNE" racineFtp="/" racineHttp="SuiviCompetition/Comites/77-SEINE_ET_MARNE/"/>
+		<Comite nom="78-YVELINES" libelle="78 - Yvelines" login="ftp78-YVELINES" racineFtp="/" racineHttp="SuiviCompetition/Comites/78-YVELINES/"/>
+		<Comite nom="79-DEUX_SEVRES" libelle="79 - Deux-Sèvres" login="ftp79-DEUX_SEVRES" racineFtp="/" racineHttp="SuiviCompetition/Comites/79-DEUX_SEVRES/"/>
+		<Comite nom="80-SOMME" libelle="80 - Somme" login="ftp80-SOMME" racineFtp="/" racineHttp="SuiviCompetition/Comites/80-SOMME/"/>
+		<Comite nom="81-TARN" libelle="81 - Tarn" login="ftp81-TARN" racineFtp="/" racineHttp="SuiviCompetition/Comites/81-TARN/"/>
+		<Comite nom="82-TARN_ET_GARONNE" libelle="82 - Tarn-et-Garonne" login="ftp82-TARN_ET_GARONNE" racineFtp="/" racineHttp="SuiviCompetition/Comites/82-TARN_ET_GARONNE/"/>
+		<Comite nom="83-VAR" libelle="83 - Var" login="ftp83-VAR" racineFtp="/" racineHttp="SuiviCompetition/Comites/83-VAR/"/>
+		<Comite nom="84-VAUCLUSE" libelle="84 - Vaucluse" login="ftp84-VAUCLUSE" racineFtp="/" racineHttp="SuiviCompetition/Comites/84-VAUCLUSE/"/>
+		<Comite nom="85-VENDEE" libelle="85 - Vendée" login="ftp85-VENDEE" racineFtp="/" racineHttp="SuiviCompetition/Comites/85-VENDEE/"/>
+		<Comite nom="86-VIENNE" libelle="86 - Vienne" login="ftp86-VIENNE" racineFtp="/" racineHttp="SuiviCompetition/Comites/86-VIENNE/"/>
+		<Comite nom="87-HAUTE_VIENNE" libelle="87 - Haute-Vienne" login="ftp87-HAUTE_VIENNE" racineFtp="/" racineHttp="SuiviCompetition/Comites/87-HAUTE_VIENNE/"/>
+		<Comite nom="88-VOSGES" libelle="88 - Vosges" login="ftp88-VOSGES" racineFtp="/" racineHttp="SuiviCompetition/Comites/88-VOSGES/"/>
+		<Comite nom="89-YONNE" libelle="89 - Yonne" login="ftp89-YONNE" racineFtp="/" racineHttp="SuiviCompetition/Comites/89-YONNE/"/>
+		<Comite nom="90-TERRITOIRE_BELFORT" libelle="90 - Territoire de Belfort" login="ftp90-TERRITOIRE_BELFORT" racineFtp="/" racineHttp="SuiviCompetition/Comites/90-TERRITOIRE_BELFORT/"/>
+		<Comite nom="91-ESSONNE" libelle="91 - Essonne" login="ftp91-ESSONNE" racineFtp="/" racineHttp="SuiviCompetition/Comites/91-ESSONNE/"/>
+		<Comite nom="92-HAUTS_SEINE" libelle="92 - Hauts-de-Seine" login="ftp92-HAUTS_SEINE" racineFtp="/" racineHttp="SuiviCompetition/Comites/92-HAUTS_SEINE/"/>
+		<Comite nom="93-SEINE_ST_DENIS" libelle="93 - Seine-Saint-Denis" login="ftp93-SEINE_ST_DENIS" racineFtp="/" racineHttp="SuiviCompetition/Comites/93-SEINE_ST_DENIS/"/>
+		<Comite nom="94-VAL_DE_MARNE" libelle="94 - Val-de-Marne" login="ftp94-VAL_DE_MARNE" racineFtp="/" racineHttp="SuiviCompetition/Comites/94-VAL_DE_MARNE/"/>
+		<Comite nom="95-VAL_D_OISE" libelle="95 - Val-d'Oise" login="ftp95-VAL_D_OISE" racineFtp="/" racineHttp="SuiviCompetition/Comites/95-VAL_D_OISE/"/>
+		<Comite nom="976-MAYOTTE" libelle="976 - Mayotte" login="ftp976-MAYOTTE" racineFtp="/" racineHttp="SuiviCompetition/Comites/976-MAYOTTE/"/>
+		<Comite nom="DA-DROME_ARDECHE" libelle="DA - Drôme-Ardèche" login="ftpDA-DROME_ARDECHE" racineFtp="/" racineHttp="SuiviCompetition/Comites/DA-DROME_ARDECHE/"/>
 	</Comites>
 	<Ligues echelon="4">
-		<Ligue nom="AUVERGNE-RHONE-ALPES" libelle="Auvergne - Rhone - Alpes" login="ftpAUVERGNE-RHONE-ALPES" racine="SuiviCompetition/Ligues/AUVERGNE-RHONE-ALPES"/>
-		<Ligue nom="BOURGOGNE-FRANCHE-COMTE" libelle="Bourgogne - Franche - Comté" login="ftpBOURGOGNE-FRANCHE-COMTE" racine="SuiviCompetition/Ligues/BOURGOGNE-FRANCHE-COMTE"/>
-		<Ligue nom="BRETAGNE" libelle="Bretagne" login="ftpBRETAGNE" racine="SuiviCompetition/Ligues/BRETAGNE"/>
-		<Ligue nom="CENTRE-VAL-DE-LOIRE" libelle="Centre Val de Loire" login="ftpCENTRE-VAL-DE-LOIRE" racine="SuiviCompetition/Ligues/CENTRE-VAL-DE-LOIRE"/>
-		<Ligue nom="CORSE" libelle="Corse" login="ftpCORSE" racine="SuiviCompetition/Ligues/CORSE"/>
-		<Ligue nom="FEDERATION-FRANCAISE-AUTRES" libelle="Fédération Française Autres" login="ftpFEDERATION-FRANCAISE-AUTRES" racine="SuiviCompetition/Ligues/FEDERATION-FRANCAISE-AUTRES"/>
-		<Ligue nom="GRAND-EST" libelle="Grand - Est" login="ftpGRAND-EST" racine="SuiviCompetition/Ligues/GRAND-EST"/>
-		<Ligue nom="GUADELOUPE" libelle="Guadeloupe" login="ftpGUADELOUPE" racine="SuiviCompetition/Ligues/GUADELOUPE"/>
-		<Ligue nom="GUYANE" libelle="Guyane" login="ftpGUYANE" racine="SuiviCompetition/Ligues/GUYANE"/>
-		<Ligue nom="HAUTS-DE-FRANCE" libelle="Hauts de France" login="ftpHAUTS-DE-FRANCE" racine="SuiviCompetition/Ligues/HAUTS-DE-FRANCE"/>
-		<Ligue nom="ILE-DE-FRANCE" libelle="Ile de France" login="ftpILE-DE-FRANCE" racine="SuiviCompetition/Ligues/ILE-DE-FRANCE"/>
-		<Ligue nom="MARTINIQUE" libelle="Martinique" login="ftpMARTINIQUE" racine="SuiviCompetition/Ligues/MARTINIQUE"/>
-		<Ligue nom="NORMANDIE" libelle="Normandie" login="ftpNORMANDIE" racine="SuiviCompetition/Ligues/NORMANDIE"/>
-		<Ligue nom="NOUVELLE-AQUITAINE" libelle="Nouvelle Aquitaine" login="ftpNOUVELLE-AQUITAINE" racine="SuiviCompetition/Ligues/NOUVELLE-AQUITAINE"/>
-		<Ligue nom="NOUVELLE-CALEDONIE" libelle="Nouvelle Calédonie" login="ftpNOUVELLE-CALEDONIE" racine="SuiviCompetition/Ligues/NOUVELLE-CALEDONIE"/>
-		<Ligue nom="OCCITANIE" libelle="Occitanie" login="ftpOCCITANIE" racine="SuiviCompetition/Ligues/OCCITANIE"/>
-		<Ligue nom="PAYS-DE-LA-LOIRE" libelle="Pays de la Loire" login="ftpPAYS-DE-LA-LOIRE" racine="SuiviCompetition/Ligues/PAYS-DE-LA-LOIRE"/>
-		<Ligue nom="PROVENCE-ALPES-COTE-D-AZUR" libelle="Provence - Alpes - Cote d'Azur" login="ftpPROVENCE-ALPES-COTE-D-AZUR" racine="SuiviCompetition/Ligues/PROVENCE-ALPES-COTE-D-AZUR"/>
-		<Ligue nom="REUNION" libelle="Réunion" login="ftpREUNION" racine="SuiviCompetition/Ligues/REUNION"/>
+		<Ligue nom="AUVERGNE-RHONE-ALPES" libelle="Auvergne - Rhone - Alpes" login="ftpAUVERGNE-RHONE-ALPES" racineFtp="/" racineHttp="SuiviCompetition/Ligues/AUVERGNE-RHONE-ALPES"/>
+		<Ligue nom="BOURGOGNE-FRANCHE-COMTE" libelle="Bourgogne - Franche - Comté" login="ftpBOURGOGNE-FRANCHE-COMTE" racineFtp="/" racineHttp="SuiviCompetition/Ligues/BOURGOGNE-FRANCHE-COMTE"/>
+		<Ligue nom="BRETAGNE" libelle="Bretagne" login="ftpBRETAGNE" racineFtp="/" racineHttp="SuiviCompetition/Ligues/BRETAGNE"/>
+		<Ligue nom="CENTRE-VAL-DE-LOIRE" libelle="Centre Val de Loire" login="ftpCENTRE-VAL-DE-LOIRE" racineFtp="/" racineHttp="SuiviCompetition/Ligues/CENTRE-VAL-DE-LOIRE"/>
+		<Ligue nom="CORSE" libelle="Corse" login="ftpCORSE" racineFtp="/" racineHttp="SuiviCompetition/Ligues/CORSE"/>
+		<Ligue nom="FEDERATION-FRANCAISE-AUTRES" libelle="Fédération Française Autres" login="ftpFEDERATION-FRANCAISE-AUTRES" racineFtp="/" racineHttp="SuiviCompetition/Ligues/FEDERATION-FRANCAISE-AUTRES"/>
+		<Ligue nom="GRAND-EST" libelle="Grand - Est" login="ftpGRAND-EST" racineFtp="/" racineHttp="SuiviCompetition/Ligues/GRAND-EST"/>
+		<Ligue nom="GUADELOUPE" libelle="Guadeloupe" login="ftpGUADELOUPE" racineFtp="/" racineHttp="SuiviCompetition/Ligues/GUADELOUPE"/>
+		<Ligue nom="GUYANE" libelle="Guyane" login="ftpGUYANE" racineFtp="/" racineHttp="SuiviCompetition/Ligues/GUYANE"/>
+		<Ligue nom="HAUTS-DE-FRANCE" libelle="Hauts de France" login="ftpHAUTS-DE-FRANCE" racineFtp="/" racineHttp="SuiviCompetition/Ligues/HAUTS-DE-FRANCE"/>
+		<Ligue nom="ILE-DE-FRANCE" libelle="Ile de France" login="ftpILE-DE-FRANCE" racineFtp="/" racineHttp="SuiviCompetition/Ligues/ILE-DE-FRANCE"/>
+		<Ligue nom="MARTINIQUE" libelle="Martinique" login="ftpMARTINIQUE" racineFtp="/" racineHttp="SuiviCompetition/Ligues/MARTINIQUE"/>
+		<Ligue nom="NORMANDIE" libelle="Normandie" login="ftpNORMANDIE" racineFtp="/" racineHttp="SuiviCompetition/Ligues/NORMANDIE"/>
+		<Ligue nom="NOUVELLE-AQUITAINE" libelle="Nouvelle Aquitaine" login="ftpNOUVELLE-AQUITAINE" racineFtp="/" racineHttp="SuiviCompetition/Ligues/NOUVELLE-AQUITAINE"/>
+		<Ligue nom="NOUVELLE-CALEDONIE" libelle="Nouvelle Calédonie" login="ftpNOUVELLE-CALEDONIE" racineFtp="/" racineHttp="SuiviCompetition/Ligues/NOUVELLE-CALEDONIE"/>
+		<Ligue nom="OCCITANIE" libelle="Occitanie" login="ftpOCCITANIE" racineFtp="/" racineHttp="SuiviCompetition/Ligues/OCCITANIE"/>
+		<Ligue nom="PAYS-DE-LA-LOIRE" libelle="Pays de la Loire" login="ftpPAYS-DE-LA-LOIRE" racineFtp="/" racineHttp="SuiviCompetition/Ligues/PAYS-DE-LA-LOIRE"/>
+		<Ligue nom="PROVENCE-ALPES-COTE-D-AZUR" libelle="Provence - Alpes - Cote d'Azur" login="ftpPROVENCE-ALPES-COTE-D-AZUR" racineFtp="/" racineHttp="SuiviCompetition/Ligues/PROVENCE-ALPES-COTE-D-AZUR"/>
+		<Ligue nom="REUNION" libelle="Réunion" login="ftpREUNION" racineFtp="/" racineHttp="SuiviCompetition/Ligues/REUNION"/>
 	</Ligues>
 	<Nationaux echelon="5">
-		<Nationale nom="FRANCEJUDO" libelle="France Judo" login="ftp" racine="SuiviCompetition/FRANCEJUDO"/>
+		<Nationale nom="FRANCEJUDO" libelle="France Judo" login="ftp-national" racineFtp="/" racineHttp="SuiviCompetition/FRANCEJUDO"/>
 	</Nationaux>
 </Publication>

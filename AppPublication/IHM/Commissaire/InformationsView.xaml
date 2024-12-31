@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AppPublication.IHM.Commissaire"
         mc:Ignorable="d"
-        Header="Informations" Height="415" Width="620"
+        Header="Informations" Height="440" Width="620"
         WindowStartupLocation="CenterScreen" 
         CanClose="True" CanMove="True" ResizeMode="NoResize" 
         WindowState="Normal" Name="UI" Background="Black" SizeToContent="True">
@@ -15,6 +15,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/AppPublication;component/Styles/StandardStyles.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/AppPublication;component/Styles/ConverterStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </telerik:RadWindow.Resources>
@@ -24,6 +25,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
@@ -50,7 +52,6 @@
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <Label Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource LabelStyle}" Content="Version:"/>
                     <TextBlock Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Style="{StaticResource ContentTextStyle}" Text="{Binding AppInformation.AppVersion}"/>
@@ -73,10 +74,12 @@
                     <Label Content="Générer" />
                 </WrapPanel>
             </telerik:RadButton>
-            <CheckBox Content="Activer les traces détaillées" IsChecked="{Binding Path=TracesDebugOn}" Style="{StaticResource CheckboxStyle}" Margin="20 0 0 0"/>
-            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cocher, permet d'activier les traces les plus détaillées de l'application. Attention, cette option peut ralentir l'application du fait des nombreuses informations écrites sur disques. A utiliser uniquement à des fin de diagnostique."/>
+            <CheckBox Content="Activer les traces détaillées" IsChecked="{Binding Path=TracesDebugOn}" IsEnabled="{Binding Path=CanManageTracesDebug}" Style="{StaticResource CheckboxStyle}" Margin="20 0 0 0"/>
+            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cocher, permet d'activer les traces les plus détaillées de l'application. Attention, cette option peut ralentir l'application du fait des nombreuses informations écrites sur disques. A utiliser uniquement à des fin de diagnostique."/>
 
         </StackPanel>
-        
+
+        <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" HorizontalAlignment="Center" Visibility="{Binding Path=CanManageTracesDebug, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Not}" Foreground="RosyBrown" FontStyle="Italic" Content="Configuration incorrecte, la gestion des données de diagnostique n'est pos disponible"/>
+
     </Grid>
 </telerik:RadWindow>

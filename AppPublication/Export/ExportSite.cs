@@ -22,6 +22,7 @@ namespace AppPublication.Export
 {
     public static class ExportSite
     {
+        private const int kTailleMaxNomCompetition = 30;
         private static XmlDocument _docParticipants = new XmlDocument();     // Instance partagees pour la generation des Participants
 
         private static List<XElement> _xClubs = new List<XElement>();          // Instance partagees pour la liste des clubs
@@ -209,8 +210,7 @@ namespace AppPublication.Export
                 XDocument doc = new XDocument();
 
                 XElement xcompetition = new XElement(ConstantXML.Competition);
-                xcompetition.SetAttributeValue(ConstantXML.Competition_Titre, OutilsTools.TraiteChaine(OutilsTools.SubString(DialogControleur.Instance.ServerData.competition.nom, 0, 30)));
-
+                xcompetition.SetAttributeValue(ConstantXML.Competition_Titre, OutilsTools.TraiteChaine(OutilsTools.SubString(DialogControleur.Instance.ServerData.competition.nom, 0, kTailleMaxNomCompetition)));
                 doc.Add(xcompetition);
 
                 XsltArgumentList argsList = new XsltArgumentList();
@@ -232,14 +232,23 @@ namespace AppPublication.Export
                 }
                 // No need to regenerate those files, they are usually static unless they are updated
                 urls = urls.Concat(ExportTools.ExportEmbeddedStyleAndJS(true, siteStruct)).ToList();
+            LogTools.Logger.Debug("GenereWebSiteIndex - ExportStyleAndJS {0}", urls.Count);
 
-                // No need to regenerate those files, they are usually static unless they are updated
-                urls = urls.Concat(ExportTools.ExportEmbeddedImg(true, siteStruct)).ToList();
+            // No need to regenerate those files, they are usually static unless they are updated
+            // urls = urls.Concat(ExportTools.ExportImg(true)).ToList();
+
+            // Genere les images "par defaut" contenues dans l'application et les images personnalises de l'utilisateur
+            urls = urls.Concat(ExportTools.ExportEmbeddedImg(true, true, siteStruct)).ToList();
+
+            LogTools.Logger.Debug("GenereWebSiteIndex - ExportImg {0}", urls.Count);
 
                 urls.Add(indexfile);
 
                 output = urls.Select(o => new FileWithChecksum(o)).ToList();
+                          
             }
+  
+          LogTools.Logger.Debug("GenereWebSiteIndex {0}", output.Count);
             return output;
         }
 
@@ -311,7 +320,6 @@ namespace AppPublication.Export
                     output.Add(new FileWithChecksum(fileSavePart + ".html"));
                 }
             }
-
             return output;
         }
 
