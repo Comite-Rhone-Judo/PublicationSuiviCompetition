@@ -323,7 +323,7 @@ namespace Tools.Outils
         /// <param name="path1">Path de debut</param>
         /// <param name="path2">Path de fin</param>
         /// <returns></returns>
-        public static string PathJoin(string path1, string path2)
+        public static string PathJoin(string path1, string path2, bool endWithSeparator = false)
         {
             if (string.IsNullOrEmpty(path1))
             {
@@ -335,7 +335,10 @@ namespace Tools.Outils
                 return path1;
             }
 
-            return path1.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar + path2.TrimStart(Path.DirectorySeparatorChar);
+            string temp = (path1.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar + path2.TrimStart(Path.DirectorySeparatorChar)).TrimEnd(Path.DirectorySeparatorChar);
+
+
+            return endWithSeparator ? temp + Path.DirectorySeparatorChar : temp;
         }
     }
 }

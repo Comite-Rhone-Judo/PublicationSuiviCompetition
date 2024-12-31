@@ -24,7 +24,6 @@ namespace AppPublication.ExtensionNoyau.Deroulement
         {
             get
             {
-                // TODO a voir si on ne peut pas generer ces informations lors de la reception de donnees directement
                 return _groupesParticipants;
             }
         }

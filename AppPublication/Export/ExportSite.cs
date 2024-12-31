@@ -17,6 +17,7 @@ using Tools.Outils;
 using KernelImpl.Noyau.Structures;
 using System.Collections;
 using AppPublication.ExtensionNoyau.Deroulement;
+using System;
 
 namespace AppPublication.Export
 {
@@ -68,7 +69,7 @@ namespace AppPublication.Export
                     string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
                     XsltArgumentList argsList = new XsltArgumentList();
                     argsList.AddParam("istapis", "", "epreuve");
-                    AddStructureArgument(argsList, siteStruct);
+                    AddStructureArgument(argsList, siteStruct, fileSave);
 
                     XmlDocument xmlFeuilleCombat = ExportXML.CreateDocumentFeuilleCombat(DC, phase, null);
                     ExportXML.AddPublicationInfo(ref xmlFeuilleCombat, config);
@@ -86,7 +87,7 @@ namespace AppPublication.Export
                     string filename2 = ExportTools.getFileName(type2);
                     string fileSave2 = Path.Combine(directory2, filename2.Replace("/", "_"));
                     XsltArgumentList argsList2 = new XsltArgumentList();
-                    AddStructureArgument(argsList2, siteStruct);
+                    AddStructureArgument(argsList2, siteStruct, fileSave2);
 
                     // Calcul la disposition de la poule
                     int typePoule = (int)TypePouleEnum.Diagonale;
@@ -113,7 +114,7 @@ namespace AppPublication.Export
                     string filename2 = ExportTools.getFileName(type2);
                     string fileSave2 = Path.Combine(directory2, filename2.Replace("/", "_"));
                     XsltArgumentList argsList2 = new XsltArgumentList();
-                    AddStructureArgument(argsList2, siteStruct);
+                    AddStructureArgument(argsList2, siteStruct, fileSave2);
 
                     XmlDocument xmlResultat = ExportXML.CreateDocumentPhase(i_vue_epreuve, phase, DC);
                     ExportXML.AddPublicationInfo(ref xmlResultat, config);
@@ -148,7 +149,7 @@ namespace AppPublication.Export
                 string filename = ExportTools.getFileName(type);
                 string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
                 XsltArgumentList argsList = new XsltArgumentList();
-                AddStructureArgument(argsList, siteStruct);
+                AddStructureArgument(argsList, siteStruct, fileSave);
 
                 XmlDocument xml = ExportXML.CreateDocumentEpreuve(DC, epreuve);
                 ExportXML.AddPublicationInfo(ref xml, config);
@@ -180,7 +181,7 @@ namespace AppPublication.Export
                 string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
                 XsltArgumentList argsList = new XsltArgumentList();
                 argsList.AddParam("istapis", "", "alltapis");
-                AddStructureArgument(argsList, siteStruct);
+                AddStructureArgument(argsList, siteStruct, fileSave);
 
                 XmlDocument xml = ExportXML.CreateDocumentFeuilleCombat(DC, null, null);
                 ExportXML.AddPublicationInfo(ref xml, config);
@@ -213,8 +214,10 @@ namespace AppPublication.Export
                 xcompetition.SetAttributeValue(ConstantXML.Competition_Titre, OutilsTools.TraiteChaine(OutilsTools.SubString(DialogControleur.Instance.ServerData.competition.nom, 0, kTailleMaxNomCompetition)));
                 doc.Add(xcompetition);
 
+                string indexfile = Path.Combine(directory, "index.html");
+
                 XsltArgumentList argsList = new XsltArgumentList();
-                AddStructureArgument(argsList, siteStruct);
+                AddStructureArgument(argsList, siteStruct, indexfile);
 
                 // Load the style sheet.
                 var resource = ResourcesTools.GetAssembyResource(ExportTools.GetXsltClassique(ExportEnum.Site_Index));
@@ -223,7 +226,6 @@ namespace AppPublication.Export
                 XslCompiledTransform xslt_index = new XslCompiledTransform();
                 xslt_index.Load(xsltReader);
 
-                string indexfile = Path.Combine(directory, "index.html");
 
                 // Create the FileStream.
                 using (FileStream fs = new FileStream(indexfile, FileMode.Create))
@@ -272,21 +274,21 @@ namespace AppPublication.Export
 
                 // Genere le menu de d'avancement
                 type = ExportEnum.Site_MenuAvancement;
-                XsltArgumentList argsList = new XsltArgumentList();
-                AddStructureArgument(argsList, siteStruct);
-
                 string filename = ExportTools.getFileName(type);
                 string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
+                XsltArgumentList argsList = new XsltArgumentList();
+                AddStructureArgument(argsList, siteStruct, fileSave);
+
                 ExportHTML.ToHTMLSite(docmenu, type, fileSave, argsList);
                 output.Add(new FileWithChecksum(fileSave + ".html"));
 
                 // Genere le menu de classement
                 type = ExportEnum.Site_MenuClassement;
-                XsltArgumentList argsList2 = new XsltArgumentList();
-                AddStructureArgument(argsList2, siteStruct);
-
                 string filename2 = ExportTools.getFileName(type);
-                string fileSave2 = directory + "/" + filename2.Replace("/", "_");
+                string fileSave2 = Path.Combine(directory, filename2.Replace("/", "_"));
+                XsltArgumentList argsList2 = new XsltArgumentList();
+                AddStructureArgument(argsList2, siteStruct, fileSave2);
+
                 ExportHTML.ToHTMLSite(docmenu, type, fileSave2, argsList2);
                 output.Add(new FileWithChecksum(fileSave2 + ".html"));
 
@@ -294,11 +296,11 @@ namespace AppPublication.Export
                 if (config.PublierProchainsCombats)
                 {
                     type = ExportEnum.Site_MenuProchainCombats;
-                    XsltArgumentList argsListPc = new XsltArgumentList();
-                    AddStructureArgument(argsListPc, siteStruct);
-
                     string filenamePc = ExportTools.getFileName(type);
-                    string fileSavePc = directory + "/" + filenamePc.Replace("/", "_");
+                    string fileSavePc = Path.Combine(directory, filenamePc.Replace("/", "_"));
+                    XsltArgumentList argsListPc = new XsltArgumentList();
+                    AddStructureArgument(argsListPc, siteStruct, fileSavePc);
+
                     ExportHTML.ToHTMLSite(docmenu, type, fileSavePc, argsListPc);
                     output.Add(new FileWithChecksum(fileSavePc + ".html"));
                 }
@@ -311,11 +313,11 @@ namespace AppPublication.Export
                     AddStructures(ref docmenu);
 
                     type = ExportEnum.Site_MenuParticipants;
-                    XsltArgumentList argsListPart = new XsltArgumentList();
-                    AddStructureArgument(argsListPart, siteStruct);
-
                     string filenamePart = ExportTools.getFileName(type);
-                    string fileSavePart = directory + "/" + filenamePart.Replace("/", "_");
+                    string fileSavePart = Path.Combine(directory, filenamePart.Replace("/", "_"));
+                    XsltArgumentList argsListPart = new XsltArgumentList();
+                    AddStructureArgument(argsListPart, siteStruct, fileSavePart);
+
                     ExportHTML.ToHTMLSite(docmenu, type, fileSavePart, argsListPart);
                     output.Add(new FileWithChecksum(fileSavePart + ".html"));
                 }
@@ -339,7 +341,7 @@ namespace AppPublication.Export
                 string filename = ExportTools.getFileName(type);
                 string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
                 XsltArgumentList argsList = new XsltArgumentList();
-                AddStructureArgument(argsList, siteStruct);
+                AddStructureArgument(argsList, siteStruct, fileSave);
 
                 XmlDocument docAffectation = ExportXML.CreateDocumentAffectationTapis(DC);
                 ExportXML.AddPublicationInfo(ref docAffectation, config);
@@ -408,7 +410,7 @@ namespace AppPublication.Export
                 XsltArgumentList argsList = new XsltArgumentList();
                 argsList.AddParam("idgroupe", "", grp.Id);
                 argsList.AddParam("idcompetition", "", grp.Competition);
-                AddStructureArgument(argsList, siteStruct);
+                AddStructureArgument(argsList, siteStruct, fileSave);
 
                 ExportHTML.ToHTMLSite(_docParticipants, type, fileSave, argsList);
 
@@ -426,14 +428,14 @@ namespace AppPublication.Export
             ExportXML.AddStructures(ref doc, _xClubs, _xComites, _xSecteurs, _xLigues, _xPays);
         }
 
+        /// <summary>
+        /// Nettoie le path specifie pour passer de Repertoire Windows à URL
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         private static string PathForUrl(string path)
         {
             string output = path.Replace('\\', '/');
-
-            if(output.First() != '/')
-            {
-                output = string.Format("/{0}", output);
-            }
 
             return output;
         }
@@ -441,13 +443,14 @@ namespace AppPublication.Export
         /// <summary>
         /// Ajoute les arguments de structure du site pour les templates xslt
         /// </summary>
-        /// <param name="argsList"></param>
-        private static void AddStructureArgument(XsltArgumentList argsList, ExportSiteStructure siteStruct)
+        /// <param name="argsList">La liste d'argument a actualiser</param>
+        /// <param name="siteStruct">La structure du site</param>
+        /// <param name="targetFile">Le fichier HTML cible</param>
+        private static void AddStructureArgument(XsltArgumentList argsList, ExportSiteStructure siteStruct, string targetFile)
         {
-            // TODO comme ici tout est local, on ne connait pas le courante vs ID Competition
-            // TODO si on a un repertoire autre que la racine (ex. http://{Serveur}/test/{Compétition}) cela ne fonctionne pas
+            siteStruct.TargetPath = targetFile;
 
-            // Ajoute les parametres
+            // Ajoute les parametres en relatif par rapport a la position du fichier
             argsList.AddParam("imgPath", "", PathForUrl(siteStruct.RepertoireImgRelatif));
             argsList.AddParam("jsPath", "", PathForUrl(siteStruct.RepertoireJsRelatif));
             argsList.AddParam("cssPath", "", PathForUrl(siteStruct.RepertoireCssRelatif));

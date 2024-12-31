@@ -279,11 +279,11 @@
 					<xsl:when test="@present = 'true'">
 						<!-- La liste des combats dans lesquel le judo est présent -->
 						<xsl:choose>
-							<xsl:when test="count($selectedCompetition/combats/combat[ (score[1]/@judoka = $idJudoka or score[2]/@judoka = $idJudoka) and (@vainqueur = 0 or vainqueur = -1)  ]) > 0">
+							<xsl:when test="count($selectedCompetition/combats/combat[ (score[1]/@judoka = $idJudoka or score[2]/@judoka = $idJudoka) and (@vainqueur = 0 or @vainqueur = -1)  ]) > 0">
 								<xsl:for-each select="$selectedCompetition/epreuves/epreuve">
 									<xsl:variable name="idEpreuve" select="@ID"/>
 									<!-- On ne prend en compte que les epreuves pour lesquelles il y a des combats -->
-									<xsl:if test="count($selectedCompetition/combats/combat[(score[1]/@judoka = $idJudoka or score[2]/@judoka = $idJudoka) and @epreuve = $idEpreuve and (@vainqueur =0 and vainqueur = -1) ]) > 0">
+									<xsl:if test="count($selectedCompetition/combats/combat[(score[1]/@judoka = $idJudoka or score[2]/@judoka = $idJudoka) and @epreuve = $idEpreuve and (@vainqueur = 0 or @vainqueur = -1) ]) > 0">
 										<div>
 											<header class="w3-container w3-teal w3-large w3-padding-small">
 												<xsl:choose>
@@ -295,7 +295,7 @@
 											<div class="w3-container w3-cell w3-cell-middle w3-padding">
 												<table class="w3-table w3-bordered tas-tableau-prochain-combat" style="width:100%">
 													<tbody>
-														<xsl:for-each select="$selectedCompetition/combats/combat[(score[1]/@judoka = $idJudoka or score[2]/@judoka = $idJudoka) and @epreuve = $idEpreuve and (@vainqueur = 0 and vainqueur = -1)]">
+														<xsl:for-each select="$selectedCompetition/combats/combat[(score[1]/@judoka = $idJudoka or score[2]/@judoka = $idJudoka) and @epreuve = $idEpreuve and (@vainqueur = 0 or @vainqueur = -1)]">
 															<xsl:sort select="@time_programmation" data-type="number" order="ascending"/>
 															<xsl:call-template name="UnCombat">
 																<xsl:with-param name="niveau" select="$niveau"/>

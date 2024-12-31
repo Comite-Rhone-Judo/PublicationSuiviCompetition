@@ -28,7 +28,7 @@ namespace AppPublication.Tools
                 {
                     XDocument document = notSave[file];
 
-                    string filename = ConstantFile.SaveCOMDirectory + "/" + file + ConstantFile.ExtensionXML;
+                    string filename = Path.Combine(ConstantFile.SaveCOMDirectory, file + ConstantFile.ExtensionXML);
                     if (!File.Exists(filename) || !FileAndDirectTools.IsFileLocked(filename))
                     {
                         FileAndDirectTools.NeedAccessFile(filename);

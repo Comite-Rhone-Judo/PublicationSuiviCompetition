@@ -74,7 +74,6 @@ namespace KernelImpl.Noyau.Arbitrage
 
             this.naissance = XMLTools.LectureDate(xinfo.Attribute(ConstantXML.Arbitre_Naissance), "ddMMyyyy", DateTime.Now);
 
-            // TODO Revoir tous les appels de ce type
             this.sexeEnum =  new EpreuveSexe(XMLTools.LectureString(xinfo.Attribute(ConstantXML.Arbitre_Sexe)));
 
             this.modification = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Arbitre_Modification));
