@@ -81,7 +81,7 @@
 				window.onload=checkReloading;
 			</script>
 			<title>
-				<xsl:value-of select="@titre"/>
+				Suivi Compétition - Avancement
 			</title>
 		</head>
 		<body>

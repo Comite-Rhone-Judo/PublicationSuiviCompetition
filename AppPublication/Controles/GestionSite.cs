@@ -48,6 +48,7 @@ namespace AppPublication.Controles
         private const string kSettingNbProchainsCombats = "NbProchainsCombats";
         private const string kSettingPublierAffectationTapis = "PublierAffectationTapis";
         private const string kSettingDelaiGenerationSec = "DelaiGenerationSec";
+        private const string kSettingEffacerAuDemarrage = "EffaceAuDemarrage";
         private const string kSettingDelaiActualisationClientSec = "DelaiActualisationClientSec";
         private const string kSettingMsgProchainsCombats = "MsgProchainsCombats";
         private const string kSettingPouleEnColonnes = "PouleEnColonnes";
@@ -686,6 +687,28 @@ namespace AppPublication.Controles
             }
         }
 
+        bool _effacerAuDemarrage = true;
+        /// <summary>
+        /// Indique si on doit faire un RAZ du contenu du répertoire au demarrage de la generation
+        /// </summary>
+        public bool EffacerAuDemarrage
+        {
+            get
+            {
+                return _effacerAuDemarrage;
+            }
+            set
+            {
+                if (_effacerAuDemarrage != value)
+                {
+                    _effacerAuDemarrage = value;
+                    AppSettings.SaveSetting(kSettingEffacerAuDemarrage, _effacerAuDemarrage.ToString());
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        
+
         int _delaiActualisationClientSec = 30;
         /// <summary>
         /// Delai entre 2 generations du site
@@ -1146,6 +1169,7 @@ namespace AppPublication.Controles
                 NbProchainsCombats = AppSettings.ReadSetting(kSettingNbProchainsCombats, 6);
                 PublierAffectationTapis = AppSettings.ReadSetting(kSettingPublierAffectationTapis, true);
                 DelaiGenerationSec = AppSettings.ReadSetting(kSettingDelaiGenerationSec, 30);
+                EffacerAuDemarrage = AppSettings.ReadSetting(kSettingEffacerAuDemarrage, true);
                 DelaiActualisationClientSec = AppSettings.ReadSetting(kSettingDelaiActualisationClientSec, 30);
                 MsgProchainsCombats = AppSettings.ReadSetting(kSettingMsgProchainsCombats, string.Empty);
                 PouleEnColonnes = AppSettings.ReadSetting(kSettingPouleEnColonnes, false);
@@ -1309,6 +1333,22 @@ namespace AppPublication.Controles
             {
                 try
                 {
+                    // Nettoie si necessaire le repertoire avant de lancer la tache
+                    if (EffacerAuDemarrage)
+                    {
+                        Status = StatusGenerationSite.Instance(StateGenerationEnum.Cleaning);
+
+                        // Efface le contenu local
+                        ClearRepertoireCompetition();
+
+                        // Efface egalement le fichier a distance s'il est actif
+                        if (SiteDistantSelectionne.IsActif)
+                        {
+                            SiteDistantSelectionne.NettoyerSite();
+                        }
+                    }
+
+                    // Lance la tache de generation
                     _taskGeneration = Task.Factory.StartNew(() =>
                     {
                         while (!_tokenSource.Token.IsCancellationRequested)
@@ -1682,6 +1722,27 @@ namespace AppPublication.Controles
             }
         }
 
+        /// <summary>
+        /// Vide le contenu du repertoire de la competition
+        /// </summary>
+        private void ClearRepertoireCompetition()
+        {
+            if(_structure != null)
+            {
+                // Efface le contenu du repertoire de la competition
+                if(!FileAndDirectTools.DeleteDirectory(_structure.RepertoireCompetition, true))
+                {
+                    LogTools.Logger.Error("Erreur lors de l'effacement du contenu de  '{0}'", _structure.RepertoireCompetition);
+                }
+
+                // Charge le contenu du fichier de checksum
+                List<FileWithChecksum> cache = LoadChecksumFichiersGeneres();
+
+                // Elimine tous les fichiers commençant par le répertoire de la competition (ils ont été supprimés)
+                cache.RemoveAll(f => f.File.FullName.StartsWith(_structure.RepertoireCompetition));
+                SaveChecksumFichiersGeneres(cache);
+            }
+        }
 
         /// <summary>
         /// Charge le fichier de cache de checksum

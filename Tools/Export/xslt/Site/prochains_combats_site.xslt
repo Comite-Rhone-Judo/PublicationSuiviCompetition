@@ -63,7 +63,7 @@
 				<xsl:value-of select="$js"/>
 			</script>
 			<title>
-				<xsl:value-of select="@titre"/>
+				Suivi Compétition - Prochains Combats
 			</title>
 		</head>
 		<body>

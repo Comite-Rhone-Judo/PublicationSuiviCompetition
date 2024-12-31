@@ -185,12 +185,21 @@
                     <Label HorizontalAlignment="Right" Content="Répertoire d'export:" Style="{StaticResource LabelStyle}" />
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Répertoire racine dans lequel les données du site sont générées et publiés"/>
                 </StackPanel>
+                <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Height="20" Margin="5 -10 5 5" Text = "{Binding Path=RepertoireRacine}" IsEnabled="False"/>
                 <telerik:RadButton Grid.Row="6" Grid.Column="0" Width="95" Height="30" telerik:StyleManager.Theme="Expression_Dark" Command="{Binding CmdGetRepertoireRacine}" Margin="-70 0 0 0">
                     <WrapPanel Orientation="Horizontal">
                         <Label Content="Sélectionner ..." Foreground="White"/>
                     </WrapPanel>
                 </telerik:RadButton>
-                <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Height="20" Margin="5 -10 5 5" Text = "{Binding Path=RepertoireRacine}" IsEnabled="False"/>
+
+                <StackPanel Grid.Row="6" Grid.Column="2" Orientation="Horizontal" Margin="0 -5 0 0">
+                    <CheckBox Style="{StaticResource CheckboxStyle}"
+                        IsChecked="{Binding Path=EffacerAuDemarrage}"
+                        Margin="0 0 0 0">
+                    </CheckBox>
+                    <Label HorizontalAlignment="Right" Content="Effacer au démarage" Style="{StaticResource LabelStyle}"/>
+                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, Supprimer tout le contenu préalable du répertoire au démarrage. Le site distant sera également effacé."/>
+                </StackPanel>
             </Grid>
         </Border>
 

@@ -436,6 +436,9 @@ namespace AppPublication.Export
         /// <param name="argsList"></param>
         private static void AddStructureArgument(XsltArgumentList argsList, ExportSiteStructure siteStruct)
         {
+            // TODO comme ici tout est local, on ne connait pas le courante vs ID Competition
+            // TODO si on a un repertoire autre que la racine (ex. http://{Serveur}/test/{Compétition}) cela ne fonctionne pas
+
             // Ajoute les parametres
             argsList.AddParam("imgPath", "", PathForUrl(siteStruct.RepertoireImgRelatif));
             argsList.AddParam("jsPath", "", PathForUrl(siteStruct.RepertoireJsRelatif));

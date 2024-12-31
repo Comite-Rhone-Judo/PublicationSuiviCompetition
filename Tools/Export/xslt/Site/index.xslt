@@ -23,7 +23,7 @@
   <xsl:template match="/*">
     <head>
       <meta charset="utf-8"/>
-      <title>JUDO</title>
+      <title>Suivi Compétition</title>
 
       <script type="text/javascript">
 		  <xsl:value-of disable-output-escaping="yes" select="concat('window.location.href = ', $apos, $commonPath, 'avancement.html', $apos, ';')"/>
