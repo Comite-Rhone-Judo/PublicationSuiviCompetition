@@ -979,9 +979,9 @@ namespace AppPublication.Controles
                 }
                 URLDistantPublication = CalculURLSiteDistant();
                 URLLocalPublication = CalculURLSiteLocal();
-                    // On ne peut publier que en individuelle
-                    CanPublierAffectation = DialogControleur.Instance.ServerData.competition.IsIndividuelle();
-                    CanPublierParticipants = DialogControleur.Instance.ServerData.competition.IsIndividuelle() || DialogControleur.Instance.ServerData.competition.IsShiai();
+                // On ne peut publier que en individuelle
+                CanPublierAffectation = DialogControleur.Instance.ServerData.competition.IsIndividuelle();
+                CanPublierParticipants = DialogControleur.Instance.ServerData.competition.IsIndividuelle() || DialogControleur.Instance.ServerData.competition.IsShiai();
 
                 // Si on est en Shiai, par defaut on met les poules en colonnes
                 if (DialogControleur.Instance.ServerData.competition.IsShiai())
@@ -1751,7 +1751,6 @@ namespace AppPublication.Controles
 
             if (IsGenerationActive)
             {
-                // TODO Voir si ici on ne doit pas ajouter une information sur le partie participants
                 GenereSiteStruct export = new GenereSiteStruct
                 {
                     type = type,

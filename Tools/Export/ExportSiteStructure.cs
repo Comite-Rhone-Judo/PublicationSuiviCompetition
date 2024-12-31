@@ -18,18 +18,21 @@ namespace Tools.Export
     {
         #region MEMBRES
         public const string kCourante = "courante";
+        public const string kParticipants = "participants";
         public const string kCommon = "common";
         public const string kImg = "img";
         public const string kJs = "js";
-        public const string kStyle = "css";
+        public const string kCss = "css";
         public const string kIndex = "index.html";
 
         private string _rootDir = string.Empty;
         private string _rootCompetDir = string.Empty;
         private string _idCompetition = string.Empty;
         private bool _isFullyConfigured = false;             // Indique l'etat de configuration 
-        private bool _asRootDir = false;
+        private bool _hasRootDir = false;
         private int _maxLen = 30;
+        private string _targetPath = string.Empty;
+        private string _relativeToRoot = string.Empty;
         #endregion
 
         #region CONSTRUCTEURS
@@ -48,6 +51,45 @@ namespace Tools.Export
         #endregion
 
         #region PROPRIETES
+
+        /// <summary>
+        /// Path cible pour pouvoir calculer les repertoires relatifs
+        /// </summary>
+        public string TargetPath
+        {
+            get
+            {
+                return _targetPath;
+            }
+            set
+            {
+                if(_targetPath != value)
+                {
+                    _targetPath = value;
+
+                    if(IsFullyConfigured)
+                    {
+                        // Supprime la racine dans le nom cible
+                        string workstr = _targetPath.Replace(RepertoireCompetition, "");
+
+                        // Eclate la chaine sur le separateur de repertoire et supprime les chaines vides
+                        List<string> pathLevels = workstr.Split(Path.DirectorySeparatorChar).Where(s => !string.IsNullOrEmpty(s)).ToList();
+
+                        // Le nombre d'element permet de connaitre le niveau relatif de la racine par rapport au fichier = taille de la liste -1 ( le fichier final)
+                        int level = pathLevels.Count() - 1;
+                        _relativeToRoot = string.Empty;
+                        if (level > 0)
+                        {
+                            for (int i = 0; i < level; i++)
+                            {
+                                _relativeToRoot += "../";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Identifiant de la competition consideree
         /// </summary>
@@ -88,11 +130,11 @@ namespace Tools.Export
         /// <summary>
         /// Retourne si la structure possede au moins un repertoire racine
         /// </summary>
-        public bool AsRootDir
+        public bool HasRootDir
         {
             get
             {
-                return _asRootDir;
+                return _hasRootDir;
             }
         }
 
@@ -129,13 +171,14 @@ namespace Tools.Export
         }
 
         /// <summary>
-        /// Le repertoire de la competition relatif a la racine
+        /// Le repertoire Competition en relatif par rapport au path cible
         /// </summary>
         public string RepertoireCompetitionRelatif
         {
             get
             {
-                return GetRelativePath(RepertoireCompetition);
+                IsConfiguredGuardRail();
+                return _relativeToRoot;
             }
         }
 
@@ -152,13 +195,14 @@ namespace Tools.Export
         }
 
         /// <summary>
-        /// Le repertoireCommon relatif a la racine
+        /// Le repertoire Common en relatif par rapport au path cible
         /// </summary>
         public string RepertoireCommonRelatif
         {
             get
             {
-                return GetRelativePath(RepertoireCommon);
+                IsConfiguredGuardRail();
+                return FileAndDirectTools.PathJoin(_relativeToRoot, kCommon, true);
             }
         }
 
@@ -170,18 +214,20 @@ namespace Tools.Export
         {
             get
             {
-                return FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, "participants"));
+                IsConfiguredGuardRail();
+                return FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, kParticipants));
             }
         }
 
         /// <summary>
-        /// Le repertoire des participants relatif a la racine
+        /// Le repertoire des participants en relatif par rapport au path cible
         /// </summary>
         public string RepertoireParticipantsRelatif
         {
             get
             {
-                return GetRelativePath(RepertoireParticipants);
+                IsConfiguredGuardRail();
+                return FileAndDirectTools.PathJoin(_relativeToRoot, kParticipants, true);
             }
         }
 
@@ -199,13 +245,14 @@ namespace Tools.Export
         }
 
         /// <summary>
-        /// Le repertoire Img relatif a la racine
+        /// Le repertoire Img relatif en relatif par rapport au path cible
         /// </summary>
         public string RepertoireImgRelatif
         {
             get
             {
-                return GetRelativePath(RepertoireImg);
+                IsConfiguredGuardRail();
+                return FileAndDirectTools.PathJoin(_relativeToRoot, kImg, true);
             }
         }
 
@@ -223,37 +270,39 @@ namespace Tools.Export
         }
 
         /// <summary>
-        /// Le repertoire Js relatif a la racine
+        /// Le repertoire Js en relatif par rapport au path cible
         /// </summary>
         public string RepertoireJsRelatif
         {
             get
             {
-                return GetRelativePath(RepertoireJs);
+                IsConfiguredGuardRail();
+                return FileAndDirectTools.PathJoin(_relativeToRoot, kJs, true);
             }
         }
 
 
         /// <summary>
-        /// Retourne le repertoire style
+        /// Retourne le repertoire Css
         /// </summary>
         public string RepertoireCss
         {
             get
             {
                 IsConfiguredGuardRail();
-                return FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, kStyle));
+                return FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, RepertoireCssRelatif));
             }
         }
 
         /// <summary>
-        /// Le repertoire de la competition relatif a la racine
+        /// Le repertoire Css en relatif par rapport au path cible
         /// </summary>
         public string RepertoireCssRelatif
         {
             get
             {
-                return GetRelativePath(RepertoireCss);
+                IsConfiguredGuardRail();
+                return FileAndDirectTools.PathJoin(_relativeToRoot, kCss, true);
             }
         }
 
@@ -280,8 +329,6 @@ namespace Tools.Export
 
             return (relatif) ? directory.Replace(RepertoireCompetition, "").Remove(0, 1) : directory;
         }
-
-
 
         /// <summary>
         /// Retourne le repertoire d'une epreuve
@@ -351,7 +398,7 @@ namespace Tools.Export
 
                 throw new InvalidOperationException("La structure de repertoire n'est pas complement configuree");
             }
-            if (!full && !_asRootDir)
+            if (!full && !_hasRootDir)
             {
                 LogTools.Logger.Debug("Tentative d'acces a un ExportSiteStructure sans racine");
 
@@ -378,25 +425,8 @@ namespace Tools.Export
                 }
             }
 
-            _asRootDir = rootDirOk;
+            _hasRootDir = rootDirOk;
             _isFullyConfigured =  idCompetOk && rootDirOk;
-        }
-
-        /// Retourne le repertoire relatif par rapport a la racine du site (ajoute un / a la fin systematiquement)
-        /// {Racine}/{ID Competition | courante}/{Path} ==> {ID Competition | courante}/{Path}/
-        /// </summary>
-        /// <param name="fullPath"></param>
-        /// <returns></returns>
-        private string GetRelativePath(string fullPath)
-        {
-            string output = fullPath.Replace(RepertoireRacine, "").Remove(0, 1);
-
-            if (output.Last() != Path.DirectorySeparatorChar)
-            {
-                output += Path.DirectorySeparatorChar;
-            }
-
-            return output;
         }
         #endregion
     }

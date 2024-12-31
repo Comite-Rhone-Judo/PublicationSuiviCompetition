@@ -10,6 +10,7 @@ namespace Tools.Outils
         protected virtual void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
             // use this to force calculation of CanExecute on RelayCommand
             CommandManager.InvalidateRequerySuggested();
         }
