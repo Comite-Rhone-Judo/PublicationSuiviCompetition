@@ -389,7 +389,7 @@ namespace Tools.Export
         /// <returns></returns>
         private string GetRelativePath(string fullPath)
         {
-            string output = fullPath.Replace(Racine, "").Remove(0, 1);
+            string output = fullPath.Replace(RepertoireRacine, "").Remove(0, 1);
 
             if (output.Last() != Path.DirectorySeparatorChar)
             {

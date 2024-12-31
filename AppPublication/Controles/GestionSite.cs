@@ -4,7 +4,7 @@ using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
 using KernelImpl.Noyau.Structures;
 using AppPublication.ExtensionNoyau.Deroulement;
-using Microsoft.Win32;
+// using Microsoft.Win32;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using System;
 using System.Collections.Generic;
@@ -501,8 +501,7 @@ namespace AppPublication.Controles
                             {
                                 string output = string.Empty;
 
-                                System.Windows.Forms.FolderBrowserDialog dlg = new FolderBrowserDialog();
-                                System.Windows.Forms.FolderBrowserDialog dlg = new System.Windows.Forms.FolderBrowserDialog();
+                                FolderBrowserDialog dlg = new FolderBrowserDialog();
                                 dlg.Description = "Sélectionner le répertoire à utiliser pour les exports";
                                 dlg.ShowNewFolderButton = true;
                                 if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -1718,7 +1717,7 @@ namespace AppPublication.Controles
                         urls = ExportSite.GenereWebSiteIndex(cfg, _structureRepertoires);
                         break;
                     case SiteEnum.Menu:
-                        urls = ExportSite.GenereWebSiteMenu(DC, cfg, _structureRepertoires);
+                        urls = ExportSite.GenereWebSiteMenu(DC, EDC, cfg, _structureRepertoires);
                         break;
                     case SiteEnum.Phase:
                         urls = ExportSite.GenereWebSitePhase(DC, genere.phase, cfg, _structureRepertoires);
@@ -1911,19 +1910,19 @@ namespace AppPublication.Controles
         /// </summary>
         private void ClearRepertoireCompetition()
         {
-            if(_structure != null)
+            if(_structureRepertoires != null)
             {
                 // Efface le contenu du repertoire de la competition
-                if(!FileAndDirectTools.DeleteDirectory(_structure.RepertoireCompetition, true))
+                if(!FileAndDirectTools.DeleteDirectory(_structureRepertoires.RepertoireCompetition, true))
                 {
-                    LogTools.Logger.Error("Erreur lors de l'effacement du contenu de  '{0}'", _structure.RepertoireCompetition);
+                    LogTools.Logger.Error("Erreur lors de l'effacement du contenu de  '{0}'", _structureRepertoires.RepertoireCompetition);
                 }
 
                 // Charge le contenu du fichier de checksum
                 List<FileWithChecksum> cache = LoadChecksumFichiersGeneres();
 
                 // Elimine tous les fichiers commençant par le répertoire de la competition (ils ont été supprimés)
-                cache.RemoveAll(f => f.File.FullName.StartsWith(_structure.RepertoireCompetition));
+                cache.RemoveAll(f => f.File.FullName.StartsWith(_structureRepertoires.RepertoireCompetition));
                 SaveChecksumFichiersGeneres(cache);
             }
         }
