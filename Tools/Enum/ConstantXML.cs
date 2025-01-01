@@ -55,6 +55,7 @@
         public const string publierParticipants = "PublierParticipants";
         public const string ParticipantsParEntite = "ParticipantsParEntite";
         public const string ParticipantsAbsents = "ParticipantsAbsents";
+        public const string ParticipantsTousCombats = "ParticipantsTousCombats";
         public const string delaiActualisationClientSec = "DelaiActualisationClientSec";
         public const string nbProchainsCombats = "NbProchainsCombats";
         public const string msgProchainsCombats = "MsgProchainsCombats";

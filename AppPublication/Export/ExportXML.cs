@@ -41,6 +41,8 @@ namespace AppPublication.Export
                 attrParticipantsParEntite.Value = config.ParticipantsParEntite.ToString().ToLower();
                 XmlAttribute attrParticipantsAbsents = doc.CreateAttribute(ConstantXML.ParticipantsAbsents);
                 attrParticipantsAbsents.Value = config.ParticipantsAbsents.ToString().ToLower();
+                XmlAttribute attrParticipantsTousCombats = doc.CreateAttribute(ConstantXML.ParticipantsTousCombats);
+                attrParticipantsTousCombats.Value = config.ParticipantsTousCombats.ToString().ToLower();
 
                 XmlAttribute attrDelaiActualisationClient = doc.CreateAttribute(ConstantXML.delaiActualisationClientSec);
                 attrDelaiActualisationClient.Value = config.DelaiActualisationClientSec.ToString();
@@ -60,6 +62,7 @@ namespace AppPublication.Export
                 node.Attributes.Append(attrParticipants);
                 node.Attributes.Append(attrParticipantsParEntite);
                 node.Attributes.Append(attrParticipantsAbsents);
+                node.Attributes.Append(attrParticipantsTousCombats);
                 node.Attributes.Append(attrDelaiActualisationClient);
                 node.Attributes.Append(attrNbProchainsCombats);
                 node.Attributes.Append(attrDateGeneration);

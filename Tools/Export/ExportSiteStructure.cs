@@ -82,7 +82,7 @@ namespace Tools.Export
                         {
                             for (int i = 0; i < level; i++)
                             {
-                                _relativeToRoot += "../";
+                                _relativeToRoot += ".." + Path.DirectorySeparatorChar;
                             }
                         }
                     }
@@ -290,7 +290,7 @@ namespace Tools.Export
             get
             {
                 IsConfiguredGuardRail();
-                return FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, RepertoireCssRelatif));
+                return FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, kCss));
             }
         }
 
