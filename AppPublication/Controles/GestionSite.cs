@@ -48,7 +48,8 @@ namespace AppPublication.Controles
         private const string kSettingRepertoireRacineSiteFTPDistant = "RepertoireRacineSiteFTPDistant";
         private const string kSettingPublierProchainsCombats = "PublierProchainsCombats";
         private const string kSettingPublierParticipants = "PublierParticipants";
-        private const string kSettingParticipantsAbsents = "participantsAbsents";
+        private const string kSettingParticipantsAbsents = "ParticipantsAbsents";
+        private const string kSettingParticipantsTousCombats = "ParticipantsTousCombats";
         private const string kSettingParticipantsParEntite = "ParticipantsParEntite";
         private const string kSettingNbProchainsCombats = "NbProchainsCombats";
         private const string kSettingPublierAffectationTapis = "PublierAffectationTapis";
@@ -1115,6 +1116,31 @@ namespace AppPublication.Controles
             }
         }
 
+        private bool _participantsTousCombats = false;
+
+        /// <summary>
+        /// Indique si on doit publier tous les combats des judokas, finis ou non
+        /// </summary>
+        public bool ParticipantsTousCombats
+        {
+            get
+            {
+                return _participantsTousCombats;
+            }
+            set
+            {
+                if (_participantsTousCombats != value)
+                {
+                    _participantsTousCombats = value;
+                    AppSettings.SaveSetting(kSettingParticipantsTousCombats, _participantsTousCombats.ToString());
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        
+
+
         private bool _participantsParEntite = false;
         /// <summary>
         /// Indique si on doit grouper les participants par club
@@ -1328,6 +1354,7 @@ namespace AppPublication.Controles
                 PublierAffectationTapis = AppSettings.ReadSetting(kSettingPublierAffectationTapis, true);
                 PublierParticipants = AppSettings.ReadSetting(kSettingPublierParticipants, false);
                 ParticipantsAbsents = AppSettings.ReadSetting(kSettingParticipantsAbsents, false);
+                ParticipantsTousCombats = AppSettings.ReadSetting(kSettingParticipantsTousCombats, false);
                 ParticipantsParEntite = AppSettings.ReadSetting(kSettingParticipantsParEntite, false);
                 DelaiGenerationSec = AppSettings.ReadSetting(kSettingDelaiGenerationSec, 30);
                 EffacerAuDemarrage = AppSettings.ReadSetting(kSettingEffacerAuDemarrage, true);
@@ -1775,7 +1802,7 @@ namespace AppPublication.Controles
         public List<FileWithChecksum> GenereAll()
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
-            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierParticipants && CanPublierParticipants, ParticipantsAbsents, ParticipantsParEntite, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes);
+            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierParticipants && CanPublierParticipants, ParticipantsAbsents, ParticipantsTousCombats, ParticipantsParEntite, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes);
 
             if (IsGenerationActive)
             {
