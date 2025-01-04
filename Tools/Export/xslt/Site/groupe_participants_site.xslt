@@ -445,7 +445,7 @@
 										</img>
 									</xsl:when>
 									<xsl:when test="@vainqueur = $hikiwake">
-										<img class="img w3-circle w3-white" width="20">
+										<img class="img w3-circle w3-white" width="15">
 											<xsl:attribute name="src">
 												<xsl:value-of select="concat($imgPath, 'equal-sign-32.png')"/>
 											</xsl:attribute>

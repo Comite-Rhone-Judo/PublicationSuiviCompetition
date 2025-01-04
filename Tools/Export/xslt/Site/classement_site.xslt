@@ -153,7 +153,7 @@
 											<xsl:value-of select="concat($prefixPanel,'F', 'Expand')"/>
 										</xsl:attribute>
 									</img>
-									Catégorie Féminine
+									Catégorie Féminines
 								</button>
 							</header>
 							<div class="w3-container">
@@ -190,7 +190,7 @@
 											<xsl:value-of select="concat($prefixPanel,'M', 'Expand')"/>
 										</xsl:attribute>
 									</img>
-									Catégorie Masculine
+									Catégorie Masculins
 								</button>
 							</header>
 							<div class="w3-container">

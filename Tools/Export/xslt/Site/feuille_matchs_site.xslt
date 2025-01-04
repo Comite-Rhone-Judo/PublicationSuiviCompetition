@@ -344,10 +344,10 @@
 							<xsl:if test="$combat/feuille/@repechage = 'true'">
 								<xsl:choose>
 									<xsl:when test="$combat/feuille/@reference = '3.1' or $combat/feuille/@reference = '5.1' or $combat/feuille/@reference = '7.1'">
-										(Barrage)
+										<br/>(Barrage)
 									</xsl:when>
 									<xsl:otherwise>
-										(Repêchage)
+										<br/>(Repêchage)
 									</xsl:otherwise>
 								</xsl:choose>
 							</xsl:if>

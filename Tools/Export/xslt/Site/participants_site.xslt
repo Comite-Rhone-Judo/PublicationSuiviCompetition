@@ -195,7 +195,7 @@
 								Féminines
 							</xsl:when>
 							<xsl:when test="$categorie = 'M'">
-								Masculines
+								Masculins
 							</xsl:when>
 							<xsl:otherwise>
 								Sans catégorie
