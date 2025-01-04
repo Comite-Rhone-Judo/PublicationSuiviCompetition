@@ -1303,11 +1303,13 @@ namespace KernelImpl.Noyau.Participants
                 Comite comite = DC.Structures.Comites.FirstOrDefault(o => o.id == club.comite && o.ligue == club.ligue);
                 if (comite != null)
                 {
+                    this.comite = comite.id;
                     this.comiteNomCourt = club.comite;
                     this.comiteNom = club.comite;
                 }
                 else
                 {
+                    this.comite = string.Empty;
                     this.comiteNomCourt = "0";
                     this.comiteNom = "";
                 }
@@ -1479,11 +1481,13 @@ namespace KernelImpl.Noyau.Participants
                 Comite comite = DC.Structures.Comites.FirstOrDefault(o => o.id == club.comite && o.ligue == club.ligue);
                 if (comite != null)
                 {
+                    this.comite = comite.id;
                     this.comiteNomCourt = club.comite;
                     this.comiteNom = club.comite;
                 }
                 else
                 {
+                    this.comite = string.Empty;
                     this.comiteNomCourt = "0";
                     this.comiteNom = "";
                 }
