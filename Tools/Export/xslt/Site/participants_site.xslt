@@ -210,32 +210,32 @@
 					</xsl:attribute>
 					<xsl:choose>
 						<!-- Niveau Aucun (par Nom) 1 -->
-						<xsl:when test="typeGroupe = 1">
+						<xsl:when test="$typeGroupe = 1">
 							<xsl:apply-templates select="./groupesParticipants/groupeParticipants[@sexe = $categorie and @type=$typeGroupe]">
 								<xsl:sort order="ascending" select="current()/@entite"/>
 							</xsl:apply-templates>
 						</xsl:when>
 						<!-- Niveau Club 2 -->
-						<xsl:when test="typeGroupe = 2">
+						<xsl:when test="$typeGroupe = 2">
 							<xsl:apply-templates select="./groupesParticipants/groupeParticipants[@sexe = $categorie and @type=$typeGroupe]">
 								<xsl:sort order="ascending" select="//club[@ID = current()/@entite]/nom"/>
 							</xsl:apply-templates>
 						</xsl:when>
 						<!-- Niveau Departement 3 -->
-						<xsl:when test="typeGroupe = 3">
+						<xsl:when test="$typeGroupe = 3">
 							<xsl:apply-templates select="./groupesParticipants/groupeParticipants[@sexe = $categorie and @type=$typeGroupe]">
 								<xsl:sort order="ascending" select="//comite[@ID = current()/@entite]/nom"/>
 							</xsl:apply-templates>
 						</xsl:when>
 						<!-- Niveau Ligue 3 -->
-						<xsl:when test="typeGroupe = 4">
+						<xsl:when test="$typeGroupe = 4">
 							<xsl:apply-templates select="./groupesParticipants/groupeParticipants[@sexe = $categorie and @type=$typeGroupe]">
 								<xsl:sort order="ascending" select="//ligue[@ID = current()/@entite]/nom"/>
 							</xsl:apply-templates>
 						</xsl:when>
 						<!-- Niveau National 5 -->
 						<!-- Niveau International 6 -->
-						<xsl:when test="typeGroupe = 5 or typeGroupe = 6">
+						<xsl:when test="$typeGroupe = 5 or $typeGroupe = 6">
 							<xsl:apply-templates select="./groupesParticipants/groupeParticipants[@sexe = $categorie and @type=$typeGroupe]">
 								<xsl:sort order="ascending" select="//pays[@ID = current()/@entite]/@nom"/>
 							</xsl:apply-templates>

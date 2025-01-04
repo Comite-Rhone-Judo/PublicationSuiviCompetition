@@ -128,6 +128,7 @@
         public const string Comite = "comite";
         public const string Comite_ID = "ID";
         public const string Comite_Nom = "nom";
+        public const string Comite_NomCourt = "nomCourt";
         public const string Comite_Ligue = "ligue";
         public const string Comite_RemoteID = "remoteID";
         public const string Comite_Secteur = "secteur";
