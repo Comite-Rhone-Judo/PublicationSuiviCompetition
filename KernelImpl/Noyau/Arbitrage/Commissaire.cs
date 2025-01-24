@@ -13,33 +13,7 @@ namespace KernelImpl.Noyau.Arbitrage
         public string nom { get; set; }
         public string prenom { get; set; }
         public System.DateTime naissance { get; set; }
-        private bool _sexe;
-        public bool sexe
-        {
-            get
-            {
-                return _sexe;
-            }
-            set
-            {
-                _sexe = value;
-                _sexeEnum = new EpreuveSexe(_sexe);
-            }
-        }
-
-        private EpreuveSexe _sexeEnum;
-        public EpreuveSexe sexeEnum
-        {
-            get
-            {
-                return _sexeEnum;
-            }
-            set
-            {
-                _sexeEnum = value;
-                _sexe = (bool) _sexeEnum;
-            }
-        }
+        public bool sexe { get; set; }
         public int categorie { get; set; }
         public bool modification { get; set; }
         public string club { get; set; }
@@ -73,7 +47,7 @@ namespace KernelImpl.Noyau.Arbitrage
 
             this.naissance = XMLTools.LectureDate(xinfo.Attribute(ConstantXML.Commissaire_Naissance), "ddMMyyyy", DateTime.Now);
 
-            this.sexeEnum = new EpreuveSexe(XMLTools.LectureString(xinfo.Attribute(ConstantXML.Commissaire_Sexe)));
+            this.sexe = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Commissaire_Sexe)) == "F" ? true : false;
 
             this.modification = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Commissaire_Modification));
             this.estResponsable = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Commissaire_EstResponsable));
@@ -91,7 +65,7 @@ namespace KernelImpl.Noyau.Arbitrage
             xcommissaire.SetAttributeValue(ConstantXML.Commissaire_Nom, nom);
             xcommissaire.SetAttributeValue(ConstantXML.Commissaire_Prenom, prenom);
             xcommissaire.SetAttributeValue(ConstantXML.Commissaire_Naissance, naissance.ToString("ddMMyyyy"));
-            xcommissaire.SetAttributeValue(ConstantXML.Commissaire_Sexe, sexeEnum.ToString());
+            xcommissaire.SetAttributeValue(ConstantXML.Commissaire_Sexe, sexe ? "F" : "M");
             xcommissaire.SetAttributeValue(ConstantXML.Commissaire_Modification, modification);
             xcommissaire.SetAttributeValue(ConstantXML.Commissaire_RemoteID, remoteID);
             xcommissaire.SetAttributeValue(ConstantXML.Commissaire_Club, club);

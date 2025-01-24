@@ -15,33 +15,7 @@ namespace Tools.Outils
             public string nom { get; set; }
             public string prenom { get; set; }
             public string remoteId { get; set; }
-            private bool _sexe;
-        public bool sexe
-        {
-            get
-            {
-                return _sexe;
-            }
-            set
-            {
-                _sexe = value;
-                _sexeEnum = new EpreuveSexe(_sexe);
-            }
-        }
-
-        private EpreuveSexe _sexeEnum;
-        public EpreuveSexe sexeEnum
-        {
-            get
-            {
-                return _sexeEnum;
-            }
-            set
-            {
-                _sexeEnum = value;
-                _sexe = (bool) _sexeEnum;
-            }
-        }
+            public bool sexe { get; set; }
             public DateTime naissance { get; set; }
             public int categorie { get; set; }
             public string club { get; set; }
@@ -84,7 +58,7 @@ namespace Tools.Outils
             personne.nom = xjudoka.Attributes[ConstantXML.Judoka_Nom].Value.ToUpper();
             personne.prenom = RechercheXmlTools.FormatPrenom(xjudoka.Attributes[ConstantXML.Judoka_Prenom].Value);
             personne.remoteId = xjudoka.Attributes[ConstantXML.Judoka_ID].Value;
-            personne.sexeEnum = new EpreuveSexe(xjudoka.Attributes[ConstantXML.Judoka_Sexe].Value);
+            personne.sexe = xjudoka.Attributes[ConstantXML.Judoka_Sexe].Value == "F";
             personne.naissance = naissance;
             personne.categorie = 0;// Outils.GetCategorie(naissance.Year);
             personne.grade = xjudoka.Attributes[ConstantXML.Judoka_Grade].Value;

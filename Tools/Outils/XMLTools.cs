@@ -101,9 +101,8 @@ namespace Tools.Outils
                 }
                 return DateTime.ParseExact(ladate.Value, format, null);
             }
-            catch (Exception ex)
+            catch
             {
-                LogTools.Logger.Error("Exception lors de la lecture de '{0}'", ladate.Value, ex);
                 return default_value;
             }
         }
@@ -125,10 +124,8 @@ namespace Tools.Outils
                 }
                 return DateTime.ParseExact(ladate.Value, format, null);
             }
-            catch(Exception ex)
+            catch
             {
-                LogTools.Logger.Error("Exception lors de la lecture de '{0}'", ladate.Value, ex);
-
                 return DateTime.Now;
             }
         }
@@ -187,9 +184,8 @@ namespace Tools.Outils
                 }
                 return DateTime.ParseExact(ladate.Value, format, null).TimeOfDay;
             }
-            catch(Exception ex)
+            catch
             {
-                LogTools.Logger.Error("Exception lors de la lecture de '{0}'", ladate.Value, ex);
                 return DateTime.Now.TimeOfDay;
             }
         }
@@ -210,9 +206,8 @@ namespace Tools.Outils
                     int.TryParse(lepoids, out poid);
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                LogTools.Logger.Error("Exception lors de la lecture de '{0}'", lepoids, ex);
             }
             return poid;
         }
@@ -233,9 +228,8 @@ namespace Tools.Outils
                     int.TryParse(xattribute.Value, out result);
                 }
             }
-            catch(Exception ex)
+            catch
             {
-                LogTools.Logger.Error("Exception lors de la lecture de '{0}'", xattribute.Value, ex);
             }
             return result;
         }
@@ -256,10 +250,8 @@ namespace Tools.Outils
                     double.TryParse(xattribute.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out result);
                 }
             }
-            catch(Exception ex)
+            catch
             {
-                LogTools.Logger.Error("Exception lors de la lecture de '{0}'", xattribute.Value, ex);
-
             }
             return result;
         }
@@ -280,9 +272,8 @@ namespace Tools.Outils
                     int.TryParse(xattribute.Value, out result);
                 }
             }
-            catch(Exception ex)
+            catch
             {
-                LogTools.Logger.Error("Exception lors de la lecture de '{0}'", xattribute.Value, ex);
             }
             return result;
         }
@@ -316,10 +307,8 @@ namespace Tools.Outils
                     }
                 }
             }
-            catch(Exception ex)
+            catch
             {
-                LogTools.Logger.Error("Exception lors de la lecture de '{0}'", xattribute.Value, ex);
-
                 return null;
             }
             return null;
@@ -384,9 +373,8 @@ namespace Tools.Outils
                 }
                 return bool.Parse(xattribute.Value);
             }
-            catch(Exception ex)
+            catch
             {
-                LogTools.Logger.Error("Exception lors de la lecture de '{0}'", xattribute.Value, ex);
                 return false;
             }
         }

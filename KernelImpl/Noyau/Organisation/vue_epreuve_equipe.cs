@@ -103,15 +103,15 @@ namespace KernelImpl.Noyau.Organisation
 
             List<Epreuve> epreuves = DC.Organisation.Epreuves.Where(o => o.epreuve_equipe == this.id).ToList();
             string sexe = "";
-            if (epreuves.Count(o => o.sexe == (int) EpreuveSexeEnum.Feminine) > 0 && epreuves.Count(o => o.sexe == (int)EpreuveSexeEnum.Masculin) > 0)
+            if (epreuves.Count(o => o.sexe == 1) > 0 && epreuves.Count(o => o.sexe == 0) > 0)
             {
                 sexe = "M/F";
             }
-            else if (epreuves.Count(o => o.sexe == (int)EpreuveSexeEnum.Feminine) > 0 && epreuves.Count(o => o.sexe == (int)EpreuveSexeEnum.Masculin) == 0)
+            else if (epreuves.Count(o => o.sexe == 1) > 0 && epreuves.Count(o => o.sexe == 0) == 0)
             {
                 sexe = "F";
             }
-            else if (epreuves.Count(o => o.sexe == (int)EpreuveSexeEnum.Feminine) == 0 && epreuves.Count(o => o.sexe == (int)EpreuveSexeEnum.Masculin) > 0)
+            else if (epreuves.Count(o => o.sexe == 1) == 0 && epreuves.Count(o => o.sexe == 0) > 0)
             {
                 sexe = "M";
             }

@@ -276,7 +276,7 @@ namespace KernelImpl.Noyau.Deroulement
                 xparticipant.SetAttributeValue(ConstantXML.Participant_Licence, j.licence);
                 xparticipant.SetAttributeValue(ConstantXML.Participant_Nom, j.nom);
                 xparticipant.SetAttributeValue(ConstantXML.Participant_Prenom, j.prenom);
-                xparticipant.SetAttributeValue(ConstantXML.Participant_Sexe, j.sexeEnum.ToString());
+                xparticipant.SetAttributeValue(ConstantXML.Participant_Sexe, j.sexe ? "F" : "M");
                 xparticipant.SetAttributeValue(ConstantXML.Participant_Naissance, j.naissance.ToString("ddMMyyyy"));
                 xparticipant.SetAttributeValue(ConstantXML.Participant_Pays, j.pays);
                 xparticipant.SetAttributeValue(ConstantXML.Participant_Club, j.club);

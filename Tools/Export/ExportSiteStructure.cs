@@ -21,7 +21,7 @@ namespace Tools.Export
         public const string kCommon = "common";
         public const string kImg = "img";
         public const string kJs = "js";
-        public const string kStyle = "css";
+        public const string kStyle = "style";
         public const string kIndex = "index.html";
 
         private string _rootDir = string.Empty;
@@ -129,17 +129,6 @@ namespace Tools.Export
         }
 
         /// <summary>
-        /// Le repertoire de la competition relatif a la racine
-        /// </summary>
-        public string RepertoireCompetitionRelatif
-        {
-            get
-            {
-                return GetRelativePath(RepertoireCompetition);
-            }
-        }
-
-        /// <summary>
         /// Retourne le repertoire Common de la competition configuree
         /// </summary>
         public string RepertoireCommon
@@ -150,41 +139,6 @@ namespace Tools.Export
                 return FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, kCommon));
             }
         }
-
-        /// <summary>
-        /// Le repertoireCommon relatif a la racine
-        /// </summary>
-        public string RepertoireCommonRelatif
-        {
-            get
-            {
-                return GetRelativePath(RepertoireCommon);
-            }
-        }
-
-
-        /// <summary>
-        /// Retourne le repertoire Participants
-        /// </summary>
-        public string RepertoireParticipants
-        {
-            get
-            {
-                return FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, "participants"));
-            }
-        }
-
-        /// <summary>
-        /// Le repertoire des participants relatif a la racine
-        /// </summary>
-        public string RepertoireParticipantsRelatif
-        {
-            get
-            {
-                return GetRelativePath(RepertoireParticipants);
-            }
-        }
-
 
         /// <summary>
         /// Retourne le repertoire image
@@ -199,18 +153,6 @@ namespace Tools.Export
         }
 
         /// <summary>
-        /// Le repertoire Img relatif a la racine
-        /// </summary>
-        public string RepertoireImgRelatif
-        {
-            get
-            {
-                return GetRelativePath(RepertoireImg);
-            }
-        }
-
-
-        /// <summary>
         /// Retourne le repertoire js
         /// </summary>
         public string RepertoireJs
@@ -223,21 +165,9 @@ namespace Tools.Export
         }
 
         /// <summary>
-        /// Le repertoire Js relatif a la racine
-        /// </summary>
-        public string RepertoireJsRelatif
-        {
-            get
-            {
-                return GetRelativePath(RepertoireJs);
-            }
-        }
-
-
-        /// <summary>
         /// Retourne le repertoire style
         /// </summary>
-        public string RepertoireCss
+        public string RepertoireStyle
         {
             get
             {
@@ -246,49 +176,15 @@ namespace Tools.Export
             }
         }
 
-        /// <summary>
-        /// Le repertoire de la competition relatif a la racine
-        /// </summary>
-        public string RepertoireCssRelatif
-        {
-            get
-            {
-                return GetRelativePath(RepertoireCss);
-            }
-        }
-
         #endregion
 
         #region METHODES
-
         /// <summary>
-        /// Calcul le repertoire d'un groupe de participants
-        /// </summary>
-        /// <param name="idGroupe">du groupe</param>
-        /// <param name="relatif">True pour avoir le chemin relatif au dossier de la competition (pas de la racine)</param>
-        /// <exception cref="NullReferenceException"></exception>
-        public string RepertoireGroupeParticipants(string idGroupe, bool relatif = false)
-        {
-            if (string.IsNullOrWhiteSpace(idGroupe))
-            {
-                throw new NullReferenceException();
-            }
-
-            // On calcul le path complet pour faire le controle d'existence
-            string directory = Path.Combine(RepertoireParticipants, OutilsTools.TraiteChaine(idGroupe));
-            directory = FiltreEtControleRepertoire(directory);
-
-            return (relatif) ? directory.Replace(RepertoireCompetition, "").Remove(0, 1) : directory;
-        }
-
-
-
-        /// <summary>
-        /// Retourne le repertoire d'une epreuve
+        /// Calcul le repertoire d'une epreuve
         /// </summary>
         /// <param name="idEpreuve">Id de l'epreuve</param>
         /// <param name="nomEpreuve">Nom de l'epreuve</param>
-        /// <param name="relatif">True si le repertoire est relatif a celui de la competition, False si absolu</param>
+        /// <param name="relatif">True pour avoir le chemin relatif au dossier de la competition (pas de la racine)</param>
         /// <returns></returns>
         /// <exception cref="NullReferenceException"></exception>
         public string RepertoireEpreuve(string idEpreuve, string nomEpreuve, bool relatif = false)
@@ -314,12 +210,7 @@ namespace Tools.Export
 
         #region METHODES INTERNES
 
-       /// <summary>
-       /// Verifie le nom du repertoire et assure la creation de ce dernier sur le disque (avec le nom filtre)
-       /// </summary>
-       /// <param name="repertoire"></param>
-       /// <returns></returns>
-       private string FiltreEtControleRepertoire(string repertoire)
+        private string FiltreEtControleRepertoire(string repertoire)
         {
             // Filtre le nom du repertoire
             string output = OutilsTools.TraiteChaineURL(repertoire);
@@ -329,10 +220,6 @@ namespace Tools.Export
             return output;
         }
 
-        /// <summary>
-        /// Calcule la racune de la competition
-        /// </summary>
-        /// <returns></returns>
         private string GetRootCompetition()
         {
             // Path absolu avec traitement des caracteres URL (+, etc.)
@@ -382,22 +269,6 @@ namespace Tools.Export
             _isFullyConfigured =  idCompetOk && rootDirOk;
         }
 
-        /// Retourne le repertoire relatif par rapport a la racine du site (ajoute un / a la fin systematiquement)
-        /// {Racine}/{ID Competition | courante}/{Path} ==> {ID Competition | courante}/{Path}/
-        /// </summary>
-        /// <param name="fullPath"></param>
-        /// <returns></returns>
-        private string GetRelativePath(string fullPath)
-        {
-            string output = fullPath.Replace(Racine, "").Remove(0, 1);
-
-            if (output.Last() != Path.DirectorySeparatorChar)
-            {
-                output += Path.DirectorySeparatorChar;
-            }
-
-            return output;
-        }
         #endregion
     }
 }

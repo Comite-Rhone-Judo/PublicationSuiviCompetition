@@ -13,7 +13,6 @@
         AllTapis = 6,
         // All = 7,    // Plus utilise
         AffectationTapis = 8,
-        Rencontres = 9,
-        Participants = 10
+        Rencontres = 9
     }
 }

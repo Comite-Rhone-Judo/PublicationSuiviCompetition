@@ -21,33 +21,7 @@ namespace KernelImpl.Noyau.Organisation
         public int ceintureMax { get; set; }
         public int anneeMin { get; set; }
         public int anneeMax { get; set; }
-        private int _sexe;
-        public int sexe
-        {
-            get
-            {
-                return _sexe;
-            }
-            set
-            {
-                _sexe = value;
-                _sexeEnum = new EpreuveSexe(_sexe);
-            }
-        }
-
-        private EpreuveSexe _sexeEnum;
-        public EpreuveSexe sexeEnum
-        {
-            get
-            {
-                return _sexeEnum;
-            }
-            set
-            {
-                _sexeEnum = value;
-                _sexe = (int)_sexeEnum;
-            }
-        }
+        public int sexe { get; set; }
         public int categorieAge { get; set; }
         public string lib_sexe { get; set; }
         public string nom_catepoids { get; set; }
@@ -80,7 +54,7 @@ namespace KernelImpl.Noyau.Organisation
             sexe = epreuve.sexe;
             categorieAge = epreuve.categorieAge;
 
-            lib_sexe = epreuve.sexeEnum.ToString();
+            lib_sexe = epreuve.sexe == 1 ? "F" : "M";
 
             Categories.CategoriePoids c_poids = DC.Categories.CPoids.FirstOrDefault(o => o.id == epreuve.categoriePoids);
 
@@ -124,7 +98,7 @@ namespace KernelImpl.Noyau.Organisation
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_RemoteID, remoteID);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_ID, id);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_Competition, competition);
-            xepreuve.SetAttributeValue(ConstantXML.Epreuve_Sexe, sexeEnum.ToString());
+            xepreuve.SetAttributeValue(ConstantXML.Epreuve_Sexe, sexe == 0 ? "M" : "F");
 
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_CateAge_Nom, nom_cateage);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_AnneeMin, anneeMin);

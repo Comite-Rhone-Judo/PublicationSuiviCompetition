@@ -16,7 +16,7 @@
   <xsl:template match="/*">
     <head>
       <meta charset="utf-8"/>
-      <title>Suivi Compétition</title>
+      <title>JUDO</title>
 
       <style type="text/css">
         .header1 {

@@ -146,12 +146,6 @@ namespace Tools.Export
                 case ExportEnum.Site_MenuProchainCombats:
                     result = "prochains_combats";
                     break;
-                case ExportEnum.Site_Participants:
-                    result = "groupe_participants";
-                    break;
-                case ExportEnum.Site_MenuParticipants:
-                    result = "participants";
-                    break;
             }
 
             result = result.Replace(' ', '_');
@@ -255,7 +249,7 @@ namespace Tools.Export
         {
             List<string> result = new List<string>();
             string dirJs = structSite.RepertoireJs;
-            string dirStyle = structSite.RepertoireCss;
+            string dirStyle = structSite.RepertoireStyle;
 
             // string directory = ExportTools.getDirectory(true, null, null).Replace("common", "");
 
@@ -504,12 +498,6 @@ namespace Tools.Export
                 case ExportEnum.Site_AffectationTapis:
                     name = ConstantResource.Export_Site_res + "affectation_tapis";
                     break;
-                case ExportEnum.Site_Participants:
-                    name = ConstantResource.Export_Site_res + "groupe_participants";
-                    break;
-                case ExportEnum.Site_MenuParticipants:
-                    name = ConstantResource.Export_Site_res + "participants";
-                    break;
                 case ExportEnum.Site_MenuClassement:
                     name = ConstantResource.Export_Site_res + "classement";
                     break;
@@ -519,7 +507,6 @@ namespace Tools.Export
                 case ExportEnum.Site_MenuProchainCombats:
                     name = ConstantResource.Export_Site_res + "prochains_combats";
                     break;
-
                 default:
                     return "";
             }

@@ -34,35 +34,46 @@ namespace Tools.Export
         /// <param name="xslt_st"></param>
         public static void ToHTML(XmlDocument xml, string fileSave, XsltArgumentList argsList, string xslt_st)
         {
+            XsltSettings settings = new XsltSettings();
+            settings.EnableDocumentFunction = true;
+            settings.EnableScript = true;
+
+            var resource = ResourcesTools.GetAssembyResource(xslt_st);
+
+            XmlReaderSettings readerSettings = new XmlReaderSettings();
+            readerSettings.DtdProcessing = DtdProcessing.Parse;
+
+            XmlReader xsltReader = XmlReader.Create(resource, readerSettings);
+
+            XslCompiledTransform xslt = new XslCompiledTransform();
+            InAssemblyUrlResolver resolver = new InAssemblyUrlResolver();
+            xslt.Load(xsltReader, settings, resolver);
+
+            // Create the FileStream.
             try
             {
-                XsltSettings settings = new XsltSettings();
-                settings.EnableDocumentFunction = true;
-                settings.EnableScript = true;
+                FileAndDirectTools.NeedAccessFile(fileSave + ".html");
+                using (FileStream fs = new FileStream(fileSave + ".html", FileMode.Create))
+                {
+                    // Execute the transformation.
+                    xslt.Transform(xml, argsList, fs);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogTools.Error(ex);
+            }
+            finally
+            {
+                FileAndDirectTools.ReleaseFile(fileSave + ".html");
+            }
 
-                var resource = ResourcesTools.GetAssembyResource(xslt_st);
-
-                XmlReaderSettings readerSettings = new XmlReaderSettings();
-                readerSettings.DtdProcessing = DtdProcessing.Parse;
-
-                XmlReader xsltReader = XmlReader.Create(resource, readerSettings);
-
-                XslCompiledTransform xslt = new XslCompiledTransform();
-                InAssemblyUrlResolver resolver = new InAssemblyUrlResolver();
-
-
-                xslt.Load(xsltReader, settings, resolver);
-
-
-                // Create the FileStream.
+            if (OutilsTools.IsDebug || fileSave.Contains("menu"))
+            {
                 try
                 {
-                    FileAndDirectTools.NeedAccessFile(fileSave + ".html");
-                    using (FileStream fs = new FileStream(fileSave + ".html", FileMode.Create))
-                    {
-                        // Execute the transformation.
-                        xslt.Transform(xml, argsList, fs);
-                    }
+                    FileAndDirectTools.NeedAccessFile(fileSave + ".xml");
+                    xml.Save(fileSave + ".xml");
                 }
                 catch (Exception ex)
                 {
@@ -70,29 +81,8 @@ namespace Tools.Export
                 }
                 finally
                 {
-                    FileAndDirectTools.ReleaseFile(fileSave + ".html");
+                    FileAndDirectTools.ReleaseFile(fileSave + ".xml");
                 }
-
-                if (OutilsTools.IsDebug || fileSave.Contains("menu"))
-                {
-                    try
-                    {
-                        FileAndDirectTools.NeedAccessFile(fileSave + ".xml");
-                        xml.Save(fileSave + ".xml");
-                    }
-                    catch (Exception ex)
-                    {
-                        LogTools.Error(ex);
-                    }
-                    finally
-                    {
-                        FileAndDirectTools.ReleaseFile(fileSave + ".xml");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                LogTools.Logger.Error("Error lors du parse XSLT", ex);
             }
         }
     }

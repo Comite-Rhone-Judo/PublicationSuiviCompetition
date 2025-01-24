@@ -5,16 +5,10 @@
 ]>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:import href="Tools/Export/xslt/Site/entete.xslt"/>
-
+	
 	<xsl:output method="html" indent="yes"/>
 	<xsl:param name="style"/>
 	<xsl:param name="js"/>
-	<xsl:param name="imgPath"/>
-	<xsl:param name="jsPath"/>
-	<xsl:param name="cssPath"/>
-	<xsl:param name="commonPath"/>
-	<xsl:param name="competitionPath"/>
-
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 	<xsl:template match="/">
@@ -24,14 +18,13 @@
 		</html>
 	</xsl:template>
 
-	<xsl:variable select="count(/competitions/competition[@PublierProchainsCombats = 'true']) > 0" name="affProchainCombats"/>
-	<xsl:variable select="count(/competitions/competition[@PublierAffectationTapis = 'true']) > 0" name="affAffectationTapis"/>
-	<xsl:variable select="count(/competitions/competition[@PublierParticipants = 'true']) > 0" name="affParticipants"/>
+	<xsl:variable select="count(/competitions/competition[@PublierProchainsCombats = 'True']) > 0" name="affProchainCombats"/>
+	<xsl:variable select="count(/competitions/competition[@PublierAffectationTapis = 'True']) > 0" name="affAffectationTapis"/>
 	<xsl:variable select="/competitions/competition[1]/@Logo" name="logo"/>
 
 	<xsl:template match="/*">
 		<xsl:variable name="apos">'</xsl:variable>
-
+		
 		<!-- ENTETE HTML -->
 		<head>
 			<META http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -42,30 +35,18 @@
 			<meta http-equiv="Expires" content="0"/>
 
 			<!-- Feuille de style W3.CSS -->
-			<link type="text/css" rel="stylesheet">
-				<xsl:attribute name="href">
-					<xsl:value-of select="concat($cssPath, 'w3.css')"/>
-				</xsl:attribute>
-			</link>
-			<link type="text/css" rel="stylesheet">
-				<xsl:attribute name="href">
-					<xsl:value-of select="concat($cssPath, 'style-common.css')"/>
-				</xsl:attribute>
-			</link>
+			<link type="text/css" rel="stylesheet" href="../style/w3.css"/>
+			<link type="text/css" rel="stylesheet" href="../style/style-common.css"/>
 
 			<!-- Script de navigation par defaut -->
-			<script>
-				<xsl:attribute name="src">
-					<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
-				</xsl:attribute>
-			</script>
+			<script src="../js/site-display.js"/>
 
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
 				<xsl:value-of select="$js"/>
 			</script>
 			<title>
-				Suivi Compétition - Avancement
+				<xsl:value-of select="@titre"/>
 			</title>
 		</head>
 		<body>
@@ -74,11 +55,8 @@
 				<xsl:with-param name="logo" select="$logo"/>
 				<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
 				<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
-				<xsl:with-param name="affParticipants" select="$affParticipants"/>
-				<xsl:with-param name="affActualiser" select="false()"/>
+				<xsl:with-param name="affActualiser" select="'False'"/>
 				<xsl:with-param name="selectedItem" select="'avancement'"/>
-				<xsl:with-param name="pathToImg" select="$imgPath"/>
-				<xsl:with-param name="pathToCommon" select="$commonPath"/>
 			</xsl:call-template>
 
 			<!-- CONTENU -->
@@ -87,7 +65,7 @@
 					<div class="w3-panel w3-pale-green w3-bottombar w3-border-green w3-border w3-center w3-large"> Veuillez patienter le tirage des épreuves </div>
 				</div>
 			</xsl:if>
-
+			
 			<!-- Boucle global sur les competitions en cours -->
 			<xsl:for-each select="/competitions/competition">
 				<xsl:if test="count(./epreuve) > 0">
@@ -138,24 +116,18 @@
 									<xsl:attribute name="onclick">
 										<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel,'F',$apos,')')"/>
 									</xsl:attribute>
-									<img class="img" width="25" style="display: none;">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
-										</xsl:attribute>
+									<img class="img" width="25" src="../img/up_circular-32.png">
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'F', 'Collapse')"/>
 										</xsl:attribute>
 									</img>
-									<img class="img" width="25">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
-										</xsl:attribute>
+									<img class="img" width="25" src="../img/down_circular-32.png" style="display: none;">
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'F', 'Expand')"/>
 										</xsl:attribute>
 									</img>
 									Catégorie Féminine
-								</button>
+									</button>
 							</header>
 							<div class="w3-container" style="display:none;">
 								<xsl:attribute name="id">
@@ -175,18 +147,12 @@
 									<xsl:attribute name="onclick">
 										<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel,'M',$apos,')')"/>
 									</xsl:attribute>
-									<img class="img" width="25" style="display: none;">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
-										</xsl:attribute>
+									<img class="img" width="25" src="../img/up_circular-32.png">
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'M', 'Collapse')"/>
 										</xsl:attribute>
 									</img>
-									<img class="img" width="25">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
-										</xsl:attribute>
+									<img class="img" width="25" src="../img/down_circular-32.png" style="display: none;">
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'M', 'Expand')"/>
 										</xsl:attribute>
@@ -212,18 +178,12 @@
 									<xsl:attribute name="onclick">
 										<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel,$apos,')')"/>
 									</xsl:attribute>
-									<img class="img" width="25" style="display: none;">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
-										</xsl:attribute>
+									<img class="img" width="25" src="../img/up_circular-32.png">
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'Collapse')"/>
 										</xsl:attribute>
 									</img>
-									<img class="img" width="25">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
-										</xsl:attribute>
+									<img class="img" width="25" src="../img/down_circular-32.png" style="display: none;">
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'Expand')"/>
 										</xsl:attribute>
@@ -242,19 +202,21 @@
 				</xsl:if>
 			</div>
 		</div>
-
+		
 	</xsl:template>
-
-	<!-- Bouton avancement par epreuve -->
+	
+		<!-- Bouton avancement par epreuve -->
 	<xsl:template name="avancement_epreuve" match="epreuve">
 		<!-- <xsl:variable select="number(./@typePhase)" name="type1"/> -->
 		<!--<xsl:variable select="number(./@typePhase)" name="type2"/>-->
 
 		<xsl:if test="count(./phases/phase[number(@typePhase) = 1]) > 0">
 			<a class="w3-button w3-panel w3-card w3-block w3-pale-yellow w3-large w3-round-large w3-padding-small">
-				<!-- TODO a remplacer par concat -->
 				<xsl:attribute name="href">
-					<xsl:value-of select="concat($competitionPath, @directory, '/poules_resultats.html')"/>
+					<xsl:text>../</xsl:text>
+					<xsl:value-of select="@directory"/>
+					<xsl:text>/poules_resultats</xsl:text>
+					<xsl:text>.html</xsl:text>
 				</xsl:attribute>
 				<xsl:value-of select="./@libelle"/>
 				<xsl:value-of select="./@nom"/>
@@ -264,7 +226,10 @@
 		<xsl:if test="count(./phases/phase[number(@typePhase) = 2]) > 0">
 			<a class="w3-button w3-panel w3-card w3-block w3-pale-yellow w3-large w3-round-large w3-padding-small">
 				<xsl:attribute name="href">
-					<xsl:value-of select="concat($competitionPath, @directory, '/tableau_competition.html')"/>
+					<xsl:text>../</xsl:text>
+					<xsl:value-of select="@directory"/>
+					<xsl:text>/tableau_competition</xsl:text>
+					<xsl:text>.html</xsl:text>
 				</xsl:attribute>
 				<xsl:value-of select="./@libelle"/>
 				<xsl:value-of select="./@nom"/>
