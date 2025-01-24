@@ -1779,6 +1779,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Export\xslt\Site\qrcode.xslt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -1932,7 +1933,17 @@
     <EmbeddedResource Include="Export\xslt\Site\entete.xslt" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Export\xslt\Site\participants_site.xslt">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="data\data\PublicationFFJudo.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\xslt\Site\groupe_participants_site.xslt">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

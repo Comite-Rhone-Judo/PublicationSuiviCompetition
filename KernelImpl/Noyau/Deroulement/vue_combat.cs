@@ -62,7 +62,34 @@ namespace KernelImpl.Noyau.Deroulement
         public Nullable<DateTime> epreuve_debut { get; set; }
         public Nullable<DateTime> epreuve_fin { get; set; }
         public string phase_name { get; set; }
-        public string epreuve_sexe { get; set; }
+
+        private string _epreuve_sexe;
+        public string epreuve_sexe
+        {
+            get
+            {
+                return _epreuve_sexe;
+            }
+            set
+            {
+                _epreuve_sexe = value;
+                _epreuve_sexeEnum = new EpreuveSexe(_epreuve_sexe);
+            }
+        }
+
+        private EpreuveSexe _epreuve_sexeEnum;
+        public EpreuveSexe epreuve_sexeEnum
+        {
+            get
+            {
+                return _epreuve_sexeEnum;
+            }
+            set
+            {
+                _epreuve_sexeEnum = value;
+                _epreuve_sexe = _epreuve_sexeEnum.ToString();
+            }
+        }
 
         public int judoka1_id1 { get; set; }
         public string judoka1_licence1 { get; set; }
