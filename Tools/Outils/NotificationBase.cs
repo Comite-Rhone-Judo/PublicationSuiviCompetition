@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Windows.Input;
 
 namespace Tools.Outils
 {
@@ -6,9 +7,11 @@ namespace Tools.Outils
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual void NotifyPropertyChanged(string propertyName)
+        protected virtual void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            // use this to force calculation of CanExecute on RelayCommand
+            CommandManager.InvalidateRequerySuggested();
         }
     }
 }

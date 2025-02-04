@@ -47,7 +47,7 @@ namespace Tools.Enum
         public static readonly string Structures = ResourcesTools.GetAssembyName() + ".data.data.structures.xml";
         public static readonly string Ligues = ResourcesTools.GetAssembyName() + ".data.data.s_ligues.xml";
         public static readonly string Comites = ResourcesTools.GetAssembyName() + ".data.data.s_comites.xml";
-
+        public static readonly string PublicationFFJUDO = ResourcesTools.GetAssembyName() + ".data.data.PublicationFFJudo.xml";
 
 
         public static readonly string Data_Base = ResourcesTools.GetAssembyName() + ".data.bd.Judo.mdf";

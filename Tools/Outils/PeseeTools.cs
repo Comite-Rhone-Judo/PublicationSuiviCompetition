@@ -123,7 +123,7 @@ namespace Tools.Outils
                     }
                     catch (Exception ex)
                     {
-                        LogTools.Trace(ex, LogTools.Level.WARN);
+                        LogTools.Warning(ex);
                     }
 
 
@@ -147,7 +147,7 @@ namespace Tools.Outils
             }
             catch (Exception ex)
             {
-                LogTools.Trace(ex, LogTools.Level.ERROR);
+                LogTools.Error(ex);
             }
         }
 
@@ -169,7 +169,7 @@ namespace Tools.Outils
             }
             catch (Exception ex)
             {
-                LogTools.Trace(ex, LogTools.Level.WARN);
+                LogTools.Warning(ex);
             }
         }
 

@@ -30,7 +30,7 @@ namespace Tools.Outils
             catch (Exception ex)
             {
                 events = ConstantXML.Event_erreur_2;
-                LogTools.Trace(ex, LogTools.Level.WARN);
+                LogTools.Warning(ex);
             }
 
             if (!WebServicesTools.TraiteErreur(events))
@@ -45,7 +45,7 @@ namespace Tools.Outils
             catch (Exception ex)
             {
                 events = ConstantXML.Event_erreur_3;
-                LogTools.Trace(ex, LogTools.Level.ERROR);
+                LogTools.Error(ex);
             }
 
             WebServicesTools.TraiteErreur(events);
@@ -71,7 +71,7 @@ namespace Tools.Outils
             catch (Exception ex)
             {
                 events = ConstantXML.Event_erreur_2;
-                LogTools.Trace(ex, LogTools.Level.WARN);
+                LogTools.Warning(ex);
             }
 
             if (!WebServicesTools.TraiteErreur(events))
@@ -86,7 +86,7 @@ namespace Tools.Outils
             catch (Exception ex)
             {
                 events = ConstantXML.Event_erreur_3;
-                LogTools.Trace(ex, LogTools.Level.ERROR);
+                LogTools.Error(ex);
             }
 
             if (!WebServicesTools.TraiteErreur(events))
@@ -116,7 +116,7 @@ namespace Tools.Outils
             catch (Exception ex)
             {
                 clubs = ConstantXML.Event_erreur_2;
-                LogTools.Trace(ex, LogTools.Level.WARN);
+                LogTools.Warning(ex);
             }
 
             if (!WebServicesTools.TraiteErreur(clubs))
@@ -131,7 +131,7 @@ namespace Tools.Outils
             catch (Exception ex)
             {
                 clubs = ConstantXML.Event_erreur_3;
-                LogTools.Trace(ex, LogTools.Level.ERROR);
+                LogTools.Error(ex);
             }
 
             WebServicesTools.TraiteErreur(clubs);
@@ -163,7 +163,7 @@ namespace Tools.Outils
             catch (Exception ex)
             {
                 judokas = ConstantXML.Event_erreur_2;
-                LogTools.Trace(ex, LogTools.Level.WARN);
+                LogTools.Warning(ex);
             }
 
             if (!WebServicesTools.TraiteErreur(judokas))
@@ -178,7 +178,7 @@ namespace Tools.Outils
             catch (Exception ex)
             {
                 judokas = ConstantXML.Event_erreur_3;
-                LogTools.Trace(ex, LogTools.Level.ERROR);
+                LogTools.Error(ex);
                 return null;
             }
 
@@ -206,7 +206,7 @@ namespace Tools.Outils
             catch (Exception ex)
             {
                 judokas = ConstantXML.Event_erreur_2;
-                LogTools.Trace(ex, LogTools.Level.WARN);
+                LogTools.Warning(ex);
             }
 
             WebServicesTools.TraiteErreur(judokas);
@@ -230,7 +230,7 @@ namespace Tools.Outils
             catch (Exception ex)
             {
                 judokas = ConstantXML.Event_erreur_2;
-                LogTools.Trace(ex, LogTools.Level.WARN);
+                LogTools.Warning(ex);
             }
 
             WebServicesTools.TraiteErreur(judokas);
@@ -265,25 +265,25 @@ namespace Tools.Outils
         {
             if (events == ConstantXML.Event_erreur_0)
             {
-                LogTools.Log(new WebServicesException("Le compte utilisateur n\'existe pas (Login ou mot de passe incorrect).\nVeuiller réessayer."), LogTools.Level.INFO);
+                LogTools.Info(new WebServicesException("Le compte utilisateur n\'existe pas (Login ou mot de passe incorrect).\nVeuiller réessayer."));
                 return false;
             }
 
             if (events == ConstantXML.Event_erreur_1)
             {
-                LogTools.Log(new WebServicesException("Vous n\'avez pas de droit sur la structure sélectionnée.\nVeuiller réessayer ultérieurement."), LogTools.Level.INFO);
+                LogTools.Info(new WebServicesException("Vous n\'avez pas de droit sur la structure sélectionnée.\nVeuiller réessayer ultérieurement."));
                 return false;
             }
 
             if (events == ConstantXML.Event_erreur_2)
             {
-                LogTools.Log(new WebServicesException("Impossible de se connecter au web-services.\nVeuiller vérifier votre connexion internet."), LogTools.Level.INFO);
+                LogTools.Info(new WebServicesException("Impossible de se connecter au web-services.\nVeuiller vérifier votre connexion internet."));
                 return false;
             }
 
             if (events == ConstantXML.Event_erreur_3)
             {
-                LogTools.Log(new ConnexionException("Problème lors du chargement du fichier."), LogTools.Level.INFO);
+                LogTools.Info(new ConnexionException("Problème lors du chargement du fichier."));
                 return false;
             }
 

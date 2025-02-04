@@ -81,7 +81,7 @@ namespace Tools.Outils
             }
             catch (Exception ex)
             {
-                LogTools.Log(ex);
+                LogTools.Error(ex);
             }
         }
 
@@ -144,7 +144,7 @@ namespace Tools.Outils
             catch (Exception ex)
             {
                 _isStart = false;
-                LogTools.Trace(ex);
+                LogTools.Error(ex);
             }
         }
 
@@ -160,7 +160,7 @@ namespace Tools.Outils
             }
             catch (Exception ex)
             {
-                LogTools.Trace(ex);
+                LogTools.Error(ex);
             }
         }
     }

@@ -10,6 +10,7 @@ namespace AppPublication.Tools
         {
             DateDemarrage = DateTime.Now;
             DateFin = DateTime.Now;
+            DateProchaineGeneration = DateTime.MinValue;
             DelaiExecutionMs = 0;
         }
         #endregion
@@ -25,7 +26,7 @@ namespace AppPublication.Tools
             set
             {
                 _dateStart = value;
-                NotifyPropertyChanged("DateDemarrage");
+                NotifyPropertyChanged();
             }
 
         }
@@ -40,7 +41,7 @@ namespace AppPublication.Tools
             set
             {
                 _dateStop = value;
-                NotifyPropertyChanged("DateFin");
+                NotifyPropertyChanged();
             }
         }
 
@@ -54,7 +55,7 @@ namespace AppPublication.Tools
             set
             {
                 _dateNext = value;
-                NotifyPropertyChanged("DateProchaineGeneration");
+                NotifyPropertyChanged();
             }
         }
 
@@ -68,7 +69,7 @@ namespace AppPublication.Tools
             set
             {
                 _delaiExecMs = value;
-                NotifyPropertyChanged("DelaiExecutionMs");
+                NotifyPropertyChanged();
             }
         }
         #endregion

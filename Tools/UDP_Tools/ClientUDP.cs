@@ -56,7 +56,7 @@ namespace Tools.UDP_Tools
             }
             catch (Exception ex)
             {
-                LogTools.Log(ex);
+                LogTools.Error(ex);
             }
 
             //}           
@@ -70,7 +70,8 @@ namespace Tools.UDP_Tools
         {
             try
             {
-                LogTools.Trace("[UDP]    " + message, LogTools.Level.INFO);
+                // LogTools.Trace("[UDP]    " + message, LogTools.Level.INFO);
+                LogTools.Info("[UDP]    " + message);
 
                 //UdpClient udpClient = new UdpClient();
                 //udpClient.Connect(_ip, _port);
@@ -92,7 +93,7 @@ namespace Tools.UDP_Tools
                 }
                 catch (Exception ex2)
                 {
-                    LogTools.Log(ex2);
+                    LogTools.Error(ex2);
                 }
             }
         }

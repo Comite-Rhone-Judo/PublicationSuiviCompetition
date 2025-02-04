@@ -19,6 +19,7 @@ namespace Tools.Outils
             {
                 if (++index > 20)
                 {
+                    LogTools.Logger.Debug("Impossible d'obtenir l'access au fichier '{0}'", file);
                     throw new UnauthorizedAccessException();
                 }
                 Thread.Sleep(100);
@@ -137,7 +138,7 @@ namespace Tools.Outils
             }
             catch (Exception ex)
             {
-                LogTools.Trace(ex, LogTools.Level.WARN);
+                LogTools.Warning(ex);
             }
 
             return false;
@@ -168,7 +169,7 @@ namespace Tools.Outils
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Trace(ex, LogTools.Level.WARN);
+                    LogTools.Error(ex);
                 }
 
                 return false;
@@ -196,7 +197,7 @@ namespace Tools.Outils
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Log(ex, LogTools.Level.FATAL);
+                    LogTools.Fatal(ex);
                 }
             }
             //LogTools.Trace("REPERTOIRE CREE " + directory, LogTools.Level.DEBUG);
@@ -308,6 +309,27 @@ namespace Tools.Outils
                     FileAndDirectTools.ReleaseFile(dir_copy + fileName);
                 }
             }
+        }
+
+        /// <summary>
+        /// Combine 2 paths en un seul en prenant compte les caracteres de separation
+        /// </summary>
+        /// <param name="path1">Path de debut</param>
+        /// <param name="path2">Path de fin</param>
+        /// <returns></returns>
+        public static string PathJoin(string path1, string path2)
+        {
+            if (string.IsNullOrEmpty(path1))
+            {
+                return path2;
+            }
+
+            if (string.IsNullOrEmpty(path2))
+            {
+                return path1;
+            }
+
+            return path1.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar + path2.TrimStart(Path.DirectorySeparatorChar);
         }
     }
 }

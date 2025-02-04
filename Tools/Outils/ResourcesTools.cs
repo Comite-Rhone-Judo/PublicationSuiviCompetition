@@ -26,7 +26,10 @@ namespace Tools.Outils
         /// <returns></returns>
         public static Stream GetAssembyResource(string name, bool useApp = false)
         {
-            return (useApp) ? appAssembly.GetManifestResourceStream(name) : assembly.GetManifestResourceStream(name);
+            Stream output = null;
+            output = (useApp) ? appAssembly.GetManifestResourceStream(name) : assembly.GetManifestResourceStream(name);
+
+            return  output;
         }
 
         /// <summary>

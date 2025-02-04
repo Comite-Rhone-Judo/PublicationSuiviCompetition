@@ -1,8 +1,8 @@
-﻿using log4net;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Sockets;
@@ -11,262 +11,163 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
-using Telerik.Windows.Zip;
 using Tools.CustomException;
 using Tools.Enum;
 using Tools.Windows;
+using NLog;
+using NLog.Fluent;
+using NLog.Targets;
+using System.Linq;
+using Telerik.Windows.Documents.Fixed.Model.Editing.Lists;
+using NLog.Layouts;
 
 namespace Tools.Outils
 {
     public static class LogTools
     {
-        public enum Level : int
-        {
-            FATAL = 0,
-            ERROR = 1,
-            WARN = 2,
-            INFO = 3,
-            DEBUG = 4
-        }
+        #region CONSTANTES
+        private const string kloggingLevelVariable = "loggingLevel";
+        #endregion
 
-        private static readonly string _email = "seguin@critt-informatique.fr";
-        private static readonly string _pass = "seguin86";
-
-        private static readonly string _host = "ex2.mail.ovh.net";
-        private static readonly int _port = 587;
-        private static readonly bool _useDefaultCredentials = true;
-        private static readonly bool _enableSsl = false;
-
-
-        private static readonly string _separatorHeader = "__________________________________________________________________________________________________________________________";
-        private static readonly string _separatorTrace = " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ";
-
-        private static readonly string _header1 = "      ";
-        private static readonly string _header2 = Environment.MachineName + " " + Environment.UserName;
-        public static string HeaderType = "";
-        public static string HeaderCompetition = "";
-        private static string _version = "[TAS] v." + OutilsTools.GetVersionApp().ToString();
-
+        #region MEMBRES
         /// <summary>
         /// Define a static logger variable so that it references
         /// </summary>
-        public static ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        static readonly object lockerLog = new object();
+        private static Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static Layout _previousLogLevel = null;
+        // private static Logger Logger { get { return _logger; } }
 
-        /// <summary>
-        /// Enregistre dans le fichier de LOG l'exception
-        /// </summary>
-        /// <param name="ex">l'exception</param>
+        #endregion
 
-        public static void Trace(Exception ex, Level level = Level.ERROR)
+        #region PROXY vers le Logger
+
+        // Access direct au Logger NLog
+        public static Logger Logger { get { return _logger; } }
+
+        public static void Error(string msg) { _logger.Error(msg); }
+
+        public static void Error(Exception ex) { _logger.Error(ex); }
+
+        public static void Warning(string msg) { _logger.Warn(msg); }
+
+        public static void Warning(Exception ex) { _logger.Warn(ex); }
+
+        public static void Info(string msg) { _logger.Info(msg); }
+
+        public static void Info(Exception ex) { _logger.Info(ex); }
+
+        public static void Fatal(string msg) { _logger.Fatal(msg); }
+
+        public static void Fatal(Exception ex) { _logger.Fatal(ex); }
+
+        public static void Debug(string msg) { _logger.Debug(msg); }
+
+        public static void Debug(Exception ex) { _logger.Debug(ex); }
+
+        #endregion
+
+        public static void LogStartup() 
         {
-            List<string> messages = new List<string>();
-
-            messages.Add(_separatorHeader);
-            messages.Add(_version + "    " + DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"));
-            messages.Add(HeaderType + _header1 + " - " + level.ToString());
-            if (!string.IsNullOrWhiteSpace(HeaderCompetition)) { messages.Add(HeaderCompetition); }
-            messages.Add("");
-
-            Exception ex2 = ex;
-            while (ex2 != null)
-            {
-                if (!String.IsNullOrWhiteSpace(ex2.Message))
-                {
-                    foreach (string text in ex2.Message.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries))
-                    {
-                        messages.Add(text);
-                    }
-                }
-
-                if (!String.IsNullOrWhiteSpace(ex2.StackTrace))
-                {
-                    foreach (string text in ex2.StackTrace.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries))
-                    {
-                        messages.Add(text);
-                    }
-                }
-
-                ex2 = ex2.InnerException;
-                if (ex2 != null)
-                {
-                    messages.Add(_separatorTrace);
-                }
-            }
-            Trace(messages, level);
-        }
-
-        public static void Trace(string message, Level level = Level.ERROR)
-        {
-            List<string> messages = new List<string>();
-
-            messages.Add(_separatorHeader);
-            messages.Add(HeaderType + _header1 + DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss") + " - " + level.ToString());
-            messages.Add("");
-
-            foreach (string text in message.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                messages.Add(text);
-            }
-            Trace(messages, level);
-        }
-
-        private static void Trace(List<string> messages, Level level = Level.ERROR)
-        {
-            using (TimedLock.Lock(lockerLog))
-            {
-                switch (level)
-                {
-                    case Level.FATAL:
-                        foreach (string message in messages)
-                        {
-                            log.Fatal(message);
-                        }
-                        break;
-                    case Level.ERROR:
-                        foreach (string message in messages)
-                        {
-                            log.Error(message);
-                        }
-                        break;
-                    case Level.WARN:
-                        if (OutilsTools.IsDebug)
-                        {
-                            foreach (string message in messages)
-                            {
-                                log.Warn(message);
-                            }
-                        }
-                        break;
-                    case Level.INFO:
-                        if (OutilsTools.IsDebug)
-                        {
-                            foreach (string message in messages)
-                            {
-                                log.Info(message);
-                            }
-                        }
-                        break;
-                    case Level.DEBUG:
-                        if (OutilsTools.IsDebug)
-                        {
-                            foreach (string message in messages)
-                            {
-                                log.Debug(message);
-                            }
-                        }
-                        break;
-                    default:
-                        foreach (string message in messages)
-                        {
-                            log.Error(message);
-                        }
-                        break;
-                }
-            }
-        }
-
-
-        static ICollection<Type> types = new List<Type>
-        {
-            typeof(SocketException),
-            typeof(JudoClientException),
-            typeof(JudoServerException)
-        };
-
-        static ICollection<string> messages = new List<string>
-        {
-            "TcpClient",
-            "Socket",
-            "RenderTransform.ScaleX"
-        };
-
-        private static bool IsNonTraiteException(Exception ex)
-        {
-            Exception ex2 = ex;
-            while (ex2 != null)
-            {
-                foreach (Type type in types)
-                {
-                    if (ex2.GetType() == type)
-                    {
-                        return true;
-                    }
-                }
-
-                foreach (string message in messages)
-                {
-                    if (ex2.Message != null && ex2.Message.Contains(message))
-                    {
-                        return true;
-                    }
-                    if (ex2.StackTrace != null && ex2.StackTrace.Contains(message))
-                    {
-                        return true;
-                    }
-                }
-
-                ex2 = ex2.InnerException;
-            }
-            return false;
-        }
-
-        private struct ContainsException
-        {
-            public Exception exept { get; set; }
-            public DateTime date { get; set; }
-        }
-
-        private static IList<ContainsException> exceptions = new List<ContainsException>();
-
-        private static bool IsContainsException(Exception ex)
-        {
-            string ex1 = ex.Message + " " + ex.StackTrace;
-            foreach (ContainsException ex2 in exceptions)
-            {
-                if ((DateTime.Now - ex2.date).TotalMinutes > 15)
-                {
-                    break;
-                }
-
-                if (ex1 == (ex2.exept.Message + " " + ex2.exept.StackTrace))
-                {
-                    return true;
-                }
-            }
-
-            exceptions.Add(new ContainsException { exept = ex, date = DateTime.Now });
-            return false;
+            _logger.Info("-----------------------------------------------------------------------------------------------------");
+            _logger.Info("App Publication is starting - Version " + OutilsTools.GetVersionInformation().ToString());
         }
 
         /// <summary>
-        /// Enregistre dans le fichier de LOG l'exception et l'affiche dans une fenêtre
+        /// Retourne l'etat de configuration du logger
         /// </summary>
-        /// <param name="ex">l'exception</param>
-
-        public static void Log(Exception ex, LogTools.Level level = LogTools.Level.ERROR)
+        public static bool IsConfigured
         {
-            if (LogTools.IsContainsException(ex))
+            get
             {
-                return;
-            }
-
-            if (!LogTools.IsNonTraiteException(ex))
-            {
-                LogTools.Trace(ex, level);
-
-                string message = "";
-                //message += "Erreur\n";
-                message += ex.Message + "\n\n";
-                message += "Une erreur est survenue. Un mail automatique va être transmis lors de votre prochaine connexion, à l\'administrateur de l'application.";
-
-                LogTools.PrintAlert(message, "Erreur", "OK");
-            }
-            else
-            {
-                LogTools.Trace(ex, LogTools.Level.INFO);
+                return LogManager.Configuration != null;
             }
         }
+
+        /// <summary>
+        /// Configure le niveau de trace au maximum si enable = true, au niveau configure dans le fichier sinon
+        /// </summary>
+        /// <param name="enable">Active (true) ou desactive (False) le niveau de trace</param>
+        public static void ConfigureDebugLevel(bool enable)
+        {
+            try
+            {
+                if (enable)
+                {
+                    // Sauvegarde l'etat actuel du niveau de trace
+                    _previousLogLevel = LogManager.Configuration.Variables[kloggingLevelVariable];
+
+                    // Force le niveau de trace a Debug
+                    LogManager.Configuration.Variables[kloggingLevelVariable] = LogLevel.Debug.ToString();
+
+                    _logger.Info("Niveau de trace configure a Debug");
+                }
+                else
+                {
+                    // Remet en place le niveau de trace precedent
+                    LogManager.Configuration.Variables[kloggingLevelVariable] = _previousLogLevel;
+
+                    _logger.Info("Niveau de trace configure a {0}", _previousLogLevel);
+
+                }
+
+                LogManager.ReconfigExistingLoggers(); // Explicit refresh of Layouts and updates active Logger-objects
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Erreur lors de la modification de la configuration du logger", ex);
+            }
+        }
+
+        private static string _logDirectory;
+        
+        /// <summary>
+        /// Propriete exposant le repertoire de trace extrait dynamiquement depuis le fichier de configuration
+        /// </summary>
+        public static string LogDirectory
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_logDirectory))
+                {
+                    _logDirectory = GetLogDirectory();
+                }
+                return _logDirectory;
+            }
+        }
+
+        /// <summary>
+        /// Recherche le nom du fichier de trace dans le fichier de configuration NLog
+        /// </summary>
+        /// <param name="target">Le nom de la cible dans le fichier de trace, par defaut "logFile"</param>
+        /// <returns>Le nom du repertoire cible</returns>
+        private static string GetLogDirectory(string target = "logFile")
+        {
+            string output = string.Empty;
+
+            try
+            {
+                // Extrait la configuration NLog pour trouver la cible demandee
+                Target logTarget = LogManager.Configuration.FindTargetByName(target);
+                if (logTarget != null && logTarget.GetType() == typeof(FileTarget))
+                {
+                    // Recupere le nom du fichier
+                    FileTarget logFileTarget = (FileTarget)logTarget;
+                    string logFileName = logFileTarget.FileName.Render(LogEventInfo.CreateNullEvent());
+
+                    // Extrait les informations du fichier pour avoir le nom du repertoire parent
+                    FileInfo info = new FileInfo(logFileName);
+
+                    output = info.DirectoryName;
+                }
+             }
+            catch (Exception ex)
+            {
+                _logger.Error("Impossible de lire la configuration NLog pour extraire le repertoire cible", ex);
+            }
+
+            return output;
+        }
+
 
         /// <summary>
         /// Affiche un message d'alert (trace l'alerte dans le fichier de LOG)
@@ -274,7 +175,7 @@ namespace Tools.Outils
         /// <param name="message"></param>
         public static void Alert(string message, string header = "Attention", string button = "OK")
         {
-            LogTools.Trace(message, Level.WARN);
+            LogTools.Warning(message);
             PrintAlert(message, header, button);
         }
 
@@ -287,149 +188,47 @@ namespace Tools.Outils
             }));
         }
 
-
         /// <summary>
-        /// Récupère le fichier de LOG
+        /// Package le contenu du repertoire de log dans une archive compressee Zip
         /// </summary>
-
-        public static void EnregistreLog()
+        /// <param name="targetArchiveName">Nom de l'archive cible (path absolu avec extension)</param>
+        /// <param name="onlyToday">True pour ne prendre en compte que les fichiers du jour, False prend tous les fichiers</param>
+        public static void PackageLog(string targetArchiveName, bool onlyToday = false)
         {
-            SaveFileDialog dialog = new SaveFileDialog();
-            dialog.Filter = "Zip File | *.zip";
-            bool? dialogResult = dialog.ShowDialog();
-            if (dialogResult == true)
+            try
             {
-                // Recupere le nom du fichier zip de destination
-                string zipFileName = dialog.FileName;
-                using (Stream stream = File.Open(zipFileName, FileMode.Create))
+                // Recupere le repertoire de Log
+                DirectoryInfo logDir = new DirectoryInfo(LogDirectory);
+
+                // Recupere la liste des fichiers a prendre en compte
+                List<FileInfo> logFiles = onlyToday ? logDir.GetFiles("*.*", SearchOption.TopDirectoryOnly).Where(f => f.CreationTime >= DateTime.Today).ToList() : logDir.GetFiles("*.*", SearchOption.TopDirectoryOnly).ToList();
+
+                // Ouvre l'archive Zip
+                using (Stream stream = File.Open(targetArchiveName, FileMode.Create))
                 {
                     using (ZipArchive archive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: false, entryNameEncoding: null))
                     {
-                        foreach (string file in Directory.GetFiles(ConstantFile.Log))
+                        // Ajoute les fichiers a l'archive Zip
+                        foreach (FileInfo file in logFiles)
                         {
-                            if (file.Contains("__copy"))
+                            ZipArchiveEntry fileEntry = archive.CreateEntry(file.Name);
+                            using (Stream outStream = fileEntry.Open())
                             {
-                                continue;
-                            }
-                            string file2 = Path.GetDirectoryName(file) + "/" + Path.GetFileNameWithoutExtension(file) + "__copy1" + Path.GetExtension(file);
-                            File.Copy(file, file2, true);
-
-                            using (FileStream fs1 = File.OpenRead(file2))
-                            {
-                                using (ZipArchiveEntry entry = archive.CreateEntry(Path.GetFileName(file)))
+                                using (Stream inStream = File.Open(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                                 {
-                                    using (Stream entryStream = entry.Open())
-                                    {
-                                        fs1.CopyTo(entryStream);
-                                    }
+                                    inStream.CopyTo(outStream);
                                 }
                             }
+                            
+                            // On ne peut pas utiliser ce code directement car le fichier est en cours d'utilisation
+                            // archive.CreateEntryFromFile(file.FullName, file.Name);
                         }
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// EnvoiLog : Envoie par MAIL les différents logs 
-        /// </summary>
-        public static void EnvoiLog()
-        {
-            try
-            {
-                bool envoi = OutilsTools.IsDebug;
-
-                MailMessage mail = new MailMessage();
-                mail.From = new MailAddress(_email);
-                mail.To.Add(new MailAddress(_email));
-                mail.IsBodyHtml = true;
-
-                string body = "";
-                string pattern = @"([0-9]{4}\-[0-9]{2}\-[0-9]{2})";
-                Regex regex = new Regex(pattern);
-
-                foreach (string file in Directory.GetFiles(ConstantFile.Log))
-                {
-                    if (file.Contains("__copy"))
-                    {
-                        continue;
-                    }
-
-                    string file2 = Path.GetDirectoryName(file) + "/" + Path.GetFileNameWithoutExtension(file) + "__copy1" + Path.GetExtension(file);
-                    File.Copy(file, file2, true);
-
-                    string file_copy = Path.GetDirectoryName(file) + "/" + Path.GetFileNameWithoutExtension(file) + "__copy2" + Path.GetExtension(file);
-                    if (!File.Exists(file_copy))
-                    {
-                        using (FileStream st = File.Create(file_copy))
-                        {
-
-                        }
-                    }
-
-
-                    Encoding enc = FileAndDirectTools.GetFileEncoding(file2);
-
-                    using (StreamReader reader = new StreamReader(file2, enc, true))
-                    {
-                        using (StreamReader reader_copy = new StreamReader(file_copy, enc, true))
-                        {
-                            while (!reader.EndOfStream)
-                            {
-                                string line = reader.ReadLine();
-                                string line_copy = reader_copy.ReadLine();
-                                if (line != null && line_copy != null && line_copy == line)
-                                {
-                                    continue;
-                                }
-
-                                if (OutilsTools.IsDebug || line.Contains("ERROR") || line.Contains("FATAL"))
-                                {
-                                    envoi = true;
-                                }
-                                body += line + "<br/>";
-                            }
-                        }
-                    }
-                }
-
-                if (!string.IsNullOrWhiteSpace(body) && envoi)
-                {
-                    mail.Body = body;
-                    mail.Subject = "[TAS] v." + OutilsTools.GetVersionApp().ToString() + " " + Environment.MachineName + " " + Environment.UserName;
-                    Thread thread = new Thread(new ThreadStart(() => Envoie(mail)));
-                    thread.Start();
-                }
-            }
-            catch
-            {
-            }
-        }
-
-        public static void Envoie(MailMessage mail)
-        {
-            SmtpClient client = new SmtpClient();
-            client.Host = _host;
-            client.Port = _port;
-            client.UseDefaultCredentials = _useDefaultCredentials;
-            client.EnableSsl = _enableSsl;
-            client.Credentials = new NetworkCredential(_email, _pass);
-            try
-            {
-                client.Send(mail);
-                foreach (string file in Directory.GetFiles(ConstantFile.Log))
-                {
-                    if (file.Contains("__copy"))
-                    {
-                        continue;
-                    }
-
-                    string file2 = Path.GetDirectoryName(file) + "/" + Path.GetFileNameWithoutExtension(file) + "__copy2" + Path.GetExtension(file);
-                    File.Copy(file, file2, true);
-                }
-            }
-            catch
-            {
+            catch (Exception ex) {
+                LogTools.Logger.Error("Impossible de creer l'archive Zip contenant les fichiers de trace de l'application vers '{0}'", targetArchiveName, ex);
+                throw new Exception("Impossible de creer l'archive Zip contenant les fichiers de trace de l'application", ex);
             }
         }
     }

@@ -80,7 +80,7 @@
 
 			<xsl:if test="count(/competitions/competition)>0">
 				<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
-					Dernière actualisation: <xsl:value-of select="/competitions/competition[1]/@DateGeneration"/>
+					v<xsl:value-of select="/competitions/competition[1]/@AppVersion"/> - Dernière actualisation: <xsl:value-of select="/competitions/competition[1]/@DateGeneration"/>
 				</div>
 			</xsl:if>
 		</body>
@@ -219,7 +219,7 @@
 						<xsl:when test="count(./TapisEpreuve/tapis) > 1">
 							<xsl:text>Tapis&#32;</xsl:text>
 							<xsl:for-each select="./TapisEpreuve/tapis">
-								<xsl:sort select="./@no_tapis"/>
+								<xsl:sort select="./@no_tapis" data-type="number"/>
 								<xsl:value-of select="./@no_tapis"/>
 								<xsl:if test="position() &lt; last() - 1">
 									<xsl:text>, </xsl:text>
@@ -232,7 +232,7 @@
 						<xsl:when test="count(./TapisEpreuve/tapis) = 1">
 							<xsl:text>Tapis&#32;</xsl:text>
 							<xsl:for-each select="./TapisEpreuve/tapis">
-								<xsl:sort select="./@no_tapis"/>
+								<xsl:sort select="./@no_tapis" data-type="number"/>
 								<xsl:value-of select="./@no_tapis"/>
 							</xsl:for-each>
 						</xsl:when>

@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AppPublication.IHM.Commissaire"
         mc:Ignorable="d"
-        Title="Configuration de la Publication" Height="400" Width="830" Background="Black">
+        Title="Configuration de la Publication" Height="440" Width="830" Background="Black">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -34,7 +34,7 @@
         <StackPanel Grid.Row="0" Grid.Column="0" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
             <TextBlock Text="Publication" Style="{StaticResource Header1TextStyle}"/>
         </StackPanel>
-        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" BorderBrush="White" Margin="10 0 10 10" Width="400" Height="240">
+        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" BorderBrush="White" Margin="10 0 10 10" Width="400" Height="280">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
@@ -73,14 +73,13 @@
                                                         IsChecked="{Binding Path=PublierAffectationTapis}"
                                                         Visibility="{Binding Path=CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}">
                     </CheckBox>
-                    <!-- TODO Sync l'affichage de l'icone -->
-                    <Image Visibility="{Binding Path=CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}" Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0" ToolTip="Si cochée, provoque l'ajout du menu 'Affectations' qui liste les tapis assignées pour chaque catégories. Disponible uniquement en compétition Individuelle ou Shiai."/>
+                    <Image Visibility="{Binding Path=CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}" Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0" ToolTip="Si cochée, provoque l'ajout du menu 'Affectations' qui liste les tapis assignés pour chaque catégories. Disponible uniquement en compétition Individuelle ou Shiai."/>
                 </StackPanel>
                 <StackPanel Grid.Row="4" Grid.Column="0"  Grid.ColumnSpan="2" Orientation="Horizontal">
                     <CheckBox   Content="Afficher les Poules en colonnes" Style="{StaticResource CheckboxStyle}"
                                         IsChecked="{Binding Path=PouleEnColonnes}">
                     </CheckBox>
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, les poules seront affichées en colonnes selon les critères. Affichage en diagonale sinon."/>
+                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, les poules seront affichées en colonnes selon les critères de taille. Affichage en diagonale sinon."/>
                 </StackPanel>
                 <StackPanel Grid.Row="5" Grid.Column="0" Orientation="Horizontal" Margin="50 -5 0 0">
                     <CheckBox Style="{StaticResource CheckboxStyle}"
@@ -107,7 +106,7 @@
         <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
             <TextBlock Text="Génération" Style="{StaticResource Header1TextStyle}"/>
         </StackPanel>
-        <Border BorderThickness="1" Grid.Row="1" Grid.Column="1" BorderBrush="White" Margin="10 0 10 10" Width="350" Height="240">
+        <Border BorderThickness="1" Grid.Row="1" Grid.Column="1" BorderBrush="White" Margin="10 0 10 10" Width="350" Height="280">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -120,6 +119,7 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
+
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
                     <Label HorizontalAlignment="Right" Content="Délai de génération:" Style="{StaticResource LabelStyle}" />
@@ -139,15 +139,25 @@
                     <Label  HorizontalAlignment="Right" Content="Sélection du logo:" Style="{StaticResource LabelStyle}" />
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Logo a afficher dans le bandeau d'entête du site"/>
                 </StackPanel>
-                <telerik:RadComboBox Grid.Column="0" Grid.Row="3" ItemsSource="{Binding FichiersLogo}" Height="20" DisplayMemberPath="Name" Name="LogoList" Margin="10 0 0 0" IsSynchronizedWithCurrentItem="True" SelectedItem="{Binding SelectedLogo}"/>
-                <Border Grid.Column="1" Grid.Row="2" Grid.RowSpan="2" Background="LightGray" Width="120">
-                    <Image  Source="{Binding ElementName=LogoList, Path=SelectedItem.FullName}" Width="120" />
-                </Border>
-                <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal">
-                    <Label HorizontalAlignment="Right" Content="Répertoire d'export:" Style="{StaticResource LabelStyle}" />
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Répertoire racine dans lequel les données du site sont générées et publiés"/>
+                <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal">
+                    <telerik:RadComboBox ItemsSource="{Binding FichiersLogo}" Height="20" Width="130" DisplayMemberPath="Name" Name="LogoList" Margin="10 0 0 0" IsSynchronizedWithCurrentItem="True" SelectedItem="{Binding SelectedLogo}"/>
+                    <telerik:RadButton ToolTip="Ajouter un logo: Format: png, taille max.: 200x200. le fichier contenir 'logo' dans son nom" telerik:StyleManager.Theme="Expression_Dark" Height="28"
+                        Focusable="False" Tag="pack://application:,,,/Tools;component/data/images/icons/black/add_image-32.png" Margin="5 0 0 0"
+                        Command="{Binding Path=CmdAjouterLogo}">
+                        <WrapPanel Orientation="Horizontal">
+                            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/add_image-32.png" Height="20" Margin="0 0 0 0"/>
+                        </WrapPanel>
+                    </telerik:RadButton>
                 </StackPanel>
-                <telerik:RadButton Grid.Row="4" Grid.Column="1" Width="95" Height="30" telerik:StyleManager.Theme="Expression_Dark" Command="{Binding CmdGetRepertoireRacine}">
+                <Border Grid.Column="1" Grid.Row="2" Grid.RowSpan="2" Background="LightGray" Width="120" Margin="0 0 30 0">
+                    <Image  Source="{Binding ElementName=LogoList, Path=SelectedItem.FullName}" Width="120" Height="120"/>
+                </Border>
+
+                <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal">
+                    <Label Content="Répertoire d'export:" Style="{StaticResource LabelStyle}" />
+                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Répertoire racine (local) dans lequel les données du site sont générées et publiées"/>
+                </StackPanel>
+                <telerik:RadButton Grid.Row="4" Grid.Column="1" Width="95" Height="30" telerik:StyleManager.Theme="Expression_Dark" Command="{Binding CmdGetRepertoireRacine}" Margin="-20 10 10 0">
                     <WrapPanel Orientation="Horizontal">
                         <Label Content="Sélectionner ..." Foreground="White"/>
                     </WrapPanel>

@@ -73,6 +73,28 @@
         <Setter Property="Margin" Value="5 10" />
     </Style>
 
+    <Style x:Key="ContentTextStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="FontFamily" Value="{telerik:Windows8Resource ResourceKey=FontFamily}" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Margin" Value="5 10" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <Style x:Key="TextBoxTextStyle" TargetType="{x:Type TextBlock}">
+    <Setter Property="FontFamily" Value="{telerik:Windows8Resource ResourceKey=FontFamily}" />
+    <Setter Property="FontWeight" Value="Normal" />
+    <Setter Property="VerticalAlignment" Value="Stretch" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="FontSize" Value="20" />
+    <Setter Property="Background" Value="White" />
+    <Setter Property="Margin" Value="5 10" />
+    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+
     <Style x:Key="LabelStyle" TargetType="Label">
         <Setter Property="Foreground" Value="#EEEEEE" />
         <Setter Property="FontSize" Value="14" />
@@ -82,6 +104,14 @@
         <Setter Property="VerticalAlignment"  Value="Center"/>
         <Setter Property="HorizontalAlignment"  Value="Left"/>
         <Setter Property="FontWeight"  Value="Bold"/>
+    </Style>
+
+    <Style x:Key="DropDownStyle" TargetType="{x:Type telerik:RadComboBox}">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontFamily" Value="{telerik:Windows8Resource ResourceKey=FontFamily}" />
+        <Setter Property="Margin"  Value="5"/>
+        <Setter Property="VerticalAlignment"  Value="Center"/>
+        <Setter Property="HorizontalAlignment"  Value="Left"/>
     </Style>
 
     <Style x:Key="CheckboxStyle" TargetType="CheckBox">

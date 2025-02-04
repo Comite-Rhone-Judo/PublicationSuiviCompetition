@@ -23,11 +23,11 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <telerik:RadToolBar DataContext="{Binding ElementName=pdfViewer, Path=Commands}">
+        <telerik:RadToolBar DataContext="{Binding ElementName=pdfViewer, Path=CommandDescriptors}">
 
             <telerik:RadButton Name="PDFButton"  HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="2" Padding="0" 
                                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center" 
-                                IsBackgroundVisible="False" Command="{Binding PrintPdfDocumentCommand}">
+                                IsBackgroundVisible="False" Command="{Binding PrintCommandDescriptor.Command}">
                 <ToolTipService.ToolTip>
                     <TextBlock Text="Imprimer" />
                 </ToolTipService.ToolTip>
@@ -45,14 +45,14 @@
 
             <telerik:RadToolBarSeparator/>
 
-            <telerik:RadButton Command="{Binding PageUpCommand}"  HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="2" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsBackgroundVisible="False">
+            <telerik:RadButton Command="{Binding PageUpCommandDescriptor.Command}"  HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="2" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsBackgroundVisible="False">
                 <ToolTipService.ToolTip>
                     <TextBlock Text="Page précédente" />
                 </ToolTipService.ToolTip>
                 <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/previous-32.png"  Stretch="Uniform" />
             </telerik:RadButton>
 
-            <telerik:RadButton Command="{Binding PageDownCommand}" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="2" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsBackgroundVisible="False">
+            <telerik:RadButton Command="{Binding PageDownCommandDescriptor.Command}" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="2" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsBackgroundVisible="False">
                 <ToolTipService.ToolTip>
                     <TextBlock Text="Page suivante" />
                 </ToolTipService.ToolTip>
@@ -64,14 +64,14 @@
             <TextBlock VerticalAlignment="Center" Margin="2" Text="{Binding ElementName=pdfViewer, Path=Document.Pages.Count}" />
             <telerik:RadToolBarSeparator/>
 
-            <telerik:RadButton Command="{Binding ZoomInCommand}" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="2" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsBackgroundVisible="False">
+            <telerik:RadButton Command="{Binding ZoomInCommandDescriptor.Command}" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="2" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsBackgroundVisible="False">
                 <ToolTipService.ToolTip>
                     <TextBlock Text="Zoom +" />
                 </ToolTipService.ToolTip>
                 <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/zoom_in-32.png"  Stretch="Uniform" />
             </telerik:RadButton>
 
-            <telerik:RadButton x:Name="PART_btnZoomOut" Command="{Binding ZoomOutCommand}" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="2" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsBackgroundVisible="False">
+            <telerik:RadButton x:Name="PART_btnZoomOut" Command="{Binding ZoomOutCommandDescriptor.Command}" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="2" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsBackgroundVisible="False">
                 <ToolTipService.ToolTip>
                     <TextBlock Text="Zoom -" />
                 </ToolTipService.ToolTip>
@@ -87,14 +87,14 @@
                 </telerik:RadWatermarkTextBox.WatermarkContent>
             </telerik:RadWatermarkTextBox>
 
-            <telerik:RadButton x:Name="btnPrev" Visibility="Collapsed" Command="{Binding FindPreviousCommand}" CommandParameter="{Binding ElementName=tbFind, Path=Text}" Margin="2" Padding="0" IsBackgroundVisible="False" HorizontalAlignment="Left" VerticalAlignment="Stretch">
+            <telerik:RadButton x:Name="btnPrev" Visibility="Collapsed" Command="{Binding FindPreviousCommandDescriptor.Command}" CommandParameter="{Binding ElementName=tbFind, Path=Text}" Margin="2" Padding="0" IsBackgroundVisible="False" HorizontalAlignment="Left" VerticalAlignment="Stretch">
                 <ToolTipService.ToolTip>
                     <TextBlock Text="Précécent" />
                 </ToolTipService.ToolTip>
                 <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/skip_to_start-32.png"  Stretch="Uniform" />
             </telerik:RadButton>
 
-            <telerik:RadButton x:Name="btnNext" Visibility="Collapsed" Command="{Binding FindCommand}" CommandParameter="{Binding ElementName=tbFind, Path=Text}" Margin="2" Padding="0" IsBackgroundVisible="False" HorizontalAlignment="Left" VerticalAlignment="Stretch">
+            <telerik:RadButton x:Name="btnNext" Visibility="Collapsed" Command="{Binding FindCommandDescriptor.Command}" CommandParameter="{Binding ElementName=tbFind, Path=Text}" Margin="2" Padding="0" IsBackgroundVisible="False" HorizontalAlignment="Left" VerticalAlignment="Stretch">
                 <ToolTipService.ToolTip>
                     <TextBlock Text="Suivant" />
                 </ToolTipService.ToolTip>

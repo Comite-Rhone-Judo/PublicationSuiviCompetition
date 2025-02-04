@@ -19,13 +19,17 @@ namespace AppPublication
         public App()
         {
             // BasicConfigurator.Configure();
-            log4net.Config.XmlConfigurator.Configure();
 
-            LogTools.Trace("App is starting");
+            // LogTools.Trace("App is starting");
+            LogTools.LogStartup();
+
+            // Assure que le logger est bien configure
+            Controles.DialogControleur.Instance.CanManageTracesDebug = LogTools.IsConfigured;
 
             CultureInfo culture = new CultureInfo("fr");
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
+
 
             //Window8Palette
             //Windows8Palette.Palette.AccentColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
@@ -91,7 +95,7 @@ namespace AppPublication
         void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             // Process unhandled exception
-            LogTools.Log(e.Exception);
+            LogTools.Logger.Error("Exception non geree ayant atteint le gestionnaire general:", e.Exception);
 
             // Prevent default unhandled exception processing
             e.Handled = true;

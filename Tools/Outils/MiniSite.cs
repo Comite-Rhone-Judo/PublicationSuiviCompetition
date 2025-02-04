@@ -1,10 +1,16 @@
 ﻿using FluentFTP;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Sockets;
+using System.Security;
+using System.Xml;
+using Tools;
+using Tools.Enum;
 
 namespace Tools.Outils
 {
@@ -25,20 +31,44 @@ namespace Tools.Outils
 
     public class MiniSite : NotificationBase
     {
+        #region CONSTANTES
+        private const string kSettingSiteFTPDistant = "SiteFTPDistant";
+        private const string kSettingLoginSiteFTPDistant = "LoginSiteFTPDistant";
+        private const string kSettingPasswordSiteFTPDistant = "PasswordSiteFTPDistant";
+        private const string kSettingModeActifFTPDistant = "ModeActifFTPDistant";
+        private const string kSettingSynchroniseDifferences = "SynchroniseDifferences";
+        private const string kSettingInterfaceLocalPublication ="InterfaceLocalPublication";
+
+        #endregion
 
         #region MEMBRES
         private FtpProfile _ftp_profile = null;     // Le profile FTP a utiliser pour les connexions
         private Action<FtpProgress> _ftpProgressCallback = null;
         private long _nbSyncDistant = 0;
+        private string _instanceName = string.Empty;
+
         #endregion
 
         #region CONSTRUCTEURS
+
+
+
+
+
         /// <summary>
         /// Constructeur
         /// </summary>
         /// <param name="local">Mode du minisite (local = true, distant = false)</param>
-        public MiniSite(bool local)
+        /// <param name="instanceName">Nom de l'instance</param>
+        /// <param name="cacheCfg">True pour activer la mise en cache de la configuration</param>
+        /// <param name="cachePwd">True pour activer la mise en cache du mot de passe</param>
+        public MiniSite(bool local, string instanceName = "", bool cacheCfg = true, bool cachePwd = true)
         {
+            // Initialise les caracteristiques du MiniSite
+            InstanceName = instanceName;
+            CacheConfig = cacheCfg;
+            CachePassword = cachePwd;
+
             if (local)
             {
                 // Configure un site web local
@@ -70,6 +100,22 @@ namespace Tools.Outils
 
         #region PROPRIETES
 
+        /// <summary>
+        /// Indique le nom de l'instance du Minisite
+        /// </summary>
+        public string InstanceName
+        {
+            get
+            {
+                return _instanceName;
+            }
+            private set
+            {
+                _instanceName = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         List<IPAddress> _interfacesLocal;
         /// <summary>
         /// La liste des interfaces locales du PCen lecture seule, initialise lors de la creation si Local)
@@ -83,7 +129,7 @@ namespace Tools.Outils
             private set
             {
                 _interfacesLocal = value;
-                NotifyPropertyChanged("InterfacesLocal");
+                NotifyPropertyChanged();
             }
         }
 
@@ -110,11 +156,11 @@ namespace Tools.Outils
                     {
                         ServerHTTP.ListeningIpAddress = _interfaceLocalPublication;
                     }
-                    if (_interfaceLocalPublication != null)
+                    if (_interfaceLocalPublication != null && CacheConfig)
                     {
-                        AppSettings.SaveSettings("InterfaceLocalPublication", _interfaceLocalPublication.ToString());
+                        AppSettings.SaveSetting(kSettingInterfaceLocalPublication, _interfaceLocalPublication.ToString(), _instanceName);
                     }
-                    NotifyPropertyChanged("InterfaceLocalPublication");
+                    NotifyPropertyChanged();
                     IsChanged = true;
                 }
                 else
@@ -137,7 +183,7 @@ namespace Tools.Outils
             private set
             {
                 _server = value;
-                NotifyPropertyChanged("ServerHTTP");
+                NotifyPropertyChanged();
                 IsChanged = true;
             }
         }
@@ -155,7 +201,7 @@ namespace Tools.Outils
             set
             {
                 _isChanged = true;
-                NotifyPropertyChanged("IsChanged");
+                NotifyPropertyChanged();
             }
         }
 
@@ -168,6 +214,40 @@ namespace Tools.Outils
             get
             {
                 return _local;
+            }
+        }
+
+        bool _cacheConfig = false;
+        /// <summary>
+        /// Indique si les donnees de configuration doivent etre gardees en cache
+        /// </summary>
+        public bool CacheConfig
+        {
+            get
+            {
+                return _cacheConfig;
+            }
+            private set
+            {
+                _cacheConfig = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        bool _cachePassword = false;
+        /// <summary>
+        /// Indique si le mot de passe doit etre gardees en cache
+        /// </summary>
+        public bool CachePassword
+        {
+            get
+            {
+                return _cachePassword;
+            }
+            private set
+            {
+                _cachePassword = value;
+                NotifyPropertyChanged();
             }
         }
 
@@ -184,8 +264,11 @@ namespace Tools.Outils
             set
             {
                 _ftpDistant = value;
-                AppSettings.SaveSettings("SiteFTPDistant", _ftpDistant);
-                NotifyPropertyChanged("SiteFTPDistant");
+                if (CacheConfig)
+                {
+                    AppSettings.SaveSetting(kSettingSiteFTPDistant, _ftpDistant, _instanceName);
+                }
+                NotifyPropertyChanged();
                 IsChanged = true;
             }
         }
@@ -203,7 +286,7 @@ namespace Tools.Outils
             set
             {
                 _ftRepertoireDistant = value;
-                NotifyPropertyChanged("RepertoireSiteFTPDistant");
+                NotifyPropertyChanged();
                 IsChanged = true;
             }
         }
@@ -221,8 +304,11 @@ namespace Tools.Outils
             set
             {
                 _ftpLoginDistant = value;
-                AppSettings.SaveSettings("LoginSiteFTPDistant", _ftpLoginDistant);
-                NotifyPropertyChanged("LoginSiteFTPDistant");
+                if (CacheConfig)
+                {
+                    AppSettings.SaveSetting(kSettingLoginSiteFTPDistant, _ftpLoginDistant, _instanceName);
+                }
+                NotifyPropertyChanged();
                 IsChanged = true;
             }
         }
@@ -241,8 +327,11 @@ namespace Tools.Outils
             set
             {
                 _modeFTPActif = value;
-                AppSettings.SaveSettings("ModeActifFTPDistant", _modeFTPActif.ToString());
-                NotifyPropertyChanged("ModeActifFTPDistant");
+                if (CacheConfig)
+                {
+                    AppSettings.SaveSetting(kSettingModeActifFTPDistant, _modeFTPActif.ToString(), _instanceName);
+                }
+                NotifyPropertyChanged();
                 IsChanged = true;
             }
         }
@@ -260,11 +349,14 @@ namespace Tools.Outils
             set
             {
                 _ftpPasswordDistant = value;
-                AppSettings.SaveSettings("PasswordSiteFTPDistant", _ftpPasswordDistant);
-                NotifyPropertyChanged("PasswordSiteFTPDistant");
+                if (CachePassword)
+                {
+                    AppSettings.SaveEncryptedSetting(kSettingPasswordSiteFTPDistant, _ftpPasswordDistant, _instanceName);
+                }
+                NotifyPropertyChanged();
                 IsChanged = true;
             }
-        }
+        }  
 
         private bool _syncDiff = false;
         public bool SynchroniseDifferences
@@ -276,8 +368,11 @@ namespace Tools.Outils
             set
             {
                 _syncDiff = value;
-                AppSettings.SaveSettings("SynchroniseDifferences", _syncDiff.ToString());
-                NotifyPropertyChanged("SynchroniseDifferences");
+                if (CacheConfig)
+                {
+                    AppSettings.SaveSetting(kSettingSynchroniseDifferences, _syncDiff.ToString(), _instanceName);
+                }
+                NotifyPropertyChanged();
                 IsChanged = true;
             }
         }
@@ -295,7 +390,7 @@ namespace Tools.Outils
             private set
             {
                 _actif = value;
-                NotifyPropertyChanged("IsActif");
+                NotifyPropertyChanged();
                 IsChanged = true;
             }
         }
@@ -313,7 +408,7 @@ namespace Tools.Outils
             private set
             {
                 _cleaning = value;
-                NotifyPropertyChanged("IsCleaning");
+                NotifyPropertyChanged();
             }
         }
 
@@ -334,7 +429,7 @@ namespace Tools.Outils
             private set
             {
                 _status = value;
-                NotifyPropertyChanged("Status");
+                NotifyPropertyChanged();
 
                 // Actualise l'etat d'activite du site
                 IsActif = !(_status.State == StateMiniSiteEnum.Stopped);
@@ -346,6 +441,8 @@ namespace Tools.Outils
 
         #region METHODES
 
+       
+
         /// <summary>
         /// Initialise la configuraiton FTP a partir du cache de fichier AppConfig
         /// </summary>
@@ -355,20 +452,11 @@ namespace Tools.Outils
 
             try
             {
-                valCache = AppSettings.ReadSettings("SiteFTPDistant");
-                SiteFTPDistant = (valCache == null) ? String.Empty : valCache;
-
-                valCache = AppSettings.ReadSettings("LoginSiteFTPDistant");
-                LoginSiteFTPDistant = (valCache == null) ? String.Empty : valCache;
-
-                valCache = AppSettings.ReadSettings("PasswordSiteFTPDistant");
-                PasswordSiteFTPDistant = (valCache == null) ? String.Empty : valCache;
-
-                valCache = AppSettings.ReadSettings("ModeActifFTPDistant");
-                ModeActifFTPDistant = (valCache == null) ? false : bool.Parse(valCache);
-
-                valCache = AppSettings.ReadSettings("SynchroniseDifferences");
-                SynchroniseDifferences = (valCache == null) ? false : bool.Parse(valCache);
+                SiteFTPDistant = AppSettings.ReadSetting(kSettingSiteFTPDistant, string.Empty, _instanceName);
+                LoginSiteFTPDistant = AppSettings.ReadSetting(kSettingLoginSiteFTPDistant, string.Empty, _instanceName);
+                PasswordSiteFTPDistant = AppSettings.ReadEncryptedSetting(kSettingPasswordSiteFTPDistant, string.Empty, _instanceName);
+                ModeActifFTPDistant = AppSettings.ReadSetting(kSettingModeActifFTPDistant, false, _instanceName);
+                SynchroniseDifferences = AppSettings.ReadSetting(kSettingSynchroniseDifferences, false, _instanceName);
             }
             catch { }
         }
@@ -388,7 +476,7 @@ namespace Tools.Outils
             if (InterfacesLocal.Count >= 1)
             {
                 // Cherche si une interface existe dans la configuration du fichier
-                string valCache = AppSettings.ReadSettings("InterfaceLocalPublication");
+                string valCache = AppSettings.ReadSetting(kSettingInterfaceLocalPublication, _instanceName);
                 IPAddress ipToUse = null;
                 bool useCache = false;
 
@@ -404,7 +492,7 @@ namespace Tools.Outils
                     {
                         // Soit l'IP configuree est incorrecte, soit elle n'est pas dans la liste
                         useCache = false;
-                        LogTools.Log(ex);
+                        LogTools.Debug(ex);
                     }
                 }
 
@@ -493,7 +581,7 @@ namespace Tools.Outils
             {
                 lStatusMsg = "Erreur au demarrage";
                 lStatusDetail = ex.Message;
-                LogTools.Log(ex);
+                LogTools.Error(ex);
             }
 
             // Met a jour les status du minisite
@@ -518,7 +606,7 @@ namespace Tools.Outils
             catch (Exception ex)
             {
                 Status = new StatusMiniSite(StateMiniSiteEnum.Stopped, "Erreur lors de l'arrêt");
-                LogTools.Log(ex);
+                LogTools.Error(ex);
             }
         }
 
@@ -548,7 +636,7 @@ namespace Tools.Outils
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Log(ex);
+                    LogTools.Error(ex);
                     throw ex;
                 }
                 finally
@@ -657,7 +745,7 @@ namespace Tools.Outils
             catch (Exception ex)
             {
                 cStatus = new StatusMiniSite(cStatus.State, "Erreur FTP", ex.Message);
-                LogTools.Log(ex);
+                LogTools.Error(ex);
             }
             finally
             {
@@ -711,7 +799,6 @@ namespace Tools.Outils
         /// Charge la structure sur le site FTP
         /// </summary>
         /// <param name="localRootDirectory">Repertoire dont le contenu doit etre charge</param>
-        /// <param name="distantDirectory">Repertoire distant (par rapport à la racine), "" pour charger directement a la racine</param>
         /// <returns></returns>
         public UploadStatus UploadSite(string localRootDirectory, List<FileInfo> listFiles = null)
         {
@@ -815,7 +902,7 @@ namespace Tools.Outils
                 output.IsSuccess = false;
                 string msg = (ex.InnerException != null) ? String.Format("{0} ({1})", ex.Message, ex.InnerException.Message) : ex.Message;
                 cStatus = new StatusMiniSite(cStatus.State, "Erreur FTP", msg);
-                LogTools.Log(ex);
+                LogTools.Logger.Error("Erreur lors de upload FTP", ex);
             }
             finally
             {

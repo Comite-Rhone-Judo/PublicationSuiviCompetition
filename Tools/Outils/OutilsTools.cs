@@ -18,6 +18,7 @@ using System.Windows.Threading;
 using Telerik.Windows.Controls;
 using Tools.Windows;
 using Tools.Enum;
+using System.Reflection;
 
 namespace Tools.Outils
 {
@@ -269,7 +270,7 @@ namespace Tools.Outils
         /// </summary>
         /// <returns>Version</returns>
 
-        public static String GetVersionApp()
+        public static String GetVersionInformation()
         {
             if (ApplicationDeployment.IsNetworkDeployed)
             {
@@ -281,14 +282,62 @@ namespace Tools.Outils
 
                 String version = assembly.GetName().Version.ToString();
 
-                var myAttr = Attribute.GetCustomAttribute(assembly, typeof(AssemblyVersionTest)) as AssemblyVersionTest;
+                var myAttr = Attribute.GetCustomAttribute(assembly, typeof(AssemblyVersionBeta)) as AssemblyVersionBeta;
                 if (myAttr.Value > 0)
                 {
-                    version += "_test" + myAttr.Value;
+                    version += String.Format("-beta{0:00}", myAttr.Value);
                 }
 
                 return version; // assembly.GetName().Version;
             }
+        }
+
+        public static string GetCompanyInformation()
+        {
+            string output = string.Empty;
+
+            try
+            {
+                System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                var myAttr = Attribute.GetCustomAttribute(assembly, typeof(AssemblyCompanyAttribute)) as AssemblyCompanyAttribute;
+
+                output = myAttr.Company;
+            }
+            catch { }
+
+            return output;
+        }
+
+        public static string GetCopyrightInformation()
+        {
+            string output = string.Empty;
+
+            try
+            {
+                System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                var myAttr = Attribute.GetCustomAttribute(assembly, typeof(AssemblyCopyrightAttribute)) as AssemblyCopyrightAttribute;
+
+                output = myAttr.Copyright;
+            }
+            catch { }
+
+            return output;
+        }
+
+        public static string GetTrademarkInformation()
+        {
+            string output = string.Empty;
+
+            try
+            {
+                System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                var myAttr = Attribute.GetCustomAttribute(assembly, typeof(AssemblyTrademarkAttribute)) as AssemblyTrademarkAttribute;
+
+                output = myAttr.Trademark;
+            }
+            catch { }
+
+            return output;
         }
 
 

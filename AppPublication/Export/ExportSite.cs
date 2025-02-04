@@ -6,6 +6,7 @@ using KernelImpl.Noyau.Organisation;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Web.UI.WebControls;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Xsl;
@@ -17,6 +18,8 @@ namespace AppPublication.Export
 {
     public static class ExportSite
     {
+        private const int kTailleMaxNomCompetition = 30;
+
         /// <summary>
         /// Génére les éléments donnés d'une phase
         /// </summary>
@@ -55,6 +58,7 @@ namespace AppPublication.Export
                 XmlDocument xmlFeuilleCombat = ExportXML.CreateDocumentFeuilleCombat(DC, phase, null);
                 ExportXML.AddPublicationInfo(ref xmlFeuilleCombat, config);
                 ExportXML.AddClubs(ref xmlFeuilleCombat, DC);
+                LogTools.Logger.Debug("XML genere: '{0}'", xmlFeuilleCombat.InnerXml);
 
                 ExportHTML.ToHTMLSite(xmlFeuilleCombat, type, fileSave, argsList);
                 urls.Add(fileSave + ".html");
@@ -81,6 +85,7 @@ namespace AppPublication.Export
                 ExportXML.AddPublicationInfo(ref xmlResultat, config);
                 ExportXML.AddCeintures(ref xmlResultat, DC);
                 ExportXML.AddClubs(ref xmlResultat, DC);
+                LogTools.Logger.Debug("XML genere: '{0}'", xmlResultat.InnerXml);
 
                 ExportHTML.ToHTMLSite(xmlResultat, type2, fileSave2, argsList2);
                 urls.Add(fileSave2 + ".html");
@@ -97,6 +102,7 @@ namespace AppPublication.Export
                 ExportXML.AddPublicationInfo(ref xmlResultat, config);
                 ExportXML.AddCeintures(ref xmlResultat, DC);
                 ExportXML.AddClubs(ref xmlResultat, DC);
+                LogTools.Logger.Debug("XML genere: '{0}'", xmlResultat.InnerXml);
 
                 ExportHTML.ToHTMLSite(xmlResultat, type2, fileSave2, argsList2);
                 urls.Add(fileSave2 + ".html");
@@ -128,8 +134,9 @@ namespace AppPublication.Export
 
             XmlDocument xml = ExportXML.CreateDocumentEpreuve(DC, epreuve);
             ExportXML.AddPublicationInfo(ref xml, config);
-
             ExportXML.AddClubs(ref xml, DC);
+            LogTools.Logger.Debug("XML genere: '{0}'", xml.InnerXml);
+
             ExportHTML.ToHTMLSite(xml, type, fileSave, argsList);
             // return new List<string> { fileSave + ".html" };
 
@@ -158,8 +165,8 @@ namespace AppPublication.Export
 
             XmlDocument xml = ExportXML.CreateDocumentFeuilleCombat(DC, null, null);
             ExportXML.AddPublicationInfo(ref xml, config);
-
             ExportXML.AddClubs(ref xml, DC);
+            LogTools.Logger.Debug("XML genere: '{0}'", xml.InnerXml);
 
             ExportHTML.ToHTMLSite(xml, type, fileSave, argsList);
             // return new List<string> { fileSave + ".html" };
@@ -183,7 +190,7 @@ namespace AppPublication.Export
             XDocument doc = new XDocument();
 
             XElement xcompetition = new XElement(ConstantXML.Competition);
-            xcompetition.SetAttributeValue(ConstantXML.Competition_Titre, OutilsTools.TraiteChaine(OutilsTools.SubString(DialogControleur.Instance.ServerData.competition.nom, 0, 30)));
+            xcompetition.SetAttributeValue(ConstantXML.Competition_Titre, OutilsTools.TraiteChaine(OutilsTools.SubString(DialogControleur.Instance.ServerData.competition.nom, 0, kTailleMaxNomCompetition)));
 
             doc.Add(xcompetition);
 
@@ -205,19 +212,21 @@ namespace AppPublication.Export
             // urls = urls.Concat(ExportTools.ExportStyleAndJS(true)).ToList();
             urls = urls.Concat(ExportTools.ExportEmbeddedStyleAndJS(true, siteStruct)).ToList();
 
-            // Debug.WriteLine(string.Format("GenereWebSiteIndex - ExportStyleAndJS {0}", urls.Count));
+            LogTools.Logger.Debug("GenereWebSiteIndex - ExportStyleAndJS {0}", urls.Count);
 
             // No need to regenerate those files, they are usually static unless they are updated
             // urls = urls.Concat(ExportTools.ExportImg(true)).ToList();
-            urls = urls.Concat(ExportTools.ExportEmbeddedImg(true, siteStruct)).ToList();
 
-            // Debug.WriteLine(string.Format("GenereWebSiteIndex - ExportImg {0}", urls.Count));
+            // Genere les images "par defaut" contenues dans l'application et les images personnalises de l'utilisateur
+            urls = urls.Concat(ExportTools.ExportEmbeddedImg(true, true, siteStruct)).ToList();
+
+            LogTools.Logger.Debug("GenereWebSiteIndex - ExportImg {0}", urls.Count);
 
             urls.Add(indexfile);
 
             output = urls.Select(o => new FileWithChecksum(o)).ToList();
 
-            // Debug.WriteLine(string.Format("GenereWebSiteIndex {0}", output.Count));
+            LogTools.Logger.Debug("GenereWebSiteIndex {0}", output.Count);
 
             return output;
         }
@@ -235,6 +244,7 @@ namespace AppPublication.Export
 
             XmlDocument docmenu = ExportXML.CreateDocumentMenu(DC, siteStruct);
             ExportXML.AddPublicationInfo(ref docmenu, config);
+            LogTools.Logger.Debug("XML genere: '{0}'", docmenu.InnerXml);
 
             // Genere le menu de d'avancement
             type = ExportEnum.Site_MenuAvancement;
@@ -287,6 +297,7 @@ namespace AppPublication.Export
 
             XmlDocument docAffectation = ExportXML.CreateDocumentAffectationTapis(DC);
             ExportXML.AddPublicationInfo(ref docAffectation, config);
+            LogTools.Logger.Debug("XML genere: '{0}'", docAffectation.InnerXml);
 
             ExportHTML.ToHTMLSite(docAffectation, type, fileSave, argsList);
 

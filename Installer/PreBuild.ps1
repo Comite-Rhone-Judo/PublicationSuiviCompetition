@@ -10,12 +10,12 @@
 	$Version = $VersionString.Substring($startpos, 7)
 
 
-	$VersionTestString = (Select-String ..\VersionInfo.cs -Pattern "assembly: AssemblyVersionTest").ToString()
-	$startPos = $VersionTestString.IndexOf("(") + 1
-	$endPos = $VersionTestString.IndexOf(")") - 1
-	$versionTest = $VersionTestString.subString($startpos, $endPos - $startPos + 1)
+	$VersionBetaString = (Select-String ..\VersionInfo.cs -Pattern "assembly: AssemblyVersionBeta").ToString()
+	$startPos = $VersionBetaString.IndexOf("(") + 1
+	$endPos = $VersionBetaString.IndexOf(")") - 1
+	$versionBeta = $VersionBetaString.subString($startpos, $endPos - $startPos + 1)
 
-	$VersionFinale = if ($versionTest -eq "0") { $Version } else { $Version + "_test" + $versionTest }
+	$VersionFinale = if ($versionBeta -eq "0") { $Version } else { $Version + ( "-beta{0}" -f ($versionBeta.PadLeft(2, '0'))) }
 	Write-Host "Version trouvee: "  $VersionFinale
 
 	$VersionDefine = "`n#define MyAppVersion `"" + $VersionFinale + "`""

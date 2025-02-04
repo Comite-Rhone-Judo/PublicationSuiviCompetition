@@ -18,10 +18,9 @@
     <Converter:BoolNotConverter x:Key="BoolNotConverter" />
     <Converter:RunningStatusConverter x:Key="RunningStatusConverter" />
     <Converter:StatGenerationConverter x:Key="StatGenerationConverter" />
-    <Converter:EtatPublicationConverter x:Key="EtatPublicationConverter" />
-    <Converter:EtatGenerationConverter x:Key="EtatGenerationConverter" />
     <Converter:AppStatusConverter x:Key="AppStatusConverter" />
     <Converter:DisplayURLStatusConverter x:Key="DisplayURLStatusConverter" />
     <Converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <Converter:BoolOperationConverter x:Key="BoolOperationConverter" />
+    <Converter:PassthroughConverter x:Key="PassthroughConverter" />
 </ResourceDictionary>

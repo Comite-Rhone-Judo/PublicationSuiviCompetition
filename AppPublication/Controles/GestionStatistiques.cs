@@ -64,7 +64,7 @@ namespace AppPublication.Controles
             private set
             {
                 _compteursGeneration = value;
-                NotifyPropertyChanged("CompteursGeneration");
+                NotifyPropertyChanged();
             }
         }
 
@@ -78,7 +78,7 @@ namespace AppPublication.Controles
             private set
             {
                 _compteursSynchronisationComplete = value;
-                NotifyPropertyChanged("CompteursSynchronisationComplete");
+                NotifyPropertyChanged();
             }
         }
 
@@ -92,7 +92,7 @@ namespace AppPublication.Controles
             private set
             {
                 _compteursSynchronisationDifference = value;
-                NotifyPropertyChanged("CompteursSynchronisationDifference");
+                NotifyPropertyChanged();
             }
         }
 
