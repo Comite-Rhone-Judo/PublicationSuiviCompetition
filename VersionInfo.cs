@@ -28,7 +28,7 @@ using System.Reflection;
 internal class AssemblyVersionBeta : Attribute
 {
     public int Value { get; set; }
-    public AssemblyVersionBeta(int valueTest)
+    public AssemblyVersionBeta(int valueTest) { 
         Value = valueTest;
     }
 }
