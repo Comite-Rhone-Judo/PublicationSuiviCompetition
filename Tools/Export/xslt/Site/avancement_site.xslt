@@ -116,12 +116,12 @@
 									<xsl:attribute name="onclick">
 										<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel,'F',$apos,')')"/>
 									</xsl:attribute>
-									<img class="img" width="25" src="../img/up_circular-32.png">
+									<img class="img" width="25" src="../img/up_circular-32.png" style="display: none;">
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'F', 'Collapse')"/>
 										</xsl:attribute>
 									</img>
-									<img class="img" width="25" src="../img/down_circular-32.png" style="display: none;">
+									<img class="img" width="25" src="../img/down_circular-32.png">
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'F', 'Expand')"/>
 										</xsl:attribute>
@@ -147,12 +147,12 @@
 									<xsl:attribute name="onclick">
 										<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel,'M',$apos,')')"/>
 									</xsl:attribute>
-									<img class="img" width="25" src="../img/up_circular-32.png">
+									<img class="img" width="25" src="../img/up_circular-32.png" style="display: none;">
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'M', 'Collapse')"/>
 										</xsl:attribute>
 									</img>
-									<img class="img" width="25" src="../img/down_circular-32.png" style="display: none;">
+									<img class="img" width="25" src="../img/down_circular-32.png">
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'M', 'Expand')"/>
 										</xsl:attribute>
@@ -178,12 +178,12 @@
 									<xsl:attribute name="onclick">
 										<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel,$apos,')')"/>
 									</xsl:attribute>
-									<img class="img" width="25" src="../img/up_circular-32.png">
+									<img class="img" width="25" src="../img/up_circular-32.png" style="display: none;">
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'Collapse')"/>
 										</xsl:attribute>
 									</img>
-									<img class="img" width="25" src="../img/down_circular-32.png" style="display: none;">
+									<img class="img" width="25" src="../img/down_circular-32.png" >
 										<xsl:attribute name="id">
 											<xsl:value-of select="concat($prefixPanel,'Expand')"/>
 										</xsl:attribute>

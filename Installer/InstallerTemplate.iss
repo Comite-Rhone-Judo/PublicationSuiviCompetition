@@ -44,7 +44,7 @@ Name: "useroverrideConfig"; Description: "{cm:OverrideConfig}"; GroupDescription
 
 [Files]
 Source: "..\..\..\AppPublication\bin\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\..\AppPublication\bin\Release\*"; Excludes:"{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\..\AppPublication\bin\Release\*"; Excludes:"*.log, *.pdb, {#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; Deploit le fichier de configuration s'il n'existe pas
 Source: "..\..\..\AppPublication\bin\Release\{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
 ; Deploit le fichier de configuration au choix de l'utilisateur (la tache peut etre desactivee si elle n'est pas compatible avec la version du fichier)

@@ -1168,48 +1168,65 @@
 
 		<xsl:variable name="kinzavainqueur" select="$combat/score[@judoka = $combat/@vainqueur]/@kinza"/>
 		<xsl:variable name="kinzaperdant" select="$combat/score[@judoka != $combat/@vainqueur]/@kinza"/>
-
+		
 		<div class="w3-left-align">
 			<span class="w3-small">
 				<xsl:choose>
-					<xsl:when test="$combat/@scorevainqueur != ''">					
+					<xsl:when test="$combat/@scorevainqueur != ''">
 						<xsl:choose>
+							<!-- Individuelle ou Shiai -->
 							<xsl:when test="$typeCompetition != '1'">
-								<xsl:value-of select="substring($combat/@scorevainqueur, 0, 3)"/>
+								<!-- Les marques -->
+								<xsl:choose>
+									<xsl:when test="$affKinzas = 'Oui'">
+										<!-- Les marques avec Kinzas, on ignore le Yuko -->
+										<xsl:value-of select="substring($combat/@scorevainqueur, 1, 2)"/>
+										<!-- Les kinzas -->
+										<span class="w3-small w3-text-green">(<xsl:value-of select="$kinzavainqueur"/>)</span>
+									</xsl:when>
+									<!-- Les marques sans Kinzas -->
+									<xsl:otherwise>
+										<xsl:value-of select="substring($combat/@scorevainqueur, 1, 3)"/>
+									</xsl:otherwise>
+								</xsl:choose>
+								<!-- Les penalites -->
+								<span class="w3-text-red">
+									<xsl:value-of select="$combat/@penvainqueur"/>
+								</span>
 							</xsl:when>
+							<!-- Equipe -->
 							<xsl:otherwise>
+								<!-- Uniquement les marques -->
 								<xsl:value-of select="$combat/@scorevainqueur"/>
 							</xsl:otherwise>
-						</xsl:choose>													
-						<xsl:if test="$typeCompetition != '1'">
-							<span class="w3-text-red">
-								<xsl:value-of select="$combat/@penvainqueur"/>
-							</span>
-							<xsl:if test="$affKinzas = 'Oui'">
-								<span class="w3-small w3-text-green">
-									(<xsl:value-of select="$kinzavainqueur"/>)
-								</span>
-							</xsl:if>
-						</xsl:if>
+						</xsl:choose>
 						<xsl:text disable-output-escaping="yes">/</xsl:text>
 						<xsl:choose>
+							<!-- Individuelle ou Shiai -->
 							<xsl:when test="$typeCompetition != '1'">
-								<xsl:value-of select="substring($combat/@scoreperdant, 0, 3)"/>
+								<xsl:choose>
+									<xsl:when test="$affKinzas = 'Oui'">
+										<!-- Les marques avec Kinzas, on ignore le Yuko -->
+										<xsl:value-of select="substring($combat/@scoreperdant, 1, 2)"/>
+										<!-- Les kinzas -->
+										<span class="w3-small w3-text-green">(<xsl:value-of select="$kinzaperdant"/>)</span>
+									</xsl:when>
+									<!-- Les marques sans Kinzas -->
+									<xsl:otherwise>
+										<xsl:value-of select="substring($combat/@scoreperdant, 1, 3)"/>
+									</xsl:otherwise>
+								</xsl:choose>
+								<!-- Les penalites -->
+								<span class="w3-text-red">
+									<xsl:value-of select="$combat/@penperdant"/>
+								</span>
 							</xsl:when>
+							<!-- Equipe -->
 							<xsl:otherwise>
+								<!-- Uniquement les marques -->
 								<xsl:value-of select="$combat/@scoreperdant"/>
 							</xsl:otherwise>
-						</xsl:choose>													
-						<xsl:if test="$typeCompetition != '1'">
-							<span class="w3-text-red">
-								<xsl:value-of select="$combat/@penperdant"/>
-							</span>
-							<xsl:if test="$affKinzas = 'Oui'">
-								<span class="w3-small w3-text-green">
-									(<xsl:value-of select="$kinzaperdant"/>)
-								</span>
-							</xsl:if>
-						</xsl:if>
+						</xsl:choose>
 					</xsl:when>
 						<!-- Pas de score (combat pas encore realise) -->
 					<xsl:otherwise>
