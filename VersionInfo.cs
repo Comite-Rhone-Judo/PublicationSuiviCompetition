@@ -17,7 +17,7 @@ using System.Reflection;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyFileVersion("1.4.0.0")]
 [assembly: AssemblyVersion("1.4.0.0")]
-[assembly: AssemblyVersionBeta(1)]
+[assembly: AssemblyVersionBeta(2)]
 
 [assembly: AssemblyCompany("FRANCE JUDO - Fédération Française de Judo et Disciplines Associées - RHONE")]
 [assembly: AssemblyCopyright("Copyright © FRANCE JUDO RHONE 2023 - Tous droits réservés")]
