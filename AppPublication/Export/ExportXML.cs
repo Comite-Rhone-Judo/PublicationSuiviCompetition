@@ -513,7 +513,7 @@ namespace AppPublication.Export
                     xcompetitions.Add(xcompetition);
 
                     // Ajoute les groupes dans la structure XML
-                    int typeGroupes = groupeParEntite ? competition.niveau : (int) EchelonEnum.Aucun;
+                    int typeGroupes = groupeParEntite ? ExtensionNoyau.Deroulement.DataDeroulement.GetTypeGroupe(competition) : (int) EchelonEnum.Aucun;
                     IList<GroupeParticipants> groupes = EDC.Deroulement.GroupesParticipants.Where(g => g.Competition == competition.id && g.Type == typeGroupes).ToList();
                     XElement xgroupesP = new XElement(ConstantXML.GroupeParticipants_groupes);
                     foreach (GroupeParticipants grp in groupes)

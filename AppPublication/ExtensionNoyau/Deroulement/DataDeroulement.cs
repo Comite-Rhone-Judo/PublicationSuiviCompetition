@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Tools.Enum;
+using Tools.Outils;
 
 namespace AppPublication.ExtensionNoyau.Deroulement
 {
@@ -31,6 +32,36 @@ namespace AppPublication.ExtensionNoyau.Deroulement
         public void SyncAll(JudoData DC)
         {
             GetGroupesParticipant(DC);
+        }
+
+        /// <summary>
+        /// Retourne le type de groupement pour une competition donnee (notamment si le niveau de competition est inconnu)
+        /// </summary>
+        /// <param name="c">La competition</param>
+        /// <returns>Le typ de groupement</returns>
+        public static int GetTypeGroupe(Competition c)
+        {
+            int type = (int) EchelonEnum.Club;
+
+            switch (c.niveau)
+            {
+                case (int)EchelonEnum.Club:
+                case (int)EchelonEnum.Departement:
+                case (int)EchelonEnum.Ligue:
+                case (int)EchelonEnum.National:
+                case (int)EchelonEnum.International:
+                    {
+                        type = c.niveau;
+                        break;
+                    }
+                default:
+                    {
+                        type = (int) EchelonEnum.Club;
+                        break;
+                    }
+            }
+
+            return type;  
         }
 
         /// <summary>
@@ -64,6 +95,7 @@ namespace AppPublication.ExtensionNoyau.Deroulement
 
                         // Groupement par entite
                         IList<string> listEntite = null;
+                        int type = competition.niveau;
 
                         switch (competition.niveau)
                         {
@@ -90,7 +122,9 @@ namespace AppPublication.ExtensionNoyau.Deroulement
                                 }
                             default:
                                 {
+                                    LogTools.Logger.Error("Niveau de competition inconnu : {0}. Utilisation du niveau club par defaut", competition.niveau);
                                     listEntite = judokasParticipants.Select(o => o.club).Distinct().ToList();
+                                    type = (int) EchelonEnum.Club;    // Le niveau de competition est inconnu, on prend le plus bas par defaut
                                     break;
                                 }
                         }
@@ -99,7 +133,7 @@ namespace AppPublication.ExtensionNoyau.Deroulement
                             GroupeParticipants grp = new GroupeParticipants();
                             grp.Competition = competition.id;
                             grp.Sexe = sexe;
-                            grp.Type = competition.niveau;
+                            grp.Type = type;
                             grp.Entite = entite;
                             _groupesParticipants.Add(grp);
                         }
