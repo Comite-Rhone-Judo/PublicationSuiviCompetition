@@ -1838,7 +1838,7 @@ namespace AppPublication.Controles
                         foreach(Competition comp in DC.Organisation.Competitions)
                         {
                             // Recupere les groupes en fonction du type de groupement
-                            int typeGrp = ParticipantsParEntite ? comp.niveau : (int) EchelonEnum.Aucun;
+                            int typeGrp = ParticipantsParEntite ? ExtensionNoyau.Deroulement.DataDeroulement.GetTypeGroupe(comp) : (int) EchelonEnum.Aucun;
                             List<GroupeParticipants> groupesP = EDC.Deroulement.GroupesParticipants.Where(g => g.Competition == comp.id && g.Type == typeGrp).ToList();
                             foreach(GroupeParticipants g in groupesP)
                             {
