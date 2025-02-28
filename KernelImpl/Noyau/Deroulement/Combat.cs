@@ -874,13 +874,13 @@ namespace KernelImpl.Noyau.Deroulement
                 //Victoire par IPPON 
                 if ((scoreV / 100) - (scoreP / 100) >= 1)
                 {
-                    return 10;
+                    return 100;
                 }
 
                 ////Victoire par 2 WAZA-ARI
                 if (scoreV >= 20)
                 {
-                    return 10;
+                    return 100;
                 }
 
                 /// Victoires par 3 Pénalités => 10 points
@@ -891,18 +891,22 @@ namespace KernelImpl.Noyau.Deroulement
                 }
                 else if (penP >= 3)
                 {
-                    return 10;
+                    return 100;
                 }
 
-                // Victoire par WAZA-ARI => 1 point
-                if ((scoreV / 10) - (scoreP / 10) >= 1)
-                {
-                    return scoreV / 10;
+                int ipponV = scoreV / 100;               // Récupère le chiffre des centaines
+                int wazaV = (scoreV / 10) % 10;          // Récupère le chiffre des dizaines
+                int yukkoV = scoreV % 10;                // Récupère le chiffre des unités
+
+                int ipponP = scoreP / 100;               // Récupère le chiffre des centaines
+                int wazaP = (scoreP / 10) % 10;          // Récupère le chiffre des dizaines
+                int yukkoP = scoreP % 10;                // Récupère le chiffre des unités
                     //return 7;
-                }
+
+                return (wazaV * 10) + yukkoV;
 
                 // Par defaut (decision, etc.) => 0 points
-                return 0;
+                // return 0;
             }
             else
             {
@@ -950,19 +954,27 @@ namespace KernelImpl.Noyau.Deroulement
                 // Le perdant doit avoir un Waza-ari de difference avec le gagnant
                 if (scoreP - scoreV >= 1)
                 {
-                    return 1;
+                    return 10;// 1;
                 }
             }
 
             // Victoire par 2 WAZA-ARI => il garde le benefice de son eventuel Waza-Ari
-            if (scoreV >= 20)
+            /*if (scoreV >= 20)
             {
                 return scoreP / 10;
-            }
+            }*/
 
+            int ipponV = scoreV / 100;               // Récupère le chiffre des centaines
+            int wazaV = (scoreV / 10) % 10;          // Récupère le chiffre des dizaines
+            int yukkoV = scoreV % 10;                // Récupère le chiffre des unités
+
+            int ipponP = scoreP / 100;               // Récupère le chiffre des centaines
+            int wazaP = (scoreP / 10) % 10;          // Récupère le chiffre des dizaines
+            int yukkoP = scoreP % 10;                // Récupère le chiffre des unités
+            return (wazaP * 10) + yukkoP; //maximum 1 waza
             // Par defaut, le perdant a Zero dans tous les autres cas
             // victoire par Ippon, par Waza-Ari
-            return 0;
+            // return 0;
         }
 
         /// <summary>
@@ -1283,11 +1295,11 @@ namespace KernelImpl.Noyau.Deroulement
 
             if (isEquipe)
             {
-                return nbV + "v." + score.ToString("00");
+                return nbV + "v." + score.ToString("000");
             }
 
             // string res = score.ToString("000");
-            string res = (score / 10).ToString("00");
+            string res = (score).ToString("000");
 
                 //string res = (score >= 100 ? (score / 100).ToString() : "0");
                 //score = score % 100;
@@ -1346,11 +1358,11 @@ namespace KernelImpl.Noyau.Deroulement
 
             if (DC.competition.type == (int)CompetitionTypeEnum.Equipe)
             {
-                return nbV + "v." + score.ToString("00");
+                return nbV + "v." + score.ToString("000");
             }
 
             // string res = score.ToString("000");
-            string res = (score / 10).ToString("00");
+            string res = (score).ToString("000");
 
                 //string res = (score >= 100 ? (score / 100).ToString() : "0");
                 //score = score % 100;

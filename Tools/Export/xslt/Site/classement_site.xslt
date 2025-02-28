@@ -190,7 +190,7 @@
 									Sans Catégorie
 								</button>
 							</header>
-							<div class="w3-container" style="display:none;">
+							<div class="w3-container">
 								<xsl:attribute name="id">
 									<xsl:value-of select="$prefixPanel"/>
 								</xsl:attribute>

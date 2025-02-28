@@ -570,7 +570,7 @@ namespace KernelImpl.Noyau.Deroulement
                         if (niveau == 1 || niveau == 2 || niveau == 4)
                         {
                             IList<Rencontre> rencontresTmp = DC.Deroulement.Rencontres.Where(o => o.combat == this.combat).ToList();
-                            bool egaliteCombat = false;
+                            //bool egaliteCombat = false;
                             int combatScore1 = 0;
                             int combatScore2 = 0;
                             int nbVictoire1 = 0;
@@ -590,7 +590,7 @@ namespace KernelImpl.Noyau.Deroulement
                             }
                             if (combatScore1 == combatScore2 && nbVictoire1 == nbVictoire2)
                             {
-                                egaliteCombat = true;
+                                //egaliteCombat = true;
                                 combatDecisifProLeagueEnAttente = true;
                             }
                         }
@@ -901,6 +901,12 @@ namespace KernelImpl.Noyau.Deroulement
                 penP = this.penalite1;
             }
 
+            int ipponV = scoreV / 100;               // Récupère le chiffre des centaines
+            int wazaV = (scoreV / 10) % 10;          // Récupère le chiffre des dizaines
+            int yukkoV = scoreV % 10;                // Récupère le chiffre des unités
+            int ipponP = scoreP / 100;               // Récupère le chiffre des centaines
+            int wazaP = (scoreP / 10) % 10;          // Récupère le chiffre des dizaines
+            int yukkoP = scoreP % 10;                // Récupère le chiffre des unités
             /* if (this.etatJ1 == (int)EtatCombattantEnum.Normal && this.etatJ2 == (int)EtatCombattantEnum.Normal)
             {*/
             //if (this.etatJ1 != (int)EtatCombattantEnum.HansokuMakeX && this.etatJ2 != (int)EtatCombattantEnum.HansokuMakeX &&
@@ -909,19 +915,19 @@ namespace KernelImpl.Noyau.Deroulement
             {
                 if ((this.judoka1 == null && this.judoka2 == this.vainqueur) || (this.judoka2 == null && this.judoka1 == this.vainqueur))
                 {
-                    return 10;
+                    return 100; //10
                 }
 
                 //Victoire par IPPON 
                 if ((scoreV / 100) - (scoreP / 100) >= 1)
                 {
-                    return 10;
+                    return 100; //10
                 }
 
                 ////Victoire par 2 WAZA-ARI
                 if (scoreV >= 20)
                 {
-                    return 10;
+                    return 100; // 10;
                 }
 
                 //Pénalités
@@ -930,16 +936,17 @@ namespace KernelImpl.Noyau.Deroulement
                     return scoreV / 10;
                 }else if (penP >= 3)
                 {
-                    return 10;
+                    return 100; // 10;
                     ////----return 0;
                 }
 
                 //Victoire par WAZA-ARI
-                if ((scoreV / 10) - (scoreP / 10) >= 1)
+                /*if ((scoreV / 10) - (scoreP / 10) >= 1)
                 {
                     return scoreV / 10;
                     //return 7;
-                }
+                }*/
+                return (wazaV * 10) + yukkoV;
 
                 //if (scoreV >= 10 && scoreP < 10)
                 //{
@@ -947,12 +954,12 @@ namespace KernelImpl.Noyau.Deroulement
                 //}
 
                 //Victoire par YUKO
-                if (scoreV - scoreP > 0)
+                /*if (scoreV - scoreP > 0)
                 {
                     return 5;
-                }
+                }*/
 
-                return 0;
+                // return 0;
 
                 //if (penP > penV)
                 //{
@@ -1008,18 +1015,23 @@ namespace KernelImpl.Noyau.Deroulement
             }
 
             //Victoire par WAZA-ARI
-            if ((scoreV / 10) - (scoreP / 10) >= 1)
+            /*if ((scoreV / 10) - (scoreP / 10) >= 1)
             {
                 return scoreP / 10;
                 //return 7;
-            }
+            }*/
 
+            int ipponV = scoreV / 100;               // Récupère le chiffre des centaines
+            int wazaV = (scoreV / 10) % 10;          // Récupère le chiffre des dizaines
+            int yukkoV = scoreV % 10;                // Récupère le chiffre des unités
 
+            int ipponP = scoreP / 100;               // Récupère le chiffre des centaines
+            int wazaP = (scoreP / 10) % 10;          // Récupère le chiffre des dizaines
+            int yukkoP = scoreP % 10;                // Récupère le chiffre des unités
 
-            return 0;
+            return (wazaP * 10) + yukkoP; //maximum 1 waza
 
-
-
+            // return 0;
         }
 
         public void LoadXml(XElement xrencontre)
