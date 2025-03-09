@@ -1363,6 +1363,8 @@ namespace AppPublication.Controles
             SiteFranceJudo.ModeActifFTPDistant = false;
             SiteFranceJudo.SiteFTPDistant = _ftpEasyConfig;
             SiteFranceJudo.SynchroniseDifferences = true;
+            SiteFranceJudo.MaxRetryFTP = 10;
+
             // Calcul le repertoire distant en fonction de la competition
             SiteFranceJudo.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
 
