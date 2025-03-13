@@ -146,6 +146,9 @@ namespace Tools.Export
                 case ExportEnum.Site_MenuProchainCombats:
                     result = "prochains_combats";
                     break;
+                    case ExportEnum.Site_FooterScript:
+                    result = "footer_script";
+                    break;
             }
 
             result = result.Replace(' ', '_');
