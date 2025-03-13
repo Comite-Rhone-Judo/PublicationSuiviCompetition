@@ -452,7 +452,8 @@ namespace Tools.Outils
                 NotifyPropertyChanged();
 
                 // Actualise l'etat d'activite du site
-                IsActif = !(_status.State == StateMiniSiteEnum.Stopped);
+                // Le site doit etre arrete ou en cours de nettoyage
+                IsActif = !(_status.State == StateMiniSiteEnum.Stopped || _status.State == StateMiniSiteEnum.Cleaning);
                 IsCleaning = (_status.State == StateMiniSiteEnum.Cleaning);
             }
         }
@@ -720,7 +721,7 @@ namespace Tools.Outils
 
             try
             {
-                Status = new StatusMiniSite(StateMiniSiteEnum.Syncing, "Nettoyage FTP ...");
+                Status = new StatusMiniSite(StateMiniSiteEnum.Cleaning, "Nettoyage FTP ...");
 
                 // Essaye de se connecter au serveur FTP
                 ftpClient.Connect(_ftp_profile);
