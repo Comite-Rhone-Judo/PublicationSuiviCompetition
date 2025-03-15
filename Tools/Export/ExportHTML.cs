@@ -9,7 +9,7 @@ namespace Tools.Export
 {
     public static class ExportHTML
     {
-        public static void ToHTMLSite(XmlDocument xml, ExportEnum export_type, string fileSave, XsltArgumentList argsList)
+        public static void ToHTMLSite(XmlDocument xml, ExportEnum export_type, string fileSave, XsltArgumentList argsList, string fileExtension = "html")
         {
             //argsList.AddParam("style", "", ExportTools.getStyleDirectory(site: true));
 
@@ -22,7 +22,7 @@ namespace Tools.Export
             // ExportTools.ExportImg(false);
 
             string xslt = ExportTools.GetXsltSite(export_type);
-            ExportHTML.ToHTML(xml, fileSave, argsList, xslt);
+            ExportHTML.ToHTML(xml, fileSave, argsList, xslt, fileExtension);
         }
 
         /// <summary>
@@ -32,7 +32,8 @@ namespace Tools.Export
         /// <param name="fileSave"></param>
         /// <param name="argsList"></param>
         /// <param name="xslt_st"></param>
-        public static void ToHTML(XmlDocument xml, string fileSave, XsltArgumentList argsList, string xslt_st)
+        /// <param name="fileExtension"></param>
+        public static void ToHTML(XmlDocument xml, string fileSave, XsltArgumentList argsList, string xslt_st, string fileExtension = "html")
         {
             XsltSettings settings = new XsltSettings();
             settings.EnableDocumentFunction = true;
@@ -49,11 +50,13 @@ namespace Tools.Export
             InAssemblyUrlResolver resolver = new InAssemblyUrlResolver();
             xslt.Load(xsltReader, settings, resolver);
 
+            string fileSaveWithExt = fileSave + "." + fileExtension;
+
             // Create the FileStream.
             try
             {
-                FileAndDirectTools.NeedAccessFile(fileSave + ".html");
-                using (FileStream fs = new FileStream(fileSave + ".html", FileMode.Create))
+                FileAndDirectTools.NeedAccessFile(fileSaveWithExt);
+                using (FileStream fs = new FileStream(fileSaveWithExt, FileMode.Create))
                 {
                     // Execute the transformation.
                     xslt.Transform(xml, argsList, fs);
@@ -65,25 +68,9 @@ namespace Tools.Export
             }
             finally
             {
-                FileAndDirectTools.ReleaseFile(fileSave + ".html");
-            }
-
-            if (OutilsTools.IsDebug || fileSave.Contains("menu"))
-            {
-                try
-                {
-                    FileAndDirectTools.NeedAccessFile(fileSave + ".xml");
-                    xml.Save(fileSave + ".xml");
-                }
-                catch (Exception ex)
-                {
-                    LogTools.Error(ex);
-                }
-                finally
-                {
-                    FileAndDirectTools.ReleaseFile(fileSave + ".xml");
-                }
+                FileAndDirectTools.ReleaseFile(fileSaveWithExt);
             }
         }
     }
 }
+

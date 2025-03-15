@@ -80,7 +80,7 @@
 
 			<xsl:if test="count(/competitions/competition)>0">
 				<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
-					v<xsl:value-of select="/competitions/competition[1]/@AppVersion"/> - Dernière actualisation: <xsl:value-of select="/competitions/competition[1]/@DateGeneration"/>
+					<script src="../js/footer_script.js"/> <!-- TODO penser a modifier quand on passera en version Participants -->
 				</div>
 			</xsl:if>
 		</body>

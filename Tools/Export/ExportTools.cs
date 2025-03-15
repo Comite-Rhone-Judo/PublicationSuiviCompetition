@@ -95,7 +95,7 @@ namespace Tools.Export
 
 
                 case ExportEnum.Site_Index:
-                    result = "Index";
+                    result = "index";
                     break;
                 case ExportEnum.Site_QrCode:
                     result = "QrCode";
@@ -145,6 +145,9 @@ namespace Tools.Export
                     break;
                 case ExportEnum.Site_MenuProchainCombats:
                     result = "prochains_combats";
+                    break;
+                case ExportEnum.Site_FooterScript:
+                    result = "footer_script";
                     break;
             }
 
@@ -506,6 +509,9 @@ namespace Tools.Export
                     break;
                 case ExportEnum.Site_MenuProchainCombats:
                     name = ConstantResource.Export_Site_res + "prochains_combats";
+                    break;
+                case ExportEnum.Site_FooterScript:
+                    name = ConstantResource.Export_Site_res + "footer_script";
                     break;
                 default:
                     return "";
