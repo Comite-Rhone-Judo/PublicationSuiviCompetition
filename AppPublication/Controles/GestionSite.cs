@@ -1186,7 +1186,7 @@ namespace AppPublication.Controles
             try
             {
                 // On lit le repertoire racine en 1er afin de pouvoir initialiser la structure du site
-                RepertoireRacine = AppSettings.ReadSetting(kSettingRepertoireRacine, Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+                RepertoireRacine = AppSettings.ReadSetting(kSettingRepertoireRacine, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
 
 
                 // Charge les valeurs pour la publication FFJudo
