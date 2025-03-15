@@ -1576,7 +1576,7 @@ namespace AppPublication.Controles
                         urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), cfg, _structureRepertoires);
                         break;
                     case SiteEnum.Index:
-                        urls = ExportSite.GenereWebSiteIndex(cfg, _structureRepertoires);
+                        urls = ExportSite.GenereWebSiteIndex(DC, cfg, _structureRepertoires);
                         break;
                     case SiteEnum.Menu:
                         urls = ExportSite.GenereWebSiteMenu(DC, cfg, _structureRepertoires);

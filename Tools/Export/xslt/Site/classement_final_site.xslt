@@ -108,7 +108,8 @@
 		</div>
 
 			<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
-				v<xsl:value-of select="/competition/@AppVersion"/> - Dernière actualisation: <xsl:value-of select="/competition/@DateGeneration"/>
+				<script src="../js/footer_script.js"/>
+				<!-- TODO penser a modifier quand on passera en version Participants -->
 			</div>
 		</body>
 	</xsl:template>
