@@ -6,7 +6,7 @@
 #define MyAppExeName "AppPublication.exe"
 #define MyAppConfig MyAppExeName + ".config"
 #define InstallerName "PublicationSuiviCompetitionInstaller_v" + MyAppVersion
-#define MinVersionCompatible "1.3.0.0"
+#define MinVersionCompatible "1.3.0.1"
 
 ; ################# WARNING ##############
 ; Do Not configure MyAppVersion, it will be added automatically using PreBuild Event

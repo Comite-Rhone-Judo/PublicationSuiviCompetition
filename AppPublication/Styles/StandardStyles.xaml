@@ -291,6 +291,14 @@
         </Style.Triggers>
     </Style>
 
+    <!--       
+        Stopped = -1,   // Le site est arrete
+        Listening = 0,  // Le site local est demarre (en ecoute)
+        Idle = 1,       // site distant est demarre mais en attente
+        Syncing = 2,    // site distant en cours de synchronisation
+        Cleaning = 3    // site distant en cours de nettoyage
+    -->
+    
     <Style TargetType="telerik:RadProgressBar" x:Key="StatusProgressBarStyle">
         <Style.Setters>
             <Setter Property="Value" Value="{Binding Path=Progress}"/>
@@ -315,6 +323,9 @@
         <Style.Triggers>
             <DataTrigger Binding="{Binding Path=State}" Value="2">
                 <Setter Property="Fill" Value="Orange"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Path=State}" Value="3">
+                <Setter Property="Fill" Value="BlueViolet"/>
             </DataTrigger>
         </Style.Triggers>
     </Style>

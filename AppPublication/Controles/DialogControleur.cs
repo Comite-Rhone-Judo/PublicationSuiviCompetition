@@ -764,6 +764,8 @@ namespace AppPublication.Controles
                                     AlertWindow win = new AlertWindow("Infomation", msg);
                                     if (win != null)
                                     {
+                                        // On doit la mettre TopMost car la fenêtre appelante l'est deja et pourrait la masquer.
+                                        win.IsTopmost = true;
                                         win.ShowDialog();
                                     }
                                 }

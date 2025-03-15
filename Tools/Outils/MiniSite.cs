@@ -2,12 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Net.Sockets;
 using System.Security;
+using System.Threading;
 using System.Xml;
 using Tools;
 using Tools.Enum;
@@ -38,6 +40,7 @@ namespace Tools.Outils
         private const string kSettingModeActifFTPDistant = "ModeActifFTPDistant";
         private const string kSettingSynchroniseDifferences = "SynchroniseDifferences";
         private const string kSettingInterfaceLocalPublication ="InterfaceLocalPublication";
+        private const int kMaxRetryFTP = 5;
 
         #endregion
 
@@ -46,6 +49,7 @@ namespace Tools.Outils
         private Action<FtpProgress> _ftpProgressCallback = null;
         private long _nbSyncDistant = 0;
         private string _instanceName = string.Empty;
+        private int _maxRetryFTP = kMaxRetryFTP;
 
         #endregion
 
@@ -99,6 +103,22 @@ namespace Tools.Outils
         #endregion
 
         #region PROPRIETES
+
+        /// <summary>
+        /// Le nombre max d'essai pour charger un fichier
+        /// </summary>
+        public int MaxRetryFTP
+        {
+            get
+            {
+                return _maxRetryFTP;
+            }
+            set
+            {
+                _maxRetryFTP = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         /// <summary>
         /// Indique le nom de l'instance du Minisite
@@ -432,7 +452,8 @@ namespace Tools.Outils
                 NotifyPropertyChanged();
 
                 // Actualise l'etat d'activite du site
-                IsActif = !(_status.State == StateMiniSiteEnum.Stopped);
+                // Le site doit etre arrete ou en cours de nettoyage
+                IsActif = !(_status.State == StateMiniSiteEnum.Stopped || _status.State == StateMiniSiteEnum.Cleaning);
                 IsCleaning = (_status.State == StateMiniSiteEnum.Cleaning);
             }
         }
@@ -700,7 +721,7 @@ namespace Tools.Outils
 
             try
             {
-                Status = new StatusMiniSite(StateMiniSiteEnum.Syncing, "Nettoyage FTP ...");
+                Status = new StatusMiniSite(StateMiniSiteEnum.Cleaning, "Nettoyage FTP ...");
 
                 // Essaye de se connecter au serveur FTP
                 ftpClient.Connect(_ftp_profile);
@@ -843,23 +864,68 @@ namespace Tools.Outils
                             // Calculer le repertoire de destination FTP en remplacant le repertoire racine local par la racine FTP
                             string ftpFileName = GetFTPFromLocal(localFileInfo.FullName, localRootDirectory);
 
-                            // Charhe le fichier
-                            FtpStatus fileUploadOut = ftpClient.UploadFile(localFileInfo.FullName,
-                                                                            ftpFileName,
-                                                                            FtpRemoteExists.Overwrite,
-                                                                            true,
-                                                                            FtpVerify.None,
-                                                                            null);
-                            if (fileUploadOut != FtpStatus.Success)
+                            // Fichier temporaire pour le transfert
+                            string ftpTmpFile = ftpFileName + ".upl";
+
+                            // Charge le fichier vers le fichier temporaire. on essaye 5 fois
+                            FtpStatus fileUploadOut = FtpStatus.Failed;
+                            int retry = 0;
+                            bool done = false;
+                            while (fileUploadOut != FtpStatus.Success && retry <= _maxRetryFTP)
+                            {
+                                fileUploadOut = ftpClient.UploadFile(localFileInfo.FullName,
+                                                                                ftpTmpFile,
+                                                                                FtpRemoteExists.Overwrite,
+                                                                                true,
+                                                                                FtpVerify.None,
+                                                                                null);
+                                retry++;
+                                if (fileUploadOut != FtpStatus.Success)
+                                {
+                                    LogTools.Logger.Debug("Erreur lors du transfert du fichier {0} vers {1}, essai {2}", localFileInfo.FullName, ftpTmpFile, retry);
+                                    Thread.Sleep(100);  // Attend 100ms avant de reessayer
+                                }
+                            }
+
+                            if (fileUploadOut == FtpStatus.Success)
+                            {
+                                bool moved = false;
+                                retry = 0;
+
+                                // Deplace le fichier temporaire vers le fichier final
+                                while(!moved && retry <= _maxRetryFTP)
+                                {
+                                    moved = ftpClient.MoveFile(ftpTmpFile, ftpFileName, FtpRemoteExists.Overwrite);
+                                    retry++;
+                                    if (!moved)
+                                    {
+                                        LogTools.Logger.Debug("Erreur lors du deplacement du fichier {0} vers {1}, essai {2}", ftpTmpFile, ftpFileName, retry);
+                                        Thread.Sleep(100);  // Attend 100ms avant de reessayer
+                                    }
+                                }                                
+                                
+                                if (moved)
+                                {
+                                    // Un fichier de plus charge
+                                    done = true;
+                                    output.nbUpload++;
+                                }
+                                else
+                                {
+                                    done = false;
+                                    LogTools.Logger.Debug("Erreur lors deplacement du fichier {0} vers {1}", ftpTmpFile, ftpFileName);
+                                }
+                            }
+                            else
+                            {
+                                done = false;
+                            }
+
+                            if(!done)
                             {
                                 // NOK car pas tous les fichiers charges
                                 output.IsSuccess = false;
                                 cStatus = new StatusMiniSite(cStatus.State, "Erreur FTP", "Impossible de charger certains fichiers");
-                            }
-                            else
-                            {
-                                // Un fichier de plus charge
-                                output.nbUpload++;
                             }
 
                             // Met a jour la progression du transfert
