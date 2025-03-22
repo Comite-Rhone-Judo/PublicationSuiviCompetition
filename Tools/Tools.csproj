@@ -240,6 +240,7 @@
     <Compile Include="Outils\MiniSite.cs" />
     <Compile Include="Outils\StatusMiniSite.cs" />
     <Compile Include="Outils\TimedLock.cs" />
+    <Compile Include="Outils\SingleShotTimer.cs" />
     <Compile Include="Outils\XMLTools.cs" />
     <Compile Include="Outils\LogTools.cs" />
     <Compile Include="Enum\NetworkTools.cs" />

@@ -73,38 +73,38 @@ namespace AppPublication.Controles
                 return;
             }
 
-            _client.OnEndConnection += GestionEvent.client_OnEndConnection;
+            _client.OnEndConnection += GestionEvent.Instance.client_OnEndConnection;
 
-            _client.TraitementConnexion.OnAcceptConnectionCOM += GestionEvent.clientjudo_OnAcceptConnectionCOM;
+            _client.TraitementConnexion.OnAcceptConnectionCOM += GestionEvent.Instance.clientjudo_OnAcceptConnectionCOM;
 
-            _client.TraitementStructure.OnListeStructures += GestionEvent.client_OnListeStructures;
-            _client.TraitementStructure.OnUpdateStructures += GestionEvent.client_OnUpdateStructures;
+            _client.TraitementStructure.OnListeStructures += GestionEvent.Instance.client_OnListeStructures;
+            _client.TraitementStructure.OnUpdateStructures += GestionEvent.Instance.client_OnUpdateStructures;
 
-            _client.TraitementCategories.OnListeCategories += GestionEvent.client_OnListeCategories;
-            _client.TraitementCategories.OnUpdateCategories += GestionEvent.client_OnUpdateCategories;
+            _client.TraitementCategories.OnListeCategories += GestionEvent.Instance.client_OnListeCategories;
+            _client.TraitementCategories.OnUpdateCategories += GestionEvent.Instance.client_OnUpdateCategories;
 
-            _client.TraitementLogos.OnListeLogos += GestionEvent.client_OnListeLogos;
-            _client.TraitementLogos.OnUpdateLogos += GestionEvent.client_OnUpdateLogos;
+            _client.TraitementLogos.OnListeLogos += GestionEvent.Instance.client_OnListeLogos;
+            _client.TraitementLogos.OnUpdateLogos += GestionEvent.Instance.client_OnUpdateLogos;
 
-            _client.TraitementOrganisation.OnListeOrganisation += GestionEvent.client_OnListeOrganisation;
-            _client.TraitementOrganisation.OnUpdateOrganisation += GestionEvent.client_OnUpdateOrganisation;
+            _client.TraitementOrganisation.OnListeOrganisation += GestionEvent.Instance.client_OnListeOrganisation;
+            _client.TraitementOrganisation.OnUpdateOrganisation += GestionEvent.Instance.client_OnUpdateOrganisation;
 
-            _client.TraitementParticipants.OnListeEquipes += GestionEvent.client_OnListeEquipes;
-            _client.TraitementParticipants.OnUpdateEquipes += GestionEvent.client_OnUpdateEquipes;
+            _client.TraitementParticipants.OnListeEquipes += GestionEvent.Instance.client_OnListeEquipes;
+            _client.TraitementParticipants.OnUpdateEquipes += GestionEvent.Instance.client_OnUpdateEquipes;
 
-            _client.TraitementParticipants.OnListeJudokas += GestionEvent.client_OnListeJudokas;
-            _client.TraitementParticipants.OnUpdateJudokas += GestionEvent.client_OnUpdateJudokas;
+            _client.TraitementParticipants.OnListeJudokas += GestionEvent.Instance.client_OnListeJudokas;
+            _client.TraitementParticipants.OnUpdateJudokas += GestionEvent.Instance.client_OnUpdateJudokas;
 
-            _client.TraitementDeroulement.OnListePhases += GestionEvent.client_OnListePhases;
-            _client.TraitementDeroulement.OnUpdatePhases += GestionEvent.client_OnUpdatePhases;
+            _client.TraitementDeroulement.OnListePhases += GestionEvent.Instance.client_OnListePhases;
+            _client.TraitementDeroulement.OnUpdatePhases += GestionEvent.Instance.client_OnUpdatePhases;
 
-            _client.TraitementDeroulement.OnListeCombats += GestionEvent.client_OnListeCombats;
-            _client.TraitementDeroulement.OnUpdateCombats += GestionEvent.client_OnUpdateCombats;
-            _client.TraitementDeroulement.OnUpdateTapisCombats += GestionEvent.client_OnUpdateCombats2;
-            _client.TraitementDeroulement.OnUpdateRencontreReceived += GestionEvent.client_onUpdateRencontres;
+            _client.TraitementDeroulement.OnListeCombats += GestionEvent.Instance.client_OnListeCombats;
+            _client.TraitementDeroulement.OnUpdateCombats += GestionEvent.Instance.client_OnUpdateCombats;
+            _client.TraitementDeroulement.OnUpdateTapisCombats += GestionEvent.Instance.client_OnUpdateCombats2;
+            _client.TraitementDeroulement.OnUpdateRencontreReceived += GestionEvent.Instance.client_onUpdateRencontres;
 
-            _client.TraitementArbitrage.OnListeArbitrage += GestionEvent.client_OnListeArbitrage;
-            _client.TraitementArbitrage.OnUpdateArbitrage += GestionEvent.client_OnUpdateArbitrage;
+            _client.TraitementArbitrage.OnListeArbitrage += GestionEvent.Instance.client_OnListeArbitrage;
+            _client.TraitementArbitrage.OnUpdateArbitrage += GestionEvent.Instance.client_OnUpdateArbitrage;
 
             _client.TraitementConnexion.OnAcceptConnectionTest += clientjudo_OnDemandeConnectionTest;
 

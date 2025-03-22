@@ -3,6 +3,7 @@ using JudoClient;
 using JudoClient.Communication;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Xml.Linq;
 using Tools.Enum;
@@ -10,31 +11,118 @@ using Tools.Outils;
 
 namespace AppPublication.Controles
 {
-    public static class GestionEvent
+    public enum ClientJudoStatusEnum
     {
+        Idle = 0,
+        Initializing = 1,
+        Cancelled = 2,
+        Disconnected = 3
+    }
+
+    public class GestionEvent
+    {
+        #region CONSTANTES
+        private const int kDefaultTimeoutMs = 15000;
+        #endregion
+
+        #region MEMBRES
+        private static GestionEvent _instance = null;  // Singleton
+        // TODO Il faut un timer pour le max de temps de connexion, un objet pour le lock et un status pour la sequence init
+
+        private object _lock = new object();   // Pour les verrous
+
+        private ClientJudoStatusEnum _status = ClientJudoStatusEnum.Idle;   // Le statut du client
+
+        SingleShotTimer _timerReponse = null;     // Timer pour la reponse
+
+        #endregion
+
+        #region CONSTRUCTEUR
+
+        private GestionEvent()
+        {
+            _lock = new object();
+            _status = ClientJudoStatusEnum.Idle;
+            _timerReponse = new SingleShotTimer();
+            _timerReponse.Elapsed += OnResponseTimeout;
+        }
+
+        public static GestionEvent Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new GestionEvent();
+                }
+                return _instance;
+            }
+        }
+
+        #endregion
+
+        #region PROPERTIES
+        public int Timeout { get; set; } = kDefaultTimeoutMs;
+        #endregion
+
+        #region EVENT
+
+        /// <summary>
+        /// Callback appele si le timer de reponse arrive a expiration
+        /// </summary>
+        /// <param name="state"></param>
+        public void OnResponseTimeout(object state)
+        {
+            // TODO Traiter le cas du timeout
+        }
+
+        #endregion
+
         #region EVENT SERVER
+
+        // TODO Modifier les evenements pour qu'ils soient non statiques et ajouter l'initialisation dans le DC
 
         // La gestion des evenements se borne a actualiser les donnees de la competition en memoire
         // La generation du site est fait de maniere asynchrone par rapport a la reception des donnees
-
-        public static void client_OnEndConnection(object sender)
+        public void client_OnEndConnection(object sender)
         {
             if (DialogControleur.Instance.Connection.Client == (ClientJudo)sender)
             {
                 DialogControleur.Instance.Connection.Client.Client.Stop();
                 DialogControleur.Instance.Connection.Client = null;
             }
+
+            lock (_lock)
+            {
+                _status = ClientJudoStatusEnum.Disconnected;
+                _timerReponse?.Stop();
+            }
         }
 
-        public static void clientjudo_OnAcceptConnectionCOM(object sender, XElement element)
+        public void clientjudo_OnAcceptConnectionCOM(object sender, XElement element)
         {
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
-            DialogControleur.Instance.Connection.Client.DemandeStructures();
+            lock (_lock)
+            {
+                _status = ClientJudoStatusEnum.Initializing;
+                DialogControleur.Instance.Connection.Client.DemandeStructures();
+                _timerReponse?.Start(Timeout);   // Demarre le timer d'attente de la reponse
+            }
         }
 
-        public static void client_OnListeStructures(object sender, XElement element)
+        public void client_OnListeStructures(object sender, XElement element)
         {
+            lock(_lock)
+            {
+                _timerReponse?.Stop();
+
+                if (_status != ClientJudoStatusEnum.Initializing)
+                {
+                    return;
+                }
+            }
+
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
             XDocument doc = new XDocument();
@@ -42,11 +130,8 @@ namespace AppPublication.Controles
             doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
             FileTools.SaveFile(doc, ConstantFile.FileStructures);
 
-            Application.Current.ExecOnUiThread(new Action(() =>
-            {
-                // DialogControleur.CS.RadBusyIndicator1.BusyContent = "Initialisation des données (catégorie âge, poids) ...";
-                DialogControleur.Instance.BusyStatus = Tools.Enum.BusyStatusEnum.InitDonneesCategories;
-            }));
+            // Positionne le status pour le binding (thread safe)
+            SetBusyStatus(Tools.Enum.BusyStatusEnum.InitDonneesCategories);
 
             DialogControleur.Instance.ServerData.Structures.lecture_clubs(element);
             DialogControleur.Instance.ServerData.Structures.lecture_comites(element);
@@ -57,7 +142,7 @@ namespace AppPublication.Controles
             DialogControleur.Instance.Connection.Client.DemandeCategories();
         }
 
-        public static void client_OnUpdateStructures(object sender, XElement element)
+        public void client_OnUpdateStructures(object sender, XElement element)
         {
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
@@ -73,7 +158,7 @@ namespace AppPublication.Controles
             DialogControleur.Instance.ServerData.Structures.lecture_pays(element);
         }
 
-        public static void client_OnListeCategories(object sender, XElement element)
+        public void client_OnListeCategories(object sender, XElement element)
         {
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
@@ -98,7 +183,7 @@ namespace AppPublication.Controles
             DialogControleur.Instance.Connection.Client.DemandeLogos();
         }
 
-        public static void client_OnUpdateCategories(object sender, XElement element)
+        public void client_OnUpdateCategories(object sender, XElement element)
         {
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
@@ -113,7 +198,7 @@ namespace AppPublication.Controles
             DC.ServerData.Categories.lecture_ceintures(element);
         }
 
-        public static void client_OnListeLogos(object sender, XElement element)
+        public void client_OnListeLogos(object sender, XElement element)
         {
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
@@ -143,7 +228,7 @@ namespace AppPublication.Controles
             }
         }
 
-        public static void client_OnUpdateLogos(object sender, XElement element)
+        public void client_OnUpdateLogos(object sender, XElement element)
         {
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
@@ -162,7 +247,7 @@ namespace AppPublication.Controles
             }
         }
 
-        public static void client_OnListeOrganisation(object sender, XElement element)
+        public void client_OnListeOrganisation(object sender, XElement element)
         {
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
@@ -197,7 +282,7 @@ namespace AppPublication.Controles
             DC.UpdateCompetition();
         }
 
-        public static void client_OnUpdateOrganisation(object sender, XElement element)
+        public void client_OnUpdateOrganisation(object sender, XElement element)
         {
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
@@ -217,7 +302,7 @@ namespace AppPublication.Controles
 
         }
 
-        public static void client_OnListeEquipes(object sender, XElement element)
+        public void client_OnListeEquipes(object sender, XElement element)
         {
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
@@ -241,7 +326,7 @@ namespace AppPublication.Controles
             DialogControleur.Instance.Connection.Client.DemandePhases();
         }
 
-        public static void client_OnUpdateEquipes(object sender, XElement element)
+        public void client_OnUpdateEquipes(object sender, XElement element)
         {
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
@@ -257,7 +342,7 @@ namespace AppPublication.Controles
             DC.ServerData.Participants.lecture_judokas(element, DC.ServerData);
         }
 
-        public static void client_OnListeJudokas(object sender, XElement element)
+        public void client_OnListeJudokas(object sender, XElement element)
         {
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
@@ -280,7 +365,7 @@ namespace AppPublication.Controles
             DialogControleur.Instance.Connection.Client.DemandePhases();
         }
 
-        public static void client_OnUpdateJudokas(object sender, XElement element)
+        public void client_OnUpdateJudokas(object sender, XElement element)
         {
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
@@ -295,7 +380,7 @@ namespace AppPublication.Controles
             DC.ServerData.Participants.lecture_judokas(element, DC.ServerData);
         }
         
-        public static void client_OnListePhases(object sender, XElement element)
+        public void client_OnListePhases(object sender, XElement element)
         {
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
@@ -323,7 +408,7 @@ namespace AppPublication.Controles
             DialogControleur.Instance.Connection.Client.DemandeCombats();
         }
 
-        public static void client_OnUpdatePhases(object sender, XElement element)
+        public void client_OnUpdatePhases(object sender, XElement element)
         {
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
@@ -342,7 +427,7 @@ namespace AppPublication.Controles
             DC.ServerData.Deroulement.lecture_groupes(element, DC.ServerData);
         }
 
-        public static void client_OnListeCombats(object sender, XElement element)
+        public void client_OnListeCombats(object sender, XElement element)
         {
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
@@ -367,12 +452,12 @@ namespace AppPublication.Controles
             DialogControleur.Instance.Connection.Client.DemandeArbitrage();
         }
 
-        public static void client_OnUpdateCombats2(object sender, XElement element)
+        public void client_OnUpdateCombats2(object sender, XElement element)
         {
             client_OnUpdateCombats(sender, element);
         }
 
-        public static void client_OnUpdateCombats(object sender, XElement element)
+        public void client_OnUpdateCombats(object sender, XElement element)
         {
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
@@ -388,7 +473,7 @@ namespace AppPublication.Controles
             DC.ServerData.Deroulement.lecture_combats(element, DC.ServerData);
         }
 
-        public static void client_onUpdateRencontres(object sender, XElement element)
+        public void client_onUpdateRencontres(object sender, XElement element)
         {
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
@@ -402,7 +487,7 @@ namespace AppPublication.Controles
             DC.ServerData.Deroulement.lecture_rencontres(element);
         }
 
-        public static void client_OnListeArbitrage(object sender, XElement element)
+        public void client_OnListeArbitrage(object sender, XElement element)
         {
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
@@ -424,7 +509,7 @@ namespace AppPublication.Controles
             }));
         }
 
-        public static void client_OnUpdateArbitrage(object sender, XElement element)
+        public void client_OnUpdateArbitrage(object sender, XElement element)
         {
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
@@ -438,6 +523,18 @@ namespace AppPublication.Controles
             DC.ServerData.Arbitrage.lecture_arbitres(element);
             DC.ServerData.Arbitrage.lecture_commissaires(element);
             DC.ServerData.Arbitrage.lecture_delegues(element);
+        }
+
+        #endregion
+
+        #region METHODES
+        private void SetBusyStatus(Tools.Enum.BusyStatusEnum status)
+        {
+            Application.Current.ExecOnUiThread(new Action(() =>
+            {
+                // DialogControleur.CS.RadBusyIndicator1.BusyContent = "Initialisation des données (catégorie âge, poids) ...";
+                DialogControleur.Instance.BusyStatus = Tools.Enum.BusyStatusEnum.InitDonneesCategories;
+            }));
         }
 
         #endregion
