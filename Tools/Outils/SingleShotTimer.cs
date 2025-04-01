@@ -150,7 +150,7 @@ namespace Tools.Outils
             // Supprimer le timer
             if (_timer.Dispose(waitHandle))
             {
-                // Attend l'arret des eventuels appels en cours lancer avant le Stop
+                // Attend l'arret des eventuels appels en cours lances avant le Stop
                 if (waitHandle.WaitOne(_disposeTimeout))
                 {
                     _timer = null;

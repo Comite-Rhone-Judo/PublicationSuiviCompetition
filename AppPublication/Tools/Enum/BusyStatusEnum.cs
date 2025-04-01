@@ -1,9 +1,23 @@
 ﻿namespace AppPublication.Tools.Enum
 {
-    public enum TypePouleEnum
+    public enum BusyStatusEnum
     {
-        Diagonale = 1,
-        Colonnes = 2,
-        Auto = 3
+        InitDonneesNone = -1,
+        DemandeDonneesStructures = 0,
+        InitDonneesStructures,
+        DemandeDonneesCategories,
+        InitDonneesCategories,
+        DemandeDonneesLogos,
+        InitDonneesLogos,
+        DemandeDonneesJudokas,
+        InitDonneesJudokas,
+        DemandeDonneesOrganisation,
+        InitDonneesOrganisation,
+        DemandeDonneesPhases,
+        InitDonneesPhases,
+        DemandeDonneesCombats,
+        InitDonneesCombats,
+        DemandeDonneesArbitres,
+        InitDonneesArbitres
     }
 }

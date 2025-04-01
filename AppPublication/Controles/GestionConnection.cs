@@ -109,7 +109,7 @@ namespace AppPublication.Controles
             _client.TraitementConnexion.OnAcceptConnectionTest += clientjudo_OnDemandeConnectionTest;
 
             DialogControleur.Instance.IsBusy = true;
-            DialogControleur.Instance.BusyStatus = Tools.Enum.BusyStatusEnum.InitDonneesClub;
+            DialogControleur.Instance.BusyStatus = Tools.Enum.BusyStatusEnum.InitDonneesStructures;
 
             _client.DemandConnectionCOM();
         }
