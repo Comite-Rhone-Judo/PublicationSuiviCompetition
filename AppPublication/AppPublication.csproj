@@ -148,6 +148,7 @@
     <Compile Include="Statistiques\StatistiqueItemCompteur.cs" />
     <Compile Include="Statistiques\StatistiqueItemMoyenneur.cs" />
     <Compile Include="Tools\AppInformation.cs" />
+    <Compile Include="Tools\Converter\AppStatusProgressConverter.cs" />
     <Compile Include="Tools\Converter\AppStatusConverter.cs" />
     <Compile Include="Tools\Converter\PassthroughConverter.cs" />
     <Compile Include="Tools\Converter\BoolOperationConverter.cs" />

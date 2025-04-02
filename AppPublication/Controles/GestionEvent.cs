@@ -76,7 +76,7 @@ namespace AppPublication.Controles
                 // ne doit pas arriver si on est deja connecté ou pas encore
                 if (_status == ClientJudoStatusEnum.Initializing)
                 {
-                    StopOnError();
+                    StopOnError(true, false);      // Demande l'affichage du message mais n'arrete pas le timer car on est deja dans le callback
                 }
             }
         }
@@ -95,7 +95,7 @@ namespace AppPublication.Controles
         {
             if (DialogControleur.Instance.Connection.Client == (ClientJudo)sender)
             {
-                StopClient();
+                StopClient(true);   // Il faut arreter le timer suite a la deconnexion
             }
         }
 
@@ -431,10 +431,10 @@ namespace AppPublication.Controles
 
         #region METHODES INTERNES
 
-        private void StopOnError(bool withMessage = false)
+        private void StopOnError(bool withMessage = false, bool stopTimer = false)
         {
             // Arrete le client
-            StopClient();
+            StopClient(stopTimer);
 
             // Affiche un message d'erreur a l'utilisateur
             if (withMessage)
@@ -446,7 +446,7 @@ namespace AppPublication.Controles
         /// <summary>
         /// Arrete le client JudoClient
         /// </summary>
-        private void StopClient()
+        private void StopClient(bool stopTimer = false)
         {
             DialogControleur.Instance.Connection.Client.Client.Stop();
             DialogControleur.Instance.Connection.Client = null;
@@ -455,7 +455,10 @@ namespace AppPublication.Controles
             lock (_lock)
             {
                 _status = ClientJudoStatusEnum.Disconnected;
-                _timerReponse?.Stop();
+                if (stopTimer)
+                {
+                    _timerReponse?.Stop();                      // Si appelez depuis le callback, on est dans un deadlock
+                }
             }
 
             SetBusyStatus(Tools.Enum.BusyStatusEnum.InitDonneesNone);

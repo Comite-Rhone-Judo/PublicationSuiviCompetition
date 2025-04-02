@@ -19,8 +19,12 @@
     <Converter:RunningStatusConverter x:Key="RunningStatusConverter" />
     <Converter:StatGenerationConverter x:Key="StatGenerationConverter" />
     <Converter:AppStatusConverter x:Key="AppStatusConverter" />
+    <Converter:AppStatusProgressConverter x:Key="AppStatusProgressConverter" />
     <Converter:DisplayURLStatusConverter x:Key="DisplayURLStatusConverter" />
     <Converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <Converter:BoolOperationConverter x:Key="BoolOperationConverter" />
     <Converter:PassthroughConverter x:Key="PassthroughConverter" />
+
+
+    
 </ResourceDictionary>

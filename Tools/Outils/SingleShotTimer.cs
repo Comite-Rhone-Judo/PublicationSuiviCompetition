@@ -16,6 +16,7 @@ namespace Tools.Outils
 
         private System.Threading.Timer _timer = null;   // Le timer en lui meme
         private object _lock = null;                    // Verrour interne pour la synchronisation
+        private bool _isRunning = false;                // Indique si le timer est actif
 
         #endregion
 
@@ -26,6 +27,7 @@ namespace Tools.Outils
             TimeoutMs = disposalTimeooutMs;
             _lock = new object();
             _timer = null;
+            _isRunning = false;
         }
 
         #endregion
@@ -78,6 +80,7 @@ namespace Tools.Outils
 
                 // Active le timer (sans recurrence)
                 _timer = new System.Threading.Timer(HandleTimerElapsed, null, durationMs, Timeout.Infinite);
+                _isRunning = true;
             }
         }
 
@@ -100,15 +103,10 @@ namespace Tools.Outils
                     // Appel de l'evenement
                     Elapsed?.Invoke(state);
 
-                    try
-                    {
-                        // Et RAZ le timer
-                        UnsafeStop();
-                    }
-                    catch (TimeoutException)
-                    {
-                        LogTools.Logger.Error("TimeoutException lors de la tentative d'arret du timer");
-                    }
+                    // On ne stop pas le timer car
+                    // 1 - il est prevu pour un single shot donc il ne se relancera pas
+                    // 2 - cela cree une situation de deadlock si appeler depuis le handler
+                    _isRunning = false;
                 }
             }
             finally {
@@ -165,6 +163,9 @@ namespace Tools.Outils
                     throw new TimeoutException("Timeout waiting for timer to stop");
                 }
             }
+
+            _isRunning = false;
+
         }
 
         public void Dispose()
