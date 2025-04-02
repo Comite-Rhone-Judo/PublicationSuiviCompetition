@@ -1,338 +1,332 @@
 ﻿using AppPublication.Tools;
+using AppPublication.Tools.Enum;
 using JudoClient;
 using JudoClient.Communication;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Windows;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using Tools.Enum;
 using Tools.Outils;
 
 namespace AppPublication.Controles
 {
-    public static class GestionEvent
+    public enum ClientJudoStatusEnum
     {
+        Idle = 0,               // En attente de recevoir les informations apres initialisation - update uniquement
+        Initializing = 1,       // En cours d'initialisation
+        Disconnected = 2        // Deconnecte
+    }
+
+    public class GestionEvent
+    {
+        #region CONSTANTES
+        private const int kDefaultTimeoutMs = 15000;
+        #endregion
+
+        #region MEMBRES
+        private static GestionEvent _instance = null;   // Singleton
+        private object _lock = new object();            // Pour les verrous
+        private ClientJudoStatusEnum _status = ClientJudoStatusEnum.Idle;   // Le statut du client
+        SingleShotTimer _timerReponse = null;     // Timer d'attente d'une reponse la reponse
+
+        #endregion
+
+        #region CONSTRUCTEUR
+
+        private GestionEvent()
+        {
+            _lock = new object();
+            _status = ClientJudoStatusEnum.Disconnected;
+            _timerReponse = new SingleShotTimer();
+            _timerReponse.Elapsed += OnResponseTimeout;
+        }
+
+        public static GestionEvent Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new GestionEvent();
+                }
+                return _instance;
+            }
+        }
+
+        #endregion
+
+        #region PROPERTIES
+        public int Timeout { get; set; } = kDefaultTimeoutMs;
+        #endregion
+
+        #region EVENT
+
+        /// <summary>
+        /// Callback appele si le timer de reponse arrive a expiration
+        /// </summary>
+        /// <param name="state"></param>
+        public void OnResponseTimeout(object state)
+        {
+            lock (_lock)
+            {
+                // Demande l'arret du client si on est bien en phase d'init. Dans le cas contraire, on ignore le timer car cet evenement 
+                // ne doit pas arriver si on est deja connecté ou pas encore
+                if (_status == ClientJudoStatusEnum.Initializing)
+                {
+                    StopOnError(true, false);      // Demande l'affichage du message mais n'arrete pas le timer car on est deja dans le callback
+                }
+            }
+        }
+
+        #endregion
+
         #region EVENT SERVER
 
         // La gestion des evenements se borne a actualiser les donnees de la competition en memoire
         // La generation du site est fait de maniere asynchrone par rapport a la reception des donnees
-
-        public static void client_OnEndConnection(object sender)
+        /// <summary>
+        /// Arret de la connexion
+        /// </summary>
+        /// <param name="sender"></param>
+        public void client_OnEndConnection(object sender)
         {
             if (DialogControleur.Instance.Connection.Client == (ClientJudo)sender)
             {
-                DialogControleur.Instance.Connection.Client.Client.Stop();
-                DialogControleur.Instance.Connection.Client = null;
+                StopClient(true);   // Il faut arreter le timer suite a la deconnexion
             }
         }
 
-        public static void clientjudo_OnAcceptConnectionCOM(object sender, XElement element)
+        /// <summary>
+        /// Reponse d'acception de la demande de connexion
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="element"></param>
+        public void clientjudo_OnAcceptConnectionCOM(object sender, XElement element)
         {
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
-            DialogControleur.Instance.Connection.Client.DemandeStructures();
+            lock (_lock)
+            {
+                try
+                {
+                    // Indique que l'on va demarrer un echange pour initialiser les donnees
+                    _status = ClientJudoStatusEnum.Initializing;
+
+                    SetBusyStatus(Tools.Enum.BusyStatusEnum.DemandeDonneesStructures);
+
+                    // Demande les structures au serveur
+                    DialogControleur.Instance.Connection.Client.DemandeStructures();
+
+                    // Demarre le timer d'attente de la reponse a la demande
+                    _timerReponse.Start(Timeout);
+                }
+                catch (Exception ex)
+                {
+                    // Trace l'erreur et arrete le client
+                    LogTools.Logger.Error("Erreur lors de la demande d'initialisation", ex);
+                    StopOnError(true);
+                }
+            }
         }
 
-        public static void client_OnListeStructures(object sender, XElement element)
+
+        /// <summary>
+        /// LEcture des donnees de structures contenu dans element
+        /// </summary>
+        /// <param name="element"></param>
+        private void LectureDonneesStructures(XElement element)
         {
-            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
-
-            XDocument doc = new XDocument();
-            doc.Add(element);
-            doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
-            FileTools.SaveFile(doc, ConstantFile.FileStructures);
-
-            Application.Current.ExecOnUiThread(new Action(() =>
-            {
-                // DialogControleur.CS.RadBusyIndicator1.BusyContent = "Initialisation des données (catégorie âge, poids) ...";
-                DialogControleur.Instance.BusyStatus = Tools.Enum.BusyStatusEnum.InitDonneesCategories;
-            }));
-
             DialogControleur.Instance.ServerData.Structures.lecture_clubs(element);
             DialogControleur.Instance.ServerData.Structures.lecture_comites(element);
             DialogControleur.Instance.ServerData.Structures.lecture_secteurs(element);
             DialogControleur.Instance.ServerData.Structures.lecture_ligues(element);
             DialogControleur.Instance.ServerData.Structures.lecture_pays(element);
-
-            DialogControleur.Instance.Connection.Client.DemandeCategories();
         }
 
-        public static void client_OnUpdateStructures(object sender, XElement element)
+        /// <summary>
+        /// Reception des donnees suite a une demande de structure
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="element"></param>
+        public void client_OnListeStructures(object sender, XElement element)
         {
-            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
-
-            XDocument doc = new XDocument();
-            doc.Add(element);
-            doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
-            FileTools.SaveFile(doc, ConstantFile.FileStructures);
-
-            DialogControleur.Instance.ServerData.Structures.lecture_clubs(element);
-            DialogControleur.Instance.ServerData.Structures.lecture_comites(element);
-            DialogControleur.Instance.ServerData.Structures.lecture_secteurs(element);
-            DialogControleur.Instance.ServerData.Structures.lecture_ligues(element);
-            DialogControleur.Instance.ServerData.Structures.lecture_pays(element);
+            InitializationRequestDispatcher(BusyStatusEnum.InitDonneesStructures,
+                                                    LectureDonneesStructures,
+                                                    BusyStatusEnum.DemandeDonneesCategories,
+                                                    DialogControleur.Instance.Connection.Client.DemandeCategories,
+                                                    element);
         }
 
-        public static void client_OnListeCategories(object sender, XElement element)
+        /// <summary>
+        /// Reception de mise a jour de donnees de structure
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="element"></param>
+        public void client_OnUpdateStructures(object sender, XElement element)
         {
-            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
-
-            XDocument doc = new XDocument();
-            doc.Add(element);
-            doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
-
-            FileTools.SaveFile(doc, ConstantFile.FileCategories);
-
-            Application.Current.ExecOnUiThread(new Action(() =>
-            {
-                // DialogControleur.CS.RadBusyIndicator1.BusyContent = "Initialisation des données (logos) ...";
-                DialogControleur.Instance.BusyStatus = Tools.Enum.BusyStatusEnum.InitDonneesLogos;
-            }));
-
-            DialogControleur DC = DialogControleur.Instance;
-
-            DC.ServerData.Categories.lecture_cateages(element);
-            DC.ServerData.Categories.lecture_catepoids(element);
-            DC.ServerData.Categories.lecture_ceintures(element);
-
-            DialogControleur.Instance.Connection.Client.DemandeLogos();
+            UpdateRequestDispatcher(LectureDonneesStructures, element);
         }
 
-        public static void client_OnUpdateCategories(object sender, XElement element)
+        /// <summary>
+        /// Lecture des donnees de categories contenu dans  Element
+        /// </summary>
+        /// <param name="element"></param>
+        private void LectureDonneesCategories(XElement element)
         {
-            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
-
-            XDocument doc = new XDocument();
-            doc.Add(element);
-            doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
-            FileTools.SaveFile(doc, ConstantFile.FileCategories);
-
             DialogControleur DC = DialogControleur.Instance;
             DC.ServerData.Categories.lecture_cateages(element);
             DC.ServerData.Categories.lecture_catepoids(element);
             DC.ServerData.Categories.lecture_ceintures(element);
         }
 
-        public static void client_OnListeLogos(object sender, XElement element)
+        /// <summary>
+        /// Demande de liste des categories
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="element"></param>
+        public void client_OnListeCategories(object sender, XElement element)
         {
-            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
-
-            XDocument doc = new XDocument();
-            doc.Add(element);
-            doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
-
-            FileTools.SaveFile(doc, ConstantFile.FileLogos);
-
-            Application.Current.ExecOnUiThread(new Action(() =>
-            {
-                // DialogControleur.CS.RadBusyIndicator1.BusyContent = "Initialisation des données (épreuves) ...";
-                DialogControleur.Instance.BusyStatus = Tools.Enum.BusyStatusEnum.InitDonneesEpreuves;
-            }));
-
-            try
-            {
-                DialogControleur.Instance.ServerData.Logos.lecture_logos(element);
-            }
-            catch (Exception ex)
-            {
-                LogTools.Error(ex);
-            }
-            finally
-            {
-                DialogControleur.Instance.Connection.Client.DemandeOrganisation();
-            }
+            InitializationRequestDispatcher(BusyStatusEnum.InitDonneesCategories,
+                                        LectureDonneesCategories,
+                                        BusyStatusEnum.DemandeDonneesLogos,
+                                        DialogControleur.Instance.Connection.Client.DemandeLogos,
+                                        element);
         }
 
-        public static void client_OnUpdateLogos(object sender, XElement element)
+        public void client_OnUpdateCategories(object sender, XElement element)
         {
-            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
-
-            XDocument doc = new XDocument();
-            doc.Add(element);
-            doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
-
-            FileTools.SaveFile(doc, ConstantFile.FileLogos);
-            try
-            {
-                DialogControleur.Instance.ServerData.Logos.lecture_logos(element);
-            }
-            catch (Exception ex)
-            {
-                LogTools.Error(ex);
-            }
+            UpdateRequestDispatcher(LectureDonneesCategories, element);
         }
 
-        public static void client_OnListeOrganisation(object sender, XElement element)
+        /// <summary>
+        /// Lecture des donnees Logoes contenues dans element
+        /// </summary>
+        /// <param name="element"></param>
+        private void LectureDonneesLogos(XElement element)
         {
-            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            DialogControleur.Instance.ServerData.Logos.lecture_logos(element);
+        }
 
-            XDocument doc = new XDocument();
-            doc.Add(element);
-            doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
+        public void client_OnListeLogos(object sender, XElement element)
+        {
+            InitializationRequestDispatcher(BusyStatusEnum.InitDonneesLogos,
+                            LectureDonneesLogos,
+                            BusyStatusEnum.DemandeDonneesOrganisation,
+                            DialogControleur.Instance.Connection.Client.DemandeOrganisation,
+                            element);
+        }
 
-            FileTools.SaveFile(doc, ConstantFile.FileOrganisation);
+        public void client_OnUpdateLogos(object sender, XElement element)
+        {
+            UpdateRequestDispatcher(LectureDonneesLogos, element);
+        }
 
+        /// <summary>
+        /// Lecture des donnees d'organisation contenu dans element
+        /// </summary>
+        /// <param name="element"></param>
+        private void LectureDonneesOrganisations(XElement element)
+        {
             DialogControleur DC = DialogControleur.Instance;
             DC.ServerData.Organisation.lecture_competitions(element, DC.ServerData);
             DC.ServerData.Organisation.lecture_epreuves_equipe(element, DC.ServerData);
             DC.ServerData.Organisation.lecture_epreuves(element, DC.ServerData);
-
-            Application.Current.ExecOnUiThread(new Action(() =>
-            {
-                // DialogControleur.CS.InitialisationControl();
-                // DialogControleur.CS.RadBusyIndicator1.BusyContent = "Initialisation des données (judokas) ...";
-                DialogControleur.Instance.BusyStatus = Tools.Enum.BusyStatusEnum.InitDonneesJudokas;
-            }));
-
-            if (DC.ServerData.competition.IsEquipe())
-            {
-                DialogControleur.Instance.Connection.Client.DemandeEquipes();
-            }
-            else
-            {
-                DialogControleur.Instance.Connection.Client.DemandeJudokas();
-            }
-
-            // Signale la mise a jour de la competition
-            DC.UpdateCompetition();
         }
 
-        public static void client_OnUpdateOrganisation(object sender, XElement element)
+        public void client_OnListeOrganisation(object sender, XElement element)
         {
-            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
-
-            XDocument doc = new XDocument();
-            doc.Add(element);
-            doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
-
-            FileTools.SaveFile(doc, ConstantFile.FileOrganisation);
-
-            DialogControleur DC = DialogControleur.Instance;
-            DC.ServerData.Organisation.lecture_competitions(element, DC.ServerData);
-            DC.ServerData.Organisation.lecture_epreuves_equipe(element, DC.ServerData);
-            DC.ServerData.Organisation.lecture_epreuves(element, DC.ServerData);
-
-            // Signale la mise a jour de la competition
-            DC.UpdateCompetition();
-
+            InitializationRequestDispatcher(BusyStatusEnum.InitDonneesOrganisation,
+                            LectureDonneesOrganisations,
+                            BusyStatusEnum.DemandeDonneesJudokas,
+                           () =>
+                           {
+                               DialogControleur DC = DialogControleur.Instance;
+                               if (DC.ServerData.competition.IsEquipe())
+                               {
+                                   DialogControleur.Instance.Connection.Client.DemandeEquipes();
+                               }
+                               else
+                               {
+                                   DialogControleur.Instance.Connection.Client.DemandeJudokas();
+                               }
+                           },
+                            element);
         }
 
-        public static void client_OnListeEquipes(object sender, XElement element)
+        public void client_OnUpdateOrganisation(object sender, XElement element)
         {
-            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
-
-            XDocument doc = new XDocument();
-            doc.Add(element);
-            doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
-
-            FileTools.SaveFile(doc, ConstantFile.FileEquipes);
-
-            Application.Current.ExecOnUiThread(new Action(() =>
+            UpdateRequestDispatcher( (XElement elem) =>
             {
-                // DialogControleur.CS.RadBusyIndicator1.BusyContent = "Initialisation des données (phases) ...";
-                DialogControleur.Instance.BusyStatus = Tools.Enum.BusyStatusEnum.InitDonneesPhases;
-            }));
-
-            DialogControleur DC = DialogControleur.Instance;
-            DC.ServerData.Participants.lecture_epreuves_judokas(element, DC.ServerData);
-            DC.ServerData.Participants.lecture_equipes(element);
-            DC.ServerData.Participants.lecture_judokas(element, DC.ServerData);
-
-            DialogControleur.Instance.Connection.Client.DemandePhases();
+                LectureDonneesOrganisations(elem);
+                // Signale la mise a jour de la competition
+                DialogControleur.Instance.UpdateCompetition();
+            },
+            element);
         }
 
-        public static void client_OnUpdateEquipes(object sender, XElement element)
+        /// <summary>
+        /// Lecture des donnees des equipes contenu dans element
+        /// </summary>
+        /// <param name="element"></param>
+        private void LectureDonneesEquipes(XElement element)
         {
-            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
-
-            XDocument doc = new XDocument();
-            doc.Add(element);
-            doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
-
-            FileTools.SaveFile(doc, ConstantFile.FileEquipes);
-
             DialogControleur DC = DialogControleur.Instance;
             DC.ServerData.Participants.lecture_epreuves_judokas(element, DC.ServerData);
             DC.ServerData.Participants.lecture_equipes(element);
             DC.ServerData.Participants.lecture_judokas(element, DC.ServerData);
         }
 
-        public static void client_OnListeJudokas(object sender, XElement element)
+        public void client_OnListeEquipes(object sender, XElement element)
         {
-            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
-            XDocument doc = new XDocument();
-            doc.Add(element);
-            doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
-
-            FileTools.SaveFile(doc, ConstantFile.FileJudokas);
-
-            Application.Current.ExecOnUiThread(new Action(() =>
-            {
-                // DialogControleur.CS.RadBusyIndicator1.BusyContent = "Initialisation des données (phases) ...";
-                DialogControleur.Instance.BusyStatus = Tools.Enum.BusyStatusEnum.InitDonneesPhases;
-            }));
-
-            DialogControleur DC = DialogControleur.Instance;
-            DC.ServerData.Participants.lecture_epreuves_judokas(element, DC.ServerData);
-            DC.ServerData.Participants.lecture_judokas(element, DC.ServerData);
-
-            DialogControleur.Instance.Connection.Client.DemandePhases();
+            InitializationRequestDispatcher(BusyStatusEnum.InitDonneesJudokas,
+                            LectureDonneesEquipes,
+                            BusyStatusEnum.DemandeDonneesPhases,
+                            DialogControleur.Instance.Connection.Client.DemandePhases,
+                            element);
         }
 
-        public static void client_OnUpdateJudokas(object sender, XElement element)
+
+        public void client_OnUpdateEquipes(object sender, XElement element)
         {
-            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            UpdateRequestDispatcher(LectureDonneesEquipes, element);
+        }
 
-            XDocument doc = new XDocument();
-            doc.Add(element);
-            doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
-
-            FileTools.SaveFile(doc, ConstantFile.FileJudokas);
-
+        /// <summary>
+        /// lecture des donnees des judokas contenu dans element
+        /// </summary>
+        /// <param name="element"></param>
+        private void LectureDonneesJudokas(XElement element)
+        {
             DialogControleur DC = DialogControleur.Instance;
             DC.ServerData.Participants.lecture_epreuves_judokas(element, DC.ServerData);
             DC.ServerData.Participants.lecture_judokas(element, DC.ServerData);
         }
-        
-        public static void client_OnListePhases(object sender, XElement element)
+
+        public void client_OnListeJudokas(object sender, XElement element)
         {
-            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            InitializationRequestDispatcher(BusyStatusEnum.InitDonneesJudokas,
+                            LectureDonneesJudokas,
+                            BusyStatusEnum.DemandeDonneesPhases,
+                            DialogControleur.Instance.Connection.Client.DemandePhases,
+                            element);
 
-            XDocument doc = new XDocument();
-            doc.Add(element);
-            doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
-
-            FileTools.SaveFile(doc, ConstantFile.FilePhases);
-
-            Application.Current.ExecOnUiThread(new Action(() =>
-            {
-                // DialogControleur.CS.RadBusyIndicator1.BusyContent = "Initialisation des données (combats) ...";
-                DialogControleur.Instance.BusyStatus = Tools.Enum.BusyStatusEnum.InitDonneesCombats;
-            }));
-
-            DialogControleur DC = DialogControleur.Instance;
-
-            DC.ServerData.Deroulement.clear_deroulement();
-            DC.ServerData.Deroulement.lecture_phases(element);
-            DC.ServerData.Deroulement.lecture_participants(element);
-            DC.ServerData.Deroulement.lecture_decoupages(element);
-            DC.ServerData.Deroulement.lecture_poules(element);
-            DC.ServerData.Deroulement.lecture_groupes(element, DC.ServerData);
-
-            DialogControleur.Instance.Connection.Client.DemandeCombats();
         }
 
-        public static void client_OnUpdatePhases(object sender, XElement element)
+        public void client_OnUpdateJudokas(object sender, XElement element)
         {
-            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            UpdateRequestDispatcher(LectureDonneesJudokas, element);
+        }
 
-            XDocument doc = new XDocument();
-            doc.Add(element);
-            doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
-
-            FileTools.SaveFile(doc, ConstantFile.FilePhases);
-
+        /// <summary>
+        /// Lecture des donnees des phases contenu dans element
+        /// </summary>
+        /// <param name="element"></param>
+        private void LectureDonneesPhases(XElement element)
+        {
             DialogControleur DC = DialogControleur.Instance;
             DC.ServerData.Deroulement.clear_deroulement();
             DC.ServerData.Deroulement.lecture_phases(element);
@@ -342,102 +336,270 @@ namespace AppPublication.Controles
             DC.ServerData.Deroulement.lecture_groupes(element, DC.ServerData);
         }
 
-        public static void client_OnListeCombats(object sender, XElement element)
+        public void client_OnListePhases(object sender, XElement element)
         {
-            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            InitializationRequestDispatcher(BusyStatusEnum.InitDonneesPhases,
+                            LectureDonneesPhases,
+                            BusyStatusEnum.DemandeDonneesCombats,
+                            DialogControleur.Instance.Connection.Client.DemandeCombats,
+                            element);
+        }
 
-            XDocument doc = new XDocument();
-            doc.Add(element);
-            doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
+        public void client_OnUpdatePhases(object sender, XElement element)
+        {
+            UpdateRequestDispatcher(LectureDonneesPhases, element);
+        }
 
-            FileTools.SaveFile(doc, ConstantFile.FileCombats);
-
-            Application.Current.ExecOnUiThread(new Action(() =>
-            {
-                // DialogControleur.CS.RadBusyIndicator1.BusyContent = "Initialisation des données (arbitres) ...";
-                DialogControleur.Instance.BusyStatus = Tools.Enum.BusyStatusEnum.InitDonneesArbitres;
-            }));
-
+        /// <summary>
+        /// Lecture des donnees des combats contenu dans element
+        /// </summary>
+        /// <param name="element"></param>
+        private void LectureDonneesCombats(XElement element)
+        {
             DialogControleur DC = DialogControleur.Instance;
-
             DC.ServerData.Deroulement.lecture_rencontres(element);
             DC.ServerData.Deroulement.lecture_feuilles(element);
             DC.ServerData.Deroulement.lecture_combats(element, DC.ServerData);
-
-            DialogControleur.Instance.Connection.Client.DemandeArbitrage();
         }
 
-        public static void client_OnUpdateCombats2(object sender, XElement element)
+        public void client_OnListeCombats(object sender, XElement element)
+        {
+            InitializationRequestDispatcher(BusyStatusEnum.InitDonneesCombats,
+                            LectureDonneesCombats,
+                            BusyStatusEnum.DemandeDonneesArbitres,
+                            DialogControleur.Instance.Connection.Client.DemandeArbitrage,
+                            element);
+        }
+
+        public void client_OnUpdateCombats2(object sender, XElement element)
         {
             client_OnUpdateCombats(sender, element);
         }
 
-        public static void client_OnUpdateCombats(object sender, XElement element)
+        public void client_OnUpdateCombats(object sender, XElement element)
         {
-            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
-
-            XDocument doc = new XDocument();
-            doc.Add(element);
-            doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
-
-            FileTools.SaveFile(doc, ConstantFile.FileCombats);
-
-            DialogControleur DC = DialogControleur.Instance;
-            DC.ServerData.Deroulement.lecture_rencontres(element);
-            DC.ServerData.Deroulement.lecture_feuilles(element);
-            DC.ServerData.Deroulement.lecture_combats(element, DC.ServerData);
+            UpdateRequestDispatcher(LectureDonneesCombats, element);
         }
 
-        public static void client_onUpdateRencontres(object sender, XElement element)
+        /// <summary>
+        /// Lecture des donnees des rencontres contenu dans element
+        /// </summary>
+        /// <param name="element"></param>
+        private void LectureDonneesRencontres(XElement element)
         {
-            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
-
-            XDocument doc = new XDocument();
-            doc.Add(element);
-            doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
-
-            FileTools.SaveFile(doc, ConstantFile.FileRencontres);
-
             DialogControleur DC = DialogControleur.Instance;
             DC.ServerData.Deroulement.lecture_rencontres(element);
         }
 
-        public static void client_OnListeArbitrage(object sender, XElement element)
+        public void client_onUpdateRencontres(object sender, XElement element)
         {
-            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            UpdateRequestDispatcher(LectureDonneesRencontres, element);
+        }
 
-            XDocument doc = new XDocument();
-            doc.Add(element);
-            doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
-
-            FileTools.SaveFile(doc, ConstantFile.FileCombats);
-
+        /// <summary>
+        /// lecture des donnees d'arbitrage contenu dans element
+        /// </summary>
+        /// <param name="element"></param>
+        private void LectureDonneesArbitrage(XElement element)
+        {
             DialogControleur DC = DialogControleur.Instance;
             DC.ServerData.Arbitrage.lecture_arbitres(element);
             DC.ServerData.Arbitrage.lecture_commissaires(element);
             DC.ServerData.Arbitrage.lecture_delegues(element);
+        }
 
-            Application.Current.ExecOnUiThread(new Action(() =>
+        public void client_OnListeArbitrage(object sender, XElement element)
+        {
+            InitializationRequestDispatcher(BusyStatusEnum.InitDonneesArbitres,
+                                                   (XElement elem) =>
+                                                   {
+                                                       LectureDonneesArbitrage(elem);
+                                                       // Signale la mise a jour de la competition a la fin du processus
+                                                       DialogControleur.Instance.UpdateCompetition();
+                                                   },
+                                                   BusyStatusEnum.InitDonneesNone,
+                                                   null,
+                                                   element);
+        }
+
+        public void client_OnUpdateArbitrage(object sender, XElement element)
+        {
+            UpdateRequestDispatcher(LectureDonneesArbitrage, element);
+        }
+
+        #endregion
+
+        #region METHODES INTERNES
+
+        private void StopOnError(bool withMessage = false, bool stopTimer = false)
+        {
+            // Arrete le client
+            StopClient(stopTimer);
+
+            // Affiche un message d'erreur a l'utilisateur
+            if (withMessage)
             {
-                // DialogControleur.CS.RadBusyIndicator1.IsBusy = false;
-                DialogControleur.Instance.IsBusy = false;
+                LogTools.Alert("Une erreur est survenue lors du chargement initiale des données. Les données peuvent être incorrecte. Veuillez essayer de vous reconnecter au serveur", "Initialisation");
+            }
+        }
+
+        /// <summary>
+        /// Arrete le client JudoClient
+        /// </summary>
+        private void StopClient(bool stopTimer = false)
+        {
+            DialogControleur.Instance.Connection.Client.Client.Stop();
+            DialogControleur.Instance.Connection.Client = null;
+
+
+            lock (_lock)
+            {
+                _status = ClientJudoStatusEnum.Disconnected;
+                if (stopTimer)
+                {
+                    _timerReponse?.Stop();                      // Si appelez depuis le callback, on est dans un deadlock
+                }
+            }
+
+            SetBusyStatus(Tools.Enum.BusyStatusEnum.InitDonneesNone);
+        }
+
+
+        /// <summary>
+        /// Positionne le status d'occupation du gestionnaire de connexion
+        /// </summary>
+        /// <param name="status"></param>
+        private void SetBusyStatus(Tools.Enum.BusyStatusEnum status)
+        {
+            System.Windows.Application.Current.ExecOnUiThread(new Action(() =>
+            {
+                bool isb = false;
+                switch (status)
+                {
+                    case Tools.Enum.BusyStatusEnum.InitDonneesStructures:
+                    case Tools.Enum.BusyStatusEnum.InitDonneesCategories:
+                    case Tools.Enum.BusyStatusEnum.InitDonneesLogos:
+                    case Tools.Enum.BusyStatusEnum.InitDonneesJudokas:
+                    case Tools.Enum.BusyStatusEnum.InitDonneesOrganisation:
+                    case Tools.Enum.BusyStatusEnum.InitDonneesPhases:
+                    case Tools.Enum.BusyStatusEnum.InitDonneesCombats:
+                    case Tools.Enum.BusyStatusEnum.InitDonneesArbitres:
+                    case Tools.Enum.BusyStatusEnum.DemandeDonneesStructures:
+                    case Tools.Enum.BusyStatusEnum.DemandeDonneesCategories:
+                    case Tools.Enum.BusyStatusEnum.DemandeDonneesLogos:
+                    case Tools.Enum.BusyStatusEnum.DemandeDonneesJudokas:
+                    case Tools.Enum.BusyStatusEnum.DemandeDonneesOrganisation:
+                    case Tools.Enum.BusyStatusEnum.DemandeDonneesPhases:
+                    case Tools.Enum.BusyStatusEnum.DemandeDonneesCombats:
+                    case Tools.Enum.BusyStatusEnum.DemandeDonneesArbitres:
+                        {
+                            isb = true;
+                            break;
+                        }
+                    case Tools.Enum.BusyStatusEnum.InitDonneesNone:
+                    default:
+                        {
+                            isb = false;
+                            break;
+                        }
+                }
+
+                DialogControleur.Instance.IsBusy = isb;
+                if (isb)
+                {
+                    DialogControleur.Instance.BusyStatus = status;
+                }
             }));
         }
 
-        public static void client_OnUpdateArbitrage(object sender, XElement element)
+        /// <summary>
+        /// Dispatcher general pour traiter les demandes d'initialisation
+        /// </summary>
+        /// <param name="currentStatus">Etat a la reception de la donnees</param>
+        /// <param name="nextStatus">Etat suivante</param>
+        /// <param name="dataAction">Action pour traiter les donnees</param>
+        /// <param name="nextAction">Action pour la demande suivante</param>
+        /// <param name="element">Les donnees recues</param>
+        private void InitializationRequestDispatcher(BusyStatusEnum currentStatus, Action<XElement> dataAction, BusyStatusEnum nextStatus, Action nextAction, XElement element)
+        {
+            lock (_lock)
+            {
+                LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
+                // Arrete le timer de reponse
+                _timerReponse.Stop();
+
+                // Verifie si on est bien entrain d'initialiser les donnees
+                if (_status != ClientJudoStatusEnum.Initializing)
+                {
+                    return;
+                }
+
+                try
+                {
+                    // Positionne le status courant pour le binding (thread safe)
+                    SetBusyStatus(currentStatus);
+
+                    // Met a jour l'heure des donnees
+                    XDocument doc = new XDocument();
+                    doc.Add(element);
+                    doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
+
+                    // Appelle  le callback pour traiter les donnees
+                    dataAction?.Invoke(element);
+
+                    // Effectue la demande suivante si necessaire
+                    if (nextStatus != BusyStatusEnum.InitDonneesNone && null != nextAction)
+                    {
+                        SetBusyStatus(nextStatus);
+ 
+                        // appel le callback suivant
+                        nextAction?.Invoke();
+
+                        // Demarre le timer d'attente de la reponse a la demande
+                        _timerReponse.Start(Timeout);
+                    }
+                    else
+                    {
+                        // Fin de l'initialisation
+                        SetBusyStatus(Tools.Enum.BusyStatusEnum.InitDonneesNone);
+                        _status = ClientJudoStatusEnum.Idle;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LogTools.Logger.Error("Erreur lors de la lecture des donnees recues", ex);
+                    StopOnError(true);      // Arrete le gestionnaire d'evenement sur une erreur
+                }
+            }
+        }
+
+        private void UpdateRequestDispatcher(Action<XElement> action, XElement element)
         {
             LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
-            XDocument doc = new XDocument();
-            doc.Add(element);
-            doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
+            // Verifie l'etat du gestionnaire (on ne peut pas recevoir ces donnees pendant une initialisation)
+            lock (_lock)
+            {
+                if (_status != ClientJudoStatusEnum.Idle)
+                {
+                    return;
+                }
+            }
 
-            FileTools.SaveFile(doc, ConstantFile.FileCombats);
+            try
+            {
+                XDocument doc = new XDocument();
+                doc.Add(element);
+                doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
 
-            DialogControleur DC = DialogControleur.Instance;
-            DC.ServerData.Arbitrage.lecture_arbitres(element);
-            DC.ServerData.Arbitrage.lecture_commissaires(element);
-            DC.ServerData.Arbitrage.lecture_delegues(element);
+                action?.Invoke(element);
+
+            }
+            catch (Exception ex)
+            {
+                LogTools.Logger.Error("Erreur lors de la mise a jour des donnees", ex);
+            }
         }
 
         #endregion

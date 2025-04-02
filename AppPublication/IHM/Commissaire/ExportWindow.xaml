@@ -27,7 +27,7 @@
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <telerik:RadBusyIndicator IsIndeterminate="False" Grid.ColumnSpan="3" BusyContent="{Binding BusyStatus, Converter={StaticResource AppStatusConverter}}" IsBusy="{Binding IsBusy}">
+            <telerik:RadBusyIndicator IsIndeterminate="False" Grid.ColumnSpan="3" ProgressValue="{Binding BusyStatus, Converter={StaticResource AppStatusProgressConverter}}" BusyContent="{Binding BusyStatus, Converter={StaticResource AppStatusConverter}}" IsBusy="{Binding IsBusy}">
                 <Grid Margin="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
