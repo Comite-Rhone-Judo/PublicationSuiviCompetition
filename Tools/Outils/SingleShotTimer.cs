@@ -39,6 +39,11 @@ namespace Tools.Outils
         /// </summary>
         public event Action<object> Elapsed;
 
+        public bool IsRunning
+        {
+            get { return _isRunning; }
+        }
+
         /// <summary>
         /// Timeout unitaire pour l'acquisition du verrou
         /// </summary>
