@@ -31,6 +31,8 @@ namespace KernelImpl.Noyau.Organisation
         public string remoteId_cateage { get; set; }
         public Nullable<int> id_epreuve_equipe { get; set; }
         public string lib_epreuve_equipe { get; set; }
+        public EpreuveEquipeTypeEnum type_epreuve_equipe { get; set; }
+        public int epreuveRef_epreuve_equipe { get; set; }
         public Nullable<int> phase1 { get; set; }
         public Nullable<int> phase2 { get; set; }
         public string nom_compet { get; set; }
@@ -71,6 +73,8 @@ namespace KernelImpl.Noyau.Organisation
 
             id_epreuve_equipe = ep != null ? ep.id : 0;
             lib_epreuve_equipe = ep != null ? ep.libelle : "";
+            type_epreuve_equipe = ep != null ? ep.type : EpreuveEquipeTypeEnum.Normal;
+            epreuveRef_epreuve_equipe = ep != null ? ep.epreuveRef : -1;
 
             //phase1 = ;
             //phase2 = ;

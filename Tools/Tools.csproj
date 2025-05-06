@@ -135,8 +135,10 @@
     <Compile Include="Enum\ConstantCouleur.cs" />
     <Compile Include="Enum\ConstantFile.cs" />
     <Compile Include="Enum\ConstantResource.cs" />
+    <Compile Include="Enum\EpreuveEquipeTypeEnum.cs" />
     <Compile Include="Enum\EpreuveSexeEnum.cs" />
     <Compile Include="Enum\ExportDisplayModeEnum.cs" />
+    <Compile Include="Enum\ReglementEquipeEnum.cs" />
     <Compile Include="Enum\ServerResponseEnum.cs" />
     <Compile Include="Enum\SiteEnum.cs" />
     <Compile Include="Enum\QualifieEnum.cs" />
