@@ -61,18 +61,18 @@ namespace KernelImpl.Noyau.Organisation
             Categories.CategoriePoids c_poids = DC.Categories.CPoids.FirstOrDefault(o => o.id == epreuve.categoriePoids);
 
             nom_catepoids = c_poids != null ? c_poids.nom : epreuve.nom;
-            remoteId_catepoids = c_poids != null ? c_poids.remoteId : "";
+            remoteId_catepoids = c_poids != null ? c_poids.remoteId : String.Empty;
 
             Categories.CategorieAge c_age = DC.Categories.CAges.FirstOrDefault(o => o.id == epreuve.categorieAge);
 
-            nom_cateage = c_age != null ? c_age.nom : "";
+            nom_cateage = c_age != null ? c_age.nom : String.Empty;
             ordre = c_age != null ? c_age.ordre : "0";
-            remoteId_cateage = c_age != null ? c_age.remoteId : "";
+            remoteId_cateage = c_age != null ? c_age.remoteId : String.Empty;
 
             Epreuve_Equipe ep = DC.Organisation.EpreuveEquipes.FirstOrDefault(o => o.id == epreuve.epreuve_equipe);
 
             id_epreuve_equipe = ep != null ? ep.id : 0;
-            lib_epreuve_equipe = ep != null ? ep.libelle : "";
+            lib_epreuve_equipe = ep != null ? ep.libelle : String.Empty;
             type_epreuve_equipe = ep != null ? ep.type : EpreuveEquipeTypeEnum.Normal;
             epreuveRef_epreuve_equipe = ep != null ? ep.epreuveRef : -1;
 
@@ -81,7 +81,7 @@ namespace KernelImpl.Noyau.Organisation
 
             Competition compet = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
 
-            nom_compet = compet != null ? compet.nom : "";
+            nom_compet = compet != null ? compet.nom : String.Empty;
         }
 
 

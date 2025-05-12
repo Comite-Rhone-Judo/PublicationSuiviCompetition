@@ -1918,6 +1918,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Export\xslt\Site\footer_script_site.xslt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\site\starter-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\xslt\Site\panel_epreuve.xslt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

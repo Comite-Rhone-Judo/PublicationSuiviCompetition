@@ -5,7 +5,7 @@
 ]>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:import href="Tools/Export/xslt/Site/entete.xslt"/>
-	
+		
 	<xsl:output method="html" indent="yes" />
 	<xsl:param name="style"></xsl:param>
 	<xsl:param name="js"></xsl:param>
@@ -82,6 +82,9 @@
 						<xsl:if test="//epreuve[1]/@sexe='M'">
 							Masculins&nbsp;
 						
+						</xsl:if>
+						<xsl:if test="//epreuve[1]/@sexe='M'">
+							Mixte&nbsp;
 						</xsl:if>
 						<xsl:value-of select="//epreuve[1]/@nom"/>
 					</h5>
@@ -289,6 +292,7 @@
 	</xsl:template>
 	
 	<!-- Combat -->
+	<!-- TODO Ajouter l'affichage de la categorie qui commence pour une rencontre en equipe -->
 	<xsl:template match="combat">
 		<!-- DEFINITION DES VARIABLES -->
 

@@ -105,6 +105,9 @@
 							<xsl:if test="//epreuve[1]/@sexe='M'">
 								Masculins&nbsp;
 							</xsl:if>
+							<xsl:if test="//epreuve[1]/@sexe='X'">
+								Mixte&nbsp;
+							</xsl:if>
 							<xsl:value-of select="//epreuve[1]/@nom"/>
 						</h5>
 					</div>
@@ -223,6 +226,7 @@
 		<!-- Si un des ID judoka vaut zero, c'est une place vide. Si judoka est null, c'est pas encore de combattant, on n'affiche rien -->
 		<xsl:if test="count($combat/score[@judoka = 0]) = 0">
 		<tr>
+			<!-- Judoka 1 -->
 			<td style="width:40%">
 				<xsl:attribute name="class">
 					<xsl:choose>
@@ -256,8 +260,10 @@
 						<xsl:otherwise>
 							<header>
 								<xsl:value-of select="ancestor::tapis[1]/participants/participant[@judoka = $participant1]/descendant::*[1]/@nom"/>
-								<xsl:text disable-output-escaping="yes">&#032;</xsl:text>
-								<xsl:value-of select="ancestor::tapis[1]/participants/participant[@judoka = $participant1]/descendant::*[1]/@prenom"/>
+								<xsl:if test="$typeCompetition != 1">
+									<xsl:text disable-output-escaping="yes">&#032;</xsl:text>
+									<xsl:value-of select="ancestor::tapis[1]/participants/participant[@judoka = $participant1]/descendant::*[1]/@prenom"/>
+								</xsl:if>
 							</header>
 							<footer class="w3-tiny">
 								<xsl:variable name="ecartement1"
@@ -302,9 +308,11 @@
 					</xsl:choose>
 				</div>
 			</td>
+
+			<!-- Info Combat -->
 			<td class=" w3-pale-yellow w3-small w3-card w3-cell-middle w3-center"  style="width:20%">
 				<!-- Affiche le nom de l'epreuve -->
-				<div class="w3-container">
+				<div class="w3-container w3-cell">
 					<header>
 						<xsl:value-of select="//epreuve[@ID = $epreuve]/@nom"/>
 						<xsl:if test="$combat/feuille/@repechage = 'true'">
@@ -324,7 +332,20 @@
 						</footer>
 					</xsl:if>
 				</div>
+				<!-- Pour les equipes, affiche la catégorie qui commence -->
+				<xsl:if test="$typeCompetition = 1">
+					<div class="w3-container w3-cell w3-cell-middle">
+						<header>
+							<img class="img" width="20" src="../img/starter-32.png" />
+						</header>
+						<footer class="w3-tiny">
+							<xsl:value-of select="$combat/@firstrencontrelib"/>
+						</footer>
+					</div>
+				</xsl:if>
 			</td>
+
+			<!-- Judoka 2 -->
 			<td style="width:40%">
 				<xsl:attribute name="class">
 					<xsl:choose>
@@ -360,8 +381,10 @@
 						<xsl:otherwise>
 							<header>
 								<xsl:value-of select="ancestor::tapis[1]/participants/participant[@judoka = $participant2]/descendant::*[1]/@nom"/>
-								<xsl:text disable-output-escaping="yes">&#032;</xsl:text>
-								<xsl:value-of select="ancestor::tapis[1]/participants/participant[@judoka = $participant2]/descendant::*[1]/@prenom"/>
+								<xsl:if test="$typeCompetition != 1">
+									<xsl:text disable-output-escaping="yes">&#032;</xsl:text>
+									<xsl:value-of select="ancestor::tapis[1]/participants/participant[@judoka = $participant2]/descendant::*[1]/@prenom"/>
+								</xsl:if>
 							</header>
 							<footer class="w3-tiny">
 								<xsl:variable name="ecartement2"

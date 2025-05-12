@@ -5,6 +5,7 @@
 ]>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:import href="Tools/Export/xslt/Site/entete.xslt"/>
+	<xsl:import href="Tools/Export/xslt/Site/panel_epreuve.xslt"/>
 	
 	<xsl:output method="html" indent="yes"/>
 	<xsl:param name="style"/>
@@ -91,8 +92,7 @@
 	<!-- Un bloc -->
 	<xsl:template name="competition">
 		<xsl:param name="idcompetition"/>
-		<xsl:variable name="apos">'</xsl:variable>
-		<xsl:variable name="prefixPanel">
+		<xsl:variable name="prefixCompetition">
 			<xsl:value-of select="concat('ProchainCombatComp',$idcompetition,'ContentPanel')"/>
 		</xsl:variable>
 
@@ -108,100 +108,20 @@
 			<div class="w3-cell-row">
 				<!-- Chaque panneau est un panel contenant une carte, utilise cell + mobile pour gerer horizontal/vertical selon la taille de l'ecran -->
 				<!-- Categorie F -->
-				<xsl:if test="count(./epreuve[@sexe = 'F']) > 0">
-					<div class="w3-panel w3-cell w3-mobile">
-						<!-- La carte des donnees elle meme -->
-						<div class="w3-card">
-							<!-- entete avec un bouton permet d'ouvrir fermer le contenu de la carte -->
-							<header class="w3-bar w3-light-green w3-large">
-								<button class="w3-bar-item w3-light-green">
-									<xsl:attribute name="onclick">
-										<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel,'F',$apos,')')"/>
-									</xsl:attribute>
-									<img class="img" width="25" src="../img/up_circular-32.png" style="display: none;">
-										<xsl:attribute name="id">
-											<xsl:value-of select="concat($prefixPanel,'F', 'Collapse')"/>
-										</xsl:attribute>
-									</img>
-									<img class="img" width="25" src="../img/down_circular-32.png">
-										<xsl:attribute name="id">
-											<xsl:value-of select="concat($prefixPanel,'F', 'Expand')"/>
-										</xsl:attribute>
-									</img>
-									Catégorie Féminine
-								</button>
-							</header>
-							<div class="w3-container" style="display:none;">
-								<xsl:attribute name="id">
-									<xsl:value-of select="concat($prefixPanel,'F')"/>
-								</xsl:attribute>
-								<xsl:apply-templates select="./epreuve[@sexe = 'F']"/>
-							</div>
-						</div>
-					</div>
-				</xsl:if>
+				<xsl:call-template name="panelEpreuve">
+					<xsl:with-param name="sexeCode" select="'F'"/>
+					<xsl:with-param name="prefixPanel" select="$prefixCompetition"/>
+				</xsl:call-template>
 				<!-- Categorie M -->
-				<xsl:if test="count(./epreuve[@sexe = 'M']) > 0">
-					<div class="w3-panel w3-cell w3-mobile">
-						<div class="w3-card">
-							<header class="w3-bar w3-light-green w3-large">
-								<button class="w3-bar-item w3-light-green">
-									<xsl:attribute name="onclick">
-										<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel,'M',$apos,')')"/>
-									</xsl:attribute>
-									<img class="img" width="25" src="../img/up_circular-32.png" style="display: none;">
-										<xsl:attribute name="id">
-											<xsl:value-of select="concat($prefixPanel,'M', 'Collapse')"/>
-										</xsl:attribute>
-									</img>
-									<img class="img" width="25" src="../img/down_circular-32.png">
-										<xsl:attribute name="id">
-											<xsl:value-of select="concat($prefixPanel,'M', 'Expand')"/>
-										</xsl:attribute>
-									</img>
-									Catégorie Masculine
-								</button>
-							</header>
-							<div class="w3-container" style="display:none;">
-								<xsl:attribute name="id">
-									<xsl:value-of select="concat($prefixPanel,'M')"/>
-								</xsl:attribute>
-								<xsl:apply-templates select="./epreuve[@sexe = 'M']"/>
-							</div>
-						</div>
-					</div>
-				</xsl:if>
-				<!-- Sans Categorie -->
-				<xsl:if test="count(./epreuve[not(@sexe)]) > 0">
-					<div class="w3-panel w3-cell w3-mobile">
-						<div class="w3-card">
-							<header class="w3-bar w3-light-green w3-large">
-								<button class="w3-bar-item w3-light-green">
-									<xsl:attribute name="onclick">
-										<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel,$apos,')')"/>
-									</xsl:attribute>
-									<img class="img" width="25" src="../img/up_circular-32.png" style="display: none;">
-										<xsl:attribute name="id">
-											<xsl:value-of select="concat($prefixPanel,'Collapse')"/>
-										</xsl:attribute>
-									</img>
-									<img class="img" width="25" src="../img/down_circular-32.png">
-										<xsl:attribute name="id">
-											<xsl:value-of select="concat($prefixPanel,'Expand')"/>
-										</xsl:attribute>
-									</img>
-									Sans Catégorie
-								</button>
-							</header>
-							<div class="w3-container" style="display:none;">
-								<xsl:attribute name="id">
-									<xsl:value-of select="$prefixPanel"/>
-								</xsl:attribute>
-								<xsl:apply-templates select="./epreuve[not(@sexe)]"/>
-							</div>
-						</div>
-					</div>
-				</xsl:if>
+				<xsl:call-template name="panelEpreuve">
+					<xsl:with-param name="sexeCode" select="'M'"/>
+					<xsl:with-param name="prefixPanel" select="$prefixCompetition"/>
+				</xsl:call-template>
+				<!-- Mixte -->
+				<xsl:call-template name="panelEpreuve">
+					<xsl:with-param name="sexeCode" select="'X'"/>
+					<xsl:with-param name="prefixPanel" select="$prefixCompetition"/>
+				</xsl:call-template>
 			</div>
 		</div>
 

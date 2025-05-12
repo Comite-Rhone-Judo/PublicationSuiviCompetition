@@ -209,7 +209,19 @@ namespace KernelImpl.Noyau.Deroulement
             using (TimedLock.Lock((DC.Organisation.vepreuves as ICollection).SyncRoot))
             {
                 vue_epreuve ep = DC.Organisation.vepreuves.FirstOrDefault(o => o.id == first_rencontre);
-                xcombat.SetAttributeValue(ConstantXML.Combat_FirstRencontreLib, ep != null ? ep.nom_catepoids : "");
+                string lib = string.Empty;
+                if (ep != null) {
+                    // Pour les epreuves mixte, on ajoute le sexe de l'epreuve qui commence, sinon, juste le nom de la cate de poids
+                    if(ep.type_epreuve_equipe == EpreuveEquipeTypeEnum.Mixte)
+                    {
+                        lib = string.Format("{0} {1} kg", ep.lib_sexe, ep.nom_catepoids);
+                    }
+                    else
+                    {
+                        lib = string.Format("{0} kg", ep.nom_catepoids);
+                    }
+                }
+                xcombat.SetAttributeValue(ConstantXML.Combat_FirstRencontreLib, lib);
             }
             xcombat.SetAttributeValue(ConstantXML.Combat_Niveau, niveau);
             xcombat.SetAttributeValue(ConstantXML.Combat_Temps, temps.ToString(CultureInfo.InvariantCulture));

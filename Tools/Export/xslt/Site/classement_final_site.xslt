@@ -22,6 +22,7 @@
 	<xsl:variable select="/competition/@PublierAffectationTapis = 'True'" name="affAffectationTapis"/>
 	<xsl:variable select="/competition/@DelaiActualisationClientSec" name="delayActualisationClient"/>
 	<xsl:variable select="/competition/@Logo" name="logo"/>
+	<xsl:variable name="typeCompetition" select="/competition/@type"/>
 
 	<xsl:template match="/*">
 		<!-- ENTETE HTML -->
@@ -74,12 +75,14 @@
 				</div>
 				<div class="w3-card w3-indigo">
 					<h5>
-
 						<xsl:if test="//epreuve[1]/@sexe='F'">
 							Féminines&nbsp;
 						</xsl:if>
 						<xsl:if test="//epreuve[1]/@sexe='M'">
 							Masculins&nbsp;
+						</xsl:if>
+						<xsl:if test="//epreuve[1]/@sexe='X'">
+							Mixte&nbsp;
 						</xsl:if>
 						<xsl:value-of select="//epreuve[1]/@nom"/>
 					</h5>
@@ -92,7 +95,14 @@
 				<thead>
 					<tr class="w3-light-blue w3-text-indigo">
 						<th>&nbsp;</th>
-						<th>NOM et Prénom</th>
+						<xsl:choose>
+							<xsl:when test="$typeCompetition = 1">
+								<th>NOM</th>
+							</xsl:when>
+							<xsl:otherwise>
+								<th>NOM et Prénom</th>
+							</xsl:otherwise>
+						</xsl:choose>
 						<th>Club</th>
 						<th>Comité</th>
 						<th>Ligue</th>
@@ -118,6 +128,7 @@
 	<!-- Ligne de classement -->
 	<xsl:template match="participant">
 		<xsl:variable name="participant1" select="@judoka" />
+		<!-- En cas d'equipe, le 1er descendant est l'equipe, sinon, un judoka-->
 		<xsl:variable name="j1" select="//participants/participant[@judoka=$participant1]/descendant::*[1]" />
 
 		<xsl:variable name="club" select="$j1/@club"/>
@@ -139,8 +150,10 @@
 			</td>
 			<td>
 				<xsl:value-of select="$j1/@nom"/>
-				&nbsp;
-				<xsl:value-of select="$j1/@prenom"/>
+				<!-- Ajoute le prenom uniquement en individuel/Shiai -->
+				<xsl:if test="$typeCompetition != 1">
+					&nbsp;<xsl:value-of select="$j1/@prenom"/>
+				</xsl:if>
 			</td>
 			<td>
 				<xsl:value-of select="$clubN/nomCourt"/>
