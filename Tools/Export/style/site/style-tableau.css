@@ -188,3 +188,12 @@ td.tas-combat-repechage-vertical {
         border-radius: 0 50% 50% 0;
         width: 100%;
     }
+
+div.tas-combat-premiere-categorie {
+    transform: translateY(-10px);
+    width: 80px;
+}
+
+div.tas-participant-premiere-categorie {
+    width: 80px;
+}

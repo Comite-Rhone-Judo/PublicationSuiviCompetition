@@ -577,6 +577,19 @@
 			</xsl:choose>
 		</xsl:variable>
 
+		<!-- Extrait la couleur en fonction de la categorie-->
+		<xsl:variable name="firstrencontreclass">
+			<xsl:choose>
+				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'M'">
+					w3-blue
+				</xsl:when>
+				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'F'">
+					w3-purple
+				</xsl:when>
+				<xsl:otherwise>''</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+
 		<!-- DIV Contenant l'affichage du combat -->
 		<!-- une case = 1 combat (div + table de 5 lignes) avec la ligne de jonction -->
 		<div class="tas-combat-niveau">
@@ -602,28 +615,37 @@
 									</xsl:attribute>
 									<!-- Nom du Judoka (complet au debut et en final, uniquement initial dans les combats suivants -->
 									<header class="w3-small">
-										<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut (sauf 1er niveau) -->
-										<xsl:if test="$typeCompetition = 1 and $combat/@niveau != $niveaumax">
-												<span class="w3-tiny">
-													(<img class="img" width="20" src="../img/starter-32.png" /><xsl:value-of select="$combat/@firstrencontrelib"/>)&nbsp;
-												</span>
-										</xsl:if>
-
-										<xsl:value-of select="$judoka1/@nom"/>
-										<xsl:text disable-output-escaping="yes">&#160;</xsl:text>
-
-										<!-- Sauf en equipe, ajoute la 1ere lettre du prenom avec un . ou le prenom complet au 1er rang -->
-										<xsl:if test="$typeCompetition != 1">
-											<xsl:if test="$combat/@niveau != $niveaumax">
-												<xsl:value-of
-												select="substring($judoka1/@prenom, 1, 1)"/>
-												<xsl:text disable-output-escaping="yes">.</xsl:text>
+										<div class="w3-cell-row">
+											<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut (sauf 1er niveau) -->
+											<xsl:if test="$typeCompetition = 1 and $combat/@niveau != $niveaumax">
+												<div>
+													<xsl:attribute name="class">
+														w3-cell tas-combat-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-xlarge w3-tiny w3-left-align
+														<xsl:value-of select="$firstrencontreclass"/>
+													</xsl:attribute>
+													<img class="img" width="20" src="../img/starter-32.png" />
+													<xsl:value-of select="$combat/@firstrencontrelib"/>
+												</div>
 											</xsl:if>
-											<!-- 1er niveau, on met le nom complet -->
-											<xsl:if test="$combat/@niveau = $niveaumax ">
-												<xsl:value-of select="$judoka1/@prenom"/>
-											</xsl:if>
-										</xsl:if>
+
+											<div class="w3-cell">
+												<xsl:value-of select="$judoka1/@nom"/>
+												<xsl:text disable-output-escaping="yes">&#160;</xsl:text>
+
+												<!-- Sauf en equipe, ajoute la 1ere lettre du prenom avec un . ou le prenom complet au 1er rang -->
+												<xsl:if test="$typeCompetition != 1">
+													<xsl:if test="$combat/@niveau != $niveaumax">
+														<xsl:value-of
+														select="substring($judoka1/@prenom, 1, 1)"/>
+														<xsl:text disable-output-escaping="yes">.</xsl:text>
+													</xsl:if>
+													<!-- 1er niveau, on met le nom complet -->
+													<xsl:if test="$combat/@niveau = $niveaumax ">
+														<xsl:value-of select="$judoka1/@prenom"/>
+													</xsl:if>
+												</xsl:if>
+											</div>
+										</div>
 									</header>
 
 									<!-- Insert le nom du club uniquement au debut du tableau -->
@@ -631,48 +653,56 @@
 										<footer class="w3-tiny">
 											<xsl:variable name="ecartement1" select="//phase[@id = $combat/@phase]/@ecartement"/>
 
-											<!-- Pour les competitions en equipes, ajoute la categorie qui commence sauf si le 2nd combattant est vide -->
-											<xsl:if test="$typeCompetition = 1 and $judoka2/@nom">
-												<span class="w3-tiny">
-													(<img class="img" width="20" src="../img/starter-32.png" /><xsl:value-of select="$combat/@firstrencontrelib"/>)&nbsp;
-												</span>
-											</xsl:if>
-											
-											<xsl:choose>
-												<xsl:when test="$ecartement1 = '3'">
-													<xsl:if test="$typeCompetition != 1">
-														<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
-														<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-														<xsl:value-of select="$comite1"/>
-													</xsl:if>
-													<xsl:if test="$typeCompetition = 1">
-														<xsl:value-of select="$comite1"/>
-													</xsl:if>
-												</xsl:when>
+											<div class="w3-cell-row">
+												<!-- Pour les competitions en equipes, ajoute la categorie qui commence sauf si le 2nd combattant est vide -->
+												<xsl:if test="$typeCompetition = 1 and $judoka2/@nom">
+													<div>
+														<xsl:attribute name="class">
+															w3-cell tas-participant-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-xlarge w3-tiny w3-left-align
+															<xsl:value-of select="$firstrencontreclass"/>
+														</xsl:attribute>
+														<img class="img" width="20" src="../img/starter-32.png" />
+														<xsl:value-of select="$combat/@firstrencontrelib"/>
+													</div>
+												</xsl:if>
+												<div class="w3-cell">
+													<xsl:choose>
+														<xsl:when test="$ecartement1 = '3'">
+															<xsl:if test="$typeCompetition != 1">
+																<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
+																<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+																<xsl:value-of select="$comite1"/>
+															</xsl:if>
+															<xsl:if test="$typeCompetition = 1">
+																<xsl:value-of select="$comite1"/>
+															</xsl:if>
+														</xsl:when>
 
-												<xsl:when test="$ecartement1 = '4'">
-													<xsl:if test="$typeCompetition != 1">
-														<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
-														<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-														<xsl:value-of select="//ligue[@ID = $ligue1]/nomCourt"/>
-													</xsl:if>
-													<xsl:if test="$typeCompetition = 1">
-														<xsl:value-of
-														select="//ligue[@ID = $ligue1]/nomCourt"/>
-													</xsl:if>
-												</xsl:when>
+														<xsl:when test="$ecartement1 = '4'">
+															<xsl:if test="$typeCompetition != 1">
+																<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
+																<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+																<xsl:value-of select="//ligue[@ID = $ligue1]/nomCourt"/>
+															</xsl:if>
+															<xsl:if test="$typeCompetition = 1">
+																<xsl:value-of
+																select="//ligue[@ID = $ligue1]/nomCourt"/>
+															</xsl:if>
+														</xsl:when>
 
-												<xsl:otherwise>
-													<xsl:if test="$typeCompetition != 1">
-														<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
-														<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-														<xsl:value-of select="$comite1"/>
-													</xsl:if>
-													<xsl:if test="$typeCompetition = 1">
-														<xsl:value-of select="$comite1"/>
-													</xsl:if>
-												</xsl:otherwise>
-											</xsl:choose>
+														<xsl:otherwise>
+															<xsl:if test="$typeCompetition != 1">
+																<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
+																<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+																<xsl:value-of select="$comite1"/>
+															</xsl:if>
+															<xsl:if test="$typeCompetition = 1">
+																<xsl:value-of select="$comite1"/>
+															</xsl:if>
+														</xsl:otherwise>
+													</xsl:choose>
+												</div>
+											</div>
 										</footer>
 									</xsl:if>
 								</div>
@@ -701,13 +731,20 @@
 										</xsl:choose>
 									</xsl:attribute>
 									<header class="w3-small">
-										<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut (sauf 1er niveau) -->
-										<xsl:if test="$typeCompetition = 1 and $combat/@niveau != $niveaumax">
-											<span class="w3-tiny">
-												(<img class="img" width="20" src="../img/starter-32.png" /><xsl:value-of select="$combat/@firstrencontrelib"/>)&nbsp;
-											</span>
-										</xsl:if>
-										&nbsp;
+										<div class="w3-cell-row">
+											<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut (sauf 1er niveau) -->
+											<xsl:if test="$typeCompetition = 1 and $combat/@niveau != $niveaumax">
+												<div>
+													<xsl:attribute name="class">
+														w3-cell tas-combat-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-xlarge w3-tiny w3-left-align
+														<xsl:value-of select="$firstrencontreclass"/>
+													</xsl:attribute>
+													<img class="img" width="20" src="../img/starter-32.png" />
+													<xsl:value-of select="$combat/@firstrencontrelib"/>
+												</div>
+											</xsl:if>
+											<div class="w3-cell">&nbsp;</div>
+										</div>
 									</header>
 									<xsl:if test="$combat/@niveau = $niveaumax">
 										<footer class="w3-tiny">&nbsp;</footer>
@@ -761,28 +798,36 @@
 									</xsl:attribute>
 									<!-- Nom du Judoka (complet au debut et en final, uniquement initial dans les combats -->
 									<header class="w3-small">
-										<!-- Pour les competitions en equipes, ajoute la categorie qui commence -->
-										<xsl:if test="$typeCompetition = 1 and $combat/@niveau != $niveaumax">
-											<span class="w3-tiny">
-												(<img class="img" width="20" src="../img/starter-32.png" /><xsl:value-of select="$combat/@firstrencontrelib"/>)&nbsp;
-											</span>
-										</xsl:if>
-
-										<xsl:value-of select="$judoka2/@nom"/>
-										<xsl:text disable-output-escaping="yes">&#160;</xsl:text>
-										
-										<!-- Sauf en equipe, ajoute la 1ere lettre du prenom avec un . ou le prenom complet au 1er rang -->
-										<xsl:if test="$typeCompetition != 1">
-											<xsl:if test="$combat/@niveau != $niveaumax">
-												<xsl:value-of
-												select="substring($judoka2/@prenom, 1, 1)"/>
-												<xsl:text disable-output-escaping="yes">.</xsl:text>
+										<div class="w3-cell-row">
+											<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut (sauf 1er niveau) -->
+											<xsl:if test="$typeCompetition = 1 and $combat/@niveau != $niveaumax">
+												<div>
+													<xsl:attribute name="class">
+														w3-cell tas-combat-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-xlarge w3-tiny w3-left-align
+														<xsl:value-of select="$firstrencontreclass"/>
+													</xsl:attribute>
+													<img class="img" width="20" src="../img/starter-32.png" />
+													<xsl:value-of select="$combat/@firstrencontrelib"/>
+												</div>
 											</xsl:if>
+											<div class="w3-cell">
+												<xsl:value-of select="$judoka2/@nom"/>
+												<xsl:text disable-output-escaping="yes">&#160;</xsl:text>
 
-											<xsl:if test="$combat/@niveau = $niveaumax">
-												<xsl:value-of select="$judoka2/@prenom"/>
-											</xsl:if>
-										</xsl:if>
+												<!-- Sauf en equipe, ajoute la 1ere lettre du prenom avec un . ou le prenom complet au 1er rang -->
+												<xsl:if test="$typeCompetition != 1">
+													<xsl:if test="$combat/@niveau != $niveaumax">
+														<xsl:value-of
+														select="substring($judoka2/@prenom, 1, 1)"/>
+														<xsl:text disable-output-escaping="yes">.</xsl:text>
+													</xsl:if>
+
+													<xsl:if test="$combat/@niveau = $niveaumax">
+														<xsl:value-of select="$judoka2/@prenom"/>
+													</xsl:if>
+												</xsl:if>
+											</div>
+										</div>
 									</header>
 
 									<!-- Insert le nom du club uniquement au debut du tableau -->
@@ -790,47 +835,56 @@
 										<footer class="w3-tiny">
 											<xsl:variable name="ecartement2" select="//phase[@id = $combat/@phase]/@ecartement"/>
 
-											<!-- Pour les competitions en equipes, ajoute la categorie qui commence sauf si le 1er combattant est vide -->
-											<xsl:if test="$typeCompetition = 1 and $judoka1/@nom">
-												<span class="w3-tiny">
-													(<img class="img" width="20" src="../img/starter-32.png" /><xsl:value-of select="$combat/@firstrencontrelib"/>)&nbsp;
-												</span>
-											</xsl:if>
-											<xsl:choose>
-												<xsl:when test="$ecartement2 = '3'">
-													<xsl:if test="$typeCompetition != 1">
-														<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
-														<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-														<xsl:value-of select="$comite2"/>
-													</xsl:if>
-													<xsl:if test="$typeCompetition = 1">
-														<xsl:value-of select="$comite2"/>
-													</xsl:if>
-												</xsl:when>
+											<div class="w3-cell-row">
+												<!-- Pour les competitions en equipes, ajoute la categorie qui commence sauf si le 2nd combattant est vide -->
+												<xsl:if test="$typeCompetition = 1 and $judoka1/@nom">
+													<div>
+														<xsl:attribute name="class">
+															w3-cell tas-participant-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-xlarge w3-tiny w3-left-align
+															<xsl:value-of select="$firstrencontreclass"/>
+														</xsl:attribute>
+														<img class="img" width="20" src="../img/starter-32.png" />
+														<xsl:value-of select="$combat/@firstrencontrelib"/>
+													</div>
+												</xsl:if>
+												<div class="w3-cell">
+													<xsl:choose>
+														<xsl:when test="$ecartement2 = '3'">
+															<xsl:if test="$typeCompetition != 1">
+																<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
+																<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+																<xsl:value-of select="$comite2"/>
+															</xsl:if>
+															<xsl:if test="$typeCompetition = 1">
+																<xsl:value-of select="$comite2"/>
+															</xsl:if>
+														</xsl:when>
 
-												<xsl:when test="$ecartement2 = '4'">
-													<xsl:if test="$typeCompetition != 1">
-														<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
-														<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-														<xsl:value-of select="//ligue[@ID = $ligue2]/nomCourt"/>
-													</xsl:if>
-													<xsl:if test="$typeCompetition = 1">
-														<xsl:value-of
-														select="//ligue[@ID = $ligue2]/nomCourt"/>
-													</xsl:if>
-												</xsl:when>
+														<xsl:when test="$ecartement2 = '4'">
+															<xsl:if test="$typeCompetition != 1">
+																<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
+																<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+																<xsl:value-of select="//ligue[@ID = $ligue2]/nomCourt"/>
+															</xsl:if>
+															<xsl:if test="$typeCompetition = 1">
+																<xsl:value-of
+																select="//ligue[@ID = $ligue2]/nomCourt"/>
+															</xsl:if>
+														</xsl:when>
 
-												<xsl:otherwise>
-													<xsl:if test="$typeCompetition != 1">
-														<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
-														<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-														<xsl:value-of select="$comite2"/>
-													</xsl:if>
-													<xsl:if test="$typeCompetition = 1">
-														<xsl:value-of select="$comite2"/>
-													</xsl:if>
-												</xsl:otherwise>
-											</xsl:choose>
+														<xsl:otherwise>
+															<xsl:if test="$typeCompetition != 1">
+																<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
+																<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+																<xsl:value-of select="$comite2"/>
+															</xsl:if>
+															<xsl:if test="$typeCompetition = 1">
+																<xsl:value-of select="$comite2"/>
+															</xsl:if>
+														</xsl:otherwise>
+													</xsl:choose>
+												</div>
+											</div>
 										</footer>
 									</xsl:if>
 								</div>
@@ -859,13 +913,22 @@
 										</xsl:choose>
 									</xsl:attribute>
 									<header class="w3-small">
-										<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut (sauf 1er niveau) -->
-										<xsl:if test="$typeCompetition = 1 and $combat/@niveau != $niveaumax">
-											<span class="w3-tiny">
-												(<img class="img" width="20" src="../img/starter-32.png" /><xsl:value-of select="$combat/@firstrencontrelib"/>)&nbsp;
-											</span>
-										</xsl:if>
-										&nbsp;
+										<div class="w3-cell-row">
+											<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut (sauf 1er niveau) -->
+											<xsl:if test="$typeCompetition = 1 and $combat/@niveau != $niveaumax">
+												<div>
+													<xsl:attribute name="class">
+														w3-cell tas-combat-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-xlarge w3-tiny w3-left-align
+														<xsl:value-of select="$firstrencontreclass"/>
+													</xsl:attribute>
+													<img class="img" width="20" src="../img/starter-32.png" />
+													<xsl:value-of select="$combat/@firstrencontrelib"/>
+												</div>
+											</xsl:if>
+											<div class="w3-cell">
+												&nbsp;
+											</div>
+										</div>
 									</header>
 									<xsl:if test="$combat/@niveau = $niveaumax">
 										<footer class="w3-tiny">&nbsp;</footer>
@@ -916,6 +979,20 @@
 		<xsl:variable name="hdivbar">
 			<xsl:value-of select="$filler + $hcombat + $hcombat"/>
 		</xsl:variable>
+		
+				<!-- Extrait la couleur en fonction de la categorie-->
+		<xsl:variable name="firstrencontreclass">
+			<xsl:choose>
+				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'M'">
+					w3-blue
+				</xsl:when>
+				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'F'">
+					w3-purple
+				</xsl:when>
+				<xsl:otherwise>''</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+
 
 		<!-- DIV de spacer pour decaler les combats -->
 		<div>
@@ -951,28 +1028,37 @@
 									</xsl:attribute>
 									<!-- Nom du Judoka (complet au debut et en final, uniquement initial dans les combats -->
 									<header class="w3-small">
-										<!-- Pour les competitions en equipes, ajoute la categorie qui commence -->
-										<xsl:if test="$typeCompetition = 1 and $combat/@niveau != $niveaumax">
-											<span class="w3-tiny">
-												(<img class="img" width="20" src="../img/starter-32.png" /><xsl:value-of select="$combat/@firstrencontrelib"/>)&nbsp;
-											</span>
-										</xsl:if>
-
-										<xsl:value-of select="$judoka1/@nom"/>
-										<xsl:text disable-output-escaping="yes">&#160;</xsl:text>
-
-										<!-- Sauf en equipe, ajoute la 1ere lettre du prenom avec un . ou le prenom complet au 1er rang -->
-										<xsl:if test="$typeCompetition != 1">
-											<xsl:if test="$combat/@niveau != $niveaumax">
-												<xsl:value-of
-												select="substring($judoka1/@prenom, 1, 1)"/>
-												<xsl:text disable-output-escaping="yes">.</xsl:text>
+										<div class="w3-cell-row">
+											<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut (sauf 1er niveau) -->
+											<xsl:if test="$typeCompetition = 1 and $combat/@niveau != $niveaumax">
+												<div>
+													<xsl:attribute name="class">
+														w3-cell tas-combat-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-xlarge w3-tiny w3-left-align
+														<xsl:value-of select="$firstrencontreclass"/>
+													</xsl:attribute>
+													<img class="img" width="20" src="../img/starter-32.png" />
+													<xsl:value-of select="$combat/@firstrencontrelib"/>
+												</div>
 											</xsl:if>
+											<div class="w3-cell">
 
-											<xsl:if test="$combat/@niveau = $niveaumax">
-												<xsl:value-of select="$judoka1/@prenom"/>
-											</xsl:if>
-										</xsl:if>
+												<xsl:value-of select="$judoka1/@nom"/>
+												<xsl:text disable-output-escaping="yes">&#160;</xsl:text>
+
+												<!-- Sauf en equipe, ajoute la 1ere lettre du prenom avec un . ou le prenom complet au 1er rang -->
+												<xsl:if test="$typeCompetition != 1">
+													<xsl:if test="$combat/@niveau != $niveaumax">
+														<xsl:value-of
+														select="substring($judoka1/@prenom, 1, 1)"/>
+														<xsl:text disable-output-escaping="yes">.</xsl:text>
+													</xsl:if>
+
+													<xsl:if test="$combat/@niveau = $niveaumax">
+														<xsl:value-of select="$judoka1/@prenom"/>
+													</xsl:if>
+												</xsl:if>
+											</div>
+										</div>
 									</header>
 
 									<!-- Insert le nom du club uniquement au debut du tableau -->
@@ -980,49 +1066,57 @@
 										<footer class="w3-tiny">
 											<xsl:variable name="ecartement1" select="//phase[@id = $combat/@phase]/@ecartement"/>
 
+											<div class="w3-cell-row">
+												<!-- Pour les competitions en equipes, ajoute la categorie qui commence sauf si le 2nd combattant est vide -->
+												<xsl:if test="$typeCompetition = 1 and $judoka2/@nom">
+													<div>
+														<xsl:attribute name="class">
+															w3-cell tas-participant-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-xlarge w3-tiny w3-left-align
+															<xsl:value-of select="$firstrencontreclass"/>
+														</xsl:attribute>
+														<img class="img" width="20" src="../img/starter-32.png" />
+														<xsl:value-of select="$combat/@firstrencontrelib"/>
+													</div>
+												</xsl:if>
+												<div class="w3-cell">
 
-											<!-- Pour les competitions en equipes, ajoute la categorie qui commence sauf si 2nd combattant est vide -->
-											<xsl:if test="$typeCompetition = 1 and $judoka2/@nom">
-												<span class="w3-tiny">
-													(<img class="img" width="20" src="../img/starter-32.png" /><xsl:value-of select="$combat/@firstrencontrelib"/>)&nbsp;
-												</span>
-											</xsl:if>
+													<xsl:choose>
+														<xsl:when test="$ecartement1 = '3'">
+															<xsl:if test="$typeCompetition != 1">
+																<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
+																<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+																<xsl:value-of select="$comite1"/>
+															</xsl:if>
+															<xsl:if test="$typeCompetition = 1">
+																<xsl:value-of select="$comite1"/>
+															</xsl:if>
+														</xsl:when>
 
-											<xsl:choose>
-												<xsl:when test="$ecartement1 = '3'">
-													<xsl:if test="$typeCompetition != 1">
-														<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
-														<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-														<xsl:value-of select="$comite1"/>
-													</xsl:if>
-													<xsl:if test="$typeCompetition = 1">
-														<xsl:value-of select="$comite1"/>
-													</xsl:if>
-												</xsl:when>
+														<xsl:when test="$ecartement1 = '4'">
+															<xsl:if test="$typeCompetition != 1">
+																<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
+																<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+																<xsl:value-of select="//ligue[@ID = $ligue1]/nomCourt"/>
+															</xsl:if>
+															<xsl:if test="$typeCompetition = 1">
+																<xsl:value-of
+																select="//ligue[@ID = $ligue1]/nomCourt"/>
+															</xsl:if>
+														</xsl:when>
 
-												<xsl:when test="$ecartement1 = '4'">
-													<xsl:if test="$typeCompetition != 1">
-														<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
-														<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-														<xsl:value-of select="//ligue[@ID = $ligue1]/nomCourt"/>
-													</xsl:if>
-													<xsl:if test="$typeCompetition = 1">
-														<xsl:value-of
-														select="//ligue[@ID = $ligue1]/nomCourt"/>
-													</xsl:if>
-												</xsl:when>
-
-												<xsl:otherwise>
-													<xsl:if test="$typeCompetition != 1">
-														<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
-														<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-														<xsl:value-of select="$comite1"/>
-													</xsl:if>
-													<xsl:if test="$typeCompetition = 1">
-														<xsl:value-of select="$comite1"/>
-													</xsl:if>
-												</xsl:otherwise>
-											</xsl:choose>
+														<xsl:otherwise>
+															<xsl:if test="$typeCompetition != 1">
+																<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
+																<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+																<xsl:value-of select="$comite1"/>
+															</xsl:if>
+															<xsl:if test="$typeCompetition = 1">
+																<xsl:value-of select="$comite1"/>
+															</xsl:if>
+														</xsl:otherwise>
+													</xsl:choose>
+												</div>
+											</div>
 										</footer>
 									</xsl:if>
 								</div>
@@ -1051,23 +1145,41 @@
 										</xsl:choose>
 									</xsl:attribute>
 									<header class="w3-small">
-										<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut (sauf 1er niveau) -->
-										<xsl:if test="$typeCompetition = 1 and $combat/@niveau != $niveaumax">
-											<span class="w3-tiny">
-												(<img class="img" width="20" src="../img/starter-32.png" /><xsl:value-of select="$combat/@firstrencontrelib"/>)&nbsp;
-											</span>
-										</xsl:if>
-										&nbsp;
+										<div class="w3-cell-row">
+											<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut (sauf 1er niveau) -->
+											<xsl:if test="$typeCompetition = 1 and $combat/@niveau != $niveaumax">
+												<div>
+													<xsl:attribute name="class">
+														w3-cell tas-combat-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-xlarge w3-tiny w3-left-align
+														<xsl:value-of select="$firstrencontreclass"/>
+													</xsl:attribute>
+													<img class="img" width="20" src="../img/starter-32.png" />
+													<xsl:value-of select="$combat/@firstrencontrelib"/>
+												</div>
+											</xsl:if>
+											<div class="w3-cell">
+												&nbsp;
+											</div>
+										</div>
 									</header>
 									<xsl:if test="$combat/@niveau = $niveaumax">
 										<footer class="w3-tiny">
-											<!-- Pour les competitions en equipes, ajoute la categorie qui commence sauf si 2nd combattant est vide -->
-											<xsl:if test="$typeCompetition = 1">
-												<span class="w3-tiny">
-													(<img class="img" width="20" src="../img/starter-32.png" /><xsl:value-of select="$combat/@firstrencontrelib"/>)&nbsp;
-												</span>
-											</xsl:if>
-											&nbsp;
+											<div class="w3-cell-row">
+												<!-- Pour les competitions en equipes, ajoute la categorie qui commence -->
+												<xsl:if test="$typeCompetition = 1">
+													<div>
+														<xsl:attribute name="class">
+															w3-cell tas-participant-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-xlarge w3-tiny w3-left-align
+															<xsl:value-of select="$firstrencontreclass"/>
+														</xsl:attribute>
+														<img class="img" width="20" src="../img/starter-32.png" />
+														<xsl:value-of select="$combat/@firstrencontrelib"/>
+													</div>
+												</xsl:if>
+												<div class="w3-cell">
+													&nbsp;
+												</div>
+											</div>
 										</footer>
 									</xsl:if>
 								</div>
@@ -1135,28 +1247,37 @@
 									</xsl:attribute>
 									<!-- Nom du Judoka (complet au debut et en final, uniquement initial dans les combats -->
 									<header class="w3-small">
-										<!-- Pour les competitions en equipes, ajoute la categorie qui commence -->
-										<xsl:if test="$typeCompetition = 1 and $combat/@niveau != $niveaumax">
-											<span class="w3-tiny">
-												(<img class="img" width="20" src="../img/starter-32.png" /><xsl:value-of select="$combat/@firstrencontrelib"/>)&nbsp;
-											</span>
-										</xsl:if>
-
-										<xsl:value-of select="$judoka2/@nom"/>
-										<xsl:text disable-output-escaping="yes">&#160;</xsl:text>
-
-										<!-- Sauf en equipe, ajoute la 1ere lettre du prenom avec un . ou le prenom complet au 1er rang -->
-										<xsl:if test="$typeCompetition != 1">
-											<xsl:if test="$combat/@niveau != $niveaumax">
-												<xsl:value-of
-												select="substring($judoka2/@prenom, 1, 1)"/>
-												<xsl:text disable-output-escaping="yes">.</xsl:text>
+										<div class="w3-cell-row">
+											<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut (sauf 1er niveau) -->
+											<xsl:if test="$typeCompetition = 1 and $combat/@niveau != $niveaumax">
+												<div>
+													<xsl:attribute name="class">
+														w3-cell tas-combat-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-xlarge w3-tiny w3-left-align
+														<xsl:value-of select="$firstrencontreclass"/>
+													</xsl:attribute>
+													<img class="img" width="20" src="../img/starter-32.png" />
+													<xsl:value-of select="$combat/@firstrencontrelib"/>
+												</div>
 											</xsl:if>
+											<div class="w3-cell">
 
-											<xsl:if test="$combat/@niveau = $niveaumax">
-												<xsl:value-of select="$judoka2/@prenom"/>
-											</xsl:if>
-										</xsl:if>
+												<xsl:value-of select="$judoka2/@nom"/>
+												<xsl:text disable-output-escaping="yes">&#160;</xsl:text>
+
+												<!-- Sauf en equipe, ajoute la 1ere lettre du prenom avec un . ou le prenom complet au 1er rang -->
+												<xsl:if test="$typeCompetition != 1">
+													<xsl:if test="$combat/@niveau != $niveaumax">
+														<xsl:value-of
+														select="substring($judoka2/@prenom, 1, 1)"/>
+														<xsl:text disable-output-escaping="yes">.</xsl:text>
+													</xsl:if>
+
+													<xsl:if test="$combat/@niveau = $niveaumax">
+														<xsl:value-of select="$judoka2/@prenom"/>
+													</xsl:if>
+												</xsl:if>
+											</div>
+										</div>
 									</header>
 
 									<!-- Insert le nom du club uniquement au debut du tableau -->
@@ -1164,49 +1285,57 @@
 										<footer class="w3-tiny">
 											<xsl:variable name="ecartement2" select="//phase[@id = $combat/@phase]/@ecartement"/>
 
-											<!-- Pour les competitions en equipes, ajoute la categorie qui commence sauf si 1er combattant est vide -->
-											<xsl:if test="$typeCompetition = 1 and $judoka1/@nom">
-												<span class="w3-tiny">
-													(<img class="img" width="20" src="../img/starter-32.png" /><xsl:value-of select="$combat/@firstrencontrelib"/>)&nbsp;
-												</span>
-											</xsl:if>
+											<div class="w3-cell-row">
+												<!-- Pour les competitions en equipes, ajoute la categorie qui commence sauf si le 2nd combattant est vide -->
+												<xsl:if test="$typeCompetition = 1 and $judoka1/@nom">
+													<div>
+														<xsl:attribute name="class">
+															w3-cell tas-participant-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-xlarge w3-tiny w3-left-align
+															<xsl:value-of select="$firstrencontreclass"/>
+														</xsl:attribute>
+														<img class="img" width="20" src="../img/starter-32.png" />
+														<xsl:value-of select="$combat/@firstrencontrelib"/>
+													</div>
+												</xsl:if>
+												<div class="w3-cell">
 
+													<xsl:choose>
+														<xsl:when test="$ecartement2 = '3'">
+															<xsl:if test="$typeCompetition != 1">
+																<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
+																<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+																<xsl:value-of select="$comite2"/>
+															</xsl:if>
+															<xsl:if test="$typeCompetition = 1">
+																<xsl:value-of select="$comite2"/>
+															</xsl:if>
+														</xsl:when>
 
-											<xsl:choose>
-												<xsl:when test="$ecartement2 = '3'">
-													<xsl:if test="$typeCompetition != 1">
-														<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
-														<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-														<xsl:value-of select="$comite2"/>
-													</xsl:if>
-													<xsl:if test="$typeCompetition = 1">
-														<xsl:value-of select="$comite2"/>
-													</xsl:if>
-												</xsl:when>
+														<xsl:when test="$ecartement2 = '4'">
+															<xsl:if test="$typeCompetition != 1">
+																<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
+																<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+																<xsl:value-of select="//ligue[@ID = $ligue2]/nomCourt"/>
+															</xsl:if>
+															<xsl:if test="$typeCompetition = 1">
+																<xsl:value-of
+																select="//ligue[@ID = $ligue2]/nomCourt"/>
+															</xsl:if>
+														</xsl:when>
 
-												<xsl:when test="$ecartement2 = '4'">
-													<xsl:if test="$typeCompetition != 1">
-														<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
-														<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-														<xsl:value-of select="//ligue[@ID = $ligue2]/nomCourt"/>
-													</xsl:if>
-													<xsl:if test="$typeCompetition = 1">
-														<xsl:value-of
-														select="//ligue[@ID = $ligue2]/nomCourt"/>
-													</xsl:if>
-												</xsl:when>
-
-												<xsl:otherwise>
-													<xsl:if test="$typeCompetition != 1">
-														<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
-														<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-														<xsl:value-of select="$comite2"/>
-													</xsl:if>
-													<xsl:if test="$typeCompetition = 1">
-														<xsl:value-of select="$comite2"/>
-													</xsl:if>
-												</xsl:otherwise>
-											</xsl:choose>
+														<xsl:otherwise>
+															<xsl:if test="$typeCompetition != 1">
+																<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
+																<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+																<xsl:value-of select="$comite2"/>
+															</xsl:if>
+															<xsl:if test="$typeCompetition = 1">
+																<xsl:value-of select="$comite2"/>
+															</xsl:if>
+														</xsl:otherwise>
+													</xsl:choose>
+												</div>
+											</div>
 										</footer>
 									</xsl:if>
 								</div>
@@ -1242,23 +1371,41 @@
 										</xsl:choose>
 									</xsl:attribute>
 									<header class="w3-small">
-										<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut (sauf 1er niveau) -->
-										<xsl:if test="$typeCompetition = 1 and $combat/@niveau != $niveaumax">
-											<span class="w3-tiny">
-												(<img class="img" width="20" src="../img/starter-32.png" /><xsl:value-of select="$combat/@firstrencontrelib"/>)&nbsp;
-											</span>
-										</xsl:if>
-										&nbsp;
+										<div class="w3-cell-row">
+											<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut (sauf 1er niveau) -->
+											<xsl:if test="$typeCompetition = 1 and $combat/@niveau != $niveaumax">
+												<div>
+													<xsl:attribute name="class">
+														w3-cell tas-participant-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-xlarge w3-tiny w3-left-align
+														<xsl:value-of select="$firstrencontreclass"/>
+													</xsl:attribute>
+													<img class="img" width="20" src="../img/starter-32.png" />
+													<xsl:value-of select="$combat/@firstrencontrelib"/>
+												</div>
+											</xsl:if>
+											<div class="w3-cell">
+												&nbsp;
+											</div>
+										</div>
 									</header>
 									<xsl:if test="$combat/@niveau = $niveaumax">
 										<footer class="w3-tiny">
-											<!-- Pour les competitions en equipes, ajoute la categorie qui commence -->
-											<xsl:if test="$typeCompetition = 1">
-												<span class="w3-tiny">
-													(<img class="img" width="20" src="../img/starter-32.png" /><xsl:value-of select="$combat/@firstrencontrelib"/>)&nbsp;
-												</span>
-											</xsl:if>
-											&nbsp;
+											<div class="w3-cell-row">
+												<!-- Pour les competitions en equipes, ajoute la categorie qui commence -->
+												<xsl:if test="$typeCompetition = 1 and $judoka2/@nom">
+													<div>
+														<xsl:attribute name="class">
+															w3-cell tas-combat-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-xlarge w3-tiny w3-left-align
+															<xsl:value-of select="$firstrencontreclass"/>
+														</xsl:attribute>
+														<img class="img" width="20" src="../img/starter-32.png" />
+														<xsl:value-of select="$combat/@firstrencontrelib"/>
+													</div>
+												</xsl:if>
+												<div class="w3-cell">
+													&nbsp;
+												</div>
+											</div>
 										</footer>
 									</xsl:if>
 								</div>
