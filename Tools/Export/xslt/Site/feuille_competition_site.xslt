@@ -1060,7 +1060,15 @@
 										&nbsp;
 									</header>
 									<xsl:if test="$combat/@niveau = $niveaumax">
-										<footer class="w3-tiny">&nbsp;</footer>
+										<footer class="w3-tiny">
+											<!-- Pour les competitions en equipes, ajoute la categorie qui commence sauf si 2nd combattant est vide -->
+											<xsl:if test="$typeCompetition = 1">
+												<span class="w3-tiny">
+													(<img class="img" width="20" src="../img/starter-32.png" /><xsl:value-of select="$combat/@firstrencontrelib"/>)&nbsp;
+												</span>
+											</xsl:if>
+											&nbsp;
+										</footer>
 									</xsl:if>
 								</div>
 								<!-- Affiche le score vide -->
@@ -1243,7 +1251,15 @@
 										&nbsp;
 									</header>
 									<xsl:if test="$combat/@niveau = $niveaumax">
-										<footer class="w3-tiny">&nbsp;</footer>
+										<footer class="w3-tiny">
+											<!-- Pour les competitions en equipes, ajoute la categorie qui commence -->
+											<xsl:if test="$typeCompetition = 1">
+												<span class="w3-tiny">
+													(<img class="img" width="20" src="../img/starter-32.png" /><xsl:value-of select="$combat/@firstrencontrelib"/>)&nbsp;
+												</span>
+											</xsl:if>
+											&nbsp;
+										</footer>
 									</xsl:if>
 								</div>
 								<!-- Affiche le score vide -->
@@ -1304,6 +1320,10 @@
 							<xsl:otherwise>
 								<!-- Uniquement les marques -->
 								<xsl:value-of select="$combat/@scorevainqueur"/>
+								<!-- Ajoute le V en cas de combat decisif dans la rencontre -->
+								<xsl:if test="count($combat/rencontre[@estDecisif='true']) != 0">
+									<span class="w3-text-orange"> (V)</span>
+								</xsl:if>
 							</xsl:otherwise>
 						</xsl:choose>
 						<xsl:text disable-output-escaping="yes">/</xsl:text>

@@ -10,6 +10,8 @@ using System.Xml.Linq;
 using Tools.Enum;
 using Tools.Outils;
 
+// TODO A Mettre a jour avec la derniere version du TAS (estDecisif)
+
 namespace KernelImpl.Noyau.Deroulement
 {
     /// <summary>

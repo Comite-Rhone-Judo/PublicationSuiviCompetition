@@ -530,6 +530,10 @@
 									<xsl:otherwise>
 										<!-- Uniquement les marques -->
 										<xsl:value-of select="./@scorevainqueur"/>
+										<!-- Ajoute le V en cas de combat decisif dans la rencontre -->
+										<xsl:if test="count($combat/rencontre[@estDecisif='true']) != 0">
+											<span class="w3-text-orange"> (V)</span>
+										</xsl:if>
 									</xsl:otherwise>
 								</xsl:choose>
 							</span>
