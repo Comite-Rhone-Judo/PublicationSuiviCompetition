@@ -177,6 +177,24 @@
 			</xsl:choose>
 		</xsl:variable>
 
+		<xsl:variable name="poulefirstrencontre">
+			<xsl:value-of select="//combat[ @niveau = $niveauCombat and @phase = $phase and @reference = $numeroPoule][1]/@firstrencontrelib"/>
+		</xsl:variable>
+		
+		<!-- Extrait la couleur en fonction de la categorie-->
+		<xsl:variable name="firstrencontreclass">
+			<xsl:choose>
+				<xsl:when test="substring($poulefirstrencontre, 1, 1) = 'M'">
+					w3-blue
+				</xsl:when>
+				<xsl:when test="substring($poulefirstrencontre, 1, 1) = 'F'">
+					w3-purple
+				</xsl:when>
+				<xsl:otherwise>w3-lime</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+
+
 		<!-- Bandeau repliable de la poule -->
 		<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
 			<button class="w3-bar-item w3-light-blue">
@@ -243,18 +261,16 @@
 
 			  <!-- Affichage de la categorie commencant en cas d'equipe -->
 			  <xsl:if test="$typeCompetition = 1">
-				  <div class="w3-container w3-margin-left w3-lime">
+				  <div>
+					  <xsl:attribute name="class">
+						  w3-container w3-margin-left colorized-img-white w3-center w3-cell-middle w3-tag w3-round-large w3-left-align
+						  <xsl:value-of select="$firstrencontreclass"/>
+					  </xsl:attribute>
 					  <img class="img" width="32" src="../img/starter-32.png" />
 					  &nbsp;
-					  1ère catégorie: <xsl:value-of select="//combat[ @niveau = $niveauCombat and @phase = $phase and @reference = $numeroPoule][1]/@firstrencontrelib"/>
+					  1ère catégorie:&nbsp;<xsl:value-of select="$poulefirstrencontre"/>
 				  </div>
 			  </xsl:if>
-
-
-
-
-
-
 			  <table border="0" class="w3-centered tas-poule-combat">				
 				<!-- 1ere ligne entete -->
                 <tbody>
@@ -531,7 +547,7 @@
 										<!-- Uniquement les marques -->
 										<xsl:value-of select="./@scorevainqueur"/>
 										<!-- Ajoute le V en cas de combat decisif dans la rencontre -->
-										<xsl:if test="count($combat/rencontre[@estDecisif='true']) != 0">
+										<xsl:if test="count(./rencontre[@estDecisif='true']) != 0">
 											<span class="w3-text-orange"> (V)</span>
 										</xsl:if>
 									</xsl:otherwise>

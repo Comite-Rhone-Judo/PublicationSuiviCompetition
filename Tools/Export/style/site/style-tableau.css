@@ -191,9 +191,10 @@ td.tas-combat-repechage-vertical {
 
 div.tas-combat-premiere-categorie {
     transform: translateY(-10px);
-    width: 80px;
+    width: 70px;
 }
 
 div.tas-participant-premiere-categorie {
-    width: 80px;
+    transform: translateY(-5px);
+    width: 70px;
 }
