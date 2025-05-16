@@ -126,7 +126,7 @@ namespace AppPublication.Controles
                 catch (Exception ex)
                 {
                     // Trace l'erreur et arrete le client
-                    LogTools.Logger.Error("Erreur lors de la demande d'initialisation", ex);
+                    LogTools.Logger.Error(ex, "Erreur lors de la demande d'initialisation");
                     StopOnError(true);
                 }
             }
@@ -568,7 +568,7 @@ namespace AppPublication.Controles
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Error("Erreur lors de la lecture des donnees recues", ex);
+                    LogTools.Logger.Error(ex, "Erreur lors de la lecture des donnees recues");
                     StopOnError(true);      // Arrete le gestionnaire d'evenement sur une erreur
                 }
             }
@@ -598,7 +598,7 @@ namespace AppPublication.Controles
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error("Erreur lors de la mise a jour des donnees", ex);
+                LogTools.Logger.Error(ex, "Erreur lors de la mise a jour des donnees");
             }
         }
 

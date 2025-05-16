@@ -450,7 +450,7 @@ namespace AppPublication.Controles
                                         }
                                         catch(Exception ex)
                                         {
-                                            LogTools.Logger.Debug("Fichier '{0}' ignore - Exception lors de la lecture du format", imgFile, ex);
+                                            LogTools.Logger.Debug(ex, "Fichier '{0}' ignore - Exception lors de la lecture du format", imgFile);
                                             allFileOk = false;
                                         }
                                     }
@@ -1059,7 +1059,7 @@ namespace AppPublication.Controles
                 catch (Exception ex)
                 {
                     output = string.Empty;
-                    LogTools.Logger.Error("Impossible de calculer le nom du fichier Checksum", ex);
+                    LogTools.Logger.Error(ex, "Impossible de calculer le nom du fichier Checksum");
                 }
 
                 return output;
@@ -1172,7 +1172,7 @@ namespace AppPublication.Controles
             catch(Exception ex)
             {
                 // On ne peut pas initialiser le mode EasyConfig
-                LogTools.Logger.Error("Desactivation du mode easyConfig - Configuration absente ou incorrecte", ex);
+                LogTools.Logger.Error(ex, "Desactivation du mode easyConfig - Configuration absente ou incorrecte");
                 EasyConfig = false;
                 EasyConfigDisponible = false;
             }
@@ -1305,7 +1305,7 @@ namespace AppPublication.Controles
             catch (Exception ex)
             {
                 output = string.Empty;
-                LogTools.Logger.Error("Impossible de calculer l'URL du site local", ex);
+                LogTools.Logger.Error(ex, "Impossible de calculer l'URL du site local");
             }
             return output;
         }

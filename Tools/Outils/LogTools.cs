@@ -114,7 +114,7 @@ namespace Tools.Outils
             }
             catch (Exception ex)
             {
-                _logger.Error("Erreur lors de la modification de la configuration du logger", ex);
+                _logger.Error(ex, "Erreur lors de la modification de la configuration du logger");
             }
         }
 
@@ -162,7 +162,7 @@ namespace Tools.Outils
              }
             catch (Exception ex)
             {
-                _logger.Error("Impossible de lire la configuration NLog pour extraire le repertoire cible", ex);
+                _logger.Error(ex, "Impossible de lire la configuration NLog pour extraire le repertoire cible");
             }
 
             return output;
@@ -227,7 +227,7 @@ namespace Tools.Outils
                 }
             }
             catch (Exception ex) {
-                LogTools.Logger.Error("Impossible de creer l'archive Zip contenant les fichiers de trace de l'application vers '{0}'", targetArchiveName, ex);
+                LogTools.Logger.Error(ex, "Impossible de creer l'archive Zip contenant les fichiers de trace de l'application vers '{0}'", targetArchiveName);
                 throw new Exception("Impossible de creer l'archive Zip contenant les fichiers de trace de l'application", ex);
             }
         }

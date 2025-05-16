@@ -121,7 +121,7 @@ namespace Tools.Outils
                 }
                 catch(Exception ex)
                 {
-                    LogTools.Logger.Debug("Erreur lors de la liberation du verrou interne", ex);
+                    LogTools.Logger.Debug(ex, "Erreur lors de la liberation du verrou interne");
                 }
             }
         }
