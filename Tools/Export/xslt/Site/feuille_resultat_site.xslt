@@ -548,7 +548,9 @@
 										<xsl:value-of select="./@scorevainqueur"/>
 										<!-- Ajoute le V en cas de combat decisif dans la rencontre -->
 										<xsl:if test="count(./rencontre[@estDecisif='true']) != 0">
-											<span class="w3-text-orange"> (V)</span>
+											<!-- TODO Modifier la taille des cases (85px) ou mettre le texte principal en small (avec test si combat decisif?)-->
+											<!-- Voir pour supprimer aussi la taille small du score et du total -->
+											<span class="w3-tiny w3-text-orange"> (V)</span>
 										</xsl:if>
 									</xsl:otherwise>
 								</xsl:choose>

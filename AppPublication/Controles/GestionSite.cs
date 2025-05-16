@@ -1277,9 +1277,10 @@ namespace AppPublication.Controles
                 }
             }
             catch (Exception ex)
-            {
+            { 
+                // TODO: Remplacer tous les appels Logger en mettant l'exception en 1er sinon elle n'est pas tracee par NLog
                 output = string.Empty;
-                LogTools.Logger.Error("Impossible de calculer l'URL du site distant",ex);
+                LogTools.Logger.Error(ex,"Impossible de calculer l'URL du site distant");
             }
             return output;
         }
@@ -1593,7 +1594,7 @@ namespace AppPublication.Controles
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error("Erreur rencontree lors de l'export", ex);
+                LogTools.Logger.Error(ex, "Erreur rencontree lors de l'export");
             }
 
             return urls;
