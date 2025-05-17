@@ -234,12 +234,12 @@
 		<xsl:variable name="firstrencontreclass">
 			<xsl:choose>
 				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'M'">
-					w3-blue
+					w3-blue colorized-img-white
 				</xsl:when>
 				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'F'">
-					w3-purple
+					w3-purple colorized-img-white
 				</xsl:when>
-				<xsl:otherwise>w3-lime</xsl:otherwise>
+				<xsl:otherwise>w3-lime colorized-img-black</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
 
@@ -359,7 +359,7 @@
 				<xsl:if test="$typeCompetition = 1">
 					<div style="position: absolute;">
 						<xsl:attribute name="class">
-							tas-prochain-combat-premiere-categorie w3-cell colorized-img-white w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align <xsl:value-of select="$firstrencontreclass"/>
+							tas-prochain-combat-premiere-categorie w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align <xsl:value-of select="$firstrencontreclass"/>
 						</xsl:attribute>
 						<img class="img" width="20" src="../img/starter-32.png" />
 						<xsl:value-of select="$combat/@firstrencontrelib"/>

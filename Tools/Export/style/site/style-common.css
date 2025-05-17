@@ -49,3 +49,8 @@ div.colorized-img-white {
         filter: drop-shadow(0px 100px 0 white);
         transform: translateY(-100px);
     }
+
+    div.colorized-img-black img {
+        filter: drop-shadow(0px 100px 0 black);
+        transform: translateY(-100px);
+    }

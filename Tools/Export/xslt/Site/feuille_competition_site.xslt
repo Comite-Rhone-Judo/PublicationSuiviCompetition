@@ -200,12 +200,8 @@
 		<table>
 			<xsl:attribute name="class">
 				<xsl:choose>
-					<xsl:when test="$repechage = 'true'">
-						tas-tableau-repechage-combat
-					</xsl:when>
-					<xsl:otherwise>
-						tas-tableau-combat
-					</xsl:otherwise>
+					<xsl:when test="$repechage = 'true'">tas-tableau-repechage-combat</xsl:when>
+					<xsl:otherwise>tas-tableau-combat	</xsl:otherwise>
 				</xsl:choose>
 			</xsl:attribute>
 
@@ -582,14 +578,15 @@
 		<xsl:variable name="firstrencontreclass">
 			<xsl:choose>
 				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'M'">
-					w3-blue
+					w3-blue colorized-img-white
 				</xsl:when>
 				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'F'">
-					w3-purple
+					w3-purple colorized-img-white
 				</xsl:when>
-				<xsl:otherwise>w3-lime</xsl:otherwise>
+				<xsl:otherwise>w3-lime colorized-img-black</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
+
 
 		<!-- DIV Contenant l'affichage du combat -->
 		<!-- une case = 1 combat (div + table de 5 lignes) avec la ligne de jonction -->
@@ -624,11 +621,11 @@
 											<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut sauf si aucun judoka en face (1er tour) -->
 											<xsl:if test="$typeCompetition = 1 and ($combat/@niveau != $niveaumax or $judoka2/@nom)">
 												<div>
-													<xsl:attribute name="class">w3-cell colorized-img-white w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align
+													<xsl:attribute name="class">w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align 
 														<xsl:value-of select="$firstrencontreclass"/>
 														<xsl:choose>
-															<xsl:when test="$combat/@niveau = $niveaumax">tas-participant-premiere-categorie</xsl:when>
-															<xsl:otherwise>tas-combat-premiere-categorie</xsl:otherwise>
+															<xsl:when test="$combat/@niveau = $niveaumax"> tas-participant-premiere-categorie</xsl:when>
+															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
 														</xsl:choose>
 													</xsl:attribute>
 													<img class="img" width="20" src="../img/starter-32.png" />
@@ -728,7 +725,7 @@
 											<xsl:if test="$typeCompetition = 1 and $combat/@niveau != $niveaumax">
 												<div>
 													<xsl:attribute name="class">
-														w3-cell tas-combat-premiere-categorie colorized-img-white w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align
+														w3-cell tas-combat-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align 
 														<xsl:value-of select="$firstrencontreclass"/>
 													</xsl:attribute>
 													<img class="img" width="20" src="../img/starter-32.png" />
@@ -799,13 +796,11 @@
 											<xsl:if test="$typeCompetition = 1 and ($combat/@niveau != $niveaumax or $judoka1/@nom)">
 												<div>
 													<xsl:attribute name="class">
-														w3-cell colorized-img-white w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align
+														w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align 
 														<xsl:value-of select="$firstrencontreclass"/>
 														<xsl:choose>
-															<xsl:when test="$combat/@niveau = $niveaumax">tas-participant-premiere-categorie</xsl:when>
-															<xsl:otherwise>
-																tas-combat-premiere-categorie
-															</xsl:otherwise>
+															<xsl:when test="$combat/@niveau = $niveaumax"> tas-participant-premiere-categorie</xsl:when>
+															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
 														</xsl:choose>
 													</xsl:attribute>
 													<img class="img" width="20" src="../img/starter-32.png" />
@@ -904,7 +899,7 @@
 											<xsl:if test="$typeCompetition = 1 and $combat/@niveau != $niveaumax">
 												<div>
 													<xsl:attribute name="class">
-														w3-cell tas-combat-premiere-categorie colorized-img-white w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align
+														w3-cell tas-combat-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align 
 														<xsl:value-of select="$firstrencontreclass"/>
 													</xsl:attribute>
 													<img class="img" width="20" src="../img/starter-32.png" />
@@ -972,15 +967,14 @@
 		<xsl:variable name="firstrencontreclass">
 			<xsl:choose>
 				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'M'">
-					w3-blue
+					w3-blue colorized-img-white
 				</xsl:when>
 				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'F'">
-					w3-purple
+					w3-purple colorized-img-white
 				</xsl:when>
-				<xsl:otherwise>w3-lime</xsl:otherwise>
+				<xsl:otherwise>w3-lime colorized-img-black</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-
 
 		<!-- DIV de spacer pour decaler les combats -->
 		<div>
@@ -1021,13 +1015,11 @@
 											<xsl:if test="$typeCompetition = 1">
 												<div>
 													<xsl:attribute name="class">
-														w3-cell colorized-img-white w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align
+														w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align 
 														<xsl:value-of select="$firstrencontreclass"/>
 														<xsl:choose>
-															<xsl:when test="$combat/@niveau = $niveaumax">tas-participant-premiere-categorie</xsl:when>
-															<xsl:otherwise>
-																tas-combat-premiere-categorie
-															</xsl:otherwise>
+															<xsl:when test="$combat/@niveau = $niveaumax"> tas-participant-premiere-categorie</xsl:when>
+															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
 														</xsl:choose>
 													</xsl:attribute>
 													<img class="img" width="20" src="../img/starter-32.png" />
@@ -1127,13 +1119,11 @@
 											<xsl:if test="$typeCompetition = 1">
 												<div>
 													<xsl:attribute name="class">
-														w3-cell colorized-img-white w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align
+														w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align 
 														<xsl:value-of select="$firstrencontreclass"/>
 														<xsl:choose>
-															<xsl:when test="$combat/@niveau = $niveaumax">tas-participant-premiere-categorie</xsl:when>
-															<xsl:otherwise>
-																tas-combat-premiere-categorie
-															</xsl:otherwise>
+															<xsl:when test="$combat/@niveau = $niveaumax"> tas-participant-premiere-categorie</xsl:when>
+															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
 														</xsl:choose>
 													</xsl:attribute>
 													<img class="img" width="20" src="../img/starter-32.png" />
@@ -1220,13 +1210,11 @@
 											<xsl:if test="$typeCompetition = 1">
 												<div>
 													<xsl:attribute name="class">
-														w3-cell colorized-img-white w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align
+														w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align 
 														<xsl:value-of select="$firstrencontreclass"/>
 														<xsl:choose>
-															<xsl:when test="$combat/@niveau = $niveaumax">tas-participant-premiere-categorie</xsl:when>
-															<xsl:otherwise>
-																tas-combat-premiere-categorie
-															</xsl:otherwise>
+															<xsl:when test="$combat/@niveau = $niveaumax"> tas-participant-premiere-categorie</xsl:when>
+															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
 														</xsl:choose>
 													</xsl:attribute>
 													<img class="img" width="20" src="../img/starter-32.png" />
@@ -1333,13 +1321,11 @@
 											<xsl:if test="$typeCompetition = 1">
 												<div>
 													<xsl:attribute name="class">
-														w3-cell colorized-img-white w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align
+														w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align 
 														<xsl:value-of select="$firstrencontreclass"/>
 														<xsl:choose>
-															<xsl:when test="$combat/@niveau = $niveaumax">tas-participant-premiere-categorie</xsl:when>
-															<xsl:otherwise>
-																tas-combat-premiere-categorie
-															</xsl:otherwise>
+															<xsl:when test="$combat/@niveau = $niveaumax"> tas-participant-premiere-categorie</xsl:when>
+															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
 														</xsl:choose>
 													</xsl:attribute>
 													<img class="img" width="20" src="../img/starter-32.png" />

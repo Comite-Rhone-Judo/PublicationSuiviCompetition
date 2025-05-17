@@ -180,20 +180,19 @@
 		<xsl:variable name="poulefirstrencontre">
 			<xsl:value-of select="//combat[ @niveau = $niveauCombat and @phase = $phase and @reference = $numeroPoule][1]/@firstrencontrelib"/>
 		</xsl:variable>
-		
+
 		<!-- Extrait la couleur en fonction de la categorie-->
 		<xsl:variable name="firstrencontreclass">
 			<xsl:choose>
-				<xsl:when test="substring($poulefirstrencontre, 1, 1) = 'M'">
-					w3-blue
+				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'M'">
+					w3-blue colorized-img-white
 				</xsl:when>
-				<xsl:when test="substring($poulefirstrencontre, 1, 1) = 'F'">
-					w3-purple
+				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'F'">
+					w3-purple colorized-img-white
 				</xsl:when>
-				<xsl:otherwise>w3-lime</xsl:otherwise>
+				<xsl:otherwise>w3-lime colorized-img-black</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-
 
 		<!-- Bandeau repliable de la poule -->
 		<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
@@ -263,7 +262,7 @@
 			  <xsl:if test="$typeCompetition = 1">
 				  <div>
 					  <xsl:attribute name="class">
-						  w3-container w3-margin-left colorized-img-white w3-center w3-cell-middle w3-tag w3-round-large w3-left-align
+						  w3-container w3-margin-left w3-center w3-cell-middle w3-tag w3-round-large w3-left-align
 						  <xsl:value-of select="$firstrencontreclass"/>
 					  </xsl:attribute>
 					  <img class="img" width="32" src="../img/starter-32.png" />
