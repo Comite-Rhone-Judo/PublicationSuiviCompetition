@@ -184,10 +184,10 @@
 		<!-- Extrait la couleur en fonction de la categorie-->
 		<xsl:variable name="firstrencontreclass">
 			<xsl:choose>
-				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'M'">
+				<xsl:when test="substring($poulefirstrencontre, 1, 1) = 'M'">
 					w3-blue colorized-img-white
 				</xsl:when>
-				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'F'">
+				<xsl:when test="substring($poulefirstrencontre, 1, 1) = 'F'">
 					w3-purple colorized-img-white
 				</xsl:when>
 				<xsl:otherwise>w3-lime colorized-img-black</xsl:otherwise>
