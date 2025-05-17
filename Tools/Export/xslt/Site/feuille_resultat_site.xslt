@@ -465,9 +465,8 @@
 						</xsl:if>
 						<xsl:if test="$participant1 != $participant2">
 							<td class="w3-center w3-border w3-border-black tas-poule-combat">
-								<!-- TODO que faire si le select comporte plus d'un combat (les resultats s'empilent dans la case) -->
 								<xsl:apply-templates
-									select="//combat[ @niveau = $niveauCombat and ((score[1][@judoka = $participant1] and score[2][@judoka = $participant2]) or (score[2][@judoka = $participant1] and score[1][@judoka = $participant2]))]">
+									select="//combat[ @niveau = $niveauCombat and ((score[1][@judoka = $participant1] and score[2][@judoka = $participant2]) or (score[2][@judoka = $participant1] and score[1][@judoka = $participant2]))][1]">
 									<xsl:with-param name="participant1" select="$participant1"/>
 								</xsl:apply-templates>
 							</td>
@@ -476,12 +475,12 @@
 				</xsl:otherwise>
 			</xsl:choose>			
 			<td class="w3-panel">
-                    <span class="w3-small">
+                    <span>
 						<xsl:value-of select="@nbVictoires"/>					 
 					</span>
                 </td>
 			<td class="w3-panel">
-                    <span class="w3-small">
+                    <span>
 						<xsl:value-of select="@cumulPoints"/>
 					</span>
                 </td>
@@ -548,8 +547,6 @@
 										<xsl:value-of select="./@scorevainqueur"/>
 										<!-- Ajoute le V en cas de combat decisif dans la rencontre -->
 										<xsl:if test="count(./rencontre[@estDecisif='true']) != 0">
-											<!-- TODO Modifier la taille des cases (85px) ou mettre le texte principal en small (avec test si combat decisif?)-->
-											<!-- Voir pour supprimer aussi la taille small du score et du total -->
 											<span class="w3-tiny w3-text-orange"> (V)</span>
 										</xsl:if>
 									</xsl:otherwise>

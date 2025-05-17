@@ -292,7 +292,6 @@
 	</xsl:template>
 
 	<!-- Combat -->
-	<!-- TODO Ajouter l'affichage de la categorie qui commence pour une rencontre en equipe -->
 	<xsl:template match="combat">
 		<!-- DEFINITION DES VARIABLES -->
 
@@ -539,8 +538,6 @@
 		</xsl:for-each>
 	</xsl:template>
 
-	<!-- TODO uniformiser l'affichage pour le 1er tour; mettre l'icone starter en blanc (manque class) -->
-
 	<!-- Le contenu d'un combat du tableau principal -->
 	<xsl:template name="contenuCombat">
 		<xsl:param name="combat"/>
@@ -627,14 +624,11 @@
 											<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut sauf si aucun judoka en face (1er tour) -->
 											<xsl:if test="$typeCompetition = 1 and ($combat/@niveau != $niveaumax or $judoka2/@nom)">
 												<div>
-													<xsl:attribute name="class">
-														w3-cell colorized-img-white w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align
+													<xsl:attribute name="class">w3-cell colorized-img-white w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align
 														<xsl:value-of select="$firstrencontreclass"/>
 														<xsl:choose>
 															<xsl:when test="$combat/@niveau = $niveaumax">tas-participant-premiere-categorie</xsl:when>
-															<xsl:otherwise>
-																tas-combat-premiere-categorie
-															</xsl:otherwise>
+															<xsl:otherwise>tas-combat-premiere-categorie</xsl:otherwise>
 														</xsl:choose>
 													</xsl:attribute>
 													<img class="img" width="20" src="../img/starter-32.png" />

@@ -181,7 +181,14 @@
 			</xsl:attribute>
 
 			<!-- La liste des combats -->
-			<table class="w3-table w3-bordered w3-card tas-tableau-prochain-combat" style="width:100%">
+			<table style="width:100%">
+				<xsl:attribute name="class">
+					w3-table w3-bordered w3-card
+					<xsl:choose>
+						<xsl:when test="$typeCompetition = 1">tas-tableau-prochain-combat-equipe</xsl:when>
+						<xsl:otherwise>tas-tableau-prochain-combat</xsl:otherwise>
+					</xsl:choose>
+				</xsl:attribute>
 				<tbody>
 					<!-- Selectionne tous les combats du tapis, sauf ceux "Aucun Judoka", avec les judoka absents -->
 					<!-- <xsl:for-each select="//tapis[@tapis = $notapis]/combats/combat"> -->
@@ -222,6 +229,19 @@
 		<xsl:variable name="club2" select="$judoka2/@club"/>
 		<xsl:variable name="comite2" select="//club[@ID = $club2]/@comite"/>
 		<xsl:variable name="ligue2" select="//club[@ID = $club2]/@ligue"/>
+
+		<!-- Extrait la couleur en fonction de la categorie-->
+		<xsl:variable name="firstrencontreclass">
+			<xsl:choose>
+				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'M'">
+					w3-blue
+				</xsl:when>
+				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'F'">
+					w3-purple
+				</xsl:when>
+				<xsl:otherwise>w3-lime</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 
 		<!-- Si un des ID judoka vaut zero, c'est une place vide. Si judoka est null, c'est pas encore de combattant, on n'affiche rien -->
 		<xsl:if test="count($combat/score[@judoka = 0]) = 0">
@@ -312,7 +332,7 @@
 			<!-- Info Combat -->
 			<td class=" w3-pale-yellow w3-small w3-card w3-cell-middle w3-center"  style="width:20%">
 				<!-- Affiche le nom de l'epreuve -->
-				<div class="w3-container w3-cell">
+				<div style="position: relative; display: inline-block;" class="w3-container w3-cell">
 					<header>
 						<xsl:value-of select="//epreuve[@ID = $epreuve]/@nom"/>
 						<xsl:if test="$combat/feuille/@repechage = 'true'">
@@ -326,21 +346,23 @@
 							</xsl:choose>
 						</xsl:if>
 					</header>
-					<xsl:if test="$affDetailCompetition">
-						<footer class="w3-tiny">
-							<xsl:value-of select="//epreuve[@ID = $epreuve]/@nom_competition"/>
-						</footer>
-					</xsl:if>
+					<footer class="w3-tiny">
+						<xsl:choose>
+							<xsl:when test="$affDetailCompetition">
+								<xsl:value-of select="//epreuve[@ID = $epreuve]/@nom_competition"/>
+							</xsl:when>
+							<xsl:otherwise>&nbsp;</xsl:otherwise>
+						</xsl:choose>
+					</footer>
 				</div>
 				<!-- Pour les equipes, affiche la catégorie qui commence -->
 				<xsl:if test="$typeCompetition = 1">
-					<div class="w3-container w3-cell w3-cell-middle">
-						<header>
-							<img class="img" width="20" src="../img/starter-32.png" />
-						</header>
-						<footer class="w3-tiny">
-							<xsl:value-of select="$combat/@firstrencontrelib"/>
-						</footer>
+					<div style="position: absolute;">
+						<xsl:attribute name="class">
+							tas-prochain-combat-premiere-categorie w3-cell colorized-img-white w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align <xsl:value-of select="$firstrencontreclass"/>
+						</xsl:attribute>
+						<img class="img" width="20" src="../img/starter-32.png" />
+						<xsl:value-of select="$combat/@firstrencontrelib"/>
 					</div>
 				</xsl:if>
 			</td>

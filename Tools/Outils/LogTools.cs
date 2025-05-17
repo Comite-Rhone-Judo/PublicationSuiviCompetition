@@ -72,6 +72,12 @@ namespace Tools.Outils
             _logger.Info("App Publication is starting - Version " + OutilsTools.GetVersionInformation().ToString());
         }
 
+        public static void LogStop()
+        {
+            _logger.Info("App Publication is stopped");
+            _logger.Info("-----------------------------------------------------------------------------------------------------");
+        }
+
         /// <summary>
         /// Retourne l'etat de configuration du logger
         /// </summary>
