@@ -17,7 +17,7 @@ using System.Reflection;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyFileVersion("1.3.1.0")]
 [assembly: AssemblyVersion("1.3.1.0")]
-[assembly: AssemblyVersionBeta(3)]
+[assembly: AssemblyVersionBeta(4)]
 
 
 [assembly: AssemblyCompany("FRANCE JUDO - Fédération Française de Judo et Disciplines Associées - RHONE")]

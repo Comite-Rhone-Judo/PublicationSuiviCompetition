@@ -181,14 +181,7 @@
 			</xsl:attribute>
 
 			<!-- La liste des combats -->
-			<table style="width:100%">
-				<xsl:attribute name="class">
-					w3-table w3-bordered w3-card
-					<xsl:choose>
-						<xsl:when test="$typeCompetition = 1">tas-tableau-prochain-combat-equipe</xsl:when>
-						<xsl:otherwise>tas-tableau-prochain-combat</xsl:otherwise>
-					</xsl:choose>
-				</xsl:attribute>
+			<table style="width:100%" class="w3-table w3-bordered w3-card tas-tableau-prochain-combat">
 				<tbody>
 					<!-- Selectionne tous les combats du tapis, sauf ceux "Aucun Judoka", avec les judoka absents -->
 					<!-- <xsl:for-each select="//tapis[@tapis = $notapis]/combats/combat"> -->
@@ -347,24 +340,21 @@
 						</xsl:if>
 					</header>
 					<footer class="w3-tiny">
-						<xsl:choose>
-							<xsl:when test="$affDetailCompetition">
-								<xsl:value-of select="//epreuve[@ID = $epreuve]/@nom_competition"/>
-							</xsl:when>
-							<xsl:otherwise>&nbsp;</xsl:otherwise>
-						</xsl:choose>
+						<!-- Pour les equipes, affiche la catégorie qui commence -->
+						<xsl:if test="$typeCompetition = 1">
+							<div>
+								<xsl:attribute name="class">
+									tas-prochain-combat-premiere-categorie w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align <xsl:value-of select="$firstrencontreclass"/>
+								</xsl:attribute>
+								<img class="img" width="20" src="../img/starter-32.png" />
+								<xsl:value-of select="$combat/@firstrencontrelib"/>
+							</div>
+						</xsl:if>
+						<xsl:if test="$affDetailCompetition">
+							<xsl:value-of select="//epreuve[@ID = $epreuve]/@nom_competition"/>
+						</xsl:if>
 					</footer>
 				</div>
-				<!-- Pour les equipes, affiche la catégorie qui commence -->
-				<xsl:if test="$typeCompetition = 1">
-					<div style="position: absolute;">
-						<xsl:attribute name="class">
-							tas-prochain-combat-premiere-categorie w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align <xsl:value-of select="$firstrencontreclass"/>
-						</xsl:attribute>
-						<img class="img" width="20" src="../img/starter-32.png" />
-						<xsl:value-of select="$combat/@firstrencontrelib"/>
-					</div>
-				</xsl:if>
 			</td>
 
 			<!-- Judoka 2 -->
