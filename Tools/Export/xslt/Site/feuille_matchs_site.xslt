@@ -325,7 +325,7 @@
 			<!-- Info Combat -->
 			<td class=" w3-pale-yellow w3-small w3-card w3-cell-middle w3-center"  style="width:20%">
 				<!-- Affiche le nom de l'epreuve -->
-				<div style="position: relative; display: inline-block;" class="w3-container w3-cell">
+				<div class="w3-container w3-cell tas-info-combat">
 					<header>
 						<xsl:value-of select="//epreuve[@ID = $epreuve]/@nom"/>
 						<xsl:if test="$combat/feuille/@repechage = 'true'">
@@ -343,9 +343,7 @@
 						<!-- Pour les equipes, affiche la catégorie qui commence -->
 						<xsl:if test="$typeCompetition = 1">
 							<div>
-								<xsl:attribute name="class">
-									tas-prochain-combat-premiere-categorie w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align <xsl:value-of select="$firstrencontreclass"/>
-								</xsl:attribute>
+								<xsl:attribute name="class">tas-prochain-combat-premiere-categorie w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align <xsl:value-of select="$firstrencontreclass"/></xsl:attribute>
 								<img class="img" width="20" src="../img/starter-32.png" />
 								<xsl:value-of select="$combat/@firstrencontrelib"/>
 							</div>

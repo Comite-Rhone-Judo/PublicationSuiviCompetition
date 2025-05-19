@@ -35,6 +35,16 @@ table.tas-tableau-prochain-combat {
         border-bottom: 6px solid white;
     }
 
+    table.tas-tableau-prochain-combat div.tas-info-combat {
+        position: relative;
+        display: inline-block;
+    }
+
+        table.tas-tableau-prochain-combat div.tas-info-combat footer {
+            display: flex;
+            justify-content: center;
+        }
+
 div.tas-combat-niveau {
     width: 100%;
     /* Taille ajuster dans le XSLT rowspan * 100px + 6px */
