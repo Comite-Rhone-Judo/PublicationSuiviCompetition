@@ -221,15 +221,15 @@ namespace AppPublication.Export
 	            // TODO verifier AddStructureArgument(argsList, siteStruct, indexfile);
                 // No need to regenerate those files, they are usually static unless they are updated
                 urls = urls.Concat(ExportTools.ExportEmbeddedStyleAndJS(true, siteStruct)).ToList();
-            LogTools.Logger.Debug("GenereWebSiteIndex - ExportStyleAndJS {0}", urls.Count);
+                LogTools.Logger.Debug("GenereWebSiteIndex - ExportStyleAndJS {0}", urls.Count);
 
-            // No need to regenerate those files, they are usually static unless they are updated
-            // urls = urls.Concat(ExportTools.ExportImg(true)).ToList();
+                // No need to regenerate those files, they are usually static unless they are updated
+                // urls = urls.Concat(ExportTools.ExportImg(true)).ToList();
 
-            // Genere les images "par defaut" contenues dans l'application et les images personnalises de l'utilisateur
-            urls = urls.Concat(ExportTools.ExportEmbeddedImg(true, true, siteStruct)).ToList();
+                // Genere les images "par defaut" contenues dans l'application et les images personnalises de l'utilisateur
+                urls = urls.Concat(ExportTools.ExportEmbeddedImg(true, true, siteStruct)).ToList();
 
-            LogTools.Logger.Debug("GenereWebSiteIndex - ExportImg {0}", urls.Count);
+                LogTools.Logger.Debug("GenereWebSiteIndex - ExportImg {0}", urls.Count);
 
             output.AddRange(urls.Select(o => new FileWithChecksum(o)).ToList());
 
