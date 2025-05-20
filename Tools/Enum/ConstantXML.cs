@@ -94,6 +94,7 @@
         public const string Competition_AfficheAutoTempsRecuperation = "afficheAutoTempsRecuperation";
         public const string Competition_AfficheAnimationVainqueur = "animationVainqueur";
         public const string Competition_RandomCombat = "randomCombat";
+        public const string Competition_ReglementEquipe = "reglementEquipe";
         public const string Competition_TempsPause = "tempsPause";
         public const string Competition_TempsMedical = "tempsMedical";
 
@@ -251,7 +252,8 @@
         public const string Epreuve_Equipe_AnneeMin = "anneeMin";
         public const string Epreuve_Equipe_AnneeMax = "anneeMax";
         public const string Epreuve_Equipe_EpreuveRef = "epreuveRef";
-        
+        public const string Epreuve_Equipe_Type = "type";
+
 
         //Groupe PhaseDecoupage 
         public const string PhaseDecoupages = "phasedecoupages";
@@ -311,25 +313,10 @@
         public const string Judoka_Observation = "observation";
         public const string Judoka_CatePoids_RemoteId = "remoteId_catepoids";
 
-
         //participant 
         public const string Participants = "participants";
         public const string Participant = "participant";
-        public const string Participant_ID = "ID";
-        public const string Participant_RemoteID = "remoteID";
         public const string Participant_Judoka = "judoka";
-        public const string Participant_Licence = "licence";
-        public const string Participant_Nom = "nom";
-        public const string Participant_Prenom = "prenom";
-        public const string Participant_Sexe = "sexe";
-        public const string Participant_Naissance = "naissance";
-        public const string Participant_Pays = "pays";
-        public const string Participant_Club = "club";
-        public const string Participant_Grade = "grade";
-        public const string Participant_Categorie = "categorie";
-        public const string Participant_Poids = "poids";
-        public const string Participant_PoidsM = "poidsM";
-        public const string Participant_Present = "present";
         public const string Participant_Ranking = "ranking";
         public const string Participant_ClassementAvant = "classementAvant";
         public const string Participant_ClassementFinal = "classementFinal";
@@ -344,11 +331,6 @@
         public const string Participant_Phase = "phase";
         public const string Participant_PositionOriginal = "positionOriginal";
         public const string Participant_DernierCombat = "dernierCombat";
-        public const string Participant_QualifieE1 = "qualifieE1";
-        public const string Participant_ScoreProLeague = "scoreProLeague";
-        public const string Participant_NbPenalites = "nbPenalites";
-
-
 
         //Phase
         public const string Phases = "phases";

@@ -40,3 +40,21 @@ div.bandeau-titre {
 img.img-bandeau-titre {
     height: 35px;
 }
+
+div.colorized-img-white {
+    overflow: hidden;
+}
+
+    div.colorized-img-white img {
+        filter: drop-shadow(0px 100px 0 white);
+        transform: translateY(-100px);
+    }
+
+div.colorized-img-black {
+    overflow: hidden;
+}
+
+    div.colorized-img-black img {
+        filter: drop-shadow(0px 100px 0 black);
+        transform: translateY(-100px);
+    }

@@ -31,6 +31,8 @@ namespace KernelImpl.Noyau.Organisation
         public string remoteId_cateage { get; set; }
         public Nullable<int> id_epreuve_equipe { get; set; }
         public string lib_epreuve_equipe { get; set; }
+        public EpreuveEquipeTypeEnum type_epreuve_equipe { get; set; }
+        public int epreuveRef_epreuve_equipe { get; set; }
         public Nullable<int> phase1 { get; set; }
         public Nullable<int> phase2 { get; set; }
         public string nom_compet { get; set; }
@@ -59,25 +61,27 @@ namespace KernelImpl.Noyau.Organisation
             Categories.CategoriePoids c_poids = DC.Categories.CPoids.FirstOrDefault(o => o.id == epreuve.categoriePoids);
 
             nom_catepoids = c_poids != null ? c_poids.nom : epreuve.nom;
-            remoteId_catepoids = c_poids != null ? c_poids.remoteId : "";
+            remoteId_catepoids = c_poids != null ? c_poids.remoteId : String.Empty;
 
             Categories.CategorieAge c_age = DC.Categories.CAges.FirstOrDefault(o => o.id == epreuve.categorieAge);
 
-            nom_cateage = c_age != null ? c_age.nom : "";
+            nom_cateage = c_age != null ? c_age.nom : String.Empty;
             ordre = c_age != null ? c_age.ordre : "0";
-            remoteId_cateage = c_age != null ? c_age.remoteId : "";
+            remoteId_cateage = c_age != null ? c_age.remoteId : String.Empty;
 
             Epreuve_Equipe ep = DC.Organisation.EpreuveEquipes.FirstOrDefault(o => o.id == epreuve.epreuve_equipe);
 
             id_epreuve_equipe = ep != null ? ep.id : 0;
-            lib_epreuve_equipe = ep != null ? ep.libelle : "";
+            lib_epreuve_equipe = ep != null ? ep.libelle : String.Empty;
+            type_epreuve_equipe = ep != null ? ep.type : EpreuveEquipeTypeEnum.Normal;
+            epreuveRef_epreuve_equipe = ep != null ? ep.epreuveRef : -1;
 
             //phase1 = ;
             //phase2 = ;
 
             Competition compet = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
 
-            nom_compet = compet != null ? compet.nom : "";
+            nom_compet = compet != null ? compet.nom : String.Empty;
         }
 
 
@@ -108,6 +112,7 @@ namespace KernelImpl.Noyau.Organisation
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_PoidsMin, poidsMin);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_PoidsMax, poidsMax);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_CatePoids_RemoteId, remoteId_catepoids);
+            xepreuve.SetAttributeValue(ConstantXML.Vue_Epreuve_Nom_Competition, nom_compet);
 
             return xepreuve;
         }

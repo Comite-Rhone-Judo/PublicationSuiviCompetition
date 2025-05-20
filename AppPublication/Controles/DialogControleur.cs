@@ -756,7 +756,7 @@ namespace AppPublication.Controles
                                 }
                                 catch (Exception ex)
                                 {
-                                    LogTools.Logger.Error("Impossible de creer l'archive de trace de l'application '{0}'", o, ex);
+                                    LogTools.Logger.Error(ex, "Impossible de creer l'archive de trace de l'application '{0}'", o);
                                     msg = string.Format("Impossibles de créer l'archive des traces de l'application. Consultez le fichier de trace ou contacter le support technique.");
                                 }
                                 finally

@@ -173,7 +173,7 @@ namespace HttpServer.Helpers.Implementations
 
             // copy all javascript options
             string[] theOptions = new string[options.Length + 6];
-            //options.CopyTo(theOptions, 0); todo: is this faster or slower?
+            //options.CopyTo(theOptions, 0);    todo: is this faster or slower?
             for (int i = 0; i < options.Length; i += 2)
             {
                 if (options[i][options[i].Length - 1] == ':')

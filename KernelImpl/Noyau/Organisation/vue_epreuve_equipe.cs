@@ -11,6 +11,8 @@ namespace KernelImpl.Noyau.Organisation
     {
         public int id { get; set; }
         public string nom { get; set; }
+        public EpreuveEquipeTypeEnum type { get; set; }
+        public int epreuveRef { get; set; }
         public System.DateTime debut { get; set; }
         public System.DateTime fin { get; set; }
         public string remoteID { get; set; }
@@ -58,6 +60,8 @@ namespace KernelImpl.Noyau.Organisation
         {
             id = epreuve.id;
             nom = epreuve.libelle;
+            type = epreuve.type;
+            epreuveRef = epreuve.epreuveRef;
             debut = epreuve.debut;
             fin = epreuve.fin;
             remoteID = epreuve.remoteID;
@@ -105,7 +109,7 @@ namespace KernelImpl.Noyau.Organisation
             string sexe = "";
             if (epreuves.Count(o => o.sexe == 1) > 0 && epreuves.Count(o => o.sexe == 0) > 0)
             {
-                sexe = "M/F";
+                sexe = "X"; // "M/F";
             }
             else if (epreuves.Count(o => o.sexe == 1) > 0 && epreuves.Count(o => o.sexe == 0) == 0)
             {

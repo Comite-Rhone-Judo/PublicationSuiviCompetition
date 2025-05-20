@@ -450,7 +450,7 @@ namespace AppPublication.Controles
                                         }
                                         catch(Exception ex)
                                         {
-                                            LogTools.Logger.Debug("Fichier '{0}' ignore - Exception lors de la lecture du format", imgFile, ex);
+                                            LogTools.Logger.Debug(ex, "Fichier '{0}' ignore - Exception lors de la lecture du format", imgFile);
                                             allFileOk = false;
                                         }
                                     }
@@ -1059,7 +1059,7 @@ namespace AppPublication.Controles
                 catch (Exception ex)
                 {
                     output = string.Empty;
-                    LogTools.Logger.Error("Impossible de calculer le nom du fichier Checksum", ex);
+                    LogTools.Logger.Error(ex, "Impossible de calculer le nom du fichier Checksum");
                 }
 
                 return output;
@@ -1172,7 +1172,7 @@ namespace AppPublication.Controles
             catch(Exception ex)
             {
                 // On ne peut pas initialiser le mode EasyConfig
-                LogTools.Logger.Error("Desactivation du mode easyConfig - Configuration absente ou incorrecte", ex);
+                LogTools.Logger.Error(ex, "Desactivation du mode easyConfig - Configuration absente ou incorrecte");
                 EasyConfig = false;
                 EasyConfigDisponible = false;
             }
@@ -1277,9 +1277,9 @@ namespace AppPublication.Controles
                 }
             }
             catch (Exception ex)
-            {
+            { 
                 output = string.Empty;
-                LogTools.Logger.Error("Impossible de calculer l'URL du site distant",ex);
+                LogTools.Logger.Debug(ex,"Impossible de calculer l'URL du site distant");
             }
             return output;
         }
@@ -1304,7 +1304,7 @@ namespace AppPublication.Controles
             catch (Exception ex)
             {
                 output = string.Empty;
-                LogTools.Logger.Error("Impossible de calculer l'URL du site local", ex);
+                LogTools.Logger.Error(ex, "Impossible de calculer l'URL du site local");
             }
             return output;
         }
@@ -1578,7 +1578,7 @@ namespace AppPublication.Controles
                         urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), cfg, _structureRepertoires);
                         break;
                     case SiteEnum.Index:
-                        urls = ExportSite.GenereWebSiteIndex(cfg, _structureRepertoires);
+                        urls = ExportSite.GenereWebSiteIndex(DC, cfg, _structureRepertoires);
                         break;
                     case SiteEnum.Menu:
                         urls = ExportSite.GenereWebSiteMenu(DC, cfg, _structureRepertoires);
@@ -1593,7 +1593,7 @@ namespace AppPublication.Controles
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error("Erreur rencontree lors de l'export", ex);
+                LogTools.Logger.Error(ex, "Erreur rencontree lors de l'export");
             }
 
             return urls;

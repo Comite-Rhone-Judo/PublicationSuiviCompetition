@@ -175,7 +175,7 @@ namespace KernelImpl.Noyau.Deroulement
 
             this.goldenScore = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Combat_TempsGolden));
             this.isNewCombat = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Combat_IsNewCombat));
-            
+
 
             this.kinza1 = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Combat_Kinza1));
             this.kinza2 = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Combat_Kinza2));
@@ -209,7 +209,19 @@ namespace KernelImpl.Noyau.Deroulement
             using (TimedLock.Lock((DC.Organisation.vepreuves as ICollection).SyncRoot))
             {
                 vue_epreuve ep = DC.Organisation.vepreuves.FirstOrDefault(o => o.id == first_rencontre);
-                xcombat.SetAttributeValue(ConstantXML.Combat_FirstRencontreLib, ep != null ? ep.nom_catepoids : "");
+                string lib = string.Empty;
+                if (ep != null) {
+                    // Pour les epreuves mixte, on ajoute le sexe de l'epreuve qui commence, sinon, juste le nom de la cate de poids
+                    if(ep.type_epreuve_equipe == EpreuveEquipeTypeEnum.Mixte)
+                    {
+                        lib = string.Format("{0} {1} kg", ep.lib_sexe, ep.nom_catepoids);
+                    }
+                    else
+                    {
+                        lib = string.Format("{0} kg", ep.nom_catepoids);
+                    }
+                }
+                xcombat.SetAttributeValue(ConstantXML.Combat_FirstRencontreLib, lib);
             }
             xcombat.SetAttributeValue(ConstantXML.Combat_Niveau, niveau);
             xcombat.SetAttributeValue(ConstantXML.Combat_Temps, temps.ToString(CultureInfo.InvariantCulture));
@@ -300,7 +312,7 @@ namespace KernelImpl.Noyau.Deroulement
             return xcombat;
         }
 
-       
+
         public void Save(int? vainqueur, int score1, int score2, int kinza1, int kinza2, int penalite1, int penalite2, int nb1, int nb2,
            EtatCombattantEnum etat1, EtatCombattantEnum etat2, JudoData DC)
         {
@@ -397,7 +409,7 @@ namespace KernelImpl.Noyau.Deroulement
                         this.pointsGRCH2 = pointsGRCH;
                         this.pointsGRCH1 = 0;
                     }
-                    
+
                     p1.cumulPointsGRCH = p1.cumulPointsGRCH + pointsGRCH;// this.CalculeScoreGRCH(DC, this.vainqueur);
                     p1.cumulPoints = p1.cumulPointsGRCH; //p1.cumulPoints + this.CalculeScoreGRCH(null, this.vainqueur);
                 }
@@ -431,7 +443,7 @@ namespace KernelImpl.Noyau.Deroulement
                             //    p1.cumulPoints = p1.cumulPoints + this.score2;
                             //}
                         }
-                            
+
                         int pointsGRCH = this.CalculeScoreGRCH(DC, this.vainqueur);
                         if (this.vainqueur == this.participant1)
                         {
@@ -446,7 +458,7 @@ namespace KernelImpl.Noyau.Deroulement
                         if (DC.competition.disciplineId != CompetitionDisciplineEnum.Judo)
                         {
                             //jujitsu
-                            if(pointsGRCH == -1)
+                            if (pointsGRCH == -1)
                             {
                                 p1.cumulPointsGRCH = 0;// this.CalculeScoreGRCH(DC, this.vainqueur);
                             }
@@ -459,7 +471,7 @@ namespace KernelImpl.Noyau.Deroulement
                         {
                             p1.cumulPointsGRCH = p1.cumulPointsGRCH + pointsGRCH;// this.CalculeScoreGRCH(DC, this.vainqueur);
                         }
-                        
+
                     }
                     if (p2 != null)
                     {
@@ -480,7 +492,7 @@ namespace KernelImpl.Noyau.Deroulement
                             //    p2.cumulPoints = p2.cumulPoints + this.score2;
                             //}
 
-                            
+
                         }
                     }
                 }
@@ -639,12 +651,12 @@ namespace KernelImpl.Noyau.Deroulement
                 }
             }
 
-            //TODO BARRAGE
+            /*
             if (feuille.repechage)
             {
 
             }
-
+            */
 
             if (!feuille.repechage)
             {
@@ -901,7 +913,7 @@ namespace KernelImpl.Noyau.Deroulement
                 int ipponP = scoreP / 100;               // Récupère le chiffre des centaines
                 int wazaP = (scoreP / 10) % 10;          // Récupère le chiffre des dizaines
                 int yukkoP = scoreP % 10;                // Récupère le chiffre des unités
-                    //return 7;
+                                                         //return 7;
 
                 return (wazaV * 10) + yukkoV;
 
@@ -996,7 +1008,7 @@ namespace KernelImpl.Noyau.Deroulement
                 zero = zero || participant == null || participant == 0;     // Participant inconnu
                 zero = zero || this.vainqueur == null;                      // pas de vainqueur identifie
                 zero = zero || this.vainqueur != participant;               // Si le judoka n'est pas le vainqueur (perdant = 0 pts)
-                if (DC.competition.disciplineId  == CompetitionDisciplineEnum.Judo)
+                if (DC.competition.disciplineId == CompetitionDisciplineEnum.Judo)
                 {
                     zero = zero || (this.score1 < 10 && this.score2 < 10);      // Si aucun Waza-Ari ou Ippon dans les scores
                 }
@@ -1004,7 +1016,7 @@ namespace KernelImpl.Noyau.Deroulement
                 {
 
                 }
-                    
+
 
                 // DGR 2022-03-26: On ne peut pas eliminer de suite le resultat car l'un des judokas peut avoir un Waza-Ari
                 // zero = zero || this.etatJ1 != (int)EtatCombatEnum.Normal;   // Si le 1er judoka a perdu sur A/M/H/X
@@ -1065,7 +1077,7 @@ namespace KernelImpl.Noyau.Deroulement
                         }
                     }
                 }*/
-       
+
 
                 // DGR 2022-03-26 Vu avec Eric Fauroux, en shiai on ne fait pas ce controle pour permettre le deroulement sur les 2D/3D (manque de participant)
                 if (DC.competition.type != (int)CompetitionTypeEnum.Shiai)
@@ -1149,7 +1161,7 @@ namespace KernelImpl.Noyau.Deroulement
                     {
                         if (participant == participant1)
                         {
-                            if(this.etatJ1 == (int)EtatCombattantEnum.HansokuMakeX) //perd ses point de la RGC
+                            if (this.etatJ1 == (int)EtatCombattantEnum.HansokuMakeX) //perd ses point de la RGC
                             {
                                 return -1;
                             }
@@ -1174,7 +1186,7 @@ namespace KernelImpl.Noyau.Deroulement
                                 {
                                     nbPartiesValidees++;
                                 }
-                                if(nbPartiesValidees >= 2)
+                                if (nbPartiesValidees >= 2)
                                 {
                                     return 7; //7 points pour 2 parties validées
                                 }
@@ -1231,10 +1243,10 @@ namespace KernelImpl.Noyau.Deroulement
                             }
                         }
                     }
-                        
+
                 }
 
-               
+
 
                 return 0;
             }
@@ -1293,13 +1305,20 @@ namespace KernelImpl.Noyau.Deroulement
                     return "";
                 }
 
-            if (isEquipe)
-            {
-                return nbV + "v." + score.ToString("000");
-            }
+                if (isEquipe)
+                {
+                    switch (DC.competition.reglementEquipe)
+                    {
+                        case ReglementEquipeEnum.FIJ:
+                            return string.Format("{0}v", nbV);
+                        case ReglementEquipeEnum.FFJDA:
+                        default:
+                            return string.Format("{0}v.{1:000}", nbV, score);
+                    }
+                }
 
-            // string res = score.ToString("000");
-            string res = (score).ToString("000");
+                // string res = score.ToString("000");
+                string res = (score).ToString("000");
 
                 //string res = (score >= 100 ? (score / 100).ToString() : "0");
                 //score = score % 100;
@@ -1326,7 +1345,7 @@ namespace KernelImpl.Noyau.Deroulement
                 }
                 return res;
             }
-           
+
         }
 
         public string GetScorePerdant(JudoData DC)
@@ -1356,13 +1375,20 @@ namespace KernelImpl.Noyau.Deroulement
                     return "";
                 }
 
-            if (DC.competition.type == (int)CompetitionTypeEnum.Equipe)
-            {
-                return nbV + "v." + score.ToString("000");
-            }
+                if (DC.competition.type == (int)CompetitionTypeEnum.Equipe)
+                {
+                    switch (DC.competition.reglementEquipe)
+                    {
+                        case ReglementEquipeEnum.FIJ:
+                            return string.Format("{0}v", nbV);
+                        case ReglementEquipeEnum.FFJDA:
+                        default:
+                            return string.Format("{0}v.{1:000}", nbV, score);
+                    }
+                }
 
-            // string res = score.ToString("000");
-            string res = (score).ToString("000");
+                // string res = score.ToString("000");
+                string res = (score).ToString("000");
 
                 //string res = (score >= 100 ? (score / 100).ToString() : "0");
                 //score = score % 100;
@@ -1388,7 +1414,7 @@ namespace KernelImpl.Noyau.Deroulement
                     return "";
                 }
             }
-           
+
         }
 
         public int? getVainqueur(EtatCombattantEnum etat1, EtatCombattantEnum etat2, JudoData DC)
@@ -1606,7 +1632,7 @@ namespace KernelImpl.Noyau.Deroulement
                 ScoresJujitsu scoresJson = Newtonsoft.Json.JsonConvert.DeserializeObject<ScoresJujitsu>(this.scoresJujitsu);
                 if (scoresJson is null) scoresJson = new ScoresJujitsu();
 
-                if(discipline == CompetitionDisciplineEnum.JujitsuCombat)
+                if (discipline == CompetitionDisciplineEnum.JujitsuCombat)
                 {
                     if ((scoresJson.shido1 + (scoresJson.chui1 * 3)) >= maxPenalites)
                     {
@@ -1638,9 +1664,9 @@ namespace KernelImpl.Noyau.Deroulement
                         }
                     }
 
-                    
+
                 }
-                
+
             }
 
             res2 = this.score2.ToString();
@@ -1698,7 +1724,7 @@ namespace KernelImpl.Noyau.Deroulement
                         }
                     }
 
-                    
+
                 }
             }
 

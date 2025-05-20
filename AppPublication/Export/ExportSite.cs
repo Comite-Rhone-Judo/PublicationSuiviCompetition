@@ -181,53 +181,45 @@ namespace AppPublication.Export
         /// Génére L'index
         /// </summary>
         /// <param name="DC"></param>
-        public static List<FileWithChecksum> GenereWebSiteIndex(ConfigurationExportSite config, ExportSiteStructure siteStruct)
+        public static List<FileWithChecksum> GenereWebSiteIndex(JudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct)
         {
             List<string> urls = new List<string>();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
+            ExportEnum type;
 
-            string directory = siteStruct.RepertoireCommon;
-            XDocument doc = new XDocument();
+            XmlDocument docindex = ExportXML.CreateDocumentIndex(DC, siteStruct);
+            ExportXML.AddPublicationInfo(ref docindex, config);
+            LogTools.Logger.Debug("XML genere: '{0}'", docindex.InnerXml);
 
-            XElement xcompetition = new XElement(ConstantXML.Competition);
-            xcompetition.SetAttributeValue(ConstantXML.Competition_Titre, OutilsTools.TraiteChaine(OutilsTools.SubString(DialogControleur.Instance.ServerData.competition.nom, 0, kTailleMaxNomCompetition)));
+            // Genere l'index
+            type = ExportEnum.Site_Index;
+            XsltArgumentList argsList = new XsltArgumentList();
+            string filename = ExportTools.getFileName(type);
+            string fileSave = Path.Combine(siteStruct.RepertoireCommon, filename.Replace("/", "_"));
+            ExportHTML.ToHTMLSite(docindex, type, fileSave, argsList);
+            output.Add(new FileWithChecksum(fileSave + ".html"));
 
-            doc.Add(xcompetition);
-
-            // Load the style sheet.
-            var resource = ResourcesTools.GetAssembyResource(ExportTools.GetXsltClassique(ExportEnum.Site_Index));
-            XmlReader xsltReader = XmlReader.Create(resource);
-
-            XslCompiledTransform xslt_index = new XslCompiledTransform();
-            xslt_index.Load(xsltReader);
-
-            string indexfile = Path.Combine(directory, "index.html");
-
-            // Create the FileStream.
-            using (FileStream fs = new FileStream(indexfile, FileMode.Create))
-            {
-                xslt_index.Transform(doc.ToXmlDocument(), null, fs);
-            }
             // No need to regenerate those files, they are usually static unless they are updated
-            // urls = urls.Concat(ExportTools.ExportStyleAndJS(true)).ToList();
             urls = urls.Concat(ExportTools.ExportEmbeddedStyleAndJS(true, siteStruct)).ToList();
-
             LogTools.Logger.Debug("GenereWebSiteIndex - ExportStyleAndJS {0}", urls.Count);
 
             // No need to regenerate those files, they are usually static unless they are updated
-            // urls = urls.Concat(ExportTools.ExportImg(true)).ToList();
-
             // Genere les images "par defaut" contenues dans l'application et les images personnalises de l'utilisateur
             urls = urls.Concat(ExportTools.ExportEmbeddedImg(true, true, siteStruct)).ToList();
-
             LogTools.Logger.Debug("GenereWebSiteIndex - ExportImg {0}", urls.Count);
 
-            urls.Add(indexfile);
+            output.AddRange(urls.Select(o => new FileWithChecksum(o)).ToList());
 
-            output = urls.Select(o => new FileWithChecksum(o)).ToList();
+            // Genere le script de mise a jour
+            type = ExportEnum.Site_FooterScript;
+            XsltArgumentList argsListFooter = new XsltArgumentList();
+            string filenameFooter = ExportTools.getFileName(type);
+            string fileSaveFooter = Path.Combine(siteStruct.RepertoireJs, filenameFooter.Replace("/", "_"));
+            ExportHTML.ToHTMLSite(docindex, type, fileSaveFooter, argsListFooter, "js");
+            output.Add(new FileWithChecksum(fileSaveFooter + ".js"));
+
 
             LogTools.Logger.Debug("GenereWebSiteIndex {0}", output.Count);
-
             return output;
         }
 

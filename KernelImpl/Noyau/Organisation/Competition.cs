@@ -40,6 +40,7 @@ namespace KernelImpl.Noyau.Organisation
             this.isRandomCombat = false;
             this.couleur1 = ConstantCouleur.Rouge.ToString();
             this.couleur2 = ConstantCouleur.Blanc.ToString();
+			this.reglementEquipe = ReglementEquipeEnum.FFJDA;
         }
 
 
@@ -93,6 +94,7 @@ namespace KernelImpl.Noyau.Organisation
 
         public int tempsMedical { get; set; }
          public bool isRandomCombat { get; set; }
+        public ReglementEquipeEnum reglementEquipe { get; set; }
 
 
         public void LoadXml(XElement xinfo)
@@ -123,6 +125,7 @@ namespace KernelImpl.Noyau.Organisation
 
             this.tempsMedical = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_TempsMedical));
             this.isRandomCombat = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_RandomCombat)) == "Oui" ? true : false;
+            this.reglementEquipe = (ReglementEquipeEnum) XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_ReglementEquipe));
         }
 
         public XElement ToXmlInformations()
@@ -146,10 +149,12 @@ namespace KernelImpl.Noyau.Organisation
             xcompetition.SetAttributeValue(ConstantXML.Competition_AfficheAnimationVainqueur, afficheAnimationVainqueur ? "Oui" : "Non");
 
             xcompetition.SetAttributeValue(ConstantXML.Competition_RandomCombat, isRandomCombat ? "Oui" : "Non");
+            xcompetition.SetAttributeValue(ConstantXML.Competition_Tapis, nbTapis.ToString());
             xcompetition.SetAttributeValue(ConstantXML.Competition_TempsMedical, tempsMedical.ToString());
 
             xcompetition.Add(new XElement(ConstantXML.Competition_Titre, nom));
             xcompetition.Add(new XElement(ConstantXML.Competition_Lieu, lieu));
+            xcompetition.SetAttributeValue(ConstantXML.Competition_ReglementEquipe, reglementEquipe.ToString());
             return xcompetition;
         }
 

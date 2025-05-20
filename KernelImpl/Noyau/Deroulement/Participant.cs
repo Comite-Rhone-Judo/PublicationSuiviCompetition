@@ -267,45 +267,6 @@ namespace KernelImpl.Noyau.Deroulement
         {
             XElement xparticipant = new XElement(ConstantXML.Participant);
 
-            Participants.Judoka j = Judoka1(DC);
-
-            if (j != null)
-            {
-                xparticipant.SetAttributeValue(ConstantXML.Participant_ID, j.id.ToString());
-                xparticipant.SetAttributeValue(ConstantXML.Participant_RemoteID, j.remoteID.ToString());                
-                xparticipant.SetAttributeValue(ConstantXML.Participant_Licence, j.licence);
-                xparticipant.SetAttributeValue(ConstantXML.Participant_Nom, j.nom);
-                xparticipant.SetAttributeValue(ConstantXML.Participant_Prenom, j.prenom);
-                xparticipant.SetAttributeValue(ConstantXML.Participant_Sexe, j.sexe ? "F" : "M");
-                xparticipant.SetAttributeValue(ConstantXML.Participant_Naissance, j.naissance.ToString("ddMMyyyy"));
-                xparticipant.SetAttributeValue(ConstantXML.Participant_Pays, j.pays);
-                xparticipant.SetAttributeValue(ConstantXML.Participant_Club, j.club);
-                xparticipant.SetAttributeValue(ConstantXML.Participant_Grade, j.ceinture);
-
-                if (j.poidsMesure > 10)
-                {
-                    xparticipant.SetAttributeValue(ConstantXML.Participant_Poids, j.poidsMesure);
-                }
-                else
-                {
-                    xparticipant.SetAttributeValue(ConstantXML.Participant_Poids, j.poids);
-                }
-            }
-
-            int qualifie1 = 0;
-            if (DC.competition.IsEquipe())
-            {
-                Participants.vue_judoka j1 = DC.Participants.vjudokas.FirstOrDefault(o => o.equipe == this.judoka);
-                qualifie1 = j1?.qualifie1 ?? 0;
-            }
-            else
-            {
-                Participants.vue_judoka j1 = DC.Participants.vjudokas.FirstOrDefault(o => o.id == this.judoka);
-                qualifie1 = j1?.qualifie1 ?? 0;
-            }
-
-            xparticipant.SetAttributeValue(ConstantXML.Participant_QualifieE1, (QualifieEnum)qualifie1);
-
             // Valeurs communes
             xparticipant.SetAttributeValue(ConstantXML.Participant_Judoka, judoka);
             xparticipant.SetAttributeValue(ConstantXML.Participant_Phase, phase);

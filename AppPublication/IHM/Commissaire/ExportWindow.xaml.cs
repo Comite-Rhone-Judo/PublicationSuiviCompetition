@@ -36,6 +36,10 @@ namespace AppPublication.IHM.Commissaire
             {
                 DialogControleur.Instance.Connection.Client.Client.Stop();
             }
+
+            LogTools.LogStop();
+            NLog.LogManager.Shutdown();
+
             App.Current.Shutdown();
         }
 

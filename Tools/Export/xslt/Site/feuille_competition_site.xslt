@@ -5,13 +5,12 @@
 ]>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:import href="Tools/Export/xslt/Site/entete.xslt"/>
-	
+
 	<xsl:output method="html" indent="yes" />
 	<xsl:param name="style"></xsl:param>
 	<xsl:param name="js"></xsl:param>
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
-	<xsl:variable name="typeCompetition" select="/competition[1]/@type"/>
 
 	<xsl:template match="/">
 		<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
@@ -25,7 +24,8 @@
 	<xsl:variable select="/competition/@DelaiActualisationClientSec" name="delayActualisationClient"/>
 	<xsl:variable select="/competition/@kinzas" name="affKinzas"/>
 	<xsl:variable select="/competition/@Logo" name="logo"/>
-	
+	<xsl:variable name="typeCompetition" select="/competition[1]/@type"/>
+
 	<xsl:template match="/*">
 		<!-- ENTETE HTML -->
 		<head>
@@ -77,11 +77,14 @@
 
 						<xsl:if test="//epreuve[1]/@sexe='F'">
 							Féminines&nbsp;
-						
+
 						</xsl:if>
 						<xsl:if test="//epreuve[1]/@sexe='M'">
 							Masculins&nbsp;
-						
+
+						</xsl:if>
+						<xsl:if test="//epreuve[1]/@sexe='M'">
+							Mixte&nbsp;
 						</xsl:if>
 						<xsl:value-of select="//epreuve[1]/@nom"/>
 					</h5>
@@ -126,7 +129,7 @@
 			</xsl:if>
 
 			<!-- Les barrages -->
-		<xsl:if test="count(//phase[@barrage5 = 'true' or @barrage3 = 'true' or @barrage7 = 'true']) &gt; 0">
+			<xsl:if test="count(//phase[@barrage5 = 'true' or @barrage3 = 'true' or @barrage7 = 'true']) &gt; 0">
 				<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
 					<button class="w3-bar-item w3-light-blue" onclick="toggleElement('tableauBarrages')">
 						<img class="img" id="tableauBarragesCollapse" width="25" src="../img/up_circular-32.png" />
@@ -138,16 +141,17 @@
 					<xsl:call-template name="tableauBarrage"/>
 				</div>
 			</xsl:if>
-	
+
 			<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
-				v<xsl:value-of select="/competition/@AppVersion"/> - Dernière actualisation: <xsl:value-of select="/competition/@DateGeneration"/>
+				<script src="../js/footer_script.js"/>
+				<!-- TODO penser a modifier quand on passera en version Participants -->
 			</div>
 		</body>
 	</xsl:template>
 
 	<!-- TEMPLATES -->
 
-	<!-- un tableau -->		
+	<!-- un tableau -->
 	<xsl:template name="tableau">
 		<xsl:param name="repechage"/>
 
@@ -162,7 +166,7 @@
 			</xsl:choose>
 		</xsl:variable>
 
-			
+
 		<xsl:variable name="niveau">
 			<xsl:for-each
 				select="//combat[@repechage = $repechage and generate-id() = generate-id(key('combats', @niveau)[1]) and starts-with(@reference, $prefixRef)]">
@@ -196,12 +200,8 @@
 		<table>
 			<xsl:attribute name="class">
 				<xsl:choose>
-					<xsl:when test="$repechage = 'true'">
-						tas-tableau-repechage-combat
-					</xsl:when>
-					<xsl:otherwise>
-						tas-tableau-combat
-					</xsl:otherwise>
+					<xsl:when test="$repechage = 'true'">tas-tableau-repechage-combat</xsl:when>
+					<xsl:otherwise>tas-tableau-combat	</xsl:otherwise>
 				</xsl:choose>
 			</xsl:attribute>
 
@@ -223,7 +223,7 @@
 							<xsl:with-param name="fillerPrev" select="-1"/>
 							<xsl:with-param name="spacerPrev" select="-1"/>
 							<xsl:with-param name="hcombatPrev" select="-1"/>
-							<xsl:with-param name="prefixRef" select="$prefixRef"/>						
+							<xsl:with-param name="prefixRef" select="$prefixRef"/>
 						</xsl:apply-templates>
 					</tr>
 				</xsl:for-each>
@@ -231,7 +231,7 @@
 		</table>
 	</xsl:template>
 
-	<!-- Tableaux de barrage -->		
+	<!-- Tableaux de barrage -->
 	<xsl:template name="tableauBarrage">
 		<xsl:if test="count(//combat[@repechage = 'true' and starts-with(@reference, '3.')]) &gt; 0">
 			<div class="w3-panel w3-small w3-text-blue" style="font-weight: bold;">Barrages 3èmes</div>
@@ -258,7 +258,7 @@
 	<!-- Un niveau (3, 5 ou 7) de tableau de barrage -->
 	<xsl:template name="barrageNiveau">
 		<xsl:param name="niveau"/>
-		
+
 		<div class="w3-panel">
 			<table class="tas-tableau-combat">
 				<tbody>
@@ -279,14 +279,14 @@
 									<xsl:with-param name="combat" select="."/>
 									<xsl:with-param name="rowspan" select="1"/>
 								</xsl:call-template>
-							</td>	
+							</td>
 						</tr>
 					</xsl:for-each>
 				</tbody>
 			</table>
 		</div>
 	</xsl:template>
-	
+
 	<!-- Combat -->
 	<xsl:template match="combat">
 		<!-- DEFINITION DES VARIABLES -->
@@ -338,7 +338,7 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		
+
 		<!-- Taille du spacer repechage (sp(0) = 0; sp(n+1) = sp(n) + 35 + f(n) / 2 -->
 		<xsl:variable name="spacer">
 			<xsl:choose>
@@ -346,14 +346,14 @@
 					<xsl:value-of select="-1"/>
 				</xsl:when>
 				<xsl:when test="$spacerPrev &gt; -1">
-					<xsl:value-of select="$spacerPrev + 2 * $hcombatPrev - $hcombat + $fillerPrev div 2"/>							
+					<xsl:value-of select="$spacerPrev + 2 * $hcombatPrev - $hcombat + $fillerPrev div 2"/>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:value-of select="0"/>
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		
+
 		<!-- Taille du filler repechage (f(0) = 6; f(n+1) = sp(n) + 70 + f(n), max(f(n)/2, 6) si on ne change le nb de combats -->
 		<xsl:variable name="filler">
 			<xsl:choose>
@@ -389,7 +389,9 @@
 			<!-- 1ere colonne = niveau 1, 2eme colonne = niveau 2 etc. -->
 			<td>
 				<xsl:if test="($position - 1) mod $p = 0">
-					<xsl:attribute name="rowspan"><xsl:value-of select="$p"/></xsl:attribute>
+					<xsl:attribute name="rowspan">
+						<xsl:value-of select="$p"/>
+					</xsl:attribute>
 				</xsl:if>
 
 				<!-- une case = 1 combat (div + table de 2 lignes) incluant la barre verticale-->
@@ -399,7 +401,7 @@
 					<xsl:with-param name="niveaumax" select="$niveaumax"/>
 				</xsl:call-template>
 			</td>
-		
+
 			<!-- Affichage de la finale -->
 			<xsl:if test="$niveau = $niveaumin">
 				<td>
@@ -418,7 +420,7 @@
 
 		<!-- FORMAT DE COMBAT DU TABLEAU DE REPECHAGE -->
 		<xsl:if test="$repechage = 'true'">
-			
+
 			<!-- 1ere colonne = niveau 1, 2eme colonne = niveau 2 etc. -->
 			<td>
 				<xsl:if test="($position - 1) mod $p = 0">
@@ -433,7 +435,7 @@
 						<xsl:otherwise>true</xsl:otherwise>
 					</xsl:choose>
 				</xsl:variable>
-				
+
 				<!-- une case = 1 combat (div + table de 2 lignes) incluant la barre verticale-->
 				<xsl:call-template name="contenuCombatRepechage">
 					<xsl:with-param name="combat" select="."/>
@@ -531,7 +533,7 @@
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:template>
-	
+
 	<!-- Le contenu d'un combat du tableau principal -->
 	<xsl:template name="contenuCombat">
 		<xsl:param name="combat"/>
@@ -560,7 +562,7 @@
 				<xsl:otherwise>
 					<xsl:value-of select="(106 * ($rowspan div 2)) div 2"/>
 				</xsl:otherwise>
-			</xsl:choose>			
+			</xsl:choose>
 		</xsl:variable>
 		<!-- Taille dynamique d'une ligne qui n'est pas dans le CSS rowspan htr(0) = 25px, htrn = 106 * (rowspan -1) / 2 - sp / 2 -->
 		<xsl:variable name="htrint">
@@ -572,14 +574,32 @@
 			</xsl:choose>
 		</xsl:variable>
 
+		<!-- Extrait la couleur en fonction de la categorie-->
+		<xsl:variable name="firstrencontreclass">
+			<xsl:choose>
+				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'M'">
+					w3-blue colorized-img-white
+				</xsl:when>
+				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'F'">
+					w3-purple colorized-img-white
+				</xsl:when>
+				<xsl:otherwise>w3-lime colorized-img-black</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+
+
 		<!-- DIV Contenant l'affichage du combat -->
 		<!-- une case = 1 combat (div + table de 5 lignes) avec la ligne de jonction -->
 		<div class="tas-combat-niveau">
-			<xsl:attribute name="style">height:<xsl:value-of select="$hdiv"/>px;</xsl:attribute>
+			<xsl:attribute name="style">
+				height:<xsl:value-of select="$hdiv"/>px;
+			</xsl:attribute>
 			<table>
 				<!-- Combattant 1-->
 				<tr>
-					<xsl:attribute name="style">height:<xsl:value-of select="$htrext"/>px;</xsl:attribute>
+					<xsl:attribute name="style">
+						height:<xsl:value-of select="$htrext"/>px;
+					</xsl:attribute>
 
 					<!-- 1ere colonne vide necessaire pour fixer les hauteurs -->
 					<td></td>
@@ -597,25 +617,46 @@
 									</xsl:attribute>
 									<!-- Nom du Judoka (complet au debut et en final, uniquement initial dans les combats suivants -->
 									<header class="w3-small">
-										<xsl:value-of select="$judoka1/@nom"/>
-										<xsl:text disable-output-escaping="yes">&#160;</xsl:text>
+										<div class="w3-cell-row">
+											<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut sauf si aucun judoka en face (1er tour) -->
+											<xsl:if test="$typeCompetition = 1 and ($combat/@niveau != $niveaumax or $judoka2/@nom)">
+												<div>
+													<xsl:attribute name="class">w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align 
+														<xsl:value-of select="$firstrencontreclass"/>
+														<xsl:choose>
+															<xsl:when test="$combat/@niveau = $niveaumax"> tas-participant-premiere-categorie</xsl:when>
+															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
+														</xsl:choose>
+													</xsl:attribute>
+													<img class="img" width="20" src="../img/starter-32.png" />
+													<xsl:value-of select="$combat/@firstrencontrelib"/>
+												</div>
+											</xsl:if>
 
-										<xsl:if test="$combat/@niveau != $niveaumax">
-											<xsl:value-of
-											select="substring($judoka1/@prenom, 1, 1)"/>
-											<xsl:text disable-output-escaping="yes">.</xsl:text>
-										</xsl:if>
+											<div class="w3-cell">
+												<xsl:value-of select="$judoka1/@nom"/>
+												<xsl:text disable-output-escaping="yes">&#160;</xsl:text>
 
-										<xsl:if test="$combat/@niveau = $niveaumax">
-											<xsl:value-of select="$judoka1/@prenom"/>
-										</xsl:if>
+												<!-- Sauf en equipe, ajoute la 1ere lettre du prenom avec un . ou le prenom complet au 1er rang -->
+												<xsl:if test="$typeCompetition != 1">
+													<xsl:if test="$combat/@niveau != $niveaumax">
+														<xsl:value-of
+														select="substring($judoka1/@prenom, 1, 1)"/>
+														<xsl:text disable-output-escaping="yes">.</xsl:text>
+													</xsl:if>
+													<!-- 1er niveau, on met le nom complet -->
+													<xsl:if test="$combat/@niveau = $niveaumax ">
+														<xsl:value-of select="$judoka1/@prenom"/>
+													</xsl:if>
+												</xsl:if>
+											</div>
+										</div>
 									</header>
 
 									<!-- Insert le nom du club uniquement au debut du tableau -->
 									<xsl:if test="$combat/@niveau = $niveaumax">
 										<footer class="w3-tiny">
 											<xsl:variable name="ecartement1" select="//phase[@id = $combat/@phase]/@ecartement"/>
-
 											<xsl:choose>
 												<xsl:when test="$ecartement1 = '3'">
 													<xsl:if test="$typeCompetition != 1">
@@ -654,7 +695,7 @@
 										</footer>
 									</xsl:if>
 								</div>
-							
+
 								<!-- Affiche le score -->
 								<xsl:if test="$combat/@niveau != $niveaumax">
 									<xsl:variable name="ref" select="$combat/feuille/@ref1"/>
@@ -678,7 +719,22 @@
 											</xsl:otherwise>
 										</xsl:choose>
 									</xsl:attribute>
-									<header class="w3-small">&nbsp;</header>
+									<header class="w3-small">
+										<div class="w3-cell-row">
+											<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut sauf 1er rang -->
+											<xsl:if test="$typeCompetition = 1 and $combat/@niveau != $niveaumax">
+												<div>
+													<xsl:attribute name="class">
+														w3-cell tas-combat-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align 
+														<xsl:value-of select="$firstrencontreclass"/>
+													</xsl:attribute>
+													<img class="img" width="20" src="../img/starter-32.png" />
+													<xsl:value-of select="$combat/@firstrencontrelib"/>
+												</div>
+											</xsl:if>
+											<div class="w3-cell">&nbsp;</div>
+										</div>
+									</header>
 									<xsl:if test="$combat/@niveau = $niveaumax">
 										<footer class="w3-tiny">&nbsp;</footer>
 									</xsl:if>
@@ -694,7 +750,9 @@
 				</tr>
 				<!-- Vertical de groupement -->
 				<tr>
-					<xsl:attribute name="style">height:<xsl:value-of select="$htrint"/>px;</xsl:attribute>
+					<xsl:attribute name="style">
+						height:<xsl:value-of select="$htrint"/>px;
+					</xsl:attribute>
 
 					<!-- 1ere colonne vide necessaire pour fixer les hauteurs -->
 					<td></td>
@@ -713,7 +771,9 @@
 				</tr>
 				<!-- Combattant 2-->
 				<tr>
-					<xsl:attribute name="style">height:<xsl:value-of select="$htrint"/>px;</xsl:attribute>
+					<xsl:attribute name="style">
+						height:<xsl:value-of select="$htrint"/>px;
+					</xsl:attribute>
 
 					<!-- 1ere colonne vide necessaire pour fixer les hauteurs -->
 					<td></td>
@@ -731,25 +791,46 @@
 									</xsl:attribute>
 									<!-- Nom du Judoka (complet au debut et en final, uniquement initial dans les combats -->
 									<header class="w3-small">
-										<xsl:value-of select="$judoka2/@nom"/>
-										<xsl:text disable-output-escaping="yes">&#160;</xsl:text>
+										<div class="w3-cell-row">
+											<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut (sauf 1er niveau) -->
+											<xsl:if test="$typeCompetition = 1 and ($combat/@niveau != $niveaumax or $judoka1/@nom)">
+												<div>
+													<xsl:attribute name="class">
+														w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align 
+														<xsl:value-of select="$firstrencontreclass"/>
+														<xsl:choose>
+															<xsl:when test="$combat/@niveau = $niveaumax"> tas-participant-premiere-categorie</xsl:when>
+															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
+														</xsl:choose>
+													</xsl:attribute>
+													<img class="img" width="20" src="../img/starter-32.png" />
+													<xsl:value-of select="$combat/@firstrencontrelib"/>
+												</div>
+											</xsl:if>
+											<div class="w3-cell">
+												<xsl:value-of select="$judoka2/@nom"/>
+												<xsl:text disable-output-escaping="yes">&#160;</xsl:text>
 
-										<xsl:if test="$combat/@niveau != $niveaumax">
-											<xsl:value-of
-											select="substring($judoka2/@prenom, 1, 1)"/>
-											<xsl:text disable-output-escaping="yes">.</xsl:text>
-										</xsl:if>
+												<!-- Sauf en equipe, ajoute la 1ere lettre du prenom avec un . ou le prenom complet au 1er rang -->
+												<xsl:if test="$typeCompetition != 1">
+													<xsl:if test="$combat/@niveau != $niveaumax">
+														<xsl:value-of
+														select="substring($judoka2/@prenom, 1, 1)"/>
+														<xsl:text disable-output-escaping="yes">.</xsl:text>
+													</xsl:if>
 
-										<xsl:if test="$combat/@niveau = $niveaumax">
-											<xsl:value-of select="$judoka2/@prenom"/>
-										</xsl:if>
+													<xsl:if test="$combat/@niveau = $niveaumax">
+														<xsl:value-of select="$judoka2/@prenom"/>
+													</xsl:if>
+												</xsl:if>
+											</div>
+										</div>
 									</header>
 
 									<!-- Insert le nom du club uniquement au debut du tableau -->
 									<xsl:if test="$combat/@niveau = $niveaumax">
 										<footer class="w3-tiny">
 											<xsl:variable name="ecartement2" select="//phase[@id = $combat/@phase]/@ecartement"/>
-
 											<xsl:choose>
 												<xsl:when test="$ecartement2 = '3'">
 													<xsl:if test="$typeCompetition != 1">
@@ -788,7 +869,7 @@
 										</footer>
 									</xsl:if>
 								</div>
-							
+
 								<!-- Affiche le score -->
 								<xsl:if test="$combat/@niveau != $niveaumax">
 									<xsl:variable name="ref" select="$combat/feuille/@ref2"/>
@@ -812,7 +893,24 @@
 											</xsl:otherwise>
 										</xsl:choose>
 									</xsl:attribute>
-									<header class="w3-small">&nbsp;</header>
+									<header class="w3-small">
+										<div class="w3-cell-row">
+											<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut (sauf 1er niveau) -->
+											<xsl:if test="$typeCompetition = 1 and $combat/@niveau != $niveaumax">
+												<div>
+													<xsl:attribute name="class">
+														w3-cell tas-combat-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align 
+														<xsl:value-of select="$firstrencontreclass"/>
+													</xsl:attribute>
+													<img class="img" width="20" src="../img/starter-32.png" />
+													<xsl:value-of select="$combat/@firstrencontrelib"/>
+												</div>
+											</xsl:if>
+											<div class="w3-cell">
+												&nbsp;
+											</div>
+										</div>
+									</header>
 									<xsl:if test="$combat/@niveau = $niveaumax">
 										<footer class="w3-tiny">&nbsp;</footer>
 									</xsl:if>
@@ -826,7 +924,9 @@
 					</td>
 				</tr>
 				<tr>
-					<xsl:attribute name="style">height:<xsl:value-of select="$htrext"/>px;</xsl:attribute>
+					<xsl:attribute name="style">
+						height:<xsl:value-of select="$htrext"/>px;
+					</xsl:attribute>
 
 					<td></td>
 					<td></td>
@@ -863,6 +963,19 @@
 			<xsl:value-of select="$filler + $hcombat + $hcombat"/>
 		</xsl:variable>
 
+		<!-- Extrait la couleur en fonction de la categorie-->
+		<xsl:variable name="firstrencontreclass">
+			<xsl:choose>
+				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'M'">
+					w3-blue colorized-img-white
+				</xsl:when>
+				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'F'">
+					w3-purple colorized-img-white
+				</xsl:when>
+				<xsl:otherwise>w3-lime colorized-img-black</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+
 		<!-- DIV de spacer pour decaler les combats -->
 		<div>
 			<xsl:attribute name="style">
@@ -897,25 +1010,47 @@
 									</xsl:attribute>
 									<!-- Nom du Judoka (complet au debut et en final, uniquement initial dans les combats -->
 									<header class="w3-small">
-										<xsl:value-of select="$judoka1/@nom"/>
-										<xsl:text disable-output-escaping="yes">&#160;</xsl:text>
+										<div class="w3-cell-row">
+											<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut -->
+											<xsl:if test="$typeCompetition = 1">
+												<div>
+													<xsl:attribute name="class">
+														w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align 
+														<xsl:value-of select="$firstrencontreclass"/>
+														<xsl:choose>
+															<xsl:when test="$combat/@niveau = $niveaumax"> tas-participant-premiere-categorie</xsl:when>
+															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
+														</xsl:choose>
+													</xsl:attribute>
+													<img class="img" width="20" src="../img/starter-32.png" />
+													<xsl:value-of select="$combat/@firstrencontrelib"/>
+												</div>
+											</xsl:if>
+											<div class="w3-cell">
 
-										<xsl:if test="$combat/@niveau != $niveaumax">
-											<xsl:value-of
-											select="substring($judoka1/@prenom, 1, 1)"/>
-											<xsl:text disable-output-escaping="yes">.</xsl:text>
-										</xsl:if>
+												<xsl:value-of select="$judoka1/@nom"/>
+												<xsl:text disable-output-escaping="yes">&#160;</xsl:text>
 
-										<xsl:if test="$combat/@niveau = $niveaumax">
-											<xsl:value-of select="$judoka1/@prenom"/>
-										</xsl:if>
+												<!-- Sauf en equipe, ajoute la 1ere lettre du prenom avec un . ou le prenom complet au 1er rang -->
+												<xsl:if test="$typeCompetition != 1">
+													<xsl:if test="$combat/@niveau != $niveaumax">
+														<xsl:value-of
+														select="substring($judoka1/@prenom, 1, 1)"/>
+														<xsl:text disable-output-escaping="yes">.</xsl:text>
+													</xsl:if>
+
+													<xsl:if test="$combat/@niveau = $niveaumax">
+														<xsl:value-of select="$judoka1/@prenom"/>
+													</xsl:if>
+												</xsl:if>
+											</div>
+										</div>
 									</header>
 
 									<!-- Insert le nom du club uniquement au debut du tableau -->
 									<xsl:if test="$combat/@niveau = $niveaumax">
 										<footer class="w3-tiny">
 											<xsl:variable name="ecartement1" select="//phase[@id = $combat/@phase]/@ecartement"/>
-
 											<xsl:choose>
 												<xsl:when test="$ecartement1 = '3'">
 													<xsl:if test="$typeCompetition != 1">
@@ -978,9 +1113,32 @@
 											</xsl:otherwise>
 										</xsl:choose>
 									</xsl:attribute>
-									<header class="w3-small">&nbsp;</header>
+									<header class="w3-small">
+										<div class="w3-cell-row">
+											<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut -->
+											<xsl:if test="$typeCompetition = 1">
+												<div>
+													<xsl:attribute name="class">
+														w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align 
+														<xsl:value-of select="$firstrencontreclass"/>
+														<xsl:choose>
+															<xsl:when test="$combat/@niveau = $niveaumax"> tas-participant-premiere-categorie</xsl:when>
+															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
+														</xsl:choose>
+													</xsl:attribute>
+													<img class="img" width="20" src="../img/starter-32.png" />
+													<xsl:value-of select="$combat/@firstrencontrelib"/>
+												</div>
+											</xsl:if>
+											<div class="w3-cell">
+												&nbsp;
+											</div>
+										</div>
+									</header>
 									<xsl:if test="$combat/@niveau = $niveaumax">
-										<footer class="w3-tiny">&nbsp;</footer>
+										<footer class="w3-tiny">
+											&nbsp;
+										</footer>
 									</xsl:if>
 								</div>
 								<!-- Affiche le score vide -->
@@ -1008,7 +1166,7 @@
 							<xsl:attribute name="style">
 								height:<xsl:value-of select="$hdivbar"/>px;
 							</xsl:attribute>
-							
+
 							&nbsp;
 						</div>
 					</td>
@@ -1047,25 +1205,47 @@
 									</xsl:attribute>
 									<!-- Nom du Judoka (complet au debut et en final, uniquement initial dans les combats -->
 									<header class="w3-small">
-										<xsl:value-of select="$judoka2/@nom"/>
-										<xsl:text disable-output-escaping="yes">&#160;</xsl:text>
+										<div class="w3-cell-row">
+											<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut (sauf 1er niveau) -->
+											<xsl:if test="$typeCompetition = 1">
+												<div>
+													<xsl:attribute name="class">
+														w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align 
+														<xsl:value-of select="$firstrencontreclass"/>
+														<xsl:choose>
+															<xsl:when test="$combat/@niveau = $niveaumax"> tas-participant-premiere-categorie</xsl:when>
+															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
+														</xsl:choose>
+													</xsl:attribute>
+													<img class="img" width="20" src="../img/starter-32.png" />
+													<xsl:value-of select="$combat/@firstrencontrelib"/>
+												</div>
+											</xsl:if>
+											<div class="w3-cell">
 
-										<xsl:if test="$combat/@niveau != $niveaumax">
-											<xsl:value-of
-											select="substring($judoka2/@prenom, 1, 1)"/>
-											<xsl:text disable-output-escaping="yes">.</xsl:text>
-										</xsl:if>
+												<xsl:value-of select="$judoka2/@nom"/>
+												<xsl:text disable-output-escaping="yes">&#160;</xsl:text>
 
-										<xsl:if test="$combat/@niveau = $niveaumax">
-											<xsl:value-of select="$judoka2/@prenom"/>
-										</xsl:if>
+												<!-- Sauf en equipe, ajoute la 1ere lettre du prenom avec un . ou le prenom complet au 1er rang -->
+												<xsl:if test="$typeCompetition != 1">
+													<xsl:if test="$combat/@niveau != $niveaumax">
+														<xsl:value-of
+														select="substring($judoka2/@prenom, 1, 1)"/>
+														<xsl:text disable-output-escaping="yes">.</xsl:text>
+													</xsl:if>
+
+													<xsl:if test="$combat/@niveau = $niveaumax">
+														<xsl:value-of select="$judoka2/@prenom"/>
+													</xsl:if>
+												</xsl:if>
+											</div>
+										</div>
 									</header>
 
 									<!-- Insert le nom du club uniquement au debut du tableau -->
 									<xsl:if test="$combat/@niveau = $niveaumax">
 										<footer class="w3-tiny">
 											<xsl:variable name="ecartement2" select="//phase[@id = $combat/@phase]/@ecartement"/>
-
 											<xsl:choose>
 												<xsl:when test="$ecartement2 = '3'">
 													<xsl:if test="$typeCompetition != 1">
@@ -1135,9 +1315,32 @@
 											</xsl:otherwise>
 										</xsl:choose>
 									</xsl:attribute>
-									<header class="w3-small">&nbsp;</header>
+									<header class="w3-small">
+										<div class="w3-cell-row">
+											<!-- Pour les competitions en equipes, ajoute la categorie qui commence au debut -->
+											<xsl:if test="$typeCompetition = 1">
+												<div>
+													<xsl:attribute name="class">
+														w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align 
+														<xsl:value-of select="$firstrencontreclass"/>
+														<xsl:choose>
+															<xsl:when test="$combat/@niveau = $niveaumax"> tas-participant-premiere-categorie</xsl:when>
+															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
+														</xsl:choose>
+													</xsl:attribute>
+													<img class="img" width="20" src="../img/starter-32.png" />
+													<xsl:value-of select="$combat/@firstrencontrelib"/>
+												</div>
+											</xsl:if>										
+											<div class="w3-cell">
+												&nbsp;
+											</div>
+										</div>
+									</header>
 									<xsl:if test="$combat/@niveau = $niveaumax">
-										<footer class="w3-tiny">&nbsp;</footer>
+										<footer class="w3-tiny">
+											&nbsp;
+										</footer>
 									</xsl:if>
 								</div>
 								<!-- Affiche le score vide -->
@@ -1168,7 +1371,7 @@
 
 		<xsl:variable name="kinzavainqueur" select="$combat/score[@judoka = $combat/@vainqueur]/@kinza"/>
 		<xsl:variable name="kinzaperdant" select="$combat/score[@judoka != $combat/@vainqueur]/@kinza"/>
-		
+
 		<div class="w3-left-align">
 			<span class="w3-small">
 				<xsl:choose>
@@ -1182,7 +1385,9 @@
 										<!-- Les marques avec Kinzas, on ignore le Yuko -->
 										<xsl:value-of select="substring($combat/@scorevainqueur, 1, 2)"/>
 										<!-- Les kinzas -->
-										<span class="w3-small w3-text-green">(<xsl:value-of select="$kinzavainqueur"/>)</span>
+										<span class="w3-small w3-text-green">
+											(<xsl:value-of select="$kinzavainqueur"/>)
+										</span>
 									</xsl:when>
 									<!-- Les marques sans Kinzas -->
 									<xsl:otherwise>
@@ -1198,6 +1403,10 @@
 							<xsl:otherwise>
 								<!-- Uniquement les marques -->
 								<xsl:value-of select="$combat/@scorevainqueur"/>
+								<!-- Ajoute le V en cas de combat decisif dans la rencontre -->
+								<xsl:if test="count($combat/rencontre[@estDecisif='true']) != 0">
+									<span class="w3-text-orange"> (V)</span>
+								</xsl:if>
 							</xsl:otherwise>
 						</xsl:choose>
 						<xsl:text disable-output-escaping="yes">/</xsl:text>
@@ -1209,7 +1418,9 @@
 										<!-- Les marques avec Kinzas, on ignore le Yuko -->
 										<xsl:value-of select="substring($combat/@scoreperdant, 1, 2)"/>
 										<!-- Les kinzas -->
-										<span class="w3-small w3-text-green">(<xsl:value-of select="$kinzaperdant"/>)</span>
+										<span class="w3-small w3-text-green">
+											(<xsl:value-of select="$kinzaperdant"/>)
+										</span>
 									</xsl:when>
 									<!-- Les marques sans Kinzas -->
 									<xsl:otherwise>
@@ -1228,7 +1439,7 @@
 							</xsl:otherwise>
 						</xsl:choose>
 					</xsl:when>
-						<!-- Pas de score (combat pas encore realise) -->
+					<!-- Pas de score (combat pas encore realise) -->
 					<xsl:otherwise>
 						&nbsp;
 					</xsl:otherwise>
@@ -1241,7 +1452,7 @@
 	<xsl:template name="scoreVide">
 		<div class="w3-left-align">
 			<span class="w3-small">
-						&nbsp;
+				&nbsp;
 			</span>
 		</div>
 	</xsl:template>
@@ -1256,7 +1467,9 @@
 		<xsl:variable name="hdivfinal" select="100 * $rowspan + 6"/>
 
 		<div class="tas-combat-final-niveau">
-			<xsl:attribute name="style">height:<xsl:value-of select="$hdivfinal"/>px;</xsl:attribute>
+			<xsl:attribute name="style">
+				height:<xsl:value-of select="$hdivfinal"/>px;
+			</xsl:attribute>
 
 			<table>
 				<tbody>
@@ -1278,10 +1491,10 @@
 							<!--
 							<xsl:variable name="ref" select="$combat/feuille/@ref1"/>
 							<xsl:variable name="combat_prec" select="//combat[@reference = $ref]"/> -->
-							
+
 							<xsl:call-template name="score">
 								<xsl:with-param name="combat" select="$combat"/>
-							</xsl:call-template>		
+							</xsl:call-template>
 						</td>
 					</tr>
 				</tbody>
@@ -1371,5 +1584,5 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-	
+
 </xsl:stylesheet>

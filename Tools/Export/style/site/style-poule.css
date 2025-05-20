@@ -28,13 +28,13 @@ table.tas-poule-combat {
             }
 
         table.tas-poule-combat td.tas-poule-combat {
-            height: 75px;
-            width: 75px;
+            height: 85px;
+            width: 85px;
         }
 
             table.tas-poule-combat td.tas-poule-combat div {
-                width: 75px;
-                height: 75px;
+                width: 85px;
+                height: 85px;
                 text-align: center
             }
 

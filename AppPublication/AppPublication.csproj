@@ -148,6 +148,7 @@
     <Compile Include="Statistiques\StatistiqueItemCompteur.cs" />
     <Compile Include="Statistiques\StatistiqueItemMoyenneur.cs" />
     <Compile Include="Tools\AppInformation.cs" />
+    <Compile Include="Tools\Converter\AppStatusProgressConverter.cs" />
     <Compile Include="Tools\Converter\AppStatusConverter.cs" />
     <Compile Include="Tools\Converter\PassthroughConverter.cs" />
     <Compile Include="Tools\Converter\BoolOperationConverter.cs" />
@@ -158,8 +159,8 @@
     <Compile Include="Tools\Converter\BoolNotConverter.cs" />
     <Compile Include="Tools\Converter\ClientConverter.cs" />
     <Compile Include="Tools\EntitePublicationFFJudo.cs" />
-    <Compile Include="Tools\Enum\TypePouleEnum.cs" />
     <Compile Include="Tools\Enum\BusyStatusEnum.cs" />
+    <Compile Include="Tools\Enum\TypePouleEnum.cs" />
     <Compile Include="Tools\FileTools.cs" />
     <Compile Include="Tools\FilteredFileInfo.cs" />
     <Compile Include="Tools\LectureFile\LectureStructures.cs" />

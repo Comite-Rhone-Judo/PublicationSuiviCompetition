@@ -135,8 +135,10 @@
     <Compile Include="Enum\ConstantCouleur.cs" />
     <Compile Include="Enum\ConstantFile.cs" />
     <Compile Include="Enum\ConstantResource.cs" />
+    <Compile Include="Enum\EpreuveEquipeTypeEnum.cs" />
     <Compile Include="Enum\EpreuveSexeEnum.cs" />
     <Compile Include="Enum\ExportDisplayModeEnum.cs" />
+    <Compile Include="Enum\ReglementEquipeEnum.cs" />
     <Compile Include="Enum\ServerResponseEnum.cs" />
     <Compile Include="Enum\SiteEnum.cs" />
     <Compile Include="Enum\QualifieEnum.cs" />
@@ -240,6 +242,7 @@
     <Compile Include="Outils\MiniSite.cs" />
     <Compile Include="Outils\StatusMiniSite.cs" />
     <Compile Include="Outils\TimedLock.cs" />
+    <Compile Include="Outils\SingleShotTimer.cs" />
     <Compile Include="Outils\XMLTools.cs" />
     <Compile Include="Outils\LogTools.cs" />
     <Compile Include="Enum\NetworkTools.cs" />
@@ -1764,7 +1767,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Export\xslt\Site\index.xslt">
+    <EmbeddedResource Include="Export\xslt\Site\index_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
@@ -1911,6 +1914,15 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="data\data\PublicationFFJudo.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\xslt\Site\footer_script_site.xslt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\site\starter-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\xslt\Site\panel_epreuve.xslt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

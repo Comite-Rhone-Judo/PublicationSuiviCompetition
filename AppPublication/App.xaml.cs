@@ -95,7 +95,7 @@ namespace AppPublication
         void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             // Process unhandled exception
-            LogTools.Logger.Error("Exception non geree ayant atteint le gestionnaire general:", e.Exception);
+            LogTools.Logger.Error(e.Exception, "Exception non geree ayant atteint le gestionnaire general:");
 
             // Prevent default unhandled exception processing
             e.Handled = true;
