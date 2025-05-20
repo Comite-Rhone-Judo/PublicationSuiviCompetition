@@ -300,6 +300,10 @@ namespace AppPublication.Export
                     output.Add(new FileWithChecksum(fileSavePc + ".html"));
                 }
 
+                // TODO Refaire une passe dans les XSLT pour verifier que l'on a plus de repertoire en dur (uniquement parametre)
+                // TODO Refaire une passe pour verifier les XSLT equipes mixtes
+                // TODO refaire une passe pour verifier les Path.Combine au lieu des concats
+
                 // Genere le menu participants
                 if (config.PublierParticipants)
                 {

@@ -147,9 +147,10 @@ namespace Tools.Outils
         /// <summary>
         /// Suppression d'un répertoire (avec vérification de suppression des fichier contenu)
         /// </summary>
-        /// <param name="directoryname"></param>
+        /// <param name="directoryname">Repertoire cible</param>
+        /// <param name="onlyContent">Si True, efface le contenu mais pas le repertoire designe. Si False, efface aussi le repertoire designe</param>
         /// <returns></returns>
-        public static bool DeleteDirectory(string directoryname)
+        public static bool DeleteDirectory(string directoryname, bool onlyContent = false)
         {
             if (Directory.Exists(directoryname))
             {
@@ -165,6 +166,13 @@ namespace Tools.Outils
                         FileAndDirectTools.DeleteFile(file);
                     }
                     Directory.Delete(directoryname);
+
+                    // Si pas uniquement le contenu, efface le repertoire designe
+                    if (!onlyContent)
+                    {
+                        Directory.Delete(directoryname);
+                    }
+
                     return true;
                 }
                 catch (Exception ex)
