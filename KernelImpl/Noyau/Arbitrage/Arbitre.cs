@@ -13,7 +13,33 @@ namespace KernelImpl.Noyau.Arbitrage
         public string nom { get; set; }
         public string prenom { get; set; }
         public System.DateTime naissance { get; set; }
-        public bool sexe { get; set; }
+        private bool _sexe;
+        public bool sexe
+        {
+            get
+            {
+                return _sexe;
+            }
+            set
+            {
+                _sexe = value;
+                _sexeEnum = new EpreuveSexe(_sexe);
+            }
+        }
+
+        private EpreuveSexe _sexeEnum;
+        public EpreuveSexe sexeEnum
+        {
+            get
+            {
+                return _sexeEnum;
+            }
+            set
+            {
+                _sexeEnum = value;
+                _sexe = (bool)_sexeEnum;
+            }
+        }
         public bool modification { get; set; }
         public int clubId { get; set; }
         public string club { get; set; }

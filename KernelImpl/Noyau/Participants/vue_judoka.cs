@@ -898,6 +898,24 @@ namespace KernelImpl.Noyau.Participants
             }
         }
 
+        private string _comite;
+        /// <summary>
+        /// ID du comite du judoka
+        /// </summary>
+        public string comite
+        {
+            get { return _comite; }
+            set
+            {
+                if (_comite != value)
+                {
+                    _comite = value;
+                    OnPropertyChanged("comite");
+                }
+            }
+        }
+
+
         private int _qualifie0;
 
         /// <summary>
