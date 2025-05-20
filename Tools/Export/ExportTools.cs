@@ -252,7 +252,7 @@ namespace Tools.Export
         {
             List<string> result = new List<string>();
             string dirJs = structSite.RepertoireJs;
-            string dirStyle = structSite.RepertoireStyle;
+            string dirStyle = structSite.RepertoireCss;
 
             // string directory = ExportTools.getDirectory(true, null, null).Replace("common", "");
 

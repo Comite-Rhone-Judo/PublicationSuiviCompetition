@@ -6,7 +6,7 @@ namespace Tools.Export
     public class ConfigurationExportSite
     {
 
-        public ConfigurationExportSite(bool pubPC = false, bool pubAT = true, bool pubP = true, bool partAbsent = false, bool partClub = true, long delAC = 30, int nbPC = 6, string pMsg = "", string pLogo = "", bool pec = false, bool ptec = false, int maxpc = 5)
+        public ConfigurationExportSite(bool pubPC = false, bool pubAT = true, bool pubP = true, bool partAbsent = false, bool partTC = false, bool partClub = true, long delAC = 30, int nbPC = 6, string pMsg = "", string pLogo = "", bool pec = false, bool ptec = false, int maxpc = 5)
         {
             PublierProchainsCombats = pubPC;
             PublierAffectationTapis = pubAT;

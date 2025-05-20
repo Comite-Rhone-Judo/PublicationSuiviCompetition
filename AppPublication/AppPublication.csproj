@@ -135,6 +135,7 @@
     </Compile>
     <Compile Include="Controles\GestionStatistiques.cs" />
     <Compile Include="Controles\RelayCommand.cs" />
+    <Compile Include="ExtensionNoyau\Deroulement\DataDeroulement.cs" />
     <Compile Include="IHM\Commissaire\ConfigurationPublication.xaml.cs">
       <DependentUpon>ConfigurationPublication.xaml</DependentUpon>
     </Compile>
