@@ -407,6 +407,29 @@ namespace AppPublication.Export
         }
 
         /// <summary>
+        /// Creation du document pour l'index
+        /// </summary>
+        /// <param name="DC"></param>
+        /// <param name="siteStructure"></param>
+        /// <returns></returns>
+        public static XmlDocument CreateDocumentIndex(JudoData DC, ExportSiteStructure siteStructure)
+        {
+            XDocument doc = new XDocument();
+            XElement xcompetitions = new XElement(ConstantXML.Competitions);
+            doc.Add(xcompetitions);
+
+            IList<Competition> competitions = DC.Organisation.Competitions.ToList();
+
+            foreach (Competition competition in competitions)
+            {
+                XElement xcompetition = competition.ToXmlInformations();
+                xcompetitions.Add(xcompetition);
+            }
+
+            return doc.ToXmlDocument();
+        }
+
+        /// <summary>
         /// Création du menu (pour le site)
         /// </summary>
         /// <param name="DC"></param>

@@ -196,6 +196,9 @@ namespace AppPublication.Export
             return output;
         }
 
+
+
+
         /// <summary>
         /// Génére L'index
         /// </summary>
@@ -204,45 +207,45 @@ namespace AppPublication.Export
         {
             List<string> urls = new List<string>();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
+            ExportEnum type;
 
-            if (config != null && siteStruct != null)
+            if (DC != null && config != null && siteStruct != null)
             {
-	 			XmlDocument docindex = ExportXML.CreateDocumentIndex(DC, siteStruct);
-	            ExportXML.AddPublicationInfo(ref docindex, config);
-	            LogTools.Logger.Debug("XML genere: '{0}'", docindex.InnerXml);
-	
-	            // Genere l'index
-	            type = ExportEnum.Site_Index;
-	            XsltArgumentList argsList = new XsltArgumentList();
-	            string filename = ExportTools.getFileName(type);
-	            string fileSave = Path.Combine(siteStruct.RepertoireCommon, filename.Replace("/", "_"));
-	            ExportHTML.ToHTMLSite(docindex, type, fileSave, argsList);
-	            output.Add(new FileWithChecksum(fileSave + ".html"));
-	            // TODO verifier AddStructureArgument(argsList, siteStruct, indexfile);
+                XmlDocument docindex = ExportXML.CreateDocumentIndex(DC, siteStruct);
+                ExportXML.AddPublicationInfo(ref docindex, config);
+                LogTools.Logger.Debug("XML genere: '{0}'", docindex.InnerXml);
+
+                // Genere l'index
+                type = ExportEnum.Site_Index;
+                string filename = ExportTools.getFileName(type);
+                string fileSave = Path.Combine(siteStruct.RepertoireCommon, filename.Replace("/", "_"));
+                XsltArgumentList argsList = new XsltArgumentList();
+                AddStructureArgument(argsList, siteStruct, fileSave);
+
+                ExportHTML.ToHTMLSite(docindex, type, fileSave, argsList);
+                output.Add(new FileWithChecksum(fileSave + ".html"));
+
                 // No need to regenerate those files, they are usually static unless they are updated
                 urls = urls.Concat(ExportTools.ExportEmbeddedStyleAndJS(true, siteStruct)).ToList();
                 LogTools.Logger.Debug("GenereWebSiteIndex - ExportStyleAndJS {0}", urls.Count);
 
-                // No need to regenerate those files, they are usually static unless they are updated
-                // urls = urls.Concat(ExportTools.ExportImg(true)).ToList();
-
                 // Genere les images "par defaut" contenues dans l'application et les images personnalises de l'utilisateur
                 urls = urls.Concat(ExportTools.ExportEmbeddedImg(true, true, siteStruct)).ToList();
-
                 LogTools.Logger.Debug("GenereWebSiteIndex - ExportImg {0}", urls.Count);
 
-            output.AddRange(urls.Select(o => new FileWithChecksum(o)).ToList());
+                output.AddRange(urls.Select(o => new FileWithChecksum(o)).ToList());
 
-            // Genere le script de mise a jour
-            type = ExportEnum.Site_FooterScript;
-            XsltArgumentList argsListFooter = new XsltArgumentList();
-            string filenameFooter = ExportTools.getFileName(type);
-            string fileSaveFooter = Path.Combine(siteStruct.RepertoireJs, filenameFooter.Replace("/", "_"));
-            ExportHTML.ToHTMLSite(docindex, type, fileSaveFooter, argsListFooter, "js");
-            output.Add(new FileWithChecksum(fileSaveFooter + ".js"));
+                // Genere le script de mise a jour
+                type = ExportEnum.Site_FooterScript;
+                string filenameFooter = ExportTools.getFileName(type);
+                string fileSaveFooter = Path.Combine(siteStruct.RepertoireJs, filenameFooter.Replace("/", "_"));
+                XsltArgumentList argsListFooter = new XsltArgumentList();
+                AddStructureArgument(argsListFooter, siteStruct, fileSaveFooter);
+                ExportHTML.ToHTMLSite(docindex, type, fileSaveFooter, argsListFooter, "js");
+                output.Add(new FileWithChecksum(fileSaveFooter + ".js"));
 
-
-            LogTools.Logger.Debug("GenereWebSiteIndex {0}", output.Count);
+                LogTools.Logger.Debug("GenereWebSiteIndex {0}", output.Count);
+            }
             return output;
         }
 
