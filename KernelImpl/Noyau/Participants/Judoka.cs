@@ -402,6 +402,8 @@ namespace KernelImpl.Noyau.Participants
 
             this.nom = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Judoka_Nom));
             this.prenom = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Judoka_Prenom));
+			// TODO Verifie le code par rapport a
+			// this.sexeEnum = new EpreuveSexe(XMLTools.LectureString(xinfo.Attribute(ConstantXML.Judoka_Sexe)));
             this.sexe = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Judoka_Sexe));
             this.naissance = XMLTools.LectureDate(xinfo.Attribute(ConstantXML.Judoka_Naissance), "ddMMyyyy", DateTime.MinValue);
             this.pays = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Judoka_Pays));

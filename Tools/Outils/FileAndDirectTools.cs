@@ -165,7 +165,6 @@ namespace Tools.Outils
                     {
                         FileAndDirectTools.DeleteFile(file);
                     }
-                    Directory.Delete(directoryname);
 
                     // Si pas uniquement le contenu, efface le repertoire designe
                     if (!onlyContent)

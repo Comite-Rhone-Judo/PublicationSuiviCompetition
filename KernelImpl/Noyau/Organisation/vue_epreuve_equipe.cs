@@ -104,7 +104,6 @@ namespace KernelImpl.Noyau.Organisation
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_AnneeMax, anneeMax);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_CateAge_RemoteId, remoteId_cateage);
 
-            // TODO A gerer correctement avec un Enum
             List<Epreuve> epreuves = DC.Organisation.Epreuves.Where(o => o.epreuve_equipe == this.id).ToList();
             EpreuveSexe sexe = new EpreuveSexe(EpreuveSexeEnum.Feminine);
             

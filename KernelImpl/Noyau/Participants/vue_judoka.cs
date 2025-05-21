@@ -20,6 +20,7 @@ namespace KernelImpl.Noyau.Participants
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        #region PROPERTIES
         private int _id;
 
         /// <summary>
@@ -1045,6 +1046,8 @@ namespace KernelImpl.Noyau.Participants
         {
             return this.etat == (int)EtatJudokaEnum.AuPoids || this.etat == (int)EtatJudokaEnum.HorsCategorie || this.etat == (int)EtatJudokaEnum.HorsPoids;
         }
+        #endregion
+        #region CONSTRUCTEURS
 
         public vue_judoka(Judoka judoka, JudoData DC)
         {
@@ -1158,11 +1161,13 @@ namespace KernelImpl.Noyau.Participants
                 Comite comite = DC.Structures.Comites.FirstOrDefault(o => o.id == club.comite && o.ligue == club.ligue);
                 if (comite != null)
                 {
+                    this.comite = comite.id;
                     this.comiteNomCourt = club.comite;
                     this.comiteNom = club.comite;
                 }
                 else
                 {
+                    this.comite = String.Empty;
                     this.comiteNomCourt = "0";
                     this.comiteNom = "";
                 }
@@ -1184,6 +1189,7 @@ namespace KernelImpl.Noyau.Participants
             }
             else
             {
+                this.comite = string.Empty;
                 this.comiteNomCourt = "0";
                 this.comiteNom = "";
                 this.ligue = "";
@@ -1551,6 +1557,8 @@ namespace KernelImpl.Noyau.Participants
             }
         }
 
+        #endregion
+        #region METHODES
         public bool PeuxParticiter()
         {
             return this.etat == (int)EtatJudokaEnum.AuPoids && this.observation == 0;
@@ -1589,6 +1597,7 @@ namespace KernelImpl.Noyau.Participants
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_Ligue, this.ligue);
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_LigueNomCourt, this.ligueNomCourt);
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_LigueNom, this.ligueNom);
+            xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_Pays, this.pays);
 
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_IdEpreuve, this.idepreuve.ToString());
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_LibEpreuve, this.libepreuve);
@@ -1597,5 +1606,6 @@ namespace KernelImpl.Noyau.Participants
 
             return xjudoka;
         }
+        #endregion
     }
 }
