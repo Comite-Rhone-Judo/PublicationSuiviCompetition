@@ -297,7 +297,11 @@
 			</xsl:choose>
 			<!-- Pied de page -->
 			<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
-				v<xsl:value-of select="$selectedCompetition/@AppVersion"/> - Dernière actualisation: <xsl:value-of select="$selectedCompetition/@DateGeneration"/>
+				<script>
+					<xsl:attribute name="src">
+						<xsl:value-of select="concat($jsPath, 'footer_script.js')"/>
+					</xsl:attribute>
+				</script>
 			</div>
 		</body>
 	</xsl:template>

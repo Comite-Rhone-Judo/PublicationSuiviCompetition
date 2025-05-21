@@ -166,8 +166,11 @@
 			</xsl:for-each>
 
 			<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
-				<script src="../js/footer_script.js"/>
-				<!-- TODO penser a modifier quand on passera en version Participants -->
+				<script>
+					<xsl:attribute name="src">
+						<xsl:value-of select="concat($jsPath, 'footer_script.js')"/>
+					</xsl:attribute>
+				</script>
 			</div>
 		</body>
 	</xsl:template>

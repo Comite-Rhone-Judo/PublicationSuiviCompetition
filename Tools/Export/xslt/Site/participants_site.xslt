@@ -97,9 +97,14 @@
 
 			<xsl:if test="count(/competitions/competition)>0">
 				<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
-					v<xsl:value-of select="/competitions/competition[1]/@AppVersion"/> - Dernière actualisation: <xsl:value-of select="/competitions/competition[1]/@DateGeneration"/>
+					<script>
+						<xsl:attribute name="src">
+							<xsl:value-of select="concat($jsPath, 'footer_script.js')"/>
+						</xsl:attribute>
+					</script>
 				</div>
 			</xsl:if>
+
 
 		</body>
 	</xsl:template>
