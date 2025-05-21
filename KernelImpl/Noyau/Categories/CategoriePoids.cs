@@ -18,7 +18,33 @@ namespace KernelImpl.Noyau.Categories
         public int poidsMax { get; set; }
         public string ordre { get; set; }
         public int categorieAge { get; set; }
-        public int sexe { get; set; }
+        private int _sexe;
+        public int sexe
+        {
+            get
+            {
+                return _sexe;
+            }
+            set
+            {
+                _sexe = value;
+                _sexeEnum = new EpreuveSexe(_sexe);
+            }
+        }
+
+        private EpreuveSexe _sexeEnum;
+        public EpreuveSexe sexeEnum
+        {
+            get
+            {
+                return _sexeEnum;
+            }
+            set
+            {
+                _sexeEnum = value;
+                _sexe = (int)_sexeEnum;
+            }
+        }
         public bool equipe { get; set; }
         public string discipline { get; set; }
 
@@ -46,7 +72,7 @@ namespace KernelImpl.Noyau.Categories
             xcatepoids.SetAttributeValue(ConstantXML.CatePoids_remoteId, remoteId);
             xcatepoids.SetAttributeValue(ConstantXML.CatePoids_poidsMin, poidsMin);
             xcatepoids.SetAttributeValue(ConstantXML.CatePoids_poidsMax, poidsMax);
-            xcatepoids.SetAttributeValue(ConstantXML.CatePoids_sexe, sexe);
+            xcatepoids.SetAttributeValue(ConstantXML.CatePoids_sexe, sexeEnum.ToString());
             xcatepoids.SetAttributeValue(ConstantXML.CatePoids_cateage, categorieAge);
             xcatepoids.SetAttributeValue(ConstantXML.CatePoids_equipe, equipe.ToString().ToLower());
             xcatepoids.SetAttributeValue(ConstantXML.CatePoids_discipline, discipline);

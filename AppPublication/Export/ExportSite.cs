@@ -303,6 +303,8 @@ namespace AppPublication.Export
                 // TODO Refaire une passe dans les XSLT pour verifier que l'on a plus de repertoire en dur (uniquement parametre)
                 // TODO Refaire une passe pour verifier les XSLT equipes mixtes
                 // TODO refaire une passe pour verifier les Path.Combine au lieu des concats
+                // TODO Faire une passe sur les enums/int (ex. discipline) pour les remplacer par des enums
+                // TODO Faire une comparaison de code avec le commit ebf4d67ccf0d9840e523e748dd0230b114e5aa00 (Merge participants dans EasyConfig)
 
                 // Genere le menu participants
                 if (config.PublierParticipants)

@@ -118,6 +118,25 @@ namespace KernelImpl.Noyau.Participants
                 {
                     _sexe = value;
                     OnPropertyChanged("sexe");
+                    sexeEnum = new EpreuveSexe(_sexe);
+                }
+            }
+        }
+
+        private EpreuveSexe _sexeEnum;
+        public EpreuveSexe sexeEnum
+        {
+            get
+            {
+                return _sexeEnum;
+            }
+            set
+            {
+                if (_sexeEnum.Enum != value.Enum)
+                {
+                    _sexeEnum = value;
+                    OnPropertyChanged("sexeEnum");
+                    sexe = (bool)_sexeEnum;
                 }
             }
         }
@@ -383,7 +402,7 @@ namespace KernelImpl.Noyau.Participants
 
             this.nom = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Judoka_Nom));
             this.prenom = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Judoka_Prenom));
-            this.sexe = xinfo.Attribute(ConstantXML.Judoka_Sexe).Value == "M" ? false : true;
+            this.sexe = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Judoka_Sexe));
             this.naissance = XMLTools.LectureDate(xinfo.Attribute(ConstantXML.Judoka_Naissance), "ddMMyyyy", DateTime.MinValue);
             this.pays = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Judoka_Pays));
             this.club = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Judoka_Club));
@@ -428,7 +447,7 @@ namespace KernelImpl.Noyau.Participants
             xjudoka.SetAttributeValue(ConstantXML.Judoka_Licence, licence);
             xjudoka.SetAttributeValue(ConstantXML.Judoka_Nom, nom.ToUpper());
             xjudoka.SetAttributeValue(ConstantXML.Judoka_Prenom, OutilsTools.FormatPrenom(prenom));
-            xjudoka.SetAttributeValue(ConstantXML.Judoka_Sexe, sexe ? "F" : "M");
+            xjudoka.SetAttributeValue(ConstantXML.Judoka_Sexe, sexeEnum.ToString());
             xjudoka.SetAttributeValue(ConstantXML.Judoka_Naissance, naissance.ToString("ddMMyyyy"));
             xjudoka.SetAttributeValue(ConstantXML.Judoka_Pays, pays);
             xjudoka.SetAttributeValue(ConstantXML.Judoka_Club, club);

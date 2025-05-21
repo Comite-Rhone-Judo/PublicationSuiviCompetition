@@ -104,23 +104,24 @@ namespace KernelImpl.Noyau.Organisation
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_AnneeMax, anneeMax);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_CateAge_RemoteId, remoteId_cateage);
 
-
+            // TODO A gerer correctement avec un Enum
             List<Epreuve> epreuves = DC.Organisation.Epreuves.Where(o => o.epreuve_equipe == this.id).ToList();
-            string sexe = "";
+            EpreuveSexe sexe = new EpreuveSexe(EpreuveSexeEnum.Feminine);
+            
             if (epreuves.Count(o => o.sexe == 1) > 0 && epreuves.Count(o => o.sexe == 0) > 0)
             {
-                sexe = "X"; // "M/F";
+                sexe = new EpreuveSexe(EpreuveSexeEnum.Mixte);
             }
             else if (epreuves.Count(o => o.sexe == 1) > 0 && epreuves.Count(o => o.sexe == 0) == 0)
             {
-                sexe = "F";
+                sexe = new EpreuveSexe(EpreuveSexeEnum.Feminine);
             }
             else if (epreuves.Count(o => o.sexe == 1) == 0 && epreuves.Count(o => o.sexe == 0) > 0)
             {
-                sexe = "M";
+                sexe = new EpreuveSexe(EpreuveSexeEnum.Masculin);
             }
 
-            xepreuve.SetAttributeValue(ConstantXML.Epreuve_Sexe, sexe);
+            xepreuve.SetAttributeValue(ConstantXML.Epreuve_Sexe, sexe.ToString());
 
             return xepreuve;
         }

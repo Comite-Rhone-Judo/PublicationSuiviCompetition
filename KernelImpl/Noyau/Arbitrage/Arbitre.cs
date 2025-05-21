@@ -13,10 +13,7 @@ namespace KernelImpl.Noyau.Arbitrage
         public string nom { get; set; }
         public string prenom { get; set; }
         public System.DateTime naissance { get; set; }
-        
-        // TODO Refaire une passe pour valider tous les appels sexe
-        
-        
+                
         private bool _sexe;
         public bool sexe
         {

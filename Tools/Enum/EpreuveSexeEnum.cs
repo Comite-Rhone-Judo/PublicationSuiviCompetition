@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -10,7 +11,8 @@ namespace Tools.Enum
     public enum EpreuveSexeEnum
     {
         Feminine = 1,
-        Masculin = 0
+        Masculin = 0,
+        Mixte = 2
     }
 
     public struct EpreuveSexe
@@ -29,7 +31,20 @@ namespace Tools.Enum
 
         public EpreuveSexe(string s)
         {
-            _enum = (s == "M") ? EpreuveSexeEnum.Masculin : EpreuveSexeEnum.Feminine;
+            switch(s)
+            {
+                case "M":
+                    _enum = EpreuveSexeEnum.Masculin;
+                    break;
+                case "F":
+                    _enum = EpreuveSexeEnum.Feminine;
+                    break;
+                case "X":
+                    _enum = EpreuveSexeEnum.Mixte;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("Invalid value for EpreuveSexe: " + s);
+            }
         }
 
         public EpreuveSexe(bool s)
@@ -52,7 +67,17 @@ namespace Tools.Enum
 
         public override string ToString()
         {
-            return (_enum == EpreuveSexeEnum.Masculin) ? "M" : "F";
+            switch(_enum)
+            {
+                case EpreuveSexeEnum.Masculin:
+                    return "M";
+                case EpreuveSexeEnum.Feminine:
+                    return "F";
+                case EpreuveSexeEnum.Mixte:
+                    return "X";
+                default:
+                    throw new ArgumentOutOfRangeException("Invalid value for EpreuveSexeEnum: " + _enum);
+            }
         }
 
         public static implicit operator int(EpreuveSexe s)
@@ -64,6 +89,5 @@ namespace Tools.Enum
         {
             return s._enum == EpreuveSexeEnum.Feminine;
         }
-
     }
 }

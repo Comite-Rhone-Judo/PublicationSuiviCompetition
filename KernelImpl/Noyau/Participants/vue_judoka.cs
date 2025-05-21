@@ -162,6 +162,25 @@ namespace KernelImpl.Noyau.Participants
                 {
                     _sexe = value;
                     OnPropertyChanged("sexe");
+                    sexeEnum = new EpreuveSexe(_sexe);
+                }
+            }
+        }
+
+        private EpreuveSexe _sexeEnum;
+        public EpreuveSexe sexeEnum
+        {
+            get
+            {
+                return _sexeEnum;
+            }
+            set
+            {
+                if (_sexeEnum.Enum != value.Enum)
+                {
+                    _sexeEnum = value;
+                    OnPropertyChanged("sexeEnum");
+                    sexe = (bool)_sexeEnum;
                 }
             }
         }
@@ -1088,15 +1107,7 @@ namespace KernelImpl.Noyau.Participants
                 this.anneeMax = 0;
             }
 
-            if (judoka.sexe)
-            {
-                this.lib_sexe = "F";
-            }
-            else
-            {
-                this.lib_sexe = "M";
-            }
-
+            this.lib_sexe = judoka.sexeEnum.ToString();
 
             if (ep != null)
             {
@@ -1262,14 +1273,7 @@ namespace KernelImpl.Noyau.Participants
                 this.anneeMax = 0;
             }
 
-            if (judoka.sexe)
-            {
-                this.lib_sexe = "F";
-            }
-            else
-            {
-                this.lib_sexe = "M";
-            }
+            this.lib_sexe = judoka.sexeEnum.ToString();
 
 
             if (ep != null)
@@ -1440,15 +1444,7 @@ namespace KernelImpl.Noyau.Participants
                 this.anneeMax = 0;
             }
 
-            if (judoka.sexe)
-            {
-                this.lib_sexe = "F";
-            }
-            else
-            {
-                this.lib_sexe = "M";
-            }
-
+            this.lib_sexe = judoka.sexeEnum.ToString();
 
             if (ep != null)
             {
@@ -1587,6 +1583,7 @@ namespace KernelImpl.Noyau.Participants
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_Club, this.club);
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_ClubNomCourt, this.clubNomCourt);
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_ClubNom, this.clubNom);
+            xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_Comite, this.comite);
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_ComiteNomCourt, this.comiteNomCourt);
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_ComiteNom, this.comiteNom);
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_Ligue, this.ligue);
