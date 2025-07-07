@@ -16,7 +16,6 @@ namespace AppPublication.ExtensionNoyau.Deroulement
 {
     public class DataDeroulement
     {
-        // TODO verifier & clean-up des fichiers bak qui traines
         private IList<GroupeParticipants> _groupesParticipants = new List<GroupeParticipants>();
 
         /// <summary>

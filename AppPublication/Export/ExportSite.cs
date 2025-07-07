@@ -437,6 +437,13 @@ namespace AppPublication.Export
         {
             string output = path.Replace('\\', '/');
 
+            /*
+             if(output.First() != '/')
+            {
+                output = string.Format("/{0}", output);
+            }
+            */
+
             return output;
         }
 

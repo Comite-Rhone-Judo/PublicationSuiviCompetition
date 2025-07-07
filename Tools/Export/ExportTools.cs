@@ -148,6 +148,12 @@ namespace Tools.Export
                     break;
                 case ExportEnum.Site_FooterScript:
                     result = "footer_script";
+					break;
+				case ExportEnum.Site_Participants:
+                    result = "groupe_participants";
+                    break;
+                case ExportEnum.Site_MenuParticipants:
+                    result = "participants";
                     break;
             }
 
@@ -500,6 +506,12 @@ namespace Tools.Export
                     break;
                 case ExportEnum.Site_AffectationTapis:
                     name = ConstantResource.Export_Site_res + "affectation_tapis";
+                    break;
+                case ExportEnum.Site_Participants:
+                    name = ConstantResource.Export_Site_res + "groupe_participants";
+                    break;
+                case ExportEnum.Site_MenuParticipants:
+                    name = ConstantResource.Export_Site_res + "participants";
                     break;
                 case ExportEnum.Site_MenuClassement:
                     name = ConstantResource.Export_Site_res + "classement";
