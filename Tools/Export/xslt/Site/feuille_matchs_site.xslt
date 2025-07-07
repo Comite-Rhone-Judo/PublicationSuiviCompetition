@@ -245,6 +245,7 @@
 
 		<xsl:variable name="epreuve" select="$combat/@epreuve"/>
 		<xsl:variable name="phase" select="$combat/@phase"/>
+		<xsl:variable name="typePhase" select="//phase[@id = $phase]/@typePhase"/>
 
 		<xsl:variable name="participant1" select="$combat/score[1]/@judoka"/>
 		<xsl:variable name="judoka1" select="//participant[@judoka = $participant1]/descendant::*[1]"/>
@@ -363,15 +364,49 @@
 				<div class="w3-container w3-cell tas-info-combat">
 					<header>
 						<xsl:value-of select="//epreuve[@ID = $epreuve]/@nom"/>
-						<xsl:if test="$combat/feuille/@repechage = 'true'">
-							<xsl:choose>
-								<xsl:when test="$combat/feuille/@reference = '3.1' or $combat/feuille/@reference = '5.1' or $combat/feuille/@reference = '7.1'">
-									(Barrage)
+						&nbsp;
+
+						<!-- Affiche les informations de niveau pour un tableau (typePhase = 2) -->
+						<xsl:if test="$typePhase = 2">
+							
+							<!-- Calcul le niveau 8eme/16eme de la phase -->
+							<xsl:variable name="niveauPhase">
+								<xsl:call-template name="power">
+									<xsl:with-param name="base" select="2"/>
+									<xsl:with-param name="power" select="$combat/@niveau - 1"/>
+								</xsl:call-template>
+							</xsl:variable>
+
+							(<xsl:choose>
+								<xsl:when test="$combat/feuille/@repechage = 'true'">
+									<xsl:choose>
+										<xsl:when test="starts-with($combat/@reference, '3') or starts-with($combat/@reference, '5') or starts-with($combat/@reference, '7')">
+											<xsl:value-of select=" concat('Barrage ', substring($combat/@reference,1,1))"/>
+										</xsl:when>
+										<xsl:when test="$combat/@reference = '2.1.1' or $combat/@reference = '2.1.2'">
+											Place de 3ème
+										</xsl:when>
+										<xsl:otherwise>
+											Repêchage
+										</xsl:otherwise>
+									</xsl:choose>
 								</xsl:when>
 								<xsl:otherwise>
-									(Repêchage)
+									<xsl:choose>
+										<xsl:when test="$niveauPhase = 1">Finale</xsl:when>
+										<xsl:when test="$niveauPhase = 2">Demi-finale</xsl:when>
+										<xsl:when test="$niveauPhase = 4">Quart de finale</xsl:when>
+										<xsl:when test="$niveauPhase > 0">
+											<xsl:value-of select="concat($niveauPhase, ' ème')"/>
+										</xsl:when>
+									</xsl:choose>
 								</xsl:otherwise>
-							</xsl:choose>
+							</xsl:choose>)
+						</xsl:if>
+
+						<!-- Affiche les informations de phase pour une poule (typePhase = 1) -->
+						<xsl:if test="$typePhase = 1">
+							<xsl:value-of select="concat('(Poule ', $combat/@reference, ')')"/>
 						</xsl:if>
 					</header>
 					<footer class="w3-tiny">
@@ -477,5 +512,36 @@
 		</xsl:if>
 
 	</xsl:template>
-	
+
+	<!-- Utilitaire de calcul -->
+	<xsl:template name="power">
+		<xsl:param name="base"/>
+		<xsl:param name="power"/>
+
+		<xsl:variable name="powerTMP">
+			<xsl:choose>
+				<xsl:when test="$power &lt; 0">
+					<xsl:value-of select="$power * (-1)"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$power"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:choose>
+			<xsl:when test="$power = 0">
+				<xsl:value-of select="1"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:variable name="temp">
+					<xsl:call-template name="power">
+						<xsl:with-param name="base" select="$base"/>
+						<xsl:with-param name="power" select="$powerTMP - 1"/>
+					</xsl:call-template>
+				</xsl:variable>
+				<xsl:value-of select="$base * $temp"/>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+
 </xsl:stylesheet>

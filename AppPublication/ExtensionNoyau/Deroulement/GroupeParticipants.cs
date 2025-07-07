@@ -11,6 +11,7 @@ namespace AppPublication.ExtensionNoyau.Deroulement
 {
     public class GroupeParticipants
     {
+        // TODO Voir pour renommer participant en engagement
         // TODO Voir pour gerer le cas ou l'on veut grouper plusieurs competitions par ex. Jujitsu Combat/Ne waza
         // Identifiant du groupement {IdCompetition}-{sexe}-{ID entite}-{Type entite}
         private string _id;

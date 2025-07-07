@@ -1564,7 +1564,7 @@
 
 		<xsl:variable name="powerTMP">
 			<xsl:choose>
-				<xsl:when test="power &lt; 0">
+				<xsl:when test="$power &lt; 0">
 					<xsl:value-of select="$power * (-1)"/>
 				</xsl:when>
 				<xsl:otherwise>
