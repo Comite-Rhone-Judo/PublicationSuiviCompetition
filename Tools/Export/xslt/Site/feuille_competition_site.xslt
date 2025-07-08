@@ -108,7 +108,7 @@
 							Masculins&nbsp;
 
 						</xsl:if>
-						<xsl:if test="//epreuve[1]/@sexe='M'">
+						<xsl:if test="//epreuve[1]/@sexe='X'">
 							Mixte&nbsp;
 						</xsl:if>
 						<xsl:value-of select="//epreuve[1]/@nom"/>
@@ -116,88 +116,101 @@
 				</div>
 			</div>
 
-			<!-- Le tableau principal -->
-			<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-				<button class="w3-bar-item w3-light-blue" onclick="toggleElement('tableauPrincipal')">
-					<img class="img" id="tableauPrincipalCollapse" width="25">
-						<xsl:attribute name="src">
-							<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
-						</xsl:attribute>
-					</img>
-					<img class="img" id="tableauPrincipalExpand" width="25" style="display: none;">
-						<xsl:attribute name="src">
-							<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
-						</xsl:attribute>
-					</img>
-					Tableau principal
-				</button>
-			</div>
-			<div class="w3-container tas-panel-tableau-combat" id="tableauPrincipal">
-				<xsl:variable name="repechage">
-					<xsl:text>false</xsl:text>
-				</xsl:variable>
+			<!-- Controle si le tirage du tableau est bien disponible -->
+			<xsl:choose>
+				<!-- Pas de tirage disponible -->
+				<xsl:when test="//phase[1]/@etat = 0">
+					<div class="w3-container w3-border">
+						<div class="w3-panel w3-pale-green w3-bottombar w3-border-green w3-border w3-center w3-large"> Veuillez patienter le tirage de la phase</div>
+					</div>
+				</xsl:when>
+				<!-- Cas standard avec un tirage -->
+				<xsl:otherwise>
+					<!-- Le tableau principal -->
+					<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
+						<button class="w3-bar-item w3-light-blue" onclick="toggleElement('tableauPrincipal')">
+							<img class="img" id="tableauPrincipalCollapse" width="25">
+								<xsl:attribute name="src">
+									<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
+								</xsl:attribute>
+							</img>
+							<img class="img" id="tableauPrincipalExpand" width="25" style="display: none;">
+								<xsl:attribute name="src">
+									<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
+								</xsl:attribute>
+							</img>
+							Tableau principal
+						</button>
+					</div>
+					<div class="w3-container tas-panel-tableau-combat" id="tableauPrincipal">
+						<xsl:variable name="repechage">
+							<xsl:text>false</xsl:text>
+						</xsl:variable>
 
-				<xsl:call-template name="tableau">
-					<xsl:with-param name="repechage" select="$repechage"/>
-				</xsl:call-template>
-			</div>
-			<!-- Le tableau repechage s'il existe -->
+						<xsl:call-template name="tableau">
+							<xsl:with-param name="repechage" select="$repechage"/>
+						</xsl:call-template>
+					</div>
 
-			<xsl:if test="count(//combat[@repechage = 'true']) &gt; 0">
-				<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-					<button class="w3-bar-item w3-light-blue" onclick="toggleElement('tableauRepechages')">
-						<img class="img" id="tableauRepechagesCollapse" width="25">
-							<xsl:attribute name="src">
-								<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
-							</xsl:attribute>
-						</img>
-						<img class="img" id="tableauRepechagesExpand" width="25" style="display: none;">
-							<xsl:attribute name="src">
-								<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
-							</xsl:attribute>
-						</img>
-						Tableaux de repêchage
-					</button>
-				</div>
-				<div class="w3-container tas-panel-tableau-combat" id="tableauRepechages">
-					<xsl:variable name="repechage1">
-						<xsl:text>true</xsl:text>
-					</xsl:variable>
-					<xsl:call-template name="tableau">
-						<xsl:with-param name="repechage" select="$repechage1"/>
-					</xsl:call-template>
-				</div>
-			</xsl:if>
+					<!-- Le tableau repechage s'il existe -->
+					<xsl:if test="count(//combat[@repechage = 'true']) &gt; 0">
+						<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
+							<button class="w3-bar-item w3-light-blue" onclick="toggleElement('tableauRepechages')">
+								<img class="img" id="tableauRepechagesCollapse" width="25">
+									<xsl:attribute name="src">
+										<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
+									</xsl:attribute>
+								</img>
+								<img class="img" id="tableauRepechagesExpand" width="25" style="display: none;">
+									<xsl:attribute name="src">
+										<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
+									</xsl:attribute>
+								</img>
+								Tableaux de repêchage
+							</button>
+						</div>
+						<div class="w3-container tas-panel-tableau-combat" id="tableauRepechages">
+							<xsl:variable name="repechage1">
+								<xsl:text>true</xsl:text>
+							</xsl:variable>
+							<xsl:call-template name="tableau">
+								<xsl:with-param name="repechage" select="$repechage1"/>
+							</xsl:call-template>
+						</div>
+					</xsl:if>
 
-			<!-- Les barrages -->
-			<xsl:if test="count(//phase[@barrage5 = 'true' or @barrage3 = 'true' or @barrage7 = 'true']) &gt; 0">
-				<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-					<button class="w3-bar-item w3-light-blue" onclick="toggleElement('tableauBarrages')">
-						<img class="img" id="tableauBarragesCollapse" width="25">
-							<xsl:attribute name="src">
-								<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
-							</xsl:attribute>
-						</img>
-						<img class="img" id="tableauBarragesExpand" width="25" style="display: none;">
-							<xsl:attribute name="src">
-								<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
-							</xsl:attribute>
-						</img>
-						Tableaux de barrage
-					</button>
-				</div>
-				<div class="w3-container tas-panel-tableau-combat" id="tableauBarrages">
-					<xsl:call-template name="tableauBarrage"/>
-				</div>
-			</xsl:if>
+					<!-- Les barrages -->
+					<xsl:if test="count(//phase[@barrage5 = 'true' or @barrage3 = 'true' or @barrage7 = 'true']) &gt; 0">
+						<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
+							<button class="w3-bar-item w3-light-blue" onclick="toggleElement('tableauBarrages')">
+								<img class="img" id="tableauBarragesCollapse" width="25">
+									<xsl:attribute name="src">
+										<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
+									</xsl:attribute>
+								</img>
+								<img class="img" id="tableauBarragesExpand" width="25" style="display: none;">
+									<xsl:attribute name="src">
+										<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
+									</xsl:attribute>
+								</img>
+								Tableaux de barrage
+							</button>
+						</div>
+						<div class="w3-container tas-panel-tableau-combat" id="tableauBarrages">
+							<xsl:call-template name="tableauBarrage"/>
+						</div>
+					</xsl:if>
 
-			<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
-				<script>
-					<xsl:attribute name="src">
-						<xsl:value-of select="concat($jsPath, 'footer_script.js')"/>
-					</xsl:attribute>
-				</script>
-			</div>
+					<!-- Pied de page -->
+					<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
+						<script>
+							<xsl:attribute name="src">
+								<xsl:value-of select="concat($jsPath, 'footer_script.js')"/>
+							</xsl:attribute>
+						</script>
+					</div>
+				</xsl:otherwise>
+			</xsl:choose>
 		</body>
 	</xsl:template>
 

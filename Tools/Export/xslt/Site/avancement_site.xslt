@@ -158,7 +158,6 @@
 
 		<xsl:if test="count(./phases/phase[number(@typePhase) = 1]) > 0">
 			<a class="w3-button w3-panel w3-card w3-block w3-pale-yellow w3-large w3-round-large w3-padding-small">
-				<!-- TODO a remplacer par concat -->
 				<xsl:attribute name="href">
 					<xsl:value-of select="concat($competitionPath, @directory, '/poules_resultats.html')"/>
 				</xsl:attribute>
@@ -167,7 +166,8 @@
 				<xsl:text>&#32;Poules</xsl:text>
 			</a>
 		</xsl:if>
-		<xsl:if test="count(./phases/phase[number(@typePhase) = 2]) > 0">
+		<!-- Pour les tableaux, on tient compte du cas des Poule/tableau dont le tirage n'a pas encore ete fait (poule pas terminees) -->
+		<xsl:if test="count(./phases/phase[number(@typePhase) = 2 and number(@etat) > 0]) > 0">
 			<a class="w3-button w3-panel w3-card w3-block w3-pale-yellow w3-large w3-round-large w3-padding-small">
 				<xsl:attribute name="href">
 					<xsl:value-of select="concat($competitionPath, @directory, '/tableau_competition.html')"/>
