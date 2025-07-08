@@ -9,6 +9,11 @@
 	<xsl:output method="html" indent="yes" />
 	<xsl:param name="style"></xsl:param>
 	<xsl:param name="js"></xsl:param>
+	<xsl:param name="imgPath"/>
+	<xsl:param name="jsPath"/>
+	<xsl:param name="cssPath"/>
+	<xsl:param name="commonPath"/>
+	<xsl:param name="competitionPath"/>
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 
@@ -19,8 +24,9 @@
 		</html>
 	</xsl:template>
 
-	<xsl:variable select="/competition/@PublierProchainsCombats = 'True'" name="affProchainCombats"/>
-	<xsl:variable select="/competition/@PublierAffectationTapis = 'True'" name="affAffectationTapis"/>
+	<xsl:variable select="/competition/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
+	<xsl:variable select="/competition/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
+	<xsl:variable select="/competition/@PublierParticipants = 'true'" name="affParticipants"/>
 	<xsl:variable select="/competition/@DelaiActualisationClientSec" name="delayActualisationClient"/>
 	<xsl:variable select="/competition/@kinzas" name="affKinzas"/>
 	<xsl:variable select="/competition/@Logo" name="logo"/>
@@ -37,12 +43,28 @@
 			<meta http-equiv="Expires" content="0"/>
 
 			<!-- Feuille de style W3.CSS -->
-			<link type="text/css" rel="stylesheet" href="../style/w3.css"/>
-			<link type="text/css" rel="stylesheet" href="../style/style-common.css"/>
-			<link type="text/css" rel="stylesheet" href="../style/style-tableau.css"/>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'w3.css')"/>
+				</xsl:attribute>
+			</link>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'style-common.css')"/>
+				</xsl:attribute>
+			</link>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'style-tableau.css')"/>
+				</xsl:attribute>
+			</link>
 
 			<!-- Script de navigation par defaut -->
-			<script src="../js/site-display.js"></script>
+			<script>
+				<xsl:attribute name="src">
+					<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
+				</xsl:attribute>
+			</script>
 
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
@@ -51,7 +73,7 @@
 				window.onload=checkReloading;
 			</script>
 			<title>
-				<xsl:value-of select="@titre"/>
+				Suivi Compétition - Avancement
 			</title>
 		</head>
 		<body>
@@ -60,8 +82,11 @@
 				<xsl:with-param name="logo" select="$logo"/>
 				<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
 				<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
-				<xsl:with-param name="affActualiser" select="'True'"/>
+				<xsl:with-param name="affParticipants" select="$affParticipants"/>
+				<xsl:with-param name="affActualiser" select="true()"/>
 				<xsl:with-param name="selectedItem" select="'avancement'"/>
+				<xsl:with-param name="pathToImg" select="$imgPath"/>
+				<xsl:with-param name="pathToCommon" select="$commonPath"/>
 			</xsl:call-template>
 
 			<!-- CONTENU -->
@@ -94,8 +119,16 @@
 			<!-- Le tableau principal -->
 			<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
 				<button class="w3-bar-item w3-light-blue" onclick="toggleElement('tableauPrincipal')">
-					<img class="img" id="tableauPrincipalCollapse" width="25" src="../img/up_circular-32.png" />
-					<img class="img" id="tableauPrincipalExpand" width="25" src="../img/down_circular-32.png" style="display: none;" />
+					<img class="img" id="tableauPrincipalCollapse" width="25">
+						<xsl:attribute name="src">
+							<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
+						</xsl:attribute>
+					</img>
+					<img class="img" id="tableauPrincipalExpand" width="25" style="display: none;">
+						<xsl:attribute name="src">
+							<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
+						</xsl:attribute>
+					</img>
 					Tableau principal
 				</button>
 			</div>
@@ -113,8 +146,16 @@
 			<xsl:if test="count(//combat[@repechage = 'true']) &gt; 0">
 				<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
 					<button class="w3-bar-item w3-light-blue" onclick="toggleElement('tableauRepechages')">
-						<img class="img" id="tableauRepechagesCollapse" width="25" src="../img/up_circular-32.png" />
-						<img class="img" id="tableauRepechagesExpand" width="25" src="../img/down_circular-32.png" style="display: none;" />
+						<img class="img" id="tableauRepechagesCollapse" width="25">
+							<xsl:attribute name="src">
+								<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
+							</xsl:attribute>
+						</img>
+						<img class="img" id="tableauRepechagesExpand" width="25" style="display: none;">
+							<xsl:attribute name="src">
+								<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
+							</xsl:attribute>
+						</img>
 						Tableaux de repêchage
 					</button>
 				</div>
@@ -132,8 +173,16 @@
 			<xsl:if test="count(//phase[@barrage5 = 'true' or @barrage3 = 'true' or @barrage7 = 'true']) &gt; 0">
 				<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
 					<button class="w3-bar-item w3-light-blue" onclick="toggleElement('tableauBarrages')">
-						<img class="img" id="tableauBarragesCollapse" width="25" src="../img/up_circular-32.png" />
-						<img class="img" id="tableauBarragesExpand" width="25" src="../img/down_circular-32.png" style="display: none;" />
+						<img class="img" id="tableauBarragesCollapse" width="25">
+							<xsl:attribute name="src">
+								<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
+							</xsl:attribute>
+						</img>
+						<img class="img" id="tableauBarragesExpand" width="25" style="display: none;">
+							<xsl:attribute name="src">
+								<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
+							</xsl:attribute>
+						</img>
 						Tableaux de barrage
 					</button>
 				</div>

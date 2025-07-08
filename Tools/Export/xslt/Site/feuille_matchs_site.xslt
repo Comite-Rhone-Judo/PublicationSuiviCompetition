@@ -303,7 +303,11 @@
 					<xsl:choose>
 						<xsl:when test="$participant1 = 'null'">
 							<!-- Combat en attente-->
-							<img class="img" src="../img/sablier.png" width="25" />
+								<img class="img" width="25">
+									<xsl:attribute name="src">
+										<xsl:value-of select="concat($imgPath, 'sablier.png')"/>
+									</xsl:attribute>
+								</img>
 							<xsl:text disable-output-escaping="yes">&#032;En Attente</xsl:text>
 						</xsl:when>
 						<xsl:otherwise>
@@ -383,12 +387,8 @@
 										<xsl:when test="starts-with($combat/@reference, '3') or starts-with($combat/@reference, '5') or starts-with($combat/@reference, '7')">
 											<xsl:value-of select=" concat('Barrage ', substring($combat/@reference,1,1))"/>
 										</xsl:when>
-										<xsl:when test="$combat/@reference = '2.1.1' or $combat/@reference = '2.1.2'">
-											Place de 3ème
-										</xsl:when>
-										<xsl:otherwise>
-											Repêchage
-										</xsl:otherwise>
+										<xsl:when test="$combat/@reference = '2.1.1' or $combat/@reference = '2.1.2'">Place de 3ème</xsl:when>
+										<xsl:otherwise>Repêchage</xsl:otherwise>
 									</xsl:choose>
 								</xsl:when>
 								<xsl:otherwise>
@@ -397,7 +397,7 @@
 										<xsl:when test="$niveauPhase = 2">Demi-finale</xsl:when>
 										<xsl:when test="$niveauPhase = 4">Quart de finale</xsl:when>
 										<xsl:when test="$niveauPhase > 0">
-											<xsl:value-of select="concat($niveauPhase, ' ème')"/>
+											<xsl:value-of select="$niveauPhase"/><sup>ème</sup>
 										</xsl:when>
 									</xsl:choose>
 								</xsl:otherwise>
@@ -455,7 +455,11 @@
 					<xsl:choose>
 						<xsl:when test="$participant2 = 'null'">
 							<!-- Combat en attente-->
-							<img class="img" src="../img/sablier.png" width="25" />
+								<img class="img" width="25">
+									<xsl:attribute name="src">
+										<xsl:value-of select="concat($imgPath, 'sablier.png')"/>
+									</xsl:attribute>
+								</img>
 							<xsl:text disable-output-escaping="yes">&#032;En Attente</xsl:text>
 						</xsl:when>
 						<xsl:otherwise>
