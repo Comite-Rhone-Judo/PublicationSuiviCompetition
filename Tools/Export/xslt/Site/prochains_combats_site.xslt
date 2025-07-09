@@ -155,7 +155,7 @@
 	<!-- Bouton avancement par epreuve -->
 	<!-- On en tient compte que des epreuves pour lesquelles les phases sont crees et sans classement valide -->
 	<xsl:template name="prochains_combats_epreuve" match="epreuve">
-		<xsl:if test="count(./phases/phase[number(@typePhase) = 1 and etat > 0 and etat != 5]) > 0">
+		<xsl:if test="count(./phases/phase[number(@typePhase) = 1 and number(@etat) > 0 and number(@etat) != 5]) > 0">
 			<a class="w3-button w3-panel w3-card w3-block w3-pale-yellow w3-large w3-round-large w3-padding-small">
 				<xsl:attribute name="href">
 					<xsl:value-of select="concat($competitionPath, @directory, '/feuille_combats.html')"/>
@@ -165,7 +165,7 @@
 				<xsl:text>&#32;Poules</xsl:text>
 			</a>
 		</xsl:if>
-		<xsl:if test="count(./phases/phase[number(@typePhase) = 2 and etat > 0 and etat != 5]) > 0">
+		<xsl:if test="count(./phases/phase[number(@typePhase) = 2 and number(@etat) > 0 and number(@etat) != 5]) > 0">
 			<a class="w3-button w3-panel w3-card w3-block w3-pale-yellow w3-large w3-round-large w3-padding-small">
 				<xsl:attribute name="href">
 					<xsl:value-of select="concat($competitionPath, @directory, '/feuille_combats.html')"/>

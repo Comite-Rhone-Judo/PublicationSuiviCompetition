@@ -139,6 +139,7 @@ namespace KernelImpl.Noyau.Organisation
             xcompetition.SetAttributeValue(ConstantXML.Competition_Type2, type2.ToString());
   
             xcompetition.SetAttributeValue(ConstantXML.Competition_Discipline, discipline);
+            xcompetition.SetAttributeValue(ConstantXML.Competition_DisciplineId, (int) disciplineId);
 
             xcompetition.SetAttributeValue(ConstantXML.Competition_Niveau, niveau.ToString());
             xcompetition.SetAttributeValue(ConstantXML.Competition_Version, version.ToString());

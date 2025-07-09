@@ -100,6 +100,7 @@
         public const string Competition_Type = "type";
         public const string Competition_Type2 = "type2";
         public const string Competition_Discipline = "discipline";
+        public const string Competition_DisciplineId = "disciplineId";
         public const string Competition_Couleur1 = "couleur1";
         public const string Competition_Couleur2 = "couleur2";
         public const string Competition_Niveau = "niveau";
@@ -413,6 +414,7 @@
         public const string Vue_Epreuve_Nom_CategorieAge = "nom_cateage";
         public const string Vue_Epreuve_Nom_CategoriePoids = "nom_catepoids";
         public const string Vue_Epreuve_Nom_Competition = "nom_competition";
+        public const string Vue_Epreuve_Discipline_Competition = "discipline_competition";
         public const string Vue_Epreuve_PoidsMin_CategoriePoids = "poidsmin_catepoids";
         public const string Vue_Epreuve_PoidsMax_CategoriePoids = "poidsmax_catepoids";
         public const string Vue_Epreuve_Categorie_Age = "categorieAge";

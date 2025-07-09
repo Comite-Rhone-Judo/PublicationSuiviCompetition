@@ -28,6 +28,7 @@ namespace KernelImpl.Noyau.Organisation
         public Nullable<int> phase1 { get; set; }
         public Nullable<int> phase2 { get; set; }
         public string nom_compet { get; set; }
+        public CompetitionDisciplineEnum discipline_competition { get; set; }
 
         private string _lib_sexe = "";
         public string lib_sexe
@@ -84,6 +85,7 @@ namespace KernelImpl.Noyau.Organisation
             Competition compet = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
 
             nom_compet = compet != null ? compet.nom : "";
+            discipline_competition = compet != null ? compet.disciplineId : CompetitionDisciplineEnum.Judo;
         }
 
 

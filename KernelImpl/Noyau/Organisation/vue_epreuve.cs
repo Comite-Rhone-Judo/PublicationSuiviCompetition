@@ -62,6 +62,7 @@ namespace KernelImpl.Noyau.Organisation
         public Nullable<int> phase1 { get; set; }
         public Nullable<int> phase2 { get; set; }
         public string nom_compet { get; set; }
+        public CompetitionDisciplineEnum discipline_competition { get; set; } = CompetitionDisciplineEnum.Judo;
 
 
         public vue_epreuve(Epreuve epreuve, JudoData DC)
@@ -108,6 +109,7 @@ namespace KernelImpl.Noyau.Organisation
             Competition compet = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
 
             nom_compet = compet != null ? compet.nom : String.Empty;
+            discipline_competition = compet != null ? compet.disciplineId : CompetitionDisciplineEnum.Judo;
         }
 
 
@@ -139,6 +141,7 @@ namespace KernelImpl.Noyau.Organisation
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_PoidsMax, poidsMax);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_CatePoids_RemoteId, remoteId_catepoids);
             xepreuve.SetAttributeValue(ConstantXML.Vue_Epreuve_Nom_Competition, nom_compet);
+            xepreuve.SetAttributeValue(ConstantXML.Vue_Epreuve_Discipline_Competition, (int) discipline_competition);
 
             return xepreuve;
         }

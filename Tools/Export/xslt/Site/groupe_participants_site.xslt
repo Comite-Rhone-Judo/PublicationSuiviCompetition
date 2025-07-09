@@ -351,6 +351,7 @@
 				</xsl:attribute>
 				<xsl:choose>
 					<xsl:when test="@present = 'true'">
+						<!-- TODO Ajouter le niveau du combat (16eme, etc.), reprendre feuille_match, voir pour la mettre en template partage -->
 						<!-- La liste des combats dans lesquel le judo est présent -->
 						<!-- Nb de combats pour ce judoka -->
 						<xsl:variable name="nbCombatsJudoka">

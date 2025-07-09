@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Tools.Enum;
 
 namespace KernelImpl.Noyau.Organisation
 {
@@ -14,6 +15,8 @@ namespace KernelImpl.Noyau.Organisation
         DateTime fin { get; set; }
         string ordre { get; set; }
         string nom_compet { get; set; }
+        CompetitionDisciplineEnum discipline_competition { get; set; }
+
         int competition { get; set; }
         int categorieAge { get; set; }
         string remoteId_cateage { get; set; }
