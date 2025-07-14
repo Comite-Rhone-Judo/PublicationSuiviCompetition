@@ -47,10 +47,10 @@ namespace AppPublication.Controles
         private const string kSettingIsolerCompetition = "IsolerCompetition";
         private const string kSettingRepertoireRacineSiteFTPDistant = "RepertoireRacineSiteFTPDistant";
         private const string kSettingPublierProchainsCombats = "PublierProchainsCombats";
-        private const string kSettingPublierParticipants = "PublierParticipants";
-        private const string kSettingParticipantsAbsents = "ParticipantsAbsents";
-        private const string kSettingParticipantsTousCombats = "ParticipantsTousCombats";
-        private const string kSettingParticipantsParEntite = "ParticipantsParEntite";
+        private const string kSettingPublierEngagements = "PublierEngagements";
+        private const string kSettingEngagementsAbsents = "EngagementsAbsents";
+        private const string kSettingEngagementsTousCombats = "EngagementsTousCombats";
+        private const string kSettingParticipantsParEntite = "ParticipantsParEntite";   // TODO A supprimer
         private const string kSettingNbProchainsCombats = "NbProchainsCombats";
         private const string kSettingPublierAffectationTapis = "PublierAffectationTapis";
         private const string kSettingDelaiGenerationSec = "DelaiGenerationSec";
@@ -91,7 +91,7 @@ namespace AppPublication.Controles
             public SiteEnum type { get; set; }
             public Phase phase { get; set; }
             public int? tapis { get; set; }
-            public GroupeParticipants groupeParticipant { get; set; }
+            public GroupeEngagements groupeParticipant { get; set; }   // TODO a supprimer
         }
         #endregion
 
@@ -982,7 +982,7 @@ namespace AppPublication.Controles
                 URLLocalPublication = CalculURLSiteLocal();
                 // On ne peut publier que en individuelle
                 CanPublierAffectation = DialogControleur.Instance.ServerData.competition.IsIndividuelle();
-                CanPublierParticipants = DialogControleur.Instance.ServerData.competition.IsIndividuelle() || DialogControleur.Instance.ServerData.competition.IsShiai();
+                CanPublierEngagements = DialogControleur.Instance.ServerData.competition.IsIndividuelle() || DialogControleur.Instance.ServerData.competition.IsShiai();
 
                 // Si on est en Shiai, par defaut on met les poules en colonnes
                 if (DialogControleur.Instance.ServerData.competition.IsShiai())
@@ -1010,19 +1010,19 @@ namespace AppPublication.Controles
             }
         }
 
-        private bool _canPublierParticipants = true;
+        private bool _canPublierEngagements = true;
         /// <summary>
-        /// Indique si on peut publier les participants ou non
+        /// Indique si on peut publier les engages ou non
         /// </summary>
-        public bool CanPublierParticipants
+        public bool CanPublierEngagements
         {
             get
             {
-                return _canPublierParticipants;
+                return _canPublierEngagements;
             }
             private set
             {
-                _canPublierParticipants = value;
+                _canPublierEngagements = value;
                 NotifyPropertyChanged();
             }
         }
@@ -1073,74 +1073,72 @@ namespace AppPublication.Controles
 
 
 
-        private bool _publierParticipants = false;
+        private bool _publierEngagements = false;
         /// <summary>
-        /// Indique si on doit publier la liste des participants
+        /// Indique si on doit publier la liste des engages
         /// </summary>
-        public bool PublierParticipants
+        public bool PublierEngagements
         {
             get
             {
-                return _publierParticipants;
+                return _publierEngagements;
             }
             set
             {
-                if (_publierParticipants != value)
+                if (_publierEngagements != value)
                 {
-                    _publierParticipants = value;
-                    AppSettings.SaveSetting(kSettingPublierParticipants, _publierParticipants.ToString());
+                    _publierEngagements = value;
+                    AppSettings.SaveSetting(kSettingPublierEngagements, _publierEngagements.ToString());
                     NotifyPropertyChanged();
                 }
             }
         }
 
-        private bool _participantsAbsents = false;
+        private bool _engagementsAbsents = false;
 
         /// <summary>
         /// Indique si on doit publier les judokas absents
         /// </summary>
-        public bool ParticipantsAbsents
+        public bool EngagementsAbsents
         {
             get
             {
-                return _participantsAbsents;
+                return _engagementsAbsents;
             }
             set
             {
-                if (_participantsAbsents != value)
+                if (_engagementsAbsents != value)
                 {
-                    _participantsAbsents = value;
-                    AppSettings.SaveSetting(kSettingParticipantsAbsents, _participantsAbsents.ToString());
+                    _engagementsAbsents = value;
+                    AppSettings.SaveSetting(kSettingEngagementsAbsents, _engagementsAbsents.ToString());
                     NotifyPropertyChanged();
                 }
             }
         }
 
-        private bool _participantsTousCombats = false;
+        private bool _engagementsTousCombats = false;
 
         /// <summary>
         /// Indique si on doit publier tous les combats des judokas, finis ou non
         /// </summary>
-        public bool ParticipantsTousCombats
+        public bool EngagementsTousCombats
         {
             get
             {
-                return _participantsTousCombats;
+                return _engagementsTousCombats;
             }
             set
             {
-                if (_participantsTousCombats != value)
+                if (_engagementsTousCombats != value)
                 {
-                    _participantsTousCombats = value;
-                    AppSettings.SaveSetting(kSettingParticipantsTousCombats, _participantsTousCombats.ToString());
+                    _engagementsTousCombats = value;
+                    AppSettings.SaveSetting(kSettingEngagementsTousCombats, _engagementsTousCombats.ToString());
                     NotifyPropertyChanged();
                 }
             }
         }
 
-        
-
-
+        // TODO Supprimer toute la propriete
         private bool _participantsParEntite = false;
         /// <summary>
         /// Indique si on doit grouper les participants par club
@@ -1352,10 +1350,10 @@ namespace AppPublication.Controles
                 PublierProchainsCombats = AppSettings.ReadSetting(kSettingPublierProchainsCombats, false);
                 NbProchainsCombats = AppSettings.ReadSetting(kSettingNbProchainsCombats, 6);
                 PublierAffectationTapis = AppSettings.ReadSetting(kSettingPublierAffectationTapis, true);
-                PublierParticipants = AppSettings.ReadSetting(kSettingPublierParticipants, false);
-                ParticipantsAbsents = AppSettings.ReadSetting(kSettingParticipantsAbsents, false);
-                ParticipantsTousCombats = AppSettings.ReadSetting(kSettingParticipantsTousCombats, false);
-                ParticipantsParEntite = AppSettings.ReadSetting(kSettingParticipantsParEntite, false);
+                PublierEngagements = AppSettings.ReadSetting(kSettingPublierEngagements, false);
+                EngagementsAbsents = AppSettings.ReadSetting(kSettingEngagementsAbsents, false);
+                EngagementsTousCombats = AppSettings.ReadSetting(kSettingEngagementsTousCombats, false);
+                ParticipantsParEntite = AppSettings.ReadSetting(kSettingParticipantsParEntite, false);  // TODO voir pour supprimer
                 DelaiGenerationSec = AppSettings.ReadSetting(kSettingDelaiGenerationSec, 30);
                 EffacerAuDemarrage = AppSettings.ReadSetting(kSettingEffacerAuDemarrage, true);
                 DelaiActualisationClientSec = AppSettings.ReadSetting(kSettingDelaiActualisationClientSec, 30);
@@ -1751,8 +1749,9 @@ namespace AppPublication.Controles
                     case SiteEnum.AffectationTapis:
                         urls = ExportSite.GenereWebSiteAffectation(DC, cfg, _structureRepertoires);
                         break;
-                    case SiteEnum.Participants:
-                        urls = ExportSite.GenereWebSiteParticipants(DC, EDC, genere.groupeParticipant, cfg, _structureRepertoires);
+                    case SiteEnum.Engagements:
+                        // TODO voir si le parametere groupeParticipant est toujours necessaire
+                        urls = ExportSite.GenereWebSiteEngagements(DC, EDC, genere.groupeParticipant, cfg, _structureRepertoires);
                         break;
                 }
             }
@@ -1772,8 +1771,9 @@ namespace AppPublication.Controles
         /// <param name="tapis"></param>
         /// <param name="groupeP">Identifiant du groupe de participant</param>
         /// <returns></returns>
-        public Task<List<FileWithChecksum>> AddWork(SiteEnum type, Phase phase, int? tapis, ConfigurationExportSite cfg, GroupeParticipants groupeP = null)
+        public Task<List<FileWithChecksum>> AddWork(SiteEnum type, Phase phase, int? tapis, ConfigurationExportSite cfg, GroupeEngagements groupeP = null)
         {
+            // TODO voir si le parametre groupeP est encore necessaire
             Task<List<FileWithChecksum>> output = null;
 
             if (IsGenerationActive)
@@ -1783,7 +1783,7 @@ namespace AppPublication.Controles
                     type = type,
                     phase = phase,
                     tapis = tapis,
-                    groupeParticipant = groupeP
+                    groupeParticipant = groupeP // TODO voir si on garde
                 };
 
                 output = OutilsTools.Factory.StartNew(() =>
@@ -1802,7 +1802,7 @@ namespace AppPublication.Controles
         public List<FileWithChecksum> GenereAll()
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
-            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierParticipants && CanPublierParticipants, ParticipantsAbsents, ParticipantsTousCombats, ParticipantsParEntite, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes);
+            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierEngagements && CanPublierEngagements, EngagementsAbsents, EngagementsTousCombats, ParticipantsParEntite, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes);
 
             if (IsGenerationActive)
             {
@@ -1835,16 +1835,17 @@ namespace AppPublication.Controles
                     }
 
                     
-                    if(PublierParticipants && CanPublierParticipants)
+                    if(PublierEngagements && CanPublierEngagements)
                     {
                         foreach(Competition comp in DC.Organisation.Competitions)
                         {
                             // Recupere les groupes en fonction du type de groupement
+                            // TODO Voir pour modifier car on doit generer tous les types
                             int typeGrp = ParticipantsParEntite ? ExtensionNoyau.Deroulement.DataDeroulement.GetTypeGroupe(comp) : (int) EchelonEnum.Aucun;
-                            List<GroupeParticipants> groupesP = EDC.Deroulement.GroupesParticipants.Where(g => g.Competition == comp.id && g.Type == typeGrp).ToList();
-                            foreach(GroupeParticipants g in groupesP)
+                            List<GroupeEngagements> groupesP = EDC.Deroulement.GroupesEngages.Where(g => g.Competition == comp.id && g.Type == typeGrp).ToList();
+                            foreach(GroupeEngagements g in groupesP)
                             {
-                                listTaskGeneration.Add(AddWork(SiteEnum.Participants, null, null, cfg, g));
+                                listTaskGeneration.Add(AddWork(SiteEnum.Engagements, null, null, cfg, g));
                             }
                         }
                     }                    

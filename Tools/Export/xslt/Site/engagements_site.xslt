@@ -26,7 +26,7 @@
 
 	<xsl:variable select="count(/competitions/competition[@PublierProchainsCombats = 'true']) > 0" name="affProchainCombats"/>
 	<xsl:variable select="count(/competitions/competition[@PublierAffectationTapis = 'true']) > 0" name="affAffectationTapis"/>
-	<xsl:variable select="count(/competitions/competition[@ParticipantsParEntite = 'true']) > 0" name="affParticipantsParEntite"/>
+	<xsl:variable select="count(/competitions/competition[@ParticipantsParEntite = 'true']) > 0" name="affEngagementsParEntite"/>
 	<xsl:variable select="/competitions/competition[1]/@Logo" name="logo"/>
 
 	<xsl:template match="/*">
@@ -65,7 +65,7 @@
 				<xsl:value-of select="$js"/>
 			</script>
 			<title>
-				Suivi Compétition - Participants
+				Suivi Compétition - Engagements
 			</title>
 		</head>
 		<body>
@@ -74,15 +74,15 @@
 				<xsl:with-param name="logo" select="$logo"/>
 				<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
 				<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
-				<xsl:with-param name="affParticipants" select="true()"/>
+				<xsl:with-param name="affEngagements" select="true()"/>
 				<xsl:with-param name="affActualiser" select="false()"/>
-				<xsl:with-param name="selectedItem" select="'participants'"/>
+				<xsl:with-param name="selectedItem" select="'engagements'"/>
 				<xsl:with-param name="pathToImg" select="$imgPath"/>
 				<xsl:with-param name="pathToCommon" select="$commonPath"/>
 			</xsl:call-template>
 
 			<!-- CONTENU -->
-			<xsl:if test="count(/competitions/competition)=0 or count(//groupeParticipants)=0">
+			<xsl:if test="count(/competitions/competition)=0 or count(//groupeEngagements)=0">
 				<div class="w3-container w3-border">
 					<div class="w3-panel w3-pale-green w3-bottombar w3-border-green w3-border w3-center w3-large"> Veuillez patienter le tirage des épreuves </div>
 				</div>
@@ -90,7 +90,7 @@
 
 			<!-- Boucle global sur les competitions en cours -->
 			<xsl:for-each select="/competitions/competition">
-				<xsl:if test="count(./groupesParticipants/groupeParticipants) > 0">
+				<xsl:if test="count(./groupesEngagements/groupeEngagements) > 0">
 					<xsl:call-template name="competition"/>
 				</xsl:if>
 			</xsl:for-each>
@@ -116,7 +116,7 @@
 		<xsl:variable name="idcompetition" select="@ID"/>
 		<xsl:variable name="apos">'</xsl:variable>
 		<xsl:variable name="prefixPanel">
-			<xsl:value-of select="concat('ParticipantsComp',$idcompetition,'ContentPanel')"/>
+			<xsl:value-of select="concat('EngagementsComp',$idcompetition,'ContentPanel')"/>
 		</xsl:variable>
 
 		<xsl:variable name="typeGroupe">
@@ -144,14 +144,14 @@
 			<div class="w3-cell-row">
 				<!-- Chaque panneau est un panel contenant une carte, utilise cell + mobile pour gerer horizontal/vertical selon la taille de l'ecran -->
 				<!-- Categorie F -->
-				<xsl:if test="count(./groupesParticipants/groupeParticipants[@sexe = 'F']) > 0">
+				<xsl:if test="count(./groupesEngagements/groupeEngagements[@sexe = 'F']) > 0">
 					<xsl:call-template name="UneCategorie">
 						<xsl:with-param name="categorie" select="'F'"/>
 						<xsl:with-param name="typeGroupe" select="$typeGroupe"/>
 					</xsl:call-template>
 				</xsl:if>
 				<!-- Categorie M -->
-				<xsl:if test="count(./groupesParticipants/groupeParticipants[@sexe = 'M']) > 0">
+				<xsl:if test="count(./groupesEngagements/groupeEngagements[@sexe = 'M']) > 0">
 					<xsl:call-template name="UneCategorie">
 						<xsl:with-param name="categorie" select="'M'"/>
 						<xsl:with-param name="typeGroupe" select="$typeGroupe"/>
@@ -169,7 +169,7 @@
 		<xsl:variable name="idcompetition" select="@ID"/>
 		<xsl:variable name="apos">'</xsl:variable>
 		<xsl:variable name="prefixPanel">
-			<xsl:value-of select="concat('ParticipantsComp',$idcompetition,'ContentPanel')"/>
+			<xsl:value-of select="concat('EngagementsComp',$idcompetition,'ContentPanel')"/>
 		</xsl:variable>
 
 		<div class="w3-panel w3-cell w3-mobile">
@@ -216,38 +216,38 @@
 					<xsl:choose>
 						<!-- Niveau Aucun (par Nom) 1 -->
 						<xsl:when test="$typeGroupe = 1">
-							<xsl:apply-templates select="./groupesParticipants/groupeParticipants[@sexe = $categorie and @type=$typeGroupe]">
+							<xsl:apply-templates select="./groupesEngagements/groupeEngagements[@sexe = $categorie and @type=$typeGroupe]">
 								<xsl:sort order="ascending" select="current()/@entite"/>
 							</xsl:apply-templates>
 						</xsl:when>
 						<!-- Niveau Club 2 -->
 						<xsl:when test="$typeGroupe = 2">
-							<xsl:apply-templates select="./groupesParticipants/groupeParticipants[@sexe = $categorie and @type=$typeGroupe]">
+							<xsl:apply-templates select="./groupesEngagements/groupeEngagements[@sexe = $categorie and @type=$typeGroupe]">
 								<xsl:sort order="ascending" select="//club[@ID = current()/@entite]/nom"/>
 							</xsl:apply-templates>
 						</xsl:when>
 						<!-- Niveau Departement 3 -->
 						<xsl:when test="$typeGroupe = 3">
-							<xsl:apply-templates select="./groupesParticipants/groupeParticipants[@sexe = $categorie and @type=$typeGroupe]">
+							<xsl:apply-templates select="./groupesEngagements/groupeEngagements[@sexe = $categorie and @type=$typeGroupe]">
 								<xsl:sort order="ascending" select="//comite[@ID = current()/@entite]/nom"/>
 							</xsl:apply-templates>
 						</xsl:when>
 						<!-- Niveau Ligue 3 -->
 						<xsl:when test="$typeGroupe = 4">
-							<xsl:apply-templates select="./groupesParticipants/groupeParticipants[@sexe = $categorie and @type=$typeGroupe]">
+							<xsl:apply-templates select="./groupesEngagements/groupeEngagements[@sexe = $categorie and @type=$typeGroupe]">
 								<xsl:sort order="ascending" select="//ligue[@ID = current()/@entite]/nom"/>
 							</xsl:apply-templates>
 						</xsl:when>
 						<!-- Niveau National 5 -->
 						<!-- Niveau International 6 -->
 						<xsl:when test="$typeGroupe = 5 or $typeGroupe = 6">
-							<xsl:apply-templates select="./groupesParticipants/groupeParticipants[@sexe = $categorie and @type=$typeGroupe]">
+							<xsl:apply-templates select="./groupesEngagements/groupeEngagements[@sexe = $categorie and @type=$typeGroupe]">
 								<xsl:sort order="ascending" select="//pays[@ID = current()/@entite]/@nom"/>
 							</xsl:apply-templates>
 						</xsl:when>
 						<!-- Par defaut, on prend le club -->
 						<xsl:otherwise>
-							<xsl:apply-templates select="./groupesParticipants/groupeParticipants[@sexe = $categorie and @type=$typeGroupe]">
+							<xsl:apply-templates select="./groupesEngagements/groupeEngagements[@sexe = $categorie and @type=$typeGroupe]">
 								<xsl:sort order="ascending" select="//club[@ID = current()/@entite]/nom"/>
 							</xsl:apply-templates>
 						</xsl:otherwise>
@@ -258,7 +258,7 @@
 	</xsl:template>
 	
 	<!-- TEMPLATE Bouton groupement -->
-	<xsl:template name="groupement" match="groupeParticipants">
+	<xsl:template name="groupement" match="groupeEngagements">
 		<!-- Determine le nom a afficher selon le niveau de la competition -->
 		<xsl:variable name="entiteId">
 			<xsl:value-of select="./@entite"/>
@@ -309,7 +309,7 @@
 					</xsl:choose>
 				</xsl:attribute>
 				<xsl:attribute name="href">
-					<xsl:value-of select="concat($competitionPath, 'participants/', @id, '/groupe_participants.html')"/>
+					<xsl:value-of select="concat($competitionPath, 'engagements/', @id, '/groupe_engagements.html')"/>
 				</xsl:attribute>
 				<!-- Utilise le nom de l'entite retenue en fonction du niveau -->
 				<xsl:value-of select="$entiteNom"/>

@@ -52,10 +52,10 @@
 
         public const string publierProchainsCombats = "PublierProchainsCombats";
         public const string publierAffectationTapis = "PublierAffectationTapis";
-        public const string publierParticipants = "PublierParticipants";
+        public const string publierEngagements = "PublierEngagements";
         public const string ParticipantsParEntite = "ParticipantsParEntite";
-        public const string ParticipantsAbsents = "ParticipantsAbsents";
-        public const string ParticipantsTousCombats = "ParticipantsTousCombats";
+        public const string EngagementsAbsents = "EngagementsAbsents";
+        public const string EngagementsTousCombats = "EngagementsTousCombats";
         public const string delaiActualisationClientSec = "DelaiActualisationClientSec";
         public const string nbProchainsCombats = "NbProchainsCombats";
         public const string msgProchainsCombats = "MsgProchainsCombats";
@@ -76,17 +76,17 @@
         public const string Structure_RemoteID = "remoteID";
         public const string Structure_Nom = "nom";
 
-        public const string GroupeParticipants_groupes = "groupesParticipants";
-        public const string GroupeParticipants_groupe = "groupeParticipants";
+        public const string GroupeEngagements_groupes = "groupesEngagements";
+        public const string GroupeEngagements_groupe = "groupeEngagements";
 
-        public const string GroupeParticipants_sexe = "sexe";
-        public const string GroupeParticipants_id = "id";
-        public const string GroupeParticipants_entite = "entite";
-        public const string GroupeParticipants_judokas = "judokas";
-        public const string GroupeParticipants_epreuves = "epreuves";
-        public const string GroupeParticipants_combats = "combats";
-        public const string GroupeParticipants_type = "type";
-        public const string GroupeParticipants_competition = "competition";
+        public const string GroupeEngagements_sexe = "sexe";
+        public const string GroupeEngagements_id = "id";
+        public const string GroupeEngagements_entite = "entite";
+        public const string GroupeEngagements_judokas = "judokas";
+        public const string GroupeEngagements_epreuves = "epreuves";
+        public const string GroupeEngagements_combats = "combats";
+        public const string GroupeEngagements_type = "type";
+        public const string GroupeEngagements_competition = "competition";
 
         //Compétition 
         public const string Competition = "competition";

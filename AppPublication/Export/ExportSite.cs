@@ -24,7 +24,7 @@ namespace AppPublication.Export
     public static class ExportSite
     {
         private const int kTailleMaxNomCompetition = 30;
-        private static XmlDocument _docParticipants = new XmlDocument();     // Instance partagees pour la generation des Participants
+        private static XmlDocument _docEngagements = new XmlDocument();     // Instance partagees pour la generation des engages
 
         private static List<XElement> _xClubs = new List<XElement>();          // Instance partagees pour la liste des clubs
         private static List<XElement> _xComites = new List<XElement>();          // Instance partagees pour la liste des comites
@@ -226,6 +226,7 @@ namespace AppPublication.Export
                 output.Add(new FileWithChecksum(fileSave + ".html"));
 
                 // No need to regenerate those files, they are usually static unless they are updated
+                // TODO voir pour la gestion du mode Dark
                 urls = urls.Concat(ExportTools.ExportEmbeddedStyleAndJS(true, siteStruct)).ToList();
                 LogTools.Logger.Debug("GenereWebSiteIndex - ExportStyleAndJS {0}", urls.Count);
 
@@ -300,19 +301,14 @@ namespace AppPublication.Export
                     output.Add(new FileWithChecksum(fileSavePc + ".html"));
                 }
 
-                // TODO Refaire une passe dans les XSLT pour verifier que l'on a plus de repertoire en dur (uniquement parametre)
-                // TODO Refaire une passe pour verifier les XSLT equipes mixtes
-                // TODO refaire une passe pour verifier les Path.Combine au lieu des concats
-                // TODO Faire une passe sur les enums/int (ex. discipline) pour les remplacer par des enums
-
-                // Genere le menu participants
-                if (config.PublierParticipants)
+                // Genere le menu engageements
+                if (config.PublierEngagements)
                 {
-                    // Ajoute les informations necessaire pour les participants
+                    // Ajoute les informations necessaire pour les engages
                     ExportXML.AddPublicationInfo(ref docmenu, config);
                     AddStructures(ref docmenu);
 
-                    type = ExportEnum.Site_MenuParticipants;
+                    type = ExportEnum.Site_MenuEngagements;
                     string filenamePart = ExportTools.getFileName(type);
                     string fileSavePart = Path.Combine(directory, filenamePart.Replace("/", "_"));
                     XsltArgumentList argsListPart = new XsltArgumentList();
@@ -383,28 +379,28 @@ namespace AppPublication.Export
             {
                 _xPays = ExportXML.GetPays(DC);
             }
-            using (TimedLock.Lock(_docParticipants))
+            using (TimedLock.Lock(_docEngagements))
             {
-                _docParticipants = ExportXML.CreateDocumentParticipants(DC, EDC, config.ParticipantsParEntite);
-                ExportXML.AddPublicationInfo(ref _docParticipants, config);
-                AddStructures(ref _docParticipants);
-                LogTools.Logger.Debug("XML genere: '{0}'", _docParticipants.InnerXml);
+                _docEngagements = ExportXML.CreateDocumentEngagements(DC, EDC, config.ParticipantsParEntite);  // TODO voir si le parametre participant tj ok
+                ExportXML.AddPublicationInfo(ref _docEngagements, config);
+                AddStructures(ref _docEngagements);
+                LogTools.Logger.Debug("XML genere: '{0}'", _docEngagements.InnerXml);
             }
         }
 
         /// <summary>
-        /// Genere la page des participants
+        /// Genere la page des engages
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static List<FileWithChecksum> GenereWebSiteParticipants(JudoData DC, ExtensionJudoData EDC, GroupeParticipants grp, ConfigurationExportSite config, ExportSiteStructure siteStruct)
+        public static List<FileWithChecksum> GenereWebSiteEngagements(JudoData DC, ExtensionJudoData EDC, GroupeEngagements grp, ConfigurationExportSite config, ExportSiteStructure siteStruct)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             if (DC != null && EDC != null && grp != null && config != null && siteStruct != null)
             {
-                ExportEnum type = ExportEnum.Site_Participants;
-                string directory = siteStruct.RepertoireGroupeParticipants(grp.Id);
+                ExportEnum type = ExportEnum.Site_Engagements;
+                string directory = siteStruct.RepertoireGroupeEngagements(grp.Id);
                 string filename = ExportTools.getFileName(type);
                 string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
                 XsltArgumentList argsList = new XsltArgumentList();
@@ -412,7 +408,7 @@ namespace AppPublication.Export
                 argsList.AddParam("idcompetition", "", grp.Competition);
                 AddStructureArgument(argsList, siteStruct, fileSave);
 
-                ExportHTML.ToHTMLSite(_docParticipants, type, fileSave, argsList);
+                ExportHTML.ToHTMLSite(_docEngagements, type, fileSave, argsList);
 
                 output.Add(new FileWithChecksum(fileSave + ".html"));
             }

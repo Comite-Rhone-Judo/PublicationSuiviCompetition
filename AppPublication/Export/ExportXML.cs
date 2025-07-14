@@ -34,15 +34,15 @@ namespace AppPublication.Export
                 attrProchainCombat.Value = config.PublierProchainsCombats.ToString().ToLower();
                 XmlAttribute attrAffectationTapis = doc.CreateAttribute(ConstantXML.publierAffectationTapis);
                 attrAffectationTapis.Value = config.PublierAffectationTapis.ToString().ToLower();
-                XmlAttribute attrParticipants = doc.CreateAttribute(ConstantXML.publierParticipants);
-                attrParticipants.Value = config.PublierParticipants.ToString().ToLower();
+                XmlAttribute attrEngagements = doc.CreateAttribute(ConstantXML.publierEngagements);
+                attrEngagements.Value = config.PublierEngagements.ToString().ToLower();
 
-                XmlAttribute attrParticipantsParEntite = doc.CreateAttribute(ConstantXML.ParticipantsParEntite);
-                attrParticipantsParEntite.Value = config.ParticipantsParEntite.ToString().ToLower();
-                XmlAttribute attrParticipantsAbsents = doc.CreateAttribute(ConstantXML.ParticipantsAbsents);
-                attrParticipantsAbsents.Value = config.ParticipantsAbsents.ToString().ToLower();
-                XmlAttribute attrParticipantsTousCombats = doc.CreateAttribute(ConstantXML.ParticipantsTousCombats);
-                attrParticipantsTousCombats.Value = config.ParticipantsTousCombats.ToString().ToLower();
+                XmlAttribute attrParticipantsParEntite = doc.CreateAttribute(ConstantXML.ParticipantsParEntite);    // TODO voir si on garde
+                attrParticipantsParEntite.Value = config.ParticipantsParEntite.ToString().ToLower();                   // TODO Voir si on garde
+                XmlAttribute attrEngagementsAbsents = doc.CreateAttribute(ConstantXML.EngagementsAbsents);
+                attrEngagementsAbsents.Value = config.EngagementsAbsents.ToString().ToLower();
+                XmlAttribute attrEngagementsTousCombats = doc.CreateAttribute(ConstantXML.EngagementsTousCombats);
+                attrEngagementsTousCombats.Value = config.EngagementsTousCombats.ToString().ToLower();
 
                 XmlAttribute attrDelaiActualisationClient = doc.CreateAttribute(ConstantXML.delaiActualisationClientSec);
                 attrDelaiActualisationClient.Value = config.DelaiActualisationClientSec.ToString();
@@ -59,10 +59,10 @@ namespace AppPublication.Export
 
                 node.Attributes.Append(attrProchainCombat);
                 node.Attributes.Append(attrAffectationTapis);
-                node.Attributes.Append(attrParticipants);
+                node.Attributes.Append(attrEngagements);
                 node.Attributes.Append(attrParticipantsParEntite);
-                node.Attributes.Append(attrParticipantsAbsents);
-                node.Attributes.Append(attrParticipantsTousCombats);
+                node.Attributes.Append(attrEngagementsAbsents);
+                node.Attributes.Append(attrEngagementsTousCombats);
                 node.Attributes.Append(attrDelaiActualisationClient);
                 node.Attributes.Append(attrNbProchainsCombats);
                 node.Attributes.Append(attrDateGeneration);
@@ -506,10 +506,10 @@ namespace AppPublication.Export
                     }
                 }
 
-                // Ajoute les groupes de participants
-                IList<GroupeParticipants> grpParticipants = EDC.Deroulement.GroupesParticipants.Where(g => g.Competition == competition.id).ToList();
-                XElement xgroupesP = new XElement(ConstantXML.GroupeParticipants_groupes);
-                foreach (GroupeParticipants grp in grpParticipants)
+                // Ajoute les groupes de engages
+                IList<GroupeEngagements> grpEngages = EDC.Deroulement.GroupesEngages.Where(g => g.Competition == competition.id).ToList();
+                XElement xgroupesP = new XElement(ConstantXML.GroupeEngagements_groupes);
+                foreach (GroupeEngagements grp in grpEngages)
                 {
                     xgroupesP.Add(grp.ToXml());
                 }
@@ -520,7 +520,7 @@ namespace AppPublication.Export
         }
 
         /// <summary>
-        public static XmlDocument CreateDocumentParticipants(JudoData DC, ExtensionJudoData EDC, bool groupeParEntite)
+        public static XmlDocument CreateDocumentEngagements(JudoData DC, ExtensionJudoData EDC, bool groupeParEntite)
         {
             XDocument doc = new XDocument();
             XElement xcompetitions = new XElement(ConstantXML.Competitions);
@@ -529,17 +529,18 @@ namespace AppPublication.Export
             IList<Club> clubs = DC.Structures.Clubs.ToList();
             foreach (Competition competition in competitions)
             {
-                // On ne gere les participants que pour les Shiai et les individuelles
+                // On ne gere les engages que pour les Shiai et les individuelles
                 if (competition.IsShiai() || competition.IsIndividuelle())
                 {
                     XElement xcompetition = competition.ToXmlInformations();
                     xcompetitions.Add(xcompetition);
 
                     // Ajoute les groupes dans la structure XML
+                    // TODO Voir si on garde
                     int typeGroupes = groupeParEntite ? ExtensionNoyau.Deroulement.DataDeroulement.GetTypeGroupe(competition) : (int) EchelonEnum.Aucun;
-                    IList<GroupeParticipants> groupes = EDC.Deroulement.GroupesParticipants.Where(g => g.Competition == competition.id && g.Type == typeGroupes).ToList();
-                    XElement xgroupesP = new XElement(ConstantXML.GroupeParticipants_groupes);
-                    foreach (GroupeParticipants grp in groupes)
+                    IList<GroupeEngagements> groupes = EDC.Deroulement.GroupesEngages.Where(g => g.Competition == competition.id && g.Type == typeGroupes).ToList();
+                    XElement xgroupesP = new XElement(ConstantXML.GroupeEngagements_groupes);
+                    foreach (GroupeEngagements grp in groupes)
                     {
                         xgroupesP.Add(grp.ToXml());
                     }
@@ -547,7 +548,7 @@ namespace AppPublication.Export
 
                     // Ajoute les judokas de la competition
                     IList<vue_judoka> vjudokas = DC.Participants.vjudokas.Where(vj => vj.idcompet == competition.id).ToList();
-                    XElement xjudokas = new XElement(ConstantXML.GroupeParticipants_judokas);
+                    XElement xjudokas = new XElement(ConstantXML.GroupeEngagements_judokas);
                     foreach (vue_judoka vj in vjudokas)
                     {
                         xjudokas.Add(vj.ToXml());
@@ -556,7 +557,7 @@ namespace AppPublication.Export
 
                     // Ajoute les epreuves de la competition
                     IList<Epreuve> epreuves = DC.Organisation.Epreuves.Where(ep => ep.competition == competition.id).ToList();
-                    XElement xepreuves = new XElement(ConstantXML.GroupeParticipants_epreuves);
+                    XElement xepreuves = new XElement(ConstantXML.GroupeEngagements_epreuves);
                     foreach (Epreuve ep in epreuves)
                     {
                         xepreuves.Add(ep.ToXml(DC));
@@ -568,7 +569,7 @@ namespace AppPublication.Export
                     IList<Phase> phases = DC.Deroulement.Phases.Join(epreuves, p => p.epreuve, e => e.id, (p, e) => p).ToList();
                     // Ensuite les combats de ces memes phases
                     IList<Combat> combats = DC.Deroulement.Combats.Join(phases, c => c.phase, p => p.id, (c, p) => c).ToList();
-                    XElement xcombats = new XElement(ConstantXML.GroupeParticipants_combats);
+                    XElement xcombats = new XElement(ConstantXML.GroupeEngagements_combats);
                     foreach (Combat c in combats)
                     {
                         xcombats.Add(c.ToXml(DC));

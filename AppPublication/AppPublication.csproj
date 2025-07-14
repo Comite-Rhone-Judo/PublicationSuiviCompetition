@@ -136,7 +136,7 @@
     <Compile Include="Controles\GestionStatistiques.cs" />
     <Compile Include="Controles\RelayCommand.cs" />
     <Compile Include="ExtensionNoyau\Deroulement\DataDeroulement.cs" />
-    <Compile Include="ExtensionNoyau\Deroulement\GroupeParticipants.cs" />
+    <Compile Include="ExtensionNoyau\Deroulement\GroupeEngagements.cs" />
     <Compile Include="ExtensionNoyau\ExtensionJudoData.cs" />
     <Compile Include="IHM\Commissaire\ConfigurationPublication.xaml.cs">
       <DependentUpon>ConfigurationPublication.xaml</DependentUpon>

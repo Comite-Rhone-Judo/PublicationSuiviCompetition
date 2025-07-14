@@ -9,6 +9,7 @@
 	<xsl:template name="panelEpreuve">
 		<xsl:param name="sexeCode"/>
 		<xsl:param name="prefixPanel"/>
+		<xsl:param name="imgPath"/>
 
 		<xsl:variable name="panelApos">'</xsl:variable>
 
@@ -22,12 +23,18 @@
 							<xsl:attribute name="onclick">
 								<xsl:value-of select="concat('toggleElement(',$panelApos,$prefixPanel,$sexeCode,$panelApos,')')"/>
 							</xsl:attribute>
-							<img class="img" width="25" src="../img/up_circular-32.png" style="display: none;">
+							<img class="img" width="25" style="display: none;">
+								<xsl:attribute name="src">
+									<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
+								</xsl:attribute>
 								<xsl:attribute name="id">
 									<xsl:value-of select="concat($prefixPanel,$sexeCode, 'Collapse')"/>
 								</xsl:attribute>
 							</img>
-							<img class="img" width="25" src="../img/down_circular-32.png">
+							<img class="img" width="25">
+								<xsl:attribute name="src">
+									<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
+								</xsl:attribute>
 								<xsl:attribute name="id">
 									<xsl:value-of select="concat($prefixPanel, $sexeCode, 'Expand')"/>
 								</xsl:attribute>

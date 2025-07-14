@@ -26,7 +26,7 @@
 
 	<xsl:variable select="/competition/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
 	<xsl:variable select="/competition/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
-	<xsl:variable select="/competition/@PublierParticipants = 'true'" name="affParticipants"/>
+	<xsl:variable select="/competition/@PublierEngagements = 'true'" name="affEngagements"/>
 	<xsl:variable select="/competition/@DelaiActualisationClientSec" name="delayActualisationClient"/>
 	<xsl:variable select="/competition/@kinzas" name="affKinzas"/>
 	<xsl:variable select="/competition/@Logo" name="logo"/>
@@ -82,7 +82,7 @@
 				<xsl:with-param name="logo" select="$logo"/>
 				<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
 				<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
-				<xsl:with-param name="affParticipants" select="$affParticipants"/>
+				<xsl:with-param name="affEngagements" select="$affEngagements"/>
 				<xsl:with-param name="affActualiser" select="true()"/>
 				<xsl:with-param name="selectedItem" select="'avancement'"/>
 				<xsl:with-param name="pathToImg" select="$imgPath"/>
@@ -693,7 +693,11 @@
 															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
 														</xsl:choose>
 													</xsl:attribute>
-													<img class="img" width="20" src="../img/starter-32.png" />
+													<img class="img" width="20">
+														<xsl:attribute name="src">
+															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+														</xsl:attribute>
+													</img>
 													<xsl:value-of select="$combat/@firstrencontrelib"/>
 												</div>
 											</xsl:if>
@@ -793,7 +797,11 @@
 														w3-cell tas-combat-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align 
 														<xsl:value-of select="$firstrencontreclass"/>
 													</xsl:attribute>
-													<img class="img" width="20" src="../img/starter-32.png" />
+													<img class="img" width="20">
+														<xsl:attribute name="src">
+															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+														</xsl:attribute>
+													</img>
 													<xsl:value-of select="$combat/@firstrencontrelib"/>
 												</div>
 											</xsl:if>
@@ -868,7 +876,11 @@
 															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
 														</xsl:choose>
 													</xsl:attribute>
-													<img class="img" width="20" src="../img/starter-32.png" />
+													<img class="img" width="20">
+														<xsl:attribute name="src">
+															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+														</xsl:attribute>
+													</img>
 													<xsl:value-of select="$combat/@firstrencontrelib"/>
 												</div>
 											</xsl:if>
@@ -967,7 +979,11 @@
 														w3-cell tas-combat-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align 
 														<xsl:value-of select="$firstrencontreclass"/>
 													</xsl:attribute>
-													<img class="img" width="20" src="../img/starter-32.png" />
+													<img class="img" width="20">
+														<xsl:attribute name="src">
+															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+														</xsl:attribute>
+													</img>
 													<xsl:value-of select="$combat/@firstrencontrelib"/>
 												</div>
 											</xsl:if>
@@ -1087,7 +1103,11 @@
 															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
 														</xsl:choose>
 													</xsl:attribute>
-													<img class="img" width="20" src="../img/starter-32.png" />
+													<img class="img" width="20">
+														<xsl:attribute name="src">
+															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+														</xsl:attribute>
+													</img>
 													<xsl:value-of select="$combat/@firstrencontrelib"/>
 												</div>
 											</xsl:if>
@@ -1191,7 +1211,11 @@
 															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
 														</xsl:choose>
 													</xsl:attribute>
-													<img class="img" width="20" src="../img/starter-32.png" />
+													<img class="img" width="20">
+														<xsl:attribute name="src">
+															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+														</xsl:attribute>
+													</img>
 													<xsl:value-of select="$combat/@firstrencontrelib"/>
 												</div>
 											</xsl:if>
@@ -1282,7 +1306,11 @@
 															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
 														</xsl:choose>
 													</xsl:attribute>
-													<img class="img" width="20" src="../img/starter-32.png" />
+													<img class="img" width="20">
+														<xsl:attribute name="src">
+															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+														</xsl:attribute>
+													</img>
 													<xsl:value-of select="$combat/@firstrencontrelib"/>
 												</div>
 											</xsl:if>
@@ -1393,7 +1421,11 @@
 															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
 														</xsl:choose>
 													</xsl:attribute>
-													<img class="img" width="20" src="../img/starter-32.png" />
+													<img class="img" width="20">
+														<xsl:attribute name="src">
+															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+														</xsl:attribute>
+													</img>
 													<xsl:value-of select="$combat/@firstrencontrelib"/>
 												</div>
 											</xsl:if>										

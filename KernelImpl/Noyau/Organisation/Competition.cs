@@ -28,7 +28,6 @@ namespace KernelImpl.Noyau.Organisation
             this.discipline = CompetitionDisciplineEnum.Judo.ToString2();
             this.nbTapis = 6;
             this.tempsCombat = 600;
-			// TODO Mettre un enum
             this.niveau = (int) EchelonEnum.Club;
             this.couleur1 = "";
             this.couleur2 = "";

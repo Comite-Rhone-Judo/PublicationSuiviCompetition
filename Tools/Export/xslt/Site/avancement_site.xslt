@@ -27,7 +27,7 @@
 
 	<xsl:variable select="count(/competitions/competition[@PublierProchainsCombats = 'true']) > 0" name="affProchainCombats"/>
 	<xsl:variable select="count(/competitions/competition[@PublierAffectationTapis = 'true']) > 0" name="affAffectationTapis"/>
-	<xsl:variable select="count(/competitions/competition[@PublierParticipants = 'true']) > 0" name="affParticipants"/>
+	<xsl:variable select="count(/competitions/competition[@PublierEngagements = 'true']) > 0" name="affEngagements"/>
 	<xsl:variable select="/competitions/competition[1]/@Logo" name="logo"/>
 
 	<xsl:template match="/*">
@@ -74,7 +74,7 @@
 				<xsl:with-param name="logo" select="$logo"/>
 				<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
 				<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
-				<xsl:with-param name="affParticipants" select="$affParticipants"/>
+				<xsl:with-param name="affEngagements" select="$affEngagements"/>
 				<xsl:with-param name="affActualiser" select="false()"/>
 				<xsl:with-param name="selectedItem" select="'avancement'"/>
 				<xsl:with-param name="pathToImg" select="$imgPath"/>
@@ -135,16 +135,19 @@
 				<xsl:call-template name="panelEpreuve">
 					<xsl:with-param name="sexeCode" select="'F'"/>
 					<xsl:with-param name="prefixPanel" select="$prefixCompetition"/>
+					<xsl:with-param name="imgPath" select="$imgPath"/>
 				</xsl:call-template>
 				<!-- Categorie M -->
 				<xsl:call-template name="panelEpreuve">
 					<xsl:with-param name="sexeCode" select="'M'"/>
 					<xsl:with-param name="prefixPanel" select="$prefixCompetition"/>
+					<xsl:with-param name="imgPath" select="$imgPath"/>
 				</xsl:call-template>
 				<!-- Mixte -->
 				<xsl:call-template name="panelEpreuve">
 					<xsl:with-param name="sexeCode" select="'X'"/>
 					<xsl:with-param name="prefixPanel" select="$prefixCompetition"/>
+					<xsl:with-param name="imgPath" select="$imgPath"/>
 				</xsl:call-template>
 			</div>
 		</div>

@@ -95,48 +95,49 @@
                 </StackPanel>
 
                 <StackPanel Grid.Row="6" Grid.Column="0"  Grid.ColumnSpan="2" Orientation="Horizontal">
-                    <CheckBox   Content="Publier 'Participants'" Style="{StaticResource CheckboxStyle}"
-                        IsChecked="{Binding Path=PublierParticipants}"
-                        Visibility="{Binding Path=CanPublierParticipants, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <CheckBox   Content="Publier 'Engagements'" Style="{StaticResource CheckboxStyle}"
+                        IsChecked="{Binding Path=PublierEngagements}"
+                        Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}">
                     </CheckBox>
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, provoque l'ajout du menu 'Particpants' qui liste les participants, leurs statuts et leurs combats à venir. Disponible uniquement en compétition Individuelle ou Shiai."
-                           Visibility="{Binding Path=CanPublierParticipants, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, provoque l'ajout du menu 'Engagements' qui liste les engages, leurs statuts et leurs combats à venir. Disponible uniquement en compétition Individuelle ou Shiai."
+                           Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
                 </StackPanel>
                 <StackPanel Grid.Row="7" Grid.Column="0" Orientation="Horizontal" Margin="30 -5 0 0">
                     <CheckBox Style="{StaticResource CheckboxStyle}"
                         IsChecked="{Binding Path=ParticipantsParEntite, Converter={StaticResource BoolNotConverter}}"
-                        IsEnabled="{Binding Path=PublierParticipants, Mode=OneWay}"
-                        Visibility="{Binding Path=CanPublierParticipants, Converter={StaticResource BoolToVisibilityConverter}}"
+                        IsEnabled="{Binding Path=PublierEngagements, Mode=OneWay}"
+                        Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"
                         Margin="0 0 0 0">
                     </CheckBox>
+                    <!-- TODO supprimer l'option de groupement par nom (option par defaut maintenant) -->
                     <Label HorizontalAlignment="Right" Content="Grouper par nom" Style="{StaticResource LabelStyle}"
-                           Visibility="{Binding Path=CanPublierParticipants, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                           Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, regroupe les participants par Nom pour la recherche. Par entité (club/Comité/ligue/Pays) sinon."
-                           Visibility="{Binding Path=CanPublierParticipants, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                           Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
                 </StackPanel>
-                <StackPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="25 -15 0 0" Visibility="{Binding Path=CanPublierParticipants, Converter={StaticResource BoolToVisibilityConverter}}">
+                <StackPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="25 -15 0 0" Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}">
                     <Label HorizontalAlignment="Right" Content="Publier:" Style="{StaticResource LabelStyle}"
-                           Visibility="{Binding Path=CanPublierParticipants, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                           Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     <CheckBox Style="{StaticResource CheckboxStyle}"
-                        IsChecked="{Binding Path=ParticipantsAbsents}"
-                        IsEnabled="{Binding Path=PublierParticipants, Mode=OneWay}"
-                        Visibility="{Binding Path=CanPublierParticipants, Converter={StaticResource BoolToVisibilityConverter}}"
+                        IsChecked="{Binding Path=EngagementsAbsents}"
+                        IsEnabled="{Binding Path=PublierEngagements, Mode=OneWay}"
+                        Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"
                         Margin="-5 0 0 0">
                     </CheckBox>
                     <Label HorizontalAlignment="Right" Content="les absents" Style="{StaticResource LabelStyle}" Margin="-2 0 0 0"
-                           Visibility="{Binding Path=CanPublierParticipants, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                           Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="-5 0 0 0" ToolTip="Si cochée, affichera les judokas absents."
-                           Visibility="{Binding Path=CanPublierParticipants, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                           Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     <CheckBox Style="{StaticResource CheckboxStyle}"
-                        IsChecked="{Binding Path=ParticipantsTousCombats}"
-                        IsEnabled="{Binding Path=PublierParticipants, Mode=OneWay}"
-                        Visibility="{Binding Path=CanPublierParticipants, Converter={StaticResource BoolToVisibilityConverter}}"
+                        IsChecked="{Binding Path=EngagementsTousCombats}"
+                        IsEnabled="{Binding Path=PublierEngagements, Mode=OneWay}"
+                        Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"
                         Margin="10 0 0 0">
                     </CheckBox>
                     <Label HorizontalAlignment="Right" Content="tous les combats" Style="{StaticResource LabelStyle}" Margin="-2 0 0 0"
-                           Visibility="{Binding Path=CanPublierParticipants, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affichera tous les combats des participants, y compris ceux terminés."
-                           Visibility="{Binding Path=CanPublierParticipants, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                           Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affichera tous les combats des engages, y compris ceux terminés."
+                           Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
                 </StackPanel>
 

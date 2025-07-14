@@ -16,22 +16,22 @@ namespace AppPublication.ExtensionNoyau.Deroulement
 {
     public class DataDeroulement
     {
-        private IList<GroupeParticipants> _groupesParticipants = new List<GroupeParticipants>();
+        private IList<GroupeEngagements> _groupesEngages = new List<GroupeEngagements>();
 
         /// <summary>
-        /// Contient la liste des groupes de participant (par rapport a la derniere generation Par GetGroupesParticipants)
+        /// Contient la liste des groupes de engages (par rapport a la derniere generation Par GetGroupesEngagements)
         /// </summary>
-        public IList<GroupeParticipants> GroupesParticipants
+        public IList<GroupeEngagements> GroupesEngages
         {
             get
             {
-                return _groupesParticipants;
+                return _groupesEngages;
             }
         }
 
         public void SyncAll(JudoData DC)
         {
-            GetGroupesParticipant(DC);
+            GetGroupesEngagements(DC);
         }
 
         /// <summary>
@@ -69,10 +69,10 @@ namespace AppPublication.ExtensionNoyau.Deroulement
         /// </summary>
         /// <param name="niveau"></param>
         /// <returns></returns>
-        public void GetGroupesParticipant(JudoData DC)
+        public void GetGroupesEngagements(JudoData DC)
         {
             // Vide la precedente liste
-            _groupesParticipants.Clear();
+            _groupesEngages.Clear();
 
             IList<Competition> competitions = DC.Organisation.Competitions.ToList();
             string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -130,12 +130,12 @@ namespace AppPublication.ExtensionNoyau.Deroulement
                         }
                         foreach (string entite in listEntite)
                         {
-                            GroupeParticipants grp = new GroupeParticipants();
+                            GroupeEngagements grp = new GroupeEngagements();
                             grp.Competition = competition.id;
                             grp.Sexe = sexe;
                             grp.Type = type;
                             grp.Entite = entite;
-                            _groupesParticipants.Add(grp);
+                            _groupesEngages.Add(grp);
                         }
 
                         // Groupement par nom
@@ -145,12 +145,12 @@ namespace AppPublication.ExtensionNoyau.Deroulement
 
                             if (nj > 0)
                             {
-                                GroupeParticipants grp = new GroupeParticipants();
+                                GroupeEngagements grp = new GroupeEngagements();
                                 grp.Competition = competition.id;
                                 grp.Sexe = sexe;
                                 grp.Type = (int) EchelonEnum.Aucun;
                                 grp.Entite = c.ToString();
-                                _groupesParticipants.Add(grp);
+                                _groupesEngages.Add(grp);
                             }
                         }
                     }

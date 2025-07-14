@@ -9,9 +9,8 @@ using Tools.Enum;
 
 namespace AppPublication.ExtensionNoyau.Deroulement
 {
-    public class GroupeParticipants
+    public class GroupeEngagements
     {
-        // TODO Voir pour renommer participant en engagement
         // TODO Voir pour gerer le cas ou l'on veut grouper plusieurs competitions par ex. Jujitsu Combat/Ne waza
         // Identifiant du groupement {IdCompetition}-{sexe}-{ID entite}-{Type entite}
         private string _id;
@@ -75,12 +74,12 @@ namespace AppPublication.ExtensionNoyau.Deroulement
         /// <returns></returns>
         public XElement ToXml()
         {
-            XElement xgroupeP = new XElement(ConstantXML.GroupeParticipants_groupe);
-            xgroupeP.SetAttributeValue(ConstantXML.GroupeParticipants_competition, this.Competition);
-            xgroupeP.SetAttributeValue(ConstantXML.GroupeParticipants_id, this.Id);
-            xgroupeP.SetAttributeValue(ConstantXML.GroupeParticipants_sexe, this.Sexe.ToString());
-            xgroupeP.SetAttributeValue(ConstantXML.GroupeParticipants_type, this.Type);
-            xgroupeP.SetAttributeValue(ConstantXML.GroupeParticipants_entite, this.Entite);
+            XElement xgroupeP = new XElement(ConstantXML.GroupeEngagements_groupe);
+            xgroupeP.SetAttributeValue(ConstantXML.GroupeEngagements_competition, this.Competition);
+            xgroupeP.SetAttributeValue(ConstantXML.GroupeEngagements_id, this.Id);
+            xgroupeP.SetAttributeValue(ConstantXML.GroupeEngagements_sexe, this.Sexe.ToString());
+            xgroupeP.SetAttributeValue(ConstantXML.GroupeEngagements_type, this.Type);
+            xgroupeP.SetAttributeValue(ConstantXML.GroupeEngagements_entite, this.Entite);
             return xgroupeP;
         }
 
@@ -89,7 +88,7 @@ namespace AppPublication.ExtensionNoyau.Deroulement
         /// </summary>
         private void GetId()
         {
-            Id = string.Format("{0}{1}{2}{3}", Competition, Sexe.ToString(), Entite, Type);
+            Id = string.Format("{0}-{1}-{2}-{3}", Competition, Sexe.ToString(), Entite, Type);
         }
     }
 }

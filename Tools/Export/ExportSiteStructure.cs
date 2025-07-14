@@ -18,7 +18,7 @@ namespace Tools.Export
     {
         #region MEMBRES
         public const string kCourante = "courante";
-        public const string kParticipants = "participants";
+        public const string kEngagements = "engagements";
         public const string kCommon = "common";
         public const string kImg = "img";
         public const string kJs = "js";
@@ -208,26 +208,26 @@ namespace Tools.Export
 
 
         /// <summary>
-        /// Retourne le repertoire Participants
+        /// Retourne le repertoire Engagements
         /// </summary>
-        public string RepertoireParticipants
+        public string RepertoireEngagements
         {
             get
             {
                 IsConfiguredGuardRail();
-                return FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, kParticipants));
+                return FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, kEngagements));
             }
         }
 
         /// <summary>
-        /// Le repertoire des participants en relatif par rapport au path cible
+        /// Le repertoire des engagemenets en relatif par rapport au path cible
         /// </summary>
-        public string RepertoireParticipantsRelatif
+        public string RepertoireEngagementsRelatif
         {
             get
             {
                 IsConfiguredGuardRail();
-                return FileAndDirectTools.PathJoin(_relativeToRoot, kParticipants, true);
+                return FileAndDirectTools.PathJoin(_relativeToRoot, kEngagements, true);
             }
         }
 
@@ -316,7 +316,7 @@ namespace Tools.Export
         /// <param name="idGroupe">du groupe</param>
         /// <param name="relatif">True pour avoir le chemin relatif au dossier de la competition (pas de la racine)</param>
         /// <exception cref="NullReferenceException"></exception>
-        public string RepertoireGroupeParticipants(string idGroupe, bool relatif = false)
+        public string RepertoireGroupeEngagements(string idGroupe, bool relatif = false)
         {
             if (string.IsNullOrWhiteSpace(idGroupe))
             {
@@ -324,7 +324,7 @@ namespace Tools.Export
             }
 
             // On calcul le path complet pour faire le controle d'existence
-            string directory = Path.Combine(RepertoireParticipants, OutilsTools.TraiteChaine(idGroupe));
+            string directory = Path.Combine(RepertoireEngagements, OutilsTools.TraiteChaine(idGroupe));
             directory = FiltreEtControleRepertoire(directory);
 
             return (relatif) ? directory.Replace(RepertoireCompetition, "").Remove(0, 1) : directory;

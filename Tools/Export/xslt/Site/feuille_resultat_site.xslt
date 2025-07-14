@@ -31,7 +31,7 @@
 
 	<xsl:variable select="/competition/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
 	<xsl:variable select="/competition/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
-	<xsl:variable select="/competition/@PublierParticipants = 'true'" name="affParticipants"/>
+	<xsl:variable select="/competition/@PublierEngagements = 'true'" name="affEngagements"/>
 	<xsl:variable select="/competition/@DelaiActualisationClientSec" name="delayActualisationClient"/>
 	<xsl:variable select="/competition/@kinzas" name="affKinzas"/>
 	<xsl:variable select="/competition/@Logo" name="logo"/>
@@ -87,7 +87,7 @@
 				<xsl:with-param name="logo" select="$logo"/>
 				<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
 				<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
-				<xsl:with-param name="affParticipants" select="$affParticipants"/>
+				<xsl:with-param name="affEngagements" select="$affEngagements"/>
 				<xsl:with-param name="affActualiser" select="true()"/>
 				<xsl:with-param name="selectedItem" select="'avancement'"/>
 				<xsl:with-param name="pathToImg" select="$imgPath"/>
@@ -299,7 +299,11 @@
 						  w3-container w3-margin-left w3-center w3-cell-middle w3-tag w3-round-large w3-left-align
 						  <xsl:value-of select="$firstrencontreclass"/>
 					  </xsl:attribute>
-					  <img class="img" width="32" src="../img/starter-32.png" />
+					  <img class="img" width="32">
+						  <xsl:attribute name="src">
+							  <xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+						  </xsl:attribute>
+					  </img>
 					  &nbsp;
 					  1ère catégorie:&nbsp;<xsl:value-of select="$poulefirstrencontre"/>
 				  </div>

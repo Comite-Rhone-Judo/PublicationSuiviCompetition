@@ -9,7 +9,7 @@
 		<xsl:param name="logo"/>
 		<xsl:param name="affProchainCombats"/>
 		<xsl:param name="affAffectationTapis"/>
-		<xsl:param name="affParticipants"/>
+		<xsl:param name="affEngagements"/>
 		<xsl:param name="affActualiser"/>
 		<xsl:param name="selectedItem"/>
 		<xsl:param name="pathToImg"/>
@@ -105,18 +105,18 @@
 				</xsl:attribute>
 				Classements
 			</a>
-			<xsl:if test="$affParticipants">
+			<xsl:if test="$affEngagements">
 				<a>
 					<xsl:attribute name="href">
-						<xsl:value-of select="concat($pathToCommon, 'participants.html')"/>
+						<xsl:value-of select="concat($pathToCommon, 'engagements.html')"/>
 					</xsl:attribute>
 					<xsl:attribute name="class">
 						<xsl:choose>
-							<xsl:when test="$selectedItem = 'participants'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
+							<xsl:when test="$selectedItem = 'engagements'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
 							<xsl:otherwise>w3-bar-item w3-button navButton</xsl:otherwise>
 						</xsl:choose>
 					</xsl:attribute>
-					Participants
+					Engagements
 				</a>
 			</xsl:if>
 		</div>
