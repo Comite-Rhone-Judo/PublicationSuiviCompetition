@@ -102,20 +102,7 @@
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, provoque l'ajout du menu 'Engagements' qui liste les engages, leurs statuts et leurs combats à venir. Disponible uniquement en compétition Individuelle ou Shiai."
                            Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
                 </StackPanel>
-                <StackPanel Grid.Row="7" Grid.Column="0" Orientation="Horizontal" Margin="30 -5 0 0">
-                    <CheckBox Style="{StaticResource CheckboxStyle}"
-                        IsChecked="{Binding Path=ParticipantsParEntite, Converter={StaticResource BoolNotConverter}}"
-                        IsEnabled="{Binding Path=PublierEngagements, Mode=OneWay}"
-                        Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"
-                        Margin="0 0 0 0">
-                    </CheckBox>
-                    <!-- TODO supprimer l'option de groupement par nom (option par defaut maintenant) -->
-                    <Label HorizontalAlignment="Right" Content="Grouper par nom" Style="{StaticResource LabelStyle}"
-                           Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, regroupe les participants par Nom pour la recherche. Par entité (club/Comité/ligue/Pays) sinon."
-                           Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                </StackPanel>
-                <StackPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="25 -15 0 0" Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}">
+                <StackPanel Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="25 -10 0 0" Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}">
                     <Label HorizontalAlignment="Right" Content="Publier:" Style="{StaticResource LabelStyle}"
                            Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     <CheckBox Style="{StaticResource CheckboxStyle}"

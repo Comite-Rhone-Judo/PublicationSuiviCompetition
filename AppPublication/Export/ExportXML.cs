@@ -37,8 +37,6 @@ namespace AppPublication.Export
                 XmlAttribute attrEngagements = doc.CreateAttribute(ConstantXML.publierEngagements);
                 attrEngagements.Value = config.PublierEngagements.ToString().ToLower();
 
-                XmlAttribute attrParticipantsParEntite = doc.CreateAttribute(ConstantXML.ParticipantsParEntite);    // TODO voir si on garde
-                attrParticipantsParEntite.Value = config.ParticipantsParEntite.ToString().ToLower();                   // TODO Voir si on garde
                 XmlAttribute attrEngagementsAbsents = doc.CreateAttribute(ConstantXML.EngagementsAbsents);
                 attrEngagementsAbsents.Value = config.EngagementsAbsents.ToString().ToLower();
                 XmlAttribute attrEngagementsTousCombats = doc.CreateAttribute(ConstantXML.EngagementsTousCombats);
@@ -60,7 +58,6 @@ namespace AppPublication.Export
                 node.Attributes.Append(attrProchainCombat);
                 node.Attributes.Append(attrAffectationTapis);
                 node.Attributes.Append(attrEngagements);
-                node.Attributes.Append(attrParticipantsParEntite);
                 node.Attributes.Append(attrEngagementsAbsents);
                 node.Attributes.Append(attrEngagementsTousCombats);
                 node.Attributes.Append(attrDelaiActualisationClient);
@@ -520,7 +517,7 @@ namespace AppPublication.Export
         }
 
         /// <summary>
-        public static XmlDocument CreateDocumentEngagements(JudoData DC, ExtensionJudoData EDC, bool groupeParEntite)
+        public static XmlDocument CreateDocumentEngagements(JudoData DC, ExtensionJudoData EDC)
         {
             XDocument doc = new XDocument();
             XElement xcompetitions = new XElement(ConstantXML.Competitions);
@@ -537,7 +534,7 @@ namespace AppPublication.Export
 
                     // Ajoute les groupes dans la structure XML
                     // TODO Voir si on garde
-                    int typeGroupes = groupeParEntite ? ExtensionNoyau.Deroulement.DataDeroulement.GetTypeGroupe(competition) : (int) EchelonEnum.Aucun;
+                    int typeGroupes = ExtensionNoyau.Deroulement.DataDeroulement.GetTypeGroupe(competition);
                     IList<GroupeEngagements> groupes = EDC.Deroulement.GroupesEngages.Where(g => g.Competition == competition.id && g.Type == typeGroupes).ToList();
                     XElement xgroupesP = new XElement(ConstantXML.GroupeEngagements_groupes);
                     foreach (GroupeEngagements grp in groupes)

@@ -41,6 +41,7 @@
 
 	<xsl:variable select="$selectedCompetition/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
 	<xsl:variable select="$selectedCompetition/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
+<!-- TODO Supprimer par entite -->
 	<xsl:variable select="$selectedCompetition/@ParticipantsParEntite = 'true'" name="affEngagementsParEntite"/>
 	<xsl:variable select="$selectedCompetition/@EngagementsAbsents = 'true'" name="affEngagementsAbsents"/>
 	<xsl:variable select="$selectedCompetition/@EngagementsTousCombats = 'true'" name="affTousCombats"/>

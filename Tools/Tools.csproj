@@ -1934,10 +1934,10 @@
     <EmbeddedResource Include="Export\img\site\equal-sign-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Export\xslt\Site\groupe_participants_site.xslt" />
+    <EmbeddedResource Include="Export\xslt\Site\groupe_engagements_site.xslt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Export\xslt\Site\participants_site.xslt" />
+    <EmbeddedResource Include="Export\xslt\Site\engagements_site.xslt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Export\xslt\Site\niveau_tour_combat.xslt" />

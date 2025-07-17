@@ -26,6 +26,7 @@
 
 	<xsl:variable select="count(/competitions/competition[@PublierProchainsCombats = 'true']) > 0" name="affProchainCombats"/>
 	<xsl:variable select="count(/competitions/competition[@PublierAffectationTapis = 'true']) > 0" name="affAffectationTapis"/>
+	<!-- TODO supprimer ParEntite-->
 	<xsl:variable select="count(/competitions/competition[@ParticipantsParEntite = 'true']) > 0" name="affEngagementsParEntite"/>
 	<xsl:variable select="/competitions/competition[1]/@Logo" name="logo"/>
 
@@ -122,6 +123,7 @@
 		<xsl:variable name="typeGroupe">
 			<xsl:choose>
 				<!-- Selection par Entite: le niveau de competition donne le type d'entite -->
+				<!-- TODO Supprimer par entite -->
 				<xsl:when test="./@ParticipantsParEntite = 'true'">
 					<xsl:value-of select="./@niveau"/>
 				</xsl:when>

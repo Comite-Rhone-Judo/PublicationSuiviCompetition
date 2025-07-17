@@ -50,7 +50,6 @@ namespace AppPublication.Controles
         private const string kSettingPublierEngagements = "PublierEngagements";
         private const string kSettingEngagementsAbsents = "EngagementsAbsents";
         private const string kSettingEngagementsTousCombats = "EngagementsTousCombats";
-        private const string kSettingParticipantsParEntite = "ParticipantsParEntite";   // TODO A supprimer
         private const string kSettingNbProchainsCombats = "NbProchainsCombats";
         private const string kSettingPublierAffectationTapis = "PublierAffectationTapis";
         private const string kSettingDelaiGenerationSec = "DelaiGenerationSec";
@@ -1138,28 +1137,6 @@ namespace AppPublication.Controles
             }
         }
 
-        // TODO Supprimer toute la propriete
-        private bool _participantsParEntite = false;
-        /// <summary>
-        /// Indique si on doit grouper les participants par club
-        /// </summary>
-        public bool ParticipantsParEntite
-        {
-            get
-            {
-                return _participantsParEntite;
-            }
-            set
-            {
-                if (_participantsParEntite != value)
-                {
-                    _participantsParEntite = value;
-                    AppSettings.SaveSetting(kSettingParticipantsParEntite, _participantsParEntite.ToString());
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
         private StatusGenerationSite _status;
         /// <summary>
         /// Le statut de generation du site
@@ -1353,7 +1330,6 @@ namespace AppPublication.Controles
                 PublierEngagements = AppSettings.ReadSetting(kSettingPublierEngagements, false);
                 EngagementsAbsents = AppSettings.ReadSetting(kSettingEngagementsAbsents, false);
                 EngagementsTousCombats = AppSettings.ReadSetting(kSettingEngagementsTousCombats, false);
-                ParticipantsParEntite = AppSettings.ReadSetting(kSettingParticipantsParEntite, false);  // TODO voir pour supprimer
                 DelaiGenerationSec = AppSettings.ReadSetting(kSettingDelaiGenerationSec, 30);
                 EffacerAuDemarrage = AppSettings.ReadSetting(kSettingEffacerAuDemarrage, true);
                 DelaiActualisationClientSec = AppSettings.ReadSetting(kSettingDelaiActualisationClientSec, 30);
@@ -1802,7 +1778,7 @@ namespace AppPublication.Controles
         public List<FileWithChecksum> GenereAll()
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
-            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierEngagements && CanPublierEngagements, EngagementsAbsents, EngagementsTousCombats, ParticipantsParEntite, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes);
+            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierEngagements && CanPublierEngagements, EngagementsAbsents, EngagementsTousCombats, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes);
 
             if (IsGenerationActive)
             {
@@ -1841,7 +1817,7 @@ namespace AppPublication.Controles
                         {
                             // Recupere les groupes en fonction du type de groupement
                             // TODO Voir pour modifier car on doit generer tous les types
-                            int typeGrp = ParticipantsParEntite ? ExtensionNoyau.Deroulement.DataDeroulement.GetTypeGroupe(comp) : (int) EchelonEnum.Aucun;
+                            int typeGrp = ExtensionNoyau.Deroulement.DataDeroulement.GetTypeGroupe(comp);
                             List<GroupeEngagements> groupesP = EDC.Deroulement.GroupesEngages.Where(g => g.Competition == comp.id && g.Type == typeGrp).ToList();
                             foreach(GroupeEngagements g in groupesP)
                             {

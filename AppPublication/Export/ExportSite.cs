@@ -381,7 +381,7 @@ namespace AppPublication.Export
             }
             using (TimedLock.Lock(_docEngagements))
             {
-                _docEngagements = ExportXML.CreateDocumentEngagements(DC, EDC, config.ParticipantsParEntite);  // TODO voir si le parametre participant tj ok
+                _docEngagements = ExportXML.CreateDocumentEngagements(DC, EDC);  // TODO voir si le parametre participant tj ok
                 ExportXML.AddPublicationInfo(ref _docEngagements, config);
                 AddStructures(ref _docEngagements);
                 LogTools.Logger.Debug("XML genere: '{0}'", _docEngagements.InnerXml);
