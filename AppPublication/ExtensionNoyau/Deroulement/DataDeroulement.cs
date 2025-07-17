@@ -16,12 +16,12 @@ namespace AppPublication.ExtensionNoyau.Deroulement
 {
     public class DataDeroulement
     {
-        private IList<GroupeEngagements> _groupesEngages = new List<GroupeEngagements>();
+        private List<GroupeEngagements> _groupesEngages = new List<GroupeEngagements>();
 
         /// <summary>
-        /// Contient la liste des groupes de engages (par rapport a la derniere generation Par GetGroupesEngagements)
+        /// Contient la liste des groupes de engages (par rapport a la derniere generation Par GetGroupesEngagements) par echelon
         /// </summary>
-        public IList<GroupeEngagements> GroupesEngages
+        public List<GroupeEngagements> GroupesEngages
         {
             get
             {
@@ -35,37 +35,69 @@ namespace AppPublication.ExtensionNoyau.Deroulement
         }
 
         /// <summary>
-        /// Retourne le type de groupement pour une competition donnee (notamment si le niveau de competition est inconnu)
+        /// Retourne les types de groupement pour une competition donnee (notamment si le niveau de competition est inconnu)
         /// </summary>
         /// <param name="c">La competition</param>
         /// <returns>Le typ de groupement</returns>
-        public static int GetTypeGroupe(Competition c)
+        public static List<EchelonEnum> GetTypeGroupe(Competition c)
         {
-            int type = (int) EchelonEnum.Club;
+            List<EchelonEnum> output = new List<EchelonEnum>();
 
+            // on a toujours au moins par Nom
+            output.Add(EchelonEnum.Aucun);
+
+            // ajoute les niveaux en fonction de la celui de la competition
             switch (c.niveau)
             {
                 case (int)EchelonEnum.Club:
+                    {
+                        output.Add(EchelonEnum.Club);
+                        break;
+                    }
                 case (int)EchelonEnum.Departement:
+                    {
+                        output.Add(EchelonEnum.Club);
+                        output.Add(EchelonEnum.Departement);
+                        break;
+                    }
                 case (int)EchelonEnum.Ligue:
+                    {
+                        output.Add(EchelonEnum.Club);
+                        output.Add(EchelonEnum.Departement);
+                        output.Add(EchelonEnum.Ligue);
+                        break;
+                    }
                 case (int)EchelonEnum.National:
+                    {
+                        output.Add(EchelonEnum.Club);
+                        output.Add(EchelonEnum.Departement);
+                        output.Add(EchelonEnum.Ligue);
+                        output.Add(EchelonEnum.National);
+                        break;
+                    }
                 case (int)EchelonEnum.International:
                     {
-                        type = c.niveau;
+                        // TODO Voir ici car je ne suis pas sur qu'on fasse la différence entre national et international
+                        output.Add(EchelonEnum.Club);
+                        output.Add(EchelonEnum.Departement);
+                        output.Add(EchelonEnum.Ligue);
+                        output.Add(EchelonEnum.National);
+                        output.Add(EchelonEnum.International);
                         break;
                     }
                 default:
                     {
-                        type = (int) EchelonEnum.Club;
+                        // Pas de niveau connu, on ajoute le niveau le plus bas (club)
+                        output.Add(EchelonEnum.Club);
                         break;
                     }
             }
 
-            return type;  
+            return output;  
         }
 
         /// <summary>
-        /// Genere la liste des groupes pour un niveau donne
+        /// Genere la liste des groupes pour le niveau de la competition
         /// </summary>
         /// <param name="niveau"></param>
         /// <returns></returns>
@@ -94,63 +126,61 @@ namespace AppPublication.ExtensionNoyau.Deroulement
                         IList<vue_judoka> judokasParticipants = DC.Participants.vjudokas.Join(epreuvesSexe, vj => vj.idepreuve, ep => ep.id, (vj, ep) => vj).ToList();
 
                         // Groupement par entite
-                        IList<string> listEntite = null;
-                        int type = competition.niveau;
+                        Dictionary<EchelonEnum, List<string>> dictEntites = new Dictionary<EchelonEnum, List<string>>();
 
                         switch (competition.niveau)
                         {
                             case (int)EchelonEnum.Club:
                                 {
-                                    listEntite = judokasParticipants.Select(o => o.club).Distinct().ToList();
+                                    dictEntites.Add(EchelonEnum.Club, judokasParticipants.Select(o => o.club).Distinct().ToList());
                                     break;
                                 }
                             case (int)EchelonEnum.Departement:
                                 {
-                                    listEntite = judokasParticipants.Select(o => o.comite).Distinct().ToList();
+                                    dictEntites.Add(EchelonEnum.Club, judokasParticipants.Select(o => o.club).Distinct().ToList());
+                                    dictEntites.Add(EchelonEnum.Departement, judokasParticipants.Select(o => o.comite).Distinct().ToList());
                                     break;
                                 }
                             case (int)EchelonEnum.Ligue:
                                 {
-                                    listEntite = judokasParticipants.Select(o => o.ligue).Distinct().ToList();
+                                    dictEntites.Add(EchelonEnum.Club, judokasParticipants.Select(o => o.club).Distinct().ToList());
+                                    dictEntites.Add(EchelonEnum.Departement, judokasParticipants.Select(o => o.comite).Distinct().ToList());
+                                    dictEntites.Add(EchelonEnum.Ligue, judokasParticipants.Select(o => o.ligue).Distinct().ToList());
                                     break;
                                 }
                             case (int)EchelonEnum.National:
                             case (int)EchelonEnum.International:
                                 {
-                                    listEntite = judokasParticipants.Select(o => o.pays.ToString()).Distinct().ToList();
+                                    dictEntites.Add(EchelonEnum.Club, judokasParticipants.Select(o => o.club).Distinct().ToList());
+                                    dictEntites.Add(EchelonEnum.Departement, judokasParticipants.Select(o => o.comite).Distinct().ToList());
+                                    dictEntites.Add(EchelonEnum.Ligue, judokasParticipants.Select(o => o.ligue).Distinct().ToList());
+                                    dictEntites.Add(EchelonEnum.National, judokasParticipants.Select(o => o.pays.ToString()).Distinct().ToList());
                                     break;
                                 }
                             default:
                                 {
                                     LogTools.Logger.Error("Niveau de competition inconnu : {0}. Utilisation du niveau club par defaut", competition.niveau);
-                                    listEntite = judokasParticipants.Select(o => o.club).Distinct().ToList();
-                                    type = (int) EchelonEnum.Club;    // Le niveau de competition est inconnu, on prend le plus bas par defaut
+                                    dictEntites.Add(EchelonEnum.Club, judokasParticipants.Select(o => o.club).Distinct().ToList());
                                     break;
                                 }
                         }
-                        foreach (string entite in listEntite)
+                        foreach (EchelonEnum typeEntite in dictEntites.Keys)
                         {
-                            GroupeEngagements grp = new GroupeEngagements();
-                            grp.Competition = competition.id;
-                            grp.Sexe = sexe;
-                            grp.Type = type;
-                            grp.Entite = entite;
-                            _groupesEngages.Add(grp);
+                            // Recupere la liste des entites pour le type
+                            List<string> entites = dictEntites[typeEntite];
+
+                            // Transforme les entites en groupe et ajoute a la liste generale
+                            _groupesEngages.Concat(entites.Select(o => { return new GroupeEngagements(competition.id, sexe, (int)typeEntite, o);}));
                         }
 
-                        // Groupement par nom
+                        // Ajoute le Groupement par nom qui est toujours present
                         foreach (char c in alphabet)
-                        {
+                        {  
                             int nj = judokasParticipants.Count(o => Char.ToUpper(o.nom.First()) == c);
 
                             if (nj > 0)
                             {
-                                GroupeEngagements grp = new GroupeEngagements();
-                                grp.Competition = competition.id;
-                                grp.Sexe = sexe;
-                                grp.Type = (int) EchelonEnum.Aucun;
-                                grp.Entite = c.ToString();
-                                _groupesEngages.Add(grp);
+                                _groupesEngages.Add(new GroupeEngagements(competition.id, sexe, (int)EchelonEnum.Aucun, c.ToString()));
                             }
                         }
                     }

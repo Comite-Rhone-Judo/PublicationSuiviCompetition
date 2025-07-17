@@ -534,12 +534,18 @@ namespace AppPublication.Export
 
                     // Ajoute les groupes dans la structure XML
                     // TODO Voir si on garde
-                    int typeGroupes = ExtensionNoyau.Deroulement.DataDeroulement.GetTypeGroupe(competition);
-                    IList<GroupeEngagements> groupes = EDC.Deroulement.GroupesEngages.Where(g => g.Competition == competition.id && g.Type == typeGroupes).ToList();
+                    List<EchelonEnum> typesGroupes = ExtensionNoyau.Deroulement.DataDeroulement.GetTypeGroupe(competition);
                     XElement xgroupesP = new XElement(ConstantXML.GroupeEngagements_groupes);
-                    foreach (GroupeEngagements grp in groupes)
+                    foreach (EchelonEnum typeGroupe in typesGroupes)
                     {
-                        xgroupesP.Add(grp.ToXml());
+                        // Recupere les groupes d'engagements pour la competition et le type de groupe en cours
+                        IList<GroupeEngagements> groupes = EDC.Deroulement.GroupesEngages.Where(g => g.Competition == competition.id && g.Type == (int)typeGroupe).ToList();
+
+                        // Convertit en XML et ajoute a l'element racine
+                        foreach (GroupeEngagements groupe in groupes)
+                        {
+                            xgroupesP.Add(groupe.ToXml());  
+                        }
                     }
                     xcompetition.Add(xgroupesP);
 
