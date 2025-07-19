@@ -69,8 +69,7 @@
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
 				<xsl:value-of select="$js"/>
-				var delayAutoreloadSec = <xsl:value-of select="$delayActualisationClient"/>;
-				window.onload=checkReloading;
+				gDelayAutoreloadSec = <xsl:value-of select="$delayActualisationClient"/>;
 			</script>
 			<title>
 				Suivi Compétition - Avancement
@@ -128,7 +127,7 @@
 				<xsl:otherwise>
 					<!-- Le tableau principal -->
 					<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-						<button class="w3-bar-item w3-light-blue" onclick="toggleElement('tableauPrincipal')">
+						<button class="w3-bar-item w3-light-blue" onclick="togglePanel('tableauPrincipal')">
 							<img class="img" id="tableauPrincipalCollapse" width="25">
 								<xsl:attribute name="src">
 									<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
@@ -155,7 +154,7 @@
 					<!-- Le tableau repechage s'il existe -->
 					<xsl:if test="count(//combat[@repechage = 'true']) &gt; 0">
 						<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-							<button class="w3-bar-item w3-light-blue" onclick="toggleElement('tableauRepechages')">
+							<button class="w3-bar-item w3-light-blue" onclick="togglePanel('tableauRepechages')">
 								<img class="img" id="tableauRepechagesCollapse" width="25">
 									<xsl:attribute name="src">
 										<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
@@ -182,7 +181,7 @@
 					<!-- Les barrages -->
 					<xsl:if test="count(//phase[@barrage5 = 'true' or @barrage3 = 'true' or @barrage7 = 'true']) &gt; 0">
 						<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-							<button class="w3-bar-item w3-light-blue" onclick="toggleElement('tableauBarrages')">
+							<button class="w3-bar-item w3-light-blue" onclick="togglePanel('tableauBarrages')">
 								<img class="img" id="tableauBarragesCollapse" width="25">
 									<xsl:attribute name="src">
 										<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>

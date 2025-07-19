@@ -21,7 +21,7 @@
 					<header class="w3-bar w3-light-green w3-large">
 						<button class="w3-bar-item w3-light-green">
 							<xsl:attribute name="onclick">
-								<xsl:value-of select="concat('toggleElement(',$panelApos,$prefixPanel,$sexeCode,$panelApos,')')"/>
+								<xsl:value-of select="concat('togglePanel(',$panelApos,$prefixPanel,$sexeCode,$panelApos,')')"/>
 							</xsl:attribute>
 							<img class="img" width="25" style="display: none;">
 								<xsl:attribute name="src">
@@ -41,10 +41,10 @@
 							</img>
 							<xsl:choose>
 								<xsl:when test="$sexeCode = 'M'">
-									Catégorie Masculine
+									Masculins
 								</xsl:when>
 								<xsl:when test="$sexeCode = 'F'">
-									Catégorie Féminine
+									Féminines
 								</xsl:when>
 								<xsl:when test="$sexeCode = 'X'">
 									Mixte

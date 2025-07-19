@@ -74,8 +74,7 @@
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
 				<xsl:value-of select="$js"/>
-				var delayAutoreloadSec = <xsl:value-of select="$delayActualisationClient"/>;
-				window.onload=checkReloading;
+				gDelayAutoreloadSec = <xsl:value-of select="$delayActualisationClient"/>;
 			</script>
 			<title>
 				Suivi Compétition - Avancement
@@ -228,10 +227,10 @@
 				<xsl:attribute name="onclick">
 					<xsl:choose>
 						<xsl:when test="$niveau > 1">
-							<xsl:value-of select="concat('toggleElement(',$apos,'pouleCompl',$numeroPoule,$apos,')')"/>
+							<xsl:value-of select="concat('togglePanel(',$apos,'pouleCompl',$numeroPoule,$apos,')')"/>
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:value-of select="concat('toggleElement(',$apos,'poule',$numeroPoule,$apos,')')"/>
+							<xsl:value-of select="concat('togglePanel(',$apos,'poule',$numeroPoule,$apos,')')"/>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:attribute>

@@ -1816,12 +1816,16 @@ namespace AppPublication.Controles
                         foreach(Competition comp in DC.Organisation.Competitions)
                         {
                             // Recupere les groupes en fonction du type de groupement
-                            // TODO Voir pour modifier car on doit generer tous les types
-                            int typeGrp = ExtensionNoyau.Deroulement.DataDeroulement.GetTypeGroupe(comp);
-                            List<GroupeEngagements> groupesP = EDC.Deroulement.GroupesEngages.Where(g => g.Competition == comp.id && g.Type == typeGrp).ToList();
-                            foreach(GroupeEngagements g in groupesP)
+                            List<EchelonEnum> typesGrp = ExtensionNoyau.Deroulement.DataDeroulement.GetTypeGroupe(comp);
+
+                            // On genere les engagements pour chaque type de groupe
+                            foreach (EchelonEnum typeGrp in typesGrp)
                             {
-                                listTaskGeneration.Add(AddWork(SiteEnum.Engagements, null, null, cfg, g));
+                                List<GroupeEngagements> groupesP = EDC.Deroulement.GroupesEngages.Where(g => g.Competition == comp.id && g.Type == (int)typeGrp).ToList();
+                                foreach (GroupeEngagements g in groupesP)
+                                {
+                                    listTaskGeneration.Add(AddWork(SiteEnum.Engagements, null, null, cfg, g));
+                                }
                             }
                         }
                     }                    

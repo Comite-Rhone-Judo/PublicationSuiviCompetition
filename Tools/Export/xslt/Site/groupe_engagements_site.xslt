@@ -94,8 +94,7 @@
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
 				<xsl:value-of select="$js"/>
-				var delayAutoreloadSec = <xsl:value-of select="$delayActualisationClient"/>;
-				window.onload=checkReloading;
+				gDelayAutoreloadSec = <xsl:value-of select="$delayActualisationClient"/>;
 			</script>
 			<title>
 				Suivi Compétition - Engagements
@@ -324,7 +323,7 @@
 			<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
 				<button class="w3-bar-item w3-light-blue">
 					<xsl:attribute name="onclick">
-						<xsl:value-of select="concat('toggleElement(',$apos,'judoka',@id,$apos,')')"/>
+						<xsl:value-of select="concat('togglePanel(',$apos,'judoka',@id,$apos,')')"/>
 					</xsl:attribute>
 					<img class="img" width="25" style="display: none;">
 						<xsl:attribute name="src">

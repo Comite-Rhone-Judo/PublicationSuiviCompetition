@@ -67,8 +67,7 @@
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
 				<xsl:value-of select="$js"/>
-				var delayAutoreloadSec = <xsl:value-of select="$delayActualisationClient"/>;
-				window.onload=checkReloading;
+				gDelayAutoreloadSec = <xsl:value-of select="$delayActualisationClient"/>;
 			</script>
 			<title>
 				Suivi Compétition - Classement

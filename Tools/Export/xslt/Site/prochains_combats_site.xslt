@@ -62,6 +62,7 @@
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
 				<xsl:value-of select="$js"/>
+				gUseAutoReload = false;
 			</script>
 			<title>
 				Suivi Compétition - Prochains Combats

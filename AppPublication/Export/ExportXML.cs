@@ -503,14 +503,25 @@ namespace AppPublication.Export
                     }
                 }
 
-                // Ajoute les groupes de engages
-                IList<GroupeEngagements> grpEngages = EDC.Deroulement.GroupesEngages.Where(g => g.Competition == competition.id).ToList();
-                XElement xgroupesP = new XElement(ConstantXML.GroupeEngagements_groupes);
-                foreach (GroupeEngagements grp in grpEngages)
+                // Ajoute les groupes dans la structure XML
+                List<EchelonEnum> typesGroupes = ExtensionNoyau.Deroulement.DataDeroulement.GetTypeGroupe(competition);
+                foreach (EchelonEnum typeGroupe in typesGroupes)
                 {
-                    xgroupesP.Add(grp.ToXml());
+                    XElement xgroupesP = new XElement(ConstantXML.GroupeEngagements_groupes);
+                    xgroupesP.SetAttributeValue(ConstantXML.GroupeEngagements_type, (int) typeGroupe);
+
+                    // Recupere les groupes d'engagements pour la competition et le type de groupe en cours
+                    IList<GroupeEngagements> grpEngages = EDC.Deroulement.GroupesEngages.Where(g => g.Competition == competition.id && g.Type == (int)typeGroupe).ToList();
+
+                    // Convertit en XML et ajoute a l'element racine
+                    foreach (GroupeEngagements grp in grpEngages)
+                    {
+                        xgroupesP.Add(grp.ToXml());
+                    }
+
+                    // Ajoute les groupes du meme type a la racine
+                    xcompetition.Add(xgroupesP);
                 }
-                xcompetition.Add(xgroupesP);
             }
 
             return doc.ToXmlDocument();
@@ -533,11 +544,12 @@ namespace AppPublication.Export
                     xcompetitions.Add(xcompetition);
 
                     // Ajoute les groupes dans la structure XML
-                    // TODO Voir si on garde
                     List<EchelonEnum> typesGroupes = ExtensionNoyau.Deroulement.DataDeroulement.GetTypeGroupe(competition);
-                    XElement xgroupesP = new XElement(ConstantXML.GroupeEngagements_groupes);
                     foreach (EchelonEnum typeGroupe in typesGroupes)
                     {
+                        XElement xgroupesP = new XElement(ConstantXML.GroupeEngagements_groupes);
+                        xgroupesP.SetAttributeValue(ConstantXML.GroupeEngagements_type, (int) typeGroupe);
+
                         // Recupere les groupes d'engagements pour la competition et le type de groupe en cours
                         IList<GroupeEngagements> groupes = EDC.Deroulement.GroupesEngages.Where(g => g.Competition == competition.id && g.Type == (int)typeGroupe).ToList();
 
@@ -546,8 +558,10 @@ namespace AppPublication.Export
                         {
                             xgroupesP.Add(groupe.ToXml());  
                         }
+
+                        // Ajoute les groupes du meme type a la racine
+                        xcompetition.Add(xgroupesP);
                     }
-                    xcompetition.Add(xgroupesP);
 
                     // Ajoute les judokas de la competition
                     IList<vue_judoka> vjudokas = DC.Participants.vjudokas.Where(vj => vj.idcompet == competition.id).ToList();

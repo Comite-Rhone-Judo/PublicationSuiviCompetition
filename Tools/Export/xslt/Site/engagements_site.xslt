@@ -26,8 +26,6 @@
 
 	<xsl:variable select="count(/competitions/competition[@PublierProchainsCombats = 'true']) > 0" name="affProchainCombats"/>
 	<xsl:variable select="count(/competitions/competition[@PublierAffectationTapis = 'true']) > 0" name="affAffectationTapis"/>
-	<!-- TODO supprimer ParEntite-->
-	<xsl:variable select="count(/competitions/competition[@ParticipantsParEntite = 'true']) > 0" name="affEngagementsParEntite"/>
 	<xsl:variable select="/competitions/competition[1]/@Logo" name="logo"/>
 
 	<xsl:template match="/*">
@@ -59,6 +57,7 @@
 				<xsl:attribute name="src">
 					<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
 				</xsl:attribute>
+				gUseAutoReload = false;
 			</script>
 
 			<!-- Script ajoute en parametre -->
@@ -120,20 +119,6 @@
 			<xsl:value-of select="concat('EngagementsComp',$idcompetition,'ContentPanel')"/>
 		</xsl:variable>
 
-		<xsl:variable name="typeGroupe">
-			<xsl:choose>
-				<!-- Selection par Entite: le niveau de competition donne le type d'entite -->
-				<!-- TODO Supprimer par entite -->
-				<xsl:when test="./@ParticipantsParEntite = 'true'">
-					<xsl:value-of select="./@niveau"/>
-				</xsl:when>
-				<!-- Selection par Nom: Niveau = 1-->
-				<xsl:otherwise>
-					<xsl:value-of select="1"/>
-				</xsl:otherwise>
-			</xsl:choose>
-		</xsl:variable>
-
 		<!-- Nom de la competition -->
 		<div class="w3-container w3-blue w3-center tas-competition-bandeau">
 			<h4>
@@ -149,14 +134,12 @@
 				<xsl:if test="count(./groupesEngagements/groupeEngagements[@sexe = 'F']) > 0">
 					<xsl:call-template name="UneCategorie">
 						<xsl:with-param name="categorie" select="'F'"/>
-						<xsl:with-param name="typeGroupe" select="$typeGroupe"/>
 					</xsl:call-template>
 				</xsl:if>
 				<!-- Categorie M -->
 				<xsl:if test="count(./groupesEngagements/groupeEngagements[@sexe = 'M']) > 0">
 					<xsl:call-template name="UneCategorie">
 						<xsl:with-param name="categorie" select="'M'"/>
-						<xsl:with-param name="typeGroupe" select="$typeGroupe"/>
 					</xsl:call-template>
 				</xsl:if>
 			</div>
@@ -179,7 +162,7 @@
 				<header class="w3-bar w3-light-green w3-large">
 					<button class="w3-bar-item w3-light-green">
 						<xsl:attribute name="onclick">
-							<xsl:value-of select="concat('toggleElement(',$apos,$prefixPanel, $categorie, $apos,')')"/>
+							<xsl:value-of select="concat('togglePanel(',$apos,$prefixPanel, $categorie, $apos,')')"/>
 						</xsl:attribute>
 						<img class="img" width="25" style="display: none;">
 							<xsl:attribute name="src">
@@ -210,6 +193,63 @@
 						</xsl:choose>
 					</button>
 				</header>
+
+				<!-- quel est le plus haut niveau de la liste -->
+				<xsl:variable name="maxNiveau">
+					<xsl:for-each select="//groupesEngagements">
+						<xsl:sort select="@type" data-type="number" order="ascending"/>
+						<xsl:if test="position()=last()">
+							<last>
+								<xsl:value-of select="@type"/>
+							</last>
+						</xsl:if>
+					</xsl:for-each>
+				</xsl:variable>
+				
+				<!-- Le bandeau de selection d'un groupement -->
+				<div class="w3-bar w3-light-gray">
+					<xsl:for-each select="//groupesEngagements">
+						<!-- Niveau Aucun (par Nom) 1 -->
+						<xsl:if test="@type = 1">
+							<button class="w3-bar-item w3-button tablink w3-round w3-margin-left" onclick="openCity(event,'Nom')">Nom</button>
+						</xsl:if>
+
+						<!-- Niveau Club 2 -->
+						
+						<!-- Niveau Departement 3 -->
+						
+						<!-- Niveau Ligue 3 -->
+						
+						<!-- Niveau National 5 -->
+						<!-- Niveau International 6 -->
+						
+						<!-- Par defaut, on prend le club -->
+					</xsl:for-each>
+	
+					
+					
+					<button class="w3-bar-item w3-button tablink w3-indigo w3-round w3-margin-left" onclick="openCity(event,'Comite')">Comité</button>
+					<button class="w3-bar-item w3-button tablink w3-round w3-margin-left" onclick="openCity(event,'Club')">Club</button>
+					<button class="w3-bar-item w3-button tablink w3-round w3-margin-left" onclick="openCity(event,'Nom')">Nom</button>
+				</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 				<!-- Ajouter les groupes -->
 				<div class="w3-row w3-container" style="display:none;">
 					<xsl:attribute name="id">
