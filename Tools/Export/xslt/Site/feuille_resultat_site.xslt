@@ -74,7 +74,7 @@
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
 				<xsl:value-of select="$js"/>
-				gDelayAutoreloadSec = <xsl:value-of select="$delayActualisationClient"/>;
+				gDelayAutoReloadSec = <xsl:value-of select="$delayActualisationClient"/>;
 			</script>
 			<title>
 				Suivi Compétition - Avancement
@@ -279,7 +279,7 @@
 		</div>
 			
 		<!-- La poule -->
-		  <div class="w3-container tas-panel-poule-combat">
+		  <div class="tasOpenedPanelType w3-container tas-panel-poule-combat">
 			  <xsl:attribute name="id">
 				  <xsl:choose>
 					  <xsl:when test="$niveau > 1">

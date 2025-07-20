@@ -52,9 +52,7 @@
 	<xsl:variable select="count(//epreuve[@competition!=$idCompetition])!=0 and /competition/@disciplineId = 1" name="affDetailCompetition"/>
 	
 	<!-- En jujitsu, on affiche la discpline -->
-	<xsl:variable select="/competition/@discipline != 'C_COMPETITION'" name="affDiscipline">
-
-		</xsl:variable>
+	<xsl:variable select="/competition/@discipline != 'C_COMPETITION'" name="affDiscipline"/>
 
 	<xsl:variable name="selectedItemName">
 		<xsl:choose>
@@ -100,7 +98,7 @@
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
 				<xsl:value-of select="$js"/>
-				gDelayAutoreloadSec = <xsl:value-of select="$delayActualisationClient"/>;
+				gDelayAutoReloadSec = <xsl:value-of select="$delayActualisationClient"/>;
 			</script>
 			<title>
 				Suivi Compétition - Avancement
@@ -216,7 +214,7 @@
 			</button>
 		</div>
 		<!-- Le contenu du tapis -->
-		<div class="w3-container tas-panel-tableau-combat">
+		<div class="tasOpenedPanelType w3-container tas-panel-tableau-combat">
 			<xsl:attribute name="id">
 				<xsl:value-of select="concat('tapis',$notapis)"/>
 			</xsl:attribute>

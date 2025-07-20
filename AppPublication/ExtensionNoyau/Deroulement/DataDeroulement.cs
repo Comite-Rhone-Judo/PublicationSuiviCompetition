@@ -170,7 +170,8 @@ namespace AppPublication.ExtensionNoyau.Deroulement
                             List<string> entites = dictEntites[typeEntite];
 
                             // Transforme les entites en groupe et ajoute a la liste generale
-                            _groupesEngages.Concat(entites.Select(o => { return new GroupeEngagements(competition.id, sexe, (int)typeEntite, o);}));
+                            IEnumerable<GroupeEngagements> groupesEntites = entites.Select(o => { return new GroupeEngagements(competition.id, sexe, (int)typeEntite, o); });
+                            _groupesEngages = _groupesEngages.Concat(groupesEntites).ToList();
                         }
 
                         // Ajoute le Groupement par nom qui est toujours present

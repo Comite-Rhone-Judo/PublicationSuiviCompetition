@@ -37,8 +37,8 @@
 				<xsl:otherwise>
 					<xsl:choose>
 						<xsl:when test="$niveauPhase = 1">Finale</xsl:when>
-						<xsl:when test="$niveauPhase = 2">Demi-finale</xsl:when>
-						<xsl:when test="$niveauPhase = 4">Quart de finale</xsl:when>
+						<xsl:when test="$niveauPhase = 2">&#189; finale</xsl:when>
+						<xsl:when test="$niveauPhase = 4">&#188; de finale</xsl:when>
 						<xsl:when test="$niveauPhase > 0">
 							<xsl:value-of select="$niveauPhase"/>
 							<sup>ème</sup>

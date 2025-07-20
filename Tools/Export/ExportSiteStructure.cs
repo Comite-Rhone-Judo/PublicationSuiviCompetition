@@ -48,6 +48,7 @@ namespace Tools.Export
             IdCompetition = idCompetition;  // L'assignation va automatiquement calculer si la configuration est correcte (full & root)
             _maxLen = maxlen;
         }
+
         #endregion
 
         #region PROPRIETES
@@ -309,6 +310,27 @@ namespace Tools.Export
         #endregion
 
         #region METHODES
+
+        /// <summary>
+        /// Clone l'instance de la structure de repertoire (utile dans un contexte de multi-threading)
+        /// </summary>
+        /// <returns></returns>
+        public ExportSiteStructure Clone()
+        {
+
+            // Clone la structure en gardant les memes parametres
+            ExportSiteStructure clone = new ExportSiteStructure(_rootDir, _idCompetition, _maxLen);
+
+            clone._rootDir = _rootDir;
+            clone._rootCompetDir = _rootCompetDir;
+            clone._idCompetition = _idCompetition;
+            clone._isFullyConfigured = _isFullyConfigured;
+            clone._hasRootDir = _hasRootDir;
+            clone._maxLen = _maxLen;
+            clone._targetPath = _targetPath;
+            clone._relativeToRoot = _relativeToRoot;
+            return clone;
+        }
 
         /// <summary>
         /// Calcul le repertoire d'un groupe de participants

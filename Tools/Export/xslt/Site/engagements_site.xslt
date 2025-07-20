@@ -57,12 +57,12 @@
 				<xsl:attribute name="src">
 					<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
 				</xsl:attribute>
-				gUseAutoReload = false;
 			</script>
 
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
 				<xsl:value-of select="$js"/>
+				gUseAutoReload = false;
 			</script>
 			<title>
 				Suivi Compétition - Engagements
@@ -156,6 +156,9 @@
 		<xsl:variable name="prefixPanel">
 			<xsl:value-of select="concat('EngagementsComp',$idcompetition,'ContentPanel')"/>
 		</xsl:variable>
+		<xsl:variable name="groupTab">
+			<xsl:value-of select="concat('groupComp',$idcompetition, $categorie)"/>
+		</xsl:variable>
 
 		<div class="w3-panel w3-cell w3-mobile">
 			<div class="w3-card">
@@ -193,107 +196,219 @@
 						</xsl:choose>
 					</button>
 				</header>
-
-				<!-- quel est le plus haut niveau de la liste -->
-				<xsl:variable name="maxNiveau">
-					<xsl:for-each select="//groupesEngagements">
-						<xsl:sort select="@type" data-type="number" order="ascending"/>
-						<xsl:if test="position()=last()">
-							<last>
-								<xsl:value-of select="@type"/>
-							</last>
-						</xsl:if>
-					</xsl:for-each>
-				</xsl:variable>
 				
-				<!-- Le bandeau de selection d'un groupement -->
-				<div class="w3-bar w3-light-gray">
-					<xsl:for-each select="//groupesEngagements">
-						<!-- Niveau Aucun (par Nom) 1 -->
-						<xsl:if test="@type = 1">
-							<button class="w3-bar-item w3-button tablink w3-round w3-margin-left" onclick="openCity(event,'Nom')">Nom</button>
-						</xsl:if>
-
-						<!-- Niveau Club 2 -->
-						
-						<!-- Niveau Departement 3 -->
-						
-						<!-- Niveau Ligue 3 -->
-						
-						<!-- Niveau National 5 -->
-						<!-- Niveau International 6 -->
-						
-						<!-- Par defaut, on prend le club -->
-					</xsl:for-each>
-	
-					
-					
-					<button class="w3-bar-item w3-button tablink w3-indigo w3-round w3-margin-left" onclick="openCity(event,'Comite')">Comité</button>
-					<button class="w3-bar-item w3-button tablink w3-round w3-margin-left" onclick="openCity(event,'Club')">Club</button>
-					<button class="w3-bar-item w3-button tablink w3-round w3-margin-left" onclick="openCity(event,'Nom')">Nom</button>
-				</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-				<!-- Ajouter les groupes -->
-				<div class="w3-row w3-container" style="display:none;">
+				<!-- TODO penser a ajouter le tasPanelType dans tous les panels pour memoriser leurs ouverture ou non -->
+				<div class="tasClosedPanelType w3-row w3-container" style="display:none;">
 					<xsl:attribute name="id">
 						<xsl:value-of select="concat($prefixPanel, $categorie)"/>
 					</xsl:attribute>
-					<xsl:choose>
-						<!-- Niveau Aucun (par Nom) 1 -->
-						<xsl:when test="$typeGroupe = 1">
-							<xsl:apply-templates select="./groupesEngagements/groupeEngagements[@sexe = $categorie and @type=$typeGroupe]">
-								<xsl:sort order="ascending" select="current()/@entite"/>
-							</xsl:apply-templates>
-						</xsl:when>
-						<!-- Niveau Club 2 -->
-						<xsl:when test="$typeGroupe = 2">
-							<xsl:apply-templates select="./groupesEngagements/groupeEngagements[@sexe = $categorie and @type=$typeGroupe]">
-								<xsl:sort order="ascending" select="//club[@ID = current()/@entite]/nom"/>
-							</xsl:apply-templates>
-						</xsl:when>
-						<!-- Niveau Departement 3 -->
-						<xsl:when test="$typeGroupe = 3">
-							<xsl:apply-templates select="./groupesEngagements/groupeEngagements[@sexe = $categorie and @type=$typeGroupe]">
-								<xsl:sort order="ascending" select="//comite[@ID = current()/@entite]/nom"/>
-							</xsl:apply-templates>
-						</xsl:when>
-						<!-- Niveau Ligue 3 -->
-						<xsl:when test="$typeGroupe = 4">
-							<xsl:apply-templates select="./groupesEngagements/groupeEngagements[@sexe = $categorie and @type=$typeGroupe]">
+
+					<!-- quel est le plus haut niveau de la liste -->
+					<xsl:variable name="maxNiveau">
+						<xsl:for-each select="//competition[@ID = $idcompetition]/groupesEngagements">
+							<xsl:sort select="@type" data-type="number" order="ascending"/>
+							<xsl:if test="position()=last()">
+								<last>
+									<xsl:value-of select="@type"/>
+								</last>
+							</xsl:if>
+						</xsl:for-each>
+					</xsl:variable>
+
+					<!-- Le bandeau de selection d'un groupement -->
+					<div class="w3-bar w3-light-gray">
+						<xsl:for-each select="//competition[@ID = $idcompetition]/groupesEngagements">
+							<xsl:sort order="descending" select="@type"/>
+							<!-- Niveau Aucun (par Nom) 1 -->
+							<xsl:if test="@type = 1">
+								<button>
+									<xsl:attribute name="id">btnNom</xsl:attribute>
+									<xsl:attribute name="data-tabgroup">
+										<xsl:value-of select="$groupTab"/>
+									</xsl:attribute>
+									<xsl:attribute name="class">tasTabBtnType w3-bar-item w3-button w3-round w3-margin-left
+										<xsl:if test="@type = $maxNiveau">
+											<xsl:text> w3-indigo</xsl:text>
+										</xsl:if>
+									</xsl:attribute>
+									<xsl:attribute name="onclick">
+										<xsl:value-of select="concat('openTab(',$apos,$groupTab,$apos,', ', $apos, 'Nom',$apos,', true)')"/>
+									</xsl:attribute>
+									Nom
+								</button>
+							</xsl:if>
+
+							<!-- Niveau Club 2 -->
+							<xsl:if test="@type = 2">
+								<button>
+									<xsl:attribute name="id">btnClub</xsl:attribute>
+									<xsl:attribute name="data-tabgroup">
+										<xsl:value-of select="$groupTab"/>
+									</xsl:attribute>
+									<xsl:attribute name="class">tasTabBtnType w3-bar-item w3-button w3-round w3-margin-left
+										<xsl:if test="@type = $maxNiveau">
+											<xsl:text> w3-indigo</xsl:text>
+										</xsl:if>
+									</xsl:attribute>
+									<xsl:attribute name="onclick">
+										<xsl:value-of select="concat('openTab(',$apos,$groupTab,$apos,', ', $apos, 'Club',$apos,', true)')"/>
+									</xsl:attribute>
+									Club
+								</button>
+							</xsl:if>
+
+							<!-- Niveau Departement 3 -->
+							<xsl:if test="@type = 3">
+								<button>
+									<xsl:attribute name="id">btnComite</xsl:attribute>
+									<xsl:attribute name="data-tabgroup">
+										<xsl:value-of select="$groupTab"/>
+									</xsl:attribute>
+									<xsl:attribute name="class">tasTabBtnType w3-bar-item w3-button w3-round w3-margin-left
+										<xsl:if test="@type = $maxNiveau">
+											<xsl:text> w3-indigo</xsl:text>
+										</xsl:if>
+									</xsl:attribute>
+									<xsl:attribute name="onclick">
+										<xsl:value-of select="concat('openTab(',$apos,$groupTab,$apos,', ', $apos, 'Comite',$apos,', true)')"/>
+									</xsl:attribute>
+									Comité
+								</button>
+							</xsl:if>
+
+							<!-- Niveau Ligue 4 -->
+							<xsl:if test="@type = 4">
+								<button>
+									<xsl:attribute name="id">btnLigue</xsl:attribute>
+									<xsl:attribute name="data-tabgroup">
+										<xsl:value-of select="$groupTab"/>
+									</xsl:attribute>
+									<xsl:attribute name="class">tasTabBtnType w3-bar-item w3-button w3-round w3-margin-left
+										<xsl:if test="@type = $maxNiveau">
+											<xsl:text> w3-indigo</xsl:text>
+										</xsl:if>
+									</xsl:attribute>
+									<xsl:attribute name="onclick">
+										<xsl:value-of select="concat('openTab(',$apos,$groupTab,$apos,', ', $apos, 'Ligue',$apos,', true)')"/>
+									</xsl:attribute>
+									Ligue
+								</button>
+							</xsl:if>
+
+							<!-- Niveau National 5 -->
+							<!-- Niveau International 6 -->
+							<xsl:if test="@type = 5 or @type = 6">
+								<button>
+									<xsl:attribute name="id">btnPays</xsl:attribute>
+									<xsl:attribute name="data-tabgroup">
+										<xsl:value-of select="$groupTab"/>
+									</xsl:attribute>
+									<xsl:attribute name="class">tasTabBtnType w3-bar-item w3-button w3-round w3-margin-left
+										<xsl:if test="@type = $maxNiveau">
+											<xsl:text> w3-indigo</xsl:text>
+										</xsl:if>
+									</xsl:attribute>
+									<xsl:attribute name="onclick">
+										<xsl:value-of select="concat('openTab(',$apos,$groupTab,$apos,', ', $apos, 'Pays',$apos,', true)')"/>
+									</xsl:attribute>
+									Pays
+								</button>
+							</xsl:if>
+						</xsl:for-each>
+					</div>
+
+					<!-- Le contenu des onglets -->
+					<xsl:for-each select="//competition[@ID = $idcompetition]/groupesEngagements">
+						<xsl:sort order="descending" select="@type"/>
+
+
+						<div class="w3-container tasTabType">
+							<xsl:attribute name="data-tabgroup">
+								<xsl:value-of select="$groupTab"/>
+							</xsl:attribute>
+
+							<!-- Niveau Aucun (par Nom) 1 -->
+							<xsl:if test="@type = 1">
+								<xsl:attribute name="id">Nom</xsl:attribute>
+								<xsl:attribute name="style">
+									<xsl:choose>
+										<xsl:when test="@type = $maxNiveau">
+											display: block;
+										</xsl:when>
+										<xsl:otherwise>display: none;</xsl:otherwise>
+									</xsl:choose>
+								</xsl:attribute>
+								<xsl:apply-templates select="./groupeEngagements">
+									<xsl:sort order="ascending" select="current()/@entite"/>
+								</xsl:apply-templates>
+							</xsl:if>
+
+							<!-- Niveau Club 2 -->
+							<xsl:if test="@type = 2">
+								<xsl:attribute name="id">Club</xsl:attribute>
+								<xsl:attribute name="style">
+									<xsl:choose>
+										<xsl:when test="@type = $maxNiveau">
+											display: block;
+										</xsl:when>
+										<xsl:otherwise>display: none;</xsl:otherwise>
+									</xsl:choose>
+								</xsl:attribute>
+								<xsl:apply-templates select="./groupeEngagements">
+									<xsl:sort order="ascending" select="//club[@ID = current()/@entite]/nom"/>
+								</xsl:apply-templates>
+							</xsl:if>
+
+							<!-- Niveau Departement 3 -->
+							<xsl:if test="@type = 3">
+								<xsl:attribute name="id">Comite</xsl:attribute>
+								<xsl:attribute name="style">
+									<xsl:choose>
+										<xsl:when test="@type = $maxNiveau">
+											display: block;
+										</xsl:when>
+										<xsl:otherwise>display: none;</xsl:otherwise>
+									</xsl:choose>
+								</xsl:attribute>
+								<xsl:apply-templates select="./groupeEngagements">
+									<xsl:sort order="ascending" select="//comite[@ID = current()/@entite]/nom"/>
+								</xsl:apply-templates>
+							</xsl:if>
+
+							<!-- Niveau Ligue 4 -->
+							<xsl:if test="@type = 4">
+								<xsl:attribute name="id">Ligue</xsl:attribute>
+								<xsl:attribute name="style">
+									<xsl:choose>
+										<xsl:when test="@type = $maxNiveau">
+											display: block;
+										</xsl:when>
+										<xsl:otherwise>display: none;</xsl:otherwise>
+									</xsl:choose>
+								</xsl:attribute>
+							</xsl:if>
+							<xsl:apply-templates select="./groupeEngagements">
 								<xsl:sort order="ascending" select="//ligue[@ID = current()/@entite]/nom"/>
 							</xsl:apply-templates>
-						</xsl:when>
-						<!-- Niveau National 5 -->
-						<!-- Niveau International 6 -->
-						<xsl:when test="$typeGroupe = 5 or $typeGroupe = 6">
-							<xsl:apply-templates select="./groupesEngagements/groupeEngagements[@sexe = $categorie and @type=$typeGroupe]">
-								<xsl:sort order="ascending" select="//pays[@ID = current()/@entite]/@nom"/>
-							</xsl:apply-templates>
-						</xsl:when>
-						<!-- Par defaut, on prend le club -->
-						<xsl:otherwise>
-							<xsl:apply-templates select="./groupesEngagements/groupeEngagements[@sexe = $categorie and @type=$typeGroupe]">
-								<xsl:sort order="ascending" select="//club[@ID = current()/@entite]/nom"/>
-							</xsl:apply-templates>
-						</xsl:otherwise>
-					</xsl:choose>
+
+							<!-- Niveau National 5 -->
+							<!-- Niveau International 6 -->
+							<xsl:if test="@type = 5 or @type = 6">
+								<xsl:attribute name="id">Pays</xsl:attribute>
+								<xsl:attribute name="style">
+									<xsl:choose>
+										<xsl:when test="@type = $maxNiveau">
+											display: block;
+										</xsl:when>
+										<xsl:otherwise>display: none;</xsl:otherwise>
+									</xsl:choose>
+								</xsl:attribute>
+								<xsl:apply-templates select="./groupeEngagements">
+									<xsl:sort order="ascending" select="//pays[@ID = current()/@entite]/@nom"/>
+								</xsl:apply-templates>
+							</xsl:if>
+						</div>
+					</xsl:for-each>
 				</div>
 			</div>
 		</div>

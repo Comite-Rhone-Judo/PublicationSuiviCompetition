@@ -71,6 +71,7 @@ namespace AppPublication.Controles
         private Task _taskGeneration = null;            // La tache de generation
         private Task _taskNettoyage = null;             // La tache de nettoyage
         private GestionStatistiques _statMgr = null;
+        // TODO compte tenu du multithread, on ne peut pas avoir une instance unique ici a cause de la contextualisation des repertoires
         private ExportSiteStructure _structureRepertoires;         // La structure d'export du site
         private ExportSiteUrls _structureSiteLocal;                 // la structure d'export du site local
         private ExportSiteUrls _structureSiteDistant;                 // la structure d'export du site distant
@@ -1704,30 +1705,31 @@ namespace AppPublication.Controles
             {
                 JudoData DC = DialogControleur.Instance.ServerData;
                 ExtensionNoyau.ExtensionJudoData EDC = DialogControleur.Instance.ExtendedServerData;
+                ExportSiteStructure structRep = _structureRepertoires.Clone();  // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread
 
                 switch (genere.type)
                 {
                     case SiteEnum.AllTapis:
-                        urls = ExportSite.GenereWebSiteAllTapis(DC, cfg, _structureRepertoires);
+                        urls = ExportSite.GenereWebSiteAllTapis(DC, cfg, structRep);
                         break;
                     case SiteEnum.Classement:
-                        urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), cfg, _structureRepertoires);
+                        urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), cfg, structRep);
                         break;
                     case SiteEnum.Index:
-                        urls = ExportSite.GenereWebSiteIndex(DC, cfg, _structureRepertoires);
+                        urls = ExportSite.GenereWebSiteIndex(DC, cfg, structRep);
                         break;
                     case SiteEnum.Menu:
-                        urls = ExportSite.GenereWebSiteMenu(DC, EDC, cfg, _structureRepertoires);
+                        urls = ExportSite.GenereWebSiteMenu(DC, EDC, cfg, structRep);
                         break;
                     case SiteEnum.Phase:
-                        urls = ExportSite.GenereWebSitePhase(DC, genere.phase, cfg, _structureRepertoires);
+                        urls = ExportSite.GenereWebSitePhase(DC, genere.phase, cfg, structRep);
                         break;
                     case SiteEnum.AffectationTapis:
-                        urls = ExportSite.GenereWebSiteAffectation(DC, cfg, _structureRepertoires);
+                        urls = ExportSite.GenereWebSiteAffectation(DC, cfg, structRep);
                         break;
                     case SiteEnum.Engagements:
                         // TODO voir si le parametere groupeParticipant est toujours necessaire
-                        urls = ExportSite.GenereWebSiteEngagements(DC, EDC, genere.groupeParticipant, cfg, _structureRepertoires);
+                        urls = ExportSite.GenereWebSiteEngagements(DC, EDC, genere.groupeParticipant, cfg, structRep);
                         break;
                 }
             }

@@ -7,6 +7,7 @@
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:import href="Tools/Export/xslt/Site/entete.xslt"/>
+	<xsl:import href="Tools/Export/xslt/Site/niveau_tour_combat.xslt"/>
 
 	<xsl:output method="html" indent="yes" />
 	<xsl:param name="style"></xsl:param>
@@ -50,8 +51,12 @@
 	<xsl:variable select="$selectedCompetition/@type" name="typeCompetition"/>
 	<xsl:variable select="/competitions/competition[1]/@Logo" name="logo"/>
 
+	<!-- En jujitsu, on affiche la discpline -->
+	<xsl:variable select="$selectedCompetition/@discipline != 'C_COMPETITION'" name="affDiscipline"/>
 
-	<!-- Le groupe selectionne -->
+
+
+		<!-- Le groupe selectionne -->
 	<xsl:variable select="//groupeEngagements[@id = $idgroupe]" name="selectedGroupeEngagements"/>
 
 	<!-- TODO Utile ? -->
@@ -94,7 +99,7 @@
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
 				<xsl:value-of select="$js"/>
-				gDelayAutoreloadSec = <xsl:value-of select="$delayActualisationClient"/>;
+				gDelayAutoReloadSec = <xsl:value-of select="$delayActualisationClient"/>;
 			</script>
 			<title>
 				Suivi Compétition - Engagements
@@ -345,7 +350,7 @@
 				</button>
 			</div>
 			<!-- Le contenu du Judoka -->
-			<div class="tas-panel-tableau-combat" style="display: none;">
+			<div class="tasClosedPanelType tas-panel-tableau-combat" style="display: none;">
 				<xsl:attribute name="id">
 					<xsl:value-of select="concat('judoka',$idJudoka)"/>
 				</xsl:attribute>
@@ -389,6 +394,13 @@
 													<xsl:when test="@sexe = 'M'">Masculins, </xsl:when>
 												</xsl:choose>
 												<xsl:value-of select="@nom"/>
+												<xsl:if test="$affDiscipline">
+													&nbsp;(<xsl:choose>
+														<xsl:when test="./@discipline_competition = 2">Combat</xsl:when>
+														<xsl:when test="./@discipline_competition = 3">NeWaza</xsl:when>
+													</xsl:choose>
+													- <xsl:value-of select="./@nom_cateage"/>)
+												</xsl:if>												
 											</header>
 											<div class="w3-container w3-cell w3-cell-middle w3-padding">
 												<table class="tas-tableau-combat-participant">
@@ -454,6 +466,8 @@
 
 		<xsl:variable name="epreuve" select="./@epreuve"/>
 		<xsl:variable name="phase" select="./@phase"/>
+		<xsl:variable name="typePhase" select="ancestor::competition/phases/phase[@id = $phase]/@typePhase"/>
+
 
 		<xsl:variable name="judoka1" select="./score[1]/@judoka"/>
 		<xsl:variable name="club1" select="ancestor::competition/judokas/judoka[@id = $judoka1]/@club"/>
@@ -470,6 +484,7 @@
 		<!-- Si un des ID judoka vaut zero, c'est une place vide. Si judoka est null, c'est pas encore de combattant, on n'affiche rien -->
 		<xsl:if test="count(./score[@judoka = 0]) = 0">
 			<tr>
+				<!-- Colonne pour l'affichage du Judoka 1 -->
 				<td style="width:40%">
 					<xsl:attribute name="class">
 						<xsl:choose>
@@ -579,28 +594,49 @@
 							</xsl:if>
 					</table>
 				</td>
+
+				<!-- Colonne pour l'affichage des informations du combat -->
 				<td class=" w3-pale-yellow w3-small w3-card w3-cell-middle w3-center"  style="width:20%">
-					<!-- Affiche le Tapis ou le resultat du combat -->
-					<xsl:choose>
-						<!-- Combat pas encore termine, on affiche le tapis s'il est assigne -->
-						<xsl:when test="./@vainqueur = 0 or ./@vainqueur = -1">
-							<xsl:choose>
-								<xsl:when test ="./@tapis > 0">
-									Tapis <xsl:value-of select="./@tapis"/>
-								</xsl:when>
-								<xsl:otherwise>
-									Affectation<br/>en attente
-								</xsl:otherwise>
-							</xsl:choose>
-						</xsl:when>
-						<xsl:otherwise>
-							<!-- Combat termine, on va afficher le résultat du combat -->
-							<xsl:call-template name="scoreCombat">
-								<xsl:with-param name="combat" select="."/>
-							</xsl:call-template>
-						</xsl:otherwise>
-					</xsl:choose>
+					<!-- TODO Ajouter ici l'information sur le niveau du combat-->
+					<table class="w3-tiny" style="width: 100%">
+						<!--  Information sur le niveau du combat -->
+						<tr>
+							<td class="w3-center">
+								<xsl:call-template name="NiveauTourCombat">
+									<xsl:with-param name="combat" select="."/>
+									<xsl:with-param name="typePhase" select="$typePhase"/>
+									<xsl:with-param name="repechage" select="./feuille/@repechage = 'true'"/>
+								</xsl:call-template>
+							</td>
+						</tr>
+						<!-- Le statut du combat (pas assigné, n° de tapis, resultat)-->
+						<tr>
+							<td class="w3-center">
+								<xsl:choose>
+									<!-- Combat pas encore termine, on affiche le tapis s'il est assigne -->
+									<xsl:when test="./@vainqueur = 0 or ./@vainqueur = -1">
+										<xsl:choose>
+											<xsl:when test ="./@tapis > 0">
+												Tapis <xsl:value-of select="./@tapis"/>
+											</xsl:when>
+											<xsl:otherwise>
+												A affecter
+											</xsl:otherwise>
+										</xsl:choose>
+									</xsl:when>
+									<xsl:otherwise>
+										<!-- Combat termine, on va afficher le résultat du combat -->
+										<xsl:call-template name="scoreCombat">
+											<xsl:with-param name="combat" select="."/>
+										</xsl:call-template>
+									</xsl:otherwise>
+								</xsl:choose>
+							</td>
+						</tr>
+					</table>
 				</td>
+				
+				<!-- Colonne pour l'affichage du Judoka 2 -->
 				<td style="width:40%">
 					<xsl:attribute name="class">
 						<xsl:choose>

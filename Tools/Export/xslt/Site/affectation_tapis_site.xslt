@@ -16,6 +16,8 @@
 	<xsl:param name="commonPath"/>
 	<xsl:param name="competitionPath"/>
 
+	<!-- TODO verifier le path d'access des images -->
+	
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 	<xsl:template match="/">
 		<xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
@@ -62,7 +64,7 @@
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
 				<xsl:value-of select="$js"/>
-				gDelayAutoreloadSec = <xsl:value-of select="$delayActualisationClient"/>;
+				gDelayAutoReloadSec = <xsl:value-of select="$delayActualisationClient"/>;
 			</script>
 			<title>
 				Suivi Compétition - Affectation

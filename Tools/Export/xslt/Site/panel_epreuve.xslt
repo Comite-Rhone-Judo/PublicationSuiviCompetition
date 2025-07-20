@@ -55,7 +55,7 @@
 							</xsl:choose>
 						</button>
 					</header>
-					<div class="w3-container" style="display:none;">
+					<div class="tasClosedPanelType w3-container" style="display:none;">
 						<xsl:attribute name="id">
 							<xsl:value-of select="concat($prefixPanel, $sexeCode)"/>
 						</xsl:attribute>

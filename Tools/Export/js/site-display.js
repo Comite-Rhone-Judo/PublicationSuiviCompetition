@@ -2,7 +2,7 @@
 
 var gReloading;                 // Pour les gestion de l'autoreload
 var gUseAutoReload = true;      // Pour activer ou desactiver l'autoreload
-var gDelayAutoreloadSec = 60;   // Pour definir le delai de l'autoreload en secondes
+var gDelayAutoReloadSec = 60;   // Pour definir le delai de l'autoreload en secondes
 
 window.onload = windowOnLoad;   // Gestionnaire d'evenements pour le chargement de la page par defaut
 
@@ -24,10 +24,10 @@ function checkReloading() {
 
     if (window.location.hash == "#autoreload") {
 
-        if (typeof (gDelayAutoreloadSec) == undefined || isNaN(gDelayAutoreloadSec)) {
+        if (typeof (gDelayAutoReloadSec) == undefined || isNaN(gDelayAutoReloadSec)) {
             timeoutms = 60000;    // Par defaut 1 min
         } else {
-            timeoutms = gDelayAutoreloadSec * 1000;    // Par defaut 1 min
+            timeoutms = gDelayAutoReloadSec * 1000;    // Par defaut 1 min
         }
 
         gReloading = setTimeout(function () { window.location.reload(); }, timeoutms);
@@ -97,7 +97,7 @@ function openTab(tabGroupName, tabName, saveIt) {
     }
 
     if (saveIt) {
-        saveInSession(tabGroupName, tabName)
+        setInSession(tabGroupName, tabName)
     }
 }
 
@@ -122,11 +122,29 @@ function initTabs() {
 function initPanels() {
     var x;
 
-    x = document.getElementsByClassName("tasPanelType");
+    // Les panneaux ouverts par defaut
+    x = document.getElementsByClassName("tasOpenedPanelType");
     for (i = 0; i < x.length; i++) {
 
-        if (sessionStorage[x[i].id] == "block") {
-            expandElement(x[i].id);
+        // On les ouvre par defaut
+        expandPanel(x[i].id);
+
+        // Si l'etat est different en session
+        if (getInSession(x[i].id) == "none") {
+            collapsePanel(x[i].id);
+        }
+    }
+
+    // Les panneaux fermes par defaut
+    x = document.getElementsByClassName("tasClosedPanelType");
+    for (i = 0; i < x.length; i++) {
+
+        // On les fermes par defaut
+        collapsePanel(x[i].id);
+
+        // Si l'etat est different en session
+        if (getInSession(x[i].id) == "block") {
+            expandPanel(x[i].id);
         }
     }
 }
@@ -152,7 +170,7 @@ function togglePanel(elementName) {
         elementToShow = expandElement;
     }
     // memorise l'etat dans le sessionStorage
-    sessionStorage[elementName] = newState;
+    setInSession(elementName, newState);
 
     document.getElementById(elementName).style.display = newState;
     document.getElementById(elementToShow).style.display = "inline";
@@ -182,23 +200,10 @@ function collapsePanel(elementName) {
     document.getElementById(expandElement).style.display = "inline";
 }
 
-// Initialise les panneaux de la page, en ouvrant ceux qui sont en session
-initPanels() {
-    var x;
-
-    x = document.getElementsByClassName("tasPanelType");
-    for (i = 0; i < x.length; i++) {
-
-        if (sessionStorage[x[i].id] == "block") {
-            expandPanel(x[i].id);
-        }
-    }
-}
-
 // ========== Gestion de la session ==========
 
 // enregistre une valeur dans la session
-function saveInSession(key, value) {
+function setInSession(key, value) {
     let path = document.location.pathname;
     let fileName = path.substring(path.lastIndexOf('/') + 1);
 

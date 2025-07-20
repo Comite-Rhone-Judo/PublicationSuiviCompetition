@@ -581,10 +581,16 @@ namespace AppPublication.Export
                     }
                     xcompetition.Add(xepreuves);
 
-                    // Ajoute les combats de la competitions
-                    // Commence par recupere toutes les phases des epreuves
+                    // Ajouter les es de la competition
                     IList<Phase> phases = DC.Deroulement.Phases.Join(epreuves, p => p.epreuve, e => e.id, (p, e) => p).ToList();
-                    // Ensuite les combats de ces memes phases
+                    XElement xphases = new XElement(ConstantXML.Phases);
+                    foreach (Phase ph in phases)
+                    {
+                        xphases.Add(ph.ToXml());
+                    }
+                    xcompetition.Add(xphases);
+
+                    // Ajoute les combats de la competitions (les combats des phases des epreuves de la competition)
                     IList<Combat> combats = DC.Deroulement.Combats.Join(phases, c => c.phase, p => p.id, (c, p) => c).ToList();
                     XElement xcombats = new XElement(ConstantXML.GroupeEngagements_combats);
                     foreach (Combat c in combats)
@@ -592,6 +598,7 @@ namespace AppPublication.Export
                         xcombats.Add(c.ToXml(DC));
                     }
                     xcompetition.Add(xcombats);
+
                 }
             }
             return doc.ToXmlDocument();

@@ -69,7 +69,7 @@
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
 				<xsl:value-of select="$js"/>
-				gDelayAutoreloadSec = <xsl:value-of select="$delayActualisationClient"/>;
+				gDelayAutoReloadSec = <xsl:value-of select="$delayActualisationClient"/>;
 			</script>
 			<title>
 				Suivi Compétition - Avancement
@@ -141,7 +141,7 @@
 							Tableau principal
 						</button>
 					</div>
-					<div class="w3-container tas-panel-tableau-combat" id="tableauPrincipal">
+					<div class="tasOpenedPanelType w3-container tas-panel-tableau-combat" id="tableauPrincipal">
 						<xsl:variable name="repechage">
 							<xsl:text>false</xsl:text>
 						</xsl:variable>
@@ -168,7 +168,7 @@
 								Tableaux de repêchage
 							</button>
 						</div>
-						<div class="w3-container tas-panel-tableau-combat" id="tableauRepechages">
+						<div class="tasOpenedPanelType w3-container tas-panel-tableau-combat" id="tableauRepechages">
 							<xsl:variable name="repechage1">
 								<xsl:text>true</xsl:text>
 							</xsl:variable>
@@ -195,7 +195,7 @@
 								Tableaux de barrage
 							</button>
 						</div>
-						<div class="w3-container tas-panel-tableau-combat" id="tableauBarrages">
+						<div class="tasOpenedPanelType w3-container tas-panel-tableau-combat" id="tableauBarrages">
 							<xsl:call-template name="tableauBarrage"/>
 						</div>
 					</xsl:if>
