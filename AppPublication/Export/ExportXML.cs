@@ -54,6 +54,11 @@ namespace AppPublication.Export
                 attrAppVersion.Value = Tools.AppInformation.Instance.AppVersion;
                 XmlAttribute attrLogo = doc.CreateAttribute(ConstantXML.Logo);
                 attrLogo.Value = config.Logo;
+                XmlAttribute attrUseIntituleCommun = doc.CreateAttribute(ConstantXML.useIntituleCommun);
+                attrUseIntituleCommun.Value = config.UseIntituleCommun.ToString().ToLower(); 
+                XmlAttribute attrIntituleCommun = doc.CreateAttribute(ConstantXML.intituleCommun);
+                attrIntituleCommun.Value = config.IntituleCommun;
+
 
                 node.Attributes.Append(attrProchainCombat);
                 node.Attributes.Append(attrAffectationTapis);
@@ -64,6 +69,8 @@ namespace AppPublication.Export
                 node.Attributes.Append(attrNbProchainsCombats);
                 node.Attributes.Append(attrDateGeneration);
                 node.Attributes.Append(attrMsgProchainsCombats);
+                node.Attributes.Append(attrUseIntituleCommun);
+                node.Attributes.Append(attrIntituleCommun);
                 node.Attributes.Append(attrLogo);
                 node.Attributes.Append(attrAppVersion);
             }
@@ -744,6 +751,8 @@ namespace AppPublication.Export
             {
                 // Pas de phase specifiee, on va chercher
             }
+
+            // TODO Voir comment on gere si on veut avoir un intiule commun
             if (competition == null)
             {
                 // Par defaut, prend la premiere

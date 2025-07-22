@@ -50,6 +50,8 @@ namespace AppPublication.Controles
         private const string kSettingPublierEngagements = "PublierEngagements";
         private const string kSettingEngagementsAbsents = "EngagementsAbsents";
         private const string kSettingEngagementsTousCombats = "EngagementsTousCombats";
+        private const string kSettingUseIntituleCommun = "UseIntituleCommun";
+        private const string kSettingIntituleCommun = "IntituleCommun";
         private const string kSettingNbProchainsCombats = "NbProchainsCombats";
         private const string kSettingPublierAffectationTapis = "PublierAffectationTapis";
         private const string kSettingDelaiGenerationSec = "DelaiGenerationSec";
@@ -1137,6 +1139,44 @@ namespace AppPublication.Controles
             }
         }
 
+        private bool _useIntituleCommun;
+        /// <summary>
+        /// Flag indiquant si on doit utiliser un intitule commun en cas de poly competition
+        /// </summary>
+        public bool UseIntituleCommun
+        {
+            get { return _useIntituleCommun; }
+            set
+            {
+                if (_useIntituleCommun != value)
+                {
+                    _useIntituleCommun = value;
+                    AppSettings.SaveSetting(kSettingUseIntituleCommun, _useIntituleCommun.ToString());
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private string _intituleCommun;
+
+        /// <summary>
+        /// intitule commun en cas de poly competition
+        /// </summary>
+        public String IntituleCommun
+        {
+            get { return _intituleCommun; }
+            set
+            {
+                if (_intituleCommun != value)
+                {
+                    _intituleCommun = value;
+                    AppSettings.SaveSetting(kSettingIntituleCommun, _intituleCommun);
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+
         private StatusGenerationSite _status;
         /// <summary>
         /// Le statut de generation du site
@@ -1337,7 +1377,8 @@ namespace AppPublication.Controles
                 PouleEnColonnes = AppSettings.ReadSetting(kSettingPouleEnColonnes, false);
                 PouleToujoursEnColonnes = AppSettings.ReadSetting(kSettingPouleToujoursEnColonnes, false);
                 TailleMaxPouleColonnes = AppSettings.ReadSetting(kSettingTailleMaxPouleColonnes, 5);
-
+                UseIntituleCommun = AppSettings.ReadSetting(kSettingUseIntituleCommun, false);
+                IntituleCommun = AppSettings.ReadSetting(kSettingUseIntituleCommun, string.Empty);
 
                 // Recherche le logo dans la liste
                 SelectedLogo = AppSettings.ReadRawSetting<FilteredFileInfo>(kSettingSelectedLogo, FichiersLogo, o => o.Name);
@@ -1777,7 +1818,7 @@ namespace AppPublication.Controles
         public List<FileWithChecksum> GenereAll()
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
-            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierEngagements && CanPublierEngagements, EngagementsAbsents, EngagementsTousCombats, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes);
+            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierEngagements && CanPublierEngagements, EngagementsAbsents, EngagementsTousCombats, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes, UseIntituleCommun, IntituleCommun);
 
             if (IsGenerationActive)
             {

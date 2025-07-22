@@ -42,8 +42,6 @@
 
 	<xsl:variable select="$selectedCompetition/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
 	<xsl:variable select="$selectedCompetition/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
-<!-- TODO Supprimer par entite -->
-	<xsl:variable select="$selectedCompetition/@ParticipantsParEntite = 'true'" name="affEngagementsParEntite"/>
 	<xsl:variable select="$selectedCompetition/@EngagementsAbsents = 'true'" name="affEngagementsAbsents"/>
 	<xsl:variable select="$selectedCompetition/@EngagementsTousCombats = 'true'" name="affTousCombats"/>
 	<xsl:variable select="$selectedCompetition/@DelaiActualisationClientSec" name="delayActualisationClient"/>
@@ -54,13 +52,8 @@
 	<!-- En jujitsu, on affiche la discpline -->
 	<xsl:variable select="$selectedCompetition/@discipline != 'C_COMPETITION'" name="affDiscipline"/>
 
-
-
-		<!-- Le groupe selectionne -->
+	<!-- Le groupe selectionne -->
 	<xsl:variable select="//groupeEngagements[@id = $idgroupe]" name="selectedGroupeEngagements"/>
-
-	<!-- TODO Utile ? -->
-	<xsl:variable select="count(//epreuve[@competition!=$idcompetition])!=0" name="affDetailCompetition"/>
 
 	<xsl:template match="/*">
 		<!-- ENTETE HTML -->
@@ -119,24 +112,12 @@
 			</xsl:call-template>
 
 			<!-- CONTENU -->
-			<xsl:variable name="typeGroupe">
-				<xsl:choose>
-					<!-- Selection par Entite: le niveau de competition donne le type d'entite -->
-					<xsl:when test="$affEngagementsParEntite">
-						<xsl:value-of select="./@niveau"/>
-					</xsl:when>
-					<!-- Selection par Nom: Niveau = 1-->
-					<xsl:otherwise>
-						<xsl:value-of select="1"/>
-					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:variable>
 
 			<!-- Nom de la competition + Groupe -->
 			<div class="w3-container w3-blue w3-center tas-competition-bandeau">
 				<div>
 					<h4>
-						<xsl:value-of select="./titre"/>
+						<xsl:value-of select="$selectedCompetition/titre"/>
 					</h4>
 				</div>
 				<div class="w3-card w3-indigo">
@@ -356,7 +337,6 @@
 				</xsl:attribute>
 				<xsl:choose>
 					<xsl:when test="@present = 'true'">
-						<!-- TODO Ajouter le niveau du combat (16eme, etc.), reprendre feuille_match, voir pour la mettre en template partage -->
 						<!-- La liste des combats dans lesquel le judo est présent -->
 						<!-- Nb de combats pour ce judoka -->
 						<xsl:variable name="nbCombatsJudoka">
@@ -460,7 +440,6 @@
 	</xsl:template>
 
 	<!-- TEMPLATE UN COMBAT -->
-	<!-- TODO il faut mettre en evidence le nom du vainqueur si on affiche les résultats, les barres de couleurs ne sont pas tres jolie. Peut etre icone victoire barley-32 , checkmark-32, wind_rose-32-->
 	<xsl:template name="UnCombat" match="combat">
 		<xsl:param name="niveau"></xsl:param>
 
@@ -597,7 +576,6 @@
 
 				<!-- Colonne pour l'affichage des informations du combat -->
 				<td class=" w3-pale-yellow w3-small w3-card w3-cell-middle w3-center"  style="width:20%">
-					<!-- TODO Ajouter ici l'information sur le niveau du combat-->
 					<table class="w3-tiny" style="width: 100%">
 						<!--  Information sur le niveau du combat -->
 						<tr>
