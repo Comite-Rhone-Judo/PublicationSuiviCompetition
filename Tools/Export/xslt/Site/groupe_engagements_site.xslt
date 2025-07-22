@@ -54,13 +54,8 @@
 	<!-- En jujitsu, on affiche la discpline -->
 	<xsl:variable select="$selectedCompetition/@discipline != 'C_COMPETITION'" name="affDiscipline"/>
 
-
-
-		<!-- Le groupe selectionne -->
+		<!-- Le groupement selectionne -->
 	<xsl:variable select="//groupeEngagements[@id = $idgroupe]" name="selectedGroupeEngagements"/>
-
-	<!-- TODO Utile ? -->
-	<xsl:variable select="count(//epreuve[@competition!=$idcompetition])!=0" name="affDetailCompetition"/>
 
 	<xsl:template match="/*">
 		<!-- ENTETE HTML -->
@@ -119,24 +114,13 @@
 			</xsl:call-template>
 
 			<!-- CONTENU -->
-			<xsl:variable name="typeGroupe">
-				<xsl:choose>
-					<!-- Selection par Entite: le niveau de competition donne le type d'entite -->
-					<xsl:when test="$affEngagementsParEntite">
-						<xsl:value-of select="./@niveau"/>
-					</xsl:when>
-					<!-- Selection par Nom: Niveau = 1-->
-					<xsl:otherwise>
-						<xsl:value-of select="1"/>
-					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:variable>
 
 			<!-- Nom de la competition + Groupe -->
 			<div class="w3-container w3-blue w3-center tas-competition-bandeau">
 				<div>
+					<!-- TODO Verifier ici, le titre de la competition ne s'affiche pas -->
 					<h4>
-						<xsl:value-of select="./titre"/>
+						<xsl:value-of select="$selectedCompetition/titre"/>
 					</h4>
 				</div>
 				<div class="w3-card w3-indigo">
