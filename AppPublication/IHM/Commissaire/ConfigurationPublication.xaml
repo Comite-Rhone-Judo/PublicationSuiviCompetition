@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AppPublication.IHM.Commissaire"
         mc:Ignorable="d"
-        Title="Configuration de la Publication" Height="480" Width="820" Background="Black">
+        Title="Configuration de la Publication" Height="520" Width="820" Background="Black">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -17,7 +17,7 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <Grid Margin="10,0,10,-5">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="auto"/>
@@ -34,13 +34,14 @@
         <StackPanel Grid.Row="0" Grid.Column="0" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
             <TextBlock Text="Publication" Style="{StaticResource Header1TextStyle}"/>
         </StackPanel>
-        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" BorderBrush="White" Margin="10 0 10 10" Width="400" Height="320">
+        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" BorderBrush="White" Margin="10,0,10,10" Width="380" Height="360">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
@@ -88,9 +89,9 @@
                     <CheckBox Style="{StaticResource CheckboxStyle}"
                         IsChecked="{Binding Path=PouleToujoursEnColonnes, Converter={StaticResource BoolNotConverter}}"
                         IsEnabled="{Binding Path=PouleEnColonnes, Mode=OneWay}"
-                        Margin="0 0 0 0">
+                        Margin="0 0 0 0"
+                              Content="taille max. poule en colonne:">
                     </CheckBox>
-                    <Label HorizontalAlignment="Right" Content="taille max. poule en colonne:" Style="{StaticResource LabelStyle}"/>
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Taille minimale de la poule au dessus de laquelle la disposition est en diagonale."/>
                 </StackPanel>
 
@@ -109,23 +110,29 @@
                         IsChecked="{Binding Path=EngagementsAbsents}"
                         IsEnabled="{Binding Path=PublierEngagements, Mode=OneWay}"
                         Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"
-                        Margin="-5 0 0 0">
+                        Margin="-5 0 0 0"
+                              Content="les absents">
                     </CheckBox>
-                    <Label HorizontalAlignment="Right" Content="les absents" Style="{StaticResource LabelStyle}" Margin="-2 0 0 0"
-                           Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="-5 0 0 0" ToolTip="Si cochée, affichera les judokas absents."
                            Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     <CheckBox Style="{StaticResource CheckboxStyle}"
                         IsChecked="{Binding Path=EngagementsTousCombats}"
                         IsEnabled="{Binding Path=PublierEngagements, Mode=OneWay}"
                         Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"
-                        Margin="10 0 0 0">
+                        Margin="10 0 0 0"
+                              Content="tous les combats">
                     </CheckBox>
-                    <Label HorizontalAlignment="Right" Content="tous les combats" Style="{StaticResource LabelStyle}" Margin="-2 0 0 0"
-                           Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affichera tous les combats des engages, y compris ceux terminés."
                            Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
+                </StackPanel>
+                <StackPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
+                    <CheckBox   Content="Utiliser un intitulé commun" Style="{StaticResource CheckboxStyle}"
+                        IsChecked="{Binding Path=UseIntituleCommun}"/>
+                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, en cas de gestion avec plusieurs compétitions simultanéement (ex. Districts),  utilise l'intitulé commun configuré au lieu du titre de la 1ère compétition."/>
+                </StackPanel>
+                <StackPanel Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="30 0 0 0" > 
+                    <TextBox  TextWrapping="Wrap" Height="36" VerticalScrollBarVisibility="Auto" Margin="5 5 5 5" MinWidth="300" Text = "{Binding Path=IntituleCommun}"/>
                 </StackPanel>
 
                 <telerik:RadNumericUpDown  Grid.Row="5" Grid.Column="1" Value="{Binding TailleMaxPouleColonnes}" Width="80" Height="20" Minimum="2" Maximum="999" SmallChange="1" HideTrailingZeros="True" Margin="5 0 5 0">
@@ -141,10 +148,10 @@
         </Border>
 
         <!-- BLOC GENERATION -->
-        <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
+        <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource Header1Style}" Margin="10,10,10,10" Visibility="Visible" >
             <TextBlock Text="Génération" Style="{StaticResource Header1TextStyle}"/>
         </StackPanel>
-        <Border BorderThickness="1" Grid.Row="1" Grid.Column="1" BorderBrush="White" Margin="10 0 10 10" Width="350" Height="320">
+        <Border BorderThickness="1" Grid.Row="1" Grid.Column="1" BorderBrush="White" Margin="10 0 10 10" Width="380" Height="360">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>

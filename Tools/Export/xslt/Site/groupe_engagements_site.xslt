@@ -42,8 +42,6 @@
 
 	<xsl:variable select="$selectedCompetition/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
 	<xsl:variable select="$selectedCompetition/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
-<!-- TODO Supprimer par entite -->
-	<xsl:variable select="$selectedCompetition/@ParticipantsParEntite = 'true'" name="affEngagementsParEntite"/>
 	<xsl:variable select="$selectedCompetition/@EngagementsAbsents = 'true'" name="affEngagementsAbsents"/>
 	<xsl:variable select="$selectedCompetition/@EngagementsTousCombats = 'true'" name="affTousCombats"/>
 	<xsl:variable select="$selectedCompetition/@DelaiActualisationClientSec" name="delayActualisationClient"/>
@@ -340,7 +338,6 @@
 				</xsl:attribute>
 				<xsl:choose>
 					<xsl:when test="@present = 'true'">
-						<!-- TODO Ajouter le niveau du combat (16eme, etc.), reprendre feuille_match, voir pour la mettre en template partage -->
 						<!-- La liste des combats dans lesquel le judo est présent -->
 						<!-- Nb de combats pour ce judoka -->
 						<xsl:variable name="nbCombatsJudoka">
@@ -444,7 +441,6 @@
 	</xsl:template>
 
 	<!-- TEMPLATE UN COMBAT -->
-	<!-- TODO il faut mettre en evidence le nom du vainqueur si on affiche les résultats, les barres de couleurs ne sont pas tres jolie. Peut etre icone victoire barley-32 , checkmark-32, wind_rose-32-->
 	<xsl:template name="UnCombat" match="combat">
 		<xsl:param name="niveau"></xsl:param>
 
@@ -581,7 +577,6 @@
 
 				<!-- Colonne pour l'affichage des informations du combat -->
 				<td class=" w3-pale-yellow w3-small w3-card w3-cell-middle w3-center"  style="width:20%">
-					<!-- TODO Ajouter ici l'information sur le niveau du combat-->
 					<table class="w3-tiny" style="width: 100%">
 						<!--  Information sur le niveau du combat -->
 						<tr>

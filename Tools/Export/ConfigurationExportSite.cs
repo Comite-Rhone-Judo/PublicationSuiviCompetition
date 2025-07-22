@@ -1,4 +1,5 @@
-﻿using System.Web.UI.WebControls;
+﻿using HttpServer.Helpers;
+using System.Web.UI.WebControls;
 using Tools.Enum;
 
 namespace Tools.Export
@@ -6,7 +7,7 @@ namespace Tools.Export
     public class ConfigurationExportSite
     {
 
-        public ConfigurationExportSite(bool pubPC = false, bool pubAT = true, bool pubP = true, bool partAbsent = false, bool partTC = false, long delAC = 30, int nbPC = 6, string pMsg = "", string pLogo = "", bool pec = false, bool ptec = false, int maxpc = 5)
+        public ConfigurationExportSite(bool pubPC = false, bool pubAT = true, bool pubP = true, bool partAbsent = false, bool partTC = false, long delAC = 30, int nbPC = 6, string pMsg = "", string pLogo = "", bool pec = false, bool ptec = false, int maxpc = 5, bool pUseIC = false, string pIC = "")
         {
             PublierProchainsCombats = pubPC;
             PublierAffectationTapis = pubAT;
@@ -20,6 +21,8 @@ namespace Tools.Export
             PouleEnColonnes = pec;
             PouleToujoursEnColonnes = ptec;
             TailleMaxPouleColonnes = maxpc;
+            UseIntituleCommun = pUseIC;
+            IntituleCommun = pIC;
         }
 
         public bool PublierProchainsCombats = false;
@@ -35,5 +38,8 @@ namespace Tools.Export
         public bool PouleEnColonnes = false;
         public bool PouleToujoursEnColonnes = false;
         public int TailleMaxPouleColonnes = 5;
+
+        public bool UseIntituleCommun = false;
+        public string IntituleCommun = string.Empty;
     }
 }

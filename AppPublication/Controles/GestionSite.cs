@@ -50,6 +50,8 @@ namespace AppPublication.Controles
         private const string kSettingPublierEngagements = "PublierEngagements";
         private const string kSettingEngagementsAbsents = "EngagementsAbsents";
         private const string kSettingEngagementsTousCombats = "EngagementsTousCombats";
+        private const string kSettingUseIntituleCommun = "UseIntituleCommun";
+        private const string kSettingIntituleCommun = "IntituleCommun";
         private const string kSettingNbProchainsCombats = "NbProchainsCombats";
         private const string kSettingPublierAffectationTapis = "PublierAffectationTapis";
         private const string kSettingDelaiGenerationSec = "DelaiGenerationSec";
@@ -71,7 +73,6 @@ namespace AppPublication.Controles
         private Task _taskGeneration = null;            // La tache de generation
         private Task _taskNettoyage = null;             // La tache de nettoyage
         private GestionStatistiques _statMgr = null;
-        // TODO compte tenu du multithread, on ne peut pas avoir une instance unique ici a cause de la contextualisation des repertoires
         private ExportSiteStructure _structureRepertoires;         // La structure d'export du site
         private ExportSiteUrls _structureSiteLocal;                 // la structure d'export du site local
         private ExportSiteUrls _structureSiteDistant;                 // la structure d'export du site distant
@@ -91,7 +92,7 @@ namespace AppPublication.Controles
             public SiteEnum type { get; set; }
             public Phase phase { get; set; }
             public int? tapis { get; set; }
-            public GroupeEngagements groupeParticipant { get; set; }   // TODO a supprimer
+            public List<GroupeEngagements> groupeEngages { get; set; }
         }
         #endregion
 
@@ -1138,6 +1139,44 @@ namespace AppPublication.Controles
             }
         }
 
+        private bool _useIntituleCommun;
+        /// <summary>
+        /// Flag indiquant si on doit utiliser un intitule commun en cas de poly competition
+        /// </summary>
+        public bool UseIntituleCommun
+        {
+            get { return _useIntituleCommun; }
+            set
+            {
+                if (_useIntituleCommun != value)
+                {
+                    _useIntituleCommun = value;
+                    AppSettings.SaveSetting(kSettingUseIntituleCommun, _useIntituleCommun.ToString());
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private string _intituleCommun;
+
+        /// <summary>
+        /// intitule commun en cas de poly competition
+        /// </summary>
+        public String IntituleCommun
+        {
+            get { return _intituleCommun; }
+            set
+            {
+                if (_intituleCommun != value)
+                {
+                    _intituleCommun = value;
+                    AppSettings.SaveSetting(kSettingIntituleCommun, _intituleCommun);
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+
         private StatusGenerationSite _status;
         /// <summary>
         /// Le statut de generation du site
@@ -1338,7 +1377,8 @@ namespace AppPublication.Controles
                 PouleEnColonnes = AppSettings.ReadSetting(kSettingPouleEnColonnes, false);
                 PouleToujoursEnColonnes = AppSettings.ReadSetting(kSettingPouleToujoursEnColonnes, false);
                 TailleMaxPouleColonnes = AppSettings.ReadSetting(kSettingTailleMaxPouleColonnes, 5);
-
+                UseIntituleCommun = AppSettings.ReadSetting(kSettingUseIntituleCommun, false);
+                IntituleCommun = AppSettings.ReadSetting(kSettingUseIntituleCommun, string.Empty);
 
                 // Recherche le logo dans la liste
                 SelectedLogo = AppSettings.ReadRawSetting<FilteredFileInfo>(kSettingSelectedLogo, FichiersLogo, o => o.Name);
@@ -1728,8 +1768,7 @@ namespace AppPublication.Controles
                         urls = ExportSite.GenereWebSiteAffectation(DC, cfg, structRep);
                         break;
                     case SiteEnum.Engagements:
-                        // TODO voir si le parametere groupeParticipant est toujours necessaire
-                        urls = ExportSite.GenereWebSiteEngagements(DC, EDC, genere.groupeParticipant, cfg, structRep);
+                        urls = ExportSite.GenereWebSiteEngagements(DC, EDC, genere.groupeEngages, cfg, structRep);
                         break;
                 }
             }
@@ -1749,9 +1788,8 @@ namespace AppPublication.Controles
         /// <param name="tapis"></param>
         /// <param name="groupeP">Identifiant du groupe de participant</param>
         /// <returns></returns>
-        public Task<List<FileWithChecksum>> AddWork(SiteEnum type, Phase phase, int? tapis, ConfigurationExportSite cfg, GroupeEngagements groupeP = null)
+        public Task<List<FileWithChecksum>> AddWork(SiteEnum type, Phase phase, int? tapis, ConfigurationExportSite cfg, List<GroupeEngagements> groupeP = null)
         {
-            // TODO voir si le parametre groupeP est encore necessaire
             Task<List<FileWithChecksum>> output = null;
 
             if (IsGenerationActive)
@@ -1761,7 +1799,7 @@ namespace AppPublication.Controles
                     type = type,
                     phase = phase,
                     tapis = tapis,
-                    groupeParticipant = groupeP // TODO voir si on garde
+                    groupeEngages = groupeP
                 };
 
                 output = OutilsTools.Factory.StartNew(() =>
@@ -1780,7 +1818,7 @@ namespace AppPublication.Controles
         public List<FileWithChecksum> GenereAll()
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
-            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierEngagements && CanPublierEngagements, EngagementsAbsents, EngagementsTousCombats, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes);
+            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierEngagements && CanPublierEngagements, EngagementsAbsents, EngagementsTousCombats, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes, UseIntituleCommun, IntituleCommun);
 
             if (IsGenerationActive)
             {
@@ -1824,10 +1862,16 @@ namespace AppPublication.Controles
                             foreach (EchelonEnum typeGrp in typesGrp)
                             {
                                 List<GroupeEngagements> groupesP = EDC.Deroulement.GroupesEngages.Where(g => g.Competition == comp.id && g.Type == (int)typeGrp).ToList();
+
+                                // Ce code est plus efficace qye celui qui cree une tache par groupe
+                                // sans doute car le lancement de nombreuses Task est couteux
+                                listTaskGeneration.Add(AddWork(SiteEnum.Engagements, null, null, cfg, groupesP));
+                                /*
                                 foreach (GroupeEngagements g in groupesP)
                                 {
-                                    listTaskGeneration.Add(AddWork(SiteEnum.Engagements, null, null, cfg, g));
+                                    listTaskGeneration.Add(AddWork(SiteEnum.Engagements, null, null, cfg, new List<GroupeEngagements>(1) { g }));
                                 }
+                                */
                             }
                         }
                     }                    

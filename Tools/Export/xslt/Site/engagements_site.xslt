@@ -149,7 +149,6 @@
 	<!-- TEMPLATE CATEGORIE -->
 	<xsl:template name="UneCategorie" match="competition">
 		<xsl:param name="categorie"/>
-		<xsl:param name="typeGroupe"/>
 
 		<xsl:variable name="idcompetition" select="@ID"/>
 		<xsl:variable name="apos">'</xsl:variable>
@@ -162,6 +161,7 @@
 
 		<div class="w3-panel w3-cell w3-mobile">
 			<div class="w3-card">
+				<!-- Le bandeau de la categorie -->
 				<header class="w3-bar w3-light-green w3-large">
 					<button class="w3-bar-item w3-light-green">
 						<xsl:attribute name="onclick">
@@ -197,7 +197,6 @@
 					</button>
 				</header>
 				
-				<!-- TODO penser a ajouter le tasPanelType dans tous les panels pour memoriser leurs ouverture ou non -->
 				<div class="tasClosedPanelType w3-row w3-container" style="display:none;">
 					<xsl:attribute name="id">
 						<xsl:value-of select="concat($prefixPanel, $categorie)"/>
@@ -338,8 +337,8 @@
 										<xsl:otherwise>display: none;</xsl:otherwise>
 									</xsl:choose>
 								</xsl:attribute>
-								<xsl:apply-templates select="./groupeEngagements">
-									<xsl:sort order="ascending" select="current()/@entite"/>
+								<xsl:apply-templates select="./groupeEngagements[@competition = $idcompetition and @sexe = $categorie]">
+									<xsl:sort order="ascending" select="@entite"/>
 								</xsl:apply-templates>
 							</xsl:if>
 
@@ -354,7 +353,7 @@
 										<xsl:otherwise>display: none;</xsl:otherwise>
 									</xsl:choose>
 								</xsl:attribute>
-								<xsl:apply-templates select="./groupeEngagements">
+								<xsl:apply-templates select="./groupeEngagements[@competition = $idcompetition and @sexe = $categorie]">
 									<xsl:sort order="ascending" select="//club[@ID = current()/@entite]/nom"/>
 								</xsl:apply-templates>
 							</xsl:if>
@@ -370,7 +369,7 @@
 										<xsl:otherwise>display: none;</xsl:otherwise>
 									</xsl:choose>
 								</xsl:attribute>
-								<xsl:apply-templates select="./groupeEngagements">
+								<xsl:apply-templates select="./groupeEngagements[@competition = $idcompetition and @sexe = $categorie]">
 									<xsl:sort order="ascending" select="//comite[@ID = current()/@entite]/nom"/>
 								</xsl:apply-templates>
 							</xsl:if>
@@ -386,10 +385,10 @@
 										<xsl:otherwise>display: none;</xsl:otherwise>
 									</xsl:choose>
 								</xsl:attribute>
+								<xsl:apply-templates select="./groupeEngagements[@competition = $idcompetition and @sexe = $categorie]">
+									<xsl:sort order="ascending" select="//ligue[@ID = current()/@entite]/nom"/>
+								</xsl:apply-templates>
 							</xsl:if>
-							<xsl:apply-templates select="./groupeEngagements">
-								<xsl:sort order="ascending" select="//ligue[@ID = current()/@entite]/nom"/>
-							</xsl:apply-templates>
 
 							<!-- Niveau National 5 -->
 							<!-- Niveau International 6 -->
@@ -403,7 +402,7 @@
 										<xsl:otherwise>display: none;</xsl:otherwise>
 									</xsl:choose>
 								</xsl:attribute>
-								<xsl:apply-templates select="./groupeEngagements">
+								<xsl:apply-templates select="./groupeEngagements[@competition = $idcompetition and @sexe = $categorie]">
 									<xsl:sort order="ascending" select="//pays[@ID = current()/@entite]/@nom"/>
 								</xsl:apply-templates>
 							</xsl:if>
