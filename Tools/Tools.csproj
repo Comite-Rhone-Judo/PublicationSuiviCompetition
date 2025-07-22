@@ -1939,7 +1939,9 @@
     <EmbeddedResource Include="Export\xslt\Site\groupe_engagements_site.xslt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Export\xslt\Site\engagements_site.xslt" />
+    <EmbeddedResource Include="Export\xslt\Site\engagements_site.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Export\xslt\Site\niveau_tour_combat.xslt" />

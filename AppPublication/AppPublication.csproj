@@ -138,6 +138,7 @@
     <Compile Include="ExtensionNoyau\Deroulement\DataDeroulement.cs" />
     <Compile Include="ExtensionNoyau\Deroulement\GroupeEngagements.cs" />
     <Compile Include="ExtensionNoyau\ExtensionJudoData.cs" />
+    <Compile Include="ExtensionNoyau\Deroulement\VueJudokaEqualityComparer.cs" />
     <Compile Include="IHM\Commissaire\ConfigurationPublication.xaml.cs">
       <DependentUpon>ConfigurationPublication.xaml</DependentUpon>
     </Compile>

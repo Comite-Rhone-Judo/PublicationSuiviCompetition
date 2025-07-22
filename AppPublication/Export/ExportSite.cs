@@ -226,7 +226,6 @@ namespace AppPublication.Export
                 output.Add(new FileWithChecksum(fileSave + ".html"));
 
                 // No need to regenerate those files, they are usually static unless they are updated
-                // TODO voir pour la gestion du mode Dark
                 urls = urls.Concat(ExportTools.ExportEmbeddedStyleAndJS(true, siteStruct)).ToList();
                 LogTools.Logger.Debug("GenereWebSiteIndex - ExportStyleAndJS {0}", urls.Count);
 
@@ -381,7 +380,7 @@ namespace AppPublication.Export
             }
             using (TimedLock.Lock(_docEngagements))
             {
-                _docEngagements = ExportXML.CreateDocumentEngagements(DC, EDC);  // TODO voir si le parametre participant tj ok
+                _docEngagements = ExportXML.CreateDocumentEngagements(DC, EDC);
                 ExportXML.AddPublicationInfo(ref _docEngagements, config);
                 AddStructures(ref _docEngagements);
                 LogTools.Logger.Debug("XML genere: '{0}'", _docEngagements.InnerXml);
@@ -393,24 +392,27 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static List<FileWithChecksum> GenereWebSiteEngagements(JudoData DC, ExtensionJudoData EDC, GroupeEngagements grp, ConfigurationExportSite config, ExportSiteStructure siteStruct)
+        public static List<FileWithChecksum> GenereWebSiteEngagements(JudoData DC, ExtensionJudoData EDC, List<GroupeEngagements> grps, ConfigurationExportSite config, ExportSiteStructure siteStruct)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
-            if (DC != null && EDC != null && grp != null && config != null && siteStruct != null)
+            if (DC != null && EDC != null && grps != null && config != null && siteStruct != null)
             {
-                ExportEnum type = ExportEnum.Site_Engagements;
-                string directory = siteStruct.RepertoireGroupeEngagements(grp.Id);
-                string filename = ExportTools.getFileName(type);
-                string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
-                XsltArgumentList argsList = new XsltArgumentList();
-                argsList.AddParam("idgroupe", "", grp.Id);
-                argsList.AddParam("idcompetition", "", grp.Competition);
-                AddStructureArgument(argsList, siteStruct, fileSave);
+                foreach (GroupeEngagements grp in grps)
+                {
+                    ExportEnum type = ExportEnum.Site_Engagements;
+                    string directory = siteStruct.RepertoireGroupeEngagements(grp.Id);
+                    string filename = ExportTools.getFileName(type);
+                    string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
+                    XsltArgumentList argsList = new XsltArgumentList();
+                    argsList.AddParam("idgroupe", "", grp.Id);
+                    argsList.AddParam("idcompetition", "", grp.Competition);
+                    AddStructureArgument(argsList, siteStruct, fileSave);
 
-                ExportHTML.ToHTMLSite(_docEngagements, type, fileSave, argsList);
+                    ExportHTML.ToHTMLSite(_docEngagements, type, fileSave, argsList);
 
-                output.Add(new FileWithChecksum(fileSave + ".html"));
+                    output.Add(new FileWithChecksum(fileSave + ".html"));
+                }
             }
             return output;
         }

@@ -68,21 +68,12 @@ namespace AppPublication.ExtensionNoyau.Deroulement
                         break;
                     }
                 case (int)EchelonEnum.National:
-                    {
-                        output.Add(EchelonEnum.Club);
-                        output.Add(EchelonEnum.Departement);
-                        output.Add(EchelonEnum.Ligue);
-                        output.Add(EchelonEnum.National);
-                        break;
-                    }
                 case (int)EchelonEnum.International:
                     {
-                        // TODO Voir ici car je ne suis pas sur qu'on fasse la différence entre national et international
                         output.Add(EchelonEnum.Club);
                         output.Add(EchelonEnum.Departement);
                         output.Add(EchelonEnum.Ligue);
                         output.Add(EchelonEnum.National);
-                        output.Add(EchelonEnum.International);
                         break;
                     }
                 default:
@@ -123,7 +114,8 @@ namespace AppPublication.ExtensionNoyau.Deroulement
                         IList<Epreuve> epreuvesSexe = DC.Organisation.Epreuves.Where(ep => ep.competition == competition.id && ep.sexeEnum.Enum == s).ToList();
 
                         // Recupere tous les judokas participant a une des epreuves (présents ou non)
-                        IList<vue_judoka> judokasParticipants = DC.Participants.vjudokas.Join(epreuvesSexe, vj => vj.idepreuve, ep => ep.id, (vj, ep) => vj).ToList();
+                        // on s'assure de ne pas avoir de doublon avec Distinct
+                        IList<vue_judoka> judokasParticipants = DC.Participants.vjudokas.Join(epreuvesSexe, vj => vj.idepreuve, ep => ep.id, (vj, ep) => vj).Distinct(new VueJudokaEqualityComparer()).ToList();
 
                         // Groupement par entite
                         Dictionary<EchelonEnum, List<string>> dictEntites = new Dictionary<EchelonEnum, List<string>>();

@@ -21,7 +21,6 @@ namespace AppPublication.ExtensionNoyau.Deroulement
             GetId();
         }
 
-        // TODO Voir pour gerer le cas ou l'on veut grouper plusieurs competitions par ex. Jujitsu Combat/Ne waza, pas sur qu'on le garde (complexe)
         // Identifiant du groupement {IdCompetition}-{sexe}-{ID entite}-{Type entite}
         private string _id;
         public string Id

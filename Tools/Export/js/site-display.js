@@ -48,7 +48,6 @@ function toggleAutoRefresh(cb) {
 
 // ========== Gestion des evenements ==========
 
-// TODO Remplacer les gestionnaires d'evenements par le gestionnaire par defaut
 // Callback pour le chargement de la page
 function windowOnLoad() {
     if (gUseAutoReload) {

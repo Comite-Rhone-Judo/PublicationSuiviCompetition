@@ -71,7 +71,6 @@ namespace AppPublication.Controles
         private Task _taskGeneration = null;            // La tache de generation
         private Task _taskNettoyage = null;             // La tache de nettoyage
         private GestionStatistiques _statMgr = null;
-        // TODO compte tenu du multithread, on ne peut pas avoir une instance unique ici a cause de la contextualisation des repertoires
         private ExportSiteStructure _structureRepertoires;         // La structure d'export du site
         private ExportSiteUrls _structureSiteLocal;                 // la structure d'export du site local
         private ExportSiteUrls _structureSiteDistant;                 // la structure d'export du site distant
@@ -91,7 +90,7 @@ namespace AppPublication.Controles
             public SiteEnum type { get; set; }
             public Phase phase { get; set; }
             public int? tapis { get; set; }
-            public GroupeEngagements groupeParticipant { get; set; }   // TODO a supprimer
+            public List<GroupeEngagements> groupeEngages { get; set; }
         }
         #endregion
 
@@ -1728,8 +1727,7 @@ namespace AppPublication.Controles
                         urls = ExportSite.GenereWebSiteAffectation(DC, cfg, structRep);
                         break;
                     case SiteEnum.Engagements:
-                        // TODO voir si le parametere groupeParticipant est toujours necessaire
-                        urls = ExportSite.GenereWebSiteEngagements(DC, EDC, genere.groupeParticipant, cfg, structRep);
+                        urls = ExportSite.GenereWebSiteEngagements(DC, EDC, genere.groupeEngages, cfg, structRep);
                         break;
                 }
             }
@@ -1749,9 +1747,8 @@ namespace AppPublication.Controles
         /// <param name="tapis"></param>
         /// <param name="groupeP">Identifiant du groupe de participant</param>
         /// <returns></returns>
-        public Task<List<FileWithChecksum>> AddWork(SiteEnum type, Phase phase, int? tapis, ConfigurationExportSite cfg, GroupeEngagements groupeP = null)
+        public Task<List<FileWithChecksum>> AddWork(SiteEnum type, Phase phase, int? tapis, ConfigurationExportSite cfg, List<GroupeEngagements> groupeP = null)
         {
-            // TODO voir si le parametre groupeP est encore necessaire
             Task<List<FileWithChecksum>> output = null;
 
             if (IsGenerationActive)
@@ -1761,7 +1758,7 @@ namespace AppPublication.Controles
                     type = type,
                     phase = phase,
                     tapis = tapis,
-                    groupeParticipant = groupeP // TODO voir si on garde
+                    groupeEngages = groupeP
                 };
 
                 output = OutilsTools.Factory.StartNew(() =>
@@ -1824,10 +1821,16 @@ namespace AppPublication.Controles
                             foreach (EchelonEnum typeGrp in typesGrp)
                             {
                                 List<GroupeEngagements> groupesP = EDC.Deroulement.GroupesEngages.Where(g => g.Competition == comp.id && g.Type == (int)typeGrp).ToList();
+
+                                // Ce code est plus efficace qye celui qui cree une tache par groupe
+                                // sans doute car le lancement de nombreuses Task est couteux
+                                listTaskGeneration.Add(AddWork(SiteEnum.Engagements, null, null, cfg, groupesP));
+                                /*
                                 foreach (GroupeEngagements g in groupesP)
                                 {
-                                    listTaskGeneration.Add(AddWork(SiteEnum.Engagements, null, null, cfg, g));
+                                    listTaskGeneration.Add(AddWork(SiteEnum.Engagements, null, null, cfg, new List<GroupeEngagements>(1) { g }));
                                 }
+                                */
                             }
                         }
                     }                    
