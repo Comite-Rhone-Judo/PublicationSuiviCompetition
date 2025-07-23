@@ -52,6 +52,7 @@ namespace AppPublication.Controles
         private const string kSettingEngagementsTousCombats = "EngagementsTousCombats";
         private const string kSettingUseIntituleCommun = "UseIntituleCommun";
         private const string kSettingIntituleCommun = "IntituleCommun";
+        private const string kSettingScoreEngagesGagnantPerdant = "scoreEngagesGagnantPerdant";
         private const string kSettingNbProchainsCombats = "NbProchainsCombats";
         private const string kSettingPublierAffectationTapis = "PublierAffectationTapis";
         private const string kSettingDelaiGenerationSec = "DelaiGenerationSec";
@@ -400,7 +401,7 @@ namespace AppPublication.Controles
 
 
         private ICommand _cmdAjouterLogo;
-        
+
         /// <summary>
         /// Commande permettant d'ajouter un logo dans la liste
         /// </summary>
@@ -415,15 +416,15 @@ namespace AppPublication.Controles
                             {
                                 bool allFileOk = true;
 
-                                OpenFileDialog op = new OpenFileDialog();  
-                                op.Title = "Sélectionner une image";  
+                                OpenFileDialog op = new OpenFileDialog();
+                                op.Title = "Sélectionner une image";
                                 op.Filter = "Portable Network Graphic (*.png)|*.png";
                                 op.Multiselect = true;
                                 op.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
                                 op.RestoreDirectory = true;
                                 if (op.ShowDialog() == DialogResult.OK)
                                 {
-                                    foreach(string imgFile in op.FileNames)
+                                    foreach (string imgFile in op.FileNames)
                                     {
                                         try
                                         {
@@ -461,14 +462,14 @@ namespace AppPublication.Controles
                                                 allFileOk = false;
                                             }
                                         }
-                                        catch(Exception ex)
+                                        catch (Exception ex)
                                         {
                                             LogTools.Logger.Debug("Fichier '{0}' ignore - Exception lors de la lecture du format", imgFile, ex);
                                             allFileOk = false;
                                         }
                                     }
 
-                                    if(!allFileOk)
+                                    if (!allFileOk)
                                     {
                                         AlertWindow win = new AlertWindow("Infomation", "Certains fichiers n'ont pas put être chargé. Veuillez vérifier les noms, formats et dimensions");
                                         if (win != null)
@@ -826,7 +827,7 @@ namespace AppPublication.Controles
                 }
             }
         }
-        
+
 
         int _delaiActualisationClientSec = 30;
         /// <summary>
@@ -951,7 +952,7 @@ namespace AppPublication.Controles
         }
 
 
-        
+
 
         private string _idCompetition = string.Empty;
         /// <summary>
@@ -1049,7 +1050,7 @@ namespace AppPublication.Controles
             }
         }
 
-        
+
 
         private bool _publierAffectationTapis = false;
         /// <summary>
@@ -1175,6 +1176,25 @@ namespace AppPublication.Controles
                 }
             }
         }
+
+        private bool _scoreEngagesGagnantPerdant;
+        public bool ScoreEngagesGagnantPerdant
+        {
+            get
+            {
+                return _scoreEngagesGagnantPerdant;
+            }
+            set
+            {
+                if (_scoreEngagesGagnantPerdant != value)
+                {
+                    _scoreEngagesGagnantPerdant = value;
+                    AppSettings.SaveSetting(kSettingScoreEngagesGagnantPerdant, _scoreEngagesGagnantPerdant.ToString());
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
 
 
         private StatusGenerationSite _status;
@@ -1379,6 +1399,7 @@ namespace AppPublication.Controles
                 TailleMaxPouleColonnes = AppSettings.ReadSetting(kSettingTailleMaxPouleColonnes, 5);
                 UseIntituleCommun = AppSettings.ReadSetting(kSettingUseIntituleCommun, false);
                 IntituleCommun = AppSettings.ReadSetting(kSettingIntituleCommun, string.Empty);
+                ScoreEngagesGagnantPerdant = AppSettings.ReadSetting(kSettingScoreEngagesGagnantPerdant, false);
 
                 // Recherche le logo dans la liste
                 SelectedLogo = AppSettings.ReadRawSetting<FilteredFileInfo>(kSettingSelectedLogo, FichiersLogo, o => o.Name);
@@ -1818,7 +1839,7 @@ namespace AppPublication.Controles
         public List<FileWithChecksum> GenereAll()
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
-            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierEngagements && CanPublierEngagements, EngagementsAbsents, EngagementsTousCombats, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes, UseIntituleCommun, IntituleCommun);
+            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierEngagements && CanPublierEngagements, EngagementsAbsents, EngagementsTousCombats, ScoreEngagesGagnantPerdant, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes, UseIntituleCommun, IntituleCommun);
 
             if (IsGenerationActive)
             {
@@ -1864,14 +1885,14 @@ namespace AppPublication.Controles
                                 List<GroupeEngagements> groupesP = EDC.Deroulement.GroupesEngages.Where(g => g.Competition == comp.id && g.Type == (int)typeGrp).ToList();
 
                                 // Ce code est plus efficace qye celui qui cree une tache par groupe
-                                // sans doute car le lancement de nombreuses Task est couteux
-                                listTaskGeneration.Add(AddWork(SiteEnum.Engagements, null, null, cfg, groupesP));
-                                /*
+                                // sans doute car le lancement de nombreuses Task est couteux mais il provoque une latence a la fin de la generation
+                                // listTaskGeneration.Add(AddWork(SiteEnum.Engagements, null, null, cfg, groupesP));
+                                
                                 foreach (GroupeEngagements g in groupesP)
                                 {
                                     listTaskGeneration.Add(AddWork(SiteEnum.Engagements, null, null, cfg, new List<GroupeEngagements>(1) { g }));
                                 }
-                                */
+                                
                             }
                         }
                     }                    

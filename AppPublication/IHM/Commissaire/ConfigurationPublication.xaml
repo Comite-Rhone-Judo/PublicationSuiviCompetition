@@ -100,31 +100,44 @@
                         IsChecked="{Binding Path=PublierEngagements}"
                         Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}">
                     </CheckBox>
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, provoque l'ajout du menu 'Engagements' qui liste les engages, leurs statuts et leurs combats à venir. Disponible uniquement en compétition Individuelle ou Shiai."
+                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, provoque l'ajout du menu 'Engagements' qui liste les engages, leurs statuts et leurs combats à venir. Disponible uniquement en compétition Individuelle ou Shiai.&#x0a;ATTENTION, cette option augmente sensiblement le temps de génération et le nombre de fichiers a transférer."
                            Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
                 </StackPanel>
-                <StackPanel Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="25 -10 0 0" Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <Label HorizontalAlignment="Right" Content="Publier:" Style="{StaticResource LabelStyle}"
+                <StackPanel Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical" Margin="25 -10 0 0" Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <Label HorizontalAlignment="Right" Content="Publier:" Style="{StaticResource LabelStyle}"
                            Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                    <CheckBox Style="{StaticResource CheckboxStyle}"
+                        <CheckBox Style="{StaticResource CheckboxStyle}"
                         IsChecked="{Binding Path=EngagementsAbsents}"
                         IsEnabled="{Binding Path=PublierEngagements, Mode=OneWay}"
                         Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"
                         Margin="-5 0 0 0"
                               Content="les absents">
-                    </CheckBox>
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="-5 0 0 0" ToolTip="Si cochée, affichera les judokas absents."
+                        </CheckBox>
+                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affichera les judokas absents."
                            Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                    <CheckBox Style="{StaticResource CheckboxStyle}"
+                        <CheckBox Style="{StaticResource CheckboxStyle}"
                         IsChecked="{Binding Path=EngagementsTousCombats}"
                         IsEnabled="{Binding Path=PublierEngagements, Mode=OneWay}"
                         Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"
                         Margin="10 0 0 0"
                               Content="tous les combats">
-                    </CheckBox>
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affichera tous les combats des engages, y compris ceux terminés."
+                        </CheckBox>
+                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affichera tous les combats des engages, y compris ceux terminés."
                            Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0 -5 0 0">
+                        <CheckBox Style="{StaticResource CheckboxStyle}"
+                                    IsChecked="{Binding Path=ScoreEngagesGagnantPerdant}"
+                                    IsEnabled="{Binding Path=PublierEngagements, Mode=OneWay}"
+                                    Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"
+                                    Margin="10 0 0 0"
+                                          Content="Notation Gagnant/Perdant"/>
+                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, les résultats des combats seront affichés dans l'ordre Gagnant/Perdant, sinon, selon l'ordre 1er Judoka/2nd Judoka"
+                           Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                    </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
                     <CheckBox   Content="Utiliser un intitulé commun" Style="{StaticResource CheckboxStyle}"
@@ -132,7 +145,7 @@
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, en cas de gestion avec plusieurs compétitions simultanéement (ex. Districts),  utilise l'intitulé commun configuré au lieu du titre de la 1ère compétition."/>
                 </StackPanel>
                 <StackPanel Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="30 0 0 0" > 
-                    <TextBox  TextWrapping="Wrap" Height="36" VerticalScrollBarVisibility="Auto" Margin="5 5 5 5" MinWidth="300" Text = "{Binding Path=IntituleCommun}"/>
+                    <TextBox Height="24" VerticalScrollBarVisibility="Auto" Margin="5 5 5 5" Width="300" Text = "{Binding Path=IntituleCommun}"/>
                 </StackPanel>
 
                 <telerik:RadNumericUpDown  Grid.Row="5" Grid.Column="1" Value="{Binding TailleMaxPouleColonnes}" Width="80" Height="20" Minimum="2" Maximum="999" SmallChange="1" HideTrailingZeros="True" Margin="5 0 5 0">

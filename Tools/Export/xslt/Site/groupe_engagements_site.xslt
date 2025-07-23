@@ -44,6 +44,7 @@
 	<xsl:variable select="$selectedCompetition/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
 	<xsl:variable select="$selectedCompetition/@EngagementsAbsents = 'true'" name="affEngagementsAbsents"/>
 	<xsl:variable select="$selectedCompetition/@EngagementsTousCombats = 'true'" name="affTousCombats"/>
+	<xsl:variable select="$selectedCompetition/@EngagementsScoreGP = 'true'" name="affscoreGP"/>
 	<xsl:variable select="$selectedCompetition/@DelaiActualisationClientSec" name="delayActualisationClient"/>
 	<xsl:variable select="$selectedCompetition/@kinzas = 'Oui'" name="affKinzas"/>
 	<xsl:variable select="$selectedCompetition/@type" name="typeCompetition"/>
@@ -386,24 +387,22 @@
 											<div class="w3-container w3-cell w3-cell-middle w3-padding">
 												<table class="tas-tableau-combat-participant">
 													<tbody>
-														<xsl:choose>
-															<xsl:when test="$affTousCombats">
-																<xsl:for-each select="$selectedCompetition/combats/combat[(score[1]/@judoka = $idJudoka or score[2]/@judoka = $idJudoka) and @epreuve = $idEpreuve]">
-																	<xsl:sort select="@time_programmation" data-type="number" order="ascending"/>
-																	<xsl:call-template name="UnCombat">
-																		<xsl:with-param name="niveau" select="$niveau"/>
-																	</xsl:call-template>
-																</xsl:for-each>
-															</xsl:when>
-															<xsl:otherwise>
-																<xsl:for-each select="$selectedCompetition/combats/combat[(score[1]/@judoka = $idJudoka or score[2]/@judoka = $idJudoka) and @epreuve = $idEpreuve and (@vainqueur = 0 or @vainqueur = -1)]">
-																	<xsl:sort select="@time_programmation" data-type="number" order="ascending"/>
-																	<xsl:call-template name="UnCombat">
-																		<xsl:with-param name="niveau" select="$niveau"/>
-																	</xsl:call-template>
-																</xsl:for-each>
-															</xsl:otherwise>
-														</xsl:choose>
+														<!-- Les combats n'ayant pas encore eu lieu sont tries par l'heure de programmation -->
+														<xsl:for-each select="$selectedCompetition/combats/combat[(score[1]/@judoka = $idJudoka or score[2]/@judoka = $idJudoka) and @epreuve = $idEpreuve and (@vainqueur = 0 or @vainqueur = -1)]">
+															<xsl:sort select="@time_programmation" data-type="number" order="descending"/>
+															<xsl:call-template name="UnCombat">
+																<xsl:with-param name="niveau" select="$niveau"/>
+															</xsl:call-template>
+														</xsl:for-each>
+														<xsl:if test="$affTousCombats">
+															<!-- Les combats deja realises sont tries par la date de fin -->
+															<xsl:for-each select="$selectedCompetition/combats/combat[(score[1]/@judoka = $idJudoka or score[2]/@judoka = $idJudoka) and @epreuve = $idEpreuve and @vainqueur != 0 and @vainqueur != -1]">
+																<xsl:sort select="@time_fin" data-type="number" order="descending"/>
+																<xsl:call-template name="UnCombat">
+																	<xsl:with-param name="niveau" select="$niveau"/>
+																</xsl:call-template>
+															</xsl:for-each>
+														</xsl:if>
 													</tbody>
 												</table>
 											</div>
@@ -594,6 +593,14 @@
 								<xsl:choose>
 									<!-- Combat pas encore termine, on affiche le tapis s'il est assigne -->
 									<xsl:when test="./@vainqueur = 0 or ./@vainqueur = -1">
+										
+										<xsl:variable name="myTest">
+											<xsl:call-template name="ordreCombatTapis">
+												<xsl:with-param name="combat" select="."/>
+											</xsl:call-template>
+										</xsl:variable>
+										<xsl:value-of select="$myTest"/>
+
 										<xsl:choose>
 											<xsl:when test ="./@tapis > 0">
 												Tapis <xsl:value-of select="./@tapis"/>
@@ -605,9 +612,18 @@
 									</xsl:when>
 									<xsl:otherwise>
 										<!-- Combat termine, on va afficher le résultat du combat -->
-										<xsl:call-template name="scoreCombat">
-											<xsl:with-param name="combat" select="."/>
-										</xsl:call-template>
+										<xsl:choose>
+											<xsl:when test="$affscoreGP">
+												<xsl:call-template name="scoreCombatGagnantPerdant">
+													<xsl:with-param name="combat" select="."/>
+												</xsl:call-template>
+											</xsl:when>
+											<xsl:otherwise>
+												<xsl:call-template name="scoreCombatPremierSecond">
+													<xsl:with-param name="combat" select="."/>
+												</xsl:call-template>
+											</xsl:otherwise>
+										</xsl:choose>
 									</xsl:otherwise>
 								</xsl:choose>
 							</td>
@@ -729,8 +745,8 @@
 		</xsl:if>
 	</xsl:template>
 
-	<!-- TEMPLATE Score d'un combat -->
-	<xsl:template name="scoreCombat">
+	<!-- TEMPLATE Score d'un combat G/P -->
+	<xsl:template name="scoreCombatGagnantPerdant">
 		<xsl:param name="combat"/>
 
 		<xsl:variable name="kinzavainqueur">
@@ -861,6 +877,94 @@
 		</div>
 	</xsl:template>
 
+	<!-- TEMPLATE Score d'un combat 1er/2nd -->
+	<xsl:template name="scoreCombatPremierSecond">
+		<xsl:param name="combat"/>
+
+		<xsl:variable name="kinzapremier">
+			<xsl:value-of select="$combat/score[1]/@kinza"/>
+		</xsl:variable>
+		<xsl:variable name="kinzasecond">
+			<xsl:value-of select="$combat/score[2]/@kinza"/>
+		</xsl:variable>
+		<xsl:variable name="scorepremier">
+			<xsl:value-of select="$combat/score[1]/@score"/>
+		</xsl:variable>
+		<xsl:variable name="scoresecond">
+			<xsl:value-of select="$combat/score[2]/@score"/>
+		</xsl:variable>
+		<xsl:variable name="penalitepremier">
+			<xsl:value-of select="$combat/score[1]/@penalite"/>
+		</xsl:variable>
+		<xsl:variable name="penalitesecond">
+			<xsl:value-of select="$combat/score[2]/@penalite"/>
+		</xsl:variable>
+
+		<div class="w3-center tas-resultat">
+			<span class="w3-tiny">
+				<xsl:choose>
+					<xsl:when test="$scorepremier != ''">
+						<xsl:choose>
+							<xsl:when test="$typeCompetition != '1'">
+								<xsl:value-of select="substring($scorepremier, 1, 3)"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="$scorepremier"/>
+							</xsl:otherwise>
+						</xsl:choose>
+						<xsl:if test="$typeCompetition != '1'">
+							<span class="w3-text-red">
+								<xsl:choose>
+									<xsl:when test="substring($penalitepremier, 1, 1) = '-' ">
+										<xsl:value-of select="$penalitepremier"/>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="concat('-', $penalitepremier)"/>
+									</xsl:otherwise>
+								</xsl:choose>
+							</span>
+							<xsl:if test="$affKinzas">
+								<span class="w3-tiny w3-text-green">
+									(<xsl:value-of select="$kinzapremier"/>)
+								</span>
+							</xsl:if>
+						</xsl:if>
+						<xsl:text disable-output-escaping="yes">/</xsl:text>
+						<xsl:choose>
+							<xsl:when test="$typeCompetition != '1'">
+								<xsl:value-of select="substring($scoresecond, 1, 3)"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="$scoresecond"/>
+							</xsl:otherwise>
+						</xsl:choose>
+						<xsl:if test="$typeCompetition != '1'">
+							<span class="w3-text-red">
+								<xsl:choose>
+									<xsl:when test="substring($penalitesecond, 1, 1) = '-' ">
+										<xsl:value-of select="$penalitesecond"/>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="concat('-', $penalitesecond)"/>
+									</xsl:otherwise>
+								</xsl:choose>
+							</span>
+							<xsl:if test="$affKinzas">
+								<span class="w3-tiny w3-text-green">
+									(<xsl:value-of select="$kinzasecond"/>)
+								</span>
+							</xsl:if>
+						</xsl:if>
+					</xsl:when>
+					<!-- Pas de score (combat pas encore realise) -->
+					<xsl:otherwise>
+						&nbsp;
+					</xsl:otherwise>
+				</xsl:choose>
+			</span>
+		</div>
+	</xsl:template>
+
 	<!-- TEMPLATE Score vide -->
 	<xsl:template name="scoreVide">
 		<div class="w3-left-align">
@@ -868,6 +972,18 @@
 				&nbsp;
 			</span>
 		</div>
+	</xsl:template>
+
+	<xsl:template name="ordreCombatTapis">
+		<xsl:param name="combat"/>
+		
+		<!-- Selectionne tous les combats non termines sur le tapis du combat -->
+		<xsl:for-each select="$selectedCompetition/combats/combat[@tapis = $combat/@tapis and (@vainqueur = 0 or @vainqueur = -1)]">
+			<xsl:sort select="@time_programmation" data-type="number" order="ascending"/>
+			<xsl:if test="./@id = $combat/@id">
+				<xsl:value-of select="position()"/>
+			</xsl:if>
+		</xsl:for-each>
 	</xsl:template>
 
 </xsl:stylesheet>

@@ -41,6 +41,8 @@ namespace AppPublication.Export
                 attrEngagementsAbsents.Value = config.EngagementsAbsents.ToString().ToLower();
                 XmlAttribute attrEngagementsTousCombats = doc.CreateAttribute(ConstantXML.EngagementsTousCombats);
                 attrEngagementsTousCombats.Value = config.EngagementsTousCombats.ToString().ToLower();
+                XmlAttribute attrEngagementsScoreGP = doc.CreateAttribute(ConstantXML.EngagementsScoreGP);
+                attrEngagementsScoreGP.Value = config.EngagementsScoreGP.ToString().ToLower();
 
                 XmlAttribute attrDelaiActualisationClient = doc.CreateAttribute(ConstantXML.delaiActualisationClientSec);
                 attrDelaiActualisationClient.Value = config.DelaiActualisationClientSec.ToString();
@@ -65,6 +67,7 @@ namespace AppPublication.Export
                 node.Attributes.Append(attrEngagements);
                 node.Attributes.Append(attrEngagementsAbsents);
                 node.Attributes.Append(attrEngagementsTousCombats);
+                node.Attributes.Append(attrEngagementsScoreGP);
                 node.Attributes.Append(attrDelaiActualisationClient);
                 node.Attributes.Append(attrNbProchainsCombats);
                 node.Attributes.Append(attrDateGeneration);

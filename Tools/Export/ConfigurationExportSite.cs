@@ -7,13 +7,14 @@ namespace Tools.Export
     public class ConfigurationExportSite
     {
 
-        public ConfigurationExportSite(bool pubPC = false, bool pubAT = true, bool pubP = true, bool partAbsent = false, bool partTC = false, long delAC = 30, int nbPC = 6, string pMsg = "", string pLogo = "", bool pec = false, bool ptec = false, int maxpc = 5, bool pUseIC = false, string pIC = "")
+        public ConfigurationExportSite(bool pubPC = false, bool pubAT = true, bool pubP = true, bool partAbsent = false, bool partTC = false, bool scoreGP = false, long delAC = 30, int nbPC = 6, string pMsg = "", string pLogo = "", bool pec = false, bool ptec = false, int maxpc = 5, bool pUseIC = false, string pIC = "")
         {
             PublierProchainsCombats = pubPC;
             PublierAffectationTapis = pubAT;
             PublierEngagements = pubP;
             EngagementsAbsents = partAbsent;
             EngagementsTousCombats = partTC;
+            EngagementsScoreGP = scoreGP;
             DelaiActualisationClientSec = delAC;
             NbProchainsCombats = nbPC;
             MsgProchainCombats = pMsg;
@@ -23,6 +24,7 @@ namespace Tools.Export
             TailleMaxPouleColonnes = maxpc;
             UseIntituleCommun = pUseIC;
             IntituleCommun = pIC;
+
         }
 
         public bool PublierProchainsCombats = false;
@@ -30,6 +32,7 @@ namespace Tools.Export
         public bool PublierEngagements = false;
         public bool EngagementsAbsents = false;
         public bool EngagementsTousCombats = false;
+        public bool EngagementsScoreGP = false;
         public long DelaiActualisationClientSec = 30;
         public int NbProchainsCombats = 6;
         public string MsgProchainCombats = string.Empty;
