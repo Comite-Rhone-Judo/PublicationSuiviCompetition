@@ -7,7 +7,7 @@ namespace Tools.Export
     public class ConfigurationExportSite
     {
 
-        public ConfigurationExportSite(bool pubPC = false, bool pubAT = true, bool pubP = true, bool partAbsent = false, bool partTC = false, bool scoreGP = false, long delAC = 30, int nbPC = 6, string pMsg = "", string pLogo = "", bool pec = false, bool ptec = false, int maxpc = 5, bool pUseIC = false, string pIC = "")
+        public ConfigurationExportSite(bool pubPC = false, bool pubAT = true, bool pubP = true, bool partAbsent = false, bool partTC = false, bool scoreGP = false, bool affPosC = false, long delAC = 30, int nbPC = 6, string pMsg = "", string pLogo = "", bool pec = false, bool ptec = false, int maxpc = 5, bool pUseIC = false, string pIC = "")
         {
             PublierProchainsCombats = pubPC;
             PublierAffectationTapis = pubAT;
@@ -15,6 +15,7 @@ namespace Tools.Export
             EngagementsAbsents = partAbsent;
             EngagementsTousCombats = partTC;
             EngagementsScoreGP = scoreGP;
+            AfficherPositionCombat = affPosC;
             DelaiActualisationClientSec = delAC;
             NbProchainsCombats = nbPC;
             MsgProchainCombats = pMsg;
@@ -33,6 +34,7 @@ namespace Tools.Export
         public bool EngagementsAbsents = false;
         public bool EngagementsTousCombats = false;
         public bool EngagementsScoreGP = false;
+        public bool AfficherPositionCombat = false;
         public long DelaiActualisationClientSec = 30;
         public int NbProchainsCombats = 6;
         public string MsgProchainCombats = string.Empty;

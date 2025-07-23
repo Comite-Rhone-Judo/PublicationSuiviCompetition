@@ -1936,7 +1936,9 @@
     <EmbeddedResource Include="Export\img\site\equal-sign-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Export\xslt\Site\groupe_engagements_site.xslt" />
+    <EmbeddedResource Include="Export\xslt\Site\groupe_engagements_site.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Export\xslt\Site\engagements_site.xslt">

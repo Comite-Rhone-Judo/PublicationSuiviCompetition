@@ -52,7 +52,8 @@ namespace AppPublication.Controles
         private const string kSettingEngagementsTousCombats = "EngagementsTousCombats";
         private const string kSettingUseIntituleCommun = "UseIntituleCommun";
         private const string kSettingIntituleCommun = "IntituleCommun";
-        private const string kSettingScoreEngagesGagnantPerdant = "scoreEngagesGagnantPerdant";
+        private const string kSettingScoreEngagesGagnantPerdant = "ScoreEngagesGagnantPerdant";
+        private const string kSettingAfficherPositionCombat = "AfficherPositionCombat";
         private const string kSettingNbProchainsCombats = "NbProchainsCombats";
         private const string kSettingPublierAffectationTapis = "PublierAffectationTapis";
         private const string kSettingDelaiGenerationSec = "DelaiGenerationSec";
@@ -1195,6 +1196,24 @@ namespace AppPublication.Controles
             }
         }
 
+        private bool _afficherPositionCombat;
+        public bool AfficherPositionCombat
+        {
+            get
+            {
+                return _afficherPositionCombat;
+            }
+            set
+            {
+                if( _afficherPositionCombat != value)
+                {
+                    _afficherPositionCombat = value;
+                    AppSettings.SaveSetting(kSettingAfficherPositionCombat, _afficherPositionCombat.ToString());
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
 
 
         private StatusGenerationSite _status;
@@ -1400,6 +1419,7 @@ namespace AppPublication.Controles
                 UseIntituleCommun = AppSettings.ReadSetting(kSettingUseIntituleCommun, false);
                 IntituleCommun = AppSettings.ReadSetting(kSettingIntituleCommun, string.Empty);
                 ScoreEngagesGagnantPerdant = AppSettings.ReadSetting(kSettingScoreEngagesGagnantPerdant, false);
+                AfficherPositionCombat = AppSettings.ReadSetting(kSettingAfficherPositionCombat, false);
 
                 // Recherche le logo dans la liste
                 SelectedLogo = AppSettings.ReadRawSetting<FilteredFileInfo>(kSettingSelectedLogo, FichiersLogo, o => o.Name);
@@ -1839,7 +1859,7 @@ namespace AppPublication.Controles
         public List<FileWithChecksum> GenereAll()
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
-            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierEngagements && CanPublierEngagements, EngagementsAbsents, EngagementsTousCombats, ScoreEngagesGagnantPerdant, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes, UseIntituleCommun, IntituleCommun);
+            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierEngagements && CanPublierEngagements, EngagementsAbsents, EngagementsTousCombats, ScoreEngagesGagnantPerdant, AfficherPositionCombat, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes, UseIntituleCommun, IntituleCommun);
 
             if (IsGenerationActive)
             {

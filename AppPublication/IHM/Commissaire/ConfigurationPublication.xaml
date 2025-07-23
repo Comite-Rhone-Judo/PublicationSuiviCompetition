@@ -127,16 +127,25 @@
                            Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0 -5 0 0">
+                    <StackPanel Orientation="Horizontal" Margin="0 -15 0 0">
+                        <Label HorizontalAlignment="Right" Content="Afficher:" Style="{StaticResource LabelStyle}"
+                                Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
                         <CheckBox Style="{StaticResource CheckboxStyle}"
                                     IsChecked="{Binding Path=ScoreEngagesGagnantPerdant}"
                                     IsEnabled="{Binding Path=PublierEngagements, Mode=OneWay}"
                                     Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"
-                                    Margin="10 0 0 0"
-                                          Content="Notation Gagnant/Perdant"/>
+                                    Margin="0 0 0 0"
+                                          Content="Scores G/P "/>
                         <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, les résultats des combats seront affichés dans l'ordre Gagnant/Perdant, sinon, selon l'ordre 1er Judoka/2nd Judoka"
                            Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
-
+                        <CheckBox Style="{StaticResource CheckboxStyle}"
+                                    IsChecked="{Binding Path=AfficherPositionCombat}"
+                                    IsEnabled="{Binding Path=PublierEngagements, Mode=OneWay}"
+                                    Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"
+                                    Margin="10 0 0 0"
+                                          Content="Position combat"/>
+                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affiche la position du combat dans l'ordre de déroulement sur le tapis."
+                           Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">

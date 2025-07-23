@@ -593,17 +593,25 @@
 								<xsl:choose>
 									<!-- Combat pas encore termine, on affiche le tapis s'il est assigne -->
 									<xsl:when test="./@vainqueur = 0 or ./@vainqueur = -1">
-										
-										<xsl:variable name="myTest">
-											<xsl:call-template name="ordreCombatTapis">
-												<xsl:with-param name="combat" select="."/>
-											</xsl:call-template>
-										</xsl:variable>
-										<xsl:value-of select="$myTest"/>
+
+										<xsl:if test="$affPositionCombat">
+											<xsl:variable name="posCombat">
+												<xsl:call-template name="ordreCombatTapis">
+													<xsl:with-param name="combat" select="."/>
+												</xsl:call-template>
+											</xsl:variable>
+										</xsl:if>
 
 										<xsl:choose>
 											<xsl:when test ="./@tapis > 0">
-												Tapis <xsl:value-of select="./@tapis"/>
+												<xsl:choose>
+													<xsl:when test="$affPositionCombat">
+														Tapis <xsl:value-of select="./@tapis"/> (n&#176; <xsl:value-of select="$posCombat"/>)
+													</xsl:when>
+													<xsl:otherwise>
+														Tapis <xsl:value-of select="./@tapis"/>		
+													</xsl:otherwise>
+												</xsl:choose>
 											</xsl:when>
 											<xsl:otherwise>
 												A affecter
@@ -974,6 +982,7 @@
 		</div>
 	</xsl:template>
 
+	<!-- TEMPLATE Calcul de la position du combat dans le deroulement du tapis -->
 	<xsl:template name="ordreCombatTapis">
 		<xsl:param name="combat"/>
 		
