@@ -1378,7 +1378,7 @@ namespace AppPublication.Controles
                 PouleToujoursEnColonnes = AppSettings.ReadSetting(kSettingPouleToujoursEnColonnes, false);
                 TailleMaxPouleColonnes = AppSettings.ReadSetting(kSettingTailleMaxPouleColonnes, 5);
                 UseIntituleCommun = AppSettings.ReadSetting(kSettingUseIntituleCommun, false);
-                IntituleCommun = AppSettings.ReadSetting(kSettingUseIntituleCommun, string.Empty);
+                IntituleCommun = AppSettings.ReadSetting(kSettingIntituleCommun, string.Empty);
 
                 // Recherche le logo dans la liste
                 SelectedLogo = AppSettings.ReadRawSetting<FilteredFileInfo>(kSettingSelectedLogo, FichiersLogo, o => o.Name);

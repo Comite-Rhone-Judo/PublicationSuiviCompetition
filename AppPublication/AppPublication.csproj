@@ -281,12 +281,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Logo_AppPublication.ico" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="NLog">
       <Version>5.3.4</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Logo_AppPublication.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

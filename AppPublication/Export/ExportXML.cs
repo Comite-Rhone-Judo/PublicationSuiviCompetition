@@ -747,10 +747,6 @@ namespace AppPublication.Export
                     competition = DC.Organisation.Competitions.Where(o => o.id == ep.competition).FirstOrDefault();
                 }
             }
-            else
-            {
-                // Pas de phase specifiee, on va chercher
-            }
 
             // TODO Voir comment on gere si on veut avoir un intiule commun
             if (competition == null)

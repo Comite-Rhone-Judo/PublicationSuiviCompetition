@@ -11,6 +11,7 @@
 	<xsl:param name="style"></xsl:param>
 	<xsl:param name="js"></xsl:param>
 	<xsl:param name="istapis"/>
+	<xsl:param name="useIntituleCommun"/>
 	<xsl:param name="imgPath"/>
 	<xsl:param name="jsPath"/>
 	<xsl:param name="cssPath"/>
@@ -118,11 +119,24 @@
 			</xsl:call-template>
 
 			<!-- CONTENU -->
+
+			<xsl:variable name="titreCompetition">
+				<xsl:choose>
+					<xsl:when test="$useIntituleCommun = 'true'">
+						<xsl:value-of select="/competition/@IntituleCommun"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="./titre"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable> 
+			
+			
 			<!-- Nom de la competition + Catégorie si on affiche une epreuve particuliere -->
 			<div class="w3-container w3-blue w3-center tas-competition-bandeau">
 				<div>
 					<h4>
-						<xsl:value-of select="./titre"/>
+						<xsl:value-of select="$titreCompetition"/>
 					</h4>
 				</div>
 				<xsl:if test="$istapis = 'epreuve'">

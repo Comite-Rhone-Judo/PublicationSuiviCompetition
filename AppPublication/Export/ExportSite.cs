@@ -97,7 +97,7 @@ namespace AppPublication.Export
                     }
                     argsList2.AddParam("typePoule", "", typePoule);
                     argsList2.AddParam("tailleMaxPouleColonne", "", config.TailleMaxPouleColonnes);
-
+                    
                     XmlDocument xmlResultat = ExportXML.CreateDocumentPhase(i_vue_epreuve, phase, DC);
                     ExportXML.AddPublicationInfo(ref xmlResultat, config);
                     ExportXML.AddCeintures(ref xmlResultat, DC);
@@ -181,6 +181,9 @@ namespace AppPublication.Export
                 string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
                 XsltArgumentList argsList = new XsltArgumentList();
                 argsList.AddParam("istapis", "", "alltapis");
+                // si plus d'une competition et intitule commun configure, on l'utilise plutot que le titre d'une des competitions
+                bool useIntituleCommun = (DC.competitions.Count() > 1) && config.UseIntituleCommun && !string.IsNullOrEmpty(config.IntituleCommun);
+                argsList.AddParam("useIntituleCommun", "", useIntituleCommun.ToString().ToLower());
                 AddStructureArgument(argsList, siteStruct, fileSave);
 
                 XmlDocument xml = ExportXML.CreateDocumentFeuilleCombat(DC, null, null);
