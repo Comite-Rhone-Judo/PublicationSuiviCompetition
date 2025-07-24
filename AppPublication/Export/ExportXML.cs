@@ -604,7 +604,7 @@ namespace AppPublication.Export
                     xcompetition.Add(xphases);
 
                     // Ajoute les combats de la competitions (les combats des phases des epreuves de la competition)
-                    IList<Combat> combats = DC.Deroulement.Combats.Join(phases, c => c.phase, p => p.id, (c, p) => c).ToList();
+                    IList<Combat> combats = DC.Deroulement.Combats.Join(phases, c => c.phase, p => p.id, (c, p) => c).Distinct(new CombatEqualityComparer()).ToList();
                     XElement xcombats = new XElement(ConstantXML.GroupeEngagements_combats);
                     foreach (Combat c in combats)
                     {

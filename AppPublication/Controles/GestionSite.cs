@@ -86,10 +86,10 @@ namespace AppPublication.Controles
         private string _ftpEasyConfig = string.Empty;   // Le serveur FTP EasyConfig
         private Uri _httpEasyConfig = null;  // Le serveur http EasyConfig
 
-        private long _generationCounter = 0;    // Nombre de generation realisees depuis le demarrage
-        private int _workCounter = 0;            // Compteur de travail en cours pour la generation du site
-        private int _nbGeneration = 0;          // Nombre de generation en cours pour le site distant   
-        private List<float> _allTaskProgress = new List<float>();     // Progression de chacune des taches
+        private long _generationCounter = 0;                        // Nombre de generation realisees depuis le demarrage
+        private int _workCounter = 0;                               // Compteur de travail en cours pour la generation du site
+        private int _nbGeneration = 0;                              // Nombre de generation en cours pour le site distant   
+        private List<int> _allTaskProgress = new List<int>();       // Progression de chacune des taches (clef = Id)
 
         /// <summary>
         /// Structure interne pour gerer les parametres de generation du site
@@ -1850,7 +1850,7 @@ namespace AppPublication.Controles
 
                 int workId = _workCounter;    // New work ID
                 _workCounter++;
-                _allTaskProgress.Add(0.0f);
+                _allTaskProgress.Add(0);
                 output = OutilsTools.Factory.StartNew(() =>
                 {
                     Progress<GenerationProgressInfo> progress = new Progress<GenerationProgressInfo>(onReportProgress);
@@ -1990,28 +1990,29 @@ namespace AppPublication.Controles
         {
             try
             {
-                // NbGeneration == -1 indique une progression sur un compteur existant
                 if(progressInfo.IsProgress)
                 {
                     // progress est le pourcentage de retour d'une seule tache
                     _allTaskProgress[progressInfo.Id] = progressInfo.Progress;
+
+                    // Calcul le pourcentage total de progression
+                    int total = 0;
+                    foreach (int p in _allTaskProgress)
+                    {
+                        total += p;
+                    }
+
+                    Status.Progress = (int)Math.Round(100.0 * total / _nbGeneration);
                 }
                 else if (progressInfo.IsInit)
                 {
+                    // Ajoute au nombre total de generation prevue
                     _nbGeneration += progressInfo.NbGeneration;
                 }
                 else
                 {
                     throw new ArgumentException("Notification de progression incoherente");
                 }
-
-                int total = 0;
-                foreach (int p in _allTaskProgress)
-                {
-                    total += p;
-                }
-
-                Status.Progress = (int)Math.Round(100.0 * total / _nbGeneration);
             }
             catch(Exception ex)
             {

@@ -135,6 +135,7 @@
     </Compile>
     <Compile Include="Controles\GestionStatistiques.cs" />
     <Compile Include="Controles\RelayCommand.cs" />
+    <Compile Include="ExtensionNoyau\Deroulement\CombatEqualityComparer.cs" />
     <Compile Include="ExtensionNoyau\Deroulement\DataDeroulement.cs" />
     <Compile Include="ExtensionNoyau\Deroulement\GroupeEngagements.cs" />
     <Compile Include="ExtensionNoyau\ExtensionJudoData.cs" />
