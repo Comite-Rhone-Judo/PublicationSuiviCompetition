@@ -156,7 +156,7 @@ namespace AppPublication.Tools
                     }
                 case StateGenerationEnum.Generating:
                     {
-                        msg = "Generation du site ...";
+                        msg = "Génération du site ...";
                         break;
                     }
                 case StateGenerationEnum.Cleaning:
