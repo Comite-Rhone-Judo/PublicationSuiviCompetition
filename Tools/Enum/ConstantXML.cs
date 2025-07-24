@@ -56,6 +56,7 @@
         public const string EngagementsAbsents = "EngagementsAbsents";
         public const string EngagementsTousCombats = "EngagementsTousCombats";
         public const string EngagementsScoreGP = "EngagementsScoreGP";
+        public const string EngagementsPositionCombat = "EngagementsPositionCombat";
         public const string delaiActualisationClientSec = "DelaiActualisationClientSec";
         public const string nbProchainsCombats = "NbProchainsCombats";
         public const string msgProchainsCombats = "MsgProchainsCombats";

@@ -297,12 +297,33 @@
         Syncing = 2,    // site distant en cours de synchronisation
         Cleaning = 3    // site distant en cours de nettoyage
     -->
-    
+
     <Style TargetType="telerik:RadProgressBar" x:Key="StatusProgressBarStyle">
         <Style.Setters>
             <Setter Property="Value" Value="{Binding Path=Progress}"/>
             <Setter Property="Visibility" Value="Collapsed"/>
             <Setter Property="IsIndeterminate" Value="{Binding Path=IsProgressUnknown}"/> 
+        </Style.Setters>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=State}" Value="2">
+                <Setter Property="Visibility" Value="Visible" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Path=State}" Value="3">
+                <Setter Property="Visibility" Value="Visible" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="Label" x:Key="StatusProgressLabelStyle">
+        <Style.Setters>
+            <Setter Property="Foreground" Value="#EEEEEE" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontFamily" Value="{telerik:Windows8Resource ResourceKey=FontFamily}" />
+            <Setter Property="FontStyle"  Value="Italic"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Content" Value="{Binding Path=Progress}"/>
+            <Setter Property="ContentStringFormat" Value="({0}%)"/>
+            <Setter Property="Visibility" Value="Collapsed"/>
         </Style.Setters>
         <Style.Triggers>
             <DataTrigger Binding="{Binding Path=State}" Value="2">

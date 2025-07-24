@@ -167,6 +167,7 @@
     <Compile Include="Tools\Enum\TypePouleEnum.cs" />
     <Compile Include="Tools\FileTools.cs" />
     <Compile Include="Tools\FilteredFileInfo.cs" />
+    <Compile Include="Tools\GenerationProgressInfo.cs" />
     <Compile Include="Tools\LectureFile\LectureStructures.cs" />
     <Compile Include="Tools\StatExecution.cs" />
     <Compile Include="Tools\StatusGenerationSite.cs" />

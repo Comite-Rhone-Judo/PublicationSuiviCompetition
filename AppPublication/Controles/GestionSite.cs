@@ -29,6 +29,8 @@ using Tools.Export;
 using Tools.Outils;
 using Tools.Windows;
 using KernelImpl.Noyau.Organisation;
+using System.Collections;
+using NLog;
 
 namespace AppPublication.Controles
 {
@@ -84,7 +86,10 @@ namespace AppPublication.Controles
         private string _ftpEasyConfig = string.Empty;   // Le serveur FTP EasyConfig
         private Uri _httpEasyConfig = null;  // Le serveur http EasyConfig
 
-        private long _generationCounter = 0;
+        private long _generationCounter = 0;    // Nombre de generation realisees depuis le demarrage
+        private int _workCounter = 0;            // Compteur de travail en cours pour la generation du site
+        private int _nbGeneration = 0;          // Nombre de generation en cours pour le site distant   
+        private List<float> _allTaskProgress = new List<float>();     // Progression de chacune des taches
 
         /// <summary>
         /// Structure interne pour gerer les parametres de generation du site
@@ -1778,7 +1783,7 @@ namespace AppPublication.Controles
         /// Declenche l'exportation
         /// </summary>
         /// <param name="genere">Type d'exportation</param>
-        private List<FileWithChecksum> Exporter(GenereSiteStruct genere, ConfigurationExportSite cfg)
+        private List<FileWithChecksum> Exporter(GenereSiteStruct genere, ConfigurationExportSite cfg, IProgress<GenerationProgressInfo> progress, int workId)
         {
             List<FileWithChecksum> urls = new List<FileWithChecksum>();
 
@@ -1791,31 +1796,31 @@ namespace AppPublication.Controles
                 switch (genere.type)
                 {
                     case SiteEnum.AllTapis:
-                        urls = ExportSite.GenereWebSiteAllTapis(DC, cfg, structRep);
+                        urls = ExportSite.GenereWebSiteAllTapis(DC, cfg, structRep, progress, workId);
                         break;
                     case SiteEnum.Classement:
-                        urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), cfg, structRep);
+                        urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), cfg, structRep, progress, workId);
                         break;
                     case SiteEnum.Index:
-                        urls = ExportSite.GenereWebSiteIndex(DC, cfg, structRep);
+                        urls = ExportSite.GenereWebSiteIndex(DC, cfg, structRep, progress, workId);
                         break;
                     case SiteEnum.Menu:
-                        urls = ExportSite.GenereWebSiteMenu(DC, EDC, cfg, structRep);
+                        urls = ExportSite.GenereWebSiteMenu(DC, EDC, cfg, structRep, progress, workId);
                         break;
                     case SiteEnum.Phase:
-                        urls = ExportSite.GenereWebSitePhase(DC, genere.phase, cfg, structRep);
+                        urls = ExportSite.GenereWebSitePhase(DC, genere.phase, cfg, structRep, progress, workId);
                         break;
                     case SiteEnum.AffectationTapis:
-                        urls = ExportSite.GenereWebSiteAffectation(DC, cfg, structRep);
+                        urls = ExportSite.GenereWebSiteAffectation(DC, cfg, structRep, progress, workId);
                         break;
                     case SiteEnum.Engagements:
-                        urls = ExportSite.GenereWebSiteEngagements(DC, EDC, genere.groupeEngages, cfg, structRep);
+                        urls = ExportSite.GenereWebSiteEngagements(DC, EDC, genere.groupeEngages, cfg, structRep, progress, workId);
                         break;
                 }
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur rencontree lors de l'export");
+                LogTools.Logger.Error(ex, "Erreur rencontree lors de l'export {0}", genere.type);
             }
 
             return urls;
@@ -1843,14 +1848,19 @@ namespace AppPublication.Controles
                     groupeEngages = groupeP
                 };
 
+                int workId = _workCounter;    // New work ID
+                _workCounter++;
+                _allTaskProgress.Add(0.0f);
                 output = OutilsTools.Factory.StartNew(() =>
                 {
-                    return Exporter(export, cfg);
+                    Progress<GenerationProgressInfo> progress = new Progress<GenerationProgressInfo>(onReportProgress);
+                    return Exporter(export, cfg, progress, workId);
                 });
             }
 
             return output;
         }
+
 
         /// <summary>
         /// Genere la totalite du site
@@ -1877,6 +1887,9 @@ namespace AppPublication.Controles
 
                     // Initialise les donnees partagees de generation
                     ExportSite.InitSharedData(DC, EDC, cfg);
+                    _allTaskProgress.Clear();
+                    _workCounter = 0;
+                    _nbGeneration = 0;
 
                     listTaskGeneration.Add(AddWork(SiteEnum.Index, null, null, cfg, null));
                     listTaskGeneration.Add(AddWork(SiteEnum.Menu, null, null, cfg, null));
@@ -1906,13 +1919,13 @@ namespace AppPublication.Controles
 
                                 // Ce code est plus efficace qye celui qui cree une tache par groupe
                                 // sans doute car le lancement de nombreuses Task est couteux mais il provoque une latence a la fin de la generation
-                                // listTaskGeneration.Add(AddWork(SiteEnum.Engagements, null, null, cfg, groupesP));
-                                
-                                foreach (GroupeEngagements g in groupesP)
-                                {
-                                    listTaskGeneration.Add(AddWork(SiteEnum.Engagements, null, null, cfg, new List<GroupeEngagements>(1) { g }));
-                                }
-                                
+                                listTaskGeneration.Add(AddWork(SiteEnum.Engagements, null, null, cfg, groupesP));
+
+                                // foreach (GroupeEngagements g in groupesP)
+                                // {
+                                //   _nbTaskGeneration++;
+                                //  listTaskGeneration.Add(AddWork(SiteEnum.Engagements, null, null, cfg, new List<GroupeEngagements>(1) { g }));
+                                // }
                             }
                         }
                     }                    
@@ -1953,7 +1966,7 @@ namespace AppPublication.Controles
         /// <returns></returns>
         private async Task<List<FileWithChecksum>> WaitGenereAll(List<Task<List<FileWithChecksum>>> listTaskGeneration)
         {
-            int totalTask = listTaskGeneration.Count();
+            // int totalTask = _workCounter;
             int nTask = 0;
             List<FileWithChecksum> fichiersGeneres = new List<FileWithChecksum>();
             while (listTaskGeneration.Any())
@@ -1961,11 +1974,49 @@ namespace AppPublication.Controles
                 Task<List<FileWithChecksum>> finishedTask = await Task.WhenAny(listTaskGeneration.ToArray());
                 listTaskGeneration.Remove(finishedTask);
                 nTask++;
-                Status.Progress = (int)Math.Round(100.0 * nTask / totalTask);
+                // Status.Progress = (int)Math.Round(100.0 * nTask / totalTask);
                 fichiersGeneres = fichiersGeneres.Concat(await finishedTask).ToList();
             }
 
             return fichiersGeneres;
+        }
+
+
+        /// <summary>
+        /// Callback pour rapporter la progression de la generation du site
+        /// </summary>
+        /// <param name="progressInfo"></param>
+        private void onReportProgress(GenerationProgressInfo progressInfo)
+        {
+            try
+            {
+                // NbGeneration == -1 indique une progression sur un compteur existant
+                if(progressInfo.IsProgress)
+                {
+                    // progress est le pourcentage de retour d'une seule tache
+                    _allTaskProgress[progressInfo.Id] = progressInfo.Progress;
+                }
+                else if (progressInfo.IsInit)
+                {
+                    _nbGeneration += progressInfo.NbGeneration;
+                }
+                else
+                {
+                    throw new ArgumentException("Notification de progression incoherente");
+                }
+
+                int total = 0;
+                foreach (int p in _allTaskProgress)
+                {
+                    total += p;
+                }
+
+                Status.Progress = (int)Math.Round(100.0 * total / _nbGeneration);
+            }
+            catch(Exception ex)
+            {
+                LogTools.Logger.Error(ex);
+            }
         }
 
         /// <summary>

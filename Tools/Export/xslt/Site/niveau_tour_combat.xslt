@@ -30,7 +30,7 @@
 						<xsl:when test="starts-with($combat/@reference, '3') or starts-with($combat/@reference, '5') or starts-with($combat/@reference, '7')">
 							<xsl:value-of select=" concat('Barrage ', substring($combat/@reference,1,1))"/>
 						</xsl:when>
-						<xsl:when test="$combat/@reference = '2.1.1' or $combat/@reference = '2.1.2'">Place de 3ème</xsl:when>
+						<xsl:when test="$combat/@reference = '2.1.1' or $combat/@reference = '2.1.2'">Place de 3<sup>ème</sup></xsl:when>
 						<xsl:otherwise>Repêchage</xsl:otherwise>
 					</xsl:choose>
 				</xsl:when>

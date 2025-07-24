@@ -45,6 +45,7 @@
 	<xsl:variable select="$selectedCompetition/@EngagementsAbsents = 'true'" name="affEngagementsAbsents"/>
 	<xsl:variable select="$selectedCompetition/@EngagementsTousCombats = 'true'" name="affTousCombats"/>
 	<xsl:variable select="$selectedCompetition/@EngagementsScoreGP = 'true'" name="affscoreGP"/>
+	<xsl:variable select="$selectedCompetition/@EngagementsPositionCombat = 'true'" name="affPositionCombat"/>
 	<xsl:variable select="$selectedCompetition/@DelaiActualisationClientSec" name="delayActualisationClient"/>
 	<xsl:variable select="$selectedCompetition/@kinzas = 'Oui'" name="affKinzas"/>
 	<xsl:variable select="$selectedCompetition/@type" name="typeCompetition"/>
@@ -594,19 +595,26 @@
 									<!-- Combat pas encore termine, on affiche le tapis s'il est assigne -->
 									<xsl:when test="./@vainqueur = 0 or ./@vainqueur = -1">
 
-										<xsl:if test="$affPositionCombat">
 											<xsl:variable name="posCombat">
-												<xsl:call-template name="ordreCombatTapis">
+												<xsl:if test="$affPositionCombat">
+													<xsl:call-template name="ordreCombatTapis">
 													<xsl:with-param name="combat" select="."/>
 												</xsl:call-template>
+												</xsl:if>
 											</xsl:variable>
-										</xsl:if>
 
-										<xsl:choose>
+											<xsl:choose>
 											<xsl:when test ="./@tapis > 0">
 												<xsl:choose>
 													<xsl:when test="$affPositionCombat">
-														Tapis <xsl:value-of select="./@tapis"/> (n&#176; <xsl:value-of select="$posCombat"/>)
+														<xsl:choose>
+															<xsl:when test="$posCombat = 1">
+																Tapis <xsl:value-of select="./@tapis"/> (<xsl:value-of select="$posCombat"/><sup>er</sup>)
+															</xsl:when>
+															<xsl:otherwise>
+																Tapis <xsl:value-of select="./@tapis"/> (<xsl:value-of select="$posCombat"/><sup>ème</sup>)
+															</xsl:otherwise>
+														</xsl:choose>
 													</xsl:when>
 													<xsl:otherwise>
 														Tapis <xsl:value-of select="./@tapis"/>		
@@ -987,7 +995,7 @@
 		<xsl:param name="combat"/>
 		
 		<!-- Selectionne tous les combats non termines sur le tapis du combat -->
-		<xsl:for-each select="$selectedCompetition/combats/combat[@tapis = $combat/@tapis and (@vainqueur = 0 or @vainqueur = -1)]">
+		<xsl:for-each select="//combats/combat[@tapis = $combat/@tapis and (@vainqueur = 0 or @vainqueur = -1)]">
 			<xsl:sort select="@time_programmation" data-type="number" order="ascending"/>
 			<xsl:if test="./@id = $combat/@id">
 				<xsl:value-of select="position()"/>
