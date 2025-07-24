@@ -14,7 +14,7 @@ namespace Tools.Export
         private static Dictionary<string, XslCompiledTransform> _xsltCache = new Dictionary<string, XslCompiledTransform>();
         private static object _xsltCacheLock = new object();
 
-        public static void ToHTMLSite(XmlDocument xml, ExportEnum export_type, string fileSave, XsltArgumentList argsList, string fileExtension = "html")
+        public static void ToHTMLSite(XmlDocument xml, ExportEnum export_type, string fileSave, XsltArgumentList argsList, string fileExtension = "html", bool useCache = true)
         {
             //argsList.AddParam("style", "", ExportTools.getStyleDirectory(site: true));
 
@@ -27,7 +27,7 @@ namespace Tools.Export
             // ExportTools.ExportImg(false);
 
             string xslt = ExportTools.GetXsltSite(export_type);
-            ExportHTML.ToHTML(xml, fileSave, argsList, xslt, fileExtension);
+            ExportHTML.ToHTML(xml, fileSave, argsList, xslt, fileExtension, useCache);
         }
 
         /// <summary>
