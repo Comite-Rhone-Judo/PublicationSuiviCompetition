@@ -96,7 +96,12 @@ namespace AppPublication.Tools.Converter
                             output = "Initialisation des données (Arbitres)";
                             break;
                         }
-                    case Enum.BusyStatusEnum.InitDonneesNone:
+                    case Enum.BusyStatusEnum.AttenteFinGeneration:
+                         {
+                            output = "En attente de la fin de la génération ...";
+                            break;
+                        }
+                    case Enum.BusyStatusEnum.None:
                     default:
                         {
                             output = string.Empty;
