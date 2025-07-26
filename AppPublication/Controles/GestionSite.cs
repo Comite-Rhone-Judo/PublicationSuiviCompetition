@@ -1942,10 +1942,10 @@ namespace AppPublication.Controles
                         listTaskGeneration.RemoveAll(item => item == null);
                         if (listTaskGeneration.Count > 0)
                         {
-                            Task<List<FileWithChecksum>> t = WaitGenereAll(listTaskGeneration);
+                            Task<List<FileWithChecksum>> taskAttente = WaitGenereAll(listTaskGeneration);
                             // Attend la fin de la generation pour rendre la main
-                            t.Wait();
-                            output = t.Result;
+                            taskAttente.Wait();
+                            output = taskAttente.Result;
 
                         }
                     }
