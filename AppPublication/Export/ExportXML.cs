@@ -754,7 +754,6 @@ namespace AppPublication.Export
                 }
             }
 
-            // TODO Voir comment on gere si on veut avoir un intiule commun
             if (competition == null)
             {
                 // Par defaut, prend la premiere

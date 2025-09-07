@@ -118,7 +118,6 @@
 			<!-- Nom de la competition + Groupe -->
 			<div class="w3-container w3-blue w3-center tas-competition-bandeau">
 				<div>
-					<!-- TODO Verifier ici, le titre de la competition ne s'affiche pas -->
 					<h4>
 						<xsl:value-of select="$selectedCompetition/titre"/>
 					</h4>
