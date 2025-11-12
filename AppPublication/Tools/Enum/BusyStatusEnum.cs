@@ -2,7 +2,7 @@
 {
     public enum BusyStatusEnum
     { 
-        InitDonneesNone = -1,
+        None = -1,
         DemandeDonneesStructures = 0,
         InitDonneesStructures,
 
@@ -25,6 +25,8 @@
         InitDonneesCombats,
 
         DemandeDonneesArbitres,
-        InitDonneesArbitres
+        InitDonneesArbitres,
+
+        AttenteFinGeneration
     }
 }

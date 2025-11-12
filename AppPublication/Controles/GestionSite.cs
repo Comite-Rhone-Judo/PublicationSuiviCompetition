@@ -3,6 +3,9 @@ using AppPublication.Tools;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
 using KernelImpl.Noyau.Structures;
+using AppPublication.ExtensionNoyau.Deroulement;
+// using Microsoft.Win32;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -25,6 +28,9 @@ using Tools.Enum;
 using Tools.Export;
 using Tools.Outils;
 using Tools.Windows;
+using KernelImpl.Noyau.Organisation;
+using System.Collections;
+using NLog;
 
 namespace AppPublication.Controles
 {
@@ -43,9 +49,17 @@ namespace AppPublication.Controles
         private const string kSettingIsolerCompetition = "IsolerCompetition";
         private const string kSettingRepertoireRacineSiteFTPDistant = "RepertoireRacineSiteFTPDistant";
         private const string kSettingPublierProchainsCombats = "PublierProchainsCombats";
+        private const string kSettingPublierEngagements = "PublierEngagements";
+        private const string kSettingEngagementsAbsents = "EngagementsAbsents";
+        private const string kSettingEngagementsTousCombats = "EngagementsTousCombats";
+        private const string kSettingUseIntituleCommun = "UseIntituleCommun";
+        private const string kSettingIntituleCommun = "IntituleCommun";
+        private const string kSettingScoreEngagesGagnantPerdant = "ScoreEngagesGagnantPerdant";
+        private const string kSettingAfficherPositionCombat = "AfficherPositionCombat";
         private const string kSettingNbProchainsCombats = "NbProchainsCombats";
         private const string kSettingPublierAffectationTapis = "PublierAffectationTapis";
         private const string kSettingDelaiGenerationSec = "DelaiGenerationSec";
+        private const string kSettingEffacerAuDemarrage = "EffaceAuDemarrage";
         private const string kSettingDelaiActualisationClientSec = "DelaiActualisationClientSec";
         private const string kSettingMsgProchainsCombats = "MsgProchainsCombats";
         private const string kSettingPouleEnColonnes = "PouleEnColonnes";
@@ -72,6 +86,11 @@ namespace AppPublication.Controles
         private string _ftpEasyConfig = string.Empty;   // Le serveur FTP EasyConfig
         private Uri _httpEasyConfig = null;  // Le serveur http EasyConfig
 
+        private long _generationCounter = 0;                        // Nombre de generation realisees depuis le demarrage
+        private int _workCounter = 0;                               // Compteur de travail en cours pour la generation du site
+        private int _nbGeneration = 0;                              // Nombre de generation en cours pour le site distant   
+        private List<int> _allTaskProgress = new List<int>();       // Progression de chacune des taches (clef = Id)
+
         /// <summary>
         /// Structure interne pour gerer les parametres de generation du site
         /// </summary>
@@ -80,6 +99,7 @@ namespace AppPublication.Controles
             public SiteEnum type { get; set; }
             public Phase phase { get; set; }
             public int? tapis { get; set; }
+            public List<GroupeEngagements> groupeEngages { get; set; }
         }
         #endregion
 
@@ -387,7 +407,7 @@ namespace AppPublication.Controles
 
 
         private ICommand _cmdAjouterLogo;
-        
+
         /// <summary>
         /// Commande permettant d'ajouter un logo dans la liste
         /// </summary>
@@ -402,15 +422,15 @@ namespace AppPublication.Controles
                             {
                                 bool allFileOk = true;
 
-                                OpenFileDialog op = new OpenFileDialog();  
-                                op.Title = "Sélectionner une image";  
+                                OpenFileDialog op = new OpenFileDialog();
+                                op.Title = "Sélectionner une image";
                                 op.Filter = "Portable Network Graphic (*.png)|*.png";
                                 op.Multiselect = true;
                                 op.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
                                 op.RestoreDirectory = true;
                                 if (op.ShowDialog() == DialogResult.OK)
                                 {
-                                    foreach(string imgFile in op.FileNames)
+                                    foreach (string imgFile in op.FileNames)
                                     {
                                         try
                                         {
@@ -448,14 +468,14 @@ namespace AppPublication.Controles
                                                 allFileOk = false;
                                             }
                                         }
-                                        catch(Exception ex)
+                                        catch (Exception ex)
                                         {
-                                            LogTools.Logger.Debug(ex, "Fichier '{0}' ignore - Exception lors de la lecture du format", imgFile);
+                                            LogTools.Logger.Debug("Fichier '{0}' ignore - Exception lors de la lecture du format", imgFile, ex);
                                             allFileOk = false;
                                         }
                                     }
 
-                                    if(!allFileOk)
+                                    if (!allFileOk)
                                     {
                                         AlertWindow win = new AlertWindow("Infomation", "Certains fichiers n'ont pas put être chargé. Veuillez vérifier les noms, formats et dimensions");
                                         if (win != null)
@@ -491,8 +511,7 @@ namespace AppPublication.Controles
                             {
                                 string output = string.Empty;
 
-                                System.Windows.Forms.FolderBrowserDialog dlg = new FolderBrowserDialog();
-
+                                FolderBrowserDialog dlg = new FolderBrowserDialog();
                                 dlg.Description = "Sélectionner le répertoire à utiliser pour les exports";
                                 dlg.ShowNewFolderButton = true;
                                 if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -794,6 +813,28 @@ namespace AppPublication.Controles
             }
         }
 
+        bool _effacerAuDemarrage = true;
+        /// <summary>
+        /// Indique si on doit faire un RAZ du contenu du répertoire au demarrage de la generation
+        /// </summary>
+        public bool EffacerAuDemarrage
+        {
+            get
+            {
+                return _effacerAuDemarrage;
+            }
+            set
+            {
+                if (_effacerAuDemarrage != value)
+                {
+                    _effacerAuDemarrage = value;
+                    AppSettings.SaveSetting(kSettingEffacerAuDemarrage, _effacerAuDemarrage.ToString());
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+
         int _delaiActualisationClientSec = 30;
         /// <summary>
         /// Delai entre 2 generations du site
@@ -917,7 +958,7 @@ namespace AppPublication.Controles
         }
 
 
-        
+
 
         private string _idCompetition = string.Empty;
         /// <summary>
@@ -947,9 +988,9 @@ namespace AppPublication.Controles
                 }
                 URLDistantPublication = CalculURLSiteDistant();
                 URLLocalPublication = CalculURLSiteLocal();
-
-                // On en peut publier que en individuelle
+                // On ne peut publier que en individuelle
                 CanPublierAffectation = DialogControleur.Instance.ServerData.competition.IsIndividuelle();
+                CanPublierEngagements = DialogControleur.Instance.ServerData.competition.IsIndividuelle() || DialogControleur.Instance.ServerData.competition.IsShiai();
 
                 // Si on est en Shiai, par defaut on met les poules en colonnes
                 if (DialogControleur.Instance.ServerData.competition.IsShiai())
@@ -977,6 +1018,23 @@ namespace AppPublication.Controles
             }
         }
 
+        private bool _canPublierEngagements = true;
+        /// <summary>
+        /// Indique si on peut publier les engages ou non
+        /// </summary>
+        public bool CanPublierEngagements
+        {
+            get
+            {
+                return _canPublierEngagements;
+            }
+            private set
+            {
+                _canPublierEngagements = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         private bool _publierProchainsCombats = false;
         /// <summary>
         /// Indique si on doit publier la liste des prochains combats ou non
@@ -998,7 +1056,7 @@ namespace AppPublication.Controles
             }
         }
 
-        
+
 
         private bool _publierAffectationTapis = false;
         /// <summary>
@@ -1020,6 +1078,148 @@ namespace AppPublication.Controles
                 }
             }
         }
+
+
+
+        private bool _publierEngagements = false;
+        /// <summary>
+        /// Indique si on doit publier la liste des engages
+        /// </summary>
+        public bool PublierEngagements
+        {
+            get
+            {
+                return _publierEngagements;
+            }
+            set
+            {
+                if (_publierEngagements != value)
+                {
+                    _publierEngagements = value;
+                    AppSettings.SaveSetting(kSettingPublierEngagements, _publierEngagements.ToString());
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private bool _engagementsAbsents = false;
+
+        /// <summary>
+        /// Indique si on doit publier les judokas absents
+        /// </summary>
+        public bool EngagementsAbsents
+        {
+            get
+            {
+                return _engagementsAbsents;
+            }
+            set
+            {
+                if (_engagementsAbsents != value)
+                {
+                    _engagementsAbsents = value;
+                    AppSettings.SaveSetting(kSettingEngagementsAbsents, _engagementsAbsents.ToString());
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private bool _engagementsTousCombats = false;
+
+        /// <summary>
+        /// Indique si on doit publier tous les combats des judokas, finis ou non
+        /// </summary>
+        public bool EngagementsTousCombats
+        {
+            get
+            {
+                return _engagementsTousCombats;
+            }
+            set
+            {
+                if (_engagementsTousCombats != value)
+                {
+                    _engagementsTousCombats = value;
+                    AppSettings.SaveSetting(kSettingEngagementsTousCombats, _engagementsTousCombats.ToString());
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private bool _useIntituleCommun;
+        /// <summary>
+        /// Flag indiquant si on doit utiliser un intitule commun en cas de poly competition
+        /// </summary>
+        public bool UseIntituleCommun
+        {
+            get { return _useIntituleCommun; }
+            set
+            {
+                if (_useIntituleCommun != value)
+                {
+                    _useIntituleCommun = value;
+                    AppSettings.SaveSetting(kSettingUseIntituleCommun, _useIntituleCommun.ToString());
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private string _intituleCommun;
+
+        /// <summary>
+        /// intitule commun en cas de poly competition
+        /// </summary>
+        public String IntituleCommun
+        {
+            get { return _intituleCommun; }
+            set
+            {
+                if (_intituleCommun != value)
+                {
+                    _intituleCommun = value;
+                    AppSettings.SaveSetting(kSettingIntituleCommun, _intituleCommun);
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private bool _scoreEngagesGagnantPerdant;
+        public bool ScoreEngagesGagnantPerdant
+        {
+            get
+            {
+                return _scoreEngagesGagnantPerdant;
+            }
+            set
+            {
+                if (_scoreEngagesGagnantPerdant != value)
+                {
+                    _scoreEngagesGagnantPerdant = value;
+                    AppSettings.SaveSetting(kSettingScoreEngagesGagnantPerdant, _scoreEngagesGagnantPerdant.ToString());
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private bool _afficherPositionCombat;
+        public bool AfficherPositionCombat
+        {
+            get
+            {
+                return _afficherPositionCombat;
+            }
+            set
+            {
+                if( _afficherPositionCombat != value)
+                {
+                    _afficherPositionCombat = value;
+                    AppSettings.SaveSetting(kSettingAfficherPositionCombat, _afficherPositionCombat.ToString());
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+
 
         private StatusGenerationSite _status;
         /// <summary>
@@ -1211,13 +1411,20 @@ namespace AppPublication.Controles
                 PublierProchainsCombats = AppSettings.ReadSetting(kSettingPublierProchainsCombats, false);
                 NbProchainsCombats = AppSettings.ReadSetting(kSettingNbProchainsCombats, 6);
                 PublierAffectationTapis = AppSettings.ReadSetting(kSettingPublierAffectationTapis, true);
+                PublierEngagements = AppSettings.ReadSetting(kSettingPublierEngagements, false);
+                EngagementsAbsents = AppSettings.ReadSetting(kSettingEngagementsAbsents, false);
+                EngagementsTousCombats = AppSettings.ReadSetting(kSettingEngagementsTousCombats, false);
                 DelaiGenerationSec = AppSettings.ReadSetting(kSettingDelaiGenerationSec, 30);
+                EffacerAuDemarrage = AppSettings.ReadSetting(kSettingEffacerAuDemarrage, true);
                 DelaiActualisationClientSec = AppSettings.ReadSetting(kSettingDelaiActualisationClientSec, 30);
                 MsgProchainsCombats = AppSettings.ReadSetting(kSettingMsgProchainsCombats, string.Empty);
                 PouleEnColonnes = AppSettings.ReadSetting(kSettingPouleEnColonnes, false);
                 PouleToujoursEnColonnes = AppSettings.ReadSetting(kSettingPouleToujoursEnColonnes, false);
                 TailleMaxPouleColonnes = AppSettings.ReadSetting(kSettingTailleMaxPouleColonnes, 5);
-
+                UseIntituleCommun = AppSettings.ReadSetting(kSettingUseIntituleCommun, false);
+                IntituleCommun = AppSettings.ReadSetting(kSettingIntituleCommun, string.Empty);
+                ScoreEngagesGagnantPerdant = AppSettings.ReadSetting(kSettingScoreEngagesGagnantPerdant, false);
+                AfficherPositionCombat = AppSettings.ReadSetting(kSettingAfficherPositionCombat, false);
 
                 // Recherche le logo dans la liste
                 SelectedLogo = AppSettings.ReadRawSetting<FilteredFileInfo>(kSettingSelectedLogo, FichiersLogo, o => o.Name);
@@ -1393,6 +1600,22 @@ namespace AppPublication.Controles
             {
                 try
                 {
+                    // Nettoie si necessaire le repertoire avant de lancer la tache
+                    if (EffacerAuDemarrage)
+                    {
+                        Status = StatusGenerationSite.Instance(StateGenerationEnum.Cleaning);
+
+                        // Efface le contenu local
+                        ClearRepertoireCompetition();
+
+                        // Efface egalement le fichier a distance s'il est actif
+                        if (SiteDistantSelectionne.IsActif)
+                        {
+                            SiteDistantSelectionne.NettoyerSite();
+                        }
+                    }
+
+                    // Lance la tache de generation
                     _taskGeneration = Task.Factory.StartNew(() =>
                     {
                         while (!_tokenSource.Token.IsCancellationRequested)
@@ -1560,40 +1783,44 @@ namespace AppPublication.Controles
         /// Declenche l'exportation
         /// </summary>
         /// <param name="genere">Type d'exportation</param>
-        private List<FileWithChecksum> Exporter(GenereSiteStruct genere)
+        private List<FileWithChecksum> Exporter(GenereSiteStruct genere, ConfigurationExportSite cfg, IProgress<GenerationProgressInfo> progress, int workId)
         {
             List<FileWithChecksum> urls = new List<FileWithChecksum>();
-            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes);
 
             try
             {
                 JudoData DC = DialogControleur.Instance.ServerData;
+                ExtensionNoyau.ExtensionJudoData EDC = DialogControleur.Instance.ExtendedServerData;
+                ExportSiteStructure structRep = _structureRepertoires.Clone();  // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread
 
                 switch (genere.type)
                 {
                     case SiteEnum.AllTapis:
-                        urls = ExportSite.GenereWebSiteAllTapis(DC, cfg, _structureRepertoires);
+                        urls = ExportSite.GenereWebSiteAllTapis(DC, cfg, structRep, progress, workId);
                         break;
                     case SiteEnum.Classement:
-                        urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), cfg, _structureRepertoires);
+                        urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), cfg, structRep, progress, workId);
                         break;
                     case SiteEnum.Index:
-                        urls = ExportSite.GenereWebSiteIndex(DC, cfg, _structureRepertoires);
+                        urls = ExportSite.GenereWebSiteIndex(DC, cfg, structRep, progress, workId);
                         break;
                     case SiteEnum.Menu:
-                        urls = ExportSite.GenereWebSiteMenu(DC, cfg, _structureRepertoires);
+                        urls = ExportSite.GenereWebSiteMenu(DC, EDC, cfg, structRep, progress, workId);
                         break;
                     case SiteEnum.Phase:
-                        urls = ExportSite.GenereWebSitePhase(DC, genere.phase, cfg, _structureRepertoires);
+                        urls = ExportSite.GenereWebSitePhase(DC, genere.phase, cfg, structRep, progress, workId);
                         break;
                     case SiteEnum.AffectationTapis:
-                        urls = ExportSite.GenereWebSiteAffectation(DC, cfg, _structureRepertoires);
+                        urls = ExportSite.GenereWebSiteAffectation(DC, cfg, structRep, progress, workId);
+                        break;
+                    case SiteEnum.Engagements:
+                        urls = ExportSite.GenereWebSiteEngagements(DC, EDC, genere.groupeEngages, cfg, structRep, progress, workId);
                         break;
                 }
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur rencontree lors de l'export");
+                LogTools.Logger.Error(ex, "Erreur rencontree lors de l'export {0}", genere.type);
             }
 
             return urls;
@@ -1605,8 +1832,9 @@ namespace AppPublication.Controles
         /// <param name="type"></param>
         /// <param name="phase"></param>
         /// <param name="tapis"></param>
+        /// <param name="groupeP">Identifiant du groupe de participant</param>
         /// <returns></returns>
-        public Task<List<FileWithChecksum>> AddWork(SiteEnum type, Phase phase, int? tapis)
+        public Task<List<FileWithChecksum>> AddWork(SiteEnum type, Phase phase, int? tapis, ConfigurationExportSite cfg, List<GroupeEngagements> groupeP = null)
         {
             Task<List<FileWithChecksum>> output = null;
 
@@ -1616,17 +1844,23 @@ namespace AppPublication.Controles
                 {
                     type = type,
                     phase = phase,
-                    tapis = tapis
+                    tapis = tapis,
+                    groupeEngages = groupeP
                 };
 
+                int workId = _workCounter;    // New work ID
+                _workCounter++;
+                _allTaskProgress.Add(0);
                 output = OutilsTools.Factory.StartNew(() =>
                 {
-                    return Exporter(export);
+                    Progress<GenerationProgressInfo> progress = new Progress<GenerationProgressInfo>(onReportProgress);
+                    return Exporter(export, cfg, progress, workId);
                 });
             }
 
             return output;
         }
+
 
         /// <summary>
         /// Genere la totalite du site
@@ -1635,30 +1869,71 @@ namespace AppPublication.Controles
         public List<FileWithChecksum> GenereAll()
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
+            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierEngagements && CanPublierEngagements, EngagementsAbsents, EngagementsTousCombats, ScoreEngagesGagnantPerdant, AfficherPositionCombat, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes, UseIntituleCommun, IntituleCommun);
+
             if (IsGenerationActive)
             {
+                if (_generationCounter < long.MaxValue) { _generationCounter++; }                
+                LogTools.Logger.Debug("Lancement de la {0}eme generation du site", _generationCounter);
+
                 JudoData DC = DialogControleur.Instance.ServerData;
+                ExtensionNoyau.ExtensionJudoData EDC = DialogControleur.Instance.ExtendedServerData;
+                // Initialise les extended data
+                EDC.SyncAll();
+
                 if (DC.Organisation.Competitions.Count > 0)
                 {
                     List<Task<List<FileWithChecksum>>> listTaskGeneration = new List<Task<List<FileWithChecksum>>>();
 
-                    listTaskGeneration.Add(AddWork(SiteEnum.Index, null, null));
-                    listTaskGeneration.Add(AddWork(SiteEnum.Menu, null, null));
+                    // Initialise les donnees partagees de generation
+                    ExportSite.InitSharedData(DC, EDC, cfg);
+                    _allTaskProgress.Clear();
+                    _workCounter = 0;
+                    _nbGeneration = 0;
+
+                    listTaskGeneration.Add(AddWork(SiteEnum.Index, null, null, cfg, null));
+                    listTaskGeneration.Add(AddWork(SiteEnum.Menu, null, null, cfg, null));
                     if (PublierAffectationTapis && CanPublierAffectation)
                     {
-                        listTaskGeneration.Add(AddWork(SiteEnum.AffectationTapis, null, null));
+                        listTaskGeneration.Add(AddWork(SiteEnum.AffectationTapis, null, null, cfg, null));
                     }
 
                     // On ne genere pas les informations de prochains combat si ce n'est pas necessaire
                     if (PublierProchainsCombats)
                     {
-                        listTaskGeneration.Add(AddWork(SiteEnum.AllTapis, null, null));
+                        listTaskGeneration.Add(AddWork(SiteEnum.AllTapis, null, null, cfg, null));
                     }
+
+                    
+                    if(PublierEngagements && CanPublierEngagements)
+                    {
+                        foreach(Competition comp in DC.Organisation.Competitions)
+                        {
+                            // Recupere les groupes en fonction du type de groupement
+                            List<EchelonEnum> typesGrp = ExtensionNoyau.Deroulement.DataDeroulement.GetTypeGroupe(comp);
+
+                            // On genere les engagements pour chaque type de groupe
+                            foreach (EchelonEnum typeGrp in typesGrp)
+                            {
+                                List<GroupeEngagements> groupesP = EDC.Deroulement.GroupesEngages.Where(g => g.Competition == comp.id && g.Type == (int)typeGrp).ToList();
+
+                                // Ce code est plus efficace qye celui qui cree une tache par groupe
+                                // sans doute car le lancement de nombreuses Task est couteux mais il provoque une latence a la fin de la generation
+                                listTaskGeneration.Add(AddWork(SiteEnum.Engagements, null, null, cfg, groupesP));
+
+                                // foreach (GroupeEngagements g in groupesP)
+                                // {
+                                //   _nbTaskGeneration++;
+                                //  listTaskGeneration.Add(AddWork(SiteEnum.Engagements, null, null, cfg, new List<GroupeEngagements>(1) { g }));
+                                // }
+                            }
+                        }
+                    }                    
 
                     foreach (Phase phase in DC.Deroulement.Phases)
                     {
-                        listTaskGeneration.Add(AddWork(SiteEnum.Phase, phase, null));
-                        listTaskGeneration.Add(AddWork(SiteEnum.Classement, phase, null));
+                        listTaskGeneration.Add(AddWork(SiteEnum.Phase, phase, null, cfg, null));
+                        listTaskGeneration.Add(AddWork(SiteEnum.Classement, phase, null, cfg, null));
                     }
 
                     try
@@ -1667,10 +1942,10 @@ namespace AppPublication.Controles
                         listTaskGeneration.RemoveAll(item => item == null);
                         if (listTaskGeneration.Count > 0)
                         {
-                            Task<List<FileWithChecksum>> t = WaitGenereAll(listTaskGeneration);
+                            Task<List<FileWithChecksum>> taskAttente = WaitGenereAll(listTaskGeneration);
                             // Attend la fin de la generation pour rendre la main
-                            t.Wait();
-                            output = t.Result;
+                            taskAttente.Wait();
+                            output = taskAttente.Result;
 
                         }
                     }
@@ -1691,7 +1966,7 @@ namespace AppPublication.Controles
         /// <returns></returns>
         private async Task<List<FileWithChecksum>> WaitGenereAll(List<Task<List<FileWithChecksum>>> listTaskGeneration)
         {
-            int totalTask = listTaskGeneration.Count();
+            // int totalTask = _workCounter;
             int nTask = 0;
             List<FileWithChecksum> fichiersGeneres = new List<FileWithChecksum>();
             while (listTaskGeneration.Any())
@@ -1699,11 +1974,50 @@ namespace AppPublication.Controles
                 Task<List<FileWithChecksum>> finishedTask = await Task.WhenAny(listTaskGeneration.ToArray());
                 listTaskGeneration.Remove(finishedTask);
                 nTask++;
-                Status.Progress = (int)Math.Round(100.0 * nTask / totalTask);
+                // Status.Progress = (int)Math.Round(100.0 * nTask / totalTask);
                 fichiersGeneres = fichiersGeneres.Concat(await finishedTask).ToList();
             }
 
             return fichiersGeneres;
+        }
+
+
+        /// <summary>
+        /// Callback pour rapporter la progression de la generation du site
+        /// </summary>
+        /// <param name="progressInfo"></param>
+        private void onReportProgress(GenerationProgressInfo progressInfo)
+        {
+            try
+            {
+                if(progressInfo.IsProgress)
+                {
+                    // progress est le pourcentage de retour d'une seule tache
+                    _allTaskProgress[progressInfo.Id] = progressInfo.Progress;
+
+                    // Calcul le pourcentage total de progression
+                    int total = 0;
+                    foreach (int p in _allTaskProgress)
+                    {
+                        total += p;
+                    }
+
+                    Status.Progress = (int)Math.Round(100.0 * total / _nbGeneration);
+                }
+                else if (progressInfo.IsInit)
+                {
+                    // Ajoute au nombre total de generation prevue
+                    _nbGeneration += progressInfo.NbGeneration;
+                }
+                else
+                {
+                    throw new ArgumentException("Notification de progression incoherente");
+                }
+            }
+            catch(Exception ex)
+            {
+                LogTools.Logger.Error(ex);
+            }
         }
 
         /// <summary>
@@ -1736,6 +2050,27 @@ namespace AppPublication.Controles
             }
         }
 
+        /// <summary>
+        /// Vide le contenu du repertoire de la competition
+        /// </summary>
+        private void ClearRepertoireCompetition()
+        {
+            if(_structureRepertoires != null)
+            {
+                // Efface le contenu du repertoire de la competition
+                if(!FileAndDirectTools.DeleteDirectory(_structureRepertoires.RepertoireCompetition, true))
+                {
+                    LogTools.Logger.Error("Erreur lors de l'effacement du contenu de  '{0}'", _structureRepertoires.RepertoireCompetition);
+                }
+
+                // Charge le contenu du fichier de checksum
+                List<FileWithChecksum> cache = LoadChecksumFichiersGeneres();
+
+                // Elimine tous les fichiers commençant par le répertoire de la competition (ils ont été supprimés)
+                cache.RemoveAll(f => f.File.FullName.StartsWith(_structureRepertoires.RepertoireCompetition));
+                SaveChecksumFichiersGeneres(cache);
+            }
+        }
 
         /// <summary>
         /// Charge le fichier de cache de checksum

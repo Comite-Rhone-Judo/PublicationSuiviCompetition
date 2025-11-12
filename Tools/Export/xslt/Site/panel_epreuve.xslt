@@ -9,6 +9,7 @@
 	<xsl:template name="panelEpreuve">
 		<xsl:param name="sexeCode"/>
 		<xsl:param name="prefixPanel"/>
+		<xsl:param name="imgPath"/>
 
 		<xsl:variable name="panelApos">'</xsl:variable>
 
@@ -20,24 +21,30 @@
 					<header class="w3-bar w3-light-green w3-large">
 						<button class="w3-bar-item w3-light-green">
 							<xsl:attribute name="onclick">
-								<xsl:value-of select="concat('toggleElement(',$panelApos,$prefixPanel,$sexeCode,$panelApos,')')"/>
+								<xsl:value-of select="concat('togglePanel(',$panelApos,$prefixPanel,$sexeCode,$panelApos,')')"/>
 							</xsl:attribute>
-							<img class="img" width="25" src="../img/up_circular-32.png" style="display: none;">
+							<img class="img" width="25" style="display: none;">
+								<xsl:attribute name="src">
+									<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
+								</xsl:attribute>
 								<xsl:attribute name="id">
 									<xsl:value-of select="concat($prefixPanel,$sexeCode, 'Collapse')"/>
 								</xsl:attribute>
 							</img>
-							<img class="img" width="25" src="../img/down_circular-32.png">
+							<img class="img" width="25">
+								<xsl:attribute name="src">
+									<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
+								</xsl:attribute>
 								<xsl:attribute name="id">
 									<xsl:value-of select="concat($prefixPanel, $sexeCode, 'Expand')"/>
 								</xsl:attribute>
 							</img>
 							<xsl:choose>
 								<xsl:when test="$sexeCode = 'M'">
-									Catégorie Masculine
+									Masculins
 								</xsl:when>
 								<xsl:when test="$sexeCode = 'F'">
-									Catégorie Féminine
+									Féminines
 								</xsl:when>
 								<xsl:when test="$sexeCode = 'X'">
 									Mixte
@@ -48,7 +55,7 @@
 							</xsl:choose>
 						</button>
 					</header>
-					<div class="w3-container" style="display:none;">
+					<div class="tasClosedPanelType w3-container" style="display:none;">
 						<xsl:attribute name="id">
 							<xsl:value-of select="concat($prefixPanel, $sexeCode)"/>
 						</xsl:attribute>

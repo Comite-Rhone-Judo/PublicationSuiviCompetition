@@ -57,6 +57,8 @@
         Site_MenuClassement = 114,
         Site_MenuAvancement = 115,
         Site_MenuProchainCombats = 116,
-        Site_FooterScript = 117
+        Site_MenuEngagements = 117,
+        Site_Engagements = 118,
+        Site_FooterScript = 119
     }
 }

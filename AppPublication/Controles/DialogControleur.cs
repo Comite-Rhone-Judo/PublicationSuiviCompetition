@@ -1,9 +1,11 @@
 ﻿using AppPublication.Tools;
 using AppPublication.Tools.Enum;
 using KernelImpl;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Information;
 using System;
 using System.IO;
 using System.Security.Policy;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Telerik.Windows.Controls;
@@ -78,7 +80,7 @@ namespace AppPublication.Controles
             }
         }
 
-        private BusyStatusEnum _busyStatus = BusyStatusEnum.InitDonneesNone;
+        private BusyStatusEnum _busyStatus = BusyStatusEnum.None;
         /// <summary>
         /// L'etat d'occupation de l'application (pendant le chargement des données)
         /// </summary>
@@ -142,6 +144,22 @@ namespace AppPublication.Controles
                     _serverData = KernelManager.Manager.manager.m_JudoData;
                 }
                 return _serverData;
+            }
+        }
+
+        private ExtensionNoyau.ExtensionJudoData _extendedServerData;
+        /// <summary>
+        /// Le bloc de donnees recupere du serveur
+        /// </summary>
+        public ExtensionNoyau.ExtensionJudoData ExtendedServerData
+        {
+            get
+            {
+                if (_extendedServerData == null)
+                {
+                    _extendedServerData = new ExtensionNoyau.ExtensionJudoData(ServerData);
+                }
+                return _extendedServerData;
             }
         }
 
@@ -498,8 +516,30 @@ namespace AppPublication.Controles
                     _cmdArreterGeneration = new RelayCommand(
                             o =>
                             {
-                                Instance.GestionSite.StopGeneration();
-                            },
+                                // Active le statut d'attente
+                                DialogControleur.Instance.BusyStatus = BusyStatusEnum.AttenteFinGeneration;
+                                DialogControleur.Instance.IsBusy = true;
+
+                                // Lance l'arret dans une tache pour liberer le thread courant (UI)
+                                Task<int> stopTask = Task.Factory.StartNew( () =>
+                                {
+                                    Instance.GestionSite.StopGeneration();
+                                    return 1;
+                                });
+
+                                // Indique de remettre le status en place a la fin de l'arret pour liberer l'IHM
+                                stopTask.ContinueWith(
+                                 (task) =>
+                                 {
+                                     // On remet l'etat d'occupation a None
+                                     System.Windows.Application.Current.ExecOnUiThread(new Action(() =>
+                                     {
+                                         DialogControleur.Instance.BusyStatus = BusyStatusEnum.None;
+                                         DialogControleur.Instance.IsBusy = false;
+                                     }));
+                                 });
+
+                                },
                             o =>
                             {
                                 return Instance.GestionSite.IsGenerationActive;

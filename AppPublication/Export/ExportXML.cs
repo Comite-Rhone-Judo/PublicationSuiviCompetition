@@ -5,6 +5,8 @@ using KernelImpl.Noyau.Deroulement;
 using KernelImpl.Noyau.Organisation;
 using KernelImpl.Noyau.Participants;
 using KernelImpl.Noyau.Structures;
+using AppPublication.ExtensionNoyau;
+using OfficeOpenXml.ConditionalFormatting;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,6 +17,7 @@ using System.Xml.Linq;
 using Tools.Enum;
 using Tools.Export;
 using Tools.Outils;
+using AppPublication.ExtensionNoyau.Deroulement;
 
 namespace AppPublication.Export
 {
@@ -28,13 +31,25 @@ namespace AppPublication.Export
             foreach (XmlNode node in listcomp)
             {
                 XmlAttribute attrProchainCombat = doc.CreateAttribute(ConstantXML.publierProchainsCombats);
-                attrProchainCombat.Value = config.PublierProchainsCombats.ToString();
+                attrProchainCombat.Value = config.PublierProchainsCombats.ToString().ToLower();
                 XmlAttribute attrAffectationTapis = doc.CreateAttribute(ConstantXML.publierAffectationTapis);
-                attrAffectationTapis.Value = config.PublierAffectationTapis.ToString();
+                attrAffectationTapis.Value = config.PublierAffectationTapis.ToString().ToLower();
+                XmlAttribute attrEngagements = doc.CreateAttribute(ConstantXML.publierEngagements);
+                attrEngagements.Value = config.PublierEngagements.ToString().ToLower();
+
+                XmlAttribute attrEngagementsAbsents = doc.CreateAttribute(ConstantXML.EngagementsAbsents);
+                attrEngagementsAbsents.Value = config.EngagementsAbsents.ToString().ToLower();
+                XmlAttribute attrEngagementsTousCombats = doc.CreateAttribute(ConstantXML.EngagementsTousCombats);
+                attrEngagementsTousCombats.Value = config.EngagementsTousCombats.ToString().ToLower();
+                XmlAttribute attrEngagementsScoreGP = doc.CreateAttribute(ConstantXML.EngagementsScoreGP);
+                attrEngagementsScoreGP.Value = config.EngagementsScoreGP.ToString().ToLower();
+                XmlAttribute attrAfficherPositionCombat = doc.CreateAttribute(ConstantXML.EngagementsPositionCombat);
+                attrAfficherPositionCombat.Value = config.AfficherPositionCombat.ToString().ToLower();
+
                 XmlAttribute attrDelaiActualisationClient = doc.CreateAttribute(ConstantXML.delaiActualisationClientSec);
                 attrDelaiActualisationClient.Value = config.DelaiActualisationClientSec.ToString();
                 XmlAttribute attrNbProchainsCombats = doc.CreateAttribute(ConstantXML.nbProchainsCombats);
-                attrNbProchainsCombats.Value = config.NbProchainsCombats.ToString();
+                attrNbProchainsCombats.Value = config.NbProchainsCombats.ToString().ToLower();
                 XmlAttribute attrMsgProchainsCombats = doc.CreateAttribute(ConstantXML.msgProchainsCombats);
                 attrMsgProchainsCombats.Value = config.MsgProchainCombats;
                 XmlAttribute attrDateGeneration = doc.CreateAttribute(ConstantXML.DateGeneration);
@@ -43,13 +58,25 @@ namespace AppPublication.Export
                 attrAppVersion.Value = Tools.AppInformation.Instance.AppVersion;
                 XmlAttribute attrLogo = doc.CreateAttribute(ConstantXML.Logo);
                 attrLogo.Value = config.Logo;
+                XmlAttribute attrUseIntituleCommun = doc.CreateAttribute(ConstantXML.useIntituleCommun);
+                attrUseIntituleCommun.Value = config.UseIntituleCommun.ToString().ToLower(); 
+                XmlAttribute attrIntituleCommun = doc.CreateAttribute(ConstantXML.intituleCommun);
+                attrIntituleCommun.Value = config.IntituleCommun;
+
 
                 node.Attributes.Append(attrProchainCombat);
                 node.Attributes.Append(attrAffectationTapis);
+                node.Attributes.Append(attrEngagements);
+                node.Attributes.Append(attrEngagementsAbsents);
+                node.Attributes.Append(attrEngagementsTousCombats);
+                node.Attributes.Append(attrEngagementsScoreGP);
+                node.Attributes.Append(attrAfficherPositionCombat);
                 node.Attributes.Append(attrDelaiActualisationClient);
                 node.Attributes.Append(attrNbProchainsCombats);
                 node.Attributes.Append(attrDateGeneration);
                 node.Attributes.Append(attrMsgProchainsCombats);
+                node.Attributes.Append(attrUseIntituleCommun);
+                node.Attributes.Append(attrIntituleCommun);
                 node.Attributes.Append(attrLogo);
                 node.Attributes.Append(attrAppVersion);
             }
@@ -112,93 +139,235 @@ namespace AppPublication.Export
             }
         }
 
+
         /// <summary>
-        /// Ajout des clubs à un document XML
+        /// Ajoute les structures dans un document XML
         /// </summary>
-        /// <param name="doc">le document</param>
-        /// <param name="DC"></param>
-        public static void AddClubs(ref XmlDocument doc, JudoData DC)
+        /// <param name="doc">Document XML a modifier</param>
+        /// <param name="clubs">Liste des clubs au format XML</param>
+        /// <param name="comites">Liste des comites au format XML</param>
+        /// <param name="ligues">Liste des ligues au format XML</param>
+        /// <param name="secteurs">Liste des secteurs au format XML</param>
+        /// <param name="pays">Liste des pays au format XML</param>
+        public static void AddStructures(ref XmlDocument doc, List<XElement> clubs, List<XElement> comites, List<XElement> secteurs, List<XElement> ligues,  List<XElement> pays)
         {
             XDocument xdoc = doc.ToXDocument();
 
-            ICollection<Club> clubs = null;
-            ICollection<Pays> pays = null;
-            ICollection<Comite> comites = null;
-            ICollection<Secteur> secteurs = null;
-            ICollection<Ligue> ligues = null;
-
-
-            using (TimedLock.Lock((DC.Participants.vjudokas as ICollection).SyncRoot))
+            if (clubs != null)
             {
-                using (TimedLock.Lock((DC.Structures.Clubs as ICollection).SyncRoot))
+                foreach (XElement club in clubs)
                 {
-                    clubs = (from c in DC.Structures.Clubs
-                             join j in DC.Participants.vjudokas on c.id equals j.club
-                             select c).Distinct().ToList();
+                    xdoc.Root.Add(club);
                 }
             }
 
-            foreach (Club club in clubs)
+            if (comites != null)
             {
-                xdoc.Root.Add(club.ToXml());
-            }
-
-            using (TimedLock.Lock((DC.Participants.Equipes as ICollection).SyncRoot))
-            {
-                using (TimedLock.Lock((DC.Structures.Clubs as ICollection).SyncRoot))
+                foreach (XElement comite in comites)
                 {
-                    clubs = (from c in DC.Structures.Clubs
-                             join eq in DC.Participants.Equipes on c.id equals eq.club
-                             select c).Distinct().ToList();
+                    xdoc.Root.Add(comite);
                 }
             }
 
-            foreach (Club club in clubs)
+            if (ligues != null)
             {
-                xdoc.Root.Add(club.ToXml());
+                foreach (XElement ligue in ligues)
+                {
+                    xdoc.Root.Add(ligue);
+                }
             }
 
-            using (TimedLock.Lock((DC.Structures.Comites as ICollection).SyncRoot))
+            if (secteurs != null)
             {
-                comites = DC.Structures.Comites.ToList();
+                foreach (XElement secteur in secteurs)
+                {
+                    xdoc.Root.Add(secteur);
+                }
             }
 
-            foreach (Comite comite in comites)
+            if (pays != null)
             {
-                xdoc.Root.Add(comite.ToXml());
-            }
-
-            using (TimedLock.Lock((DC.Structures.Secteurs as ICollection).SyncRoot))
-            {
-                secteurs = DC.Structures.Secteurs.ToList();
-            }
-
-            foreach (Secteur secteur in secteurs)
-            {
-                xdoc.Root.Add(secteur.ToXml());
-            }
-
-            using (TimedLock.Lock((DC.Structures.Ligues as ICollection).SyncRoot))
-            {
-                ligues = DC.Structures.Ligues.ToList();
-            }
-
-            foreach (Ligue ligue in ligues)
-            {
-                xdoc.Root.Add(ligue.ToXml());
-            }
-
-            using (TimedLock.Lock((DC.Structures.LesPays as ICollection).SyncRoot))
-            {
-                pays = DC.Structures.LesPays.ToList();
-            }
-
-            foreach (Pays pays1 in pays)
-            {
-                xdoc.Root.Add(pays1.ToXml());
+                foreach (XElement unPays in pays)
+                {
+                    xdoc.Root.Add(unPays);
+                }
             }
 
             doc = xdoc.ToXmlDocument();
+        }
+
+        /// <summary>
+        /// Retourne la liste des comites en XML
+        /// </summary>
+        /// <param name="DC"></param>
+        /// <returns></returns>
+        public static List<XElement> GetComites(JudoData DC)
+        {
+            ICollection<Comite> comites = null;
+            List<XElement> output = new List<XElement>();
+
+            try
+            {
+                using (TimedLock.Lock((DC.Structures.Comites as ICollection).SyncRoot))
+                {
+                    comites = DC.Structures.Comites.ToList();
+                }
+
+                foreach (Comite comite in comites)
+                {
+                    output.Add(comite.ToXml());
+                }
+            }
+            catch (Exception ex)
+            {
+                LogTools.Logger.Debug(ex);
+            }
+
+            return output;
+        }
+
+        /// <summary>
+        /// Retourne la liste des ligues en XML
+        /// </summary>
+        /// <param name="DC"></param>
+        /// <returns></returns>
+        public static List<XElement> GetLigues(JudoData DC)
+        {
+            ICollection<Ligue> ligues = null;
+            List<XElement> output = new List<XElement>();
+
+            try
+            {
+                using (TimedLock.Lock((DC.Structures.Ligues as ICollection).SyncRoot))
+                {
+                    ligues = DC.Structures.Ligues.ToList();
+                }
+
+                foreach (Ligue ligue in ligues)
+                {
+                    output.Add(ligue.ToXml());
+                }
+            }
+            catch (Exception ex)
+            {
+                LogTools.Logger.Debug(ex);
+            }
+
+            return output;
+        }
+
+
+
+        /// <summary>
+        /// Retourne la liste des secteurs en XML
+        /// </summary>
+        /// <param name="DC"></param>
+        /// <returns></returns>
+        public static List<XElement> GetSecteurs(JudoData DC)
+        {
+            ICollection<Secteur> secteurs = null;
+            List<XElement> output = new List<XElement>();
+
+            try
+            {
+                using (TimedLock.Lock((DC.Structures.Secteurs as ICollection).SyncRoot))
+                {
+                    secteurs = DC.Structures.Secteurs.ToList();
+                }
+
+                foreach (Secteur secteur in secteurs)
+                {
+                   output.Add(secteur.ToXml());
+                }
+
+            }
+            catch (Exception ex)
+            {
+                LogTools.Logger.Debug(ex);
+            }
+
+            return output;
+        }
+
+        /// <summary>
+        /// Retourne la liste des ligues en XML
+        /// </summary>
+        /// <param name="DC"></param>
+        /// <returns></returns>
+        public static List<XElement> GetPays(JudoData DC)
+        {
+            ICollection<Pays> pays = null;
+            List<XElement> output = new List<XElement>();
+
+            try
+            {
+                using (TimedLock.Lock((DC.Structures.LesPays as ICollection).SyncRoot))
+                {
+                    pays = DC.Structures.LesPays.ToList();
+                }
+
+                foreach (Pays pays1 in pays)
+                {
+                    output.Add(pays1.ToXml());
+                }
+            }
+            catch (Exception ex)
+            {
+                LogTools.Logger.Debug(ex);
+            }
+
+            return output;
+        }
+
+
+        /// <summary>
+        /// Genere la liste des clubs en XML
+        /// </summary>
+        /// <param name="DC"></param>
+        /// <returns></returns>
+        public static List<XElement> GetClubs(JudoData DC)
+        {
+            ICollection<Club> clubs = null;
+            List<XElement> output = new List<XElement> ();
+
+            try
+            {
+                using (TimedLock.Lock((DC.Participants.vjudokas as ICollection).SyncRoot))
+                {
+                    using (TimedLock.Lock((DC.Structures.Clubs as ICollection).SyncRoot))
+                    {
+                        clubs = (from c in DC.Structures.Clubs
+                                 join j in DC.Participants.vjudokas on c.id equals j.club
+                                 select c).Distinct().ToList();
+                    }
+                }
+
+                foreach (Club club in clubs)
+                {
+                    output.Add(club.ToXml());
+                }
+
+                using (TimedLock.Lock((DC.Participants.Equipes as ICollection).SyncRoot))
+                {
+                    using (TimedLock.Lock((DC.Structures.Clubs as ICollection).SyncRoot))
+                    {
+                        clubs = (from c in DC.Structures.Clubs
+                                 join eq in DC.Participants.Equipes on c.id equals eq.club
+                                 select c).Distinct().ToList();
+                    }
+                }
+
+                foreach (Club club in clubs)
+                {
+                    output.Add(club.ToXml());
+                }
+            }
+            catch (Exception ex)
+            {
+                LogTools.Logger.Debug(ex);
+            }
+
+            return output;
         }
 
         /// <summary>
@@ -275,7 +444,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static XmlDocument CreateDocumentMenu(JudoData DC, ExportSiteStructure siteStructure)
+        public static XmlDocument CreateDocumentMenu(JudoData DC, ExtensionJudoData EDC, ExportSiteStructure siteStructure)
         {
             XDocument doc = new XDocument();
             XElement xcompetitions = new XElement(ConstantXML.Competitions);
@@ -346,12 +515,107 @@ namespace AppPublication.Export
                         }
                     }
                 }
+
+                // Ajoute les groupes dans la structure XML
+                List<EchelonEnum> typesGroupes = ExtensionNoyau.Deroulement.DataDeroulement.GetTypeGroupe(competition);
+                foreach (EchelonEnum typeGroupe in typesGroupes)
+                {
+                    XElement xgroupesP = new XElement(ConstantXML.GroupeEngagements_groupes);
+                    xgroupesP.SetAttributeValue(ConstantXML.GroupeEngagements_type, (int) typeGroupe);
+
+                    // Recupere les groupes d'engagements pour la competition et le type de groupe en cours
+                    IList<GroupeEngagements> grpEngages = EDC.Deroulement.GroupesEngages.Where(g => g.Competition == competition.id && g.Type == (int)typeGroupe).ToList();
+
+                    // Convertit en XML et ajoute a l'element racine
+                    foreach (GroupeEngagements grp in grpEngages)
+                    {
+                        xgroupesP.Add(grp.ToXml());
+                    }
+
+                    // Ajoute les groupes du meme type a la racine
+                    xcompetition.Add(xgroupesP);
+                }
             }
 
             return doc.ToXmlDocument();
         }
 
         /// <summary>
+        public static XmlDocument CreateDocumentEngagements(JudoData DC, ExtensionJudoData EDC)
+        {
+            XDocument doc = new XDocument();
+            XElement xcompetitions = new XElement(ConstantXML.Competitions);
+            doc.Add(xcompetitions);
+            IList<Competition> competitions = DC.Organisation.Competitions.ToList();
+            IList<Club> clubs = DC.Structures.Clubs.ToList();
+            foreach (Competition competition in competitions)
+            {
+                // On ne gere les engages que pour les Shiai et les individuelles
+                if (competition.IsShiai() || competition.IsIndividuelle())
+                {
+                    XElement xcompetition = competition.ToXmlInformations();
+                    xcompetitions.Add(xcompetition);
+
+                    // Ajoute les groupes dans la structure XML
+                    List<EchelonEnum> typesGroupes = ExtensionNoyau.Deroulement.DataDeroulement.GetTypeGroupe(competition);
+                    foreach (EchelonEnum typeGroupe in typesGroupes)
+                    {
+                        XElement xgroupesP = new XElement(ConstantXML.GroupeEngagements_groupes);
+                        xgroupesP.SetAttributeValue(ConstantXML.GroupeEngagements_type, (int) typeGroupe);
+
+                        // Recupere les groupes d'engagements pour la competition et le type de groupe en cours
+                        IList<GroupeEngagements> groupes = EDC.Deroulement.GroupesEngages.Where(g => g.Competition == competition.id && g.Type == (int)typeGroupe).ToList();
+
+                        // Convertit en XML et ajoute a l'element racine
+                        foreach (GroupeEngagements groupe in groupes)
+                        {
+                            xgroupesP.Add(groupe.ToXml());  
+                        }
+
+                        // Ajoute les groupes du meme type a la racine
+                        xcompetition.Add(xgroupesP);
+                    }
+
+                    // Ajoute les judokas de la competition
+                    IList<vue_judoka> vjudokas = DC.Participants.vjudokas.Where(vj => vj.idcompet == competition.id).ToList();
+                    XElement xjudokas = new XElement(ConstantXML.GroupeEngagements_judokas);
+                    foreach (vue_judoka vj in vjudokas)
+                    {
+                        xjudokas.Add(vj.ToXml());
+                    }
+                    xcompetition.Add(xjudokas);
+
+                    // Ajoute les epreuves de la competition
+                    IList<Epreuve> epreuves = DC.Organisation.Epreuves.Where(ep => ep.competition == competition.id).ToList();
+                    XElement xepreuves = new XElement(ConstantXML.GroupeEngagements_epreuves);
+                    foreach (Epreuve ep in epreuves)
+                    {
+                        xepreuves.Add(ep.ToXml(DC));
+                    }
+                    xcompetition.Add(xepreuves);
+
+                    // Ajouter les es de la competition
+                    IList<Phase> phases = DC.Deroulement.Phases.Join(epreuves, p => p.epreuve, e => e.id, (p, e) => p).ToList();
+                    XElement xphases = new XElement(ConstantXML.Phases);
+                    foreach (Phase ph in phases)
+                    {
+                        xphases.Add(ph.ToXml());
+                    }
+                    xcompetition.Add(xphases);
+
+                    // Ajoute les combats de la competitions (les combats des phases des epreuves de la competition)
+                    IList<Combat> combats = DC.Deroulement.Combats.Join(phases, c => c.phase, p => p.id, (c, p) => c).Distinct(new CombatEqualityComparer()).ToList();
+                    XElement xcombats = new XElement(ConstantXML.GroupeEngagements_combats);
+                    foreach (Combat c in combats)
+                    {
+                        xcombats.Add(c.ToXml(DC));
+                    }
+                    xcompetition.Add(xcombats);
+
+                }
+            }
+            return doc.ToXmlDocument();
+        }
         /// Document XML contenant les informations pour les generations des affectations de tapis
         /// </summary>
         /// <param name="DC"></param>
@@ -394,7 +658,7 @@ namespace AppPublication.Export
                     }
 
                     //i_vue_epreuve ep = vepreuves.FirstOrDefault(o => o.id == epreuve.id);
-                    string epreuve_nom = ep != null ? (ep.id + "_" + ep.nom) : null;
+                    // string epreuve_nom = ep != null ? (ep.id + "_" + ep.nom) : null;
 
                     XElement xepreuve = ep.ToXml(DC);
                     xcompetition.Add(xepreuve);
@@ -489,10 +753,7 @@ namespace AppPublication.Export
                     competition = DC.Organisation.Competitions.Where(o => o.id == ep.competition).FirstOrDefault();
                 }
             }
-            else
-            {
-                // Pas de phase specifiee, on va chercher
-            }
+
             if (competition == null)
             {
                 // Par defaut, prend la premiere
@@ -927,5 +1188,6 @@ namespace AppPublication.Export
 
             return xclassement;
         }
+
     }
 }

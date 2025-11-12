@@ -52,9 +52,16 @@
 
         public const string publierProchainsCombats = "PublierProchainsCombats";
         public const string publierAffectationTapis = "PublierAffectationTapis";
+        public const string publierEngagements = "PublierEngagements";
+        public const string EngagementsAbsents = "EngagementsAbsents";
+        public const string EngagementsTousCombats = "EngagementsTousCombats";
+        public const string EngagementsScoreGP = "EngagementsScoreGP";
+        public const string EngagementsPositionCombat = "EngagementsPositionCombat";
         public const string delaiActualisationClientSec = "DelaiActualisationClientSec";
         public const string nbProchainsCombats = "NbProchainsCombats";
         public const string msgProchainsCombats = "MsgProchainsCombats";
+        public const string useIntituleCommun = "UseIntituleCommun";
+        public const string intituleCommun = "IntituleCommun";
         public const string DateGeneration = "DateGeneration";
         public const string AppVersion = "AppVersion";
         public const string Logo = "Logo";
@@ -72,6 +79,18 @@
         public const string Structure_RemoteID = "remoteID";
         public const string Structure_Nom = "nom";
 
+        public const string GroupeEngagements_groupes = "groupesEngagements";
+        public const string GroupeEngagements_groupe = "groupeEngagements";
+
+        public const string GroupeEngagements_sexe = "sexe";
+        public const string GroupeEngagements_id = "id";
+        public const string GroupeEngagements_entite = "entite";
+        public const string GroupeEngagements_judokas = "judokas";
+        public const string GroupeEngagements_epreuves = "epreuves";
+        public const string GroupeEngagements_combats = "combats";
+        public const string GroupeEngagements_type = "type";
+        public const string GroupeEngagements_competition = "competition";
+
         //Compétition 
         public const string Competition = "competition";
         public const string Competition_ID = "ID";
@@ -84,6 +103,7 @@
         public const string Competition_Type = "type";
         public const string Competition_Type2 = "type2";
         public const string Competition_Discipline = "discipline";
+        public const string Competition_DisciplineId = "disciplineId";
         public const string Competition_Couleur1 = "couleur1";
         public const string Competition_Couleur2 = "couleur2";
         public const string Competition_Niveau = "niveau";
@@ -113,6 +133,7 @@
         public const string Comite = "comite";
         public const string Comite_ID = "ID";
         public const string Comite_Nom = "nom";
+        public const string Comite_NomCourt = "nomCourt";
         public const string Comite_Ligue = "ligue";
         public const string Comite_RemoteID = "remoteID";
         public const string Comite_Secteur = "secteur";
@@ -313,6 +334,7 @@
         public const string Judoka_Observation = "observation";
         public const string Judoka_CatePoids_RemoteId = "remoteId_catepoids";
 
+
         //participant 
         public const string Participants = "participants";
         public const string Participant = "participant";
@@ -395,6 +417,7 @@
         public const string Vue_Epreuve_Nom_CategorieAge = "nom_cateage";
         public const string Vue_Epreuve_Nom_CategoriePoids = "nom_catepoids";
         public const string Vue_Epreuve_Nom_Competition = "nom_competition";
+        public const string Vue_Epreuve_Discipline_Competition = "discipline_competition";
         public const string Vue_Epreuve_PoidsMin_CategoriePoids = "poidsmin_catepoids";
         public const string Vue_Epreuve_PoidsMax_CategoriePoids = "poidsmax_catepoids";
         public const string Vue_Epreuve_Categorie_Age = "categorieAge";
@@ -446,12 +469,15 @@
         public const string Vue_Judoka_ClubNomCourt = "clubnomcourt";
         public const string Vue_Judoka_ClubNom = "clubnom";
 
+        public const string Vue_Judoka_Comite = "comite";
         public const string Vue_Judoka_ComiteNomCourt = "comitenomcourt";
         public const string Vue_Judoka_ComiteNom = "comitenom";
 
         public const string Vue_Judoka_Ligue = "ligue";
         public const string Vue_Judoka_LigueNomCourt = "liguenomcourt";
         public const string Vue_Judoka_LigueNom = "liguenom";
+        
+        public const string Vue_Judoka_Pays = "pays";
 
         public const string Vue_Judoka_IdEpreuve = "idepreuve";
         public const string Vue_Judoka_LibEpreuve = "libepreuve";

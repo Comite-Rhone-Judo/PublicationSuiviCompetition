@@ -5,12 +5,20 @@
 ]>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:import href="Tools/Export/xslt/Site/entete.xslt"/>
-	
+	<xsl:import href="Tools/Export/xslt/Site/niveau_tour_combat.xslt"/>
+
 	<xsl:output method="html" indent="yes" />
 	<xsl:param name="style"></xsl:param>
 	<xsl:param name="js"></xsl:param>
 	<xsl:param name="istapis"/>
-	
+	<xsl:param name="useIntituleCommun"/>
+	<xsl:param name="imgPath"/>
+	<xsl:param name="jsPath"/>
+	<xsl:param name="cssPath"/>
+	<xsl:param name="commonPath"/>
+	<xsl:param name="competitionPath"/>
+
+
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 
 	<xsl:variable name="couleur1" select="//competition/@couleur1"> </xsl:variable>
@@ -25,8 +33,9 @@
 		</html>
 	</xsl:template>
 
-	<xsl:variable select="/competition/@PublierProchainsCombats = 'True'" name="affProchainCombats"/>
-	<xsl:variable select="/competition/@PublierAffectationTapis = 'True'" name="affAffectationTapis"/>
+	<xsl:variable select="/competition/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
+	<xsl:variable select="/competition/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
+	<xsl:variable select="/competition/@PublierEngagements = 'true'" name="affEngagements"/>
 	<xsl:variable select="/competition/@DelaiActualisationClientSec" name="delayActualisationClient"/>
 	<xsl:variable select="number(competition/@NbProchainsCombats)" name="nbProchainsCombats"/>
 	<xsl:variable select="/competition/@Logo" name="logo"/>
@@ -40,7 +49,11 @@
 		</xsl:choose>
 	</xsl:variable>
 
-	<xsl:variable select="count(//epreuve[@competition!=$idCompetition])!=0" name="affDetailCompetition"/>
+	<!-- Affiche les details de la competition si on est en judo avec plus d'une competition -->
+	<xsl:variable select="count(//epreuve[@competition!=$idCompetition])!=0 and /competition/@disciplineId = 1" name="affDetailCompetition"/>
+	
+	<!-- En jujitsu, on affiche la discpline -->
+	<xsl:variable select="/competition/@discipline != 'C_COMPETITION'" name="affDiscipline"/>
 
 	<xsl:variable name="selectedItemName">
 		<xsl:choose>
@@ -60,21 +73,36 @@
 			<meta http-equiv="Expires" content="0"/>
 
 			<!-- Feuille de style W3.CSS -->
-			<link type="text/css" rel="stylesheet" href="../style/w3.css"/>
-			<link type="text/css" rel="stylesheet" href="../style/style-common.css"/>
-			<link type="text/css" rel="stylesheet" href="../style/style-tableau.css"/>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'w3.css')"/>
+				</xsl:attribute>
+			</link>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'style-common.css')"/>
+				</xsl:attribute>
+			</link>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'style-tableau.css')"/>
+				</xsl:attribute>
+			</link>
 
 			<!-- Script de navigation par defaut -->
-			<script src="../js/site-display.js"></script>
+			<script>
+				<xsl:attribute name="src">
+					<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
+				</xsl:attribute>
+			</script>
 
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
 				<xsl:value-of select="$js"/>
-				var delayAutoreloadSec = <xsl:value-of select="$delayActualisationClient"/>;
-				window.onload=checkReloading;
+				gDelayAutoReloadSec = <xsl:value-of select="$delayActualisationClient"/>;
 			</script>
 			<title>
-				<xsl:value-of select="@titre"/>
+				Suivi Compétition - Avancement
 			</title>
 		</head>
 		<body>
@@ -83,16 +111,32 @@
 				<xsl:with-param name="logo" select="$logo"/>
 				<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
 				<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
-				<xsl:with-param name="affActualiser" select="'True'"/>
+				<xsl:with-param name="affEngagements" select="$affEngagements"/>
+				<xsl:with-param name="affActualiser" select="true()"/>
 				<xsl:with-param name="selectedItem" select="$selectedItemName"/>
+				<xsl:with-param name="pathToImg" select="$imgPath"/>
+				<xsl:with-param name="pathToCommon" select="$commonPath"/>
 			</xsl:call-template>
 
 			<!-- CONTENU -->
+
+			<xsl:variable name="titreCompetition">
+				<xsl:choose>
+					<xsl:when test="$useIntituleCommun = 'true'">
+						<xsl:value-of select="/competition/@IntituleCommun"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="./titre"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable> 
+			
+			
 			<!-- Nom de la competition + Catégorie si on affiche une epreuve particuliere -->
 			<div class="w3-container w3-blue w3-center tas-competition-bandeau">
 				<div>
 					<h4>
-						<xsl:value-of select="./titre"/>
+						<xsl:value-of select="$titreCompetition"/>
 					</h4>
 				</div>
 				<xsl:if test="$istapis = 'epreuve'">
@@ -132,7 +176,7 @@
 				<!-- On ne prend en compte que les tapis avec des combats -->
 				<xsl:if test="@tapis != 0 and ($istapis != 'epreuve' or count(./combats/combat) &gt; 0)">
 					<xsl:variable name="tapis" select="@tapis"/>
-					
+
 					<xsl:call-template name="UnTapis">
 						<xsl:with-param name="notapis" select="$tapis"/>
 					</xsl:call-template>
@@ -140,15 +184,18 @@
 			</xsl:for-each>
 
 			<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
-				<script src="../js/footer_script.js"/>
-				<!-- TODO penser a modifier quand on passera en version Participants -->
+				<script>
+					<xsl:attribute name="src">
+						<xsl:value-of select="concat($jsPath, 'footer_script.js')"/>
+					</xsl:attribute>
+				</script>
 			</div>
 		</body>
 	</xsl:template>
 
 	<!-- TEMPLATES -->
 
-	
+
 	<!-- TEMPLATE UN TAPIS -->
 	<xsl:template name="UnTapis">
 		<xsl:param name="notapis"/>
@@ -159,14 +206,20 @@
 		<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
 			<button class="w3-bar-item w3-light-blue">
 				<xsl:attribute name="onclick">
-					<xsl:value-of select="concat('toggleElement(',$apos,'tapis',$notapis,$apos,')')"/>
+					<xsl:value-of select="concat('togglePanel(',$apos,'tapis',$notapis,$apos,')')"/>
 				</xsl:attribute>
-				<img class="img" width="25" src="../img/up_circular-32.png">
+				<img class="img" width="25">
+					<xsl:attribute name="src">
+						<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
+					</xsl:attribute>
 					<xsl:attribute name="id">
 						<xsl:value-of select="concat('tapis',$notapis,'Collapse')"/>
 					</xsl:attribute>
 				</img>
-				<img class="img" width="25" src="../img/down_circular-32.png" style="display: none;" >
+				<img class="img" width="25" style="display: none;" >
+					<xsl:attribute name="src">
+						<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
+					</xsl:attribute>
 					<xsl:attribute name="id">
 						<xsl:value-of select="concat('tapis',$notapis,'Expand')"/>
 					</xsl:attribute>
@@ -175,13 +228,13 @@
 			</button>
 		</div>
 		<!-- Le contenu du tapis -->
-		<div class="w3-container tas-panel-tableau-combat">
+		<div class="tasOpenedPanelType w3-container tas-panel-tableau-combat">
 			<xsl:attribute name="id">
 				<xsl:value-of select="concat('tapis',$notapis)"/>
 			</xsl:attribute>
 
 			<!-- La liste des combats -->
-			<table style="width:100%" class="w3-table w3-bordered w3-card tas-tableau-prochain-combat">
+			<table class="w3-table w3-bordered w3-card tas-tableau-prochain-combat" style="width:100%">
 				<tbody>
 					<!-- Selectionne tous les combats du tapis, sauf ceux "Aucun Judoka", avec les judoka absents -->
 					<!-- <xsl:for-each select="//tapis[@tapis = $notapis]/combats/combat"> -->
@@ -202,7 +255,7 @@
 
 		</div>
 	</xsl:template>
-	
+
 	<!-- TEMPLATE UN COMBAT -->
 	<xsl:template name="UnCombat">
 		<xsl:param name="combat"/>
@@ -210,6 +263,7 @@
 
 		<xsl:variable name="epreuve" select="$combat/@epreuve"/>
 		<xsl:variable name="phase" select="$combat/@phase"/>
+		<xsl:variable name="typePhase" select="//phase[@id = $phase]/@typePhase"/>
 
 		<xsl:variable name="participant1" select="$combat/score[1]/@judoka"/>
 		<xsl:variable name="judoka1" select="//participant[@judoka = $participant1]/descendant::*[1]"/>
@@ -267,7 +321,11 @@
 					<xsl:choose>
 						<xsl:when test="$participant1 = 'null'">
 							<!-- Combat en attente-->
-							<img class="img" src="../img/sablier.png" width="25" />
+								<img class="img" width="25">
+									<xsl:attribute name="src">
+										<xsl:value-of select="concat($imgPath, 'sablier.png')"/>
+									</xsl:attribute>
+								</img>
 							<xsl:text disable-output-escaping="yes">&#032;En Attente</xsl:text>
 						</xsl:when>
 						<xsl:otherwise>
@@ -327,29 +385,35 @@
 				<!-- Affiche le nom de l'epreuve -->
 				<div class="w3-container w3-cell tas-info-combat">
 					<header>
-						<xsl:value-of select="//epreuve[@ID = $epreuve]/@nom"/>
-						<xsl:if test="$combat/feuille/@repechage = 'true'">
-							<xsl:choose>
-								<xsl:when test="$combat/feuille/@reference = '3.1' or $combat/feuille/@reference = '5.1' or $combat/feuille/@reference = '7.1'">
-									(Barrage)
-								</xsl:when>
-								<xsl:otherwise>
-									(Repêchage)
-								</xsl:otherwise>
-							</xsl:choose>
-						</xsl:if>
+						<xsl:value-of select="//epreuve[@ID = $epreuve]/@sexe"/><xsl:text>&#32;</xsl:text><xsl:value-of select="//epreuve[@ID = $epreuve]/@nom"/>
+						(<xsl:call-template name="NiveauTourCombat">
+							<xsl:with-param name="combat" select="$combat"/>
+							<xsl:with-param name="typePhase" select="$typePhase"/>
+							<xsl:with-param name="repechage" select="$combat/feuille/@repechage = 'true'"/>
+						</xsl:call-template>)
 					</header>
 					<footer class="w3-tiny">
 						<!-- Pour les equipes, affiche la catégorie qui commence -->
 						<xsl:if test="$typeCompetition = 1">
 							<div>
 								<xsl:attribute name="class">tas-prochain-combat-premiere-categorie w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align <xsl:value-of select="$firstrencontreclass"/></xsl:attribute>
-								<img class="img" width="20" src="../img/starter-32.png" />
+								<img class="img" width="20">
+									<xsl:attribute name="src">
+										<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+									</xsl:attribute>
+								</img>
 								<xsl:value-of select="$combat/@firstrencontrelib"/>
 							</div>
 						</xsl:if>
 						<xsl:if test="$affDetailCompetition">
 							<xsl:value-of select="//epreuve[@ID = $epreuve]/@nom_competition"/>
+						</xsl:if>
+						<xsl:if test="$affDiscipline">
+							<xsl:choose>
+								<xsl:when test="//epreuve[@ID = $epreuve]/@discipline_competition = 2">Combat</xsl:when>
+								<xsl:when test="//epreuve[@ID = $epreuve]/@discipline_competition = 3">NeWaza</xsl:when>
+							</xsl:choose>
+							 - <xsl:value-of select="//epreuve[@ID = $epreuve]/@nom_cateage"/>
 						</xsl:if>
 					</footer>
 				</div>
@@ -385,7 +449,11 @@
 					<xsl:choose>
 						<xsl:when test="$participant2 = 'null'">
 							<!-- Combat en attente-->
-							<img class="img" src="../img/sablier.png" width="25" />
+								<img class="img" width="25">
+									<xsl:attribute name="src">
+										<xsl:value-of select="concat($imgPath, 'sablier.png')"/>
+									</xsl:attribute>
+								</img>
 							<xsl:text disable-output-escaping="yes">&#032;En Attente</xsl:text>
 						</xsl:when>
 						<xsl:otherwise>
@@ -442,5 +510,5 @@
 		</xsl:if>
 
 	</xsl:template>
-	
+
 </xsl:stylesheet>
