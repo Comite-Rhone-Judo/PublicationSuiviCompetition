@@ -85,7 +85,7 @@ namespace AppPublication.IHM.Commissaire
             string tmpFile = Path.GetTempFileName();
             using (FileStream fs = new FileStream(tmpFile, FileMode.Create))
             {
-                Telerik.Windows.Media.Imaging.ExportExtensions.ExportToImage(QRCodeLocal, fs, new PngBitmapEncoder());
+                Telerik.Windows.Media.Imaging.ExportExtensions.ExportToImage(QRCodeDistant, fs, new PngBitmapEncoder());
                 fs.Close();
             }
             BitmapImage img = new BitmapImage(new Uri(tmpFile));
