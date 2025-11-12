@@ -137,7 +137,7 @@ namespace Tools.Export
             get
             {
                 IsConfiguredGuardRail();
-                return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportSiteStructure.kStyle);
+                return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportSiteStructure.kCss);
             }
         }
 

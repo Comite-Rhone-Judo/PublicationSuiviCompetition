@@ -10,7 +10,11 @@
 	<xsl:output method="html" indent="yes"/>
 	<xsl:param name="style"/>
 	<xsl:param name="js"/>
-	
+	<xsl:param name="imgPath"/>
+	<xsl:param name="jsPath"/>
+	<xsl:param name="cssPath"/>
+	<xsl:param name="commonPath"/>
+	<xsl:param name="competitionPath"/>
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 	<xsl:template match="/">
@@ -20,8 +24,9 @@
 		</html>
 	</xsl:template>
 
-	<xsl:variable select="count(/competitions/competition[@PublierProchainsCombats = 'True']) > 0" name="affProchainCombats"/>
-	<xsl:variable select="count(/competitions/competition[@PublierAffectationTapis = 'True']) > 0" name="affAffectationTapis"/>
+	<xsl:variable select="count(/competitions/competition[@PublierProchainsCombats = 'true']) > 0" name="affProchainCombats"/>
+	<xsl:variable select="count(/competitions/competition[@PublierAffectationTapis = 'true']) > 0" name="affAffectationTapis"/>
+	<xsl:variable select="count(/competitions/competition[@PublierEngagements = 'true']) > 0" name="affEngagements"/>
 	<xsl:variable select="sum(/competitions/competition/@DelaiActualisationClientSec) div count(/competitions/competition)" name="delayActualisationClient"/>
 	<xsl:variable select="/competitions/competition[1]/@Logo" name="logo"/>
 
@@ -36,20 +41,31 @@
 			<meta http-equiv="Expires" content="0"/>
 
 			<!-- Feuille de style W3.CSS -->
-			<link type="text/css" rel="stylesheet" href="../style/w3.css"/>
-			<link type="text/css" rel="stylesheet" href="../style/style-common.css"/>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'w3.css')"/>
+				</xsl:attribute>
+			</link>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'style-common.css')"/>
+				</xsl:attribute>
+			</link>
 
 			<!-- Script de navigation par defaut -->
-			<script src="../js/site-display.js"/>
+			<script>
+				<xsl:attribute name="src">
+					<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
+				</xsl:attribute>
+			</script>
 
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
 				<xsl:value-of select="$js"/>
-				var delayAutoreloadSec = <xsl:value-of select="$delayActualisationClient"/>;
-				window.onload=checkReloading;
+				gDelayAutoReloadSec = <xsl:value-of select="$delayActualisationClient"/>;
 			</script>
 			<title>
-				<xsl:value-of select="@titre"/>
+				Suivi Compétition - Affectation
 			</title>
 		</head>
 		<body>
@@ -58,17 +74,20 @@
 				<xsl:with-param name="logo" select="$logo"/>
 				<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
 				<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
-				<xsl:with-param name="affActualiser" select="'True'"/>
+				<xsl:with-param name="affActualiser" select="true()"/>
+				<xsl:with-param name="affEngagements" select="$affEngagements"/>
 				<xsl:with-param name="selectedItem" select="'affectations_tapis'"/>
+				<xsl:with-param name="pathToImg" select="$imgPath"/>
+				<xsl:with-param name="pathToCommon" select="$commonPath"/>
 			</xsl:call-template>
-			
+
 			<!-- CONTENU -->
 			<xsl:if test="count(/competitions/competition)=0 or count(//epreuve)=0">
 				<div class="w3-container w3-border">
 					<div class="w3-panel w3-pale-green w3-bottombar w3-border-green w3-border w3-center w3-large"> Veuillez patienter le tirage des épreuves </div>
 				</div>
 			</xsl:if>
-			
+
 			<!-- Boucle global sur les competitions en cours -->
 			<xsl:for-each select="/competitions/competition">
 				<xsl:if test="count(./epreuve) > 0">
@@ -81,7 +100,11 @@
 
 			<xsl:if test="count(/competitions/competition)>0">
 				<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
-					<script src="../js/footer_script.js"/> <!-- TODO penser a modifier quand on passera en version Participants -->
+					<script>
+						<xsl:attribute name="src">
+							<xsl:value-of select="concat($jsPath, 'footer_script.js')"/>
+						</xsl:attribute>
+					</script>
 				</div>
 			</xsl:if>
 		</body>
@@ -111,21 +134,24 @@
 				<xsl:call-template name="panelEpreuve">
 					<xsl:with-param name="sexeCode" select="'F'"/>
 					<xsl:with-param name="prefixPanel" select="$prefixCompetition"/>
+					<xsl:with-param name="imgPath" select="$imgPath"/>
 				</xsl:call-template>
 				<!-- Categorie M -->
 				<xsl:call-template name="panelEpreuve">
 					<xsl:with-param name="sexeCode" select="'M'"/>
 					<xsl:with-param name="prefixPanel" select="$prefixCompetition"/>
+					<xsl:with-param name="imgPath" select="$imgPath"/>
 				</xsl:call-template>
 				<!-- Mixte -->
 				<xsl:call-template name="panelEpreuve">
 					<xsl:with-param name="sexeCode" select="'X'"/>
 					<xsl:with-param name="prefixPanel" select="$prefixCompetition"/>
+					<xsl:with-param name="imgPath" select="$imgPath"/>
 				</xsl:call-template>
 			</div>
 		</div>
 	</xsl:template>
-	
+
 	<!-- Bouton affectations par epreuve -->
 	<xsl:template name="affectation_epreuve" match="epreuve">
 		<div class="w3-panel">

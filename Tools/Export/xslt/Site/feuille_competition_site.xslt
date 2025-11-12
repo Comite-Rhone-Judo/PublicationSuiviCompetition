@@ -9,6 +9,11 @@
 	<xsl:output method="html" indent="yes" />
 	<xsl:param name="style"></xsl:param>
 	<xsl:param name="js"></xsl:param>
+	<xsl:param name="imgPath"/>
+	<xsl:param name="jsPath"/>
+	<xsl:param name="cssPath"/>
+	<xsl:param name="commonPath"/>
+	<xsl:param name="competitionPath"/>
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 
@@ -19,8 +24,9 @@
 		</html>
 	</xsl:template>
 
-	<xsl:variable select="/competition/@PublierProchainsCombats = 'True'" name="affProchainCombats"/>
-	<xsl:variable select="/competition/@PublierAffectationTapis = 'True'" name="affAffectationTapis"/>
+	<xsl:variable select="/competition/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
+	<xsl:variable select="/competition/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
+	<xsl:variable select="/competition/@PublierEngagements = 'true'" name="affEngagements"/>
 	<xsl:variable select="/competition/@DelaiActualisationClientSec" name="delayActualisationClient"/>
 	<xsl:variable select="/competition/@kinzas" name="affKinzas"/>
 	<xsl:variable select="/competition/@Logo" name="logo"/>
@@ -37,21 +43,36 @@
 			<meta http-equiv="Expires" content="0"/>
 
 			<!-- Feuille de style W3.CSS -->
-			<link type="text/css" rel="stylesheet" href="../style/w3.css"/>
-			<link type="text/css" rel="stylesheet" href="../style/style-common.css"/>
-			<link type="text/css" rel="stylesheet" href="../style/style-tableau.css"/>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'w3.css')"/>
+				</xsl:attribute>
+			</link>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'style-common.css')"/>
+				</xsl:attribute>
+			</link>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'style-tableau.css')"/>
+				</xsl:attribute>
+			</link>
 
 			<!-- Script de navigation par defaut -->
-			<script src="../js/site-display.js"></script>
+			<script>
+				<xsl:attribute name="src">
+					<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
+				</xsl:attribute>
+			</script>
 
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
 				<xsl:value-of select="$js"/>
-				var delayAutoreloadSec = <xsl:value-of select="$delayActualisationClient"/>;
-				window.onload=checkReloading;
+				gDelayAutoReloadSec = <xsl:value-of select="$delayActualisationClient"/>;
 			</script>
 			<title>
-				<xsl:value-of select="@titre"/>
+				Suivi Compétition - Avancement
 			</title>
 		</head>
 		<body>
@@ -60,8 +81,11 @@
 				<xsl:with-param name="logo" select="$logo"/>
 				<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
 				<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
-				<xsl:with-param name="affActualiser" select="'True'"/>
+				<xsl:with-param name="affEngagements" select="$affEngagements"/>
+				<xsl:with-param name="affActualiser" select="true()"/>
 				<xsl:with-param name="selectedItem" select="'avancement'"/>
+				<xsl:with-param name="pathToImg" select="$imgPath"/>
+				<xsl:with-param name="pathToCommon" select="$commonPath"/>
 			</xsl:call-template>
 
 			<!-- CONTENU -->
@@ -83,7 +107,7 @@
 							Masculins&nbsp;
 
 						</xsl:if>
-						<xsl:if test="//epreuve[1]/@sexe='M'">
+						<xsl:if test="//epreuve[1]/@sexe='X'">
 							Mixte&nbsp;
 						</xsl:if>
 						<xsl:value-of select="//epreuve[1]/@nom"/>
@@ -91,61 +115,101 @@
 				</div>
 			</div>
 
-			<!-- Le tableau principal -->
-			<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-				<button class="w3-bar-item w3-light-blue" onclick="toggleElement('tableauPrincipal')">
-					<img class="img" id="tableauPrincipalCollapse" width="25" src="../img/up_circular-32.png" />
-					<img class="img" id="tableauPrincipalExpand" width="25" src="../img/down_circular-32.png" style="display: none;" />
-					Tableau principal
-				</button>
-			</div>
-			<div class="w3-container tas-panel-tableau-combat" id="tableauPrincipal">
-				<xsl:variable name="repechage">
-					<xsl:text>false</xsl:text>
-				</xsl:variable>
+			<!-- Controle si le tirage du tableau est bien disponible -->
+			<xsl:choose>
+				<!-- Pas de tirage disponible -->
+				<xsl:when test="//phase[1]/@etat = 0">
+					<div class="w3-container w3-border">
+						<div class="w3-panel w3-pale-green w3-bottombar w3-border-green w3-border w3-center w3-large"> Veuillez patienter le tirage de la phase</div>
+					</div>
+				</xsl:when>
+				<!-- Cas standard avec un tirage -->
+				<xsl:otherwise>
+					<!-- Le tableau principal -->
+					<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
+						<button class="w3-bar-item w3-light-blue" onclick="togglePanel('tableauPrincipal')">
+							<img class="img" id="tableauPrincipalCollapse" width="25">
+								<xsl:attribute name="src">
+									<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
+								</xsl:attribute>
+							</img>
+							<img class="img" id="tableauPrincipalExpand" width="25" style="display: none;">
+								<xsl:attribute name="src">
+									<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
+								</xsl:attribute>
+							</img>
+							Tableau principal
+						</button>
+					</div>
+					<div class="tasOpenedPanelType w3-container tas-panel-tableau-combat" id="tableauPrincipal">
+						<xsl:variable name="repechage">
+							<xsl:text>false</xsl:text>
+						</xsl:variable>
 
-				<xsl:call-template name="tableau">
-					<xsl:with-param name="repechage" select="$repechage"/>
-				</xsl:call-template>
-			</div>
-			<!-- Le tableau repechage s'il existe -->
+						<xsl:call-template name="tableau">
+							<xsl:with-param name="repechage" select="$repechage"/>
+						</xsl:call-template>
+					</div>
 
-			<xsl:if test="count(//combat[@repechage = 'true']) &gt; 0">
-				<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-					<button class="w3-bar-item w3-light-blue" onclick="toggleElement('tableauRepechages')">
-						<img class="img" id="tableauRepechagesCollapse" width="25" src="../img/up_circular-32.png" />
-						<img class="img" id="tableauRepechagesExpand" width="25" src="../img/down_circular-32.png" style="display: none;" />
-						Tableaux de repêchage
-					</button>
-				</div>
-				<div class="w3-container tas-panel-tableau-combat" id="tableauRepechages">
-					<xsl:variable name="repechage1">
-						<xsl:text>true</xsl:text>
-					</xsl:variable>
-					<xsl:call-template name="tableau">
-						<xsl:with-param name="repechage" select="$repechage1"/>
-					</xsl:call-template>
-				</div>
-			</xsl:if>
+					<!-- Le tableau repechage s'il existe -->
+					<xsl:if test="count(//combat[@repechage = 'true']) &gt; 0">
+						<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
+							<button class="w3-bar-item w3-light-blue" onclick="togglePanel('tableauRepechages')">
+								<img class="img" id="tableauRepechagesCollapse" width="25">
+									<xsl:attribute name="src">
+										<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
+									</xsl:attribute>
+								</img>
+								<img class="img" id="tableauRepechagesExpand" width="25" style="display: none;">
+									<xsl:attribute name="src">
+										<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
+									</xsl:attribute>
+								</img>
+								Tableaux de repêchage
+							</button>
+						</div>
+						<div class="tasOpenedPanelType w3-container tas-panel-tableau-combat" id="tableauRepechages">
+							<xsl:variable name="repechage1">
+								<xsl:text>true</xsl:text>
+							</xsl:variable>
+							<xsl:call-template name="tableau">
+								<xsl:with-param name="repechage" select="$repechage1"/>
+							</xsl:call-template>
+						</div>
+					</xsl:if>
 
-			<!-- Les barrages -->
-			<xsl:if test="count(//phase[@barrage5 = 'true' or @barrage3 = 'true' or @barrage7 = 'true']) &gt; 0">
-				<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-					<button class="w3-bar-item w3-light-blue" onclick="toggleElement('tableauBarrages')">
-						<img class="img" id="tableauBarragesCollapse" width="25" src="../img/up_circular-32.png" />
-						<img class="img" id="tableauBarragesExpand" width="25" src="../img/down_circular-32.png" style="display: none;" />
-						Tableaux de barrage
-					</button>
-				</div>
-				<div class="w3-container tas-panel-tableau-combat" id="tableauBarrages">
-					<xsl:call-template name="tableauBarrage"/>
-				</div>
-			</xsl:if>
+					<!-- Les barrages -->
+					<xsl:if test="count(//phase[@barrage5 = 'true' or @barrage3 = 'true' or @barrage7 = 'true']) &gt; 0">
+						<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
+							<button class="w3-bar-item w3-light-blue" onclick="togglePanel('tableauBarrages')">
+								<img class="img" id="tableauBarragesCollapse" width="25">
+									<xsl:attribute name="src">
+										<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
+									</xsl:attribute>
+								</img>
+								<img class="img" id="tableauBarragesExpand" width="25" style="display: none;">
+									<xsl:attribute name="src">
+										<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
+									</xsl:attribute>
+								</img>
+								Tableaux de barrage
+							</button>
+						</div>
+						<div class="tasOpenedPanelType w3-container tas-panel-tableau-combat" id="tableauBarrages">
+							<xsl:call-template name="tableauBarrage"/>
+						</div>
+					</xsl:if>
 
-			<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
-				<script src="../js/footer_script.js"/>
-				<!-- TODO penser a modifier quand on passera en version Participants -->
-			</div>
+					<!-- Pied de page -->
+					<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
+						<script>
+							<xsl:attribute name="src">
+								<xsl:value-of select="concat($jsPath, 'footer_script.js')"/>
+							</xsl:attribute>
+						</script>
+					</div>
+				</xsl:otherwise>
+			</xsl:choose>
 		</body>
 	</xsl:template>
 
@@ -628,7 +692,11 @@
 															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
 														</xsl:choose>
 													</xsl:attribute>
-													<img class="img" width="20" src="../img/starter-32.png" />
+													<img class="img" width="20">
+														<xsl:attribute name="src">
+															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+														</xsl:attribute>
+													</img>
 													<xsl:value-of select="$combat/@firstrencontrelib"/>
 												</div>
 											</xsl:if>
@@ -728,7 +796,11 @@
 														w3-cell tas-combat-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align 
 														<xsl:value-of select="$firstrencontreclass"/>
 													</xsl:attribute>
-													<img class="img" width="20" src="../img/starter-32.png" />
+													<img class="img" width="20">
+														<xsl:attribute name="src">
+															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+														</xsl:attribute>
+													</img>
 													<xsl:value-of select="$combat/@firstrencontrelib"/>
 												</div>
 											</xsl:if>
@@ -803,7 +875,11 @@
 															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
 														</xsl:choose>
 													</xsl:attribute>
-													<img class="img" width="20" src="../img/starter-32.png" />
+													<img class="img" width="20">
+														<xsl:attribute name="src">
+															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+														</xsl:attribute>
+													</img>
 													<xsl:value-of select="$combat/@firstrencontrelib"/>
 												</div>
 											</xsl:if>
@@ -902,7 +978,11 @@
 														w3-cell tas-combat-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align 
 														<xsl:value-of select="$firstrencontreclass"/>
 													</xsl:attribute>
-													<img class="img" width="20" src="../img/starter-32.png" />
+													<img class="img" width="20">
+														<xsl:attribute name="src">
+															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+														</xsl:attribute>
+													</img>
 													<xsl:value-of select="$combat/@firstrencontrelib"/>
 												</div>
 											</xsl:if>
@@ -1022,7 +1102,11 @@
 															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
 														</xsl:choose>
 													</xsl:attribute>
-													<img class="img" width="20" src="../img/starter-32.png" />
+													<img class="img" width="20">
+														<xsl:attribute name="src">
+															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+														</xsl:attribute>
+													</img>
 													<xsl:value-of select="$combat/@firstrencontrelib"/>
 												</div>
 											</xsl:if>
@@ -1126,7 +1210,11 @@
 															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
 														</xsl:choose>
 													</xsl:attribute>
-													<img class="img" width="20" src="../img/starter-32.png" />
+													<img class="img" width="20">
+														<xsl:attribute name="src">
+															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+														</xsl:attribute>
+													</img>
 													<xsl:value-of select="$combat/@firstrencontrelib"/>
 												</div>
 											</xsl:if>
@@ -1217,7 +1305,11 @@
 															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
 														</xsl:choose>
 													</xsl:attribute>
-													<img class="img" width="20" src="../img/starter-32.png" />
+													<img class="img" width="20">
+														<xsl:attribute name="src">
+															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+														</xsl:attribute>
+													</img>
 													<xsl:value-of select="$combat/@firstrencontrelib"/>
 												</div>
 											</xsl:if>
@@ -1328,7 +1420,11 @@
 															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
 														</xsl:choose>
 													</xsl:attribute>
-													<img class="img" width="20" src="../img/starter-32.png" />
+													<img class="img" width="20">
+														<xsl:attribute name="src">
+															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+														</xsl:attribute>
+													</img>
 													<xsl:value-of select="$combat/@firstrencontrelib"/>
 												</div>
 											</xsl:if>										
@@ -1561,7 +1657,7 @@
 
 		<xsl:variable name="powerTMP">
 			<xsl:choose>
-				<xsl:when test="power &lt; 0">
+				<xsl:when test="$power &lt; 0">
 					<xsl:value-of select="$power * (-1)"/>
 				</xsl:when>
 				<xsl:otherwise>

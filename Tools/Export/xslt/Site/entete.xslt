@@ -9,8 +9,11 @@
 		<xsl:param name="logo"/>
 		<xsl:param name="affProchainCombats"/>
 		<xsl:param name="affAffectationTapis"/>
+		<xsl:param name="affEngagements"/>
 		<xsl:param name="affActualiser"/>
 		<xsl:param name="selectedItem"/>
+		<xsl:param name="pathToImg"/>
+		<xsl:param name="pathToCommon"/>
 		<xsl:variable name="apos">'</xsl:variable>
 		
 		<!-- BANDEAU DE TITRE -->
@@ -23,7 +26,7 @@
 				<div class="w3-cell w3-cell-middle bandeau-titre">
 					<img class="img img-bandeau-titre">
 						<xsl:attribute name="src">
-							<xsl:value-of select="concat('../img/',$logo)"/>
+							<xsl:value-of select="concat($pathToImg, $logo)"/>
 						</xsl:attribute>
 					</img>
 				</div>
@@ -33,13 +36,16 @@
 		<!-- PANNEAU DE NAVIGATION -->
 		<div class="w3-sidebar w3-bar-block w3-border-right w3-animate-left tas-navigation-panel" id="navigationPanel">
 			<button onclick="closeElement('navigationPanel')" class="w3-bar-item w3-large">Fermer &times;</button>
-			<xsl:if test="$affActualiser or $affActualiser = 'True'">
+			<xsl:if test="$affActualiser">
 				<button class="w3-bar-item w3-button navButton">
 					<input class="w3-check" type="checkbox" id="cbActualiser" onclick="toggleAutoRefresh(this);"/> Actualiser
 				</button>
 			</xsl:if>
-			<xsl:if test="$affProchainCombats   or $affProchainCombats = 'True'">
-				<a href="../common/se_prepare.html">
+			<xsl:if test="$affProchainCombats">
+				<a>
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($pathToCommon, 'se_prepare.html')"/>
+					</xsl:attribute>
 					<xsl:attribute name="class">
 						<xsl:choose>
 							<xsl:when test="$selectedItem = 'se_prepare'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
@@ -48,7 +54,10 @@
 					</xsl:attribute>
 					Se prépare
 				</a>
-				<a href="../common/prochains_combats.html">
+				<a>
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($pathToCommon, 'prochains_combats.html')"/>
+					</xsl:attribute>
 					<xsl:attribute name="class">
 						<xsl:choose>
 							<xsl:when test="$selectedItem = 'prochains_combats'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
@@ -58,8 +67,11 @@
 					Prochains combats
 				</a>
 			</xsl:if>
-			<xsl:if test="$affAffectationTapis  or $affAffectationTapis = 'True'">
-				<a href="../common/affectation_tapis.html">
+			<xsl:if test="$affAffectationTapis">
+				<a>
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($pathToCommon, 'affectation_tapis.html')"/>
+					</xsl:attribute>
 					<xsl:attribute name="class">
 						<xsl:choose>
 							<xsl:when test="$selectedItem = 'affectations_tapis'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
@@ -69,7 +81,10 @@
 					Affectations
 				</a>
 			</xsl:if>
-			<a href="../common/avancement.html">
+			<a>
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($pathToCommon, 'avancement.html')"/>
+				</xsl:attribute>
 				<xsl:attribute name="class">
 					<xsl:choose>
 						<xsl:when test="$selectedItem = 'avancement'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
@@ -78,7 +93,10 @@
 				</xsl:attribute>
 				Avancements
 			</a>
-			<a href="../common/classement.html"> 
+			<a>
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($pathToCommon, 'classement.html')"/>
+				</xsl:attribute>
 				<xsl:attribute name="class">
 					<xsl:choose>
 						<xsl:when test="$selectedItem = 'classement'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
@@ -87,6 +105,20 @@
 				</xsl:attribute>
 				Classements
 			</a>
+			<xsl:if test="$affEngagements">
+				<a>
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($pathToCommon, 'engagements.html')"/>
+					</xsl:attribute>
+					<xsl:attribute name="class">
+						<xsl:choose>
+							<xsl:when test="$selectedItem = 'engagements'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
+							<xsl:otherwise>w3-bar-item w3-button navButton</xsl:otherwise>
+						</xsl:choose>
+					</xsl:attribute>
+					Engagements
+				</a>
+			</xsl:if>
 		</div>
 
 		<!-- Div vide pour aligner le contenu avec le bandeau de titre de taille fixe -->

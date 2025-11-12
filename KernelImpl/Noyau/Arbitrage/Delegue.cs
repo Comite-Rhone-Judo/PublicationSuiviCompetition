@@ -6,7 +6,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Arbitrage
 {
-    public class Delegue
+    public class Delegue : IIdEntity<int>
     {
         public int id { get; set; }
         public string nom { get; set; }

@@ -9,6 +9,11 @@
 	<xsl:output method="html" indent="yes" />
 	<xsl:param name="style"></xsl:param>
 	<xsl:param name="js"></xsl:param>
+	<xsl:param name="imgPath"/>
+	<xsl:param name="jsPath"/>
+	<xsl:param name="cssPath"/>
+	<xsl:param name="commonPath"/>
+	<xsl:param name="competitionPath"/>
 	
 	<!-- Type de la poule: 1 = Diagonale, 2 = Colonnes, 3 = auto -->
 	<xsl:param name="typePoule"/>
@@ -16,6 +21,7 @@
 
 	<xsl:key name="participants" match="participant" use="@poule"/>
 	
+	<xsl:variable name="typeCompetition" select="/competition/@type"/>
 	<xsl:template match="/">
 		<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
 		<html>
@@ -23,12 +29,12 @@
 		</html>
 	</xsl:template>
 
-	<xsl:variable select="/competition/@PublierProchainsCombats = 'True'" name="affProchainCombats"/>
-	<xsl:variable select="/competition/@PublierAffectationTapis = 'True'" name="affAffectationTapis"/>
+	<xsl:variable select="/competition/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
+	<xsl:variable select="/competition/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
+	<xsl:variable select="/competition/@PublierEngagements = 'true'" name="affEngagements"/>
 	<xsl:variable select="/competition/@DelaiActualisationClientSec" name="delayActualisationClient"/>
 	<xsl:variable select="/competition/@kinzas" name="affKinzas"/>
 	<xsl:variable select="/competition/@Logo" name="logo"/>
-	<xsl:variable name="typeCompetition" select="/competition/@type"/>
 
 
 	<xsl:template match="/*">
@@ -42,21 +48,36 @@
 			<meta http-equiv="Expires" content="0"/>
 
 			<!-- Feuille de style W3.CSS -->
-			<link type="text/css" rel="stylesheet" href="../style/w3.css"/>
-			<link type="text/css" rel="stylesheet" href="../style/style-common.css"/>
-			<link type="text/css" rel="stylesheet" href="../style/style-poule.css"/>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'w3.css')"/>
+				</xsl:attribute>
+			</link>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'style-common.css')"/>
+				</xsl:attribute>
+			</link>
+			<link type="text/css" rel="stylesheet">
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($cssPath, 'style-poule.css')"/>
+				</xsl:attribute>
+			</link>
 
 			<!-- Script de navigation par defaut -->
-			<script src="../js/site-display.js"></script>
+			<script>
+				<xsl:attribute name="src">
+					<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
+				</xsl:attribute>
+			</script>
 
 			<!-- Script ajoute en parametre -->
 			<script type="text/javascript">
 				<xsl:value-of select="$js"/>
-				var delayAutoreloadSec = <xsl:value-of select="$delayActualisationClient"/>;
-				window.onload=checkReloading;
+				gDelayAutoReloadSec = <xsl:value-of select="$delayActualisationClient"/>;
 			</script>
 			<title>
-				<xsl:value-of select="@titre"/>
+				Suivi Compétition - Avancement
 			</title>
 		</head>
 		<body>
@@ -65,8 +86,11 @@
 				<xsl:with-param name="logo" select="$logo"/>
 				<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
 				<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
-				<xsl:with-param name="affActualiser" select="'True'"/>
+				<xsl:with-param name="affEngagements" select="$affEngagements"/>
+				<xsl:with-param name="affActualiser" select="true()"/>
 				<xsl:with-param name="selectedItem" select="'avancement'"/>
+				<xsl:with-param name="pathToImg" select="$imgPath"/>
+				<xsl:with-param name="pathToCommon" select="$commonPath"/>
 			</xsl:call-template>
 			
 			<!-- Div vide pour aligner le contenu avec le bandeau de titre de taille fixe -->
@@ -154,8 +178,11 @@
 
 			<!-- Info d'actualisation -->
 			<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
-				<script src="../js/footer_script.js"/>
-				<!-- TODO penser a modifier quand on passera en version Participants -->
+				<script>
+					<xsl:attribute name="src">
+						<xsl:value-of select="concat($jsPath, 'footer_script.js')"/>
+					</xsl:attribute>
+				</script>
 			</div>
 		</body>
 	</xsl:template>
@@ -200,14 +227,17 @@
 				<xsl:attribute name="onclick">
 					<xsl:choose>
 						<xsl:when test="$niveau > 1">
-							<xsl:value-of select="concat('toggleElement(',$apos,'pouleCompl',$numeroPoule,$apos,')')"/>
+							<xsl:value-of select="concat('togglePanel(',$apos,'pouleCompl',$numeroPoule,$apos,')')"/>
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:value-of select="concat('toggleElement(',$apos,'poule',$numeroPoule,$apos,')')"/>
+							<xsl:value-of select="concat('togglePanel(',$apos,'poule',$numeroPoule,$apos,')')"/>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:attribute>
-				<img class="img" width="25" src="../img/up_circular-32.png">
+				<img class="img" width="25">
+					<xsl:attribute name="src">
+						<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
+					</xsl:attribute>
 					<xsl:attribute name="id">
 						<xsl:choose>
 							<xsl:when test="$niveau > 1">
@@ -219,7 +249,10 @@
 						</xsl:choose>
 					</xsl:attribute>
 				</img>
-				<img class="img" width="25" src="../img/down_circular-32.png" style="display: none;" >
+				<img class="img" width="25" style="display: none;" >
+					<xsl:attribute name="src">
+						<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
+					</xsl:attribute>
 					<xsl:attribute name="id">
 						<xsl:choose>
 							<xsl:when test="$niveau > 1">
@@ -246,7 +279,7 @@
 		</div>
 			
 		<!-- La poule -->
-		  <div class="w3-container tas-panel-poule-combat">
+		  <div class="tasOpenedPanelType w3-container tas-panel-poule-combat">
 			  <xsl:attribute name="id">
 				  <xsl:choose>
 					  <xsl:when test="$niveau > 1">
@@ -265,7 +298,11 @@
 						  w3-container w3-margin-left w3-center w3-cell-middle w3-tag w3-round-large w3-left-align
 						  <xsl:value-of select="$firstrencontreclass"/>
 					  </xsl:attribute>
-					  <img class="img" width="32" src="../img/starter-32.png" />
+					  <img class="img" width="32">
+						  <xsl:attribute name="src">
+							  <xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+						  </xsl:attribute>
+					  </img>
 					  &nbsp;
 					  1ère catégorie:&nbsp;<xsl:value-of select="$poulefirstrencontre"/>
 				  </div>

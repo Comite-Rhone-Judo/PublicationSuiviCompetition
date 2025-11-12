@@ -147,9 +147,10 @@ namespace Tools.Outils
         /// <summary>
         /// Suppression d'un répertoire (avec vérification de suppression des fichier contenu)
         /// </summary>
-        /// <param name="directoryname"></param>
+        /// <param name="directoryname">Repertoire cible</param>
+        /// <param name="onlyContent">Si True, efface le contenu mais pas le repertoire designe. Si False, efface aussi le repertoire designe</param>
         /// <returns></returns>
-        public static bool DeleteDirectory(string directoryname)
+        public static bool DeleteDirectory(string directoryname, bool onlyContent = false)
         {
             if (Directory.Exists(directoryname))
             {
@@ -164,7 +165,13 @@ namespace Tools.Outils
                     {
                         FileAndDirectTools.DeleteFile(file);
                     }
-                    Directory.Delete(directoryname);
+
+                    // Si pas uniquement le contenu, efface le repertoire designe
+                    if (!onlyContent)
+                    {
+                        Directory.Delete(directoryname);
+                    }
+
                     return true;
                 }
                 catch (Exception ex)
@@ -317,7 +324,7 @@ namespace Tools.Outils
         /// <param name="path1">Path de debut</param>
         /// <param name="path2">Path de fin</param>
         /// <returns></returns>
-        public static string PathJoin(string path1, string path2)
+        public static string PathJoin(string path1, string path2, bool endWithSeparator = false)
         {
             if (string.IsNullOrEmpty(path1))
             {
@@ -329,7 +336,10 @@ namespace Tools.Outils
                 return path1;
             }
 
-            return path1.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar + path2.TrimStart(Path.DirectorySeparatorChar);
+            string temp = (path1.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar + path2.TrimStart(Path.DirectorySeparatorChar)).TrimEnd(Path.DirectorySeparatorChar);
+
+
+            return endWithSeparator ? temp + Path.DirectorySeparatorChar : temp;
         }
     }
 }

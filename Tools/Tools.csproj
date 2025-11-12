@@ -1910,7 +1910,9 @@
     <EmbeddedResource Include="Export\img\site\logo-France-Judo.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Export\xslt\Site\entete.xslt" />
+    <EmbeddedResource Include="Export\xslt\Site\entete.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="data\data\PublicationFFJudo.xml" />
@@ -1922,7 +1924,29 @@
     <EmbeddedResource Include="Export\img\site\starter-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Export\xslt\Site\panel_epreuve.xslt" />
+    <EmbeddedResource Include="Export\xslt\Site\panel_epreuve.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\site\badge-1st-32.png" />
+    <EmbeddedResource Include="Export\img\site\winner-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\img\site\equal-sign-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\xslt\Site\groupe_engagements_site.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\xslt\Site\engagements_site.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\xslt\Site\niveau_tour_combat.xslt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

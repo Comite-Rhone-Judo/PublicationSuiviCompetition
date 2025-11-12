@@ -32,6 +32,8 @@ namespace KernelImpl.Noyau.Structures
             }
         }
         public string nom { get; set; }
+        public string nomCourt { get; set; }
+
         public string ligue { get; set; }
         public string code { get; set; }
         public string secteur { get; set; }
@@ -42,6 +44,7 @@ namespace KernelImpl.Noyau.Structures
             this.id = XMLTools.LectureString(xcomite.Attribute(ConstantXML.Comite_ID));
             this.ligue = XMLTools.LectureString(xcomite.Attribute(ConstantXML.Comite_Ligue));
             this.nom = XMLTools.LectureString(xcomite.Element(ConstantXML.Comite_Nom));
+            this.nomCourt = this.id;
             this.code = XMLTools.LectureString(xcomite.Attribute(ConstantXML.Comite_RemoteID));
             this.secteur = XMLTools.LectureString(xcomite.Attribute(ConstantXML.Comite_Secteur));
 
@@ -62,6 +65,7 @@ namespace KernelImpl.Noyau.Structures
             }
             xcomite.SetAttributeValue(ConstantXML.Comite_Ligue, ligue.ToString());
             xcomite.Add(new XElement(ConstantXML.Comite_Nom, nom.ToString()));
+            xcomite.Add(new XElement(ConstantXML.Comite_NomCourt, nomCourt.ToString()));
 
             xcomite.SetAttributeValue(ConstantXML.Comite_RemoteID, code.ToString());
             xcomite.SetAttributeValue(ConstantXML.Comite_Secteur, secteur.ToString());

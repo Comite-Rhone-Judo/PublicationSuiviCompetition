@@ -148,6 +148,12 @@ namespace Tools.Export
                     break;
                 case ExportEnum.Site_FooterScript:
                     result = "footer_script";
+					break;
+				case ExportEnum.Site_Engagements:
+                    result = "groupe_engagements";
+                    break;
+                case ExportEnum.Site_MenuEngagements:
+                    result = "engagements";
                     break;
             }
 
@@ -252,7 +258,7 @@ namespace Tools.Export
         {
             List<string> result = new List<string>();
             string dirJs = structSite.RepertoireJs;
-            string dirStyle = structSite.RepertoireStyle;
+            string dirStyle = structSite.RepertoireCss;
 
             // string directory = ExportTools.getDirectory(true, null, null).Replace("common", "");
 
@@ -500,6 +506,12 @@ namespace Tools.Export
                     break;
                 case ExportEnum.Site_AffectationTapis:
                     name = ConstantResource.Export_Site_res + "affectation_tapis";
+                    break;
+                case ExportEnum.Site_Engagements:
+                    name = ConstantResource.Export_Site_res + "groupe_engagements";
+                    break;
+                case ExportEnum.Site_MenuEngagements:
+                    name = ConstantResource.Export_Site_res + "engagements";
                     break;
                 case ExportEnum.Site_MenuClassement:
                     name = ConstantResource.Export_Site_res + "classement";

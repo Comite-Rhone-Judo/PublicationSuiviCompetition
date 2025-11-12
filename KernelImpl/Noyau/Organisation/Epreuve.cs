@@ -11,7 +11,7 @@ namespace KernelImpl.Noyau.Organisation
     /// <summary>
     /// Description des Epreuves
     /// </summary>
-    public class Epreuve
+    public class Epreuve : IIdEntity<int>
     {
 
         public int id { get; set; }
@@ -27,7 +27,34 @@ namespace KernelImpl.Noyau.Organisation
         public int ceintureMax { get; set; }
         public int anneeMin { get; set; }
         public int anneeMax { get; set; }
-        public int sexe { get; set; }
+
+        private int _sexe;
+        public int sexe
+        {
+            get
+            {
+                return _sexe;
+            }
+            set
+            {
+                _sexe = value;
+                _sexeEnum = new EpreuveSexe(_sexe);
+            }
+        }
+
+        private EpreuveSexe _sexeEnum; 
+        public EpreuveSexe sexeEnum {
+            get
+            {
+                return _sexeEnum;
+            }
+            set
+            {
+                _sexeEnum = value;
+                _sexe = (int)_sexeEnum;
+            }
+        }
+
         public int categorieAge { get; set; }
         public Nullable<int> epreuve_equipe { get; set; }
 
@@ -73,7 +100,7 @@ namespace KernelImpl.Noyau.Organisation
             this.anneeMin = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Epreuve_AnneeMin));
             this.anneeMax = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Epreuve_AnneeMax));
             this.categorieAge = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Epreuve_Categorie_Age));
-            this.sexe = (xinfo.Attribute(ConstantXML.Epreuve_Sexe).Value == "M" ? 0 : 1);
+            this.sexe = new EpreuveSexe(XMLTools.LectureString(xinfo.Attribute(ConstantXML.Epreuve_Sexe)));
             this.epreuve_equipe = XMLTools.LectureNullableInt(xinfo.Attribute(ConstantXML.Epreuve_EquipeEP));
         }
 
@@ -88,7 +115,7 @@ namespace KernelImpl.Noyau.Organisation
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_RemoteID, remoteID);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_ID, id);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_Competition, competition);
-            xepreuve.SetAttributeValue(ConstantXML.Epreuve_Sexe, sexe == 0 ? "M" : "F");
+            xepreuve.SetAttributeValue(ConstantXML.Epreuve_Sexe, sexeEnum.ToString());
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_AnneeMin, anneeMin);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_AnneeMax, anneeMax);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_PoidsMin, poidsMin);

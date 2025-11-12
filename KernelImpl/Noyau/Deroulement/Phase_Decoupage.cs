@@ -6,7 +6,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class Phase_Decoupage
+    public class Phase_Decoupage : IIdEntity<int>
     {
         public int id { get; set; }
         public int phase { get; set; }

@@ -4,7 +4,7 @@ using Tools.Enum;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class vue_epreuve_phase : INotifyPropertyChanged
+    public class vue_epreuve_phase : INotifyPropertyChanged, IIdEntity<int>
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

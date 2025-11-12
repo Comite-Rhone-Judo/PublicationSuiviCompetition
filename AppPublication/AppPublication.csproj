@@ -135,6 +135,11 @@
     </Compile>
     <Compile Include="Controles\GestionStatistiques.cs" />
     <Compile Include="Controles\RelayCommand.cs" />
+    <Compile Include="ExtensionNoyau\Deroulement\CombatEqualityComparer.cs" />
+    <Compile Include="ExtensionNoyau\Deroulement\DataDeroulement.cs" />
+    <Compile Include="ExtensionNoyau\Deroulement\GroupeEngagements.cs" />
+    <Compile Include="ExtensionNoyau\ExtensionJudoData.cs" />
+    <Compile Include="ExtensionNoyau\Deroulement\VueJudokaEqualityComparer.cs" />
     <Compile Include="IHM\Commissaire\ConfigurationPublication.xaml.cs">
       <DependentUpon>ConfigurationPublication.xaml</DependentUpon>
     </Compile>
@@ -148,6 +153,7 @@
     <Compile Include="Statistiques\StatistiqueItemCompteur.cs" />
     <Compile Include="Statistiques\StatistiqueItemMoyenneur.cs" />
     <Compile Include="Tools\AppInformation.cs" />
+    <Compile Include="Tools\Converter\AppStatusTypeConverter.cs" />
     <Compile Include="Tools\Converter\AppStatusProgressConverter.cs" />
     <Compile Include="Tools\Converter\AppStatusConverter.cs" />
     <Compile Include="Tools\Converter\PassthroughConverter.cs" />
@@ -163,6 +169,7 @@
     <Compile Include="Tools\Enum\TypePouleEnum.cs" />
     <Compile Include="Tools\FileTools.cs" />
     <Compile Include="Tools\FilteredFileInfo.cs" />
+    <Compile Include="Tools\GenerationProgressInfo.cs" />
     <Compile Include="Tools\LectureFile\LectureStructures.cs" />
     <Compile Include="Tools\StatExecution.cs" />
     <Compile Include="Tools\StatusGenerationSite.cs" />
@@ -277,12 +284,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Logo_AppPublication.ico" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="NLog">
       <Version>5.3.4</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Logo_AppPublication.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

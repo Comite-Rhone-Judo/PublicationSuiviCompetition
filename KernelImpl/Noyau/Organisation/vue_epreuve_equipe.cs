@@ -28,6 +28,7 @@ namespace KernelImpl.Noyau.Organisation
         public Nullable<int> phase1 { get; set; }
         public Nullable<int> phase2 { get; set; }
         public string nom_compet { get; set; }
+        public CompetitionDisciplineEnum discipline_competition { get; set; }
 
         private string _lib_sexe = "";
         public string lib_sexe
@@ -84,6 +85,7 @@ namespace KernelImpl.Noyau.Organisation
             Competition compet = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
 
             nom_compet = compet != null ? compet.nom : "";
+            discipline_competition = compet != null ? compet.disciplineId : CompetitionDisciplineEnum.Judo;
         }
 
 
@@ -104,23 +106,23 @@ namespace KernelImpl.Noyau.Organisation
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_AnneeMax, anneeMax);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_CateAge_RemoteId, remoteId_cateage);
 
-
             List<Epreuve> epreuves = DC.Organisation.Epreuves.Where(o => o.epreuve_equipe == this.id).ToList();
-            string sexe = "";
+            EpreuveSexe sexe = new EpreuveSexe(EpreuveSexeEnum.Feminine);
+            
             if (epreuves.Count(o => o.sexe == 1) > 0 && epreuves.Count(o => o.sexe == 0) > 0)
             {
-                sexe = "X"; // "M/F";
+                sexe = new EpreuveSexe(EpreuveSexeEnum.Mixte);
             }
             else if (epreuves.Count(o => o.sexe == 1) > 0 && epreuves.Count(o => o.sexe == 0) == 0)
             {
-                sexe = "F";
+                sexe = new EpreuveSexe(EpreuveSexeEnum.Feminine);
             }
             else if (epreuves.Count(o => o.sexe == 1) == 0 && epreuves.Count(o => o.sexe == 0) > 0)
             {
-                sexe = "M";
+                sexe = new EpreuveSexe(EpreuveSexeEnum.Masculin);
             }
 
-            xepreuve.SetAttributeValue(ConstantXML.Epreuve_Sexe, sexe);
+            xepreuve.SetAttributeValue(ConstantXML.Epreuve_Sexe, sexe.ToString());
 
             return xepreuve;
         }

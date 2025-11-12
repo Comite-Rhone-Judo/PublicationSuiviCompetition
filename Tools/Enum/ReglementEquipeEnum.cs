@@ -6,7 +6,7 @@ using System.Text;
 namespace Tools.Enum
 {
     /// <summary>
-    /// Enumération des type de sexe
+    /// Enumération des type de reglements
     /// </summary>
     public enum ReglementEquipeEnum
     {

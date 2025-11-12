@@ -12,7 +12,7 @@ namespace KernelImpl.Noyau.Organisation
     /// <summary>
     /// Description des Competitions
     /// </summary>
-    public class Competition
+    public class Competition : IIdEntity<int>
     {
         public Competition()
         {
@@ -28,7 +28,7 @@ namespace KernelImpl.Noyau.Organisation
             this.discipline = CompetitionDisciplineEnum.Judo.ToString2();
             this.nbTapis = 6;
             this.tempsCombat = 600;
-            this.niveau = 0;
+            this.niveau = (int) EchelonEnum.Club;
             this.couleur1 = "";
             this.couleur2 = "";
             this.version = "";
@@ -138,6 +138,7 @@ namespace KernelImpl.Noyau.Organisation
             xcompetition.SetAttributeValue(ConstantXML.Competition_Type2, type2.ToString());
   
             xcompetition.SetAttributeValue(ConstantXML.Competition_Discipline, discipline);
+            xcompetition.SetAttributeValue(ConstantXML.Competition_DisciplineId, (int) disciplineId);
 
             xcompetition.SetAttributeValue(ConstantXML.Competition_Niveau, niveau.ToString());
             xcompetition.SetAttributeValue(ConstantXML.Competition_Version, version.ToString());

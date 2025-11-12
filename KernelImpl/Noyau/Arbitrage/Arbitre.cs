@@ -7,13 +7,40 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Arbitrage
 {
-    public class Arbitre
+    public class Arbitre : IIdEntity<int>
     {
         public string licence { get; set; }
         public string nom { get; set; }
         public string prenom { get; set; }
         public System.DateTime naissance { get; set; }
-        public bool sexe { get; set; }
+                
+        private bool _sexe;
+        public bool sexe
+        {
+            get
+            {
+                return _sexe;
+            }
+            set
+            {
+                _sexe = value;
+                _sexeEnum = new EpreuveSexe(_sexe);
+            }
+        }
+
+        private EpreuveSexe _sexeEnum;
+        public EpreuveSexe sexeEnum
+        {
+            get
+            {
+                return _sexeEnum;
+            }
+            set
+            {
+                _sexeEnum = value;
+                _sexe = (bool)_sexeEnum;
+            }
+        }
         public bool modification { get; set; }
         public int clubId { get; set; }
         public string club { get; set; }
@@ -46,7 +73,7 @@ namespace KernelImpl.Noyau.Arbitrage
 
             this.naissance = XMLTools.LectureDate(xinfo.Attribute(ConstantXML.Arbitre_Naissance), "ddMMyyyy", DateTime.Now);
 
-            this.sexe = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Arbitre_Sexe)) == "F" ? true : false;
+            this.sexeEnum =  new EpreuveSexe(XMLTools.LectureString(xinfo.Attribute(ConstantXML.Arbitre_Sexe)));
 
             this.modification = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Arbitre_Modification));
             this.estResponsable = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Arbitre_EstResponsable));
@@ -64,7 +91,7 @@ namespace KernelImpl.Noyau.Arbitrage
             xarbitre.SetAttributeValue(ConstantXML.Arbitre_Nom, nom.ToUpper());
             xarbitre.SetAttributeValue(ConstantXML.Arbitre_Prenom, OutilsTools.FormatPrenom(prenom));
             xarbitre.SetAttributeValue(ConstantXML.Arbitre_Naissance, naissance.ToString("ddMMyyyy"));
-            xarbitre.SetAttributeValue(ConstantXML.Arbitre_Sexe, sexe ? "F" : "M");
+            xarbitre.SetAttributeValue(ConstantXML.Arbitre_Sexe, sexeEnum.ToString());
             xarbitre.SetAttributeValue(ConstantXML.Arbitre_Modification, modification);
             xarbitre.SetAttributeValue(ConstantXML.Arbitre_RemoteID, remoteID);
             xarbitre.SetAttributeValue(ConstantXML.Arbitre_Club, club);

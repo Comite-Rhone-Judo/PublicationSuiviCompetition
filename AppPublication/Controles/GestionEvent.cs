@@ -328,7 +328,7 @@ namespace AppPublication.Controles
         private void LectureDonneesPhases(XElement element)
         {
             DialogControleur DC = DialogControleur.Instance;
-            DC.ServerData.Deroulement.clear_deroulement();
+            // DC.ServerData.Deroulement.clear_deroulement();
             DC.ServerData.Deroulement.lecture_phases(element);
             DC.ServerData.Deroulement.lecture_participants(element);
             DC.ServerData.Deroulement.lecture_decoupages(element);
@@ -417,7 +417,7 @@ namespace AppPublication.Controles
                                                        // Signale la mise a jour de la competition a la fin du processus
                                                        DialogControleur.Instance.UpdateCompetition();
                                                    },
-                                                   BusyStatusEnum.InitDonneesNone,
+                                                   BusyStatusEnum.None,
                                                    null,
                                                    element);
         }
@@ -461,7 +461,7 @@ namespace AppPublication.Controles
                 }
             }
 
-            SetBusyStatus(Tools.Enum.BusyStatusEnum.InitDonneesNone);
+            SetBusyStatus(Tools.Enum.BusyStatusEnum.None);
         }
 
 
@@ -496,7 +496,7 @@ namespace AppPublication.Controles
                             isb = true;
                             break;
                         }
-                    case Tools.Enum.BusyStatusEnum.InitDonneesNone:
+                    case Tools.Enum.BusyStatusEnum.None:
                     default:
                         {
                             isb = false;
@@ -549,7 +549,7 @@ namespace AppPublication.Controles
                     dataAction?.Invoke(element);
 
                     // Effectue la demande suivante si necessaire
-                    if (nextStatus != BusyStatusEnum.InitDonneesNone && null != nextAction)
+                    if (nextStatus != BusyStatusEnum.None && null != nextAction)
                     {
                         SetBusyStatus(nextStatus);
  
@@ -562,7 +562,7 @@ namespace AppPublication.Controles
                     else
                     {
                         // Fin de l'initialisation
-                        SetBusyStatus(Tools.Enum.BusyStatusEnum.InitDonneesNone);
+                        SetBusyStatus(Tools.Enum.BusyStatusEnum.None);
                         _status = ClientJudoStatusEnum.Idle;
                     }
                 }

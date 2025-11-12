@@ -5,9 +5,16 @@
 
   <xsl:output method="xml" indent="yes"/>
   <xsl:param name="style"/>
+	<xsl:param name="imgPath"/>
+	<xsl:param name="jsPath"/>
+	<xsl:param name="cssPath"/>
+	<xsl:param name="commonPath"/>
+	<xsl:param name="competitionPath"/>
 
 
-  <xsl:template match="/">
+	<xsl:variable name="apos">'</xsl:variable>
+	
+	<xsl:template match="/">
     <html>
       <xsl:apply-templates/>
     </html>
@@ -16,10 +23,11 @@
   <xsl:template match="/*">
     <head>
       <meta charset="utf-8"/>
-      <title>JUDO</title>
+      <title>Suivi Compétition</title>
 
       <script type="text/javascript">
-                window.location.href = '../common/avancement.html';</script>
+		  <xsl:value-of disable-output-escaping="yes" select="concat('window.location.href = ', $apos, $commonPath, 'avancement.html', $apos, ';')"/>
+       </script>
     </head>
     <body> </body>
   </xsl:template>
