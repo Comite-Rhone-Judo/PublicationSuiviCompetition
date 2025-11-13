@@ -133,6 +133,9 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Config\EcranAppelConfiguration.cs" />
+    <Compile Include="Controles\ConfigurationEcranAppelViewModel.cs" />
+    <Compile Include="Controles\EcranAppelViewModel.cs" />
     <Compile Include="Controles\GestionStatistiques.cs" />
     <Compile Include="Controles\RelayCommand.cs" />
     <Compile Include="ExtensionNoyau\Deroulement\CombatEqualityComparer.cs" />
@@ -140,6 +143,10 @@
     <Compile Include="ExtensionNoyau\Deroulement\GroupeEngagements.cs" />
     <Compile Include="ExtensionNoyau\ExtensionJudoData.cs" />
     <Compile Include="ExtensionNoyau\Deroulement\VueJudokaEqualityComparer.cs" />
+        <Compile Include="Controles\TapisSelectionViewModel.cs" />
+    <Compile Include="IHM\Commissaire\ConfigurationEcranAppel.xaml.cs">
+      <DependentUpon>ConfigurationEcranAppel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="IHM\Commissaire\ConfigurationPublication.xaml.cs">
       <DependentUpon>ConfigurationPublication.xaml</DependentUpon>
     </Compile>
@@ -156,6 +163,7 @@
     <Compile Include="Tools\Converter\AppStatusTypeConverter.cs" />
     <Compile Include="Tools\Converter\AppStatusProgressConverter.cs" />
     <Compile Include="Tools\Converter\AppStatusConverter.cs" />
+    <Compile Include="Tools\Converter\ListIntToStringConverter.cs" />
     <Compile Include="Tools\Converter\PassthroughConverter.cs" />
     <Compile Include="Tools\Converter\BoolOperationConverter.cs" />
     <Compile Include="Tools\Converter\BoolToVisibilityConverter.cs" />
@@ -175,6 +183,10 @@
     <Compile Include="Tools\StatusGenerationSite.cs" />
     <Compile Include="Tools\StreamTool.cs" />
     <Compile Include="Tools\Struct\ExportStruct.cs" />
+    <Page Include="IHM\Commissaire\ConfigurationEcranAppel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="IHM\Commissaire\ConfigurationPublication.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -284,12 +296,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Logo_AppPublication.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="NLog">
       <Version>5.3.4</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Logo_AppPublication.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
