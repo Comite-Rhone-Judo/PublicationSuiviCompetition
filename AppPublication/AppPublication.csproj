@@ -133,10 +133,12 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
-<Compile Include="Config\EcranAppelConfiguration.cs" />
+    <Compile Include="Config\EcranAppelConfiguration.cs" />
+    <Compile Include="Config\MiniSiteSection.cs" />
+    <Compile Include="Config\PublicationConfigSection.cs" />
     <Compile Include="Controles\ConfigurationEcranAppelViewModel.cs" />
-        <Compile Include="Controles\GestionStatistiques.cs" />
-    <Compile Include="Controles\IClientProvider.cs" />
+    <Compile Include="Controles\EcranAppelViewModel.cs" />
+    <Compile Include="Controles\GestionStatistiques.cs" />
     <Compile Include="Controles\RelayCommand.cs" />
     <Compile Include="ExtensionNoyau\Engagement\CombatEqualityComparer.cs" />
     <Compile Include="ExtensionNoyau\Engagement\DataEngagement.cs" />
@@ -296,12 +298,12 @@ Compile Include="Controles\TapisSelectionViewModel.cs" />
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Logo_AppPublication.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="NLog">
       <Version>5.3.4</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Logo_AppPublication.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
