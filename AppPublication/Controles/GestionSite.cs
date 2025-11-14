@@ -1,12 +1,16 @@
-﻿using AppPublication.Export;
+﻿using AppPublication.Config;
+using AppPublication.Export;
+using AppPublication.ExtensionNoyau.Deroulement;
 using AppPublication.Tools;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
+using KernelImpl.Noyau.Organisation;
 using KernelImpl.Noyau.Structures;
-using AppPublication.ExtensionNoyau.Deroulement;
+using NLog;
 // using Microsoft.Win32;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -28,9 +32,6 @@ using Tools.Enum;
 using Tools.Export;
 using Tools.Outils;
 using Tools.Windows;
-using KernelImpl.Noyau.Organisation;
-using System.Collections;
-using NLog;
 
 namespace AppPublication.Controles
 {
@@ -41,9 +42,13 @@ namespace AppPublication.Controles
     public class GestionSite : NotificationBase
     {
         #region CONSTANTES
+
+        // TODO faire le clean dans ces constantes avec la nouvelle configuration
+
         private const string kSiteLocalInstanceName = "local";
         private const string kSiteDistantInstanceName = "";
         private const string kSiteFranceJudoInstanceName = "ffjudo";
+
         private const string kSettingEasyConfig = "EasyConfig";
         private const string kSettingURLDistant = "URLDistant";
         private const string kSettingIsolerCompetition = "IsolerCompetition";
@@ -82,6 +87,7 @@ namespace AppPublication.Controles
         private ExportSiteUrls _structureSiteDistant;                 // la structure d'export du site distant
         private Dictionary<string, EntitePublicationFFJudo> _allEntitePublicationFFJudo = null;
         private Dictionary<string, ObservableCollection<EntitePublicationFFJudo>> _allEntitesPublicationFFJudo = null;
+        private PublicationConfigSection _config;
 
         private string _ftpEasyConfig = string.Empty;   // Le serveur FTP EasyConfig
         private Uri _httpEasyConfig = null;  // Le serveur http EasyConfig
@@ -108,6 +114,9 @@ namespace AppPublication.Controles
         {
             try
             {
+                // Initialise la configuration depuis le Singleton "live"
+                _config = PublicationConfigSection.Instance;
+
                 // Initialise les objets de gestion des sites Web
                 _siteLocal = new MiniSite(true, kSiteLocalInstanceName, true, true);
                 _siteDistant = new MiniSite(false, kSiteDistantInstanceName, true, true);           // on utilise un prefix vide pour le site distant pour des questions de retrocompatibilite
@@ -166,16 +175,19 @@ namespace AppPublication.Controles
         {
             get
             {
-                return _easyConfig;
+                // Lit la valeur en cache
+                return _config.EasyConfig;
             }
             set
             {
                 // On ne peut changer la valeur que si le site en cours n'est pas actif
                 if (SiteDistantSelectionne == null || !SiteDistantSelectionne.IsActif)
                 {
-                    _easyConfig = value;
-                    AppSettings.SaveSetting(kSettingEasyConfig, _easyConfig.ToString());
+                    // Enregistre la valeur en cache
+                    _config.EasyConfig = value;
+
                     NotifyPropertyChanged();
+
                     // Met a jour le site distant selectionne
                     SiteDistantSelectionne = CalculSiteDistantSelectionne();
                 }
@@ -271,6 +283,8 @@ namespace AppPublication.Controles
         {
             get
             {
+                return _config.En
+
                 return _entitePublicationFFJudo;
             }
             set
