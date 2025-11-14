@@ -5,7 +5,7 @@ namespace AppPublication.Controles
     /// <summary>
     /// ViewModel pour la sélection d'un tapis (utilisé dans les CheckBox)
     /// </summary>
-    public class TapisSelectionViewModel : NotificationBase
+    public class EcranAppelTapisSelectionViewModel : NotificationBase
     {
         private int _numero;
         public int Numero

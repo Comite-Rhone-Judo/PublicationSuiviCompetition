@@ -11,19 +11,24 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.Configuration;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Xml;
 using System.Xml.Linq;
+using Telerik.Windows.Controls;
 using Tools.Enum;
 using Tools.Export;
 using Tools.Outils;
 using Tools.Windows;
 using KernelImpl.Noyau.Organisation;
-
+using System.Collections;
+using NLog;
 
 namespace AppPublication.Controles
 {
@@ -63,7 +68,6 @@ namespace AppPublication.Controles
         private const string kSettingEntitePublicationFFJudo = "EntitePublicationFFJudo";
         private const string kSettingSelectedLogo = "SelectedLogo";
         private const string kSettingInterfaceLocalPublication = "InterfaceLocalPublication";
-
         #endregion
 
         #region MEMBRES
@@ -76,6 +80,7 @@ namespace AppPublication.Controles
         private ExportSiteUrls _structureSiteDistant;                 // la structure d'export du site distant
         private Dictionary<string, EntitePublicationFFJudo> _allEntitePublicationFFJudo = null;
         private Dictionary<string, ObservableCollection<EntitePublicationFFJudo>> _allEntitesPublicationFFJudo = null;
+        private PublicationConfigSection _config;
 
         private string _ftpEasyConfig = string.Empty;   // Le serveur FTP EasyConfig
         private Uri _httpEasyConfig = null;  // Le serveur http EasyConfig
@@ -113,6 +118,9 @@ namespace AppPublication.Controles
 
             try
             {
+                // Initialise la configuration depuis le Singleton "live"
+                _config = PublicationConfigSection.Instance;
+
                 // Initialise les objets de gestion des sites Web
                 _siteLocal = new MiniSite(true, kSiteLocalInstanceName, true, true);
                 _siteDistant = new MiniSite(false, kSiteDistantInstanceName, true, true);           // on utilise un prefix vide pour le site distant pour des questions de retrocompatibilite
@@ -196,9 +204,11 @@ namespace AppPublication.Controles
                 // On ne peut changer la valeur que si le site en cours n'est pas actif
                 if (SiteDistantSelectionne == null || !SiteDistantSelectionne.IsActif)
                 {
-                    _easyConfig = value;
-                    AppSettings.SaveSetting(kSettingEasyConfig, _easyConfig.ToString());
+                    // Enregistre la valeur en cache
+                    _config.EasyConfig = value;
+
                     NotifyPropertyChanged();
+
                     // Met a jour le site distant selectionne
                     SiteDistantSelectionne = CalculSiteDistantSelectionne();
                 }

@@ -70,8 +70,8 @@ namespace AppPublication.Controles
             }
         }
 
-        private ObservableCollection<TapisSelectionViewModel> _tapisDisponiblesPourEdition;
-        public ObservableCollection<TapisSelectionViewModel> TapisDisponiblesPourEdition
+        private ObservableCollection<EcranAppelTapisSelectionViewModel> _tapisDisponiblesPourEdition;
+        public ObservableCollection<EcranAppelTapisSelectionViewModel> TapisDisponiblesPourEdition
         {
             get { return _tapisDisponiblesPourEdition; }
             set
@@ -126,7 +126,7 @@ namespace AppPublication.Controles
             _nombreTotalTapis = nombreTotalTapis; // Initialisation du membre interne
 
             Ecrans = new ObservableCollection<EcranAppelViewModel>();
-            TapisDisponiblesPourEdition = new ObservableCollection<TapisSelectionViewModel>();
+            TapisDisponiblesPourEdition = new ObservableCollection<EcranAppelTapisSelectionViewModel>();
 
             // Initialisation des commandes
             CmdAddNewEcran = new RelayCommand(AddNewEcran);
@@ -262,7 +262,7 @@ namespace AppPublication.Controles
             // Utilise le membre interne _nombreTotalTapis
             for (int i = 1; i <= _nombreTotalTapis; i++)
             {
-                TapisDisponiblesPourEdition.Add(new TapisSelectionViewModel
+                TapisDisponiblesPourEdition.Add(new EcranAppelTapisSelectionViewModel
                 {
                     Numero = i,
                     IsSelected = tapisAssocies.Contains(i)
