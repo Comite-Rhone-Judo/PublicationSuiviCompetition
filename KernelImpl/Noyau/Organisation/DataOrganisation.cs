@@ -36,14 +36,17 @@ namespace KernelImpl.Noyau.Organisation
             ICollection<Competition> competitions = Competition.LectureCompetitions(element, null);
             using (TimedLock.Lock((_competitions as ICollection).SyncRoot))
             {
+                _competitions.Clear();
                 //Ajout des nouveaux
                 foreach (Competition competition in competitions)
                 {
                     Competition p = _competitions.FirstOrDefault(o => o.id == competition.id);
+                    /*
                     if (p != null)
                     {
                         _competitions.Remove(p);
                     }
+                    */
                     _competitions.Add(competition);
                 }
 
@@ -64,14 +67,16 @@ namespace KernelImpl.Noyau.Organisation
             ICollection<Epreuve_Equipe> epreuves = Epreuve_Equipe.LectureEpreuveEquipes(element, null);
             using (TimedLock.Lock((_epreuve_equipes as ICollection).SyncRoot))
             {
-
+                _epreuve_equipes.Clear();
                 foreach (Epreuve_Equipe epreuve in epreuves)
                 {
                     Epreuve_Equipe p = _epreuve_equipes.FirstOrDefault(o => o.id == epreuve.id);
+                    /*
                     if (p != null)
                     {
                         _epreuve_equipes.Remove(p);
                     }
+                    */
                     _epreuve_equipes.Add(epreuve);
                 }
 
@@ -95,13 +100,16 @@ namespace KernelImpl.Noyau.Organisation
             //Ajout des nouveaux
             using (TimedLock.Lock((_epreuves as ICollection).SyncRoot))
             {
+                _epreuves.Clear();
                 foreach (Epreuve epreuve in epreuves)
                 {
                     Epreuve p = _epreuves.FirstOrDefault(o => o.id == epreuve.id);
+                    /*
                     if (p != null)
                     {
                         _epreuves.Remove(p);
                     }
+                    */
                     _epreuves.Add(epreuve);
                 }
                 lecture_vue_epreuves(DC);

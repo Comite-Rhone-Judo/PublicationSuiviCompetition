@@ -138,13 +138,17 @@ namespace KernelImpl.Noyau.Deroulement
             //Ajout des nouveaux
             using (TimedLock.Lock((_participants as ICollection).SyncRoot))
             {
+                _participants.Clear();
+
                 foreach (Participant participant in participants)
                 {
                     Participant p = _participants.FirstOrDefault(o => o.judoka == participant.judoka && o.phase == participant.phase);
+                    /*
                     if (p != null)
                     {
                         _participants.Remove(p);
                     }
+                    */
                     _participants.Add(participant);
                 }
             }
@@ -161,13 +165,16 @@ namespace KernelImpl.Noyau.Deroulement
             //Ajout des nouveaux
             using (TimedLock.Lock((_phases as ICollection).SyncRoot))
             {
+                _phases.Clear();
                 foreach (Phase phase in phases)
                 {
                     Phase p = _phases.FirstOrDefault(o => o.id == phase.id);
+                    /*
                     if (p != null)
                     {
                         _phases.Remove(p);
                     }
+                    */
                     _phases.Add(phase);
                 }
             }
@@ -184,13 +191,16 @@ namespace KernelImpl.Noyau.Deroulement
             //Ajout des nouveaux
             using (TimedLock.Lock((_decoupages as ICollection).SyncRoot))
             {
+                _decoupages.Clear();
                 foreach (Phase_Decoupage decoupage in decoupages)
                 {
                     Phase_Decoupage p = _decoupages.FirstOrDefault(o => o.id == decoupage.id);
+                    /*
                     if (p != null)
                     {
                         _decoupages.Remove(p);
                     }
+                    */
                     _decoupages.Add(decoupage);
                 }
             }
@@ -207,13 +217,16 @@ namespace KernelImpl.Noyau.Deroulement
             //Ajout des nouveaux
             using (TimedLock.Lock((_groupes as ICollection).SyncRoot))
             {
+                _groupes.Clear();  
                 foreach (Groupe_Combats groupe in groupes)
                 {
                     Groupe_Combats p = _groupes.FirstOrDefault(o => o.id == groupe.id);
+                    /*
                     if (p != null)
                     {
                         _groupes.Remove(p);
                     }
+                    */
                     _groupes.Add(groupe);
                 }
 
@@ -232,13 +245,17 @@ namespace KernelImpl.Noyau.Deroulement
             //Ajout des nouveaux
             using (TimedLock.Lock((_poules as ICollection).SyncRoot))
             {
+                _poules.Clear();
+
                 foreach (Poule poule in poules)
                 {
                     Poule p = _poules.FirstOrDefault(o => o.id == poule.id);
+                    /*
                     if (p != null)
                     {
                         _poules.Remove(p);
                     }
+                    */
                     _poules.Add(poule);
                 }
             }
@@ -258,13 +275,16 @@ namespace KernelImpl.Noyau.Deroulement
             //Ajout des nouveaux
             using (TimedLock.Lock((_combats as ICollection).SyncRoot))
             {
+                _combats.Clear();
                 foreach (Combat combat in combats)
                 {
                     Combat p = _combats.FirstOrDefault(o => o.id == combat.id);
+                    /*
                     if (p != null)
                     {
                         _combats.Remove(p);
                     }
+                    */
                     _combats.Add(combat);
                 }
                 this.lecture_vue_combats(DC);
@@ -289,13 +309,16 @@ namespace KernelImpl.Noyau.Deroulement
             //Ajout des nouveaux
             using (TimedLock.Lock((_rencontres as ICollection).SyncRoot))
             {
+                _rencontres.Clear();
                 foreach (Rencontre rencontre in rencontres)
                 {
                     Rencontre p = _rencontres.FirstOrDefault(o => o.id == rencontre.id);
+                    /*
                     if (p != null)
                     {
                         _rencontres.Remove(p);
                     }
+                    */
                     _rencontres.Add(rencontre);
                 }
             }
@@ -317,13 +340,16 @@ namespace KernelImpl.Noyau.Deroulement
             //Ajout des nouveaux
             using (TimedLock.Lock((_feuilles as ICollection).SyncRoot))
             {
+                _feuilles.Clear();
                 foreach (Feuille feuille in feuilles)
                 {
                     Feuille p = _feuilles.FirstOrDefault(o => o.id == feuille.id);
+                    /*
                     if (p != null)
                     {
                         _feuilles.Remove(p);
                     }
+                    */
                     _feuilles.Add(feuille);
                     //else
                     //{
@@ -381,14 +407,17 @@ namespace KernelImpl.Noyau.Deroulement
             //Ajout des nouveaux
             using (TimedLock.Lock((_vgroupes as ICollection).SyncRoot))
             {
+                _vgroupes.Clear();
                 foreach (Groupe_Combats groupe in _groupes)
                 {
                     vue_groupe p = _vgroupes.FirstOrDefault(o => o.groupe_id == groupe.id);
                     vue_groupe vg = new vue_groupe(groupe, DC);
+                    /*
                     if (p != null)
                     {
                         _vgroupes.Remove(p);
                     }
+                    */
                     _vgroupes.Add(vg);
                     //else
                     //{
@@ -440,14 +469,17 @@ namespace KernelImpl.Noyau.Deroulement
             //Ajout des nouveaux
             using (TimedLock.Lock((_vcombats as ICollection).SyncRoot))
             {
+                _vcombats.Clear();
                 foreach (Combat combat in _combats)
                 {
                     vue_combat p = _vcombats.FirstOrDefault(o => o.combat_id == combat.id);
                     vue_combat vc = new vue_combat(combat, DC);
+                    /*
                     if (p != null)
                     {
                         _vcombats.Remove(p);
                     }
+                    */
                     _vcombats.Add(vc);
                     //else  //????? (combat.participant1 == p.participant1 && combat.participant2 == p.participant2)
                     //{

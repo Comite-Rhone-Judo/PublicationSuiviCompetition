@@ -328,7 +328,7 @@ namespace AppPublication.Controles
         private void LectureDonneesPhases(XElement element)
         {
             DialogControleur DC = DialogControleur.Instance;
-            DC.ServerData.Deroulement.clear_deroulement();
+            // DC.ServerData.Deroulement.clear_deroulement();
             DC.ServerData.Deroulement.lecture_phases(element);
             DC.ServerData.Deroulement.lecture_participants(element);
             DC.ServerData.Deroulement.lecture_decoupages(element);

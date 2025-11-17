@@ -1118,7 +1118,7 @@ namespace AppPublication.Export
 
             foreach (Combat c in combats)
             {
-                Feuille f1 = feuilles.FirstOrDefault(o => o.combat == c.id);
+                // Feuille f1 = feuilles.FirstOrDefault(o => o.combat == c.id);
 
                 XElement xcombat = c.ToXml(DC);
                 xcombats.Add(xcombat);

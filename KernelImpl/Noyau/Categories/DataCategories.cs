@@ -29,7 +29,14 @@ namespace KernelImpl.Noyau.Categories
             ICollection<CategorieAge> cateages = CategorieAge.LectureCategorieAge(element, null);
             using (TimedLock.Lock((_cAges as ICollection).SyncRoot))
             {
+                _cAges.Clear();
+                foreach (CategorieAge cateage in cateages)
+                {
+                    _cAges.Add(cateage);
+                }
+
                 //Ajout des nouveaux
+                /*
                 foreach (CategorieAge cateage in cateages)
                 {
                     CategorieAge p = _cAges.FirstOrDefault(o => o.id == cateage.id);
@@ -39,6 +46,7 @@ namespace KernelImpl.Noyau.Categories
                     }
                     _cAges.Add(cateage);
                 }
+                */
             }
         }
 
@@ -54,6 +62,15 @@ namespace KernelImpl.Noyau.Categories
             using (TimedLock.Lock((_cPoids as ICollection).SyncRoot))
             {
                 //Ajout des nouveaux
+                _cPoids.Clear();
+
+                foreach (CategoriePoids catepoid in catepoids)
+                {
+                    _cPoids.Add(catepoid);
+                }
+
+
+                /*
                 foreach (CategoriePoids catepoid in catepoids)
                 {
                     CategoriePoids p = _cPoids.FirstOrDefault(o => o.id == catepoid.id);
@@ -63,6 +80,7 @@ namespace KernelImpl.Noyau.Categories
                     }
                     _cPoids.Add(catepoid);
                 }
+                */
             }
         }
 
@@ -78,6 +96,13 @@ namespace KernelImpl.Noyau.Categories
             //Ajout des nouveaux
             using (TimedLock.Lock((_grades as ICollection).SyncRoot))
             {
+                _grades.Clear();
+                foreach (Ceintures ceinture in ceintures)
+                {
+                    _grades.Add(ceinture);
+                }
+
+                /*
                 foreach (Ceintures ceinture in ceintures)
                 {
                     Ceintures p = _grades.FirstOrDefault(o => o.id == ceinture.id);
@@ -87,6 +112,7 @@ namespace KernelImpl.Noyau.Categories
                     }
                     _grades.Add(ceinture);
                 }
+                */
 
                 Ceintures grade = _grades.FirstOrDefault(o => o.nom == "1D");
                 if (grade != null)
