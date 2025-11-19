@@ -22,16 +22,16 @@ namespace KernelImpl.Noyau.Deroulement
         private readonly DeduplicatedCachedData<int, vue_combat> _vcombatsCache = new DeduplicatedCachedData<int, vue_combat>();
 
         // Accesseurs O(1)
-        public IReadOnlyList<Combat> Combats { get { return _combatsCache.ListCache; } }
-        public IReadOnlyList<Rencontre> Rencontres { get { return _rencontresCache.ListCache; } }
-        public IReadOnlyList<Feuille> Feuilles { get { return _feuillesCache.ListCache; } }
-        public IReadOnlyList<Phase_Decoupage> Decoupages { get { return _decoupagesCache.ListCache; } }
-        public IReadOnlyList<Groupe_Combats> Groupes { get { return _groupesCache.ListCache; } }
-        public IReadOnlyList<Phase> Phases { get { return _phasesCache.ListCache; } }
-        public IReadOnlyList<Poule> Poules { get { return _poulesCache.ListCache; } }
-        public IReadOnlyList<Participant> Participants { get { return _participantsCache.ListCache; } }
-        public IReadOnlyList<vue_groupe> vgroupes { get { return _vgroupesCache.ListCache; } }
-        public IReadOnlyList<vue_combat> vcombats { get { return _vcombatsCache.ListCache; } }
+        public IReadOnlyList<Combat> Combats { get { return _combatsCache.Cache; } }
+        public IReadOnlyList<Rencontre> Rencontres { get { return _rencontresCache.Cache; } }
+        public IReadOnlyList<Feuille> Feuilles { get { return _feuillesCache.Cache; } }
+        public IReadOnlyList<Phase_Decoupage> Decoupages { get { return _decoupagesCache.Cache; } }
+        public IReadOnlyList<Groupe_Combats> Groupes { get { return _groupesCache.Cache; } }
+        public IReadOnlyList<Phase> Phases { get { return _phasesCache.Cache; } }
+        public IReadOnlyList<Poule> Poules { get { return _poulesCache.Cache; } }
+        public IReadOnlyList<Participant> Participants { get { return _participantsCache.Cache; } }
+        public IReadOnlyList<vue_groupe> vgroupes { get { return _vgroupesCache.Cache; } }
+        public IReadOnlyList<vue_combat> vcombats { get { return _vcombatsCache.Cache; } }
 
 
         public IEnumerable<Participant> ListeParticipant1(int epreuve, JudoData DC)

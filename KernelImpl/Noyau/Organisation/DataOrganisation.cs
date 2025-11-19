@@ -20,11 +20,11 @@ namespace KernelImpl.Noyau.Organisation
         private readonly DeduplicatedCachedData<int, vue_epreuve> _vepreuvesCache = new DeduplicatedCachedData<int, vue_epreuve>();
 
         // Accesseurs O(1)
-        public IReadOnlyList<Competition> Competitions { get { return _competitionsCache.ListCache; } }
-        public IReadOnlyList<Epreuve> Epreuves { get { return _epreuvesCache.ListCache; } }
-        public IReadOnlyList<Epreuve_Equipe> EpreuveEquipes { get { return _epreuve_equipesCache.ListCache; } }
-        public IReadOnlyList<vue_epreuve_equipe> vepreuves_equipe { get { return _vepreuves_equipeCache.ListCache; } }
-        public IReadOnlyList<vue_epreuve> vepreuves { get { return _vepreuvesCache.ListCache; } }
+        public IReadOnlyList<Competition> Competitions { get { return _competitionsCache.Cache; } }
+        public IReadOnlyList<Epreuve> Epreuves { get { return _epreuvesCache.Cache; } }
+        public IReadOnlyList<Epreuve_Equipe> EpreuveEquipes { get { return _epreuve_equipesCache.Cache; } }
+        public IReadOnlyList<vue_epreuve_equipe> vepreuves_equipe { get { return _vepreuves_equipeCache.Cache; } }
+        public IReadOnlyList<vue_epreuve> vepreuves { get { return _vepreuvesCache.Cache; } }
 
         /// <summary>
         /// lecture des compétitions

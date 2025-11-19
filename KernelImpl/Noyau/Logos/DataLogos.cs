@@ -18,9 +18,9 @@ namespace KernelImpl.Noyau.Logos
         private readonly DeduplicatedCachedData<string, string> _logosCache = new DeduplicatedCachedData<string, string>();
 
         // Accesseurs O(1)
-        public IReadOnlyList<string> Fede { get { return _fedeCache.ListCache; } }
-        public IReadOnlyList<string> Ligue { get { return _fedeCache.ListCache; } }
-        public IReadOnlyList<string> Sponsors { get { return _fedeCache.ListCache; } }
+        public IReadOnlyList<string> Fede { get { return _fedeCache.Cache; } }
+        public IReadOnlyList<string> Ligue { get { return _fedeCache.Cache; } }
+        public IReadOnlyList<string> Sponsors { get { return _fedeCache.Cache; } }
 
 
         /// <summary>

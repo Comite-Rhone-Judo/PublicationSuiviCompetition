@@ -20,10 +20,10 @@ namespace KernelImpl.Noyau.Participants
         private readonly DeduplicatedCachedData<string, vue_judoka> _vue_judokasCache = new DeduplicatedCachedData<string, vue_judoka>();
 
         // Accesseurs O(1)
-        public IReadOnlyList<Equipe> Equipes { get { return _equipesCache.ListCache; } }
-        public IReadOnlyList<Judoka> Judokas { get { return _judokasCache.ListCache; } }
-        public IReadOnlyList<EpreuveJudoka> EJS { get { return _epreuvejudokasCache.ListCache; } }
-        public IReadOnlyList<vue_judoka> vjudokas { get { return _vue_judokasCache.ListCache; } }
+        public IReadOnlyList<Equipe> Equipes { get { return _equipesCache.Cache; } }
+        public IReadOnlyList<Judoka> Judokas { get { return _judokasCache.Cache; } }
+        public IReadOnlyList<EpreuveJudoka> EJS { get { return _epreuvejudokasCache.Cache; } }
+        public IReadOnlyList<vue_judoka> vjudokas { get { return _vue_judokasCache.Cache; } }
 
         public IEnumerable<Judoka> GetJudokaEpreuve(int epreuve)
         {

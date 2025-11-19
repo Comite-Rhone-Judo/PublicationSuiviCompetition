@@ -17,11 +17,11 @@ namespace KernelImpl.Noyau.Categories
         private readonly DeduplicatedCachedData<int, Ceintures> _gradesCache = new DeduplicatedCachedData<int, Ceintures>();
 
 
-        public IReadOnlyList<CategorieAge> CAges { get { return _cAgesCache.ListCache; } }
+        public IReadOnlyList<CategorieAge> CAges { get { return _cAgesCache.Cache; } }
 
-        public IReadOnlyList<CategoriePoids> CPoids { get { return _cPoidsCache.ListCache; } }
+        public IReadOnlyList<CategoriePoids> CPoids { get { return _cPoidsCache.Cache; } }
 
-        public IReadOnlyList<Ceintures> Grades { get { return _gradesCache.ListCache; } }
+        public IReadOnlyList<Ceintures> Grades { get { return _gradesCache.Cache; } }
 
 
         /// <summary>

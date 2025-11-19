@@ -18,9 +18,9 @@ namespace KernelImpl.Noyau.Arbitrage
         private readonly DeduplicatedCachedData<int, Delegue> _deleguesCache = new DeduplicatedCachedData<int, Delegue>();
 
         // 2. L'interface publique est JUSTE la liste O(1)
-        public IReadOnlyList<Commissaire> Commissaires { get { return _commissairesCache.ListCache; } }
-        public IReadOnlyList<Arbitre> Arbitres { get { return _arbitresCache.ListCache; } }
-        public IReadOnlyList<Delegue> Delegues { get { return _deleguesCache.ListCache; } }
+        public IReadOnlyList<Commissaire> Commissaires { get { return _commissairesCache.Cache; } }
+        public IReadOnlyList<Arbitre> Arbitres { get { return _arbitresCache.Cache; } }
+        public IReadOnlyList<Delegue> Delegues { get { return _deleguesCache.Cache; } }
 
         /// <summary>
         /// lecture des commissaires

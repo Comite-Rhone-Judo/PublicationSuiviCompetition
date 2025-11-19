@@ -53,7 +53,6 @@
     </Compile>
     <Compile Include="Internal\AtomicCachedBased.cs" />
     <Compile Include="Internal\DeduplicatedDataCache.cs" />
-    <Compile Include="Internal\DataCache.cs" />
     <Compile Include="Internal\SimpleCachedData.cs" />
     <Compile Include="JudoData.cs" />
     <Compile Include="Noyau\Arbitrage\DataArbitrage.cs" />

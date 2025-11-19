@@ -18,11 +18,11 @@ namespace KernelImpl.Noyau.Structures
         private readonly DeduplicatedCachedData<int, Pays> _paysCache = new DeduplicatedCachedData<int, Pays>();
 
         // Accesseurs O(1)
-        public IReadOnlyList<Club> Clubs { get { return _clubsCache.ListCache; } }
-        public IReadOnlyList<Comite> Comites { get { return _comitesCache.ListCache; } }
-        public IReadOnlyList<Secteur> Secteurs { get { return _secteursCache.ListCache; } }
-        public IReadOnlyList<Ligue> Ligues { get { return _liguesCache.ListCache; } }
-        public IReadOnlyList<Pays> LesPays { get { return _paysCache.ListCache; } }
+        public IReadOnlyList<Club> Clubs { get { return _clubsCache.Cache; } }
+        public IReadOnlyList<Comite> Comites { get { return _comitesCache.Cache ; } }
+        public IReadOnlyList<Secteur> Secteurs { get { return _secteursCache.Cache; } }
+        public IReadOnlyList<Ligue> Ligues { get { return _liguesCache.Cache; } }
+        public IReadOnlyList<Pays> LesPays { get { return _paysCache.Cache; } }
 
         /// <summary>
         /// lecture des clubs
