@@ -1,9 +1,12 @@
 ﻿
+using KernelImpl.Internal;
+using KernelImpl.Noyau.Organisation;
 using NLog;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Xml.Linq;
 using Tools.Outils;
 
@@ -11,41 +14,29 @@ namespace KernelImpl.Noyau.Participants
 {
     public class DataParticipants
     {
-        private IList<Equipe> _equipes = new List<Equipe>();
-        public IList<Equipe> Equipes { get { return _equipes; } }
+        private readonly DeduplicatedCachedData<int, Equipe> _equipesCache = new DeduplicatedCachedData<int, Equipe>();
+        private readonly DeduplicatedCachedData<int, Judoka> _judokasCache = new DeduplicatedCachedData<int, Judoka>();
+        private readonly DeduplicatedCachedData<int, EpreuveJudoka> _epreuvejudokasCache = new DeduplicatedCachedData<int, EpreuveJudoka>();
+        private readonly DeduplicatedCachedData<string, vue_judoka> _vue_judokasCache = new DeduplicatedCachedData<string, vue_judoka>();
 
-        private IList<Judoka> _judokas = new List<Judoka>();
-        public IList<Judoka> Judokas { get { return _judokas; } }
-
-
-        private IList<EpreuveJudoka> _epreuvejudokas = new List<EpreuveJudoka>();
-        public IList<EpreuveJudoka> EJS { get { return _epreuvejudokas; } }
-
+        // Accesseurs O(1)
+        public IReadOnlyList<Equipe> Equipes { get { return _equipesCache.ListCache; } }
+        public IReadOnlyList<Judoka> Judokas { get { return _judokasCache.ListCache; } }
+        public IReadOnlyList<EpreuveJudoka> EJS { get { return _epreuvejudokasCache.ListCache; } }
+        public IReadOnlyList<vue_judoka> vjudokas { get { return _vue_judokasCache.ListCache; } }
 
         public IEnumerable<Judoka> GetJudokaEpreuve(int epreuve)
         {
-            IEnumerable<int> judokas = _epreuvejudokas.Where(o => o.epreuve == epreuve).Select(o => o.judoka).Distinct();
-            return _judokas.Where(o => judokas.Contains(o.id));
+            IEnumerable<int> judokas = EJS.Where(o => o.epreuve == epreuve).Select(o => o.judoka).Distinct();
+            return Judokas.Where(o => judokas.Contains(o.id));
         }
 
+        // Expose le dictionnaire courant. Note: IDictionary est utilisé pour la compatibilité, 
+        // mais l'objet sous-jacent ne doit pas être modifié par le consommateur.
+        private readonly SimpleCachedData<Dictionary<int, IList<vue_judoka>>> _vjudokasEpreuveMap  = new SimpleCachedData<Dictionary<int, IList<vue_judoka>>>();
 
 
-        private IList<vue_judoka> _vue_judokas = new ObservableCollection<vue_judoka>();
-        public IList<vue_judoka> vjudokas { get { return _vue_judokas; } }
-
-        private IDictionary<int, IList<vue_judoka>> _vjudokas_epreuve = new Dictionary<int, IList<vue_judoka>>();
-        public IDictionary<int, IList<vue_judoka>> vjudokas_epreuve { get { return _vjudokas_epreuve; } }
-
-
-
-        public void clear_participants()
-        {
-            _equipes.Clear();
-            _judokas.Clear();
-            _epreuvejudokas.Clear();
-            vjudokas.Clear();
-        }
-
+        public IDictionary<int, IList<vue_judoka>> vjudokas_epreuve { get { return _vjudokasEpreuveMap.ListCache; } }
 
         /// <summary>
         /// lecture des judoka
@@ -56,50 +47,13 @@ namespace KernelImpl.Noyau.Participants
         {
             ICollection<Judoka> judokasRecu = Judoka.LectureJudoka(element, null);
 
-            using (TimedLock.Lock((_judokas as ICollection).SyncRoot))
-            {
-                // TODO Ne serait-il pas plus simple de simplement vider tous les judokas et de remettre ceux recu a la place ??
-                // Vide la collection
-                _judokas.Clear();
+            // Genere les vues et le dictionnaire associés
+            var (vueJudokas, judokasParEpreuve) = GenererVueJudokas(DC);
 
-                // Ajoute les judokas recus
-                foreach (Judoka jr in judokasRecu)
-                {
-                    // Ajoute le judoka recu (CREATE ou UPDATE)
-                    _judokas.Add(jr);
-                }
-
-                /*
-                // Ajout des nouveaux et mise a jour
-                foreach (Judoka jr in judokasRecu)
-                {
-                    Judoka p = _judokas.FirstOrDefault(o => o.id == jr.id);
-                    //i_vue_judoka vj = new vue_judoka(judoka, DC)
-                    if (p != null)
-                    {
-                        // Supprime le judoka pour le remplacer par le nouveau recu
-                        _judokas.Remove(p);
-                    }
-                    // Ajoute le judoka recu (CREATE ou UPDATE)
-                    _judokas.Add(jr);
-                }
-
-                // Suppression de ceux absents
-                foreach (Judoka ji in _judokas)
-                {
-                    Judoka p = judokasRecu.FirstOrDefault(o => o.id == ji.id);
-
-                    // Si aucun judoka trouve c'est qu'il n'est plus dans la liste recue donc on supprime
-                    if (p == null)
-                    {
-                        _judokas.Remove(ji);
-                    }
-                }
-                */
-
-                // Met a jour les vues associees
-                lecture_vue_judokas(DC);
-            }        
+            // Swap atomique des donnees
+            _judokasCache.UpdateSnapshot(judokasRecu, o => o.id);
+            _vue_judokasCache.UpdateSnapshot(vueJudokas, o => o.ClefUnique);
+            _vjudokasEpreuveMap.UpdateSnapshot(judokasParEpreuve);
         }
 
 
@@ -124,35 +78,14 @@ namespace KernelImpl.Noyau.Participants
         public void lecture_equipes(XElement element)
         {
             ICollection<Equipe> equipes = Equipe.LectureEquipes(element, null);
-            using (TimedLock.Lock((_equipes as ICollection).SyncRoot))
-            {
-                _equipes.Clear();
-                foreach (Equipe equipe in equipes)
-                {
-                    _equipes.Add(equipe);
-                }
+            _equipesCache.UpdateSnapshot(equipes, o => o.id);
 
-                /*
-                //Ajout des nouveaux
-                foreach (Equipe equipe in equipes)
-                {
-                    Equipe p = _equipes.FirstOrDefault(o => o.id == equipe.id);
-                    if (p != null)
-                    {
-                        _equipes.Remove(p);
-                    }
-                    _equipes.Add(equipe);
-                }
-                */
-            }
         }
 
         public ICollection<Equipe> LectureEquipes(XElement xelement, OutilsTools.MontreInformation1 MI)
         {
             return Equipe.LectureEquipes(xelement, MI);
         }
-
-
 
         /// <summary>
         /// lecture des épreuves des judokas
@@ -162,36 +95,30 @@ namespace KernelImpl.Noyau.Participants
         public void lecture_epreuves_judokas(XElement element, JudoData DC)
         {
             ICollection<EpreuveJudoka> ejs = EpreuveJudoka.LectureEpreuveJudokas(element, null);
+            _epreuvejudokasCache.UpdateSnapshot(ejs, o => o.id);
 
-            using (TimedLock.Lock((_epreuvejudokas as ICollection).SyncRoot))
+            // 3. Propagation de l'état aux Judokas (Optimisation)
+
+            // Accès rapide à la liste actuelle des judokas (O(1))
+            // On utilise la propriété locale 'Judokas' (qui pointe vers _judokasData.ListCache)
+            var listeJudokas = this.Judokas;
+
+            // ÉTAPE CLÉ : On indexe les judokas dans un Dictionnaire temporaire.
+            // Cela coûte O(N) une seule fois, mais permet ensuite des recherches immédiates.
+            // On utilise l'ID comme clé.
+            var judokaMap = listeJudokas.ToDictionary(j => j.id);
+
+            // On parcourt les EpreuvesJudokas (O(M))
+            foreach (EpreuveJudoka ej in EJS)
             {
-                _epreuvejudokas.Clear();
-
-                foreach (EpreuveJudoka ej in ejs)
+                // Recherche instantanée O(1) grâce au dictionnaire
+                if (judokaMap.TryGetValue(ej.judoka, out Judoka j))
                 {
-                    _epreuvejudokas.Add(ej);
-                }
-
-                /*
-                //Ajout des nouveaux
-                foreach (EpreuveJudoka ej in ejs)
-                {
-                    EpreuveJudoka p = _epreuvejudokas.FirstOrDefault(o => o.id == ej.id);
-                    if (p != null)
-                    {
-                        _epreuvejudokas.Remove(p);
-                    }
-                    _epreuvejudokas.Add(ej);
-                }
-                */
-
-                foreach (EpreuveJudoka ej in _epreuvejudokas)
-                {
-                    Judoka j = DC.Participants.Judokas.FirstOrDefault(o => o.id == ej.judoka);
-                    if (j != null)
-                    {
-                        j.etat = ej.etat;
-                    }
+                    // Mise à jour de l'état
+                    // Note : Comme on modifie une propriété d'un objet existant, 
+                    // assurez-vous que l'objet Judoka implémente INotifyPropertyChanged 
+                    // si vous voulez que l'UI se rafraîchisse automatiquement.
+                    j.etat = ej.etat;
                 }
             }
         }
@@ -211,134 +138,57 @@ namespace KernelImpl.Noyau.Participants
 
 
         /// <summary>
-        /// lecture des judokas
+        /// Fabrique la liste des vues et le dictionnaire associé à partir des snapshots actuels.
+        /// Ne modifie aucun état de la classe.
         /// </summary>
-        /// <param name="element">element XML contenant les judokas</param>
-        /// <param name="DC"></param>
-        public void lecture_vue_judokas(/*XElement element, bool suppression,*/ JudoData DC/*, ObservableCollection<i_vue_judoka> ItemsSource*/)
+        /// <returns>Un Tuple contenant la liste plate et le dictionnaire construits.</returns>
+        private (List<vue_judoka> VueJudoka, Dictionary<int, IList<vue_judoka>> JudokasParEpreuve) GenererVueJudokas(JudoData DC)
         {
-            // TODO idem, peut etre plus simple de vider le dictionnaire et le reconstruire si on sait que l'on recoit tous a chaque fois
+            // 1. Capture des Snapshots locaux (Lecture O(1)) pour cohérence durant le traitement
+            var sourceJudokas = Judokas;
+            var sourceEJS = EJS;
+            var sourceEpreuves = DC.Organisation.Epreuves;
 
-            using (TimedLock.Lock((_vjudokas_epreuve as ICollection).SyncRoot))
+            // 2. Construction de la Liste Plate (LINQ)
+            var requeteVues =
+                from j in sourceJudokas
+                join ej in sourceEJS on j.id equals ej.judoka
+                join ep in sourceEpreuves on ej.epreuve equals ep.id
+                select new vue_judoka(j, ep, DC);
+
+            var listeVues = requeteVues.ToList();
+
+            // 3. Construction du Dictionnaire
+            var nouveauDico = new Dictionary<int, IList<vue_judoka>>();
+            nouveauDico[0] = new List<vue_judoka>();
+
+            // 3.1 Initialisation des clés
+            var epreuvesAInitialiser = DC.competition.IsEquipe()
+                ? DC.Organisation.EpreuveEquipes.Cast<dynamic>()
+                : DC.Organisation.Epreuves.Cast<dynamic>();
+
+            foreach (var ep in epreuvesAInitialiser)
             {
-                _vjudokas_epreuve.Clear();
+                if (!nouveauDico.ContainsKey(ep.id))
+                    nouveauDico[ep.id] = new List<vue_judoka>();
+            }
 
-                // Rajoute le zero si besoin
-                if (!_vjudokas_epreuve.ContainsKey(0))
+            // 3.2 Remplissage
+            foreach (var vue in listeVues)
+            {
+                int targetId = (vue.idepreuve_equipe != 0) ? vue.idepreuve_equipe : vue.idepreuve;
+                if (nouveauDico.TryGetValue(targetId, out IList<vue_judoka> listeCible))
                 {
-                    _vjudokas_epreuve.Add(0, new List<vue_judoka>());
-                }
-
-                if (DC.competition.IsEquipe())
-                {
-                    foreach (Organisation.Epreuve_Equipe ep in DC.Organisation.EpreuveEquipes)
-                    {
-                        if (!_vjudokas_epreuve.ContainsKey(ep.id))
-                        {
-                            _vjudokas_epreuve.Add(ep.id, new List<vue_judoka>());
-                        }
-                    }
+                    listeCible.Add(vue);
                 }
                 else
                 {
-                    foreach (Organisation.Epreuve ep in DC.Organisation.Epreuves)
-                    {
-                        if (!_vjudokas_epreuve.ContainsKey(ep.id))
-                        {
-                            _vjudokas_epreuve.Add(ep.id, new List<vue_judoka>());
-                        }
-                    }
+                    nouveauDico[0].Add(vue);
                 }
             }
 
-            //ICollection<IJudoka> judokas = Judoka.LectureJudoka(element, null);
-
-            //Ajout des nouveaux
-            //int count = ItemsSource == null ? 0 : ItemsSource.Count;
-            using (TimedLock.Lock((_vue_judokas as ICollection).SyncRoot))
-            {
-                // TODO A voir s'il n'est pas plus efficace de vider la liste des vues directement et d'ajouter les donnees recues a la place
-
-                _vue_judokas.Clear();
-
-                foreach (Judoka judoka in _judokas)
-                {
-                    List<EpreuveJudoka> epreuvesJudoka = DC.Participants.EJS.Where(o => o.judoka == judoka.id).ToList();
-                    foreach (EpreuveJudoka epreuve_judoka in epreuvesJudoka)
-                    {
-                        Organisation.Epreuve epreuve = DC.Organisation.Epreuves.FirstOrDefault(o => o.id == epreuve_judoka.epreuve);
-                        if (epreuve != null)
-                        {
-                            // Nouvelle vue Judoka
-                            vue_judoka vj = new vue_judoka(judoka, epreuve, DC);
-                            _vue_judokas.Add(vj);
-
-                            // Met a jour le dictionnaire des vjudokas par epreuve
-                            foreach (int epreuveid in _vjudokas_epreuve.Keys)
-                            {
-                                // On retire toutes les vjudoka pour le judoka en cours
-                                vue_judoka p2 = _vjudokas_epreuve[epreuveid].FirstOrDefault(o => o.id == judoka.id);
-                                if (p2 != null)
-                                {
-                                    _vjudokas_epreuve[epreuveid].Remove(p2);
-                                }
-                            }
-
-                            // Ajoute la vjudoka en cours
-                            int id = vj.idepreuve_equipe != 0 ? vj.idepreuve_equipe : vj.idepreuve;
-                            _vjudokas_epreuve[id].Add(vj);
-                        }
-                        else
-                        {
-                            // Epreuve inconnue ... pas normal, on trace en debug au cas ou
-                            LogTools.Logger.Debug($"epreuve Id={epreuve_judoka.epreuve} manquante, referencee pour judoka '{epreuve_judoka.judoka}'");
-                        }
-                    }
-
-                    /*
-                    foreach (Judoka judoka in _judokas)
-                    {
-                        List<vue_judoka> vues_judoka = _vue_judokas.Where(o => o.id == judoka.id).ToList();
-                        List<EpreuveJudoka> epreuvesJudoka = DC.Participants.EJS.Where(o => o.judoka == judoka.id).ToList();
-
-                        foreach (EpreuveJudoka epreuve_judoka in epreuvesJudoka)
-                        {
-                            Organisation.Epreuve epreuve = DC.Organisation.Epreuves.FirstOrDefault(o => o.id == epreuve_judoka.epreuve);
-                            if (epreuve != null)
-                            {
-                                vue_judoka vj = new vue_judoka(judoka, epreuve, DC);
-
-                                vue_judoka p = _vue_judokas.FirstOrDefault(o => o.id == judoka.id && o.idepreuve == epreuve.id);                            
-                                if (p != null)
-                                {
-                                    _vue_judokas.Remove(p);
-                                }
-                                _vue_judokas.Add(vj);
-
-                                // Met a jour le dictionnaire des vjudokas par epreuve
-                                foreach (int epreuveid in _vjudokas_epreuve.Keys)
-                                {
-                                    // On retire toutes les vjudoka pour le judoka en cours
-                                    vue_judoka p2 = _vjudokas_epreuve[epreuveid].FirstOrDefault(o => o.id == judoka.id);
-                                    if (p2 != null)
-                                    {
-                                        _vjudokas_epreuve[epreuveid].Remove(p2);
-                                    }
-                                }
-
-                                // Ajoute la vjudoka en cours
-                                int id = vj.idepreuve_equipe != 0 ? vj.idepreuve_equipe : vj.idepreuve;
-                                _vjudokas_epreuve[id].Add(vj);
-                            }
-                            else
-                            {
-                                // Epreuve inconnue ... pas normal, on trace en debug au cas ou
-                                LogTools.Logger.Debug($"epreuve Id={epreuve_judoka.epreuve} manquante, referencee pour judoka '{epreuve_judoka.judoka}'");
-                            }
-                        }
-                    */
-                }
-            }
+            // 4. Retour des objets construits
+            return (listeVues, nouveauDico);
         }
     }
 }

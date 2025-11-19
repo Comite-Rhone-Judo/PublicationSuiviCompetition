@@ -21,6 +21,16 @@ namespace KernelImpl.Noyau.Participants
         }
 
         #region PROPERTIES
+
+        public string ClefUnique
+        {
+            get
+            {
+                return string.Format("{0}-{1}", idcompet, id);
+            }
+        }
+
+
         private int _id;
 
         /// <summary>

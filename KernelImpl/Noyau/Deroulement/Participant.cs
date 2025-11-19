@@ -35,6 +35,20 @@ namespace KernelImpl.Noyau.Deroulement
             }
         }
 
+        private int _id;
+        public int id
+        {
+            get { return _id; }
+            set
+            {
+                if (_id != value)
+                {
+                    _id = value;
+                    OnPropertyChanged("id");
+                }
+            }
+        }
+
         private int _phase;
         public int phase
         {
@@ -245,6 +259,7 @@ namespace KernelImpl.Noyau.Deroulement
         public void LoadXml(XElement xinfo)
         {
             this.judoka = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Participant_Judoka));
+            this.id = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Participant_ID));
 
             this.phase = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Participant_Phase));
             this.ranking = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Participant_Ranking));

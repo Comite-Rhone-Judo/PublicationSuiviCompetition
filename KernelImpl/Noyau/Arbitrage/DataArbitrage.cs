@@ -2,26 +2,25 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Xml.Linq;
 using Tools.Outils;
+using KernelImpl.Internal;
 
 namespace KernelImpl.Noyau.Arbitrage
 {
     public class DataArbitrage
     {
-        private ConcurrentDictionary<int, Commissaire> _commissaires = new ConcurrentDictionary<int, Commissaire>();
+        // 1. Le stockage privé est le "DataCache"
+        private readonly DeduplicatedCachedData<int, Commissaire> _commissairesCache = new DeduplicatedCachedData<int, Commissaire>();
+        private readonly DeduplicatedCachedData<int, Arbitre> _arbitresCache = new DeduplicatedCachedData<int, Arbitre>();
+        private readonly DeduplicatedCachedData<int, Delegue> _deleguesCache = new DeduplicatedCachedData<int, Delegue>();
 
-        // private IList<Commissaire> _commissaires = new List<Commissaire>();
-        public IList<Commissaire> Commissaires { get { return _commissaires.Values.ToList(); } }
-
-        private ConcurrentDictionary<int, Arbitre> _arbitres = new ConcurrentDictionary<int, Arbitre>();
-        // private IList<Arbitre> _arbitres = new List<Arbitre>();
-        public IList<Arbitre> Arbitres { get { return _arbitres.Values.ToList(); } }
-
-        private ConcurrentDictionary<int, Delegue> _delegues = new ConcurrentDictionary<int, Delegue>();
-        // private IList<Delegue> _delegues = new List<Delegue>();
-        public IList<Delegue> Delegues { get { return _delegues.Values.ToList(); } }
+        // 2. L'interface publique est JUSTE la liste O(1)
+        public IReadOnlyList<Commissaire> Commissaires { get { return _commissairesCache.ListCache; } }
+        public IReadOnlyList<Arbitre> Arbitres { get { return _arbitresCache.ListCache; } }
+        public IReadOnlyList<Delegue> Delegues { get { return _deleguesCache.ListCache; } }
 
         /// <summary>
         /// lecture des commissaires
@@ -31,7 +30,7 @@ namespace KernelImpl.Noyau.Arbitrage
         public void lecture_commissaires(XElement element)
         {
             ICollection<Commissaire> commissaires = Commissaire.LectureCommissaire(element, null);
-            CollectionHelper.UpdateConcurrentCollection(ref _commissaires, commissaires, o => o.id);
+            _commissairesCache.UpdateSnapshot(commissaires, o => o.id);
         }
 
         /// <summary>
@@ -42,7 +41,7 @@ namespace KernelImpl.Noyau.Arbitrage
         public void lecture_arbitres(XElement element)
         {
             ICollection<Arbitre> arbitres = Arbitre.LectureArbitre(element, null);
-            CollectionHelper.UpdateConcurrentCollection(ref _arbitres, arbitres, o => o.id);
+            _arbitresCache.UpdateSnapshot(arbitres, o => o.id); 
         }
 
         /// <summary>
@@ -53,7 +52,7 @@ namespace KernelImpl.Noyau.Arbitrage
         public void lecture_delegues(XElement element)
         {
             ICollection<Delegue> delegues = Delegue.LectureDelegue(element, null);
-            CollectionHelper.UpdateConcurrentCollection(ref _delegues, delegues, o => o.id);
+            _deleguesCache.UpdateSnapshot(delegues, o => o.id);
         }
     }
 }

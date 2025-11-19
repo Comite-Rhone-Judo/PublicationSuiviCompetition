@@ -1,5 +1,8 @@
 
+using KernelImpl.Internal;
+using KernelImpl.Noyau.Arbitrage;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
@@ -9,14 +12,16 @@ namespace KernelImpl.Noyau.Categories
 {
     public class DataCategories
     {
-        private IList<CategorieAge> _cAges = new List<CategorieAge>();
-        public IList<CategorieAge> CAges { get { return _cAges; } }
+        private readonly DeduplicatedCachedData<int, CategorieAge> _cAgesCache = new DeduplicatedCachedData<int, CategorieAge>();
+        private readonly DeduplicatedCachedData<int, CategoriePoids> _cPoidsCache = new DeduplicatedCachedData<int, CategoriePoids>();
+        private readonly DeduplicatedCachedData<int, Ceintures> _gradesCache = new DeduplicatedCachedData<int, Ceintures>();
 
-        private IList<CategoriePoids> _cPoids = new List<CategoriePoids>();
-        public IList<CategoriePoids> CPoids { get { return _cPoids; } }
 
-        private IList<Ceintures> _grades = new List<Ceintures>();
-        public IList<Ceintures> Grades { get { return _grades; } }
+        public IReadOnlyList<CategorieAge> CAges { get { return _cAgesCache.ListCache; } }
+
+        public IReadOnlyList<CategoriePoids> CPoids { get { return _cPoidsCache.ListCache; } }
+
+        public IReadOnlyList<Ceintures> Grades { get { return _gradesCache.ListCache; } }
 
 
         /// <summary>
@@ -27,27 +32,7 @@ namespace KernelImpl.Noyau.Categories
         public void lecture_cateages(XElement element)
         {
             ICollection<CategorieAge> cateages = CategorieAge.LectureCategorieAge(element, null);
-            using (TimedLock.Lock((_cAges as ICollection).SyncRoot))
-            {
-                _cAges.Clear();
-                foreach (CategorieAge cateage in cateages)
-                {
-                    _cAges.Add(cateage);
-                }
-
-                //Ajout des nouveaux
-                /*
-                foreach (CategorieAge cateage in cateages)
-                {
-                    CategorieAge p = _cAges.FirstOrDefault(o => o.id == cateage.id);
-                    if (p != null)
-                    {
-                        _cAges.Remove(p);
-                    }
-                    _cAges.Add(cateage);
-                }
-                */
-            }
+            _cAgesCache.UpdateSnapshot(cateages, o => o.id);
         }
 
 
@@ -59,29 +44,7 @@ namespace KernelImpl.Noyau.Categories
         public void lecture_catepoids(XElement element)
         {
             ICollection<CategoriePoids> catepoids = CategoriePoids.LectureCategoriePoids(element, null);
-            using (TimedLock.Lock((_cPoids as ICollection).SyncRoot))
-            {
-                //Ajout des nouveaux
-                _cPoids.Clear();
-
-                foreach (CategoriePoids catepoid in catepoids)
-                {
-                    _cPoids.Add(catepoid);
-                }
-
-
-                /*
-                foreach (CategoriePoids catepoid in catepoids)
-                {
-                    CategoriePoids p = _cPoids.FirstOrDefault(o => o.id == catepoid.id);
-                    if (p != null)
-                    {
-                        _cPoids.Remove(p);
-                    }
-                    _cPoids.Add(catepoid);
-                }
-                */
-            }
+            _cPoidsCache.UpdateSnapshot(catepoids, o => o.id);
         }
 
 
@@ -93,40 +56,19 @@ namespace KernelImpl.Noyau.Categories
         public void lecture_ceintures(XElement element)
         {
             ICollection<Ceintures> ceintures = Ceintures.LectureCeintures(element, null);
-            //Ajout des nouveaux
-            using (TimedLock.Lock((_grades as ICollection).SyncRoot))
+            _gradesCache.UpdateSnapshot(ceintures, o => o.id);
+
+            Ceintures grade = Grades.FirstOrDefault(o => o.nom == "1D");
+            if (grade != null)
             {
-                _grades.Clear();
-                foreach (Ceintures ceinture in ceintures)
-                {
-                    _grades.Add(ceinture);
-                }
-
-                /*
-                foreach (Ceintures ceinture in ceintures)
-                {
-                    Ceintures p = _grades.FirstOrDefault(o => o.id == ceinture.id);
-                    if (p != null)
-                    {
-                        _grades.Remove(p);
-                    }
-                    _grades.Add(ceinture);
-                }
-                */
-
-                Ceintures grade = _grades.FirstOrDefault(o => o.nom == "1D");
-                if (grade != null)
-                {
-                    OutilsTools.Grade1D_ID = grade.id;
-                }
-
-                grade = _grades.FirstOrDefault(o => o.nom == "7D");
-                if (grade != null)
-                {
-                    OutilsTools.Grade7D_ID = grade.id;
-                }
+                OutilsTools.Grade1D_ID = grade.id;
             }
 
+            grade = Grades.FirstOrDefault(o => o.nom == "7D");
+            if (grade != null)
+            {
+                OutilsTools.Grade7D_ID = grade.id;
+            }
         }
     }
 }
