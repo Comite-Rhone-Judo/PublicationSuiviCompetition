@@ -1,4 +1,4 @@
-ï»¿using KernelImpl.Noyau;
+using KernelImpl.Noyau;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Threading;
 namespace KernelImpl.Internal
 {
     /// <summary>
-    /// Cache spÃ©cialisÃ© pour les listes, avec logique de dÃ©duplication intÃ©grÃ©e.
+    /// Cache spécialisé pour les listes, avec logique de déduplication intégrée.
     /// </summary>
     internal class DeduplicatedCachedData<TKey, TValue> : AtomicCachedBase<IReadOnlyList<TValue>>
     {
@@ -16,8 +16,8 @@ namespace KernelImpl.Internal
         public DeduplicatedCachedData() : base(new List<TValue>(0)) { }
 
         /// <summary>
-        /// OPTIMISÃ‰ POUR SNAPSHOT COMPLET.
-        /// Remplace totalement le cache. GÃ¨re la dÃ©duplication via le keySelector.
+        /// OPTIMISÉ POUR SNAPSHOT COMPLET.
+        /// Remplace totalement le cache. Gère la déduplication via le keySelector.
         /// </summary>
         public void UpdateFullSnapshot(IEnumerable<TValue> nouveauxElements, Func<TValue, TKey> keySelector)
         {
@@ -32,8 +32,8 @@ namespace KernelImpl.Internal
                 return;
             }
 
-            // 1. CrÃ©ation du dictionnaire (Allocation unique dimensionnÃ©e)
-            // On Ã©crase les doublons potentiels de l'input (Last wins)
+            // 1. Création du dictionnaire (Allocation unique dimensionnée)
+            // On écrase les doublons potentiels de l'input (Last wins)
             var workingDict = new Dictionary<TKey, TValue>(items.Count);
             foreach (var item in items)
             {
@@ -45,7 +45,7 @@ namespace KernelImpl.Internal
         }
 
         /// <summary>
-        /// OPTIMISÃ‰ POUR DIFFÃ‰RENTIEL.
+        /// OPTIMISÉ POUR DIFFÉRENTIEL.
         /// Fusionne l'existant avec les modifications.
         /// </summary>
         public void UpdateDifferentialSnapshot(IEnumerable<TValue> elementsModifies, Func<TValue, TKey> keySelector)
@@ -58,7 +58,7 @@ namespace KernelImpl.Internal
             // 1. On part du cache actuel (Lecture O(1))
             var currentSnapshot = Cache;
 
-            // 2. On prÃ©pare le dictionnaire avec la taille estimÃ©e (Existant + Nouveaux)
+            // 2. On prépare le dictionnaire avec la taille estimée (Existant + Nouveaux)
             var workingDict = new Dictionary<TKey, TValue>(currentSnapshot.Count + changes.Count);
 
             // 3. Copie de l'existant

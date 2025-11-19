@@ -1,5 +1,4 @@
-﻿using KernelImpl.Internal;
-using KernelImpl.Noyau.Categories;
+﻿using KernelImpl.Noyau.Categories;
 using KernelImpl.Noyau.Organisation;
 using KernelImpl.Noyau.Structures;
 

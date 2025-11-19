@@ -229,7 +229,6 @@
     <Compile Include="HttpServerModule\Templates\TemplateEngine.cs" />
     <Compile Include="Outils\AppSettings.cs" />
     <Compile Include="Outils\BlockingCounter.cs" />
-    <Compile Include="Outils\CollectionHelper.cs" />
     <Compile Include="Outils\Encryption.cs" />
     <Compile Include="Outils\FileAndDirectTools.cs" />
     <Compile Include="Outils\FileWithChecksum.cs" />
