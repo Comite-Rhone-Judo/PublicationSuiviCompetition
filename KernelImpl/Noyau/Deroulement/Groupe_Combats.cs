@@ -8,7 +8,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class Groupe_Combats
+    public class Groupe_Combats : IIdEntity<int>
     {
         public int id { get; set; }
         public int decoupage { get; set; }

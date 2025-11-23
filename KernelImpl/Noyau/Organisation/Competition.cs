@@ -12,7 +12,7 @@ namespace KernelImpl.Noyau.Organisation
     /// <summary>
     /// Description des Competitions
     /// </summary>
-    public class Competition
+    public class Competition : IIdEntity<int>
     {
         public Competition()
         {

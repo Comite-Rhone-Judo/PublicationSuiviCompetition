@@ -10,7 +10,7 @@ namespace KernelImpl.Noyau.Organisation
     /// <summary>
     /// Description des Epreuve Equipe
     /// </summary>
-    public class Epreuve_Equipe
+    public class Epreuve_Equipe : IIdEntity<int>
     {
         public int id { get; set; }
         public string libelle { get; set; }

@@ -11,7 +11,7 @@ namespace KernelImpl.Noyau.Deroulement
     /// <summary>
     /// Description des Feuilles (construction d'un tableau)
     /// </summary>
-    public class Feuille
+    public class Feuille : IIdEntity<int>
     {
         public int id { get; set; }
         public bool repechage { get; set; }

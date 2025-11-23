@@ -11,7 +11,7 @@ namespace KernelImpl.Noyau.Deroulement
     /// <summary>
     /// Description des Phases
     /// </summary>
-    public class Phase
+    public class Phase : IIdEntity<int>
     {
         public int id { get; set; }
         public string libelle { get; set; }

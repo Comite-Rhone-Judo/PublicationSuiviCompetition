@@ -50,9 +50,9 @@ namespace KernelImpl.Noyau.Organisation
         public void lecture_epreuves_equipe(XElement element, JudoData DC)
         {
             ICollection<Epreuve_Equipe> epreuves = Epreuve_Equipe.LectureEpreuveEquipes(element, null);
-            ICollection<vue_epreuve_equipe> vepreuves = GenereVueEpreuveEquipe(epreuves, DC);
-
             _epreuve_equipesCache.UpdateSnapshot(epreuves, o => o.id);
+
+            ICollection<vue_epreuve_equipe> vepreuves = GenereVueEpreuveEquipe(epreuves, DC);
             _vepreuves_equipeCache.UpdateSnapshot(vepreuves, o => o.id);
         }
 
@@ -70,9 +70,9 @@ namespace KernelImpl.Noyau.Organisation
         public void lecture_epreuves(XElement element, JudoData DC)
         {
             ICollection<Epreuve> epreuves = Epreuve.LectureEpreuves(element, null);
-            ICollection<vue_epreuve> vepreuves = GenereVueEpreuves(epreuves, DC);
-
             _epreuvesCache.UpdateSnapshot(epreuves, o => o.id);
+            
+            ICollection<vue_epreuve> vepreuves = GenereVueEpreuves(epreuves, DC);
             _vepreuvesCache.UpdateSnapshot(vepreuves, o => o.id);
         }
 

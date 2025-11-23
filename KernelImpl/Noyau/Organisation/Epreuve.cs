@@ -11,7 +11,7 @@ namespace KernelImpl.Noyau.Organisation
     /// <summary>
     /// Description des Epreuves
     /// </summary>
-    public class Epreuve
+    public class Epreuve : IIdEntity<int>
     {
 
         public int id { get; set; }

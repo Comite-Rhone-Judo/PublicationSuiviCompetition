@@ -116,9 +116,10 @@ namespace KernelImpl.Noyau.Deroulement
         public void lecture_groupes(XElement element, JudoData DC)
         {
             ICollection<Groupe_Combats> groupes = Groupe_Combats.LectureGroupes(element, null);
-            ICollection<vue_groupe> vgroupes = GenereVueGroupe(groupes, DC);    
-
             _groupesCache.UpdateSnapshot(groupes, o => o.id);
+
+
+            ICollection<vue_groupe> vgroupes = GenereVueGroupe(groupes, DC);    
             _vgroupesCache.UpdateSnapshot(vgroupes, o => o.groupe_id);
         }
 
@@ -152,9 +153,9 @@ namespace KernelImpl.Noyau.Deroulement
         public void lecture_combats(XElement element/*, bool suppression, int? tapis, ICombat CantDelete*/, JudoData DC)
         {
             ICollection<Combat> combats = Combat.LectureCombats(element, null);
-            ICollection<vue_combat> vcombats = GenereVueCombat(combats, DC);
-
             _combatsCache.UpdateSnapshot(combats, o => o.id);
+
+            ICollection<vue_combat> vcombats = GenereVueCombat(combats, DC);
             _vcombatsCache.UpdateSnapshot(vcombats, o => o.combat_id);
         }
 

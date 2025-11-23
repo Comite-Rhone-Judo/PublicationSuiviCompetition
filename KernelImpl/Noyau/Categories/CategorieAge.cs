@@ -9,7 +9,7 @@ namespace KernelImpl.Noyau.Categories
     /// <summary>
     /// Description des Categorie Age
     /// </summary>
-    public class CategorieAge
+    public class CategorieAge : IIdEntity<int>
     {
         public int id { get; set; }
         public string nom { get; set; }

@@ -15,7 +15,7 @@ namespace KernelImpl.Noyau.Deroulement
     /// <summary>
     /// Description des Rencontres
     /// </summary>
-    public class Rencontre : INotifyPropertyChanged
+    public class Rencontre : INotifyPropertyChanged, IIdEntity<int>
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

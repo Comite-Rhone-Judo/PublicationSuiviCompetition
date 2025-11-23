@@ -6,7 +6,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class Poule
+    public class Poule : IIdEntity<int>
     {
         public int numero { get; set; }
         public int phase { get; set; }

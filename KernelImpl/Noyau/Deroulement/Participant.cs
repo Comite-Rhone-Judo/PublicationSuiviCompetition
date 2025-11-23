@@ -12,7 +12,7 @@ namespace KernelImpl.Noyau.Deroulement
     /// <summary>
     /// Description des Participants
     /// </summary>
-    public class Participant : INotifyPropertyChanged
+    public class Participant : INotifyPropertyChanged, IIdEntity<int>
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

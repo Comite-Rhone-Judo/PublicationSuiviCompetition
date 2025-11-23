@@ -17,7 +17,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class Combat : INotifyPropertyChanged
+    public class Combat : INotifyPropertyChanged, IIdEntity<int>
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

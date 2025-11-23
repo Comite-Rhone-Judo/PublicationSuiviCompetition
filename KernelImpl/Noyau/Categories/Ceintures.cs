@@ -9,7 +9,7 @@ namespace KernelImpl.Noyau.Categories
     /// <summary>
     /// Description des Ceintures
     /// </summary>
-    public class Ceintures
+    public class Ceintures : IIdEntity<int>
     {
         public int id { get; set; }
         public string nom { get; set; }

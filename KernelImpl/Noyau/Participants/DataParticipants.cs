@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Security.Principal;
 using System.Threading;
 using System.Xml.Linq;
 using Tools.Outils;
@@ -36,7 +37,7 @@ namespace KernelImpl.Noyau.Participants
         private readonly SimpleCachedData<Dictionary<int, IList<vue_judoka>>> _vjudokasEpreuveMap  = new SimpleCachedData<Dictionary<int, IList<vue_judoka>>>();
 
 
-        public IDictionary<int, IList<vue_judoka>> vjudokas_epreuve { get { return _vjudokasEpreuveMap.ListCache; } }
+        public IDictionary<int, IList<vue_judoka>> vjudokas_epreuve { get { return _vjudokasEpreuveMap.Cache; } }
 
         /// <summary>
         /// lecture des judoka
@@ -46,12 +47,10 @@ namespace KernelImpl.Noyau.Participants
         public void lecture_judokas(XElement element, JudoData DC)
         {
             ICollection<Judoka> judokasRecu = Judoka.LectureJudoka(element, null);
+            _judokasCache.UpdateSnapshot(judokasRecu, o => o.id);
 
             // Genere les vues et le dictionnaire associés
-            var (vueJudokas, judokasParEpreuve) = GenererVueJudokas(DC);
-
-            // Swap atomique des donnees
-            _judokasCache.UpdateSnapshot(judokasRecu, o => o.id);
+            var (vueJudokas, judokasParEpreuve) = GenereVueJudokas(DC);
             _vue_judokasCache.UpdateSnapshot(vueJudokas, o => o.ClefUnique);
             _vjudokasEpreuveMap.UpdateSnapshot(judokasParEpreuve);
         }
@@ -142,7 +141,7 @@ namespace KernelImpl.Noyau.Participants
         /// Ne modifie aucun état de la classe.
         /// </summary>
         /// <returns>Un Tuple contenant la liste plate et le dictionnaire construits.</returns>
-        private (List<vue_judoka> VueJudoka, Dictionary<int, IList<vue_judoka>> JudokasParEpreuve) GenererVueJudokas(JudoData DC)
+        private (List<vue_judoka> VueJudoka, Dictionary<int, IList<vue_judoka>> JudokasParEpreuve) GenereVueJudokas(JudoData DC)
         {
             // 1. Capture des Snapshots locaux (Lecture O(1)) pour cohérence durant le traitement
             var sourceJudokas = Judokas;
@@ -164,8 +163,8 @@ namespace KernelImpl.Noyau.Participants
 
             // 3.1 Initialisation des clés
             var epreuvesAInitialiser = DC.competition.IsEquipe()
-                ? DC.Organisation.EpreuveEquipes.Cast<dynamic>()
-                : DC.Organisation.Epreuves.Cast<dynamic>();
+                ? DC.Organisation.EpreuveEquipes.Cast<IIdEntity<int>>()
+                : DC.Organisation.Epreuves.Cast<IIdEntity<int>>();
 
             foreach (var ep in epreuvesAInitialiser)
             {
