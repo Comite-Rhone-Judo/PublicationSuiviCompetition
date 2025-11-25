@@ -133,6 +133,8 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Config\ConfigSectionBase.cs" />
+    <Compile Include="Config\ConfigurationService.cs" />
     <Compile Include="Config\PublicationConfigSection.cs" />
     <Compile Include="Controles\GestionStatistiques.cs" />
     <Compile Include="Controles\RelayCommand.cs" />
@@ -141,9 +143,6 @@
     <Compile Include="ExtensionNoyau\Deroulement\GroupeEngagements.cs" />
     <Compile Include="ExtensionNoyau\ExtensionJudoData.cs" />
     <Compile Include="ExtensionNoyau\Deroulement\VueJudokaEqualityComparer.cs" />
-    <Compile Include="IHM\Commissaire\ConfigurationEcranAppel.xaml.cs">
-      <DependentUpon>ConfigurationEcranAppel.xaml</DependentUpon>
-    </Compile>
     <Compile Include="IHM\Commissaire\ConfigurationPublication.xaml.cs">
       <DependentUpon>ConfigurationPublication.xaml</DependentUpon>
     </Compile>
@@ -180,10 +179,6 @@
     <Compile Include="Tools\StatusGenerationSite.cs" />
     <Compile Include="Tools\StreamTool.cs" />
     <Compile Include="Tools\Struct\ExportStruct.cs" />
-    <Page Include="IHM\Commissaire\ConfigurationEcranAppel.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="IHM\Commissaire\ConfigurationPublication.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -12,6 +12,7 @@ namespace AppPublication
   /// </summary>
     public partial class App : Application
     {
+        ConfigurationService _configSvc = null;
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -41,6 +42,10 @@ namespace AppPublication
 
             StyleManager.ApplicationTheme = new Windows8Theme();
             // Controles.DialogControleur.DC = new Controles.DialogControleur();
+
+            // Démarrage du Service de Configuration (le worker commence ici)
+            // L'accès à .Instance suffit à démarrer le Singleton et le Worker
+            _configSvc = ConfigurationService.Instance;
 
             // Demarre la fenetre principale et injecte le Dialog controleur en tant que DataContext
             AppPublication.IHM.Commissaire.ExportWindow mainWin = new AppPublication.IHM.Commissaire.ExportWindow();
@@ -80,6 +85,23 @@ namespace AppPublication
             {
                 exitOperation.Abort();
             }
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            // Arrêt propre du Service de Configuration
+            // Cela force l'arrêt du worker et une dernière sauvegarde synchrone sur disque.
+            if (ConfigurationService.Instance != null)
+            {
+                ConfigurationService.Instance.StopAndCommit();
+                (ConfigurationService.Instance as IDisposable)?.Dispose();
+            }
+
+            // Arrete les loggers
+            LogTools.LogStop();
+            NLog.LogManager.Shutdown();
+
+            base.OnExit(e);
         }
 
         private static Object ExitFrame(Object state)
