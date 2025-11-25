@@ -1,5 +1,6 @@
 ﻿using NLog;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using Tools.Outils;
 
@@ -15,7 +16,7 @@ namespace AppPublication.Config
 
         #region CONSTANTES
         // Nom de la section dans app.config
-        public const string kConfigSectionName = "PublicationConfigSection";
+        public const string kConfigSectionName = "PublicationSection";
 
         // Nom des clefs de configuration
         private const string kRepertoireRacine = "repertoireRacine";
@@ -119,6 +120,68 @@ namespace AppPublication.Config
                 throw ex; // Propage l'exception
             }
         }
+
+        /// <summary>
+        /// Helper générique pour retourner une valeur par défaut si la clé est absente ou non convertible.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
+        private T GetConfigValue<T>(string key, T defaultValue)
+        {
+            try
+            {
+                var raw = this[key];
+                if (raw == null) return defaultValue;
+
+                // Si le type attendu est string, faire un cast direct
+                if (typeof(T) == typeof(string))
+                {
+                    return (T)raw;
+                }
+
+                // Pour les types nullables (ex: bool?) on gère
+                var targetType = typeof(T);
+                if (Nullable.GetUnderlyingType(targetType) != null)
+                {
+                    targetType = Nullable.GetUnderlyingType(targetType);
+                }
+
+                return (T)Convert.ChangeType(raw, targetType);
+            }
+            catch
+            {
+                return defaultValue;
+            }
+        }
+
+        /// <summary>
+        /// Retourne l'élément de la collection <c>candidates</c> dont la représentation string
+        /// (fourni par <c>valueSelector</c>) correspond à la valeur stockée pour <c>key</c>.
+        /// Si aucune correspondance, renvoie le premier élément de la collection (ou default si vide).
+        /// Encapsule la logique "valeur présente dans la liste => la retourner, sinon => première valeur".
+        /// </summary>
+        /// <typeparam name="T">Type des éléments de la collection.</typeparam>
+        /// <param name="key">Clé de configuration (attribut dans la section).</param>
+        /// <param name="candidates">Collection des éléments valides.</param>
+        /// <param name="valueSelector">Fonction qui extrait la représentation string d'un élément (ex: f => f.Name).</param>
+        /// <returns>L'élément trouvé ou le premier élément de la collection.</returns>
+        public T GetItemFromList<T>(string key, IEnumerable<T> candidates, Func<T, string> valueSelector)
+        {
+            if (candidates == null) return default(T);
+            if (valueSelector == null) throw new ArgumentNullException(nameof(valueSelector));
+
+            string stored = GetConfigValue<string>(key, null);
+            if (!string.IsNullOrWhiteSpace(stored))
+            {
+                var match = candidates.FirstOrDefault(c => string.Equals(valueSelector(c) ?? string.Empty, stored, StringComparison.OrdinalIgnoreCase));
+                if (match != null) return match;
+            }
+
+            // fallback : première valeur ou default
+            return candidates.FirstOrDefault();
+        }
         #endregion
 
         #region PROPRIETES DE CONFIGURATION
@@ -126,230 +189,168 @@ namespace AppPublication.Config
         [ConfigurationProperty(kRepertoireRacine, IsRequired = false)]
         public string RepertoireRacine
         {
-            get
-            {
-                string val = (string)this[kRepertoireRacine];
-                if (string.IsNullOrEmpty(val))
-                {
-                    // Valeur par défaut dynamique conforme à la demande
-                    return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                }
-                return val;
-            }
+            get { return GetConfigValue<string>(kRepertoireRacine, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));}
             set { this[kRepertoireRacine] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kDelaiGenerationSec, IsRequired = false)]
         public int DelaiGenerationSec
         {
-            get
-            {
-                object val = this[kDelaiGenerationSec];
-                return (val == null) ? 30 : (int)val;
-            }
+            get { return GetConfigValue<int>(kDelaiGenerationSec, 30); }
             set { this[kDelaiGenerationSec] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kDelaiActualisationClientSec, IsRequired = false)]
         public int DelaiActualisationClientSec
         {
-            get
-            {
-                object val = this[kDelaiActualisationClientSec];
-                return (val == null) ? 30 : (int)val;
-            }
+            get { return GetConfigValue<int>(kDelaiActualisationClientSec, 30); }
             set { this[kDelaiActualisationClientSec] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kTailleMaxPouleColonnes, IsRequired = false)]
         public int TailleMaxPouleColonnes
         {
-            get
-            {
-                object val = this[kTailleMaxPouleColonnes];
-                return (val == null) ? 5 : (int)val;
-            }
+            get { return GetConfigValue<int>(kTailleMaxPouleColonnes, 5); }
             set { this[kTailleMaxPouleColonnes] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kPouleEnColonnes, IsRequired = false)]
         public bool PouleEnColonnes
         {
-            get
-            {
-                object val = this[kPouleEnColonnes];
-                return (val == null) ? false : (bool)val;
-            }
+            get { return GetConfigValue<bool>(kPouleEnColonnes, false); }
             set { this[kPouleEnColonnes] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kPouleToujoursEnColonnes, IsRequired = false)]
         public bool PouleToujoursEnColonnes
         {
-            get
-            {
-                object val = this[kPouleToujoursEnColonnes];
-                return (val == null) ? false : (bool)val;
-            }
+            get { return GetConfigValue<bool>(kPouleToujoursEnColonnes, false); }
             set { this[kPouleToujoursEnColonnes] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kPublierProchainsCombats, IsRequired = false)]
         public bool PublierProchainsCombats
         {
-            get
-            {
-                object val = this[kPublierProchainsCombats];
-                return (val == null) ? false : (bool)val;
-            }
+            get { return GetConfigValue<bool>(kPublierProchainsCombats, false); }
             set { this[kPublierProchainsCombats] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kNbProchainsCombats, IsRequired = false)]
         public int NbProchainsCombats
         {
-            get
-            {
-                object val = this[kNbProchainsCombats];
-                return (val == null) ? 6 : (int)val;
-            }
+            get { return GetConfigValue<int>(kNbProchainsCombats, 6); }
             set { this[kNbProchainsCombats] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kMsgProchainsCombats, IsRequired = false)]
         public string MsgProchainsCombats
         {
-            get
-            {
-                string val = (string)this[kMsgProchainsCombats];
-                if (string.IsNullOrEmpty(val))
-                {
-                    return "ATTENTION : Les horaires et numéros de tapis sont donnés à titre indicatif et sont succeptibles d'être modifiés.";
-                }
-                return val;
-            }
+            get { return GetConfigValue<string>(kMsgProchainsCombats, String.Empty); }
             set { this[kMsgProchainsCombats] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kPublierAffectationTapis, IsRequired = false)]
         public bool PublierAffectationTapis
         {
-            get
-            {
-                object val = this[kPublierAffectationTapis];
-                return (val == null) ? true : (bool)val;
-            }
+            get { return GetConfigValue<bool>(kPublierAffectationTapis, true); }
             set { this[kPublierAffectationTapis] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kLogo, IsRequired = false)]
         public string Logo
         {
-            get
-            {
-                // Le getter retourne la valeur brute (ou null)
-                // La logique de valeur par défaut est gérée dans GestionSite.cs
-                return (string)this[kLogo];
-            }
+            get { return GetConfigValue<string>(kLogo, null); }
             set { this[kLogo] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kInterfaceLocalPublication, IsRequired = false)]
         public string InterfaceLocalPublication
         {
-            get
-            {
-                // Le getter retourne la valeur brute (ou null)
-                return (string)this[kInterfaceLocalPublication];
-            }
+            get { return GetConfigValue<string>(kInterfaceLocalPublication, null); }
             set { this[kInterfaceLocalPublication] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kEasyConfig, IsRequired = false)]
         public bool EasyConfig
         {
-            get
-            {
-                object val = this[kEasyConfig];
-                return (val == null) ? true : (bool)val;
-            }
+            get { return GetConfigValue<bool>(kEasyConfig, true); }
             set { this[kEasyConfig] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kURLDistant, IsRequired = false)]
         public string URLDistant
         {
-            get { return (string)this[kURLDistant] ?? string.Empty; }
+            get { return GetConfigValue<string>(kURLDistant, string.Empty); }
             set { this[kURLDistant] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kIsolerCompetition, IsRequired = false)]
         public bool IsolerCompetition
         {
-            get { return (bool?)this[kIsolerCompetition] ?? false; }
+            get { return GetConfigValue<bool>(kIsolerCompetition, false); }
             set { this[kIsolerCompetition] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kRepertoireRacineSiteFTPDistant, IsRequired = false)]
         public string RepertoireRacineSiteFTPDistant
         {
-            get { return (string)this[kRepertoireRacineSiteFTPDistant] ?? string.Empty; }
+            get { return GetConfigValue<string>(kRepertoireRacineSiteFTPDistant, string.Empty); }
             set { this[kRepertoireRacineSiteFTPDistant] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kPublierEngagements, IsRequired = false)]
         public bool PublierEngagements
         {
-            get { return (bool?)this[kPublierEngagements] ?? false; }
+            get { return GetConfigValue<bool>(kPublierEngagements, true); }
             set { this[kPublierEngagements] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kEngagementsAbsents, IsRequired = false)]
         public bool EngagementsAbsents
         {
-            get { return (bool?)this[kEngagementsAbsents] ?? false; }
+            get { return GetConfigValue<bool>(kEngagementsAbsents, false); }
             set { this[kEngagementsAbsents] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kEngagementsTousCombats, IsRequired = false)]
         public bool EngagementsTousCombats
         {
-            get { return (bool?)this[kEngagementsTousCombats] ?? false; }
+            get { return GetConfigValue<bool>(kEngagementsTousCombats, false); }
             set { this[kEngagementsTousCombats] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kEffacerAuDemarrage, IsRequired = false)]
         public bool EffacerAuDemarrage
         {
-            get { return (bool?)this[kEffacerAuDemarrage] ?? true; }
+            get { return GetConfigValue<bool>(kEffacerAuDemarrage, true); }
             set { this[kEffacerAuDemarrage] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kUseIntituleCommun, IsRequired = false)]
         public bool UseIntituleCommun
         {
-            get { return (bool?)this[kUseIntituleCommun] ?? false; }
+            get { return GetConfigValue<bool>(kUseIntituleCommun, false); }
             set { this[kUseIntituleCommun] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kIntituleCommun, IsRequired = false)]
         public string IntituleCommun
         {
-            get { return (string)this[kIntituleCommun] ?? string.Empty; }
+            get { return GetConfigValue<string>(kIntituleCommun, string.Empty); }
             set { this[kIntituleCommun] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kScoreEngagesGagnantPerdant, IsRequired = false)]
         public bool ScoreEngagesGagnantPerdant
         {
-            get { return (bool?)this[kScoreEngagesGagnantPerdant] ?? false; }
+            get { return GetConfigValue<bool>(kScoreEngagesGagnantPerdant, false); }
             set { this[kScoreEngagesGagnantPerdant] = value; SaveSection(); }
         }
 
         [ConfigurationProperty(kAfficherPositionCombat, IsRequired = false)]
         public bool AfficherPositionCombat
         {
-            get { return (bool?)this[kAfficherPositionCombat] ?? false; }
+            get { return GetConfigValue<bool>(kAfficherPositionCombat, true); }
             set { this[kAfficherPositionCombat] = value; SaveSection(); }
         }
         #endregion

@@ -197,7 +197,8 @@ namespace AppPublication.Controles
         {
             get
             {
-                return _easyConfig;
+                // Lit la valeur en cache
+                return _config.EasyConfig;
             }
             set
             {
