@@ -1,6 +1,4 @@
-﻿using AppPublication.Controles;
-using KernelImpl;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Threading;
 using System.Windows;
@@ -14,17 +12,17 @@ namespace AppPublication
   /// </summary>
     public partial class App : Application
     {
+    ConfigurationService _configSvc = null;
         #region PROPERTIES
         // Accès global aux données si strictement nécessaire
         public JudoData DataManager { get; private set; }
         #endregion
-
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
-        {
+
             CultureInfo culture = new CultureInfo("fr");
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
@@ -50,11 +48,16 @@ namespace AppPublication
             // Assure que le logger est bien configure
             DialogControleur.Instance.CanManageTracesDebug = LogTools.IsConfigured;
 
+            // Démarrage du Service de Configuration (le worker commence ici)
+            // L'accès à .Instance suffit à démarrer le Singleton et le Worker
+            _configSvc = ConfigurationService.Instance;
+
             // Demarre la fenetre principale et injecte le Dialog controleur en tant que DataContext
-            IHM.Commissaire.ExportWindow mainWin = new IHM.Commissaire.ExportWindow();
-            mainWin.DataContext = DialogControleur.Instance;
+            AppPublication.IHM.Commissaire.ExportWindow mainWin = new AppPublication.IHM.Commissaire.ExportWindow();
+            mainWin.DataContext = Controles.DialogControleur.Instance;
             mainWin.Show();
         }
+
 
 
         private static DispatcherOperationCallback exitFrameCallback = new DispatcherOperationCallback(ExitFrame);
@@ -84,10 +87,23 @@ namespace AppPublication
             // If the "exitFrame" callback doesn't get finished, Abort it.
 
             if (exitOperation.Status != DispatcherOperationStatus.Completed)
-            {
-                exitOperation.Abort();
-            }
         }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            // Arrêt propre du Service de Configuration
+            // Cela force l'arrêt du worker et une dernière sauvegarde synchrone sur disque.
+            if (ConfigurationService.Instance != null)
+            {
+                ConfigurationService.Instance.StopAndCommit();
+                (ConfigurationService.Instance as IDisposable)?.Dispose();
+            }
+
+            // Arrete les loggers
+            LogTools.LogStop();
+            NLog.LogManager.Shutdown();
+
+            }
 
         private static Object ExitFrame(Object state)
         {

@@ -37,9 +37,6 @@ namespace AppPublication.IHM.Commissaire
                 DialogControleur.Instance.Connection.Client.NetworkClient.Stop();
             }
 
-            LogTools.LogStop();
-            NLog.LogManager.Shutdown();
-
             App.Current.Shutdown();
         }
 

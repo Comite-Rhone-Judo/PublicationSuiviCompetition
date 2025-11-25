@@ -133,8 +133,8 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
-    <Compile Include="Config\EcranAppelConfiguration.cs" />
-    <Compile Include="Config\MiniSiteSection.cs" />
+    <Compile Include="Config\ConfigSectionBase.cs" />
+    <Compile Include="Config\ConfigurationService.cs" />
     <Compile Include="Config\PublicationConfigSection.cs" />
     <Compile Include="Controles\ConfigurationEcranAppelViewModel.cs" />
     <Compile Include="Controles\EcranAppel.cs" />

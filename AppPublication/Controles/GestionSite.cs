@@ -187,9 +187,6 @@ namespace AppPublication.Controles
             }
         }
 
-
-        private bool _easyConfig;
-
         /// <summary>
         /// Flag indiquant si le mode de configuration simplifie est selectionne (True). == !AdvancedConfig
         /// </summary>
@@ -564,21 +561,18 @@ namespace AppPublication.Controles
             }
         }
 
-        private string _repertoireRacine;
-
         public string RepertoireRacine
         {
             get
             {
-                return _repertoireRacine;
+                return _config.RepertoireRacine;
             }
             set
             {
-                if (value != _repertoireRacine)
+                if (value != _config.RepertoireRacine)
                 {
-                    _repertoireRacine = value;
+                    _config.RepertoireRacine = value;
                     NotifyPropertyChanged();
-                    AppSettings.SaveSetting(kSettingRepertoireRacine, _repertoireRacine);
 
                     // Met a jour la constante d'export
                     string tmp = OutilsTools.GetExportSiteDir(_repertoireRacine);
@@ -1424,6 +1418,8 @@ namespace AppPublication.Controles
         {
             try
             {
+                // La lecture de la config ne permet pas d'initialiser la structure du site correctement
+
                 // On lit le repertoire racine en 1er afin de pouvoir initialiser la structure du site
                 RepertoireRacine = AppSettings.ReadSetting(kSettingRepertoireRacine, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
 
