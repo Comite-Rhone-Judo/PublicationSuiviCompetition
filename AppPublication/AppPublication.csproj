@@ -133,12 +133,7 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
-    <Compile Include="Config\EcranAppelConfiguration.cs" />
-    <Compile Include="Config\MiniSiteSection.cs" />
     <Compile Include="Config\PublicationConfigSection.cs" />
-    <Compile Include="Controles\ConfigurationEcranAppelViewModel.cs" />
-    <Compile Include="Controles\EcranAppel.cs" />
-    <Compile Include="Controles\EcranAppelViewModel.cs" />
     <Compile Include="Controles\GestionStatistiques.cs" />
     <Compile Include="Controles\RelayCommand.cs" />
     <Compile Include="ExtensionNoyau\Deroulement\CombatEqualityComparer.cs" />
@@ -146,7 +141,6 @@
     <Compile Include="ExtensionNoyau\Deroulement\GroupeEngagements.cs" />
     <Compile Include="ExtensionNoyau\ExtensionJudoData.cs" />
     <Compile Include="ExtensionNoyau\Deroulement\VueJudokaEqualityComparer.cs" />
-    <Compile Include="ViewModel\EcranAppelTapisSelectionViewModel.cs" />
     <Compile Include="IHM\Commissaire\ConfigurationEcranAppel.xaml.cs">
       <DependentUpon>ConfigurationEcranAppel.xaml</DependentUpon>
     </Compile>

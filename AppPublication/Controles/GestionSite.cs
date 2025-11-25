@@ -283,7 +283,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                return _config.En
+                return _config.Entite
 
                 return _entitePublicationFFJudo;
             }
