@@ -12,6 +12,7 @@ public delegate void SectionDirtyEventHandler(ConfigSectionBase section);
 /// </summary>
 public abstract class ConfigSectionBase : ConfigurationSection
 {
+    #region MEMBERS
     // Verrou local de l'instance Singleton pour protéger l'état en mémoire et le drapeau _isDirty.
     private readonly object _writeLock = new object();
 
@@ -23,7 +24,9 @@ public abstract class ConfigSectionBase : ConfigurationSection
     /// C'est le mécanisme clé du découplage (Pattern Observer).
     /// </summary>
     public static event SectionDirtyEventHandler SectionBecameDirty;
+    #endregion
 
+    #region PROPERTIES
     // Propriétés de lecture pour le ConfigurationService
     public bool IsDirty
     {
@@ -39,10 +42,14 @@ public abstract class ConfigSectionBase : ConfigurationSection
         }
     }
     public abstract string SectionName { get; }
+    #endregion
 
+    #region CONSTRUCTEUR
     // Assurez-vous que l'initialisation du Singleton est gérée par la classe dérivée.
     protected ConfigSectionBase() { }
+    #endregion
 
+    #region METHODES
     /// <summary>
     /// Méthode factorisée pour tous les Setters. Met à jour la valeur,
     /// et marque la section comme 'Dirty' si la valeur a changé, en notifiant le système.
@@ -86,4 +93,86 @@ public abstract class ConfigSectionBase : ConfigurationSection
             _isDirty = false;
         }
     }
+
+    /// <summary>
+    /// Helper générique pour retourner une valeur par défaut si la clé est absente ou non convertible.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="key"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    protected T GetConfigValue<T>(string key, T defaultValue)
+    {
+        try
+        {
+            var raw = this[key];
+            if (raw == null) return defaultValue;
+
+            // Si le type attendu est string, faire un cast direct
+            if (typeof(T) == typeof(string))
+            {
+                return (T)raw;
+            }
+
+            // Pour les types nullables (ex: bool?) on gère
+            var targetType = typeof(T);
+            if (Nullable.GetUnderlyingType(targetType) != null)
+            {
+                targetType = Nullable.GetUnderlyingType(targetType);
+            }
+
+            return (T)Convert.ChangeType(raw, targetType);
+        }
+        catch
+        {
+            return defaultValue;
+        }
+    }
+
+    /// <summary>
+    /// Retourne l'élément de la collection <c>candidates</c> dont la représentation string
+    /// (fourni par <c>valueSelector</c>) correspond à la valeur stockée pour <c>key</c>.
+    /// Si aucune correspondance, renvoie le premier élément de la collection (ou default si vide).
+    /// Encapsule la logique "valeur présente dans la liste => la retourner, sinon => première valeur".
+    /// </summary>
+    /// <typeparam name="T">Type des éléments de la collection.</typeparam>
+    /// <param name="key">Clé de configuration (attribut dans la section).</param>
+    /// <param name="candidates">Collection des éléments valides.</param>
+    /// <param name="valueSelector">Fonction qui extrait la représentation string d'un élément (ex: f => f.Name).</param>
+    /// <returns>L'élément trouvé ou le premier élément de la collection.</returns>
+    protected T GetItemFromList<T>(string key, IEnumerable<T> candidates, Func<T, string> valueSelector)
+    {
+        if (candidates == null) return default(T);
+        if (valueSelector == null) throw new ArgumentNullException(nameof(valueSelector));
+
+        string stored = GetConfigValue<string>(key, null);
+        return FindItemFromList(candidates, valueSelector, stored);
+    }
+
+    /// <summary>
+    /// Recherche dans la collection <c>candidates</c> l'élément dont la représentation string (via <c>valueSelector</c>)
+    /// correspond à <c>stored</c>. Si aucune correspondance, retourne le premier élément de la collection (ou default si vide).
+    /// Méthode extraite pour séparer la logique de recherche de l'accès à la configuration.
+    /// </summary>
+    /// <typeparam name="T">Type des éléments.</typeparam>
+    /// <param name="candidates">Collection candidate.</param>
+    /// <param name="valueSelector">Sélecteur de valeur string pour chaque élément.</param>
+    /// <param name="stored">Valeur à rechercher (peut être null ou vide).</param>
+    /// <returns>Élément correspondant ou premier élément / default.</returns>
+    protected T FindItemFromList<T>(IEnumerable<T> candidates, Func<T, string> valueSelector, string stored)
+    {
+        if (candidates == null) return default(T);
+        if (valueSelector == null) throw new ArgumentNullException(nameof(valueSelector));
+
+        if (!string.IsNullOrWhiteSpace(stored))
+        {
+            var match = candidates.FirstOrDefault(c => string.Equals(valueSelector(c) ?? string.Empty, stored, StringComparison.OrdinalIgnoreCase));
+            if (match != null) return match;
+        }
+
+        // fallback : première valeur ou default
+        return candidates.FirstOrDefault();
+    }
+
+    #endregion
 }

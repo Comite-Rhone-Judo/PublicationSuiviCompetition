@@ -165,6 +165,8 @@ namespace AppPublication.Controles
             }
         }
 
+        private bool _easyConfig;
+
         /// <summary>
         /// Flag indiquant si le mode de configuration simplifie est selectionne (True). == !AdvancedConfig
         /// </summary>
@@ -172,8 +174,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                // Lit la valeur en cache
-                return _config.EasyConfig;
+                return _easyConfig;
             }
             set
             {
@@ -181,7 +182,7 @@ namespace AppPublication.Controles
                 if (SiteDistantSelectionne == null || !SiteDistantSelectionne.IsActif)
                 {
                     // Enregistre la valeur en cache
-                    _config.EasyConfig = value;
+                    _config.EasyConfig = (_easyConfig = value);
 
                     NotifyPropertyChanged();
 
@@ -291,7 +292,7 @@ namespace AppPublication.Controles
                     {
                         // Garde en memoire la derniere valeur sauvegardee pour ce niveau
                         _allEntitePublicationFFJudo[_niveauPublicationFFJudo] = value;
-                        AppSettings.SaveSetting(kSettingEntitePublicationFFJudo, _entitePublicationFFJudo.Nom);
+                        _config.EntitePublicationFFJudo = _entitePublicationFFJudo.Nom;
 
                         // On Calcul les parametres FTP en fonction de l'entite selectionne
                         GenereConfigFTPFranceJudo(value);
@@ -335,8 +336,8 @@ namespace AppPublication.Controles
             {
                 if (_niveauPublicationFFJudo != value)
                 {
-                    _niveauPublicationFFJudo = value;
-                    AppSettings.SaveSetting(kSettingNiveauPublicationFFJudo, _niveauPublicationFFJudo);
+                    // TODO Manquant dans PublicationConfigSection
+                    _config.NiveauPublicationFFJudo = (_niveauPublicationFFJudo = value);
 
                     // Ajuste la liste des entites et restaure le dernier element selectionne pour ce niveau
                     ObservableCollection<EntitePublicationFFJudo> ent = null;
@@ -371,8 +372,7 @@ namespace AppPublication.Controles
             {
                 if (_pouleEnColonnes != value)
                 {
-                    _pouleEnColonnes = value;
-                    AppSettings.SaveSetting(kSettingPouleEnColonnes, _pouleEnColonnes.ToString());
+                    _config.PouleEnColonnes = (_pouleEnColonnes = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -389,8 +389,7 @@ namespace AppPublication.Controles
             {
                 if (_pouleToujoursEnColonnes != value)
                 {
-                    _pouleToujoursEnColonnes = value;
-                    AppSettings.SaveSetting(kSettingPouleToujoursEnColonnes, _pouleToujoursEnColonnes.ToString());
+                    _config.PouleToujoursEnColonnes = (_pouleToujoursEnColonnes = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -407,8 +406,7 @@ namespace AppPublication.Controles
             {
                 if (_tailleMaxPouleColonnes != value)
                 {
-                    _tailleMaxPouleColonnes = value;
-                    AppSettings.SaveSetting(kSettingTailleMaxPouleColonnes, _tailleMaxPouleColonnes.ToString());
+                    _config.TailleMaxPouleColonnes = (_tailleMaxPouleColonnes = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -539,17 +537,18 @@ namespace AppPublication.Controles
             }
         }
 
+        private string _repertoireRacine;
         public string RepertoireRacine
         {
             get
             {
-                return _config.RepertoireRacine;
+                return _repertoireRacine;
             }
             set
             {
-                if (value != _config.RepertoireRacine)
+                if (value != _repertoireRacine)
                 {
-                    _config.RepertoireRacine = value;
+                    _config.RepertoireRacine = (_repertoireRacine = value);
                     NotifyPropertyChanged();
 
                     // Met a jour la constante d'export
@@ -596,7 +595,7 @@ namespace AppPublication.Controles
                 if (_selectedLogo != value)
                 {
                     _selectedLogo = value;
-                    AppSettings.SaveSetting(kSettingSelectedLogo, _selectedLogo.Name);
+                    _config.Logo  = _selectedLogo.Name;
                     NotifyPropertyChanged();
                 }
             }
@@ -697,8 +696,9 @@ namespace AppPublication.Controles
                 // Verifie que la valeur selectionnee est bien dans la liste des interfaces
                 try
                 {
+                    // TODO A voir dans quel section on la met
                     SiteLocal.InterfaceLocalPublication = value;
-                    AppSettings.SaveSetting(kSettingInterfaceLocalPublication, SiteLocal.InterfaceLocalPublication.ToString());
+                    _config.InterfaceLocalPublication = SiteLocal.InterfaceLocalPublication.ToString();
                     NotifyPropertyChanged();
                     URLLocalPublication = CalculURLSiteLocal();
                 }
@@ -759,8 +759,7 @@ namespace AppPublication.Controles
             }
             set
             {
-                _isolerCompetition = value;
-                AppSettings.SaveSetting(kSettingIsolerCompetition, _isolerCompetition.ToString());
+                _config.IsolerCompetition = (_isolerCompetition = value);
 
                 // Met a jour la structure d'export
                 if (_structureSiteDistant != null)
@@ -790,9 +789,8 @@ namespace AppPublication.Controles
             {
                 if (_nbProchainsCombats != value)
                 {
-                    _nbProchainsCombats = value;
+                    _config.NbProchainsCombats = (_nbProchainsCombats = value);
                     NotifyPropertyChanged();
-                    AppSettings.SaveSetting(kSettingNbProchainsCombats, _nbProchainsCombats.ToString());
                 }
             }
         }
@@ -812,8 +810,7 @@ namespace AppPublication.Controles
             {
                 if (_delaiGenerationSec != value)
                 {
-                    _delaiGenerationSec = value;
-                    AppSettings.SaveSetting(kSettingDelaiGenerationSec, _delaiGenerationSec.ToString());
+                    _config.DelaiGenerationSec = (_delaiGenerationSec = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -833,8 +830,7 @@ namespace AppPublication.Controles
             {
                 if (_effacerAuDemarrage != value)
                 {
-                    _effacerAuDemarrage = value;
-                    AppSettings.SaveSetting(kSettingEffacerAuDemarrage, _effacerAuDemarrage.ToString());
+                    _config.EffacerAuDemarrage = (_effacerAuDemarrage = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -855,8 +851,7 @@ namespace AppPublication.Controles
             {
                 if (_delaiActualisationClientSec != value)
                 {
-                    _delaiActualisationClientSec = value;
-                    AppSettings.SaveSetting(kSettingDelaiActualisationClientSec, _delaiActualisationClientSec.ToString());
+                    _config.DelaiActualisationClientSec = (_delaiActualisationClientSec = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -876,8 +871,7 @@ namespace AppPublication.Controles
             {
                 if (_msgProchainsCombats != value)
                 {
-                    _msgProchainsCombats = value;
-                    AppSettings.SaveSetting(kSettingMsgProchainsCombats, _msgProchainsCombats);
+                    _config.MsgProchainsCombats = (_msgProchainsCombats = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -898,8 +892,7 @@ namespace AppPublication.Controles
             {
                 if (_urlDistant != value)
                 {
-                    _urlDistant = value;
-                    AppSettings.SaveSetting(kSettingURLDistant, _urlDistant);
+                    _config.URLDistant = (_urlDistant = value);
                     NotifyPropertyChanged();
                     URLDistantPublication = CalculURLSiteDistant();
                 }
@@ -955,8 +948,7 @@ namespace AppPublication.Controles
             {
                 if (_ftpRepertoireRacineDistant != value)
                 {
-                    _ftpRepertoireRacineDistant = value;
-                    AppSettings.SaveSetting(kSettingRepertoireRacineSiteFTPDistant, _ftpRepertoireRacineDistant);
+                    _config.RepertoireRacineSiteFTPDistant = (_ftpRepertoireRacineDistant = value);
                     NotifyPropertyChanged();
                     SiteDistant.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();   // Ce parametre ne concerne pas le site FranceJudo
                 }
@@ -1055,8 +1047,7 @@ namespace AppPublication.Controles
             {
                 if (_publierProchainsCombats != value)
                 {
-                    _publierProchainsCombats = value;
-                    AppSettings.SaveSetting(kSettingPublierProchainsCombats, _publierProchainsCombats.ToString());
+                    _config.PublierProchainsCombats = (_publierProchainsCombats = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -1078,8 +1069,7 @@ namespace AppPublication.Controles
             {
                 if (_publierAffectationTapis != value)
                 {
-                    _publierAffectationTapis = value;
-                    AppSettings.SaveSetting(kSettingPublierAffectationTapis, _publierAffectationTapis.ToString());
+                    _config.PublierAffectationTapis = (_publierAffectationTapis = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -1101,8 +1091,7 @@ namespace AppPublication.Controles
             {
                 if (_publierEngagements != value)
                 {
-                    _publierEngagements = value;
-                    AppSettings.SaveSetting(kSettingPublierEngagements, _publierEngagements.ToString());
+                    _config.PublierEngagements = (_publierEngagements = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -1123,8 +1112,7 @@ namespace AppPublication.Controles
             {
                 if (_engagementsAbsents != value)
                 {
-                    _engagementsAbsents = value;
-                    AppSettings.SaveSetting(kSettingEngagementsAbsents, _engagementsAbsents.ToString());
+                    _config.EngagementsAbsents = (_engagementsAbsents = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -1145,8 +1133,7 @@ namespace AppPublication.Controles
             {
                 if (_engagementsTousCombats != value)
                 {
-                    _engagementsTousCombats = value;
-                    AppSettings.SaveSetting(kSettingEngagementsTousCombats, _engagementsTousCombats.ToString());
+                    _config.EngagementsTousCombats = (_engagementsTousCombats = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -1163,8 +1150,7 @@ namespace AppPublication.Controles
             {
                 if (_useIntituleCommun != value)
                 {
-                    _useIntituleCommun = value;
-                    AppSettings.SaveSetting(kSettingUseIntituleCommun, _useIntituleCommun.ToString());
+                    _config.UseIntituleCommun = (_useIntituleCommun = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -1182,8 +1168,7 @@ namespace AppPublication.Controles
             {
                 if (_intituleCommun != value)
                 {
-                    _intituleCommun = value;
-                    AppSettings.SaveSetting(kSettingIntituleCommun, _intituleCommun);
+                    _config.IntituleCommun = (_intituleCommun = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -1200,8 +1185,7 @@ namespace AppPublication.Controles
             {
                 if (_scoreEngagesGagnantPerdant != value)
                 {
-                    _scoreEngagesGagnantPerdant = value;
-                    AppSettings.SaveSetting(kSettingScoreEngagesGagnantPerdant, _scoreEngagesGagnantPerdant.ToString());
+                    _config.ScoreEngagesGagnantPerdant = (_scoreEngagesGagnantPerdant = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -1218,8 +1202,7 @@ namespace AppPublication.Controles
             {
                 if( _afficherPositionCombat != value)
                 {
-                    _afficherPositionCombat = value;
-                    AppSettings.SaveSetting(kSettingAfficherPositionCombat, _afficherPositionCombat.ToString());
+                    _config.AfficherPositionCombat =(_afficherPositionCombat = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -1394,45 +1377,44 @@ namespace AppPublication.Controles
                 // La lecture de la config ne permet pas d'initialiser la structure du site correctement
 
                 // On lit le repertoire racine en 1er afin de pouvoir initialiser la structure du site
-                RepertoireRacine = AppSettings.ReadSetting(kSettingRepertoireRacine, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
-
+                RepertoireRacine = _config.RepertoireRacine;
 
                 // Charge les valeurs pour la publication FFJudo
                 if (EasyConfigDisponible)
                 {
-                    EasyConfig = AppSettings.ReadSetting(kSettingEasyConfig, true);
+                    EasyConfig = _config.EasyConfig;
 
                     // On charge le nom de l'entite en 1er car sinon, en initialisant la liste des niveaux, on fait un reset de la valeur de l'entite a la 1ere de la liste du niveau
-                    string tmp = AppSettings.ReadRawSetting(kSettingEntitePublicationFFJudo);
+                    string tmp = _config.EntitePublicationFFJudo;
 
                     // Charge le niveau selectionne
-                    NiveauPublicationFFJudo = AppSettings.ReadRawSetting<string>(kSettingNiveauPublicationFFJudo, ListeNiveauxPublicationFFJudo, o => o);
+                    NiveauPublicationFFJudo =  _config.GetNiveauPublicationFFJudo(ListeNiveauxPublicationFFJudo, o => o);
 
                     // Recherche l'entite a partir de la valeur initiale lue
-                    EntitePublicationFFJudo = AppSettings.FindSetting<EntitePublicationFFJudo>(tmp, ListeEntitesPublicationFFJudo, o => o.Nom);                    
+                    EntitePublicationFFJudo = _config.GetEntitePublicationFFJudo(ListeEntitesPublicationFFJudo, o => o.Nom, tmp);                    
                 }
 
                 // Les autres parametres peuvent suivre
-                URLDistant = AppSettings.ReadSetting(kSettingURLDistant, string.Empty);
-                IsolerCompetition = AppSettings.ReadSetting(kSettingIsolerCompetition, false);
-                RepertoireRacineSiteFTPDistant = AppSettings.ReadSetting(kSettingRepertoireRacineSiteFTPDistant, string.Empty);
-                PublierProchainsCombats = AppSettings.ReadSetting(kSettingPublierProchainsCombats, false);
-                NbProchainsCombats = AppSettings.ReadSetting(kSettingNbProchainsCombats, 6);
-                PublierAffectationTapis = AppSettings.ReadSetting(kSettingPublierAffectationTapis, true);
-                PublierEngagements = AppSettings.ReadSetting(kSettingPublierEngagements, false);
-                EngagementsAbsents = AppSettings.ReadSetting(kSettingEngagementsAbsents, false);
-                EngagementsTousCombats = AppSettings.ReadSetting(kSettingEngagementsTousCombats, false);
-                DelaiGenerationSec = AppSettings.ReadSetting(kSettingDelaiGenerationSec, 30);
-                EffacerAuDemarrage = AppSettings.ReadSetting(kSettingEffacerAuDemarrage, true);
-                DelaiActualisationClientSec = AppSettings.ReadSetting(kSettingDelaiActualisationClientSec, 30);
-                MsgProchainsCombats = AppSettings.ReadSetting(kSettingMsgProchainsCombats, string.Empty);
-                PouleEnColonnes = AppSettings.ReadSetting(kSettingPouleEnColonnes, false);
-                PouleToujoursEnColonnes = AppSettings.ReadSetting(kSettingPouleToujoursEnColonnes, false);
-                TailleMaxPouleColonnes = AppSettings.ReadSetting(kSettingTailleMaxPouleColonnes, 5);
-                UseIntituleCommun = AppSettings.ReadSetting(kSettingUseIntituleCommun, false);
-                IntituleCommun = AppSettings.ReadSetting(kSettingIntituleCommun, string.Empty);
-                ScoreEngagesGagnantPerdant = AppSettings.ReadSetting(kSettingScoreEngagesGagnantPerdant, false);
-                AfficherPositionCombat = AppSettings.ReadSetting(kSettingAfficherPositionCombat, false);
+                URLDistant = _config.URLDistant;
+                IsolerCompetition = _config.IsolerCompetition;
+                RepertoireRacineSiteFTPDistant = _config.RepertoireRacineSiteFTPDistant;
+                PublierProchainsCombats = _config.PublierProchainsCombats;
+                NbProchainsCombats = _config.NbProchainsCombats;
+                PublierAffectationTapis = _config.PublierAffectationTapis;
+                PublierEngagements = _config.PublierEngagements;
+                EngagementsAbsents = _config.EngagementsAbsents;
+                EngagementsTousCombats = _config.EngagementsTousCombats;
+                DelaiGenerationSec = _config.DelaiGenerationSec;
+                EffacerAuDemarrage = _config.EffacerAuDemarrage;
+                DelaiActualisationClientSec = _config.DelaiActualisationClientSec;
+                MsgProchainsCombats = _config.MsgProchainsCombats;
+                PouleEnColonnes = _config.PouleEnColonnes;
+                PouleToujoursEnColonnes = _config.PouleToujoursEnColonnes;
+                TailleMaxPouleColonnes = _config.TailleMaxPouleColonnes;
+                UseIntituleCommun = _config.UseIntituleCommun;
+                IntituleCommun = _config.IntituleCommun;
+                ScoreEngagesGagnantPerdant = _config.ScoreEngagesGagnantPerdant;
+                AfficherPositionCombat = _config.AfficherPositionCombat;
 
                 // Recherche le logo dans la liste
                 SelectedLogo = AppSettings.ReadRawSetting<FilteredFileInfo>(kSettingSelectedLogo, FichiersLogo, o => o.Name);
