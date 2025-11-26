@@ -1,9 +1,11 @@
 ﻿using NLog;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using Tools.Outils;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using Tools.Outils;
 
 namespace AppPublication.Config
 {
@@ -44,6 +46,8 @@ namespace AppPublication.Config
         private const string kIntituleCommun = "intituleCommun";
         private const string kScoreEngagesGagnantPerdant = "scoreEngagesGagnantPerdant";
         private const string kAfficherPositionCombat = "afficherPositionCombat";
+        private const string kNiveauPublicationFFJudo = "NiveauPublicationFFJudo";
+        private const string kEntitePublicationFFJudo = "EntitePublicationFFJudo";
 
         #endregion
 
@@ -55,7 +59,7 @@ namespace AppPublication.Config
         #region CONSTRUCTEURS ET SINGLETON
 
         // Constructeur privé pour le Singleton
-        private PublicationConfigSection()
+        private PublicationConfigSection() : base()
         {
             // Initialisation standard de la ConfigurationSection si elle existe
             var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
@@ -111,77 +115,53 @@ namespace AppPublication.Config
 
         #endregion
 
-        #region METHODES
-        /// <summary>
-        /// Helper générique pour retourner une valeur par défaut si la clé est absente ou non convertible.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
-        private T GetConfigValue<T>(string key, T defaultValue)
-        {
-            try
-            {
-                var raw = this[key];
-                if (raw == null) return defaultValue;
-
-                // Si le type attendu est string, faire un cast direct
-                if (typeof(T) == typeof(string))
-                {
-                    return (T)raw;
-                }
-
-                // Pour les types nullables (ex: bool?) on gère
-                var targetType = typeof(T);
-                if (Nullable.GetUnderlyingType(targetType) != null)
-                {
-                    targetType = Nullable.GetUnderlyingType(targetType);
-                }
-
-                return (T)Convert.ChangeType(raw, targetType);
-            }
-            catch
-            {
-                return defaultValue;
-            }
-        }
-
-        /// <summary>
-        /// Retourne l'élément de la collection <c>candidates</c> dont la représentation string
-        /// (fourni par <c>valueSelector</c>) correspond à la valeur stockée pour <c>key</c>.
-        /// Si aucune correspondance, renvoie le premier élément de la collection (ou default si vide).
-        /// Encapsule la logique "valeur présente dans la liste => la retourner, sinon => première valeur".
-        /// </summary>
-        /// <typeparam name="T">Type des éléments de la collection.</typeparam>
-        /// <param name="key">Clé de configuration (attribut dans la section).</param>
-        /// <param name="candidates">Collection des éléments valides.</param>
-        /// <param name="valueSelector">Fonction qui extrait la représentation string d'un élément (ex: f => f.Name).</param>
-        /// <returns>L'élément trouvé ou le premier élément de la collection.</returns>
-        public T GetItemFromList<T>(string key, IEnumerable<T> candidates, Func<T, string> valueSelector)
-        {
-            if (candidates == null) return default(T);
-            if (valueSelector == null) throw new ArgumentNullException(nameof(valueSelector));
-
-            string stored = GetConfigValue<string>(key, null);
-            if (!string.IsNullOrWhiteSpace(stored))
-            {
-                var match = candidates.FirstOrDefault(c => string.Equals(valueSelector(c) ?? string.Empty, stored, StringComparison.OrdinalIgnoreCase));
-                if (match != null) return match;
-            }
-
-            // fallback : première valeur ou default
-            return candidates.FirstOrDefault();
-        }
-        #endregion
-
         #region PROPRIETES
         public override string SectionName => kConfigSectionName;
         #endregion
 
         #region PROPRIETES DE CONFIGURATION
 
+        [ConfigurationProperty(kNiveauPublicationFFJudo, IsRequired = false)]
+        public string NiveauPublicationFFJudo
+        {
+            get { return GetConfigValue<string>(kNiveauPublicationFFJudo, string.Empty); }
+            set { SetValueAndMarkDirty(kNiveauPublicationFFJudo, value); }
+        }
 
+        /// <summary>
+        /// Retourne la propriété NiveauPublicationFFJudo si elle est dans la liste des candidats, sinon retourne le 1er de la liste
+        /// </summary>
+        /// <param name="candidates"></param>
+        /// <param name="valueSelector"></param>
+        /// <returns></returns>
+        public string GetNiveauPublicationFFJudo(IEnumerable<string> candidates, Func<string, string> valueSelector)
+        {
+            return GetItemFromList(kNiveauPublicationFFJudo, candidates, valueSelector);
+        }
+
+        [ConfigurationProperty(kEntitePublicationFFJudo, IsRequired = false)]
+        public string EntitePublicationFFJudo
+        {
+            get { return GetConfigValue<string>(kEntitePublicationFFJudo, string.Empty); }
+            set { SetValueAndMarkDirty(kRepertoireRacine, value); }
+        }
+
+        /// <summary>
+        /// Retourne la propriété EntitePublicationFFJudo si elle est dans la liste des candidats, sinon retourne le 1er de la liste
+        /// si val n'est pas null, retourne l'élément correspondant à val dans la liste ou le 1er de la liste
+        /// </summary>
+        /// <param name="candidates"></param>
+        /// <param name="valueSelector"></param>
+        /// <returns></returns>
+        public EntitePublicationFFJudo GetEntitePublicationFFJudo(IEnumerable<EntitePublicationFFJudo> candidates, Func<EntitePublicationFFJudo, string> valueSelector, string val = null)
+        {
+            if(val != null)
+            {
+                return FindItemFromList(candidates, valueSelector, val);
+            }
+
+            return GetItemFromList(kEntitePublicationFFJudo, candidates, e => e.Nom);
+        }
 
         [ConfigurationProperty(kRepertoireRacine, IsRequired = false)]
         public string RepertoireRacine

@@ -8,6 +8,10 @@ using System.Security;
 
 namespace Tools.Outils
 {
+    /// <summary>
+    /// Classe utilitaire pour la gestion des paramètres d'application dans le fichier de configuration.
+    /// plutot recommandé d'utiliser ConfigurationService et des ConfigSectionBase dédiées.
+    /// </summary>
     public class AppSettings
     {
         #region ECRITURE
