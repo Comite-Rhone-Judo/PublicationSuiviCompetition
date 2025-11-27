@@ -14,9 +14,9 @@ namespace AppPublication.Config
     /// Implémenté en Singleton pour un accès facile et une sauvegarde "live".
     /// Les 'getters' fournissent des valeurs par défaut dynamiques si la configuration est absente.
     /// </summary>
-    public class PublicationConfigSection : ConfigSectionBase
+    [SectionName("PublicationSection")]
+    public class PublicationConfigSection : ConfigSectionBase<PublicationConfigSection>
     {
-
         #region CONSTANTES
         // Nom de la section dans app.config
         public const string kConfigSectionName = "PublicationSection";
@@ -59,52 +59,7 @@ namespace AppPublication.Config
         #region CONSTRUCTEURS ET SINGLETON
 
         // Constructeur privé pour le Singleton
-        private PublicationConfigSection() : base() {}
-
-        /// <summary>
-        /// Point d'accès Singleton
-        /// </summary>
-        public static PublicationConfigSection Instance
-        {
-            get
-            {
-                lock (_lock)
-                {
-                    if (_instance == null)
-                    {
-                        // Initialisation standard de la ConfigurationSection si elle existe
-                        var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                        var section = config.GetSection(kConfigSectionName) as PublicationConfigSection;
-
-                        // Si la section n'existe pas, la créer (ou la charger du cache si elle existe déjà)
-                        if (section == null)
-                        {
-                            // Tente de créer la section.
-                            try
-                            {
-                                // Ceci est la seule utilisation du lock original, garantissant l'unicité
-                                _instance = new PublicationConfigSection(); // Crée une instance temporaire
-                                _instance.SectionInformation.AllowExeDefinition = ConfigurationAllowExeDefinition.MachineToApplication;
-                                config.Sections.Add(kConfigSectionName, _instance);
-                                config.Save(ConfigurationSaveMode.Modified);
-                                ConfigurationManager.RefreshSection(kConfigSectionName);
-                            }
-                            catch (Exception ex)
-                            {
-                                LogTools.Logger.Error(ex, $"Erreur critique : Impossible de créer la section de configuration '{kConfigSectionName}'.");
-                                throw;
-                            }
-                        }
-                        else
-                        {
-                            _instance = section;
-                        }
-                    }
-                    // Si l'instance a été chargée via ConfigurationManager.GetSection (dans le constructeur), elle est retournée.
-                    return _instance;
-                }
-            }
-        }
+        protected PublicationConfigSection() : base() {}
 
         #endregion
 
