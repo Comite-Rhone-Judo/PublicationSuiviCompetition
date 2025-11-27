@@ -22,13 +22,30 @@ namespace AppPublication
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
+        {
+            // Attention a l'ordre des initialisations !
+
+            // LogTools.Trace("App is starting");
+            LogTools.LogStartup();
+
+            // Démarrage du Service de Configuration (le worker commence ici)
+            // L'accès à .Instance suffit à démarrer le Singleton et le Worker
+            _configSvc = ConfigurationService.Instance;
+
+            // Demarrer le controleur et assure que le logger est bien configure
+            Controles.DialogControleur.Instance.CanManageTracesDebug = LogTools.IsConfigured;
 
             CultureInfo culture = new CultureInfo("fr");
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
 
-            // Toute premiere trace !!
-            LogTools.LogStartup();
+            //Window8Palette
+            //Windows8Palette.Palette.AccentColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
+            //Windows8Palette.Palette.BasicColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
+            //Windows8Palette.Palette.StrongColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
+            //Windows8Palette.Palette.MainColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
+            //Windows8Palette.Palette.MarkerColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
+            //Windows8Palette.Palette.ValidationColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);            
 
             StyleManager.ApplicationTheme = new Windows8Theme();
         }
@@ -87,6 +104,9 @@ namespace AppPublication
             // If the "exitFrame" callback doesn't get finished, Abort it.
 
             if (exitOperation.Status != DispatcherOperationStatus.Completed)
+            {
+                exitOperation.Abort();
+            }
         }
 
         protected override void OnExit(ExitEventArgs e)
@@ -103,7 +123,8 @@ namespace AppPublication
             LogTools.LogStop();
             NLog.LogManager.Shutdown();
 
-            }
+            base.OnExit(e);
+        }
 
         private static Object ExitFrame(Object state)
         {
