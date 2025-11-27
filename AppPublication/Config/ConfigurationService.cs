@@ -1,7 +1,9 @@
-﻿using System;
+﻿using OfficeOpenXml.FormulaParsing.Excel.Functions.Information;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Tools.Outils;
@@ -24,7 +26,7 @@ namespace AppPublication.Config
         private readonly object _saveLock = new object();
 
         // Liste des sections en attente de sauvegarde (le "batch" à écrire)
-        private readonly List<ConfigSectionBase> _sectionsToSave = new List<ConfigSectionBase>();
+        private readonly List<InternalConfigSectionBase> _sectionsToSave = new List<InternalConfigSectionBase>();
 
         private Task _saveWorker = null;
         private CancellationTokenSource _cts = new CancellationTokenSource();
@@ -33,10 +35,13 @@ namespace AppPublication.Config
         private ConfigurationService()
         {
             // S'abonne à l'événement statique de la classe de base
-            ConfigSectionBase.SectionBecameDirty += HandleSectionDirty;
+            InternalConfigSectionBase.SectionBecameDirty += HandleSectionDirty;
             StartSaveWorker();
         }
 
+        /// <summary>
+        /// Démarre le worker de sauvegarde asynchrone s'il n'est pas déjà en cours d'exécution.
+        /// </summary>
         private void StartSaveWorker()
         {
             if (_saveWorker == null || _saveWorker.IsCompleted)
@@ -48,7 +53,7 @@ namespace AppPublication.Config
         /// <summary>
         /// Gestionnaire d'événement (appelé par les sections). Ajoute la section à la liste d'attente.
         /// </summary>
-        private void HandleSectionDirty(ConfigSectionBase section)
+        private void HandleSectionDirty(InternalConfigSectionBase section)
         {
             lock (_saveLock) // Protège l'accès à la liste _sectionsToSave
             {
@@ -60,6 +65,11 @@ namespace AppPublication.Config
             }
         }
 
+        /// <summary>
+        /// Tache executée en arrière-plan qui vérifie périodiquement les sections à sauvegarder.
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
         private async Task RunSaveWorker(CancellationToken token)
         {
             while (!token.IsCancellationRequested)
@@ -121,6 +131,9 @@ namespace AppPublication.Config
                             // Utilisation de CurrentConfiguration !
                             config.Save(ConfigurationSaveMode.Modified);
                         }
+
+                        // Succès standard : Nettoyage normal
+                        CleanupAfterSave(count);
                     }
                     catch (ConfigurationErrorsException ex)
                     {
@@ -131,6 +144,17 @@ namespace AppPublication.Config
                         try
                         {
                             PerformFallbackSave(_sectionsToSave);
+
+                            // B. INVALIDATION TOTALE
+                            // Puisque le fichier a changé, notre objet _sharedConfig est mort.
+                            // On le tue, et on tue tous les Singletons pour forcer un rechargement frais.
+                            InternalConfigSectionBase.InvalidateContext();
+
+                            // C. Nettoyage de la liste d'attente
+                            // Les objets dans _sectionsToSave sont maintenant des "zombies" (liés à l'ancienne config).
+                            // On les nettoie pour ne pas réessayer de les sauver.
+                            // Leurs données ont été sauvées par le Fallback.
+                            _sectionsToSave.Clear();
                         }
                         catch (Exception exFallback)
                         {
@@ -144,22 +168,6 @@ namespace AppPublication.Config
                         return;
                     }
 
-                // Étape 4 : Nettoyage et Notification
-                // On réutilise la boucle par index pour nettoyer les états
-                for (int i = 0; i < count; i++)
-                    {
-                        var section = _sectionsToSave[i];
-
-                        // Rafraichissement du cache statique .NET
-                        ConfigurationManager.RefreshSection(section.SectionName);
-
-                        // Reset du flag Dirty (thread-safe via son propre lock interne)
-                        section.ClearDirtyFlag();
-                    }
-
-                    // Étape 5 : Vidage de la liste en une seule opération O(1) ou O(n) interne optimisée
-                    _sectionsToSave.Clear();
-
                     LogTools.Logger.Debug("Configuration sauvegardée.");
                 }
                 catch (Exception ex)
@@ -170,34 +178,54 @@ namespace AppPublication.Config
         }
 
         /// <summary>
+        /// Nettoie les états internes après une sauvegarde réussie.
+        /// </summary>
+        /// <param name="count"></param>
+        private void CleanupAfterSave(int count)
+        {
+            try
+            {
+                // On réutilise la boucle par index pour nettoyer les états
+                for (int i = 0; i < count; i++)
+                {
+                    var section = _sectionsToSave[i];
+                    // Rafraichissement du cache statique .NET
+                    ConfigurationManager.RefreshSection(section.SectionName);
+                    // Reset du flag Dirty (thread-safe via son propre lock interne)
+                    section.ClearDirtyFlag();
+                }
+                // Vidage de la liste en une seule opération O(1) ou O(n) interne optimisée
+                _sectionsToSave.Clear();
+                LogTools.Logger.Debug($"Configuration sauvegardée ({count} sections).");
+            }
+            catch (Exception ex) { LogTools.Logger.Error(ex, "Erreur nettoyage."); }
+        }
+
+        /// <summary>
         /// Méthode de secours : Ouvre une nouvelle instance du fichier, 
         /// y injecte les valeurs XML actuelles des singletons, et sauvegarde.
         /// </summary>
-        private void PerformFallbackSave(List<ConfigSectionBase> sections)
+        private void PerformFallbackSave(List<InternalConfigSectionBase> sections)
         {
             // 1. Ouvrir une configuration temporaire (fraîchement lue du disque)
             var tempConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
             foreach (var section in sections)
             {
-                // 2. Supprimer l'ancienne version dans ce conteneur temporaire
+                // 2. Créer une instance vierge du même type que notre section
+                // (Utilise le constructeur privé via Activator)
+                var tempSection = (InternalConfigSectionBase) Activator.CreateInstance(section.GetType(), true);
+
+                // 3. COPIE MANUELLE DES PROPRIÉTÉS (La correction est ici)
+                section.CopyValuesTo(tempSection);
+                tempSection.SectionInformation.ForceSave = true;
+
+                // 4. Ajouter à la config temporaire
+                // Remplacer dans le fichier temporaire
                 if (tempConfig.Sections.Get(section.SectionName) != null)
                 {
                     tempConfig.Sections.Remove(section.SectionName);
                 }
-
-                // 3. Cloner l'état du Singleton via XML
-                // C'est la seule façon de transférer les données sans détacher le Singleton de sa config d'origine
-                string rawXml = section.SectionInformation.GetRawXml();
-
-                // Créer une coquille vide du bon type
-                var tempSection = (ConfigurationSection)Activator.CreateInstance(section.GetType(), true);
-
-                // Appliquer les données
-                tempSection.SectionInformation.SetRawXml(rawXml);
-                tempSection.SectionInformation.ForceSave = true;
-
-                // 4. Ajouter à la config temporaire
                 tempConfig.Sections.Add(section.SectionName, tempSection);
             }
 
@@ -211,9 +239,12 @@ namespace AppPublication.Config
         public void Dispose()
         {
             StopAndCommit();
-            ConfigSectionBase.SectionBecameDirty -= HandleSectionDirty;
+            InternalConfigSectionBase.SectionBecameDirty -= HandleSectionDirty;
         }
 
+        /// <summary>
+        /// Arrête le worker et effectue une sauvegarde synchrone finale.
+        /// </summary>
         public void StopAndCommit()
         {
             // Tente d'arrêter le worker

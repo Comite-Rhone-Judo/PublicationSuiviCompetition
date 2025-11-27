@@ -134,6 +134,7 @@
       <Link>VersionInfo.cs</Link>
     </Compile>
     <Compile Include="Config\ConfigSectionBase.cs" />
+    <Compile Include="Config\InternalConfigSectionBase.cs" />
     <Compile Include="Config\ConfigurationService.cs" />
     <Compile Include="Config\PublicationConfigSection.cs" />
     <Compile Include="Controles\GestionStatistiques.cs" />

@@ -14,7 +14,7 @@ namespace AppPublication.Config
     /// Implémenté en Singleton pour un accès facile et une sauvegarde "live".
     /// Les 'getters' fournissent des valeurs par défaut dynamiques si la configuration est absente.
     /// </summary>
-    [SectionName("PublicationSection")]
+    [SectionName(kConfigSectionName)]
     public class PublicationConfigSection : ConfigSectionBase<PublicationConfigSection>
     {
         #region CONSTANTES
@@ -51,20 +51,11 @@ namespace AppPublication.Config
 
         #endregion
 
-        #region MEMBRES
-        private static PublicationConfigSection _instance;
-        private static readonly object _lock = new object();
-        #endregion
-
-        #region CONSTRUCTEURS ET SINGLETON
+        #region CONSTRUCTEURS
 
         // Constructeur privé pour le Singleton
         protected PublicationConfigSection() : base() {}
 
-        #endregion
-
-        #region PROPRIETES
-        public override string SectionName => kConfigSectionName;
         #endregion
 
         #region PROPRIETES DE CONFIGURATION
