@@ -117,7 +117,6 @@ namespace AppPublication
             // Cela force l'arrêt du worker et une dernière sauvegarde synchrone sur disque.
             if (ConfigurationService.Instance != null)
             {
-                ConfigurationService.Instance.StopAndCommit();
                 (ConfigurationService.Instance as IDisposable)?.Dispose();
             }
 
