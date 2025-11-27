@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Globalization;
 using System.Threading;
+using System.Web.UI.WebControls.WebParts;
 using System.Windows;
 using System.Windows.Threading;
 using Telerik.Windows.Controls;
 using Tools.Outils;
+using AppPublication.Config;
 
 namespace AppPublication
 { /// <summary>

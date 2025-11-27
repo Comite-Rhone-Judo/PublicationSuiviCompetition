@@ -18,6 +18,9 @@ namespace Tools.Outils
         /// <param name="value">Valeur du parametre</param>
         public static void SaveSetting(string key, string value, string prefix = "")
         {
+            // TODO For debug purpose
+            return;
+
             var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
             string internalKey = (string.IsNullOrEmpty(prefix) ? key : prefix + "_" + key);
@@ -42,6 +45,10 @@ namespace Tools.Outils
         /// <param name="value">Valeur du parametre</param>
         public static void SaveEncryptedSetting(string key, string value, string prefix = "")
         {
+
+            // TODO For debug purpose
+            return;
+
             string encryptedValue = Encryption.EncryptString( Encryption.ToSecureString(value));
             var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             string internalKey = (string.IsNullOrEmpty(prefix) ? key : prefix + "_" + key);
