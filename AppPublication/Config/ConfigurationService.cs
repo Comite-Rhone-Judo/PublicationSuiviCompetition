@@ -1,9 +1,7 @@
-﻿using OfficeOpenXml.FormulaParsing.Excel.Functions.Information;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Tools.Outils;

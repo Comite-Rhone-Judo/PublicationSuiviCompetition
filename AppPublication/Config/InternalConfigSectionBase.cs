@@ -41,7 +41,7 @@ namespace AppPublication.Config
         private readonly object _writeLock = new object();
 
         // Drapeau d'état (volatile pour s'assurer que les threads le lisent à jour)
-        protected volatile bool _isDirty = false;
+        protected bool _isDirty = false;
 
         /// <summary>
         /// Événement statique déclenché lorsqu'une section devient "Dirty".
@@ -127,6 +127,8 @@ namespace AppPublication.Config
         /// </summary>
         protected void SetValueAndMarkDirty<T>(string propertyName, T newValue, T defaultValue = default(T))
         {
+            bool notify = false;
+
             // 1. ACQUISITION DU VERROU LOCAL (RAPIDE)
             lock (_writeLock)
             {
@@ -144,12 +146,16 @@ namespace AppPublication.Config
                     if (!_isDirty)
                     {
                         _isDirty = true;
-                        // Déclenche l'événement pour informer le Service Worker
-                        SectionBecameDirty?.Invoke(this);
+                        notify = true; // On note qu'il faut notifier, mais on ne le fait pas encore
                     }
                 }
             }
-            // Le verrou est relâché immédiatement.
+            // 2. Notification (Hors du verrou)
+            if (notify)
+            {
+                // Si le Service acquiert le Verrou B ici, pas de problème car nous ne tenons plus A.
+                SectionBecameDirty?.Invoke(this);
+            }
         }
 
         /// <summary>
