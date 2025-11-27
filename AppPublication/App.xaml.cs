@@ -19,33 +19,24 @@ namespace AppPublication
         /// </summary>
         public App()
         {
-            // BasicConfigurator.Configure();
+            // Attention a l'ordre des initialisations !
 
             // LogTools.Trace("App is starting");
             LogTools.LogStartup();
 
-            // Assure que le logger est bien configure
+            // Démarrage du Service de Configuration (le worker commence ici)
+            // L'accès à .Instance suffit à démarrer le Singleton et le Worker
+            _configSvc = ConfigurationService.Instance;
+
+            // Demarrer le controleur et assure que le logger est bien configure
             Controles.DialogControleur.Instance.CanManageTracesDebug = LogTools.IsConfigured;
 
             CultureInfo culture = new CultureInfo("fr");
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
 
-
-            //Window8Palette
-            //Windows8Palette.Palette.AccentColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
-            //Windows8Palette.Palette.BasicColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
-            //Windows8Palette.Palette.StrongColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
-            //Windows8Palette.Palette.MainColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
-            //Windows8Palette.Palette.MarkerColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
-            //Windows8Palette.Palette.ValidationColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);            
-
             StyleManager.ApplicationTheme = new Windows8Theme();
             // Controles.DialogControleur.DC = new Controles.DialogControleur();
-
-            // Démarrage du Service de Configuration (le worker commence ici)
-            // L'accès à .Instance suffit à démarrer le Singleton et le Worker
-            _configSvc = ConfigurationService.Instance;
 
             // Demarre la fenetre principale et injecte le Dialog controleur en tant que DataContext
             AppPublication.IHM.Commissaire.ExportWindow mainWin = new AppPublication.IHM.Commissaire.ExportWindow();

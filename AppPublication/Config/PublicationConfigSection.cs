@@ -59,39 +59,7 @@ namespace AppPublication.Config
         #region CONSTRUCTEURS ET SINGLETON
 
         // Constructeur privé pour le Singleton
-        private PublicationConfigSection() : base()
-        {
-            // Initialisation standard de la ConfigurationSection si elle existe
-            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            var section = config.GetSection(kConfigSectionName) as PublicationConfigSection;
-
-            // Si la section n'existe pas, la créer (ou la charger du cache si elle existe déjà)
-            if (section == null)
-            {
-                // Tente de créer la section.
-                try
-                {
-                    // Ceci est la seule utilisation du lock original, garantissant l'unicité
-                    _instance = new PublicationConfigSection(); // Crée une instance temporaire
-                    _instance.SectionInformation.AllowExeDefinition = ConfigurationAllowExeDefinition.MachineToApplication;
-                    config.Sections.Add(kConfigSectionName, _instance);
-                    config.Save(ConfigurationSaveMode.Modified);
-                    ConfigurationManager.RefreshSection(kConfigSectionName);
-                }
-                catch (Exception ex)
-                {
-                    LogTools.Logger.Error(ex, $"Erreur critique : Impossible de créer la section de configuration '{kConfigSectionName}'.");
-                    throw;
-                }
-            }
-            else
-            {
-                _instance = section;
-            }
-
-            // Le constructeur doit appeler le constructeur de ConfigSectionBase via le : base() implicite.
-            // L'abonnement à l'événement se fait dans ConfigSectionBase.
-        }
+        private PublicationConfigSection() : base() {}
 
         /// <summary>
         /// Point d'accès Singleton
@@ -104,8 +72,33 @@ namespace AppPublication.Config
                 {
                     if (_instance == null)
                     {
-                        // Forcer l'appel au constructeur privé pour charger ou créer l'instance
-                        new PublicationConfigSection();
+                        // Initialisation standard de la ConfigurationSection si elle existe
+                        var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                        var section = config.GetSection(kConfigSectionName) as PublicationConfigSection;
+
+                        // Si la section n'existe pas, la créer (ou la charger du cache si elle existe déjà)
+                        if (section == null)
+                        {
+                            // Tente de créer la section.
+                            try
+                            {
+                                // Ceci est la seule utilisation du lock original, garantissant l'unicité
+                                _instance = new PublicationConfigSection(); // Crée une instance temporaire
+                                _instance.SectionInformation.AllowExeDefinition = ConfigurationAllowExeDefinition.MachineToApplication;
+                                config.Sections.Add(kConfigSectionName, _instance);
+                                config.Save(ConfigurationSaveMode.Modified);
+                                ConfigurationManager.RefreshSection(kConfigSectionName);
+                            }
+                            catch (Exception ex)
+                            {
+                                LogTools.Logger.Error(ex, $"Erreur critique : Impossible de créer la section de configuration '{kConfigSectionName}'.");
+                                throw;
+                            }
+                        }
+                        else
+                        {
+                            _instance = section;
+                        }
                     }
                     // Si l'instance a été chargée via ConfigurationManager.GetSection (dans le constructeur), elle est retournée.
                     return _instance;
@@ -143,7 +136,7 @@ namespace AppPublication.Config
         public string EntitePublicationFFJudo
         {
             get { return GetConfigValue<string>(kEntitePublicationFFJudo, string.Empty); }
-            set { SetValueAndMarkDirty(kRepertoireRacine, value); }
+            set { SetValueAndMarkDirty(kEntitePublicationFFJudo, value); }
         }
 
         /// <summary>

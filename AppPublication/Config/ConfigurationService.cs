@@ -106,11 +106,16 @@ public class ConfigurationService : IDisposable
                 // Marquer toutes les sections comme ForceSave
                 foreach (var section in sectionsToProcess)
                 {
-                    ConfigurationSection configSection = config.GetSection(section.SectionName);
-                    if (configSection != null)
+                    // a. Retirer l'instance (ancienne) de la collection basée sur le nom
+                    if (config.Sections.Get(section.SectionName) != null)
                     {
-                        configSection.SectionInformation.ForceSave = true;
+                        config.Sections.Remove(section.SectionName);
                     }
+
+                    // b. Ajouter l'instance (nouvelle et modifiée) de notre Singleton.
+                    // L'objet 'section' passé en paramètre est la référence à l'instance Singleton modifiée.
+                    section.SectionInformation.ForceSave = true;
+                    config.Sections.Add(section.SectionName, section);
                 }
 
                 // 2. Opération I/O de sauvegarde sur disque
@@ -120,6 +125,7 @@ public class ConfigurationService : IDisposable
                 // 3. SUCCÈS : Réinitialisation des drapeaux et de la liste
                 foreach (var section in sectionsToProcess)
                 {
+                    ConfigurationManager.RefreshSection(section.SectionName);
                     section.ClearDirtyFlag(); // Utilise le verrou LOCAL _writeLock pour la cohérence
                     _sectionsToSave.Remove(section);
                 }
