@@ -114,6 +114,7 @@ namespace AppPublication.Config
                         .Where(c => c != null)
                         .Distinct()
                         .ToList();
+
                     try
                     {
                         // Étape 1 : Marquer toutes les sections comme ForceSave

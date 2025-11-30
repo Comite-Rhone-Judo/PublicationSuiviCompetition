@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Tools.Enum;
 
-namespace AppPublication.Tools
+namespace AppPublication.Tools.Files
 {
     public class FilteredFileInfo
     {

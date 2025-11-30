@@ -1,139 +1,56 @@
-﻿using System.Configuration;
-using Tools.Enum;
+﻿using System;
+using System.Configuration;
+using Tools.Outils;
 
 namespace AppPublication.Config
 {
     /// <summary>
-    /// Définit la section de configuration personnalisée <MiniSiteSection> dans app.config.
+    /// Section de configuration pour la gestion des paramètres techniques des MiniSites.
     /// </summary>
-    public class MiniSiteConfigSection : ConfigurationSection
+    [SectionName(MiniSiteConfigSection.kConfigSectionName)]
+    public class MiniSiteConfigSection : ConfigSectionBase<MiniSiteConfigSection>
     {
-        // TODO Ajouter le mode local/distant, reprendre la liste de tous les parametres nécessaires.
-
-        // Constantes pour les noms XML
         public const string kConfigSectionName = "MiniSiteSection";
         private const string kCollectionName = "miniSites";
-        private const string kElementName = "miniSite";
+
+        // Propriété technique pour forcer le "Dirty" depuis les enfants
+        private const string kLastModifiedTick = "lastModifiedTick";
+
+        protected MiniSiteConfigSection() : base() { }
+
+        #region Collection
 
         [ConfigurationProperty(kCollectionName)]
-        [ConfigurationCollection(typeof(MiniSiteCollection), AddItemName = kElementName)]
+        [ConfigurationCollection(typeof(MiniSiteCollection), AddItemName = "miniSite")]
         public MiniSiteCollection MiniSites
         {
             get { return (MiniSiteCollection)base[kCollectionName]; }
         }
-    }
 
-    /// <summary>
-    /// Définit la collection d'éléments <miniSite>
-    /// </summary>
-    public class MiniSiteCollection : ConfigurationElementCollection
-    {
-        protected override ConfigurationElement CreateNewElement()
+        #endregion
+
+        #region Mécanique de Notification
+
+        /// <summary>
+        /// Propriété cachée utilisée pour déclencher l'événement de modification
+        /// depuis les éléments enfants.
+        /// </summary>
+        [ConfigurationProperty(kLastModifiedTick, DefaultValue = 0L)]
+        internal long LastModifiedTick
         {
-            return new MiniSiteConfigElement();
+            // On utilise l'accès direct de ConfigSectionBase ici car on est dans la racine
+            get { return (long)this[kLastModifiedTick]; }
+            set { SetValueAndMarkDirty(kLastModifiedTick, value); }
         }
 
-        protected override object GetElementKey(ConfigurationElement element)
+        /// <summary>
+        /// Méthode appelée par les enfants (MiniSiteConfigElement) quand ils changent.
+        /// </summary>
+        internal void NotifyChildModification()
         {
-            // Utilise 'id' comme clé unique
-            return ((MiniSiteConfigElement)element).ID;
+            this.LastModifiedTick = DateTime.Now.Ticks;
         }
 
-        public MiniSiteConfigElement this[int index]
-        {
-            get { return (MiniSiteConfigElement)BaseGet(index); }
-            set
-            {
-                if (BaseGet(index) != null)
-                {
-                    BaseRemoveAt(index);
-                }
-                BaseAdd(index, value);
-            }
-        }
-
-        public new MiniSiteConfigElement this[string name]
-        {
-            get { return (MiniSiteConfigElement)BaseGet(name); }
-        }
-
-        public void Add(MiniSiteConfigElement element)
-        {
-            BaseAdd(element);
-        }
-
-        public void Clear()
-        {
-            BaseClear();
-        }
-
-        public void Remove(MiniSiteConfigElement element)
-        {
-            BaseRemove(GetElementKey(element));
-        }
-
-        public void RemoveAt(int index)
-        {
-            BaseRemoveAt(index);
-        }
-    }
-
-    /// <summary>
-    /// Définit un élément <miniSite> avec ses attributs.
-    /// </summary>
-    public class MiniSiteConfigElement : ConfigurationElement
-    {
-        // Constantes pour les attributs XML
-        private const string kId = "id";                // Equivalent du prefix dans l'ancienne config
-        private const string kFtpLogin = "ftpLogin";            
-        private const string kFtpPassword = "ftpPassword";
-        private const string kFtpSite = "ftpSite";
-        private const string kFtpModeActif = "modeActif";
-        private const string ksyncDiff = "syncDiff";
-
-
-        /*
-            kSettingInterfaceLocalPublication   Mode local 
-            kSettingSiteFTPDistant              Mode Distant
-            kSettingLoginSiteFTPDistant         Mode Distant
-            kSettingModeActifFTPDistant         Mode Distant
-            kSettingSynchroniseDifferences      Mode Distant
-        */
-
-        [ConfigurationProperty(kId, IsRequired = true, IsKey = true)]
-        public string ID
-        {
-            get { return (string)this[kId]; }
-            set { this[kId] = value; }
-        }
-
-        [ConfigurationProperty(kFtpLogin, IsRequired = false, DefaultValue = "")]
-        public string FtpLogin
-        {
-            get { return (string)this[kFtpLogin]; }
-            set { this[kFtpLogin] = value; }
-        }
-
-        [ConfigurationProperty(kFtpPassword, IsRequired = false, DefaultValue = "")]
-        public string FtpPassword
-        {
-            // TODO Transferer la logique de cryptage/décryptage ici
-            get { return (string)this[kFtpPassword]; }
-            set { this[kFtpPassword] = value; }
-        }
-
-        [ConfigurationProperty(kFtpSite, IsRequired = false, DefaultValue = "")]
-        public string FtpSite
-        {
-            get { return (string)this[kFtpSite]; }
-            set { this[kFtpSite] = value; }
-        }
-
-        [ConfigurationProperty(kFtpModeActif, IsRequired = false, DefaultValue = false)]
-        public bool FtpModeActif
-        {
-            get { return (bool)this[kFtpModeActif]; }
-            set { this[kFtpModeActif] = value; }
-        }
+        #endregion
     }
 }

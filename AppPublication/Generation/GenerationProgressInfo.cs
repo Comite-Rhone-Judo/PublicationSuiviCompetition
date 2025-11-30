@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppPublication.Tools
+namespace AppPublication.Generation
 {
     public class GenerationProgressInfo
     {

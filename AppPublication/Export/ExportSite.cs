@@ -1,5 +1,4 @@
-﻿using AppPublication.Controles;
-using AppPublication.Tools.Enum;
+﻿using AppPublication.Tools.Enum;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
 using KernelImpl.Noyau.Organisation;
@@ -14,11 +13,9 @@ using System.Xml.Xsl;
 using Tools.Enum;
 using Tools.Export;
 using Tools.Outils;
-using KernelImpl.Noyau.Structures;
-using System.Collections;
 using AppPublication.ExtensionNoyau.Deroulement;
 using System;
-using AppPublication.Tools;
+using AppPublication.Generation;
 
 namespace AppPublication.Export
 {

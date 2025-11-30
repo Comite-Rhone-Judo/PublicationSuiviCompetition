@@ -7,12 +7,14 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Security;
 using System.Threading;
 using System.Xml;
 using Tools;
 using Tools.Enum;
+
 
 namespace Tools.Outils
 {
@@ -31,17 +33,10 @@ namespace Tools.Outils
     }
 
 
-    public class MiniSite : NotificationBase
+    public abstract class MiniSite : NotificationBase
     {
         #region CONSTANTES
-        private const string kSettingSiteFTPDistant = "SiteFTPDistant";
-        private const string kSettingLoginSiteFTPDistant = "LoginSiteFTPDistant";
-        private const string kSettingPasswordSiteFTPDistant = "PasswordSiteFTPDistant";
-        private const string kSettingModeActifFTPDistant = "ModeActifFTPDistant";
-        private const string kSettingSynchroniseDifferences = "SynchroniseDifferences";
-        private const string kSettingInterfaceLocalPublication ="InterfaceLocalPublication";
         private const int kMaxRetryFTP = 5;
-
         #endregion
 
         #region MEMBRES
@@ -50,28 +45,19 @@ namespace Tools.Outils
         private long _nbSyncDistant = 0;
         private string _instanceName = string.Empty;
         private int _maxRetryFTP = kMaxRetryFTP;
-
         #endregion
 
         #region CONSTRUCTEURS
-
-
-
-
 
         /// <summary>
         /// Constructeur
         /// </summary>
         /// <param name="local">Mode du minisite (local = true, distant = false)</param>
         /// <param name="instanceName">Nom de l'instance</param>
-        /// <param name="cacheCfg">True pour activer la mise en cache de la configuration</param>
-        /// <param name="cachePwd">True pour activer la mise en cache du mot de passe</param>
-        public MiniSite(bool local, string instanceName = "", bool cacheCfg = true, bool cachePwd = true)
+        public MiniSite(bool local, string instanceName = "")
         {
             // Initialise les caracteristiques du MiniSite
             InstanceName = instanceName;
-            CacheConfig = cacheCfg;
-            CachePassword = cachePwd;
 
             if (local)
             {
@@ -83,9 +69,6 @@ namespace Tools.Outils
             }
             else
             {
-                // Site distant
-                InitConfigFTP();
-
                 // Initialise le callback de tracking
                 _ftpProgressCallback = new Action<FtpProgress>(p =>
                 {
@@ -158,7 +141,7 @@ namespace Tools.Outils
         /// Interface (@IP) utilisée pour la publication du site en mode local
         /// doit etre presente dans la liste InterfacesLocal
         /// </summary>
-        public IPAddress InterfaceLocalPublication
+        public virtual IPAddress InterfaceLocalPublication
         {
             get
             {
@@ -176,10 +159,7 @@ namespace Tools.Outils
                     {
                         ServerHTTP.ListeningIpAddress = _interfaceLocalPublication;
                     }
-                    if (_interfaceLocalPublication != null && CacheConfig)
-                    {
-                        AppSettings.SaveSetting(kSettingInterfaceLocalPublication, _interfaceLocalPublication.ToString(), _instanceName);
-                    }
+
                     NotifyPropertyChanged();
                     IsChanged = true;
                 }
@@ -237,45 +217,11 @@ namespace Tools.Outils
             }
         }
 
-        bool _cacheConfig = false;
-        /// <summary>
-        /// Indique si les donnees de configuration doivent etre gardees en cache
-        /// </summary>
-        public bool CacheConfig
-        {
-            get
-            {
-                return _cacheConfig;
-            }
-            private set
-            {
-                _cacheConfig = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        bool _cachePassword = false;
-        /// <summary>
-        /// Indique si le mot de passe doit etre gardees en cache
-        /// </summary>
-        public bool CachePassword
-        {
-            get
-            {
-                return _cachePassword;
-            }
-            private set
-            {
-                _cachePassword = value;
-                NotifyPropertyChanged();
-            }
-        }
-
         private string _ftpDistant = string.Empty;
         /// <summary>
         /// L'adresse du site FTP Distant
         /// </summary>
-        public string SiteFTPDistant
+        public virtual string SiteFTPDistant
         {
             get
             {
@@ -284,10 +230,6 @@ namespace Tools.Outils
             set
             {
                 _ftpDistant = value;
-                if (CacheConfig)
-                {
-                    AppSettings.SaveSetting(kSettingSiteFTPDistant, _ftpDistant, _instanceName);
-                }
                 NotifyPropertyChanged();
                 IsChanged = true;
             }
@@ -315,7 +257,7 @@ namespace Tools.Outils
         /// <summary>
         /// Login de connexion au site FTP Distant
         /// </summary>
-        public string LoginSiteFTPDistant
+        public virtual string LoginSiteFTPDistant
         {
             get
             {
@@ -324,10 +266,6 @@ namespace Tools.Outils
             set
             {
                 _ftpLoginDistant = value;
-                if (CacheConfig)
-                {
-                    AppSettings.SaveSetting(kSettingLoginSiteFTPDistant, _ftpLoginDistant, _instanceName);
-                }
                 NotifyPropertyChanged();
                 IsChanged = true;
             }
@@ -338,7 +276,7 @@ namespace Tools.Outils
         /// <summary>
         /// Mode de fonctionnement FTP Actif (true) ou passif (false)
         /// </summary>
-        public bool ModeActifFTPDistant
+        public virtual bool ModeActifFTPDistant
         {
             get
             {
@@ -347,10 +285,6 @@ namespace Tools.Outils
             set
             {
                 _modeFTPActif = value;
-                if (CacheConfig)
-                {
-                    AppSettings.SaveSetting(kSettingModeActifFTPDistant, _modeFTPActif.ToString(), _instanceName);
-                }
                 NotifyPropertyChanged();
                 IsChanged = true;
             }
@@ -360,7 +294,7 @@ namespace Tools.Outils
         /// <summary>
         /// Mot de passe FTP au site FTP Distant
         /// </summary>
-        public string PasswordSiteFTPDistant
+        public virtual string PasswordSiteFTPDistant
         {
             get
             {
@@ -369,17 +303,16 @@ namespace Tools.Outils
             set
             {
                 _ftpPasswordDistant = value;
-                if (CachePassword)
-                {
-                    AppSettings.SaveEncryptedSetting(kSettingPasswordSiteFTPDistant, _ftpPasswordDistant, _instanceName);
-                }
                 NotifyPropertyChanged();
                 IsChanged = true;
             }
         }  
 
         private bool _syncDiff = false;
-        public bool SynchroniseDifferences
+        /// <summary>
+        /// Synchronise uniquement les différences (True) sinon, transfere tous les fichier (False)
+        /// </summary>
+        public virtual bool SynchroniseDifferences
         {
             get
             {
@@ -388,10 +321,6 @@ namespace Tools.Outils
             set
             {
                 _syncDiff = value;
-                if (CacheConfig)
-                {
-                    AppSettings.SaveSetting(kSettingSynchroniseDifferences, _syncDiff.ToString(), _instanceName);
-                }
                 NotifyPropertyChanged();
                 IsChanged = true;
             }
@@ -462,69 +391,92 @@ namespace Tools.Outils
 
         #region METHODES
 
-       
 
         /// <summary>
-        /// Initialise la configuraiton FTP a partir du cache de fichier AppConfig
+        /// Tente de définir l'interface de publication à partir d'une chaîne (ex: config).
+        /// Si l'IP est invalide ou absente de la machine, sélectionne automatiquement la première interface disponible.
         /// </summary>
-        private void InitConfigFTP()
+        /// <param name="ipString">La chaîne représentant l'adresse IP</param>
+        public void SelectInterfaceOrDefault(string ipString)
         {
-            string valCache = string.Empty;
+            IPAddress ipToUse = null;
 
-            try
+            // 1. Tente de parser et de trouver l'IP dans la liste des interfaces locales
+            if (!string.IsNullOrEmpty(ipString) && IPAddress.TryParse(ipString, out var parsedIp))
             {
-                SiteFTPDistant = AppSettings.ReadSetting(kSettingSiteFTPDistant, string.Empty, _instanceName);
-                LoginSiteFTPDistant = AppSettings.ReadSetting(kSettingLoginSiteFTPDistant, string.Empty, _instanceName);
-                PasswordSiteFTPDistant = AppSettings.ReadEncryptedSetting(kSettingPasswordSiteFTPDistant, string.Empty, _instanceName);
-                ModeActifFTPDistant = AppSettings.ReadSetting(kSettingModeActifFTPDistant, false, _instanceName);
-                SynchroniseDifferences = AppSettings.ReadSetting(kSettingSynchroniseDifferences, false, _instanceName);
+                if (InterfacesLocal.Contains(parsedIp))
+                {
+                    ipToUse = parsedIp;
+                }
             }
-            catch { }
+
+            // 2. Si aucune IP valide trouvée (ou config vide), Fallback sur la première dispo
+            if (ipToUse == null && InterfacesLocal.Count > 0)
+            {
+                ipToUse = InterfacesLocal.First();
+            }
+
+            // 3. Application de la valeur (déclenche le Setter existant qui gère le serveur HTTP et la notif)
+            if (ipToUse != null)
+            {
+                try
+                {
+                    // On passe par la propriété pour bénéficier des effets de bord (ServerHTTP update, PropertyChanged)
+                    // Attention : le setter actuel lève une exception si l'IP n'est pas dans la liste, 
+                    // mais ici on a garanti que 'ipToUse' est soit dans la liste, soit null (si liste vide).
+                    this.InterfaceLocalPublication = ipToUse;
+                }
+                catch (Exception ex)
+                {
+                    LogTools.Logger.Debug(ex, "Erreur lors de la sélection de l'interface locale pour le MiniSite.");
+                }
+            }
         }
 
+
         /// <summary>
-        /// Initialise la liste des interfaces locales disponibles
+        /// Initialise la liste des interfaces locales disponibles via NetworkInterface.
+        /// Plus rapide et fiable que Dns.GetHostName/GetHostAddresses.
         /// </summary>
-        private void InitInterfaces()
+        protected void InitInterfaces()
         {
-            // Initialise la liste des interfaces
-            string strHostName = Dns.GetHostName();
-            InterfacesLocal = Dns.GetHostAddresses(strHostName).Where(o => o.AddressFamily == AddressFamily.InterNetwork).ToList();
-            // Selectionne la 1ere interface de la liste
-            InterfaceLocalPublication = null;
-
-            // Si la liste contient au moins un element
-            if (InterfacesLocal.Count >= 1)
+            try
             {
-                // Cherche si une interface existe dans la configuration du fichier
-                string valCache = AppSettings.ReadSetting(kSettingInterfaceLocalPublication, _instanceName);
-                IPAddress ipToUse = null;
-                bool useCache = false;
+                InterfacesLocal = new List<IPAddress>();
 
-                if (valCache != null)
+                // Récupère toutes les interfaces réseau
+                var interfaces = NetworkInterface.GetAllNetworkInterfaces();
+
+                // On filtre pour ne garder que les interfaces opérationnelles (Up)
+                // et on exclut le Loopback (127.0.0.1) qui n'est généralement pas utile pour la publication
+                var activeInterfaces = interfaces
+                    .Where(ni => ni.OperationalStatus == OperationalStatus.Up
+                              && ni.NetworkInterfaceType != NetworkInterfaceType.Loopback);
+
+                foreach (var adapter in activeInterfaces)
                 {
-                    try
-                    {
-                        // Lit l'adresse dans le fichier et verifie qu'elle est dans la liste
-                        ipToUse = IPAddress.Parse(valCache);
-                        useCache = InterfacesLocal.Contains(ipToUse);
-                    }
-                    catch (Exception ex)
-                    {
-                        // Soit l'IP configuree est incorrecte, soit elle n'est pas dans la liste
-                        useCache = false;
-                        LogTools.Debug(ex);
-                    }
+                    var properties = adapter.GetIPProperties();
+
+                    // Récupère les adresses unicast IPv4
+                    var ipv4Addresses = properties.UnicastAddresses
+                        .Where(ua => ua.Address.AddressFamily == AddressFamily.InterNetwork)
+                        .Select(ua => ua.Address);
+
+                    InterfacesLocal.AddRange(ipv4Addresses);
                 }
 
-                // on prend la 1ere interface de la liste si elle n'est pas dans la 
-                if (!useCache)
-                {
-                    ipToUse = InterfacesLocal.First();
-                }
+                // Suppression des doublons potentiels
+                InterfacesLocal = InterfacesLocal.Distinct().ToList();
 
-                // Assigne la valeur (en dernier pour eviter les bindings successifs)
-                InterfaceLocalPublication = ipToUse;
+                // Sélection par défaut
+                if (InterfacesLocal.Count > 0)
+                {
+                    InterfaceLocalPublication = InterfacesLocal.First();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogTools.Error(ex);
             }
         }
 

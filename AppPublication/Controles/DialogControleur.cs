@@ -1,18 +1,15 @@
 ﻿using AppPublication.Tools;
 using AppPublication.Tools.Enum;
 using KernelImpl;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Information;
 using System;
 using System.IO;
-using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Telerik.Windows.Controls;
-using Tools.Enum;
-using Tools.Export;
 using Tools.Outils;
 using Tools.Windows;
+using AppPublication.Tools.Streams;
 
 namespace AppPublication.Controles
 {

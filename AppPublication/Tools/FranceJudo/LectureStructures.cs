@@ -3,7 +3,7 @@ using System.Xml;
 using Tools.Enum;
 using Tools.Outils;
 
-namespace AppPublication.Tools.LectureFile
+namespace AppPublication.Tools.FranceJudo
 {
     public static class LectureStructures
     {

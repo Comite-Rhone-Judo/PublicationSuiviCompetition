@@ -133,9 +133,13 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Config\ConfigElementBase.cs" />
     <Compile Include="Config\ConfigSectionBase.cs" />
     <Compile Include="Config\InternalConfigSectionBase.cs" />
     <Compile Include="Config\ConfigurationService.cs" />
+    <Compile Include="Config\MiniSiteCollection.cs" />
+    <Compile Include="Config\MiniSiteConfigElement.cs" />
+    <Compile Include="Config\MiniSiteConfigSection.cs" />
     <Compile Include="Config\PublicationConfigSection.cs" />
     <Compile Include="Controles\GestionStatistiques.cs" />
     <Compile Include="Controles\RelayCommand.cs" />
@@ -153,6 +157,7 @@
     <Compile Include="IHM\Commissaire\StatistiquesView.xaml.cs">
       <DependentUpon>StatistiquesView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Publication\MiniSiteConfigurable.cs" />
     <Compile Include="Statistiques\StatistiqueItem.cs" />
     <Compile Include="Statistiques\StatistiqueItemCompteur.cs" />
     <Compile Include="Statistiques\StatistiqueItemMoyenneur.cs" />
@@ -169,16 +174,16 @@
     <Compile Include="Tools\Converter\RunningStatusConverter.cs" />
     <Compile Include="Tools\Converter\BoolNotConverter.cs" />
     <Compile Include="Tools\Converter\ClientConverter.cs" />
-    <Compile Include="Tools\EntitePublicationFFJudo.cs" />
+    <Compile Include="Tools\FranceJudo\EntitePublicationFFJudo.cs" />
     <Compile Include="Tools\Enum\BusyStatusEnum.cs" />
     <Compile Include="Tools\Enum\TypePouleEnum.cs" />
-    <Compile Include="Tools\FileTools.cs" />
-    <Compile Include="Tools\FilteredFileInfo.cs" />
-    <Compile Include="Tools\GenerationProgressInfo.cs" />
-    <Compile Include="Tools\LectureFile\LectureStructures.cs" />
-    <Compile Include="Tools\StatExecution.cs" />
-    <Compile Include="Tools\StatusGenerationSite.cs" />
-    <Compile Include="Tools\StreamTool.cs" />
+    <Compile Include="Tools\Files\FileTools.cs" />
+    <Compile Include="Tools\Files\FilteredFileInfo.cs" />
+    <Compile Include="Generation\GenerationProgressInfo.cs" />
+    <Compile Include="Tools\FranceJudo\LectureStructures.cs" />
+    <Compile Include="Statistiques\StatExecution.cs" />
+    <Compile Include="Generation\StatusGenerationSite.cs" />
+    <Compile Include="Tools\Streams\StreamTool.cs" />
     <Compile Include="Tools\Struct\ExportStruct.cs" />
     <Page Include="IHM\Commissaire\ConfigurationPublication.xaml">
       <SubType>Designer</SubType>
@@ -296,6 +301,7 @@
   <ItemGroup>
     <Resource Include="Logo_AppPublication.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

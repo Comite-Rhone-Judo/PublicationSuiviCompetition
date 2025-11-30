@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Tools.Outils;
 
-namespace Tools.Outils
+namespace AppPublication.Tools.FranceJudo
 {
     public class EntitePublicationFFJudo : NotificationBase
     {

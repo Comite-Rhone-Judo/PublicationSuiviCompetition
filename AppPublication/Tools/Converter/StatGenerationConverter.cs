@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
+using AppPublication.Statistiques;
 
 namespace AppPublication.Tools.Converter
 {

@@ -1,11 +1,9 @@
-﻿using NLog;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using Tools.Outils;
+using System.IO;
+using AppPublication.Tools.Files;
+using AppPublication.Tools.FranceJudo;
 
 namespace AppPublication.Config
 {
@@ -33,7 +31,6 @@ namespace AppPublication.Config
         private const string kMsgProchainsCombats = "msgProchainsCombats";
         private const string kPublierAffectationTapis = "publierAffectationTapis";
         private const string kLogo = "logo";
-        private const string kInterfaceLocalPublication = "interfaceLocalPublication";
         private const string kEasyConfig = "easyConfig";
         private const string kURLDistant = "urlDistant";
         private const string kIsolerCompetition = "isolerCompetition";
@@ -179,11 +176,15 @@ namespace AppPublication.Config
             set { SetValueAndMarkDirty(kLogo, value); }
         }
 
-        [ConfigurationProperty(kInterfaceLocalPublication, IsRequired = false)]
-        public string InterfaceLocalPublication
+        /// <summary>
+        /// Retourne le fichier Logo si il est dans la liste, sinon le 1er de la liste
+        /// </summary>
+        /// <param name="candidates"></param>
+        /// <param name="valueSelector"></param>
+        /// <returns></returns>
+        public FilteredFileInfo GetLogo(IEnumerable<FilteredFileInfo> candidates, Func<FilteredFileInfo, string> valueSelector)
         {
-            get { return GetConfigValue<string>(kInterfaceLocalPublication, null); }
-            set { SetValueAndMarkDirty(kInterfaceLocalPublication, value); }
+            return GetItemFromList(kLogo, candidates, valueSelector);
         }
 
         [ConfigurationProperty(kEasyConfig, IsRequired = false)]

@@ -6,7 +6,7 @@ using System.Xml.Linq;
 using Tools.Enum;
 using Tools.Outils;
 
-namespace AppPublication.Tools
+namespace AppPublication.Tools.Files
 {
     public static class FileTools
     {
