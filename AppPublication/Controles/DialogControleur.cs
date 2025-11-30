@@ -1,20 +1,15 @@
 ﻿using AppPublication.Tools;
 using AppPublication.Tools.Enum;
 using KernelImpl;
-using KernelImpl.Noyau.Deroulement;
-using KernelImpl.Noyau.Organisation;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Information;
 using System;
 using System.IO;
-using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Telerik.Windows.Controls;
-using Tools.Enum;
-using Tools.Export;
 using Tools.Outils;
 using Tools.Windows;
+using AppPublication.Tools.Streams;
 
 namespace AppPublication.Controles
 {
@@ -24,7 +19,7 @@ namespace AppPublication.Controles
     public class DialogControleur : NotificationBase
     {
         #region MEMBRES
-        private static DialogControleur _instance = null;      // instance singletion
+        private static DialogControleur _currentControleur = null;      // instance singletion
         private AppPublication.IHM.Commissaire.StatistiquesView _statWindow = null;
         private AppPublication.IHM.Commissaire.InformationsView _infoWindow = null;
         private PdfViewer _manuelViewer = null;

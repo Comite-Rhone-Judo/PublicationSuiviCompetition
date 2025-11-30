@@ -273,22 +273,103 @@ namespace AppPublication.Config
         /// <param name="target">L'instance (vierge) qui va recevoir les valeurs.</param>
         public void CopyValuesTo(InternalConfigSectionBase target)
         {
-            // Ici, 'this.Properties' est accessible car nous sommes dans la classe dérivée.
-            foreach (ConfigurationProperty prop in this.Properties)
-            {
-                try
-                {
-                    // TENTATIVE DE COPIE
-                    // L'indexeur this[prop.Name] va lire la valeur en mémoire du Singleton.
-                    // L'indexeur target[prop.Name] va tenter d'écrire dans la nouvelle instance.
+            DeepCopyRecursive(this, target);
+        }
 
-                    // Si la propriété est en lecture seule (interne) ou système, 
-                    // le framework lèvera une exception que nous attrapons ici.
-                    target[prop.Name] = this[prop.Name];
-                }
-                catch
+
+        /// <summary>
+        /// Méthode récursive pour copier le contenu d'un ConfigurationElement à un autre.
+        /// Utilise l'API publique ElementInformation pour éviter l'erreur CS1540 et l'erreur de type sur IsReadOnly.
+        /// </summary>
+        private static void DeepCopyRecursive(ConfigurationElement source, ConfigurationElement target)
+        {
+            // CORRECTION: Utilisation de PropertyInformation dans la boucle
+            foreach (PropertyInformation sourcePropInfo in source.ElementInformation.Properties)
+            {
+                // Ignorer les propriétés systèmes
+                if (sourcePropInfo.Name == "lockAttributes" || sourcePropInfo.Name == "lockAllAttributesExcept" ||
+                    sourcePropInfo.Name == "lockElements" || sourcePropInfo.Name == "lockItem" ||
+                    sourcePropInfo.Name == "xmlns")
+                    continue;
+
+                // Récupération de la propriété équivalente sur la cible via ElementInformation
+                var targetPropInfo = target.ElementInformation.Properties[sourcePropInfo.Name];
+
+                if (targetPropInfo == null) continue;
+
+                object sourceValue = sourcePropInfo.Value;
+                object targetValue = targetPropInfo.Value;
+
+                if (sourceValue == null) continue;
+
+                // CAS 1 : C'est une Collection (ex: MiniSites)
+                // Note: ConfigurationElementCollection hérite de ConfigurationElement, donc on teste d'abord la collection
+                if (sourceValue is ConfigurationElementCollection sourceColl &&
+                    targetValue is ConfigurationElementCollection targetColl)
                 {
-                    // On ignore les erreurs de copie individuelles (ex: type incompatibles rares)
+                    CopyCollection(sourceColl, targetColl);
+                }
+                // CAS 2 : C'est un sous-élément complexe (ex: un settings imbriqué)
+                else if (sourceValue is ConfigurationElement sourceElem &&
+                         targetValue is ConfigurationElement targetElem)
+                {
+                    DeepCopyRecursive(sourceElem, targetElem);
+                }
+                // CAS 3 : C'est une valeur simple
+                else
+                {
+                    // CORRECTION: Suppression du check IsReadOnly qui n'existe pas sur PropertyInformation.
+                    // On tente simplement l'assignation. Si la propriété est en lecture seule ou calculée, cela échouera silencieusement.
+                    try
+                    {
+                        targetPropInfo.Value = sourceValue;
+                    }
+                    catch { /* Ignorer erreurs conversion ou readonly */ }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Helper pour copier le contenu d'une collection à une autre via Réflexion.
+        /// </summary>
+        private static void CopyCollection(ConfigurationElementCollection source, ConfigurationElementCollection target)
+        {
+            // On parcourt les éléments de la collection source
+            foreach (ConfigurationElement sourceItem in source)
+            {
+                // 1. Créer un nouvel élément dans la cible du bon type
+                // (CreateNewElement est protected, donc appel via Reflection)
+                var createMethod = target.GetType().GetMethod("CreateNewElement",
+                    BindingFlags.Instance | BindingFlags.NonPublic, null, Type.EmptyTypes, null);
+
+                // Si non trouvé sur le type dérivé, chercher sur la classe de base
+                if (createMethod == null)
+                {
+                    createMethod = typeof(ConfigurationElementCollection).GetMethod("CreateNewElement",
+                       BindingFlags.Instance | BindingFlags.NonPublic, null, Type.EmptyTypes, null);
+                }
+
+                if (createMethod != null)
+                {
+                    // Appel de CreateNewElement()
+                    var newItem = (ConfigurationElement)createMethod.Invoke(target, null);
+
+                    // 2. Copier récursivement les propriétés de l'item source vers le nouveau
+                    DeepCopyRecursive(sourceItem, newItem);
+
+                    // 3. Ajouter le nouvel item à la collection cible via BaseAdd (protected)
+                    var addMethod = target.GetType().GetMethod("BaseAdd",
+                        BindingFlags.Instance | BindingFlags.NonPublic,
+                        null, new Type[] { typeof(ConfigurationElement) }, null);
+
+                    if (addMethod == null)
+                    {
+                        addMethod = typeof(ConfigurationElementCollection).GetMethod("BaseAdd",
+                            BindingFlags.Instance | BindingFlags.NonPublic,
+                            null, new Type[] { typeof(ConfigurationElement) }, null);
+                    }
+
+                    addMethod?.Invoke(target, new object[] { newItem });
                 }
             }
         }

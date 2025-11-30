@@ -1,7 +1,7 @@
 ﻿using System;
 using Tools.Outils;
 
-namespace AppPublication.Tools
+namespace AppPublication.Generation
 {
     public enum StateGenerationEnum
     {

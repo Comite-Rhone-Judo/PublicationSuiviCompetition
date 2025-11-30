@@ -20,6 +20,9 @@ using System.Xml.Xsl;
 using Tools.Enum;
 using Tools.Export;
 using Tools.Outils;
+using AppPublication.ExtensionNoyau.Deroulement;
+using System;
+using AppPublication.Generation;
 
 namespace AppPublication.Export
 {

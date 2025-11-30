@@ -1,4 +1,5 @@
-﻿using AppPublication.Export;
+﻿using AppPublication.Config;
+using AppPublication.Export;
 using AppPublication.Tools;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
@@ -29,6 +30,11 @@ using Tools.Windows;
 using KernelImpl.Noyau.Organisation;
 using System.Collections;
 using NLog;
+using AppPublication.Tools.FranceJudo;
+using AppPublication.Tools.Files;
+using AppPublication.Publication;
+using AppPublication.Statistiques;
+using AppPublication.Generation;
 
 namespace AppPublication.Controles
 {
@@ -40,8 +46,9 @@ namespace AppPublication.Controles
     {
         #region CONSTANTES
         private const string kSiteLocalInstanceName = "local";
-        private const string kSiteDistantInstanceName = "";
+        private const string kSiteDistantInstanceName = "distant";
         private const string kSiteFranceJudoInstanceName = "ffjudo";
+
         private const string kSettingEasyConfig = "EasyConfig";
         private const string kSettingURLDistant = "URLDistant";
         private const string kSettingIsolerCompetition = "IsolerCompetition";
@@ -118,9 +125,9 @@ namespace AppPublication.Controles
             try
             {
                 // Initialise les objets de gestion des sites Web
-                _siteLocal = new MiniSite(true, kSiteLocalInstanceName, true, true);
-                _siteDistant = new MiniSite(false, kSiteDistantInstanceName, true, true);           // on utilise un prefix vide pour le site distant pour des questions de retrocompatibilite
-                _siteFranceJudo = new MiniSite(false, kSiteFranceJudoInstanceName, false, true);    // On ne garde pas le detail des configuration pour le site FFJudo
+                _siteLocal = new MiniSiteConfigurable (true, kSiteLocalInstanceName, true, true);
+                _siteDistant = new MiniSiteConfigurable (false, kSiteDistantInstanceName, true, true);           // on utilise un prefix vide pour le site distant pour des questions de retrocompatibilite
+                _siteFranceJudo = new MiniSiteConfigurable (false, kSiteFranceJudoInstanceName, false, true);    // On ne garde pas le detail des configuration pour le site FFJudo
                 _statMgr = (statMgr != null) ? statMgr : new GestionStatistiques();
                 _judoDataManager = dataManager;
 
@@ -716,7 +723,6 @@ namespace AppPublication.Controles
                 {
                     // TODO A voir dans quel section on la met
                     SiteLocal.InterfaceLocalPublication = value;
-                    PublicationConfigSection.Instance.InterfaceLocalPublication = SiteLocal.InterfaceLocalPublication.ToString();
                     NotifyPropertyChanged();
                     URLLocalPublication = CalculURLSiteLocal();
                 }
@@ -1440,10 +1446,10 @@ namespace AppPublication.Controles
                 AfficherPositionCombat = PublicationConfigSection.Instance.AfficherPositionCombat;
 
                 // Recherche le logo dans la liste
-                SelectedLogo = AppSettings.ReadRawSetting<FilteredFileInfo>(kSettingSelectedLogo, FichiersLogo, o => o.Name);
+                SelectedLogo = PublicationConfigSection.Instance.GetLogo(FichiersLogo.ToList(), o => o.Name);
 
-                // Recherche l'interface de publication
-                InterfaceLocalPublication = AppSettings.ReadRawSetting<IPAddress>(kSettingInterfaceLocalPublication, SiteLocal.InterfacesLocal, o => o.ToString());
+                // L'interface local de publication a ete chargee via la configuration du minisite, il faut juste s'assurer du bon calcul des URLs
+                URLLocalPublication = CalculURLSiteLocal();
             }
             catch (Exception ex)
             {

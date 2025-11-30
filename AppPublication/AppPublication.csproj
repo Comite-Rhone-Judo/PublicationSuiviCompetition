@@ -137,22 +137,13 @@
     <Compile Include="Config\InternalConfigSectionBase.cs" />
     <Compile Include="Config\ConfigurationService.cs" />
     <Compile Include="Config\PublicationConfigSection.cs" />
-    <Compile Include="Controles\ConfigurationEcranAppelViewModel.cs" />
-    <Compile Include="Controles\EcranAppel.cs" />
-    <Compile Include="Controles\EcranAppelViewModel.cs" />
     <Compile Include="Controles\GestionStatistiques.cs" />
     <Compile Include="Controles\RelayCommand.cs" />
-    <Compile Include="ExtensionNoyau\Engagement\CombatEqualityComparer.cs" />
-    <Compile Include="ExtensionNoyau\Engagement\DataEngagement.cs" />
-    <Compile Include="ExtensionNoyau\Engagement\GroupeEngagements.cs" />
-    <Compile Include="ExtensionNoyau\Engagement\IEngagementData.cs" />
-    <Compile Include="ExtensionNoyau\ExtendedJudoData.cs" />
-    <Compile Include="ExtensionNoyau\Engagement\VueJudokaEqualityComparer.cs" />
-    <Compile Include="ExtensionNoyau\IExtendedJudoData.cs" />
-   <Compile Include="ViewModel\EcranAppelTapisSelectionViewModel.cs" />
-    <Compile Include="IHM\Commissaire\ConfigurationEcranAppel.xaml.cs">
-      <DependentUpon>ConfigurationEcranAppel.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="ExtensionNoyau\Deroulement\CombatEqualityComparer.cs" />
+    <Compile Include="ExtensionNoyau\Deroulement\DataDeroulement.cs" />
+    <Compile Include="ExtensionNoyau\Deroulement\GroupeEngagements.cs" />
+    <Compile Include="ExtensionNoyau\ExtensionJudoData.cs" />
+    <Compile Include="ExtensionNoyau\Deroulement\VueJudokaEqualityComparer.cs" />
     <Compile Include="IHM\Commissaire\ConfigurationPublication.xaml.cs">
       <DependentUpon>ConfigurationPublication.xaml</DependentUpon>
     </Compile>
@@ -165,7 +156,6 @@
     <Compile Include="Statistiques\StatistiqueItem.cs" />
     <Compile Include="Statistiques\StatistiqueItemCompteur.cs" />
     <Compile Include="Statistiques\StatistiqueItemMoyenneur.cs" />
-    <Compile Include="Tools\ActionWatcher.cs" />
     <Compile Include="Tools\AppInformation.cs" />
     <Compile Include="Tools\Converter\AppStatusTypeConverter.cs" />
     <Compile Include="Tools\Converter\AppStatusProgressConverter.cs" />
@@ -180,16 +170,16 @@
     <Compile Include="Tools\Converter\BoolNotConverter.cs" />
     <Compile Include="Tools\Converter\ClientConverter.cs" />
     <Compile Include="Tools\EchangeMarkup.cs" />
-    <Compile Include="Tools\EntitePublicationFFJudo.cs" />
+    <Compile Include="Tools\FranceJudo\EntitePublicationFFJudo.cs" />
     <Compile Include="Tools\Enum\BusyStatusEnum.cs" />
     <Compile Include="Tools\Enum\TypePouleEnum.cs" />
-    <Compile Include="Tools\FileTools.cs" />
-    <Compile Include="Tools\FilteredFileInfo.cs" />
-    <Compile Include="Tools\GenerationProgressInfo.cs" />
-    <Compile Include="Tools\LectureFile\LectureStructures.cs" />
-    <Compile Include="Tools\StatExecution.cs" />
-    <Compile Include="Tools\StatusGenerationSite.cs" />
-    <Compile Include="Tools\StreamTool.cs" />
+    <Compile Include="Tools\Files\FileTools.cs" />
+    <Compile Include="Tools\Files\FilteredFileInfo.cs" />
+    <Compile Include="Generation\GenerationProgressInfo.cs" />
+    <Compile Include="Tools\FranceJudo\LectureStructures.cs" />
+    <Compile Include="Statistiques\StatExecution.cs" />
+    <Compile Include="Generation\StatusGenerationSite.cs" />
+    <Compile Include="Tools\Streams\StreamTool.cs" />
     <Compile Include="Tools\Struct\ExportStruct.cs" />
     <Page Include="IHM\Commissaire\ConfigurationEcranAppel.xaml">
       <SubType>Designer</SubType>
