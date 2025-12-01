@@ -41,7 +41,7 @@ namespace AppPublication
             // Controles.DialogControleur.DC = new Controles.DialogControleur();
 
             // Demarre la fenetre principale et injecte le Dialog controleur en tant que DataContext
-            AppPublication.Views.Commissaire.ExportWindow mainWin = new AppPublication.Views.Commissaire.ExportWindow();
+            AppPublication.Views.Main.ExportWindow mainWin = new AppPublication.Views.Main.ExportWindow();
             mainWin.DataContext = Controles.DialogControleur.Instance;
             mainWin.Show();
         }

@@ -135,6 +135,9 @@
     </Compile>
     <Compile Include="Config\ConfigElementBase.cs" />
     <Compile Include="Config\ConfigSectionBase.cs" />
+    <Compile Include="Config\EcranCollection.cs" />
+    <Compile Include="Config\EcranConfigElement.cs" />
+    <Compile Include="Config\EcransConfigSection.Cs" />
     <Compile Include="Config\InternalConfigSectionBase.cs" />
     <Compile Include="Config\ConfigurationService.cs" />
     <Compile Include="Config\MiniSiteCollection.cs" />
@@ -148,13 +151,16 @@
     <Compile Include="ExtensionNoyau\Deroulement\GroupeEngagements.cs" />
     <Compile Include="ExtensionNoyau\ExtensionJudoData.cs" />
     <Compile Include="ExtensionNoyau\Deroulement\VueJudokaEqualityComparer.cs" />
-    <Compile Include="Views\Commissaire\ConfigurationPublication.xaml.cs">
+    <Compile Include="ViewModels\ConfigurationEcransViewModel.cs" />
+    <Compile Include="ViewModels\EcranAppelConfigViewModel.cs" />
+    <Compile Include="ViewModels\EcranAppelTapisSelectionViewModel.cs" />
+    <Compile Include="Views\Configuration\ConfigurationPublication.xaml.cs">
       <DependentUpon>ConfigurationPublication.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Commissaire\InformationsView.xaml.cs">
+    <Compile Include="Views\Infos\InformationsView.xaml.cs">
       <DependentUpon>InformationsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Commissaire\StatistiquesView.xaml.cs">
+    <Compile Include="Views\Infos\StatistiquesView.xaml.cs">
       <DependentUpon>StatistiquesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Publication\MiniSiteConfigurable.cs" />
@@ -185,19 +191,23 @@
     <Compile Include="Generation\StatusGenerationSite.cs" />
     <Compile Include="Tools\Streams\StreamTool.cs" />
     <Compile Include="Tools\Struct\ExportStruct.cs" />
-    <Page Include="Views\Commissaire\ConfigurationPublication.xaml">
+    <Page Include="Views\Configuration\ConfigurationPublication.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Commissaire\ExportWindow.xaml">
+    <Page Include="Views\Main\ExportWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Commissaire\InformationsView.xaml">
+    <Page Include="Views\Infos\InformationsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Commissaire\StatistiquesView.xaml">
+    <Page Include="Views\Infos\StatistiquesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Configuration\ConfigurationEcransAppel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -216,8 +226,11 @@
     <Compile Include="Controles\ICommissaireWindow.cs" />
     <Compile Include="Export\ExportSite.cs" />
     <Compile Include="Export\ExportXML.cs" />
-    <Compile Include="Views\Commissaire\ExportWindow.xaml.cs">
+    <Compile Include="Views\Main\ExportWindow.xaml.cs">
       <DependentUpon>ExportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Configuration\ConfigurationEcransAppel.xaml.cs">
+      <DependentUpon>ConfigurationEcransAppel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Server\RechercheServer.xaml.cs">
       <DependentUpon>RechercheServer.xaml</DependentUpon>
@@ -302,7 +315,6 @@
     <Resource Include="Logo_AppPublication.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Config\ViewModels\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

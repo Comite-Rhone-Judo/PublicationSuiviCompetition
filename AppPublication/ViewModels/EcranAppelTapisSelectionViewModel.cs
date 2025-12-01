@@ -1,13 +1,12 @@
 ﻿using Tools.Outils;
 
-namespace AppPublication.Controles
+namespace AppPublication.ViewModel
 {
-    /// <summary>
-    /// ViewModel pour la sélection d'un tapis (utilisé dans les CheckBox)
-    /// </summary>
     public class EcranAppelTapisSelectionViewModel : NotificationBase
     {
         private int _numero;
+        private bool _isSelected;
+
         public int Numero
         {
             get { return _numero; }
@@ -21,7 +20,6 @@ namespace AppPublication.Controles
             }
         }
 
-        private bool _isSelected;
         public bool IsSelected
         {
             get { return _isSelected; }
@@ -35,9 +33,6 @@ namespace AppPublication.Controles
             }
         }
 
-        public string DisplayName
-        {
-            get { return $"Tapis {Numero}"; }
-        }
+        public string DisplayName => $"Tapis {Numero}";
     }
 }

@@ -11,7 +11,7 @@ using Tools.Outils;
 using Tools.Export;
 using Tools.Windows;
 
-namespace AppPublication.Views.Commissaire
+namespace AppPublication.Views.Main
 {
     /// <summary>
     /// Logique d'interaction pour IndividuelleWindow.xaml
