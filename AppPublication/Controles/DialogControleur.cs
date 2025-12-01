@@ -20,10 +20,10 @@ namespace AppPublication.Controles
     {
         #region MEMBRES
         private static DialogControleur _currentControleur = null;      // instance singletion
-        private AppPublication.Views.Commissaire.StatistiquesView _statWindow = null;
-        private AppPublication.Views.Commissaire.InformationsView _infoWindow = null;
+        private AppPublication.Views.Infos.StatistiquesView _statWindow = null;
+        private AppPublication.Views.Infos.InformationsView _infoWindow = null;
         private PdfViewer _manuelViewer = null;
-        private AppPublication.Views.Commissaire.ConfigurationPublication _cfgWindow = null;
+        private AppPublication.Views.Configuration.ConfigurationPublication _cfgWindow = null;
        private readonly JudoData _serverData;
         #endregion
 
@@ -667,7 +667,7 @@ namespace AppPublication.Controles
                             {
                                 if (_infoWindow == null)
                                 {
-                                    _infoWindow = new AppPublication.Views.Commissaire.InformationsView();
+                                    _infoWindow = new AppPublication.Views.Infos.InformationsView();
                                 }
                                 if (_infoWindow != null)
                                 {
@@ -734,7 +734,7 @@ namespace AppPublication.Controles
                             {
                                 if (_statWindow == null)
                                 {
-                                    _statWindow = new AppPublication.Views.Commissaire.StatistiquesView(GestionStatistiques);
+                                    _statWindow = new AppPublication.Views.Infos.StatistiquesView(GestionStatistiques);
                                 }
 
                                 if (_statWindow != null)
@@ -767,7 +767,7 @@ namespace AppPublication.Controles
                             {
                                 if (_cfgWindow == null)
                                 {
-                                    _cfgWindow = new AppPublication.Views.Commissaire.ConfigurationPublication(GestionSite);
+                                    _cfgWindow = new AppPublication.Views.Configuration.ConfigurationPublication(GestionSite);
                                 }
                                 if (_cfgWindow != null)
                                 {

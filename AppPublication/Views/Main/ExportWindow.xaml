@@ -1,4 +1,4 @@
-﻿<Window x:Class="AppPublication.Views.Commissaire.ExportWindow"
+﻿<Window x:Class="AppPublication.Views.Main.ExportWindow"
        xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
