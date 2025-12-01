@@ -20,11 +20,11 @@ namespace AppPublication.Controles
     {
         #region MEMBRES
         private static DialogControleur _currentControleur = null;      // instance singletion
-        private AppPublication.IHM.Commissaire.StatistiquesView _statWindow = null;
-        private AppPublication.IHM.Commissaire.InformationsView _infoWindow = null;
+        private AppPublication.Views.Commissaire.StatistiquesView _statWindow = null;
+        private AppPublication.Views.Commissaire.InformationsView _infoWindow = null;
         private PdfViewer _manuelViewer = null;
-        private AppPublication.IHM.Commissaire.ConfigurationPublication _cfgWindow = null;
-        private readonly JudoData _serverData;
+        private AppPublication.Views.Commissaire.ConfigurationPublication _cfgWindow = null;
+       private readonly JudoData _serverData;
         #endregion
 
         #region CONSTRUCTEUR
@@ -667,7 +667,7 @@ namespace AppPublication.Controles
                             {
                                 if (_infoWindow == null)
                                 {
-                                    _infoWindow = new AppPublication.IHM.Commissaire.InformationsView();
+                                    _infoWindow = new AppPublication.Views.Commissaire.InformationsView();
                                 }
                                 if (_infoWindow != null)
                                 {
@@ -734,7 +734,7 @@ namespace AppPublication.Controles
                             {
                                 if (_statWindow == null)
                                 {
-                                    _statWindow = new AppPublication.IHM.Commissaire.StatistiquesView(GestionStatistiques);
+                                    _statWindow = new AppPublication.Views.Commissaire.StatistiquesView(GestionStatistiques);
                                 }
 
                                 if (_statWindow != null)
@@ -767,7 +767,7 @@ namespace AppPublication.Controles
                             {
                                 if (_cfgWindow == null)
                                 {
-                                    _cfgWindow = new AppPublication.IHM.Commissaire.ConfigurationPublication(GestionSite);
+                                    _cfgWindow = new AppPublication.Views.Commissaire.ConfigurationPublication(GestionSite);
                                 }
                                 if (_cfgWindow != null)
                                 {

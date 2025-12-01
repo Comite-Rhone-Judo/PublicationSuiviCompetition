@@ -133,9 +133,13 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Config\ConfigElementBase.cs" />
     <Compile Include="Config\ConfigSectionBase.cs" />
     <Compile Include="Config\InternalConfigSectionBase.cs" />
     <Compile Include="Config\ConfigurationService.cs" />
+    <Compile Include="Config\MiniSiteCollection.cs" />
+    <Compile Include="Config\MiniSiteConfigElement.cs" />
+    <Compile Include="Config\MiniSiteConfigSection.cs" />
     <Compile Include="Config\PublicationConfigSection.cs" />
     <Compile Include="Controles\GestionStatistiques.cs" />
     <Compile Include="Controles\RelayCommand.cs" />
@@ -144,15 +148,16 @@
     <Compile Include="ExtensionNoyau\Deroulement\GroupeEngagements.cs" />
     <Compile Include="ExtensionNoyau\ExtensionJudoData.cs" />
     <Compile Include="ExtensionNoyau\Deroulement\VueJudokaEqualityComparer.cs" />
-    <Compile Include="IHM\Commissaire\ConfigurationPublication.xaml.cs">
+    <Compile Include="Views\Commissaire\ConfigurationPublication.xaml.cs">
       <DependentUpon>ConfigurationPublication.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IHM\Commissaire\InformationsView.xaml.cs">
+    <Compile Include="Views\Commissaire\InformationsView.xaml.cs">
       <DependentUpon>InformationsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IHM\Commissaire\StatistiquesView.xaml.cs">
+    <Compile Include="Views\Commissaire\StatistiquesView.xaml.cs">
       <DependentUpon>StatistiquesView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Publication\MiniSiteConfigurable.cs" />
     <Compile Include="Statistiques\StatistiqueItem.cs" />
     <Compile Include="Statistiques\StatistiqueItemCompteur.cs" />
     <Compile Include="Statistiques\StatistiqueItemMoyenneur.cs" />
@@ -181,27 +186,23 @@
     <Compile Include="Generation\StatusGenerationSite.cs" />
     <Compile Include="Tools\Streams\StreamTool.cs" />
     <Compile Include="Tools\Struct\ExportStruct.cs" />
-    <Page Include="IHM\Commissaire\ConfigurationEcranAppel.xaml">
+    <Page Include="Views\Commissaire\ConfigurationPublication.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="IHM\Commissaire\ConfigurationPublication.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="IHM\Commissaire\ExportWindow.xaml">
+    <Page Include="Views\Commissaire\ExportWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="IHM\Commissaire\InformationsView.xaml">
+    <Page Include="Views\Commissaire\InformationsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="IHM\Commissaire\StatistiquesView.xaml">
+    <Page Include="Views\Commissaire\StatistiquesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="IHM\Server\RechercheServer.xaml">
+    <Page Include="Views\Server\RechercheServer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -216,10 +217,10 @@
     <Compile Include="Controles\ICommissaireWindow.cs" />
     <Compile Include="Export\ExportSite.cs" />
     <Compile Include="Export\ExportXML.cs" />
-    <Compile Include="IHM\Commissaire\ExportWindow.xaml.cs">
+    <Compile Include="Views\Commissaire\ExportWindow.xaml.cs">
       <DependentUpon>ExportWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IHM\Server\RechercheServer.xaml.cs">
+    <Compile Include="Views\Server\RechercheServer.xaml.cs">
       <DependentUpon>RechercheServer.xaml</DependentUpon>
     </Compile>
     <Page Include="Styles\ConverterStyles.xaml">
@@ -296,6 +297,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Logo_AppPublication.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Config\ViewModels\" />
+    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

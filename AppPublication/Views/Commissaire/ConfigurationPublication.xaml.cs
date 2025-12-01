@@ -1,7 +1,7 @@
 ﻿using AppPublication.Controles;
 using System.Windows;
 
-namespace AppPublication.IHM.Commissaire
+namespace AppPublication.Views.Commissaire
 {
     /// <summary>
     /// Logique d'interaction pour ConfigurationPublication.xaml
