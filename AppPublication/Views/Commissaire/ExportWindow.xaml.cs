@@ -1,5 +1,5 @@
 ﻿using AppPublication.Controles;
-using AppPublication.IHM.Server;
+using AppPublication.Views.Server;
 using KernelImpl.Noyau.Organisation;
 using System;
 using System.Collections.ObjectModel;
@@ -11,7 +11,7 @@ using Tools.Outils;
 using Tools.Export;
 using Tools.Windows;
 
-namespace AppPublication.IHM.Commissaire
+namespace AppPublication.Views.Commissaire
 {
     /// <summary>
     /// Logique d'interaction pour IndividuelleWindow.xaml

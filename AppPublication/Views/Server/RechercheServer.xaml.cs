@@ -10,7 +10,7 @@ using Tools.Enum;
 using Tools.Outils;
 using Tools.Struct;
 
-namespace AppPublication.IHM.Server
+namespace AppPublication.Views.Server
 {
     /// <summary>
     /// Logique d'interaction pour RechercheServer.xaml

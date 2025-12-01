@@ -1,7 +1,7 @@
 ﻿using AppPublication.Controles;
 using Telerik.Windows.Controls;
 
-namespace AppPublication.IHM.Commissaire
+namespace AppPublication.Views.Commissaire
 {
     /// <summary>
     /// Logique d'interaction pour Statistiques.xaml
