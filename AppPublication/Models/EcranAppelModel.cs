@@ -7,10 +7,15 @@ namespace AppPublication.Models
     {
         private static int _compteurGlobal = 1;
 
-        public static int NextId
+        public static int LastId
         {
             get { return _compteurGlobal++; }
             set { _compteurGlobal = value; }
+        }
+
+        public static int GetNextId()
+        {
+            return _compteurGlobal++;
         }
 
         public int Id { get; set; }
@@ -21,7 +26,7 @@ namespace AppPublication.Models
 
         public EcranAppelModel()
         {
-            Id = NextId;
+            Id = GetNextId();
             TapisIds = new List<int>();
             Description = "Nouvel Écran";
             Hostname = string.Empty;

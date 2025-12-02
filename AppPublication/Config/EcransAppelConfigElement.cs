@@ -7,11 +7,11 @@ namespace AppPublication.Config
     /// Élément de configuration représentant un écran d'appel.
     /// Hérite de ConfigElementBase pour l'intégration automatique avec le système de sauvegarde.
     /// </summary>
-    public class EcranConfigElement : ConfigElementBase
+    public class EcransAppelConfigElement : ConfigElementBase
     {
         // Constantes pour les noms des propriétés XML
         private const string kId = "id";
-        private const string kNom = "nom";
+        private const string kNom = "description";
         private const string kAdresseIp = "adresseIp";
         private const string kTapisIds = "tapisIds";
         private const string kHostname = "hostname"; // NOUVEAU
@@ -23,9 +23,9 @@ namespace AppPublication.Config
         /// </summary>
         protected override void NotifyParentOfModification()
         {
-            if (EcransConfigSection.Instance != null)
+            if (EcransAppelConfigSection.Instance != null)
             {
-                EcransConfigSection.Instance.NotifyChildModification();
+                EcransAppelConfigSection.Instance.NotifyChildModification();
             }
         }
 
@@ -39,12 +39,12 @@ namespace AppPublication.Config
         [ConfigurationProperty(kId, IsKey = true, IsRequired = true)]
         public int Id
         {
-            get { return GetConfigValue<int>(kId, 0); }
+            get { return GetConfigValue<int>(kId, 1); }
             set { SetValueAndMarkDirty(kId, value); }
         }
 
         [ConfigurationProperty(kNom, DefaultValue = "Nouvel Ecran")]
-        public string Nom
+        public string Description
         {
             get { return GetConfigValue<string>(kNom, "Nouvel Ecran"); }
             set { SetValueAndMarkDirty(kNom, value); }

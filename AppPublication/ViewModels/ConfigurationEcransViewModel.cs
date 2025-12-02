@@ -45,6 +45,12 @@ namespace AppPublication.ViewModels
         /// </summary>
         public ConfigurationEcransViewModel(ObservableCollection<EcranAppelModel> models, int nbMaxTapis)
         {
+            // TODO l'adresse IP est le host ne sont pas chargés correctement au démarrage
+            // TODO la zonde de saisie adresse/host est bizarre
+            // TODO la résolution des noms ne semble pas fonctionner correctement
+            // TODO la sélection des tapis ne fonctionne pas
+            // TODO le RAZ host/IP ne fonctionne pas correctement
+
             _sourceCollection = models;
             _tapisDisponibles = Enumerable.Range(1, nbMaxTapis).ToList();
 
@@ -74,14 +80,14 @@ namespace AppPublication.ViewModels
             _sourceCollection.Add(nouveauModel);
 
             // 3. Ajout à la Configuration (Sauvegarde Disque immédiate)
-            var configElement = new EcranConfigElement
+            var configElement = new EcransAppelConfigElement
             {
                 Id = nouveauModel.Id,
-                Nom = nouveauModel.Description
+                Description = nouveauModel.Description
             };
-            if (EcransConfigSection.Instance != null)
+            if (EcransAppelConfigSection.Instance != null)
             {
-                EcransConfigSection.Instance.Ecrans.Add(configElement);
+                EcransAppelConfigSection.Instance.Ecrans.Add(configElement);
             }
 
             // 4. Création du ViewModel et ajout à l'interface
@@ -110,9 +116,9 @@ namespace AppPublication.ViewModels
                 if (modelToRemove != null) _sourceCollection.Remove(modelToRemove);
 
                 // 3. Supprimer de la Configuration (Disque)
-                if (EcransConfigSection.Instance != null)
+                if (EcransAppelConfigSection.Instance != null)
                 {
-                    EcransConfigSection.Instance.Ecrans.Remove(vm.Id);
+                    EcransAppelConfigSection.Instance.Ecrans.Remove(vm.Id);
                 }
             }
         }
