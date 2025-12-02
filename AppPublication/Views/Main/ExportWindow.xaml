@@ -232,21 +232,21 @@
                                     Command="{Binding Path=CmdAfficherConfiguration}" Height="35">
                                         <WrapPanel Orientation="Horizontal">
                                             <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/settings2-32.png" Height="25" Margin="5 0"/>
-                                            <Label Content="Configuration" />
+                                            <Label Content="Configuration ..." Style="{StaticResource ButtonLabelStyle}"/>
                                         </WrapPanel>
                                     </telerik:RadButton>
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 15 0"
                                                    Command="{Binding Path=CmdDemarrerGeneration}" Height="35">
                                         <WrapPanel Orientation="Horizontal">
                                             <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/play-32.png" Height="25" Margin="5 0"/>
-                                            <Label Content="Démarrer" />
+                                            <Label Content="Démarrer" Style="{StaticResource ButtonLabelStyle}" />
                                         </WrapPanel>
                                     </telerik:RadButton>
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="15 0 0 0" Height="35"
                                                    Command="{Binding Path=CmdArreterGeneration}">
                                         <WrapPanel Orientation="Horizontal">
                                             <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/stop-32.png" Height="25" Margin="5 0"/>
-                                            <Label Content="Arrêter" />
+                                            <Label Content="Arrêter" Style="{StaticResource ButtonLabelStyle}" />
                                         </WrapPanel>
                                     </telerik:RadButton>
                                 </StackPanel>

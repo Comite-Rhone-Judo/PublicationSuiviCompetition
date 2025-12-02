@@ -187,6 +187,7 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
                     <Label HorizontalAlignment="Right" Content="Délai de génération:" Style="{StaticResource LabelStyle}" />
@@ -226,17 +227,26 @@
                 <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Height="20" Margin="5 -10 5 5" Text = "{Binding Path=RepertoireRacine}" IsEnabled="False"/>
                 <telerik:RadButton Grid.Row="6" Grid.Column="0" Width="95" Height="30" telerik:StyleManager.Theme="Expression_Dark" Command="{Binding CmdGetRepertoireRacine}" Margin="-70 0 0 0">
                     <WrapPanel Orientation="Horizontal">
-                        <Label Content="Sélectionner ..." Foreground="White"/>
+                        <Label Content="Sélectionner ..." Style="{StaticResource ButtonLabelStyle}"/>
                     </WrapPanel>
                 </telerik:RadButton>
 
-                <StackPanel Grid.Row="6" Grid.Column="2" Orientation="Horizontal" Margin="0 -5 0 0">
+                <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" Margin="0 -5 0 0">
                     <CheckBox Style="{StaticResource CheckboxStyle}"
                         IsChecked="{Binding Path=EffacerAuDemarrage}"
                         Margin="0 0 0 0">
                     </CheckBox>
                     <Label HorizontalAlignment="Right" Content="Effacer au démarage" Style="{StaticResource LabelStyle}"/>
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, Supprimer tout le contenu préalable du répertoire au démarrage. Le site distant sera également effacé."/>
+                </StackPanel>
+                <StackPanel Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0 10 0 0">
+                    <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 0 0"
+                    Command="{Binding Path=CmdAfficherConfigurationEcransAppel}" Height="35">
+                        <WrapPanel Orientation="Horizontal">
+                            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/restore_window-32.png" Height="25" Margin="5 0"/>
+                            <Label Content="Configurer Ecrans d'appel ..." Style="{StaticResource ButtonLabelStyle}"/>
+                        </WrapPanel>
+                    </telerik:RadButton>
                 </StackPanel>
             </Grid>
         </Border>
