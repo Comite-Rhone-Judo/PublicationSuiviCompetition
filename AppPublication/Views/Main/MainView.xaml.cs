@@ -16,13 +16,13 @@ namespace AppPublication.Views.Main
     /// <summary>
     /// Logique d'interaction pour IndividuelleWindow.xaml
     /// </summary>
-    public partial class ExportWindow : Window //, ICommissaireWindow
+    public partial class MainView : Window //, ICommissaireWindow
     {
 
         private ObservableCollection<i_vue_epreuve_interface> _source1 = new ObservableCollection<i_vue_epreuve_interface>();
         private ObservableCollection<Competition> _source2 = new ObservableCollection<Competition>();
 
-        public ExportWindow()
+        public MainView()
         {
             InitializeComponent();
 

@@ -23,7 +23,7 @@ namespace AppPublication.Controles
         private AppPublication.Views.Infos.StatistiquesView _statWindow = null;
         private AppPublication.Views.Infos.InformationsView _infoWindow = null;
         private PdfViewer _manuelViewer = null;
-        private AppPublication.Views.Configuration.ConfigurationPublication _cfgWindow = null;
+        private AppPublication.Views.Configuration.ConfigurationPublicationView _cfgWindow = null;
         #endregion
 
         #region CONSTRUCTEUR
@@ -746,7 +746,7 @@ namespace AppPublication.Controles
                             {
                                 if (_cfgWindow == null)
                                 {
-                                    _cfgWindow = new AppPublication.Views.Configuration.ConfigurationPublication(GestionSite);
+                                    _cfgWindow = new AppPublication.Views.Configuration.ConfigurationPublicationView(GestionSite);
                                 }
                                 if (_cfgWindow != null)
                                 {

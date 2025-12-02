@@ -1,6 +1,8 @@
 ﻿using AppPublication.Config;
 using AppPublication.Export;
 using AppPublication.ExtensionNoyau.Deroulement;
+using AppPublication.Views.Configuration;
+using AppPublication.ViewModel;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
 using KernelImpl.Noyau.Organisation;
@@ -92,6 +94,8 @@ namespace AppPublication.Controles
         private int _nbGeneration = 0;                              // Nombre de generation en cours pour le site distant   
         private List<int> _allTaskProgress = new List<int>();       // Progression de chacune des taches (clef = Id)
 
+        private ConfigurationEcransAppelView _cfgEcransAppelView = null; // La fenetre de configuration des ecrans d'appel
+
         /// <summary>
         /// Structure interne pour gerer les parametres de generation du site
         /// </summary>
@@ -101,6 +105,41 @@ namespace AppPublication.Controles
             public Phase phase { get; set; }
             public int? tapis { get; set; }
             public List<GroupeEngagements> groupeEngages { get; set; }
+        }
+        #endregion
+
+        #region COMMANDES
+
+        private ICommand _cmdAfficherConfigurationEcransAppel = null;
+        /// <summary>
+        /// Commande d'affichage de la configuration
+        /// </summary>
+        public ICommand CmdAfficherConfigurationEcransAppel
+        {
+            get
+            {
+                if (_cmdAfficherConfigurationEcransAppel == null)
+                {
+                    _cmdAfficherConfigurationEcransAppel = new RelayCommand(
+                            o =>
+                            {
+                                if (_cfgEcransAppelView == null)
+                                {
+                                    _cfgEcransAppelView = new AppPublication.Views.Configuration.ConfigurationEcransAppelView(new ConfigurationEcransViewModel());
+                                }
+                                if (_cfgEcransAppelView != null)
+                                {
+                                    _cfgEcransAppelView.ShowDialog();
+                                    _cfgEcransAppelView = null;
+                                }
+                            },
+                            o =>
+                            {
+                                return !this.IsGenerationActive;
+                            });
+                }
+                return _cmdAfficherConfigurationEcransAppel;
+            }
         }
         #endregion
 

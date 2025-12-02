@@ -6,9 +6,9 @@ namespace AppPublication.Views.Configuration
     /// <summary>
     /// Logique d'interaction pour ConfigurationPublication.xaml
     /// </summary>
-    public partial class ConfigurationPublication : Window
+    public partial class ConfigurationPublicationView : Window
     {
-        public ConfigurationPublication(GestionSite dataCtx)
+        public ConfigurationPublicationView(GestionSite dataCtx)
         {
             if (dataCtx != null)
             {
