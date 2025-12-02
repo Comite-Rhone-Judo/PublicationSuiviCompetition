@@ -50,7 +50,7 @@
                     </telerik:RadButton>
                 </StackPanel>
 
-                <telerik:RadGridView Grid.Row="1" ItemsSource="{Binding Ecrans}" 
+                <telerik:RadGridView Grid.Row="1" ItemsSource="{Binding EcransViewModels}" 
                                      Style="{StaticResource GridViewStyle1}"
                                      ShowGroupPanel="False"
                                      AutoGenerateColumns="False"

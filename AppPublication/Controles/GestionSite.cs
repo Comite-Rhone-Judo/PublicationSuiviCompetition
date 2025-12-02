@@ -1487,6 +1487,9 @@ namespace AppPublication.Controles
             }
         }
 
+        /// <summary>
+        /// Initialise les ecrans d'appel depuis les données en configuration
+        /// </summary>
         private void InitEcransAppel()
         {
             try
@@ -1494,9 +1497,9 @@ namespace AppPublication.Controles
                 // Chargement des Ecrans depuis la Config vers le Modèle Runtime
                 _ecransAppel = new ObservableCollection<EcranAppelModel>();
 
-                if (EcransConfigSection.Instance != null && EcransConfigSection.Instance.Ecrans != null)
+                if (EcransAppelConfigSection.Instance != null && EcransAppelConfigSection.Instance.Ecrans != null)
                 {
-                    foreach (EcranConfigElement cfg in EcransConfigSection.Instance.Ecrans)
+                    foreach (EcransAppelConfigElement cfg in EcransAppelConfigSection.Instance.Ecrans)
                     {
                         // Parsing des IDs de tapis "1;2;3" -> List<int>
                         List<int> tapisIds = new List<int>();
@@ -1510,19 +1513,20 @@ namespace AppPublication.Controles
 
                         // On crée le modèle à partir de la config
                         IPAddress ip = IPAddress.None;
-                        IPAddress.TryParse(cfg.AdresseIp, out ip);
+                        bool ipValid = IPAddress.TryParse(cfg.AdresseIp, out ip);
                         var model = new EcranAppelModel
                         {
                             Id = cfg.Id,
-                            Description = cfg.Nom,
+                            Description = cfg.Description,
                             Hostname = cfg.Hostname,
-                            AdresseIP = ip,
+                            AdresseIP = ipValid ? ip : IPAddress.None,
                             TapisIds = tapisIds
                         };
 
+                        // TODO La gestion de l'ID est a revoir ...
                         // Ajuster le compteur statique pour éviter les doublons d'ID futurs
-                        if (model.Id >= EcranAppelModel.NextId)
-                            EcranAppelModel.NextId = model.Id + 1;
+                        if (model.Id > EcranAppelModel.LastId)
+                            EcranAppelModel.LastId = model.Id;
 
                         _ecransAppel.Add(model);
                     }

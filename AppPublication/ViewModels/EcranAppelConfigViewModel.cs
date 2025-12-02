@@ -77,12 +77,12 @@ namespace AppPublication.ViewModels
 
                     // SAUVEGARDE IMMEDIATE
                     var cfg = GetConfigElement();
-                    if (cfg != null) cfg.Nom = value; // Déclenche le IsDirty automatique
+                    if (cfg != null) cfg.Description = value; // Déclenche le IsDirty automatique
                 }
             }
         }
 
-        private string _hostname;
+        private string _hostname = kNotFoundPlaceholder;
         public string Hostname
         {
             get { return _hostname; }
@@ -106,7 +106,7 @@ namespace AppPublication.ViewModels
             }
         }
 
-        private string _ipAdresse;
+        private string _ipAdresse = kNotFoundPlaceholder;
         public string AdresseIP
         {
             get { return _ipAdresse.ToString(); }
@@ -181,13 +181,12 @@ namespace AppPublication.ViewModels
         #region METHODES PRIVEES
 
         // --- Helpers Configuration ---
-        private EcranConfigElement GetConfigElement()
+        private EcransAppelConfigElement GetConfigElement()
         {
             // On va chercher l'élément correspondant dans la config globale
-            if (EcransConfigSection.Instance != null && EcransConfigSection.Instance.Ecrans != null)
+            if (EcransAppelConfigSection.Instance != null && EcransAppelConfigSection.Instance.Ecrans != null)
             {
-                return EcransConfigSection.Instance.Ecrans.Cast<EcranConfigElement>()
-                                          .FirstOrDefault(e => e.Id == this.Id);
+                return EcransAppelConfigSection.Instance.Ecrans.GetElementById(Id);
             }
             return null;
         }

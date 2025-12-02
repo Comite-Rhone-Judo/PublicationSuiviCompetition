@@ -135,9 +135,9 @@
     </Compile>
     <Compile Include="Config\ConfigElementBase.cs" />
     <Compile Include="Config\ConfigSectionBase.cs" />
-    <Compile Include="Config\EcranConfigElementCollection.cs" />
-    <Compile Include="Config\EcranConfigElement.cs" />
-    <Compile Include="Config\EcransConfigSection.Cs" />
+    <Compile Include="Config\EcransAppelConfigElementCollection.cs" />
+    <Compile Include="Config\EcransAppelConfigElement.cs" />
+    <Compile Include="Config\EcransAppelConfigSection.Cs" />
     <Compile Include="Config\InternalConfigSectionBase.cs" />
     <Compile Include="Config\ConfigurationService.cs" />
     <Compile Include="Config\MiniSiteCollection.cs" />

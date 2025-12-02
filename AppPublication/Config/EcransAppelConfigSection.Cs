@@ -7,20 +7,20 @@ namespace AppPublication.Config
     /// Section de configuration pour les écrans d'appel.
     /// Singleton géré par ConfigSectionBase.
     /// </summary>
-    [SectionName("EcransConfigSection")]
-    public class EcransConfigSection : ConfigSectionBase<EcransConfigSection>
+    [SectionName("EcransAppelSection")]
+    public class EcransAppelConfigSection : ConfigSectionBase<EcransAppelConfigSection>
     {
         private const string kEcrans = "ecrans";
         private const string kLastModifiedTick = "lastModifiedTick";
 
         // Constructeur privé pour le singleton
-        protected EcransConfigSection() : base() { }
+        protected EcransAppelConfigSection() : base() { }
 
         [ConfigurationProperty(kEcrans, IsDefaultCollection = false)]
-        [ConfigurationCollection(typeof(EcranConfigElementCollection), AddItemName = "ecran")]
-        public EcranConfigElementCollection Ecrans
+        [ConfigurationCollection(typeof(EcransAppelConfigElementCollection), AddItemName = "ecran")]
+        public EcransAppelConfigElementCollection Ecrans
         {
-            get { return (EcranConfigElementCollection)this[kEcrans]; }
+            get { return (EcransAppelConfigElementCollection)this[kEcrans]; }
             set { this[kEcrans] = value; }
         }
 
