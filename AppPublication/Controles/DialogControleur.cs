@@ -767,7 +767,7 @@ namespace AppPublication.Controles
                             {
                                 if (_cfgWindow == null)
                                 {
-                                    _cfgWindow = new AppPublication.Views.Configuration.ConfigurationPublication(GestionSite);
+                                    _cfgWindow = new AppPublication.Views.Configuration.ConfigurationPublicationView(GestionSite);
                                 }
                                 if (_cfgWindow != null)
                                 {

@@ -18,14 +18,14 @@ namespace AppPublication.Views.Configuration
     /// <summary>
     /// Interaction logic for ConfigurationEcransAppel.xaml
     /// </summary>
-    public partial class ConfigurationEcransAppel : Window
+    public partial class ConfigurationEcransAppelView : Window
     {
-        public ConfigurationEcransAppel()
+        public ConfigurationEcransAppelView(ConfigurationEcransViewModel dataCtx)
         {
             InitializeComponent();
 
             // Injection du ViewModel lors de la création de la vue
-            this.DataContext = new ConfigurationEcransViewModel();
+            this.DataContext = dataCtx;
         }
 
         private void ButClose_Click(object sender, RoutedEventArgs e)

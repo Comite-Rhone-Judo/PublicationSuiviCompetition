@@ -154,8 +154,8 @@
     <Compile Include="ViewModels\ConfigurationEcransViewModel.cs" />
     <Compile Include="ViewModels\EcranAppelConfigViewModel.cs" />
     <Compile Include="ViewModels\EcranAppelTapisSelectionViewModel.cs" />
-    <Compile Include="Views\Configuration\ConfigurationPublication.xaml.cs">
-      <DependentUpon>ConfigurationPublication.xaml</DependentUpon>
+    <Compile Include="Views\Configuration\ConfigurationPublicationView.xaml.cs">
+      <DependentUpon>ConfigurationPublicationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Infos\InformationsView.xaml.cs">
       <DependentUpon>InformationsView.xaml</DependentUpon>
@@ -192,11 +192,11 @@
     <Compile Include="Generation\StatusGenerationSite.cs" />
     <Compile Include="Tools\Streams\StreamTool.cs" />
     <Compile Include="Tools\Struct\ExportStruct.cs" />
-    <Page Include="Views\Configuration\ConfigurationPublication.xaml">
+    <Page Include="Views\Configuration\ConfigurationPublicationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Main\ExportWindow.xaml">
+    <Page Include="Views\Main\MainView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -208,7 +208,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Configuration\ConfigurationEcransAppel.xaml">
+    <Page Include="Views\Configuration\ConfigurationEcransAppelView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -227,11 +227,11 @@
     <Compile Include="Controles\ICommissaireWindow.cs" />
     <Compile Include="Export\ExportSite.cs" />
     <Compile Include="Export\ExportXML.cs" />
-    <Compile Include="Views\Main\ExportWindow.xaml.cs">
-      <DependentUpon>ExportWindow.xaml</DependentUpon>
+    <Compile Include="Views\Main\MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Configuration\ConfigurationEcransAppel.xaml.cs">
-      <DependentUpon>ConfigurationEcransAppel.xaml</DependentUpon>
+    <Compile Include="Views\Configuration\ConfigurationEcransAppelView.xaml.cs">
+      <DependentUpon>ConfigurationEcransAppelView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Server\RechercheServer.xaml.cs">
       <DependentUpon>RechercheServer.xaml</DependentUpon>

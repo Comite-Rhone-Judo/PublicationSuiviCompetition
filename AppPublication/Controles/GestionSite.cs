@@ -1,6 +1,8 @@
 ﻿using AppPublication.Config;
 using AppPublication.Export;
-using AppPublication.Tools;
+using AppPublication.ExtensionNoyau.Deroulement;
+using AppPublication.Views.Configuration;
+using AppPublication.ViewModel;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
 using AppPublication.ExtensionNoyau;
@@ -95,6 +97,7 @@ namespace AppPublication.Controles
         private int _workCounter = 0;                               // Compteur de travail en cours pour la generation du site
         private int _nbGeneration = 0;                              // Nombre de generation en cours pour le site distant   
         private List<int> _allTaskProgress = new List<int>();       // Progression de chacune des taches (clef = Id)
+		private ConfigurationEcransAppelView _cfgEcransAppelView = null; // La fenetre de configuration des ecrans d'appel
 
         private IJudoDataManager _judoDataManager;                  // Le gestionnaire de données interne
 
@@ -110,6 +113,41 @@ namespace AppPublication.Controles
         }
         #endregion
 
+        #region COMMANDES
+
+        private ICommand _cmdAfficherConfigurationEcransAppel = null;
+        /// <summary>
+        /// Commande d'affichage de la configuration
+        /// </summary>
+        public ICommand CmdAfficherConfigurationEcransAppel
+        {
+            get
+            {
+                if (_cmdAfficherConfigurationEcransAppel == null)
+                {
+                    _cmdAfficherConfigurationEcransAppel = new RelayCommand(
+                            o =>
+                            {
+                                if (_cfgEcransAppelView == null)
+                                {
+                                    _cfgEcransAppelView = new AppPublication.Views.Configuration.ConfigurationEcransAppelView(new ConfigurationEcransViewModel());
+                                }
+                                if (_cfgEcransAppelView != null)
+                                {
+                                    _cfgEcransAppelView.ShowDialog();
+                                    _cfgEcransAppelView = null;
+                                }
+                            },
+                            o =>
+                            {
+                                return !this.IsGenerationActive;
+                            });
+                }
+                return _cmdAfficherConfigurationEcransAppel;
+            }
+        }
+        #endregion
+
         #region CONSTRUCTEURS
         /// <summary>
         /// Constructeur
@@ -121,7 +159,6 @@ namespace AppPublication.Controles
         {
             // Impossible d'etre null
             if (dataManager == null) throw new ArgumentNullException();
-
             try
             {
                 // Initialise les objets de gestion des sites Web
@@ -145,6 +182,7 @@ namespace AppPublication.Controles
             }
             catch (Exception ex)
             {
+                // TODO Voir ce que l'on fait ici, le gestionSite n'est pas correctement initialise ... peut-on encore continuer ??
                 LogTools.Error(ex);
             }
         }

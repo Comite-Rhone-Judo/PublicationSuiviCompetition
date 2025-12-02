@@ -72,7 +72,7 @@ namespace AppPublication
             _configSvc = ConfigurationService.Instance;
 
             // Demarre la fenetre principale et injecte le Dialog controleur en tant que DataContext
-            AppPublication.Views.Main.ExportWindow mainWin = new AppPublication.Views.Main.ExportWindow();
+            AppPublication.Views.Main.MainView mainWin = new AppPublication.Views.Main.MainView();
             mainWin.DataContext = Controles.DialogControleur.Instance;
             mainWin.Show();
         }
