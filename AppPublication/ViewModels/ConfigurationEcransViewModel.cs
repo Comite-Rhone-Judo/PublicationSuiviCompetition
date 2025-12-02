@@ -50,6 +50,7 @@ namespace AppPublication.ViewModels
             // TODO la résolution des noms ne semble pas fonctionner correctement
             // TODO la sélection des tapis ne fonctionne pas
             // TODO le RAZ host/IP ne fonctionne pas correctement
+            // TODO Traiter le cas ou on a des tapis plus loin que le nbMaxTapis (ex: tapis 10 alors que nbMaxTapis=8)
 
             _sourceCollection = models;
             _tapisDisponibles = Enumerable.Range(1, nbMaxTapis).ToList();
