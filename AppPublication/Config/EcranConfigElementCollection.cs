@@ -6,7 +6,7 @@ namespace AppPublication.Config
     /// Collection d'éléments de configuration pour les écrans.
     /// </summary>
     [ConfigurationCollection(typeof(EcranConfigElement), AddItemName = "ecran", CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
-    public class EcranCollection : ConfigurationElementCollection
+    public class EcranConfigElementCollection : ConfigurationElementCollection
     {
         protected override ConfigurationElement CreateNewElement()
         {
@@ -26,6 +26,11 @@ namespace AppPublication.Config
         public void Remove(EcranConfigElement element)
         {
             BaseRemove(element.Id);
+        }
+
+        public void Remove(int id)
+        {
+            BaseRemove(id);
         }
 
         public new int Count

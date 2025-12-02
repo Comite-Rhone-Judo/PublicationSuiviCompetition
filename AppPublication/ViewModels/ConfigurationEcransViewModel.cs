@@ -1,107 +1,126 @@
-﻿using System.Collections.ObjectModel;
+﻿using AppPublication.Config;
+using AppPublication.Controles;
+using AppPublication.Models;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using AppPublication.Config;
-using AppPublication.Controles;
 using Tools.Outils;
-using Tools.Windows;
 
-namespace AppPublication.ViewModel
+namespace AppPublication.ViewModels
 {
     public class ConfigurationEcransViewModel : NotificationBase
     {
-        private const int TotalTapisCompetition = 8;
-        private const int MaxTapisParEcran = 4;
+        #region MEMBERS
+        // Collection source (référence vers celle de GestionSite)
+        private readonly ObservableCollection<EcranAppelModel> _sourceCollection;
+        private readonly List<int> _tapisDisponibles;
+        #endregion
+
+        #region PROPERTIES
+        // Collection de ViewModels affichée dans la grille
+        public ObservableCollection<EcranAppelConfigViewModel> EcransViewModels { get; set; }
+
+        #endregion
+
+        #region COMMANDS
 
         private ICommand _cmdAjouterEcran;
-        private ICommand _cmdSupprimerEcran;
-
-        public ObservableCollection<EcranAppelConfigViewModel> Ecrans { get; set; }
-
-        public ConfigurationEcransViewModel()
-        {
-            Ecrans = new ObservableCollection<EcranAppelConfigViewModel>();
-            LoadFromConfig();
-        }
-
-        private void LoadFromConfig()
-        {
-            Ecrans.Clear();
-            foreach (EcranConfigElement element in EcransConfigSection.Instance.Ecrans)
-            {
-                var vm = new EcranAppelConfigViewModel(element, TotalTapisCompetition, MaxTapisParEcran)
-                {
-                    DeleteCommand = CmdSupprimerEcran
-                };
-                Ecrans.Add(vm);
-            }
-        }
-
         public ICommand CmdAjouterEcran
         {
             get
             {
                 if (_cmdAjouterEcran == null)
-                    _cmdAjouterEcran = new RelayCommand(AjouterEcran);
+                {
+                    _cmdAjouterEcran = new RelayCommand(AjouterEcranAction);
+                }
                 return _cmdAjouterEcran;
             }
         }
+        #endregion
 
-        public ICommand CmdSupprimerEcran
+        #region CONSTRUCTEURS
+        /// <summary>
+        /// Constructeur appelé avec la collection de modèles de GestionSite
+        /// </summary>
+        public ConfigurationEcransViewModel(ObservableCollection<EcranAppelModel> models, int nbMaxTapis)
         {
-            get
-            {
-                if (_cmdSupprimerEcran == null)
-                    _cmdSupprimerEcran = new RelayCommand(param => SupprimerEcran(param as EcranAppelConfigViewModel));
-                return _cmdSupprimerEcran;
-            }
-        }
+            _sourceCollection = models;
+            _tapisDisponibles = Enumerable.Range(1, nbMaxTapis).ToList();
 
-        private void AjouterEcran(object obj)
-        {
-            int newId = 1;
-            if (EcransConfigSection.Instance.Ecrans.Count > 0)
+            EcransViewModels = new ObservableCollection<EcranAppelConfigViewModel>();
+
+            // Charger les ViewModels à partir de la collection Runtime de GestionSite
+            // Cette collection a déjà été initialisée depuis la config au démarrage de GestionSite
+            if (_sourceCollection != null)
             {
-                int maxId = 0;
-                foreach (EcranConfigElement el in EcransConfigSection.Instance.Ecrans)
+                foreach (var model in _sourceCollection)
                 {
-                    if (el.Id > maxId) maxId = el.Id;
-                }
-                newId = maxId + 1;
-            }
-
-            var newElement = new EcranConfigElement
-            {
-                Id = newId,
-                Nom = $"Ecran {newId}",
-                AdresseIp = ""
-            };
-
-            EcransConfigSection.Instance.Ecrans.Add(newElement);
-
-            var vm = new EcranAppelConfigViewModel(newElement, TotalTapisCompetition, MaxTapisParEcran)
-            {
-                DeleteCommand = CmdSupprimerEcran
-            };
-            Ecrans.Add(vm);
-        }
-
-        private void SupprimerEcran(EcranAppelConfigViewModel ecranVm)
-        {
-            if (ecranVm != null)
-            {
-                ConfirmWindow confirm = new ConfirmWindow(
-                    "Confirmation",
-                    $"Supprimer l'écran '{ecranVm.Nom}' ?"
-                );
-
-                if (confirm.ShowDialog() == true)
-                {
-                    var element = ecranVm.GetConfigElement();
-                    EcransConfigSection.Instance.Ecrans.Remove(element);
-                    Ecrans.Remove(ecranVm);
+                    var vm = new EcranAppelConfigViewModel(model, _tapisDisponibles);
+                    vm.DeleteCommand = new RelayCommand(SupprimerLigne);
+                    EcransViewModels.Add(vm);
                 }
             }
         }
+        #endregion
+
+        #region METHODS
+        private void AjouterEcranAction(object obj)
+        {
+            // 1. Création du nouveau modèle
+            var nouveauModel = new EcranAppelModel();
+
+            // 2. Ajout à la collection source (GestionSite est mis à jour par référence)
+            _sourceCollection.Add(nouveauModel);
+
+            // 3. Ajout à la Configuration (Sauvegarde Disque immédiate)
+            var configElement = new EcranConfigElement
+            {
+                Id = nouveauModel.Id,
+                Nom = nouveauModel.Description
+            };
+            if (EcransConfigSection.Instance != null)
+            {
+                EcransConfigSection.Instance.Ecrans.Add(configElement);
+            }
+
+            // 4. Création du ViewModel et ajout à l'interface
+            var vm = new EcranAppelConfigViewModel(nouveauModel, _tapisDisponibles);
+            vm.DeleteCommand = new RelayCommand(SupprimerLigne);
+
+            EcransViewModels.Add(vm);
+        }
+
+        private void SupprimerLigne(object param)
+        {
+            var vm = param as EcranAppelConfigViewModel;
+            if (vm != null)
+            {
+                vm.CancelSearch();
+
+                // 1. Supprimer de l'interface
+                EcransViewModels.Remove(vm);
+
+                // 2. Supprimer du modèle source (GestionSite)
+                // Le VM encapsule le modèle, on peut donc l'utiliser pour la suppression
+                // (Note: vm.ModelOriginal n'est pas exposé publiquement dans le code précédent, 
+                // on peut soit l'exposer, soit chercher par ID).
+                // Ici, on cherche par ID pour être sûr.
+                var modelToRemove = _sourceCollection.FirstOrDefault(m => m.Id == vm.Id);
+                if (modelToRemove != null) _sourceCollection.Remove(modelToRemove);
+
+                // 3. Supprimer de la Configuration (Disque)
+                if (EcransConfigSection.Instance != null)
+                {
+                    EcransConfigSection.Instance.Ecrans.Remove(vm.Id);
+                }
+            }
+        }
+
+        public void OnClose()
+        {
+            foreach (var vm in EcransViewModels) vm.CancelSearch();
+        }
+        #endregion
     }
 }

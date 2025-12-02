@@ -14,6 +14,8 @@ namespace AppPublication.Config
         private const string kNom = "nom";
         private const string kAdresseIp = "adresseIp";
         private const string kTapisIds = "tapisIds";
+        private const string kHostname = "hostname"; // NOUVEAU
+        // TODO Aligner avec le model
 
         /// <summary>
         /// Méthode héritée de ConfigElementBase.
@@ -25,6 +27,13 @@ namespace AppPublication.Config
             {
                 EcransConfigSection.Instance.NotifyChildModification();
             }
+        }
+
+        [ConfigurationProperty(kHostname, DefaultValue = "")]
+        public string Hostname
+        {
+            get { return GetConfigValue<string>(kHostname, string.Empty); }
+            set { SetValueAndMarkDirty(kHostname, value); }
         }
 
         [ConfigurationProperty(kId, IsKey = true, IsRequired = true)]

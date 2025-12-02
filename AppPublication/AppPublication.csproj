@@ -135,7 +135,7 @@
     </Compile>
     <Compile Include="Config\ConfigElementBase.cs" />
     <Compile Include="Config\ConfigSectionBase.cs" />
-    <Compile Include="Config\EcranCollection.cs" />
+    <Compile Include="Config\EcranConfigElementCollection.cs" />
     <Compile Include="Config\EcranConfigElement.cs" />
     <Compile Include="Config\EcransConfigSection.Cs" />
     <Compile Include="Config\InternalConfigSectionBase.cs" />
@@ -151,6 +151,7 @@
     <Compile Include="ExtensionNoyau\Deroulement\GroupeEngagements.cs" />
     <Compile Include="ExtensionNoyau\ExtensionJudoData.cs" />
     <Compile Include="ExtensionNoyau\Deroulement\VueJudokaEqualityComparer.cs" />
+    <Compile Include="Models\EcranAppelModel.cs" />
     <Compile Include="ViewModels\ConfigurationEcransViewModel.cs" />
     <Compile Include="ViewModels\EcranAppelConfigViewModel.cs" />
     <Compile Include="ViewModels\EcranAppelTapisSelectionViewModel.cs" />
@@ -314,9 +315,7 @@
   <ItemGroup>
     <Resource Include="Logo_AppPublication.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
