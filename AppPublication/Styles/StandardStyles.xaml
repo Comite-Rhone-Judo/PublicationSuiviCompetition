@@ -105,6 +105,15 @@
         <Setter Property="HorizontalAlignment"  Value="Left"/>
     </Style>
 
+    <Style x:Key="ButtonLabelStyle" TargetType="Label">
+        <Setter Property="Foreground" Value="#EEEEEE" />
+        <Setter Property="FontSize" Value="12" />
+        <!-- <Setter Property="FontFamily"  Value="pack://application:,,,/Tools;component/Styles/Polices/#Cooper Black"/>  -->
+        <Setter Property="FontFamily" Value="{telerik:Windows8Resource ResourceKey=FontFamily}" />
+        <Setter Property="VerticalAlignment"  Value="Center"/>
+        <Setter Property="HorizontalAlignment"  Value="Left"/>
+    </Style>
+
     <Style x:Key="DropDownStyle" TargetType="{x:Type telerik:RadComboBox}">
         <Setter Property="FontSize" Value="14" />
         <Setter Property="FontFamily" Value="{telerik:Windows8Resource ResourceKey=FontFamily}" />

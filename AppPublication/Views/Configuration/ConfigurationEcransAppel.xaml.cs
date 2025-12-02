@@ -27,7 +27,8 @@ namespace AppPublication.Views.Configuration
             // Injection du ViewModel lors de la création de la vue
             this.DataContext = new ConfigurationEcransViewModel();
         }
-        private void ButOk_Click(object sender, RoutedEventArgs e)
+
+        private void ButClose_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true;
             this.Close();
