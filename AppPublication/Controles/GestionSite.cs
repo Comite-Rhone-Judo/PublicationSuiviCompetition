@@ -2,7 +2,8 @@
 using AppPublication.Export;
 using AppPublication.ExtensionNoyau.Deroulement;
 using AppPublication.Views.Configuration;
-using AppPublication.ViewModel;
+using AppPublication.ViewModels;
+using AppPublication.Models;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
 using AppPublication.ExtensionNoyau;
@@ -130,7 +131,12 @@ namespace AppPublication.Controles
                             {
                                 if (_cfgEcransAppelView == null)
                                 {
-                                    _cfgEcransAppelView = new AppPublication.Views.Configuration.ConfigurationEcransAppelView(new ConfigurationEcransViewModel());
+                                    // TODO Synchroniser le nombre de tapis avec la configuration courante de la competition
+                                    ConfigurationEcransViewModel vm = new ConfigurationEcransViewModel(this.EcransAppel, 8);
+                                    if (vm != null)
+                                    {
+                                        _cfgEcransAppelView = new ConfigurationEcransAppelView(vm);
+                                    }
                                 }
                                 if (_cfgEcransAppelView != null)
                                 {
@@ -204,6 +210,24 @@ namespace AppPublication.Controles
                     _extendedJudoData = new ExtendedJudoData();
                 }
                 return _extendedJudoData;
+            }
+        }
+        
+private ObservableCollection<EcranAppelModel> _ecransAppel;
+        public ObservableCollection<EcranAppelModel> EcransAppel
+        {
+            get
+            {
+                return _ecransAppel;
+            }
+            set
+            {
+                if (_ecransAppel != value)
+                {
+                    // TODO voir si c'est nécessaire ici ....
+                    _ecransAppel = value;
+                    NotifyPropertyChanged();
+                }
             }
         }
 
@@ -1488,6 +1512,56 @@ namespace AppPublication.Controles
 
                 // L'interface local de publication a ete chargee via la configuration du minisite, il faut juste s'assurer du bon calcul des URLs
                 URLLocalPublication = CalculURLSiteLocal();
+
+                // ici on initialise les ecrans d'appel
+                InitEcransAppel();
+            }
+            catch (Exception ex)
+            {
+                LogTools.Error(ex);
+            }
+        }
+
+        private void InitEcransAppel()
+        {
+            try
+            {
+                // Chargement des Ecrans depuis la Config vers le Modèle Runtime
+                _ecransAppel = new ObservableCollection<EcranAppelModel>();
+
+                if (EcransConfigSection.Instance != null && EcransConfigSection.Instance.Ecrans != null)
+                {
+                    foreach (EcranConfigElement cfg in EcransConfigSection.Instance.Ecrans)
+                    {
+                        // Parsing des IDs de tapis "1;2;3" -> List<int>
+                        List<int> tapisIds = new List<int>();
+                        if (!string.IsNullOrEmpty(cfg.TapisIds))
+                        {
+                            tapisIds = cfg.TapisIds.Split(';')
+                                          .Select(s => int.TryParse(s, out int i) ? i : 0)
+                                          .Where(i => i > 0)
+                                          .ToList();
+                        }
+
+                        // On crée le modèle à partir de la config
+                        IPAddress ip = IPAddress.None;
+                        IPAddress.TryParse(cfg.AdresseIp, out ip);
+                        var model = new EcranAppelModel
+                        {
+                            Id = cfg.Id,
+                            Description = cfg.Nom,
+                            Hostname = cfg.Hostname,
+                            AdresseIP = ip,
+                            TapisIds = tapisIds
+                        };
+
+                        // Ajuster le compteur statique pour éviter les doublons d'ID futurs
+                        if (model.Id >= EcranAppelModel.NextId)
+                            EcranAppelModel.NextId = model.Id + 1;
+
+                        _ecransAppel.Add(model);
+                    }
+                }
             }
             catch (Exception ex)
             {

@@ -1,17 +1,6 @@
-﻿using AppPublication.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using AppPublication.ViewModels;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace AppPublication.Views.Configuration
 {
@@ -30,6 +19,8 @@ namespace AppPublication.Views.Configuration
 
         private void ButClose_Click(object sender, RoutedEventArgs e)
         {
+            var vm = this.DataContext as ConfigurationEcransViewModel;
+            vm?.OnClose(); // Arrête les recherches en cours
             this.DialogResult = true;
             this.Close();
         }

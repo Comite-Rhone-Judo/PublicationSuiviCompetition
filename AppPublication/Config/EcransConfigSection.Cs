@@ -17,10 +17,10 @@ namespace AppPublication.Config
         protected EcransConfigSection() : base() { }
 
         [ConfigurationProperty(kEcrans, IsDefaultCollection = false)]
-        [ConfigurationCollection(typeof(EcranCollection), AddItemName = "ecran")]
-        public EcranCollection Ecrans
+        [ConfigurationCollection(typeof(EcranConfigElementCollection), AddItemName = "ecran")]
+        public EcranConfigElementCollection Ecrans
         {
-            get { return (EcranCollection)this[kEcrans]; }
+            get { return (EcranConfigElementCollection)this[kEcrans]; }
             set { this[kEcrans] = value; }
         }
 
