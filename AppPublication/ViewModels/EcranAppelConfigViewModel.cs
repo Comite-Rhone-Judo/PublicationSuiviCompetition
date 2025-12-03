@@ -244,9 +244,19 @@ namespace AppPublication.ViewModels
         /// <param name="saisie"></param>
         private void DeterminerTypeSaisie(string saisie)
         {
-            if (string.IsNullOrWhiteSpace(saisie)) { Hostname = ""; AdresseIP = ""; return; }
-            if (IPAddress.TryParse(saisie, out _)) { AdresseIP = saisie; if (string.IsNullOrEmpty(Hostname)) Hostname = kNotFoundPlaceholder; }
-            else { Hostname = saisie; if (string.IsNullOrEmpty(AdresseIP)) AdresseIP = kNotFoundPlaceholder; }
+            if (string.IsNullOrWhiteSpace(saisie))
+            {
+                Hostname = ""; AdresseIP = ""; return;
+            }
+
+            if (IPAddress.TryParse(saisie, out _))
+            {
+                AdresseIP = saisie; if (string.IsNullOrEmpty(Hostname)) Hostname = kNotFoundPlaceholder;
+            }
+            else
+            {
+                Hostname = saisie; if (string.IsNullOrEmpty(AdresseIP)) AdresseIP = kNotFoundPlaceholder;
+            }
         }
 
         /// <summary>
@@ -255,11 +265,20 @@ namespace AppPublication.ViewModels
         /// <param name="saisie"></param>
         private async void LancerRechercheComplementaire(string saisie)
         {
-            if (_searchCts != null) { _searchCts.Cancel(); _searchCts.Dispose(); }
+            if (_searchCts != null)
+            {
+                _searchCts.Cancel();
+                _searchCts.Dispose();
+            }
+
             _searchCts = new CancellationTokenSource();
             var token = _searchCts.Token;
 
-            if (string.IsNullOrWhiteSpace(saisie)) { IsRechercheEnCours = false; return; }
+            if (string.IsNullOrWhiteSpace(saisie))
+            {
+                IsRechercheEnCours = false;
+                return;
+            }
 
             IsRechercheEnCours = true;
             try
@@ -268,23 +287,48 @@ namespace AppPublication.ViewModels
                 string res = "";
                 bool isIp = IPAddress.TryParse(saisie, out IPAddress ipAddr);
 
-                await Task.Run(async () => {
+                await Task.Run(async () =>
+                {
                     try
                     {
-                        if (isIp) { var e = await Dns.GetHostEntryAsync(ipAddr); res = e.HostName; }
-                        else { var e = await Dns.GetHostEntryAsync(saisie); var i = e.AddressList.FirstOrDefault(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork); if (i != null) res = i.ToString(); }
+                        if (isIp)
+                        {
+                            var e = await Dns.GetHostEntryAsync(ipAddr);
+                            res = e.HostName;
+                        }
+                        else
+                        {
+                            var e = await Dns.GetHostEntryAsync(saisie);
+                            var i = e.AddressList.FirstOrDefault(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
+                            if (i != null)
+                            {
+                                res = i.ToString();
+                            }
+                        }
                     }
                     catch { }
                 }, token);
 
                 if (!token.IsCancellationRequested && !string.IsNullOrEmpty(res))
                 {
-                    if (isIp) Hostname = res; // Setter -> Sauvegarde
-                    else AdresseIP = res;     // Setter -> Sauvegarde
+                    if (isIp)
+                    {
+                        Hostname = res; // Setter -> Sauvegarde
+                    }
+                    else
+                    {
+                        AdresseIP = res;     // Setter -> Sauvegarde
+                    }
                 }
             }
             catch { }
-            finally { if (!token.IsCancellationRequested) IsRechercheEnCours = false; }
+            finally
+            {
+                if (!token.IsCancellationRequested)
+                {
+                    IsRechercheEnCours = false;
+                }
+            }
         }
 
         #endregion

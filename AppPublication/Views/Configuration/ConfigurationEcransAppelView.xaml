@@ -42,8 +42,8 @@
                     <telerik:RadButton Command="{Binding CmdAjouterEcran}" 
                                        telerik:StyleManager.Theme="Expression_Dark"
                                        ToolTip="Ajouter un nouvel écran"
-                                       Width="40" Height="40"
-                                       Tag="pack://application:,,,/Tools;component/data/images/icons/black/add_list-32.png">
+                                       Width="30" Height="30"
+                                       Tag="pack://application:,,,/Tools;component/data/images/icons/black/add_list-32.png" Margin="0 5 5 0">
                         <WrapPanel Orientation="Horizontal">
                             <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/add_list-32.png" Margin="0 0 0 0"/>
                         </WrapPanel>
@@ -111,8 +111,8 @@
                                     <telerik:RadButton Command="{Binding DeleteCommand}" 
                                                        CommandParameter="{Binding}"
                                                        ToolTip="Supprimer cet écran"
-                                                       Width="28" Height="28"
-                                                       Style="{StaticResource RadButtonStyle1}"
+                                                       Width="20" Height="20"
+                                                       telerik:StyleManager.Theme="Expression_Dark"
                                                        Tag="pack://application:,,,/Tools;component/data/images/icons/black/delete-32.png">
                                     </telerik:RadButton>
                                 </DataTemplate>
