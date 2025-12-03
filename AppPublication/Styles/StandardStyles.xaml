@@ -13,6 +13,88 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation">
 
+    <Style x:Key="TrailSpinnerStyle" TargetType="Control">
+        <Setter Property="Foreground" Value="#007ACC" />
+        <Setter Property="Width" Value="40" />
+        <Setter Property="Height" Value="40" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Control">
+                    <Grid x:Name="Root" 
+                      Background="Transparent"
+                      RenderTransformOrigin="0.5, 0.5">
+
+                        <Grid.RenderTransform>
+                            <RotateTransform x:Name="SpinnerRotate" Angle="0" />
+                        </Grid.RenderTransform>
+
+                        <Viewbox>
+                            <Canvas Width="100" Height="100">
+                                <Ellipse Width="20" Height="20" Fill="{TemplateBinding Foreground}" Opacity="1.0" Canvas.Left="40" Canvas.Top="0"/>
+
+                                <Ellipse Width="20" Height="20" Fill="{TemplateBinding Foreground}" Opacity="0.85" Canvas.Left="40" Canvas.Top="0">
+                                    <Ellipse.RenderTransform>
+                                        <RotateTransform Angle="45" CenterX="10" CenterY="50" />
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+
+                                <Ellipse Width="20" Height="20" Fill="{TemplateBinding Foreground}" Opacity="0.70" Canvas.Left="40" Canvas.Top="0">
+                                    <Ellipse.RenderTransform>
+                                        <RotateTransform Angle="90" CenterX="10" CenterY="50" />
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+
+                                <Ellipse Width="20" Height="20" Fill="{TemplateBinding Foreground}" Opacity="0.55" Canvas.Left="40" Canvas.Top="0">
+                                    <Ellipse.RenderTransform>
+                                        <RotateTransform Angle="135" CenterX="10" CenterY="50" />
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+
+                                <Ellipse Width="20" Height="20" Fill="{TemplateBinding Foreground}" Opacity="0.40" Canvas.Left="40" Canvas.Top="0">
+                                    <Ellipse.RenderTransform>
+                                        <RotateTransform Angle="180" CenterX="10" CenterY="50" />
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+
+                                <Ellipse Width="20" Height="20" Fill="{TemplateBinding Foreground}" Opacity="0.25" Canvas.Left="40" Canvas.Top="0">
+                                    <Ellipse.RenderTransform>
+                                        <RotateTransform Angle="225" CenterX="10" CenterY="50" />
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+
+                                <Ellipse Width="20" Height="20" Fill="{TemplateBinding Foreground}" Opacity="0.15" Canvas.Left="40" Canvas.Top="0">
+                                    <Ellipse.RenderTransform>
+                                        <RotateTransform Angle="270" CenterX="10" CenterY="50" />
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+
+                                <Ellipse Width="20" Height="20" Fill="{TemplateBinding Foreground}" Opacity="0.05" Canvas.Left="40" Canvas.Top="0">
+                                    <Ellipse.RenderTransform>
+                                        <RotateTransform Angle="315" CenterX="10" CenterY="50" />
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+                            </Canvas>
+                        </Viewbox>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <EventTrigger RoutedEvent="Loaded">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetName="SpinnerRotate"
+                                                 Storyboard.TargetProperty="Angle"
+                                                 From="0" To="360" 
+                                                 Duration="0:0:1.0" 
+                                                 RepeatBehavior="Forever" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="BusyIconStyle" TargetType="Control">
         <Setter Property="Width" Value="20"/>
         <Setter Property="Height" Value="20"/>
