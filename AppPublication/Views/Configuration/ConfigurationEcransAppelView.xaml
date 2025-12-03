@@ -70,7 +70,9 @@
                                 <DataTemplate>
                                     <Grid>
                                         <Control Style="{StaticResource TrailSpinnerStyle}" 
-                                                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                 Width="15" Height="15"        
+                                                 Foreground="White"
+                                                 Visibility="Visible"
                                                          HorizontalAlignment="Center" 
                                                          VerticalAlignment="Center" />
                                     </Grid>
