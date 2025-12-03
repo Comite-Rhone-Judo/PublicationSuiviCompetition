@@ -209,7 +209,7 @@
                 </StackPanel>
                 <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal">
                     <telerik:RadComboBox ItemsSource="{Binding FichiersLogo}" Height="20" Width="130" DisplayMemberPath="Name" Name="LogoList" Margin="10 0 0 0" IsSynchronizedWithCurrentItem="True" SelectedItem="{Binding SelectedLogo}"/>
-                    <telerik:RadButton ToolTip="Ajouter un logo: Format: png, taille max.: 200x200. le fichier contenir 'logo' dans son nom" telerik:StyleManager.Theme="Expression_Dark" Height="28"
+                    <telerik:RadButton ToolTip="Ajouter un logo: Format: png, taille max.: 200x200. le fichier contenir 'logo' dans son nom" telerik:StyleManager.Theme="Expression_Dark" Height="32" Width="32"
                         Focusable="False" Tag="pack://application:,,,/Tools;component/data/images/icons/black/add_image-32.png" Margin="5 0 0 0"
                         Command="{Binding Path=CmdAjouterLogo}">
                         <WrapPanel Orientation="Horizontal">

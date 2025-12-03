@@ -45,7 +45,10 @@ namespace AppPublication.ViewModels
         /// </summary>
         public ConfigurationEcransViewModel(ObservableCollection<EcranAppelModel> models, int nbMaxTapis)
         {
-            // TODO la zonde de saisie adresse/host est bizarre
+            // TODO Déplacer l'icone d'attente vers hostname et IP
+            // TODO Avoir 2 recherches différentes (hostname et IP) pour déclencher le bon icone
+            // TODO Faire un arbre de decision sur le comportement lors de la saisie
+            // TODO revoir le comportement de la saisie vs le modèle en cas de chaine vide (ce que l'on stocke dans le fichier de config) et ce que l'on affiche si la recherche échoue (ex: "Inconnu" ou vide ?)
             // TODO la résolution des noms ne semble pas fonctionner correctement
             // TODO le RAZ host/IP ne fonctionne pas correctement
             // TODO Traiter le cas ou on a des tapis plus loin que le nbMaxTapis (ex: tapis 10 alors que nbMaxTapis=8), le changement pouvant se faire dynamiquement par la table centrale ...
