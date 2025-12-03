@@ -1,4 +1,4 @@
-﻿using AppPublication.Config;
+﻿using AppPublication.Config.EcransAppel;
 using AppPublication.Controles;
 using AppPublication.Models;
 using System.Collections.Generic;
@@ -45,12 +45,11 @@ namespace AppPublication.ViewModels
         /// </summary>
         public ConfigurationEcransViewModel(ObservableCollection<EcranAppelModel> models, int nbMaxTapis)
         {
-            // TODO l'adresse IP est le host ne sont pas chargés correctement au démarrage
             // TODO la zonde de saisie adresse/host est bizarre
             // TODO la résolution des noms ne semble pas fonctionner correctement
-            // TODO la sélection des tapis ne fonctionne pas
             // TODO le RAZ host/IP ne fonctionne pas correctement
-            // TODO Traiter le cas ou on a des tapis plus loin que le nbMaxTapis (ex: tapis 10 alors que nbMaxTapis=8)
+            // TODO Traiter le cas ou on a des tapis plus loin que le nbMaxTapis (ex: tapis 10 alors que nbMaxTapis=8), le changement pouvant se faire dynamiquement par la table centrale ...
+            // A voir si on ignore juste pas et les valeurs de tapis > nb tapis seront ignorées à la génération
 
             _sourceCollection = models;
             _tapisDisponibles = Enumerable.Range(1, nbMaxTapis).ToList();

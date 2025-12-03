@@ -1,7 +1,7 @@
 ﻿using System.Configuration;
 using System.Linq;
 
-namespace AppPublication.Config
+namespace AppPublication.Config.EcransAppel
 {
     /// <summary>
     /// Collection d'éléments de configuration pour les écrans.

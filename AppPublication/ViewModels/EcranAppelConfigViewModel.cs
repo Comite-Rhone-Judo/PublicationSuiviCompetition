@@ -1,4 +1,4 @@
-﻿using AppPublication.Config;
+﻿using AppPublication.Config.EcransAppel;
 using AppPublication.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,15 +6,18 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using Tools.Outils;
+using Tools.Windows;
 
 namespace AppPublication.ViewModels
 {
     public class EcranAppelConfigViewModel : NotificationBase
     {
         #region CONSTANTES
-        private const string kNotFoundPlaceholder = "<...>";
+        private const string kNotFoundPlaceholder = "...";
+        private const int kMaxTapisSelection = 4; // Constante pour la limite
         #endregion
 
         #region MEMBERS
@@ -42,11 +45,11 @@ namespace AppPublication.ViewModels
             _model = model;
 
             // Initialisation visuelle
-            if (!string.IsNullOrEmpty(model.Hostname)) _rawUserInput = model.Hostname;
-            else _rawUserInput = model.AdresseIP.ToString();
+            Hostname = string.IsNullOrEmpty(model.Hostname) ? kNotFoundPlaceholder : model.Hostname;
+            AdresseIP = (model.AdresseIP == null || model.AdresseIP.Equals(IPAddress.None))  ? kNotFoundPlaceholder : model.AdresseIP.ToString();
 
             // Création des CheckBoxes pour les tapis
-            ListeTapisVM = new ObservableCollection<EcranAppelTapisSelectionViewModel>();
+            ListeTapisViewModels = new ObservableCollection<EcranAppelTapisSelectionViewModel>();
             foreach (var idTapis in tousLesTapis)
             {
                 var vmTapis = new EcranAppelTapisSelectionViewModel
@@ -55,8 +58,8 @@ namespace AppPublication.ViewModels
                     IsSelected = model.TapisIds.Contains(idTapis)
                 };
                 // Abonnement pour sauvegarde immédiate
-                vmTapis.PropertyChanged += (s, e) => { if (e.PropertyName == "IsSelected") UpdateTapisAndSave(); };
-                ListeTapisVM.Add(vmTapis);
+                vmTapis.PropertyChanged += (s, e) => { if (e.PropertyName == "IsSelected") OnTapisSelectionChanged(vmTapis); };
+                ListeTapisViewModels.Add(vmTapis);
             }
         }
 
@@ -154,7 +157,7 @@ namespace AppPublication.ViewModels
         /// <summary>
         /// La lisye des ViewModels de sélection des tapis
         /// </summary>
-        public ObservableCollection<EcranAppelTapisSelectionViewModel> ListeTapisVM { get; set; }
+        public ObservableCollection<EcranAppelTapisSelectionViewModel> ListeTapisViewModels { get; set; }
         #endregion
 
         #region METHODES PUBLIQUES
@@ -192,11 +195,37 @@ namespace AppPublication.ViewModels
         }
 
         /// <summary>
+        /// Nouvelle méthode pour gérer la restriction du nombre de tapis
+        /// </summary>
+        private void OnTapisSelectionChanged(EcranAppelTapisSelectionViewModel changedItem)
+        {
+            // Si l'utilisateur vient de cocher une case
+            if (changedItem.IsSelected)
+            {
+                int count = ListeTapisViewModels.Count(t => t.IsSelected);
+                if (count > kMaxTapisSelection)
+                {
+                    // On annule la sélection (ceci va déclencher récursivement OnTapisSelectionChanged avec IsSelected=false)
+                    changedItem.IsSelected = false;
+
+                    // Optionnel : Afficher un message à l'utilisateur
+                    AlertWindow win = new AlertWindow("Limite atteinte", $"Vous ne pouvez sélectionner que {kMaxTapisSelection} tapis maximum par écran.");
+                    win.ShowDialog();
+
+                    return; // On sort pour ne pas sauvegarder l'état invalide
+                }
+            }
+
+            // Si tout est OK (ou si on vient de décocher suite à l'annulation), on sauvegarde
+            UpdateTapisAndSave();
+        }
+
+        /// <summary>
         /// Met a jour la chaine des tapis sélectionnés dans le modèle et la configuration
         /// </summary>
         private void UpdateTapisAndSave()
         {
-            var ids = ListeTapisVM.Where(t => t.IsSelected).Select(t => t.Numero).ToList();
+            var ids = ListeTapisViewModels.Where(t => t.IsSelected).Select(t => t.Numero).ToList();
 
             // Mise à jour Modèle Runtime
             _model.TapisIds = ids;

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Tools.Outils;
 
-namespace AppPublication.Config
+namespace AppPublication.Config.MiniSite
 {
     /// <summary>
     /// Détail technique d'un accès FTP ou Local.

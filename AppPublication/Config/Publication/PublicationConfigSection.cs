@@ -5,7 +5,7 @@ using System.IO;
 using AppPublication.Tools.Files;
 using AppPublication.Tools.FranceJudo;
 
-namespace AppPublication.Config
+namespace AppPublication.Config.Publication
 {
     /// <summary>
     /// Gère les paramètres de publication globaux.

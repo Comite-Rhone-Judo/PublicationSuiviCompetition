@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Configuration;
 
-namespace AppPublication.Config
+namespace AppPublication.Config.EcransAppel
 {
     /// <summary>
     /// Élément de configuration représentant un écran d'appel.
@@ -14,8 +14,7 @@ namespace AppPublication.Config
         private const string kNom = "description";
         private const string kAdresseIp = "adresseIp";
         private const string kTapisIds = "tapisIds";
-        private const string kHostname = "hostname"; // NOUVEAU
-        // TODO Aligner avec le model
+        private const string kHostname = "hostname";
 
         /// <summary>
         /// Méthode héritée de ConfigElementBase.

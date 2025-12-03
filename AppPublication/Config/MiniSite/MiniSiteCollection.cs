@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppPublication.Config
+namespace AppPublication.Config.MiniSite
 {
     /// <summary>
     /// Collection d'éléments <miniSite>

@@ -1,4 +1,5 @@
-﻿using AppPublication.Config;
+﻿using AppPublication.Config.Publication;
+using AppPublication.Config.EcransAppel;
 using AppPublication.Export;
 using AppPublication.ExtensionNoyau.Deroulement;
 using AppPublication.Views.Configuration;
@@ -41,39 +42,9 @@ namespace AppPublication.Controles
     public class GestionSite : NotificationBase
     {
         #region CONSTANTES
-
-        // TODO faire le clean dans ces constantes avec la nouvelle configuration
-
         private const string kSiteLocalInstanceName = "local";
         private const string kSiteDistantInstanceName = "distant";
         private const string kSiteFranceJudoInstanceName = "ffjudo";
-
-        private const string kSettingEasyConfig = "EasyConfig";
-        private const string kSettingURLDistant = "URLDistant";
-        private const string kSettingIsolerCompetition = "IsolerCompetition";
-        private const string kSettingRepertoireRacineSiteFTPDistant = "RepertoireRacineSiteFTPDistant";
-        private const string kSettingPublierProchainsCombats = "PublierProchainsCombats";
-        private const string kSettingPublierEngagements = "PublierEngagements";
-        private const string kSettingEngagementsAbsents = "EngagementsAbsents";
-        private const string kSettingEngagementsTousCombats = "EngagementsTousCombats";
-        private const string kSettingUseIntituleCommun = "UseIntituleCommun";
-        private const string kSettingIntituleCommun = "IntituleCommun";
-        private const string kSettingScoreEngagesGagnantPerdant = "ScoreEngagesGagnantPerdant";
-        private const string kSettingAfficherPositionCombat = "AfficherPositionCombat";
-        private const string kSettingNbProchainsCombats = "NbProchainsCombats";
-        private const string kSettingPublierAffectationTapis = "PublierAffectationTapis";
-        private const string kSettingDelaiGenerationSec = "DelaiGenerationSec";
-        private const string kSettingEffacerAuDemarrage = "EffaceAuDemarrage";
-        private const string kSettingDelaiActualisationClientSec = "DelaiActualisationClientSec";
-        private const string kSettingMsgProchainsCombats = "MsgProchainsCombats";
-        private const string kSettingPouleEnColonnes = "PouleEnColonnes";
-        private const string kSettingPouleToujoursEnColonnes = "PouleToujoursEnColonnes";
-        private const string kSettingTailleMaxPouleColonnes = "TailleMaxPouleColonnes";
-        private const string kSettingRepertoireRacine = "RepertoireRacine";
-        private const string kSettingNiveauPublicationFFJudo = "NiveauPublicationFFJudo";
-        private const string kSettingEntitePublicationFFJudo = "EntitePublicationFFJudo";
-        private const string kSettingSelectedLogo = "SelectedLogo";
-        private const string kSettingInterfaceLocalPublication = "InterfaceLocalPublication";
         #endregion
 
         #region MEMBRES
@@ -126,8 +97,9 @@ namespace AppPublication.Controles
                             {
                                 if (_cfgEcransAppelView == null)
                                 {
-                                    // TODO Synchroniser le nombre de tapis avec la configuration courante de la competition
-                                    ConfigurationEcransViewModel vm = new ConfigurationEcransViewModel(this.EcransAppel, 8);
+                                    // Crée la ViewModel de configuration. Comme on le refait a chaque fois, on est sur d'avoir les dernieres valeurs
+                                    // notamment par rapport aux nombres de tapis de la competition s'il a été modifié
+                                    ConfigurationEcransViewModel vm = new ConfigurationEcransViewModel(this.EcransAppel, this.NbTapis);
                                     if (vm != null)
                                     {
                                         _cfgEcransAppelView = new ConfigurationEcransAppelView(vm);
@@ -168,14 +140,18 @@ namespace AppPublication.Controles
 
                 // Initialise la configuration via le cache de fichier
                 InitCacheConfig();
-
-                // Initialise les repertoires d'export - Pas necessaire car en lisant les valeurs en cache le changement se fait a l'initialisation de la propriete
-                // FileAndDirectTools.InitExportSiteDirectories();
             }
             catch (Exception ex)
             {
-                // TODO Voir ce que l'on fait ici, le gestionSite n'est pas correctement initialise ... peut-on encore continuer ??
-                LogTools.Error(ex);
+                LogTools.Logger.Fatal(ex, "Impossible d'initialiser le gestionnaire de Site interne. Impossible de continuer");
+                AlertWindow win = new AlertWindow("Erreur fatale", "Impossible de démarrer un composant interne, l'application doit s'arrêter. Veuillez contacter le support.");
+                if (win != null)
+                {
+                    win.ShowDialog();
+                }
+
+                // Emergency shutdown
+                App.Current.Shutdown();
             }
         }
 
@@ -393,7 +369,6 @@ namespace AppPublication.Controles
             {
                 if (_niveauPublicationFFJudo != value)
                 {
-                    // TODO Manquant dans PublicationConfigSection
                     PublicationConfigSection.Instance.NiveauPublicationFFJudo = (_niveauPublicationFFJudo = value);
 
                     // Ajuste la liste des entites et restaure le dernier element selectionne pour ce niveau
@@ -753,7 +728,6 @@ namespace AppPublication.Controles
                 // Verifie que la valeur selectionnee est bien dans la liste des interfaces
                 try
                 {
-                    // TODO A voir dans quel section on la met
                     SiteLocal.InterfaceLocalPublication = value;
                     NotifyPropertyChanged();
                     URLLocalPublication = CalculURLSiteLocal();
@@ -1045,12 +1019,34 @@ namespace AppPublication.Controles
                 // On ne peut publier que en individuelle
                 CanPublierAffectation = DialogControleur.Instance.ServerData.competition.IsIndividuelle();
                 CanPublierEngagements = DialogControleur.Instance.ServerData.competition.IsIndividuelle() || DialogControleur.Instance.ServerData.competition.IsShiai();
+                
+                // Le nombre de tapis peut avoir changer selon la compétition
+                NbTapis = DialogControleur.Instance.ServerData.competition.nbTapis;
 
                 // Si on est en Shiai, par defaut on met les poules en colonnes
                 if (DialogControleur.Instance.ServerData.competition.IsShiai())
                 {
                     PouleEnColonnes = true;
                     PouleToujoursEnColonnes = true;
+                }
+
+
+            }
+        }
+
+        private int _nbTapis = 6;
+        public int NbTapis
+        {
+            get
+            {
+                return _nbTapis;
+            }
+            set
+            {
+                if (_nbTapis != value)
+                {
+                    _nbTapis = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -1523,7 +1519,6 @@ namespace AppPublication.Controles
                             TapisIds = tapisIds
                         };
 
-                        // TODO La gestion de l'ID est a revoir ...
                         // Ajuster le compteur statique pour éviter les doublons d'ID futurs
                         if (model.Id > EcranAppelModel.LastId)
                             EcranAppelModel.LastId = model.Id;

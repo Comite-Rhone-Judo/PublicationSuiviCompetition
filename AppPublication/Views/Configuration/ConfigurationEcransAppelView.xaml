@@ -63,20 +63,19 @@
 
                         <telerik:GridViewDataColumn Header="Description" DataMemberBinding="{Binding Description}" Width="200" ToolTip="(Optionnel) Description de l'écran" />
 
-                        <telerik:GridViewDataColumn Header="Identifiant" Width="160" ToolTip="Identifiant de l'écran sur le réseau, IP ou Hostname">
+                        <telerik:GridViewDataColumn Header="Identifiant" DataMemberBinding="{Binding RawUserInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="160" ToolTip="Identifiant de l'écran sur le réseau, IP ou Hostname"/>
+
+                        <telerik:GridViewDataColumn Header="" Width="30" ToolTip="Indique si une recherche hostname ou IP est en cours">
                             <telerik:GridViewDataColumn.CellTemplate>
                                 <DataTemplate>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBox Text="{Binding RawUserInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                                 VerticalAlignment="Center"/>
-                                        <telerik:RadBusyIndicator Grid.Column="1" 
-                                                                  IsBusy="{Binding IsRechercheEnCours}" 
-                                                                  BusyContent="" 
-                                                                  Width="20" Height="20" Margin="5,0,0,0"/>
+                                        <Control Grid.Column="0" 
+                     Style="{StaticResource BusyIconStyle}"
+                     Tag="{Binding IsRechercheEnCours}" 
+                     Margin="5,0,0,0"/>
                                     </Grid>
                                 </DataTemplate>
                             </telerik:GridViewDataColumn.CellTemplate>
@@ -88,7 +87,7 @@
                         <telerik:GridViewColumn Header="Sélection Tapis" Width="*" ToolTip="Liste des tapis à afficher sur l'écean (max. 4)">
                             <telerik:GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <ItemsControl ItemsSource="{Binding ListeTapis}">
+                                    <ItemsControl ItemsSource="{Binding ListeTapisViewModels}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
                                                 <WrapPanel Orientation="Horizontal"/>
@@ -96,8 +95,8 @@
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <CheckBox Content="{Binding NomTapis}" 
-                                                          IsChecked="{Binding EstSelectionne, Mode=TwoWay}"
+                                                <CheckBox Content="{Binding DisplayName}" 
+                                                          IsChecked="{Binding IsSelected, Mode=TwoWay}"
                                                           Style="{StaticResource CheckboxStyle}"
                                                           Margin="2,0,8,0"/>
                                             </DataTemplate>
