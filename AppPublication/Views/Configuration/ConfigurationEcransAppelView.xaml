@@ -69,13 +69,10 @@
                             <telerik:GridViewDataColumn.CellTemplate>
                                 <DataTemplate>
                                     <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Control Grid.Column="0" 
-                     Style="{StaticResource BusyIconStyle}"
-                     Tag="{Binding IsRechercheEnCours}" 
-                     Margin="5,0,0,0"/>
+                                        <Control Style="{StaticResource TrailSpinnerStyle}" 
+                                                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                         HorizontalAlignment="Center" 
+                                                         VerticalAlignment="Center" />
                                     </Grid>
                                 </DataTemplate>
                             </telerik:GridViewDataColumn.CellTemplate>
