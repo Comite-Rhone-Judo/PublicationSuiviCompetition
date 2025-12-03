@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Configuration;
 
-namespace AppPublication.Config
+namespace AppPublication.Config.EcransAppel
 {
     /// <summary>
     /// Section de configuration pour les écrans d'appel.

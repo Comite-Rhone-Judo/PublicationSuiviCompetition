@@ -1,4 +1,4 @@
-﻿using AppPublication.Config;
+﻿using AppPublication.Config.MiniSite;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using System;
 using System.Collections.Generic;

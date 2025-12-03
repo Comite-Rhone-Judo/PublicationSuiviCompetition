@@ -135,15 +135,15 @@
     </Compile>
     <Compile Include="Config\ConfigElementBase.cs" />
     <Compile Include="Config\ConfigSectionBase.cs" />
-    <Compile Include="Config\EcransAppelConfigElementCollection.cs" />
-    <Compile Include="Config\EcransAppelConfigElement.cs" />
-    <Compile Include="Config\EcransAppelConfigSection.Cs" />
+    <Compile Include="Config\EcransAppel\EcransAppelConfigElementCollection.cs" />
+    <Compile Include="Config\EcransAppel\EcransAppelConfigElement.cs" />
+    <Compile Include="Config\EcransAppel\EcransAppelConfigSection.Cs" />
     <Compile Include="Config\InternalConfigSectionBase.cs" />
     <Compile Include="Config\ConfigurationService.cs" />
-    <Compile Include="Config\MiniSiteCollection.cs" />
-    <Compile Include="Config\MiniSiteConfigElement.cs" />
-    <Compile Include="Config\MiniSiteConfigSection.cs" />
-    <Compile Include="Config\PublicationConfigSection.cs" />
+    <Compile Include="Config\MiniSite\MiniSiteCollection.cs" />
+    <Compile Include="Config\MiniSite\MiniSiteConfigElement.cs" />
+    <Compile Include="Config\MiniSite\MiniSiteConfigSection.cs" />
+    <Compile Include="Config\Publication\PublicationConfigSection.cs" />
     <Compile Include="Controles\GestionStatistiques.cs" />
     <Compile Include="Controles\RelayCommand.cs" />
     <Compile Include="ExtensionNoyau\Deroulement\CombatEqualityComparer.cs" />

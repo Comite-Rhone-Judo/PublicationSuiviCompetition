@@ -2,7 +2,7 @@
 using System.Configuration;
 using Tools.Outils;
 
-namespace AppPublication.Config
+namespace AppPublication.Config.MiniSite
 {
     /// <summary>
     /// Section de configuration pour la gestion des paramètres techniques des MiniSites.
