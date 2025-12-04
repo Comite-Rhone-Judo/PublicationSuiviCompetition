@@ -82,7 +82,7 @@
                                 <Storyboard>
                                     <DoubleAnimation Storyboard.TargetName="SpinnerRotate"
                                                  Storyboard.TargetProperty="Angle"
-                                                 From="0" To="360" 
+                                                 From="360" To="0" 
                                                  Duration="0:0:1.0" 
                                                  RepeatBehavior="Forever" />
                                 </Storyboard>

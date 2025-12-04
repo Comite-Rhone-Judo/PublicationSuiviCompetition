@@ -1,10 +1,16 @@
-﻿using AppPublication.Config.Publication;
-using AppPublication.Config.EcransAppel;
+﻿using AppPublication.Config.EcransAppel;
+using AppPublication.Config.Publication;
 using AppPublication.Export;
 using AppPublication.ExtensionNoyau.Deroulement;
-using AppPublication.Views.Configuration;
-using AppPublication.ViewModels;
+using AppPublication.Generation;
+using AppPublication.Managers;
 using AppPublication.Models;
+using AppPublication.Publication;
+using AppPublication.Statistiques;
+using AppPublication.Tools.Files;
+using AppPublication.Tools.FranceJudo;
+using AppPublication.ViewModels;
+using AppPublication.Views.Configuration;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
 using AppPublication.ExtensionNoyau;
@@ -1527,7 +1533,7 @@ private ObservableCollection<EcranAppelModel> _ecransAppel;
             try
             {
                 // Chargement des Ecrans depuis la Config vers le Modèle Runtime
-                _ecransAppel = new ObservableCollection<EcranAppelModel>();
+                _ecransAppel = new EcranCollectionManager();
 
                 if (EcransAppelConfigSection.Instance != null && EcransAppelConfigSection.Instance.Ecrans != null)
                 {

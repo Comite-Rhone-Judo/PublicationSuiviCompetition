@@ -1,55 +1,16 @@
-﻿    using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Configuration;
+using Tools.Configuration;
 
 namespace AppPublication.Config.MiniSite
 {
     /// <summary>
     /// Collection d'éléments <miniSite>
     /// </summary>
-    public class MiniSiteCollection : ConfigurationElementCollection
+    public class MiniSiteCollection : ConfigCollectionBase<MiniSiteConfigSection, MiniSiteConfigElement>
     {
-        protected override ConfigurationElement CreateNewElement()
+        protected override object GetElementKey(MiniSiteConfigElement element)
         {
-            return new MiniSiteConfigElement();
-        }
-
-        protected override object GetElementKey(ConfigurationElement element)
-        {
-            return ((MiniSiteConfigElement)element).ID;
-        }
-
-        public MiniSiteConfigElement this[int index]
-        {
-            get { return (MiniSiteConfigElement)BaseGet(index); }
-            set
-            {
-                if (BaseGet(index) != null) BaseRemoveAt(index);
-                BaseAdd(index, value);
-            }
-        }
-
-        public new MiniSiteConfigElement this[string id]
-        {
-            get { return (MiniSiteConfigElement)BaseGet(id); }
-        }
-
-        public void Add(MiniSiteConfigElement element)
-        {
-            BaseAdd(element);
-        }
-
-        public void Remove(string id)
-        {
-            BaseRemove(id);
-        }
-
-        public void Clear()
-        {
-            BaseClear();
+            return element.ID;
         }
     }
 }

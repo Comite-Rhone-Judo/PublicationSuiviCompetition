@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.IO;
 using AppPublication.Tools.Files;
 using AppPublication.Tools.FranceJudo;
+using Tools.Configuration;
 
 namespace AppPublication.Config.Publication
 {

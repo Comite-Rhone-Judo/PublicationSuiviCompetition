@@ -1,6 +1,8 @@
 ﻿using AppPublication.Config.EcransAppel;
 using AppPublication.Controles;
+using AppPublication.Managers;
 using AppPublication.Models;
+using KernelManager;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -13,7 +15,7 @@ namespace AppPublication.ViewModels
     {
         #region MEMBERS
         // Collection source (référence vers celle de GestionSite)
-        private readonly ObservableCollection<EcranAppelModel> _sourceCollection;
+        private readonly EcranCollectionManager _ecranManager;
         private readonly List<int> _tapisDisponibles;
         #endregion
 
@@ -43,27 +45,18 @@ namespace AppPublication.ViewModels
         /// <summary>
         /// Constructeur appelé avec la collection de modèles de GestionSite
         /// </summary>
-        public ConfigurationEcransViewModel(ObservableCollection<EcranAppelModel> models, int nbMaxTapis)
+        public ConfigurationEcransViewModel(EcranCollectionManager manager, int nbMaxTapis)
         {
-            // TODO Déplacer l'icone d'attente vers hostname et IP
-            // TODO Avoir 2 recherches différentes (hostname et IP) pour déclencher le bon icone
-            // TODO Faire un arbre de decision sur le comportement lors de la saisie
-            // TODO revoir le comportement de la saisie vs le modèle en cas de chaine vide (ce que l'on stocke dans le fichier de config) et ce que l'on affiche si la recherche échoue (ex: "Inconnu" ou vide ?)
-            // TODO la résolution des noms ne semble pas fonctionner correctement
-            // TODO le RAZ host/IP ne fonctionne pas correctement
-            // TODO Traiter le cas ou on a des tapis plus loin que le nbMaxTapis (ex: tapis 10 alors que nbMaxTapis=8), le changement pouvant se faire dynamiquement par la table centrale ...
-            // A voir si on ignore juste pas et les valeurs de tapis > nb tapis seront ignorées à la génération
-
-            _sourceCollection = models;
+            _ecranManager = manager;
             _tapisDisponibles = Enumerable.Range(1, nbMaxTapis).ToList();
 
             EcransViewModels = new ObservableCollection<EcranAppelConfigViewModel>();
 
             // Charger les ViewModels à partir de la collection Runtime de GestionSite
             // Cette collection a déjà été initialisée depuis la config au démarrage de GestionSite
-            if (_sourceCollection != null)
+            if(_ecranManager != null && _ecranManager.Ecrans != null)
             {
-                foreach (var model in _sourceCollection)
+                foreach (var model in _ecranManager.Ecrans)
                 {
                     var vm = new EcranAppelConfigViewModel(model, _tapisDisponibles);
                     vm.DeleteCommand = new RelayCommand(SupprimerLigne);
@@ -77,10 +70,7 @@ namespace AppPublication.ViewModels
         private void AjouterEcranAction(object obj)
         {
             // 1. Création du nouveau modèle
-            var nouveauModel = new EcranAppelModel();
-
-            // 2. Ajout à la collection source (GestionSite est mis à jour par référence)
-            _sourceCollection.Add(nouveauModel);
+            var nouveauModel = _ecranManager.Add();
 
             // 3. Ajout à la Configuration (Sauvegarde Disque immédiate)
             var configElement = new EcransAppelConfigElement
@@ -111,12 +101,8 @@ namespace AppPublication.ViewModels
                 EcransViewModels.Remove(vm);
 
                 // 2. Supprimer du modèle source (GestionSite)
-                // Le VM encapsule le modèle, on peut donc l'utiliser pour la suppression
-                // (Note: vm.ModelOriginal n'est pas exposé publiquement dans le code précédent, 
-                // on peut soit l'exposer, soit chercher par ID).
                 // Ici, on cherche par ID pour être sûr.
-                var modelToRemove = _sourceCollection.FirstOrDefault(m => m.Id == vm.Id);
-                if (modelToRemove != null) _sourceCollection.Remove(modelToRemove);
+                _ecranManager.Remove(vm.Id);
 
                 // 3. Supprimer de la Configuration (Disque)
                 if (EcransAppelConfigSection.Instance != null)

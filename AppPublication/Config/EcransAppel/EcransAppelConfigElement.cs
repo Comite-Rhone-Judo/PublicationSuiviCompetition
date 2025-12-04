@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using Tools.Configuration;
 
 namespace AppPublication.Config.EcransAppel
 {
@@ -7,7 +8,7 @@ namespace AppPublication.Config.EcransAppel
     /// Élément de configuration représentant un écran d'appel.
     /// Hérite de ConfigElementBase pour l'intégration automatique avec le système de sauvegarde.
     /// </summary>
-    public class EcransAppelConfigElement : ConfigElementBase
+    public class EcransAppelConfigElement : ConfigElementBase<EcransAppelConfigSection>
     {
         // Constantes pour les noms des propriétés XML
         private const string kId = "id";

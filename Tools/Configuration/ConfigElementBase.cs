@@ -1,20 +1,28 @@
 ﻿using System;
 using System.Configuration;
-using Tools.Outils; // Pour Encryption
 
-namespace AppPublication.Config
+namespace Tools.Configuration
 {
     /// <summary>
     /// Classe de base pour tous les éléments de configuration (ConfigurationElement).
     /// Factorise les méthodes GetConfigValue et SetValueAndMarkDirty.
     /// </summary>
-    public abstract class ConfigElementBase : ConfigurationElement
+    /// <typeparam name="TSection">Le type de la section de configuration parente (Singleton)</typeparam>
+    public abstract class ConfigElementBase<TSection> : ConfigurationElement
+        where TSection : ConfigSectionBase<TSection>
     {
         /// <summary>
-        /// Méthode abstraite que l'élément concret devra implémenter pour notifier 
-        /// la section parente (Singleton) qu'un changement a eu lieu.
+        /// Implémentation générique de la notification.
+        /// Utilise l'instance Singleton du type TSection fourni.
         /// </summary>
-        protected abstract void NotifyParentOfModification();
+        protected virtual void NotifyParentOfModification()
+        {
+            // Appel direct au singleton de la section typée
+            if (ConfigSectionBase<TSection>.Instance != null)
+            {
+                ConfigSectionBase<TSection>.Instance.NotifyChildModification();
+            }
+        }
 
         /// <summary>
         /// Helper générique pour récupérer une valeur avec gestion des types et valeur par défaut.

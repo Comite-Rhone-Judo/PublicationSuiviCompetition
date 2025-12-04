@@ -5,7 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Configuration des Écrans d'Appel" Height="600" Width="1100" Background="Black"
+        Title="Configuration des Écrans d'Appel" Height="480" Width="860" Background="Black"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
@@ -40,13 +40,11 @@
 
                 <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
                     <telerik:RadButton Command="{Binding CmdAjouterEcran}" 
+                                       Style="{StaticResource RadButtonStyle1}"
                                        telerik:StyleManager.Theme="Expression_Dark"
                                        ToolTip="Ajouter un nouvel écran"
                                        Width="30" Height="30"
-                                       Tag="pack://application:,,,/Tools;component/data/images/icons/black/add_list-32.png" Margin="0 5 5 0">
-                        <WrapPanel Orientation="Horizontal">
-                            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/add_list-32.png" Margin="0 0 0 0"/>
-                        </WrapPanel>
+                                       Tag="pack://application:,,,/Tools;component/data/images/icons/black/add_list-32.png">
                     </telerik:RadButton>
                 </StackPanel>
 
@@ -59,31 +57,53 @@
                                      CanUserDeleteRows="False">
                     <telerik:RadGridView.Columns>
 
-                        <telerik:GridViewDataColumn Header="N°" DataMemberBinding="{Binding Id}" IsReadOnly="True" Width="40" TextAlignment="Center" ToolTip="ID autogénéré de l'écran" />
+                        <telerik:GridViewDataColumn Header="N°" DataMemberBinding="{Binding Id}" IsReadOnly="True" Width="30" TextAlignment="Center" ToolTip="ID autogénéré de l'écran" />
 
-                        <telerik:GridViewDataColumn Header="Description" DataMemberBinding="{Binding Description}" Width="200" ToolTip="(Optionnel) Description de l'écran" />
+                        <telerik:GridViewDataColumn Header="Description" DataMemberBinding="{Binding Description}" Width="150" ToolTip="(Optionnel) Description de l'écran" />
 
-                        <telerik:GridViewDataColumn Header="Identifiant" DataMemberBinding="{Binding RawUserInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="160" ToolTip="Identifiant de l'écran sur le réseau, IP ou Hostname"/>
+                        <telerik:GridViewDataColumn Header="Identifiant" DataMemberBinding="{Binding RawUserInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="120" ToolTip="Identifiant de l'écran sur le réseau, IP ou Hostname"/>
 
-                        <telerik:GridViewDataColumn Header="" Width="30" ToolTip="Indique si une recherche hostname ou IP est en cours">
-                            <telerik:GridViewDataColumn.CellTemplate>
+
+                        <telerik:GridViewDataColumn Header="Hostname" DataMemberBinding="{Binding Hostname}" IsReadOnly="True" Width="120" ToolTip="Hostname détecté pour l'identifiant de l'écran" >
+                            <telerik:GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <Grid>
-                                        <Control Style="{StaticResource TrailSpinnerStyle}" 
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto"/>
+                                            <ColumnDefinition Width="20"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Hostname}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <Control Grid.Column="1" Style="{StaticResource TrailSpinnerStyle}" 
                                                  Width="15" Height="15"        
                                                  Foreground="White"
-                                                 Visibility="Visible"
+                                                 Visibility="{Binding IsRechercheHostnameEnCours, Converter={StaticResource BoolToVisibilityConverter}}"
                                                          HorizontalAlignment="Center" 
                                                          VerticalAlignment="Center" />
                                     </Grid>
                                 </DataTemplate>
-                            </telerik:GridViewDataColumn.CellTemplate>
+                            </telerik:GridViewColumn.CellTemplate>
+                        </telerik:GridViewDataColumn>
+                        <telerik:GridViewDataColumn Header="IP" DataMemberBinding="{Binding AdresseIP}" IsReadOnly="True" Width="100" ToolTip="Adresse IP détectée pour l'identifiant de l'écran" >
+                            <telerik:GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto"/>
+                                            <ColumnDefinition Width="20"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding AdresseIP}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <Control Grid.Column="1" Style="{StaticResource TrailSpinnerStyle}" 
+                                                 Width="15" Height="15"        
+                                                 Foreground="White"
+                                                 Visibility="{Binding IsRechercheIpEnCours, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                         HorizontalAlignment="Center" 
+                                                         VerticalAlignment="Center" />
+                                    </Grid>
+                                </DataTemplate>
+                            </telerik:GridViewColumn.CellTemplate>
                         </telerik:GridViewDataColumn>
 
-                        <telerik:GridViewDataColumn Header="Hostname" DataMemberBinding="{Binding Hostname}" IsReadOnly="True" Width="150" ToolTip="Hostname détecté pour l'identifiant de l'écran" />
-                        <telerik:GridViewDataColumn Header="IP" DataMemberBinding="{Binding AdresseIP}" IsReadOnly="True" Width="120" ToolTip="Adresse IP détectée pour l'identifiant de l'écran" />
-
-                        <telerik:GridViewColumn Header="Sélection Tapis" Width="*" ToolTip="Liste des tapis à afficher sur l'écean (max. 4)">
+                        <telerik:GridViewColumn Header="Sélection Tapis" IsResizable="False" Width="240" ToolTip="Liste des tapis à afficher sur l'écean (max. 4)">
                             <telerik:GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <ItemsControl ItemsSource="{Binding ListeTapisViewModels}">
@@ -105,7 +125,7 @@
                             </telerik:GridViewColumn.CellTemplate>
                         </telerik:GridViewColumn>
 
-                        <telerik:GridViewColumn Header="Actions" Width="60">
+                        <telerik:GridViewColumn IsResizable="False" Header="" Width="40">
                             <telerik:GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <telerik:RadButton Command="{Binding DeleteCommand}" 
@@ -113,6 +133,7 @@
                                                        ToolTip="Supprimer cet écran"
                                                        Width="20" Height="20"
                                                        telerik:StyleManager.Theme="Expression_Dark"
+                                                       Style="{StaticResource RadButtonStyle1}"
                                                        Tag="pack://application:,,,/Tools;component/data/images/icons/black/delete-32.png">
                                     </telerik:RadButton>
                                 </DataTemplate>
@@ -125,7 +146,7 @@
         </Border>
 
         <WrapPanel Grid.Row="2" HorizontalAlignment="Right" Orientation="Horizontal">
-            <telerik:RadButton x:Name="ButClose" Width="100" Height="35" 
+            <telerik:RadButton x:Name="ButClose" Width="100" Height="30" 
                                telerik:StyleManager.Theme="Expression_Dark" 
                                IsCancel="True"
                                Click="ButClose_Click">

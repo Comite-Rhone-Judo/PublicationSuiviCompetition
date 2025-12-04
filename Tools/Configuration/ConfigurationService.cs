@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Tools.Outils;
 
-namespace AppPublication.Config
+namespace Tools.Configuration
 {
     /// <summary>
     /// Service centralisé qui gère la sauvegarde asynchrone des sections de configuration.
