@@ -209,7 +209,6 @@ private ObservableCollection<EcranAppelModel> _ecransAppel;
             {
                 if (_ecransAppel != value)
                 {
-                    // TODO voir si c'est nécessaire ici ....
                     _ecransAppel = value;
                     NotifyPropertyChanged();
                 }

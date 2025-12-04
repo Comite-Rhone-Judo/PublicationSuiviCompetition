@@ -126,6 +126,10 @@ namespace AppPublication.ViewModels
 
                     IPAddress ip = IPAddress.None;
                     bool ipValid = IPAddress.TryParse(value, out ip);
+
+                    // Mise à jour Modèle Runtime
+                    _model.AdresseIP = ipValid ? ip : IPAddress.None;
+
                     // SAUVEGARDE IMMEDIATE
                     var cfg = GetConfigElement();
                     if (cfg != null) cfg.AdresseIp = ipValid ? value : string.Empty;
