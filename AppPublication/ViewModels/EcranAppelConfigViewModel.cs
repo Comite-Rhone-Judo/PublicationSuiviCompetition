@@ -1,9 +1,11 @@
 ﻿using AppPublication.Config.EcransAppel;
 using AppPublication.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
+using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,8 +17,14 @@ namespace AppPublication.ViewModels
 {
     public class EcranAppelConfigViewModel : NotificationBase
     {
+        private enum TypeSaisieEnum
+        {
+            AddressIP,
+            Hostname,
+            Inconnu
+        }
+
         #region CONSTANTES
-        private const string kNotFoundPlaceholder = "...";
         private const int kMaxTapisSelection = 4; // Constante pour la limite
         #endregion
 
@@ -25,7 +33,8 @@ namespace AppPublication.ViewModels
 
         // Champs visuels (non stockés)
         private string _rawUserInput;
-        private bool _isRechercheEnCours;
+        private bool _isRechercheIpEnCours;
+        private bool _isRechercheHostnameEnCours;
         private CancellationTokenSource _searchCts;
         #endregion
 
@@ -45,8 +54,8 @@ namespace AppPublication.ViewModels
             _model = model;
 
             // Initialisation visuelle
-            Hostname = string.IsNullOrEmpty(model.Hostname) ? kNotFoundPlaceholder : model.Hostname;
-            AdresseIP = (model.AdresseIP == null || model.AdresseIP.Equals(IPAddress.None))  ? kNotFoundPlaceholder : model.AdresseIP.ToString();
+            Hostname = string.IsNullOrEmpty(model.Hostname) ? string.Empty : model.Hostname;
+            AdresseIP = (model.AdresseIP == null || model.AdresseIP.Equals(IPAddress.None))  ? string.Empty : model.AdresseIP.ToString();
 
             // Création des CheckBoxes pour les tapis
             ListeTapisViewModels = new ObservableCollection<EcranAppelTapisSelectionViewModel>();
@@ -85,7 +94,7 @@ namespace AppPublication.ViewModels
             }
         }
 
-        private string _hostname = kNotFoundPlaceholder;
+        private string _hostname = string.Empty;
         public string Hostname
         {
             get { return _hostname; }
@@ -96,20 +105,15 @@ namespace AppPublication.ViewModels
                     _hostname = value;
                     NotifyPropertyChanged();
 
-                    // On ne sauvegarde pas le placeholder dans le modele car c'est juste de l'affichage
-                    if (value != kNotFoundPlaceholder)
-                    {
-                        _model.Hostname = value;
-
-                        // SAUVEGARDE IMMEDIATE
-                        var cfg = GetConfigElement();
-                        if (cfg != null) cfg.Hostname = value;
-                    }
+                    // SAUVEGARDE IMMEDIATE
+                    _model.Hostname = value;
+                    var cfg = GetConfigElement();
+                    if (cfg != null) cfg.Hostname = value;
                 }
             }
         }
 
-        private string _ipAdresse = kNotFoundPlaceholder;
+        private string _ipAdresse = string.Empty;
         public string AdresseIP
         {
             get { return _ipAdresse.ToString(); }
@@ -120,21 +124,11 @@ namespace AppPublication.ViewModels
                     _ipAdresse = value;
                     NotifyPropertyChanged();
 
-                    // On ne sauvegarde pas le placeholder dans le modele car c'est juste de l'affichage
-                    if (value != kNotFoundPlaceholder)
-                    {
-                        IPAddress ip = IPAddress.None;
-                        bool ipValid = IPAddress.TryParse(value, out ip);
-
-                        if (ipValid)
-                        {
-                            {
-                                // SAUVEGARDE IMMEDIATE
-                                var cfg = GetConfigElement();
-                                if (cfg != null) cfg.AdresseIp = value;
-                            }
-                        }
-                    }
+                    IPAddress ip = IPAddress.None;
+                    bool ipValid = IPAddress.TryParse(value, out ip);
+                    // SAUVEGARDE IMMEDIATE
+                    var cfg = GetConfigElement();
+                    if (cfg != null) cfg.AdresseIp = ipValid ? value : string.Empty;
                 }
             }
         }
@@ -149,8 +143,8 @@ namespace AppPublication.ViewModels
                 {
                     _rawUserInput = value;
                     NotifyPropertyChanged();
-                    DeterminerTypeSaisie(value);
-                    LancerRechercheComplementaire(value);
+                    var typeSaisie = DeterminerTypeSaisie(value);
+                    LancerRechercheComplementaire(value, typeSaisie);
                 }
             }
         }
@@ -162,12 +156,45 @@ namespace AppPublication.ViewModels
 
         #region METHODES PUBLIQUES
         /// <summary>
+        /// True si une recherche asynchrone d'IP est en cours
+        /// </summary>
+        public bool IsRechercheIpEnCours
+        {
+            get { return _isRechercheIpEnCours; }
+            set
+            {
+                if (_isRechercheIpEnCours != value)
+                {
+                    _isRechercheIpEnCours = value;
+                    NotifyPropertyChanged();
+                    NotifyPropertyChanged(nameof(IsRechercheEnCours));
+                }
+            }
+        }
+
+        /// <summary>
+        /// True si une recherche asynchrone de hostname est en cours
+        /// </summary>
+        public bool IsRechercheHostnameEnCours
+        {
+            get { return _isRechercheHostnameEnCours; }
+            set
+            {
+                if (_isRechercheHostnameEnCours != value)
+                {
+                    _isRechercheHostnameEnCours = value;
+                    NotifyPropertyChanged();
+                    NotifyPropertyChanged(nameof(IsRechercheEnCours));
+                }
+            }
+        }
+
+        /// <summary>
         /// True si une recherche asynchrone est en cours
         /// </summary>
         public bool IsRechercheEnCours
         {
-            get { return _isRechercheEnCours; }
-            set { if (_isRechercheEnCours != value) { _isRechercheEnCours = value; NotifyPropertyChanged(); } }
+            get { return IsRechercheIpEnCours || IsRechercheHostnameEnCours; }
         }
 
         /// <summary>
@@ -242,20 +269,22 @@ namespace AppPublication.ViewModels
         /// Determine si la saisie utilisateur est une adresse IP ou un hostname, et met à jour les propriétés en conséquence
         /// </summary>
         /// <param name="saisie"></param>
-        private void DeterminerTypeSaisie(string saisie)
+        private TypeSaisieEnum DeterminerTypeSaisie(string saisie)
         {
             if (string.IsNullOrWhiteSpace(saisie))
             {
-                Hostname = ""; AdresseIP = ""; return;
+                Hostname = ""; AdresseIP = ""; return TypeSaisieEnum.Inconnu;
             }
 
             if (IPAddress.TryParse(saisie, out _))
             {
-                AdresseIP = saisie; if (string.IsNullOrEmpty(Hostname)) Hostname = kNotFoundPlaceholder;
+                AdresseIP = saisie;
+                return TypeSaisieEnum.AddressIP;
             }
             else
             {
-                Hostname = saisie; if (string.IsNullOrEmpty(AdresseIP)) AdresseIP = kNotFoundPlaceholder;
+                Hostname = saisie;
+                return TypeSaisieEnum.Hostname;
             }
         }
 
@@ -263,29 +292,45 @@ namespace AppPublication.ViewModels
         /// Lance une recherche asynchrone pour compléter l'adresse IP ou le hostname en fonction de la saisie utilisateur
         /// </summary>
         /// <param name="saisie"></param>
-        private async void LancerRechercheComplementaire(string saisie)
+        private async void LancerRechercheComplementaire(string saisie, TypeSaisieEnum type)
         {
             if (_searchCts != null)
             {
                 _searchCts.Cancel();
                 _searchCts.Dispose();
+                IsRechercheHostnameEnCours = false;
+                IsRechercheIpEnCours = false;
             }
 
             _searchCts = new CancellationTokenSource();
             var token = _searchCts.Token;
 
-            if (string.IsNullOrWhiteSpace(saisie))
+            if (string.IsNullOrWhiteSpace(saisie) || type == TypeSaisieEnum.Inconnu)
             {
-                IsRechercheEnCours = false;
+                LogTools.Logger.Debug("LancerRechercheComplementaire: saisie vide ou inconnue, pas de recherche lancée.");
                 return;
             }
 
-            IsRechercheEnCours = true;
+            // Determine le type de recherche a effectuer et Vide le champ que l'on va rechercher
+            switch (type) 
+                            {
+                case TypeSaisieEnum.AddressIP:
+                    IsRechercheHostnameEnCours = true;
+                    Hostname = String.Empty;
+                    break;
+                case TypeSaisieEnum.Hostname:
+                    IsRechercheIpEnCours = true;
+                    AdresseIP = String.Empty;
+                    break;
+                default:
+                    break;
+            }
+
             try
             {
                 await Task.Delay(500, token);
                 string res = "";
-                bool isIp = IPAddress.TryParse(saisie, out IPAddress ipAddr);
+                bool isIp = type == TypeSaisieEnum.AddressIP;
 
                 await Task.Run(async () =>
                 {
@@ -293,7 +338,7 @@ namespace AppPublication.ViewModels
                     {
                         if (isIp)
                         {
-                            var e = await Dns.GetHostEntryAsync(ipAddr);
+                            var e = await Dns.GetHostEntryAsync(IPAddress.Parse(saisie));
                             res = e.HostName;
                         }
                         else
@@ -306,7 +351,10 @@ namespace AppPublication.ViewModels
                             }
                         }
                     }
-                    catch { }
+                    catch (Exception ex)
+                    { 
+                        LogTools.Logger.Warn($"LancerRechercheComplementaire: Erreur lors de la recherche DNS pour '{saisie}': {ex.Message}");  
+                    }
                 }, token);
 
                 if (!token.IsCancellationRequested && !string.IsNullOrEmpty(res))
@@ -326,7 +374,8 @@ namespace AppPublication.ViewModels
             {
                 if (!token.IsCancellationRequested)
                 {
-                    IsRechercheEnCours = false;
+                    IsRechercheIpEnCours = false;
+                    IsRechercheHostnameEnCours = false;
                 }
             }
         }

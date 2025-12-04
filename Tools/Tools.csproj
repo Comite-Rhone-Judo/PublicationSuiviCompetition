@@ -126,6 +126,11 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Configuration\ConfigCollectionBase.cs" />
+    <Compile Include="Configuration\ConfigElementBase.cs" />
+    <Compile Include="Configuration\ConfigSectionBase.cs" />
+    <Compile Include="Configuration\ConfigurationService.cs" />
+    <Compile Include="Configuration\InternalConfigSectionBase.cs" />
     <Compile Include="CustomException\AppUpdateException.cs" />
     <Compile Include="CustomException\JudoServerException.cs" />
     <Compile Include="CustomException\JudoClientException.cs" />

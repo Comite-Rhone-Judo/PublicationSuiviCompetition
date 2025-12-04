@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Configuration;
-using Tools.Outils;
+using Tools.Configuration;
 
 namespace AppPublication.Config.MiniSite
 {
@@ -13,9 +13,6 @@ namespace AppPublication.Config.MiniSite
         public const string kConfigSectionName = "MiniSiteSection";
         private const string kCollectionName = "miniSites";
 
-        // Propriété technique pour forcer le "Dirty" depuis les enfants
-        private const string kLastModifiedTick = "lastModifiedTick";
-
         protected MiniSiteConfigSection() : base() { }
 
         #region Collection
@@ -25,30 +22,6 @@ namespace AppPublication.Config.MiniSite
         public MiniSiteCollection MiniSites
         {
             get { return (MiniSiteCollection)base[kCollectionName]; }
-        }
-
-        #endregion
-
-        #region Mécanique de Notification
-
-        /// <summary>
-        /// Propriété cachée utilisée pour déclencher l'événement de modification
-        /// depuis les éléments enfants.
-        /// </summary>
-        [ConfigurationProperty(kLastModifiedTick, DefaultValue = 0L)]
-        internal long LastModifiedTick
-        {
-            // On utilise l'accès direct de ConfigSectionBase ici car on est dans la racine
-            get { return (long)this[kLastModifiedTick]; }
-            set { SetValueAndMarkDirty(kLastModifiedTick, value); }
-        }
-
-        /// <summary>
-        /// Méthode appelée par les enfants (MiniSiteConfigElement) quand ils changent.
-        /// </summary>
-        internal void NotifyChildModification()
-        {
-            this.LastModifiedTick = DateTime.Now.Ticks;
         }
 
         #endregion

@@ -1,5 +1,6 @@
 ﻿using System.Configuration;
 using System.Linq;
+using Tools.Configuration;
 
 namespace AppPublication.Config.EcransAppel
 {
@@ -7,42 +8,16 @@ namespace AppPublication.Config.EcransAppel
     /// Collection d'éléments de configuration pour les écrans.
     /// </summary>
     [ConfigurationCollection(typeof(EcransAppelConfigElement), AddItemName = "ecran", CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
-    public class EcransAppelConfigElementCollection : ConfigurationElementCollection
+    public class EcransAppelConfigElementCollection : ConfigCollectionBase<EcransAppelConfigSection, EcransAppelConfigElement>
     {
-        protected override ConfigurationElement CreateNewElement()
+        /// <summary>
+        /// Seule méthode obligatoire à implémenter : définir la clé unique de l'élément.
+        /// </summary>
+        protected override object GetElementKey(EcransAppelConfigElement element)
         {
-            return new EcransAppelConfigElement();
+            return element.Id;
         }
 
-        protected override object GetElementKey(ConfigurationElement element)
-        {
-            return ((EcransAppelConfigElement)element).Id;
-        }
-
-        public void Add(EcransAppelConfigElement element)
-        {
-            BaseAdd(element);
-        }
-
-        public void Remove(EcransAppelConfigElement element)
-        {
-            BaseRemove(element.Id);
-        }
-
-        public void Remove(int id)
-        {
-            BaseRemove(id);
-        }
-
-        public new int Count
-        {
-            get { return base.Count; }
-        }
-
-        public EcransAppelConfigElement this[int index]
-        {
-            get { return (EcransAppelConfigElement)BaseGet(index); }
-        }
         public EcransAppelConfigElement GetElementById(int id)
         {
             return (EcransAppelConfigElement) this.Cast<EcransAppelConfigElement>().FirstOrDefault(e => e.Id == id);

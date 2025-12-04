@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Configuration;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace AppPublication.Config
+namespace Tools.Configuration
 {
     /// <summary>
     /// Classe de base GÉNÉRIQUE (pour les classes concrètes)
@@ -14,6 +11,9 @@ namespace AppPublication.Config
     /// <typeparam name="T">La classe fille elle-même (Pattern CRTP)</typeparam>
     public abstract class ConfigSectionBase<T> : InternalConfigSectionBase where T : ConfigSectionBase<T>
     {
+        // Constante pour la propriété technique de modification
+        protected const string kLastModifiedTick = "lastModifiedTick";
+
         private static T _instance;
         private static readonly object _singletonLock = new object();
 
@@ -72,5 +72,29 @@ namespace AppPublication.Config
                 return attr?.Name;
             }
         }
+
+        #region Mécanique de Notification Centralisée
+
+        /// <summary>
+        /// Propriété technique utilisée pour marquer la section comme "Dirty" 
+        /// lorsque des enfants sont modifiés. Définie ici pour factorisation.
+        /// </summary>
+        [ConfigurationProperty(kLastModifiedTick, DefaultValue = 0L)]
+        public long LastModifiedTick
+        {
+            get { return (long)this[kLastModifiedTick]; }
+            set { SetValueAndMarkDirty(kLastModifiedTick, value); }
+        }
+
+        /// <summary>
+        /// Méthode appelée par les enfants (via ConfigElementBase) quand ils changent.
+        /// Cela met à jour le Tick, ce qui déclenche la sauvegarde via le mécanisme Dirty.
+        /// </summary>
+        public void NotifyChildModification()
+        {
+            this.LastModifiedTick = DateTime.Now.Ticks;
+        }
+
+        #endregion
     }
 }

@@ -133,13 +133,9 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
-    <Compile Include="Config\ConfigElementBase.cs" />
-    <Compile Include="Config\ConfigSectionBase.cs" />
     <Compile Include="Config\EcransAppel\EcransAppelConfigElementCollection.cs" />
     <Compile Include="Config\EcransAppel\EcransAppelConfigElement.cs" />
     <Compile Include="Config\EcransAppel\EcransAppelConfigSection.Cs" />
-    <Compile Include="Config\InternalConfigSectionBase.cs" />
-    <Compile Include="Config\ConfigurationService.cs" />
     <Compile Include="Config\MiniSite\MiniSiteCollection.cs" />
     <Compile Include="Config\MiniSite\MiniSiteConfigElement.cs" />
     <Compile Include="Config\MiniSite\MiniSiteConfigSection.cs" />
@@ -152,6 +148,7 @@
     <Compile Include="ExtensionNoyau\ExtensionJudoData.cs" />
     <Compile Include="ExtensionNoyau\Deroulement\VueJudokaEqualityComparer.cs" />
     <Compile Include="Models\EcranAppelModel.cs" />
+    <Compile Include="Models\EcranCollectionManager.cs" />
     <Compile Include="ViewModels\ConfigurationEcransViewModel.cs" />
     <Compile Include="ViewModels\EcranAppelConfigViewModel.cs" />
     <Compile Include="ViewModels\EcranAppelTapisSelectionViewModel.cs" />

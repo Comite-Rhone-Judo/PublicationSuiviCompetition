@@ -1,13 +1,11 @@
-﻿using AppPublication.Config;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Reflection;
 using Tools.Outils;
 
-namespace AppPublication.Config
+namespace Tools.Configuration
 {
 
     public delegate void SectionDirtyEventHandler(InternalConfigSectionBase section);
@@ -34,7 +32,7 @@ namespace AppPublication.Config
     {
         #region MEMBERS
         // L'objet Configuration unique pour toute l'application
-        private static Configuration _sharedConfig;
+        private static System.Configuration.Configuration _sharedConfig;
         private static readonly object _sharedConfigLock = new object();
 
         // Verrou local de l'instance Singleton pour protéger l'état en mémoire et le drapeau _isDirty.

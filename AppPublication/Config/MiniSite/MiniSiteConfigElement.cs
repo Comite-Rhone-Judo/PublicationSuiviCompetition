@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Configuration;
+using Tools.Configuration;
 using Tools.Outils;
 
 namespace AppPublication.Config.MiniSite
@@ -12,7 +8,7 @@ namespace AppPublication.Config.MiniSite
     /// Détail technique d'un accès FTP ou Local.
     /// Hérite maintenant de ConfigElementBase pour la factorisation du code.
     /// </summary>
-    public class MiniSiteConfigElement : ConfigElementBase
+    public class MiniSiteConfigElement : ConfigElementBase<MiniSiteConfigSection>
     {
         // Constantes pour les attributs XML
         private const string kId = "id";
