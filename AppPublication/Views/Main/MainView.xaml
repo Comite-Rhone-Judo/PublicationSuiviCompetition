@@ -6,9 +6,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"        
         Closing="MainWindow1_Closing"  Closed="MainWin_Closed_1" 
         Background="Black" Title="{Binding AppInformation.AppVersion, StringFormat=Application Publication Suivi de Compétition - {0}}" Name="MainWin" Focusable="True"
-        mc:Ignorable="d" SizeToContent="Width" Height="900"
+        mc:Ignorable="d" SizeToContent="Width" Height="870"
         DataContextChanged="Window_DataContextChanged">
-    <!--Style="{StaticResource WindowStyle}"-->
+    <!-- SizeToContent="Width" Height="900" -->
 
     <Window.Resources>
         <ResourceDictionary>
@@ -180,13 +180,13 @@
 
                         <!-- BLOC GENERATION -->
                         <!-- Entete -->
-                        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
+                        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource Header1Style}" Margin="5 5 5 5" Visibility="Visible" >
                             <TextBlock Text="Génération du suivi de la compétition" Style="{StaticResource Header1TextStyle}"/>
                             <TextBlock Text="{Binding Competition.nom}" Style="{StaticResource Header1TextStyle}"/>
                             <TextBlock Text="{Binding Competition.remoteId}" Style="{StaticResource Header1TextStyle}"/>
                         </StackPanel>
                         <!-- Contenu -->
-                        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="White" Margin="10 0 10 10">
+                        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="White" Margin="10 0 10 0">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="auto"/>
@@ -255,94 +255,179 @@
 
                         <!-- BLOC SERVEUR LOCAL -->
                         <!-- Entete -->
-                        <StackPanel Grid.Row="2" Grid.Column="0" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
+                        <StackPanel Grid.Row="2" Grid.Column="0" Style="{StaticResource Header1Style}" Margin="10 0 5 0" Visibility="Visible" >
                             <TextBlock Text="Publication locale" Style="{StaticResource Header1TextStyle}"/>
                         </StackPanel>
                         <!-- Contenu -->
-                        <Border BorderThickness="1" Grid.Row="3" Grid.Column="0" BorderBrush="White" Margin="10 0 10 10">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="auto"/>
-                                </Grid.RowDefinitions>
-                                <StackPanel Orientation="Vertical" Grid.Row="0">
-                                    <Label HorizontalAlignment="Left" Content="QRCode et adresse du site:" Style="{StaticResource HeaderStyle}" />
-                                    <WrapPanel>
-                                        <WrapPanel Background="White" Margin="50 0 0 0">
-                                            <telerik:RadBarcodeQR Background="White"  Height="150" Mode="Byte" ErrorCorrectionLevel="L" x:Name="QRCodeLocal">
-                                                <telerik:RadBarcodeQR.Text>
-                                                    <MultiBinding Converter="{StaticResource DisplayURLStatusConverter}" Mode="OneWay">
-                                                        <Binding Path="GestionSite.URLLocalPublication"  Mode="OneWay"/>
-                                                        <Binding Path="GestionSite.SiteLocal.IsActif"  Mode="OneWay"/>
-                                                    </MultiBinding>
-                                                </telerik:RadBarcodeQR.Text>
-                                            </telerik:RadBarcodeQR>
-                                        </WrapPanel>
-                                        <WrapPanel Orientation="Vertical" >
-                                            <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="10 0 0 0" Width="32" HorizontalAlignment="Left"
-                                                               Click="QRCodeLocalCopy_Click"
-                                                               IsEnabled="{Binding Path=GestionSite.SiteLocal.IsActif}">
-                                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier le QRCode"/>
-                                            </telerik:RadButton>
-                                            <WrapPanel Orientation="Horizontal" >
-                                                <Border BorderThickness="1" BorderBrush="Gray" Margin="10 10 10 10">
-                                                    <TextBlock Text="{Binding ElementName=QRCodeLocal, Path=Text, Mode=OneWay}" Style="{StaticResource TextBoxTextStyle}" Width="430" Margin=" 0 0 0 0"/>
-                                                </Border>
-                                                <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="0 0 10 0" Width="32" Height="32" HorizontalAlignment="Right" Command="{Binding Path=CmdCopyUrlLocal}">
-                                                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier l'URL"/>
+                        <Grid Grid.Row="3" Grid.Column="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <!-- SERVEUR LOCAL PUBLIC -->
+                            <Border BorderThickness="1" Grid.Row="0" BorderBrush="White" Margin="10 0 5 5">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Orientation="Vertical" Grid.Row="0">
+                                        <Label HorizontalAlignment="Left" Content="QRCode et adresse du site de suivi:" Style="{StaticResource HeaderStyle}" />
+                                        <WrapPanel>
+                                            <WrapPanel Background="White" Margin="50 0 0 0">
+                                                <telerik:RadBarcodeQR Background="White"  Height="120" Mode="Byte" ErrorCorrectionLevel="L" x:Name="QRCodeLocal">
+                                                    <telerik:RadBarcodeQR.Text>
+                                                        <MultiBinding Converter="{StaticResource DisplayURLStatusConverter}" Mode="OneWay">
+                                                            <Binding Path="GestionSite.URLLocalPublication"  Mode="OneWay"/>
+                                                            <Binding Path="GestionSite.SiteLocal.IsActif"  Mode="OneWay"/>
+                                                        </MultiBinding>
+                                                    </telerik:RadBarcodeQR.Text>
+                                                </telerik:RadBarcodeQR>
+                                            </WrapPanel>
+                                            <WrapPanel Orientation="Vertical" >
+                                                <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="10 0 0 0" Width="32" HorizontalAlignment="Left"
+                                       Click="QRCodeLocalCopy_Click"
+                                       IsEnabled="{Binding Path=GestionSite.SiteLocal.IsActif}">
+                                                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier le QRCode"/>
                                                 </telerik:RadButton>
+                                                <WrapPanel Orientation="Horizontal" >
+                                                    <Border BorderThickness="1" BorderBrush="Gray" Margin="10 10 10 10">
+                                                        <TextBlock Text="{Binding ElementName=QRCodeLocal, Path=Text, Mode=OneWay}" Style="{StaticResource TextBoxTextStyle}" Width="430" Margin=" 0 0 0 0"/>
+                                                    </Border>
+                                                    <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="0 0 10 0" Width="32" Height="32" HorizontalAlignment="Right" Command="{Binding Path=CmdCopyUrlLocal}">
+                                                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier l'URL"/>
+                                                    </telerik:RadButton>
+                                                </WrapPanel>
                                             </WrapPanel>
                                         </WrapPanel>
-                                    </WrapPanel>
-                                    <StackPanel Orientation="Horizontal" >
                                         <StackPanel Orientation="Horizontal" >
-                                            <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
-                                            <Rectangle Margin="0" Height="15" Width="15" Style="{StaticResource RunningStatusStyle}" DataContext="{Binding Path=GestionSite.SiteLocal}"/>
-                                            <Label HorizontalAlignment="Left" Content="{Binding Path=GestionSite.SiteLocal.IsActif, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
+                                            <StackPanel Orientation="Horizontal" >
+                                                <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
+                                                <Rectangle Margin="0" Height="15" Width="15" Style="{StaticResource RunningStatusStyle}" DataContext="{Binding Path=GestionSite.SiteLocal}"/>
+                                                <Label HorizontalAlignment="Left" Content="{Binding Path=GestionSite.SiteLocal.IsActif, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
+                                            </StackPanel>
+                                            <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
+                                            <StackPanel Orientation="Horizontal" >
+                                                <Label HorizontalAlignment="Left" Content="Statut:" Style="{StaticResource LabelStyle}" />
+                                                <Label HorizontalAlignment="Left" Content="{Binding GestionSite.SiteLocal.Status.Message}" Style="{StaticResource LabelStyleValue}" />
+                                            </StackPanel>
                                         </StackPanel>
-                                        <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
+                                        <Line StrokeThickness="1" Stroke="White" Margin="5" X1="0" X2="1" Stretch="Fill"/>
                                         <StackPanel Orientation="Horizontal" >
-                                            <Label HorizontalAlignment="Left" Content="Statut:" Style="{StaticResource LabelStyle}" />
-                                            <Label HorizontalAlignment="Left" Content="{Binding GestionSite.SiteLocal.Status.Message}" Style="{StaticResource LabelStyleValue}" />
+                                            <Label HorizontalAlignment="Left" Content="Parametres:" Style="{StaticResource HeaderStyle}" />
+                                            <StackPanel Orientation="Horizontal" >
+                                                <Label Content="Adresse de publication:" Margin="0 0 0 0" Style="{StaticResource LabelStyle}"/>
+                                                <telerik:RadComboBox Height="22" MinWidth="200" Style="{StaticResource DropDownStyle}"
+                                                                      ItemsSource="{Binding Path=GestionSite.SiteLocal.InterfacesLocal}"
+                                                                      SelectedItem = "{Binding Path=GestionSite.InterfaceLocalPublication}"
+                                                                      IsEnabled="{Binding Path=GestionSite.SiteLocal.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                            </StackPanel>
                                         </StackPanel>
                                     </StackPanel>
-                                    <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="1" Stretch="Fill"/>
-                                    <Label HorizontalAlignment="Left" Content="Parametres:" Style="{StaticResource HeaderStyle}" />
-                                    <StackPanel Orientation="Horizontal" >
-                                        <Label Content="Adresse de publication:" Margin="10" Style="{StaticResource LabelStyle}"/>
-                                        <telerik:RadComboBox Height="22" MinWidth="200" Style="{StaticResource DropDownStyle}"
-                                          ItemsSource="{Binding Path=GestionSite.SiteLocal.InterfacesLocal}"
-                                          SelectedItem = "{Binding Path=GestionSite.InterfaceLocalPublication}"
-                                          IsEnabled="{Binding Path=GestionSite.SiteLocal.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                                        <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 20 0" Command="{Binding Path=CmdDemarrerSiteLocal}">
+                                            <WrapPanel Orientation="Horizontal">
+                                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/play-32.png" Height="25" Margin="5 0"/>
+                                                <Label Content="Démarrer" />
+                                            </WrapPanel>
+                                        </telerik:RadButton>
+                                        <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="20 0 0 0" Command="{Binding Path=CmdArreterSiteLocal}">
+                                            <WrapPanel Orientation="Horizontal">
+                                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/stop-32.png" Height="25" Margin="5 0"/>
+                                                <Label Content="Arrêter" />
+                                            </WrapPanel>
+                                        </telerik:RadButton>
                                     </StackPanel>
-                                </StackPanel>
-                                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                                    <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 20 0"
-                                                    Command="{Binding Path=CmdDemarrerSiteLocal}">
-                                        <WrapPanel Orientation="Horizontal">
-                                            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/play-32.png" Height="25" Margin="5 0"/>
-                                            <Label Content="Démarrer" />
-                                        </WrapPanel>
-                                    </telerik:RadButton>
-                                    <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="20 0 0 0" Command="{Binding Path=CmdArreterSiteLocal}">
-                                        <WrapPanel Orientation="Horizontal">
-                                            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/stop-32.png" Height="25" Margin="5 0"/>
-                                            <Label Content="Arrêter" />
-                                        </WrapPanel>
-                                    </telerik:RadButton>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-                        <!-- Boutons-->
+                                </Grid>
+                            </Border>
 
-
+                            <!-- SERVEUR LOCAL ECRANS APPEL -->
+                            <Border BorderThickness="1" Grid.Row="4" BorderBrush="White" Margin="10 0 5 0">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Orientation="Vertical" Grid.Row="0">
+                                        <Label HorizontalAlignment="Left" Content="QRCode et adresse pour les écrans d'appel:" Style="{StaticResource HeaderStyle}" />
+                                        <WrapPanel>
+                                            <WrapPanel Background="White" Margin="50 0 0 0">
+                                                <telerik:RadBarcodeQR Background="White"  Height="120" Mode="Byte" ErrorCorrectionLevel="L" x:Name="QRCodeEcransAppel">
+                                                    <telerik:RadBarcodeQR.Text>
+                                                        <MultiBinding Converter="{StaticResource DisplayURLStatusConverter}" Mode="OneWay">
+                                                            <Binding Path="GestionSite.URLLocalPublication"  Mode="OneWay"/>
+                                                            <Binding Path="GestionSite.SiteLocal.IsActif"  Mode="OneWay"/>
+                                                        </MultiBinding>
+                                                    </telerik:RadBarcodeQR.Text>
+                                                </telerik:RadBarcodeQR>
+                                            </WrapPanel>
+                                            <WrapPanel Orientation="Vertical" >
+                                                <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="10 0 0 0" Width="32" HorizontalAlignment="Left"
+                                       Click="QRCodeEcransAppelCopy_Click"
+                                       IsEnabled="{Binding Path=GestionSite.SiteLocal.IsActif}">
+                                                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier le QRCode"/>
+                                                </telerik:RadButton>
+                                                <WrapPanel Orientation="Horizontal" >
+                                                    <Border BorderThickness="1" BorderBrush="Gray" Margin="10 10 10 10">
+                                                        <TextBlock Text="{Binding ElementName=QRCodeEcransAppel, Path=Text, Mode=OneWay}" Style="{StaticResource TextBoxTextStyle}" Width="430" Margin=" 0 0 0 0"/>
+                                                    </Border>
+                                                    <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="0 0 10 0" Width="32" Height="32" HorizontalAlignment="Right" Command="{Binding Path=CmdCopyUrlEcransAppel}">
+                                                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier l'URL"/>
+                                                    </telerik:RadButton>
+                                                </WrapPanel>
+                                            </WrapPanel>
+                                        </WrapPanel>
+                                        <StackPanel Orientation="Horizontal" >
+                                            <StackPanel Orientation="Horizontal" >
+                                                <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
+                                                <Rectangle Margin="0" Height="15" Width="15" Style="{StaticResource RunningStatusStyle}" DataContext="{Binding Path=GestionSite.SiteLocal}"/>
+                                                <Label HorizontalAlignment="Left" Content="{Binding Path=GestionSite.SiteLocal.IsActif, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
+                                            </StackPanel>
+                                            <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
+                                            <StackPanel Orientation="Horizontal" >
+                                                <Label HorizontalAlignment="Left" Content="Statut:" Style="{StaticResource LabelStyle}" />
+                                                <Label HorizontalAlignment="Left" Content="{Binding GestionSite.SiteLocal.Status.Message}" Style="{StaticResource LabelStyleValue}" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="1" Stretch="Fill"/>
+                                        <StackPanel Orientation="Horizontal" >
+                                            <Label HorizontalAlignment="Left" Content="Parametres:" Style="{StaticResource HeaderStyle}" />
+                                            <StackPanel Orientation="Horizontal" >
+                                                <Label Content="Adresse de publication:" Margin="0 0 0 0" Style="{StaticResource LabelStyle}"/>
+                                                <telerik:RadComboBox Height="22" MinWidth="200" Style="{StaticResource DropDownStyle}"
+                                                                      ItemsSource="{Binding Path=GestionSite.SiteLocal.InterfacesLocal}"
+                                                                      SelectedItem = "{Binding Path=GestionSite.InterfaceLocalPublication}"
+                                                                      IsEnabled="{Binding Path=GestionSite.SiteLocal.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                                        <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 20 0"
+                            Command="{Binding Path=CmdDemarrerSiteLocal}">
+                                            <WrapPanel Orientation="Horizontal">
+                                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/play-32.png" Height="25" Margin="5 0"/>
+                                                <Label Content="Démarrer" />
+                                            </WrapPanel>
+                                        </telerik:RadButton>
+                                        <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="20 0 0 0" Command="{Binding Path=CmdArreterSiteLocal}">
+                                            <WrapPanel Orientation="Horizontal">
+                                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/stop-32.png" Height="25" Margin="5 0"/>
+                                                <Label Content="Arrêter" />
+                                            </WrapPanel>
+                                        </telerik:RadButton>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        
                         <!-- BLOC SERVEUR DISTANT -->
                         <!-- Entete -->
-                        <StackPanel Grid.Row="2" Grid.Column="1" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
+                        <StackPanel Grid.Row="2" Grid.Column="1" Style="{StaticResource Header1Style}" Margin="5 5 10 5" Visibility="Visible" >
                             <TextBlock Text="Publication sur site distant" Style="{StaticResource Header1TextStyle}"/>
                         </StackPanel>
                         <!-- Contenu -->
-                        <Border BorderThickness="1" Grid.Row="3" Grid.Column="1" BorderBrush="White" Margin="10 0 10 10">
+                        <Border BorderThickness="1" Grid.Row="3" Grid.Column="1" BorderBrush="White" Margin="5 0 10 0">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
