@@ -37,14 +37,8 @@ using Tools.Enum;
 using Tools.Export;
 using Tools.Outils;
 using Tools.Windows;
-using KernelImpl.Noyau.Organisation;
-using System.Collections;
-using NLog;
-using AppPublication.Tools.FranceJudo;
-using AppPublication.Tools.Files;
-using AppPublication.Publication;
-using AppPublication.Statistiques;
-using AppPublication.Generation;
+using Tools.Framework;
+
 
 namespace AppPublication.Controles
 {

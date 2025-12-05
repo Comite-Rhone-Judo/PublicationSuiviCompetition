@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows.Input;
 
-namespace Tools.Outils
+namespace Tools.Framework
 {
     public abstract class NotificationBase : INotifyPropertyChanged
     {

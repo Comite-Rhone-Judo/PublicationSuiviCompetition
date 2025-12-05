@@ -154,6 +154,7 @@
     <Compile Include="Export\ExportSiteStructure.cs" />
     <Compile Include="Export\ExportTools.cs" />
     <Compile Include="Export\InAssemblyUrlResolver.cs" />
+    <Compile Include="Framework\WindowLoadBehavior.cs" />
     <Compile Include="HttpServerModule\Authentication\AuthenticationModule.cs" />
     <Compile Include="HttpServerModule\Authentication\BasicAuthentication.cs" />
     <Compile Include="HttpServerModule\Authentication\DigestAuthentication.cs" />
@@ -240,7 +241,7 @@
     <Compile Include="Outils\FileWithChecksumComparer.cs" />
     <Compile Include="Outils\FTPTools.cs" />
     <Compile Include="Outils\LimitedConcurrencyLevel.cs" />
-    <Compile Include="Outils\NotificationBase.cs" />
+    <Compile Include="Framework\NotificationBase.cs" />
     <Compile Include="Outils\ResourcesTools.cs" />
     <Compile Include="Outils\ScoresJujitsu.cs" />
     <Compile Include="Outils\ServeurHttp.cs" />

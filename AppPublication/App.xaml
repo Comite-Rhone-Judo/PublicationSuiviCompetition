@@ -4,6 +4,11 @@
              xmlns:local="clr-namespace:AppPublication"
              DispatcherUnhandledException="App_DispatcherUnhandledException">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/AppPublication;component/Styles/StandardStyles.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/AppPublication;component/Styles/ConverterStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

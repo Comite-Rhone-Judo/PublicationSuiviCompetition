@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Input;
 using Tools.Outils;
 using Tools.Windows;
+using Tools.Framework;
 
 namespace AppPublication.ViewModels
 {
@@ -58,7 +59,7 @@ namespace AppPublication.ViewModels
             AdresseIP = (model.AdresseIP == null || model.AdresseIP.Equals(IPAddress.None))  ? string.Empty : model.AdresseIP.ToString();
 
             // Création des CheckBoxes pour les tapis
-            ListeTapisViewModels = new ObservableCollection<EcranAppelTapisSelectionViewModel>();
+            var _tmpList = new ObservableCollection<EcranAppelTapisSelectionViewModel>();
             foreach (var idTapis in tousLesTapis)
             {
                 var vmTapis = new EcranAppelTapisSelectionViewModel
@@ -68,13 +69,31 @@ namespace AppPublication.ViewModels
                 };
                 // Abonnement pour sauvegarde immédiate
                 vmTapis.PropertyChanged += (s, e) => { if (e.PropertyName == "IsSelected") OnTapisSelectionChanged(vmTapis); };
-                ListeTapisViewModels.Add(vmTapis);
+                _tmpList.Add(vmTapis);
             }
+
+            ListeTapisViewModels = _tmpList;
         }
 
         #endregion
 
         #region PROPRIETES
+
+        private string _listeTapisSelectionnesAffiche;
+        public string ListeTapisSelectionnesAffiche
+        {
+            get
+            {
+                return _listeTapisSelectionnesAffiche;
+            }
+
+            private set
+            {
+                _listeTapisSelectionnesAffiche = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public int Id => _model.Id;
 
         public string Description
@@ -152,10 +171,25 @@ namespace AppPublication.ViewModels
                 }
             }
         }
+
+        private ObservableCollection<EcranAppelTapisSelectionViewModel> _listeTapisViewModels;
+
         /// <summary>
         /// La lisye des ViewModels de sélection des tapis
         /// </summary>
-        public ObservableCollection<EcranAppelTapisSelectionViewModel> ListeTapisViewModels { get; set; }
+        public ObservableCollection<EcranAppelTapisSelectionViewModel> ListeTapisViewModels
+        {
+            get
+            {
+                return _listeTapisViewModels;
+            }
+            set
+            {
+                _listeTapisViewModels = value;
+                NotifyPropertyChanged();
+                ListeTapisSelectionnesAffiche = GetListeTapisAffiche();
+            }
+        }
         #endregion
 
         #region METHODES PUBLIQUES
@@ -246,6 +280,9 @@ namespace AppPublication.ViewModels
                     return; // On sort pour ne pas sauvegarder l'état invalide
                 }
             }
+
+            // On pense a changer la chaine affichée
+            ListeTapisSelectionnesAffiche = GetListeTapisAffiche();
 
             // Si tout est OK (ou si on vient de décocher suite à l'annulation), on sauvegarde
             UpdateTapisAndSave();
@@ -382,6 +419,37 @@ namespace AppPublication.ViewModels
                     IsRechercheHostnameEnCours = false;
                 }
             }
+        }
+
+        /// <summary>
+        /// Calcul une chaîne affichant les tapis sélectionnés de manière lisible
+        /// </summary>
+        /// <returns></returns>
+        private string GetListeTapisAffiche()
+        {
+            // 1. Récupération des IDs sélectionnés
+            // On suppose que ListeTapisViewModels contient des objets avec 'Id' et 'IsSelected'
+            var idsSelectionnes = ListeTapisViewModels
+                                    .Where(vm => vm.IsSelected)
+                                    .Select(vm => vm.Numero)
+                                    .OrderBy(id => id)
+                                    .ToList();
+
+            // 2. Gestion des cas simples
+            if (idsSelectionnes.Count == 0)
+                return "Aucun tapis";
+
+            if (idsSelectionnes.Count == 1)
+                return $"Tapis {idsSelectionnes[0]}";
+
+            // 3. Formatage complexe : "Tapis 1, 2 et 5"
+            // On prend tous les éléments sauf le dernier pour les joindre par une virgule
+            string partieVirgule = string.Join(", ", idsSelectionnes.Take(idsSelectionnes.Count - 1));
+
+            // On récupère le dernier pour le préfixer par " et "
+            string dernier = idsSelectionnes.Last().ToString();
+
+            return $"Tapis {partieVirgule} et {dernier}";
         }
 
         #endregion

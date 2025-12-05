@@ -4,18 +4,11 @@
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:behave="clr-namespace:Tools.Framework;assembly=Tools"
         mc:Ignorable="d"
         Title="Configuration des Écrans d'Appel" Height="480" Width="860" Background="Black"
-        WindowStartupLocation="CenterScreen">
-
-    <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/AppPublication;component/Styles/StandardStyles.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/AppPublication;component/Styles/ConverterStyles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Window.Resources>
+        WindowStartupLocation="CenterScreen"
+        behave:WindowLoadBehavior.LoadedCommand="{Binding CmdOnLoaded}">
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -54,8 +47,11 @@
                                      AutoGenerateColumns="False"
                                      IsReadOnly="False"
                                      CanUserInsertRows="False"
-                                     CanUserDeleteRows="False">
-                    <telerik:RadGridView.Columns>
+                                     CanUserDeleteRows="False"
+                                     EnableRowVirtualization="True" 
+                                    EnableColumnVirtualization="False"
+                                    GroupRenderMode="Flat">
+                        <telerik:RadGridView.Columns>
 
                         <telerik:GridViewDataColumn Header="N°" DataMemberBinding="{Binding Id}" IsReadOnly="True" Width="30" TextAlignment="Center" ToolTip="ID autogénéré de l'écran" />
 
@@ -106,6 +102,12 @@
                         <telerik:GridViewColumn Header="Sélection Tapis" IsResizable="False" Width="240" ToolTip="Liste des tapis à afficher sur l'écean (max. 4)">
                             <telerik:GridViewColumn.CellTemplate>
                                 <DataTemplate>
+                                    <TextBlock Text="{Binding ListeTapisSelectionnesAffiche, FallbackValue='Aucun tapis'}" VerticalAlignment="Center" Margin="5"/>
+                                </DataTemplate>
+                            </telerik:GridViewColumn.CellTemplate>
+
+                            <telerik:GridViewColumn.CellEditTemplate>
+                                <DataTemplate>
                                     <ItemsControl ItemsSource="{Binding ListeTapisViewModels}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
@@ -122,7 +124,7 @@
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
                                 </DataTemplate>
-                            </telerik:GridViewColumn.CellTemplate>
+                            </telerik:GridViewColumn.CellEditTemplate>
                         </telerik:GridViewColumn>
 
                         <telerik:GridViewColumn IsResizable="False" Header="" Width="40">

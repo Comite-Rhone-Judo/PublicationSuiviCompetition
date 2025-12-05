@@ -11,15 +11,6 @@
         CanClose="True" CanMove="True" ResizeMode="NoResize" 
         WindowState="Normal" Name="UI" Background="Black" SizeToContent="True">
 
-    <telerik:RadWindow.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/AppPublication;component/Styles/StandardStyles.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/AppPublication;component/Styles/ConverterStyles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </telerik:RadWindow.Resources>
-
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
