@@ -61,11 +61,20 @@ namespace AppPublication.Views.Main
         {
             (new RechercheServer()).ShowDialog();
         }
-        #region PRIVATE
-
-        #endregion
 
         private void QRCodeLocalCopy_Click(object sender, RoutedEventArgs e)
+        {
+            string tmpFile = Path.GetTempFileName();
+            using (FileStream fs = new FileStream(tmpFile, FileMode.Create))
+            {
+                Telerik.Windows.Media.Imaging.ExportExtensions.ExportToImage(QRCodeLocal, fs, new PngBitmapEncoder());
+                fs.Close();
+            }
+            BitmapImage img = new BitmapImage(new Uri(tmpFile));
+            Clipboard.SetImage(img);
+        }
+
+        private void QRCodeEcransAppelCopy_Click(object sender, RoutedEventArgs e)
         {
             string tmpFile = Path.GetTempFileName();
             using (FileStream fs = new FileStream(tmpFile, FileMode.Create))

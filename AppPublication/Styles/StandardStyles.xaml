@@ -175,11 +175,11 @@
     </Style>
 
     <Style x:Key="Header1Style" TargetType="{x:Type StackPanel}">
-        <Setter Property="Height" Value="40" />
+        <Setter Property="Height" Value="30" />
         <!--<Setter Property="Background" Value="{telerik:Windows8Resource ResourceKey=AccentBrush}" />-->
         <Setter Property="Background" Value="#333333" />
         <Setter Property="Orientation" Value="Horizontal" />
-        <Setter Property="Margin" Value="5" />
+        <Setter Property="Margin" Value="0" />
     </Style>
 
     <Style x:Key="Header1TextStyle" TargetType="{x:Type TextBlock}">
@@ -189,7 +189,7 @@
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="FontSize" Value="16" />
         <Setter Property="Foreground" Value="White" />
-        <Setter Property="Margin" Value="5 10" />
+        <Setter Property="Margin" Value="5 5 5 5" />
     </Style>
 
     <Style x:Key="ContentTextStyle" TargetType="{x:Type TextBlock}">
@@ -208,7 +208,7 @@
     <Setter Property="FontWeight" Value="Normal" />
     <Setter Property="VerticalAlignment" Value="Stretch" />
     <Setter Property="HorizontalAlignment" Value="Center" />
-    <Setter Property="FontSize" Value="20" />
+    <Setter Property="FontSize" Value="14" />
     <Setter Property="Background" Value="White" />
     <Setter Property="Margin" Value="5 10" />
     <Setter Property="TextTrimming" Value="CharacterEllipsis" />
@@ -265,7 +265,7 @@
 
     <Style x:Key="HeaderStyle" TargetType="Label">
         <Setter Property="Foreground" Value="#EEEEEE" />
-        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontSize" Value="14" />
         <!-- <Setter Property="FontFamily"  Value="pack://application:,,,/Tools;component/Styles/Polices/#Cooper Black"/> -->
         <Setter Property="FontFamily" Value="{telerik:Windows8Resource ResourceKey=FontFamily}" />
         <Setter Property="Margin"  Value="5"/>
