@@ -365,6 +365,65 @@ namespace AppPublication.Controles
             }
         }
 
+        private ICommand _cmdDemarrerSiteEcransAppel = null;
+        /// <summary>
+        /// Command de demarrage du site des ecrans d'appel
+        /// </summary>
+        public ICommand CmdDemarrerSiteEcransAppel
+        {
+            get
+            {
+                if (_cmdDemarrerSiteEcransAppel == null)
+                {
+                    _cmdDemarrerSiteEcransAppel = new RelayCommand(
+                            o =>
+                            {
+                                if (Instance.GestionSite.SiteEcransAppel != null && !Instance.GestionSite.SiteEcransAppel.IsActif)
+                                {
+                                    // Demarre le site en local
+                                    Instance.GestionSite.SiteEcransAppel.StartSite();
+
+                                    // Force la mise a jour de l'URL
+                                    Instance.GestionSite.IdCompetition = Instance.GestionSite.IdCompetition;
+                                }
+                            },
+                            o =>
+                            {
+                                return !String.IsNullOrEmpty(Instance.GestionSite.IdCompetition) && !Instance.GestionSite.SiteEcransAppel.IsActif && Instance.GestionSite.SiteEcransAppel.IsChanged;
+                            });
+                }
+                return _cmdDemarrerSiteEcransAppel;
+            }
+        }
+
+        private ICommand _cmdArreterSiteEcransAppel = null;
+        /// <summary>
+        /// Commande d'arret du site des ecrans d'appel
+        /// </summary>
+        public ICommand CmdArreterSiteEcransAppel
+        {
+            get
+            {
+                if (_cmdArreterSiteEcransAppel == null)
+                {
+                    _cmdArreterSiteEcransAppel = new RelayCommand(
+                            o =>
+                            {
+                                if (Instance.GestionSite.SiteEcransAppel != null && Instance.GestionSite.SiteEcransAppel.IsActif)
+                                {
+                                    // Demarre le site en local
+                                    Instance.GestionSite.SiteEcransAppel.StopSite();
+                                }
+                            },
+                            o =>
+                            {
+                                return Instance.GestionSite.SiteEcransAppel.IsActif;
+                            });
+                }
+                return _cmdArreterSiteEcransAppel;
+            }
+        }
+
         private ICommand _cmdDemarrerSiteDistant = null;
         /// <summary>
         /// Commande de demarrage du site distant
