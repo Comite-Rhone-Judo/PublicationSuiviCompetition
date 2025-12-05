@@ -142,8 +142,9 @@ namespace AppPublication.Controles
             if (dataManager == null) throw new ArgumentNullException();
             try
             {
-                // Initialise les objets de gestion des sites Web
-                _siteLocal = new MiniSiteConfigurable (true, kSiteLocalInstanceName, true, true);
+                // Initialise les objets de gestion des sites Web. Ils chargent automatiquement leur configuration
+                _siteLocal = new MiniSiteConfigurable (true, kSiteLocalInstanceName, true, false);
+                _siteEcransAppel = new MiniSiteConfigurable(true, kSiteEcransAppel, true, false);
                 _siteDistant = new MiniSiteConfigurable (false, kSiteDistantInstanceName, true, true);           // on utilise un prefix vide pour le site distant pour des questions de retrocompatibilite
                 _siteFranceJudo = new MiniSiteConfigurable (false, kSiteFranceJudoInstanceName, false, true);    // On ne garde pas le detail des configuration pour le site FFJudo
                 _statMgr = (statMgr != null) ? statMgr : new GestionStatistiques();
@@ -745,6 +746,41 @@ private ObservableCollection<EcranAppelModel> _ecransAppel;
             }
         }
 
+        private MiniSite _siteEcransAppel = null;
+        /// <summary>
+        /// Le site de publication local des ecrans d'appel
+        /// </summary>
+        public MiniSite SiteEcransAppel
+        {
+            get
+            {
+                return _siteEcransAppel;
+            }
+        }
+
+        /// <summary>
+        /// Propriete passerelle pour selectionner l'interface de publication du site ecrans
+        /// Permet de tenir a jour le QR code de l'URL de publication
+        /// </summary>
+        public IPAddress InterfaceEcransAppel
+        {
+            get
+            {
+                return SiteEcransAppel.InterfaceLocalPublication;
+            }
+            set
+            {
+                // Verifie que la valeur selectionnee est bien dans la liste des interfaces
+                try
+                {
+                    SiteEcransAppel.InterfaceLocalPublication = value;
+                    NotifyPropertyChanged();
+                    URLEcransAppelPublication = CalculURLSiteEcransAppel();
+                }
+                catch (ArgumentOutOfRangeException) { }
+            }
+        }
+
         /// <summary>
         /// Propriete passerelle pour selectionner l'interface de publication du site local
         /// Permet de tenir a jour le QR code de l'URL de publication
@@ -995,6 +1031,22 @@ private ObservableCollection<EcranAppelModel> _ecransAppel;
             }
         }
 
+        private string _urlEcransAppelPublication;
+        /// <summary>
+        /// URL pour le site local des ecrans d'appel
+        /// </summary>
+        public string URLEcransAppelPublication
+        {
+            get
+            {
+                return _urlEcransAppelPublication;
+            }
+            private set
+            {
+                _urlEcransAppelPublication = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         private string _ftpRepertoireRacineDistant;
         /// <summary>
@@ -1341,6 +1393,173 @@ private ObservableCollection<EcranAppelModel> _ecransAppel;
 
         #endregion
 
+        #region COMMANDES
+
+        private ICommand _cmdAfficherConfigurationEcransAppel = null;
+        /// <summary>
+        /// Commande d'affichage de la configuration
+        /// </summary>
+        public ICommand CmdAfficherConfigurationEcransAppel
+        {
+            get
+            {
+                if (_cmdAfficherConfigurationEcransAppel == null)
+                {
+                    _cmdAfficherConfigurationEcransAppel = new RelayCommand(
+                            o =>
+                            {
+                                if (_cfgEcransAppelView == null)
+                                {
+                                    // Crée la ViewModel de configuration. Comme on le refait a chaque fois, on est sur d'avoir les dernieres valeurs
+                                    // notamment par rapport aux nombres de tapis de la competition s'il a été modifié
+                                    ConfigurationEcransViewModel vm = new ConfigurationEcransViewModel(this.EcransAppel, this.NbTapis);
+                                    if (vm != null)
+                                    {
+                                        _cfgEcransAppelView = new ConfigurationEcransAppelView(vm);
+                                    }
+                                }
+                                if (_cfgEcransAppelView != null)
+                                {
+                                    _cfgEcransAppelView.ShowDialog();
+                                    _cfgEcransAppelView = null;
+                                }
+                            },
+                            o =>
+                            {
+                                return !this.IsGenerationActive;
+                            });
+                }
+                return _cmdAfficherConfigurationEcransAppel;
+            }
+        }
+
+
+        private ICommand _cmdAjouterLogo;
+
+        /// <summary>
+        /// Commande permettant d'ajouter un logo dans la liste
+        /// </summary>
+        public ICommand CmdAjouterLogo
+        {
+            get
+            {
+                if (_cmdAjouterLogo == null)
+                {
+                    _cmdAjouterLogo = new RelayCommand(
+                            o =>
+                            {
+                                bool allFileOk = true;
+
+                                OpenFileDialog op = new OpenFileDialog();
+                                op.Title = "Sélectionner une image";
+                                op.Filter = "Portable Network Graphic (*.png)|*.png";
+                                op.Multiselect = true;
+                                op.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+                                op.RestoreDirectory = true;
+                                if (op.ShowDialog() == DialogResult.OK)
+                                {
+                                    foreach (string imgFile in op.FileNames)
+                                    {
+                                        try
+                                        {
+                                            if (imgFile.ToLower().Contains("logo"))
+                                            {
+                                                int w, h;
+
+                                                using (var stream = new FileStream(imgFile, FileMode.Open, FileAccess.Read, FileShare.Read))
+                                                {
+                                                    var bitmapFrame = BitmapFrame.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.None);
+                                                    w = bitmapFrame.PixelWidth;
+                                                    h = bitmapFrame.PixelHeight;
+
+                                                    // Verifie la taille de l'image
+                                                    if (w <= 200 && h <= 200)
+                                                    {
+                                                        FilteredFileInfo newItem = new FilteredFileInfo(new FileInfo(imgFile));
+
+                                                        // Copy le fichier dans le répertoire de travail de l'application
+                                                        File.Copy(newItem.FullName, Path.Combine(ConstantFile.ExportStyle_dir, newItem.Name));
+
+                                                        // Actualise la liste des logos
+                                                        FichiersLogo.Add(newItem);
+                                                    }
+                                                    else
+                                                    {
+                                                        LogTools.Logger.Debug("Fichier '{0}' ignore - taille {1}x{2} incorrecte", imgFile, w, h);
+                                                        allFileOk = false;
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                LogTools.Logger.Debug("Fichier '{0}' ignore - Nom ne contient pas 'logo'", imgFile);
+                                                allFileOk = false;
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            LogTools.Logger.Debug("Fichier '{0}' ignore - Exception lors de la lecture du format", imgFile, ex);
+                                            allFileOk = false;
+                                        }
+                                    }
+
+                                    if (!allFileOk)
+                                    {
+                                        AlertWindow win = new AlertWindow("Infomation", "Certains fichiers n'ont pas put être chargé. Veuillez vérifier les noms, formats et dimensions");
+                                        if (win != null)
+                                        {
+                                            win.ShowDialog();
+                                        }
+                                    }
+                                }
+
+                            },
+                            o =>
+                            {
+                                // Meme si le site est demarre on peut ajouter un logo, il n'est pas pris automatiquement enc compte
+                                return true;
+                            });
+                }
+                return _cmdAjouterLogo;
+            }
+        }
+
+        private ICommand _cmdGetRepertoireRacine;
+        /// <summary>
+        /// Commande pour gérer la selection du repertoire Racine
+        /// </summary>
+        public ICommand CmdGetRepertoireRacine
+        {
+            get
+            {
+                if (_cmdGetRepertoireRacine == null)
+                {
+                    _cmdGetRepertoireRacine = new RelayCommand(
+                            o =>
+                            {
+                                string output = string.Empty;
+
+                                FolderBrowserDialog dlg = new FolderBrowserDialog();
+                                dlg.Description = "Sélectionner le répertoire à utiliser pour les exports";
+                                dlg.ShowNewFolderButton = true;
+                                if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                                {
+                                    output = dlg.SelectedPath;
+                                }
+                                RepertoireRacine = output;
+                            },
+                            o =>
+                            {
+                                // On ne peut modifier le repertoire racine que si tous les processus sont arretes
+                                return (SiteDistantSelectionne != null) ? !SiteDistantSelectionne.IsActif && !SiteLocal.IsActif && !IsGenerationActive : true;
+                            });
+                }
+                return _cmdGetRepertoireRacine;
+            }
+        }
+
+        #endregion
+
         #region METHODES
 
         /// <summary>
@@ -1348,6 +1567,8 @@ private ObservableCollection<EcranAppelModel> _ecransAppel;
         /// </summary>
         private void InitExportSiteStructure()
         {
+            // TODO Ajouter ici la strucuture specifique au Ecrans d'appel
+
             if (_structureRepertoires != null)
             {
                 FileAndDirectTools.CreateDirectorie(_structureRepertoires.RepertoireRacine);
@@ -1509,6 +1730,8 @@ private ObservableCollection<EcranAppelModel> _ecransAppel;
                 // L'interface local de publication a ete chargee via la configuration du minisite, il faut juste s'assurer du bon calcul des URLs
                 URLLocalPublication = CalculURLSiteLocal();
 
+                URLEcransAppelPublication = CalculURLSiteEcransAppel();
+
                 // ici on initialise les ecrans d'appel
                 InitEcransAppel();
             }
@@ -1647,6 +1870,32 @@ private ObservableCollection<EcranAppelModel> _ecransAppel;
         }
 
         /// <summary>
+        /// Calcul l'URL sur le site ecrans en fonction de la configuration
+        /// </summary>
+        /// <returns></returns>
+        private string CalculURLSiteEcransAppel()
+        {
+            string output = "Indefinie";
+
+            try
+            {
+                if (!String.IsNullOrEmpty(IdCompetition) && SiteEcransAppel.ServerHTTP != null && SiteEcransAppel.ServerHTTP.ListeningIpAddress != null && SiteEcransAppel.ServerHTTP.Port > 0)
+                {
+                    string urlBase = string.Format("http://{0}:{1}/", SiteEcransAppel.ServerHTTP.ListeningIpAddress.ToString(), SiteEcransAppel.ServerHTTP.Port);
+
+                    // TODO Ajouter la structure des ecrans d'appel
+                    // output = (new Uri(new Uri(urlBase), _structureSiteLocal.UrlPathIndex)).ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                output = string.Empty;
+                LogTools.Logger.Error(ex, "Impossible de calculer l'URL du site des ecrans d'appel");
+            }
+            return output;
+        }
+
+        /// <summary>
         /// Retourne le site distant selectionne
         /// </summary>
         /// <returns></returns>
@@ -1714,6 +1963,8 @@ private ObservableCollection<EcranAppelModel> _ecransAppel;
         /// </summary>
         public void StartGeneration()
         {
+            // TODO Ajouter la génération des écrans d'appel
+
             // Status = new StatusGenerationSite(StateGenerationEnum.Idle);
             Status = StatusGenerationSite.Instance(StateGenerationEnum.Idle);
 
