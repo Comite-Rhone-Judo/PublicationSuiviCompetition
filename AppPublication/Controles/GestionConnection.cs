@@ -3,7 +3,7 @@ using JudoClient.Communication;
 using System;
 using System.Windows.Threading;
 using System.Xml.Linq;
-using Tools.Outils;
+using Tools.Framework;
 
 namespace AppPublication.Controles
 {

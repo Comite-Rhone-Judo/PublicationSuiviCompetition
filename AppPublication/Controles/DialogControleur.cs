@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using Telerik.Windows.Controls;
 using Tools.Outils;
+using Tools.Framework;
 using Tools.Windows;
 using AppPublication.Tools.Streams;
 

@@ -1,19 +1,13 @@
 ﻿using FluentFTP;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Security;
 using System.Threading;
-using System.Xml;
-using Tools;
-using Tools.Enum;
+using Tools.Framework;
 
 
 namespace Tools.Outils

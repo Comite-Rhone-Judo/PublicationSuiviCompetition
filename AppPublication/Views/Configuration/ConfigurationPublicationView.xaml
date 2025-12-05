@@ -8,15 +8,6 @@
         mc:Ignorable="d"
         Title="Configuration de la Publication" Height="520" Width="820" Background="Black">
 
-    <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/AppPublication;component/Styles/StandardStyles.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/AppPublication;component/Styles/ConverterStyles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Window.Resources>
-
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>

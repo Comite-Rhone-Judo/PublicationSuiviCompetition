@@ -1,5 +1,5 @@
 ﻿using System;
-using Tools.Outils;
+using Tools.Framework;
 
 namespace AppPublication.Statistiques
 {

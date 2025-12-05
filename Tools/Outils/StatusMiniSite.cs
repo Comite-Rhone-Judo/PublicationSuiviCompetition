@@ -1,4 +1,6 @@
-﻿namespace Tools.Outils
+﻿using Tools.Framework;
+
+namespace Tools.Outils
 {
     public enum StateMiniSiteEnum
     {

@@ -32,6 +32,7 @@ using Tools.Enum;
 using Tools.Export;
 using Tools.Outils;
 using Tools.Windows;
+using Tools.Framework;
 
 
 namespace AppPublication.Controles

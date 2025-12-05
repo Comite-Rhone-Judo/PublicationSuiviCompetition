@@ -1,6 +1,7 @@
 ﻿using AppPublication.Statistiques;
 using System.Collections.Generic;
 using Tools.Outils;
+using Tools.Framework;
 
 namespace AppPublication.Controles
 {
