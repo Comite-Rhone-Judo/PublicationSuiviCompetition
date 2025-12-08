@@ -1,6 +1,8 @@
-﻿using System;
+﻿using KernelImpl.Noyau;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Threading;
 
 namespace KernelImpl.Internal
@@ -8,7 +10,7 @@ namespace KernelImpl.Internal
     /// <summary>
     /// Cache spécialisé pour les listes, avec logique de déduplication intégrée.
     /// </summary>
-    internal class DeduplicatedCachedData<TKey, TValue> : AtomicCachedBase<IReadOnlyList<TValue>>
+    internal class DeduplicatedCachedData<TKey, TValue> : AtomicCachedBase<IReadOnlyList<TValue>> where TValue : IIdEntity<TKey>
     {
         // Initialisation avec une liste vide
         public DeduplicatedCachedData() : base(new List<TValue>(0)) { }
@@ -17,9 +19,9 @@ namespace KernelImpl.Internal
         /// Met à jour le snapshot via un remplacement complet (Snapshot Complet).
         /// Tout ce qui n'est pas dans 'nouveauxElements' disparait.
         /// </summary>
-        public void UpdateFullSnapshot(IEnumerable<TValue> nouveauxElements, Func<TValue, TKey> keySelector)
+        public void UpdateFullSnapshot(IEnumerable<TValue> nouveauxElements)
         {
-            ApplyUpdate(nouveauxElements, keySelector, isDifferential: false);
+            ApplyUpdate(nouveauxElements, isDifferential: false);
         }
 
         /// <summary>
@@ -27,19 +29,17 @@ namespace KernelImpl.Internal
         /// Ajoute les nouveaux items et met à jour ceux existants (basé sur la clé).
         /// Les items existants non mentionnés dans le delta sont conservés.
         /// </summary>
-        public void UpdateDifferentialSnapshot(IEnumerable<TValue> elementsModifies, Func<TValue, TKey> keySelector)
+        public void UpdateDifferentialSnapshot(IEnumerable<TValue> elementsModifies)
         {
-            ApplyUpdate(elementsModifies, keySelector, isDifferential: true);
+            ApplyUpdate(elementsModifies, isDifferential: true);
         }
 
 
         /// <summary>
         /// Logique centralisée de fusion et dédoublonnage.
         /// </summary>
-        private void ApplyUpdate(IEnumerable<TValue> incomingData, Func<TValue, TKey> keySelector, bool isDifferential)
+        private void ApplyUpdate(IEnumerable<TValue> incomingData, bool isDifferential)
         {
-            if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
-
             var changes = incomingData as ICollection<TValue> ?? (incomingData?.ToList());
 
             // Optimisation : Si différentiel et aucun changement, on ne fait rien
@@ -60,7 +60,7 @@ namespace KernelImpl.Internal
                 foreach (var item in currentSnapshot)
                 {
                     // On suppose que le cache actuel est déjà propre (clés uniques)
-                    workingDict[keySelector(item)] = item;
+                    workingDict[item.id] = item;
                 }
             }
             else
@@ -75,7 +75,7 @@ namespace KernelImpl.Internal
                 foreach (var item in changes)
                 {
                     // La clé écrase la valeur existante (mise à jour ou ajout)
-                    workingDict[keySelector(item)] = item;
+                    workingDict[item.id] = item;
                 }
             }
 

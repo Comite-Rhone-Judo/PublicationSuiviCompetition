@@ -7,7 +7,7 @@ using Tools.Enum;
 
 namespace KernelImpl.Noyau.Organisation
 {
-    public class vue_epreuve_equipe : i_vue_epreuve_interface
+    public class vue_epreuve_equipe : i_vue_epreuve_interface, IIdEntity<int>
     {
         public int id { get; set; }
         public string nom { get; set; }

@@ -32,7 +32,7 @@ namespace KernelImpl.Noyau.Structures
         public void lecture_clubs(XElement element)
         {
             ICollection<Club> clubs = Club.LectureClubs(element, null);
-            _clubsCache.UpdateSnapshot(clubs, o => o.id);
+            _clubsCache.UpdateFullSnapshot(clubs);
         }
 
         public ICollection<Club> LectureClubs(XElement xelement, OutilsTools.MontreInformation1 MI)
@@ -48,7 +48,7 @@ namespace KernelImpl.Noyau.Structures
         public void lecture_comites(XElement element)
         {
             ICollection<Comite> comites = Comite.LectureComites(element, null);
-            _comitesCache.UpdateSnapshot(comites, o => string.Format("{0}-{1}", o.id, o.ligue)); 
+            _comitesCache.UpdateFullSnapshot(comites); 
         }
 
         public ICollection<Secteur> LectureSecteurs(XElement xelement, OutilsTools.MontreInformation1 MI)
@@ -64,7 +64,8 @@ namespace KernelImpl.Noyau.Structures
         public void lecture_secteurs(XElement element)
         {
             ICollection<Secteur> secteurs = Secteur.LectureSecteurs(element, null);
-            _secteursCache.UpdateSnapshot(secteurs, o => o.id);        }
+            _secteursCache.UpdateFullSnapshot(secteurs);      
+        }
 
         public ICollection<Comite> LectureComites(XElement xelement, OutilsTools.MontreInformation1 MI)
         {
@@ -80,7 +81,7 @@ namespace KernelImpl.Noyau.Structures
         public void lecture_ligues(XElement element)
         {
             ICollection<Ligue> ligues = Ligue.LectureLigues(element, null);
-            _liguesCache.UpdateSnapshot(ligues, o => o.id);
+            _liguesCache.UpdateFullSnapshot(ligues);
         }
 
         public ICollection<Ligue> LectureLigues(XElement xelement, OutilsTools.MontreInformation1 MI)
@@ -96,7 +97,7 @@ namespace KernelImpl.Noyau.Structures
         public void lecture_pays(XElement element)
         {
             ICollection<Pays> pays2 = Pays.LecturePays(element, null);
-            _paysCache.UpdateSnapshot(pays2, o => o.id);
+            _paysCache.UpdateFullSnapshot(pays2);
         }
     }
 }

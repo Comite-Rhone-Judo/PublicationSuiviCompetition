@@ -9,7 +9,7 @@ namespace KernelImpl.Noyau.Structures
     /// <summary>
     /// Description des Ligues
     /// </summary>
-    public class Ligue
+    public class Ligue : IIdEntity<string>
     {
         public string id { get; set; }
         public string nom { get; set; }

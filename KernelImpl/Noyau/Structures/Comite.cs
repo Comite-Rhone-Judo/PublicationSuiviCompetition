@@ -9,7 +9,7 @@ namespace KernelImpl.Noyau.Structures
     /// <summary>
     /// Description des Comites
     /// </summary>
-    public class Comite
+    public class Comite : IIdEntity<string>
     {
         private string _id;
         public string id

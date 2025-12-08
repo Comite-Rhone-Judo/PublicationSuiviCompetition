@@ -83,7 +83,7 @@ namespace KernelImpl.Noyau.Deroulement
         public void lecture_participants(XElement element/*, bool suppression*/)
         {
             ICollection<Participant> participants = Participant.LectureParticipant(element, null);
-            _participantsCache.UpdateSnapshot(participants, o => o.id);
+            _participantsCache.UpdateFullSnapshot(participants);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace KernelImpl.Noyau.Deroulement
         public void lecture_phases(XElement element)
         {
             ICollection<Phase> phases = Phase.LecturePhases(element, null);
-            _phasesCache.UpdateSnapshot(phases, o => o.id);
+            _phasesCache.UpdateFullSnapshot(phases);
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace KernelImpl.Noyau.Deroulement
         public void lecture_decoupages(XElement element)
         {
             ICollection<Phase_Decoupage> decoupages = Phase_Decoupage.LectureDecoupages(element, null);
-            _decoupagesCache.UpdateSnapshot(decoupages, o => o.id);
+            _decoupagesCache.UpdateFullSnapshot(decoupages);
         }
 
         /// <summary>
@@ -116,11 +116,11 @@ namespace KernelImpl.Noyau.Deroulement
         public void lecture_groupes(XElement element, JudoData DC)
         {
             ICollection<Groupe_Combats> groupes = Groupe_Combats.LectureGroupes(element, null);
-            _groupesCache.UpdateSnapshot(groupes, o => o.id);
+            _groupesCache.UpdateFullSnapshot(groupes);
 
 
             ICollection<vue_groupe> vgroupes = GenereVueGroupe(groupes, DC);    
-            _vgroupesCache.UpdateSnapshot(vgroupes, o => o.groupe_id);
+            _vgroupesCache.UpdateFullSnapshot(vgroupes);
         }
 
         /// <summary
@@ -141,7 +141,7 @@ namespace KernelImpl.Noyau.Deroulement
         public void lecture_poules(XElement element)
         {
             ICollection<Poule> poules = Poule.LecturePoules(element, null);
-            _poulesCache.UpdateSnapshot(poules, o => o.id);
+            _poulesCache.UpdateFullSnapshot(poules);
         }
 
 
@@ -154,10 +154,10 @@ namespace KernelImpl.Noyau.Deroulement
         {
             // TODO c'est le seul cas pour lequel on recoit des donnees differentielles et pas un snapshot complet
             ICollection<Combat> combats = Combat.LectureCombats(element, null);
-            _combatsCache.UpdateSnapshot(combats, o => o.id);
+            _combatsCache.UpdateDifferentialSnapshot(combats);
 
             ICollection<vue_combat> vcombats = GenereVueCombat(combats, DC);
-            _vcombatsCache.UpdateSnapshot(vcombats, o => o.combat_id);
+            _vcombatsCache.UpdateFullSnapshot(vcombats);
         }
 
         /// <summary
@@ -183,7 +183,7 @@ namespace KernelImpl.Noyau.Deroulement
         public void lecture_rencontres(XElement element/*, bool suppression, int? tapis*/)
         {
             ICollection<Rencontre> rencontres = Rencontre.LectureRencontres(element, null);
-            _rencontresCache.UpdateSnapshot(rencontres, o => o.id);
+            _rencontresCache.UpdateFullSnapshot(rencontres);
         }
 
         public ICollection<Rencontre> LectureRencontres(XElement xelement, /*int? tapis,*/ OutilsTools.MontreInformation1 MI)
@@ -199,7 +199,7 @@ namespace KernelImpl.Noyau.Deroulement
         public void lecture_feuilles(XElement element/*, bool suppression*/)
         {
             ICollection<Feuille> feuilles = Feuille.LectureFeuilles(element, null);
-            _feuillesCache.UpdateSnapshot(feuilles, o => o.id); 
+            _feuillesCache.UpdateDifferentialSnapshot(feuilles); 
         }
 
         public ICollection<Feuille> LectureFeuilles(XElement xelement, OutilsTools.MontreInformation1 MI)
