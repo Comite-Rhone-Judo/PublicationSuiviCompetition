@@ -1997,7 +1997,7 @@ namespace AppPublication.Controles
 
                     // Calcul le pourcentage total de progression
                     int total = 0;
-                    foreach (int p in _allTaskProgress)
+                    foreach (int p in _allTaskProgress.ToList())
                     {
                         total += p;
                     }

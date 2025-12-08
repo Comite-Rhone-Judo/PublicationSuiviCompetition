@@ -152,6 +152,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// <param name="DC"></param>
         public void lecture_combats(XElement element/*, bool suppression, int? tapis, ICombat CantDelete*/, JudoData DC)
         {
+            // TODO c'est le seul cas pour lequel on recoit des donnees differentielles et pas un snapshot complet
             ICollection<Combat> combats = Combat.LectureCombats(element, null);
             _combatsCache.UpdateSnapshot(combats, o => o.id);
 
