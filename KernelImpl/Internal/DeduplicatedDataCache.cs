@@ -14,29 +14,75 @@ namespace KernelImpl.Internal
         public DeduplicatedCachedData() : base(new List<TValue>(0)) { }
 
         /// <summary>
-        /// Construit une nouvelle liste dédupliquée et effectue le swap.
+        /// Met à jour le snapshot via un remplacement complet (Snapshot Complet).
+        /// Tout ce qui n'est pas dans 'nouveauxElements' disparait.
         /// </summary>
-        public void UpdateSnapshot(IEnumerable<TValue> nouveauxElements, Func<TValue, TKey> keySelector)
+        public void UpdateFullSnapshot(IEnumerable<TValue> nouveauxElements, Func<TValue, TKey> keySelector)
+        {
+            ApplyUpdate(nouveauxElements, keySelector, isDifferential: false);
+        }
+
+        /// <summary>
+        /// Met à jour le snapshot via une fusion (Snapshot Différentiel).
+        /// Ajoute les nouveaux items et met à jour ceux existants (basé sur la clé).
+        /// Les items existants non mentionnés dans le delta sont conservés.
+        /// </summary>
+        public void UpdateDifferentialSnapshot(IEnumerable<TValue> elementsModifies, Func<TValue, TKey> keySelector)
+        {
+            ApplyUpdate(elementsModifies, keySelector, isDifferential: true);
+        }
+
+
+        /// <summary>
+        /// Logique centralisée de fusion et dédoublonnage.
+        /// </summary>
+        private void ApplyUpdate(IEnumerable<TValue> incomingData, Func<TValue, TKey> keySelector, bool isDifferential)
         {
             if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
 
-            var items = nouveauxElements as ICollection<TValue> ?? (nouveauxElements?.ToList());
+            var changes = incomingData as ICollection<TValue> ?? (incomingData?.ToList());
 
-            if (items == null || items.Count == 0)
+            // Optimisation : Si différentiel et aucun changement, on ne fait rien
+            if (isDifferential && (changes == null || changes.Count == 0))
             {
-                Swap(new List<TValue>(0));
                 return;
             }
 
-            // Logique de déduplication (Dictionnaire temporaire)
-            var tempDict = new Dictionary<TKey, TValue>(items.Count);
-            foreach (var item in items)
+            // 1. Préparation du dictionnaire de travail
+            Dictionary<TKey, TValue> workingDict;
+
+            if (isDifferential)
             {
-                tempDict[keySelector(item)] = item;
+                // Différentiel : On part de l'existant (Copie défensive pour thread-safety)
+                var currentSnapshot = Cache;
+                workingDict = new Dictionary<TKey, TValue>(currentSnapshot.Count + (changes?.Count ?? 0));
+
+                foreach (var item in currentSnapshot)
+                {
+                    // On suppose que le cache actuel est déjà propre (clés uniques)
+                    workingDict[keySelector(item)] = item;
+                }
+            }
+            else
+            {
+                // Complet : On part de zéro
+                workingDict = new Dictionary<TKey, TValue>(changes?.Count ?? 0);
             }
 
-            // Swap via la classe de base
-            Swap(tempDict.Values.ToList());
+            // 2. Application des changements (Upsert : Last win)
+            if (changes != null)
+            {
+                foreach (var item in changes)
+                {
+                    // La clé écrase la valeur existante (mise à jour ou ajout)
+                    workingDict[keySelector(item)] = item;
+                }
+            }
+
+            // 3. Finalisation et Swap atomique
+            // On transforme les valeurs du dictionnaire en liste (l'ordre n'est pas garanti par le Dict, 
+            // si l'ordre importe, il faudrait trier ici ou utiliser un SortedDictionary)
+            Swap(workingDict.Values.ToList());
         }
     }
 }
