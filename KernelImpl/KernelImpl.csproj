@@ -52,6 +52,7 @@
       <Link>VersionInfo.cs</Link>
     </Compile>
     <Compile Include="Internal\AtomicCachedBased.cs" />
+    <Compile Include="Internal\CacheExtensions.cs" />
     <Compile Include="Internal\DeduplicatedDataCache.cs" />
     <Compile Include="Internal\SimpleCachedData.cs" />
     <Compile Include="JudoData.cs" />
@@ -62,7 +63,7 @@
     <Compile Include="Noyau\Categories\CategoriePoids.cs" />
     <Compile Include="Noyau\Categories\Ceintures.cs" />
     <Compile Include="Noyau\Deroulement\DataDeroulement.cs" />
-    <Compile Include="Noyau\IIdEntity.cs" />
+    <Compile Include="Internal\IEntityWithKey.cs" />
     <Compile Include="Noyau\Logos\DataLogos.cs" />
     <Compile Include="Noyau\Organisation\DataOrganisation.cs" />
     <Compile Include="Noyau\Organisation\i_vue_epreuve_interface.cs" />

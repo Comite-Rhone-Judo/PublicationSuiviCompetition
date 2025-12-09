@@ -10,6 +10,8 @@ namespace KernelImpl.Noyau.Deroulement
 {
     public class DataDeroulement
     {
+        // TODO Prendre en compte la suppression par erreur des fonctions clear
+
         private readonly DeduplicatedCachedData<int, Rencontre> _rencontresCache = new DeduplicatedCachedData<int, Rencontre>();
         private readonly DeduplicatedCachedData<int, Feuille> _feuillesCache = new DeduplicatedCachedData<int, Feuille>();
         private readonly DeduplicatedCachedData<int, Combat> _combatsCache = new DeduplicatedCachedData<int, Combat>();

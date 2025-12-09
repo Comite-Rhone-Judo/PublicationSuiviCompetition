@@ -1,4 +1,5 @@
 ﻿
+using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
@@ -7,8 +8,10 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Arbitrage
 {
-    public class Arbitre : IIdEntity<int>
+    public class Arbitre : IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public string licence { get; set; }
         public string nom { get; set; }
         public string prenom { get; set; }

@@ -163,8 +163,8 @@ namespace KernelImpl.Noyau.Participants
 
             // 3.1 Initialisation des clés
             var epreuvesAInitialiser = DC.competition.IsEquipe()
-                ? DC.Organisation.EpreuveEquipes.Cast<IIdEntity<int>>()
-                : DC.Organisation.Epreuves.Cast<IIdEntity<int>>();
+                ? DC.Organisation.EpreuveEquipes.Cast<IEntityWithKey<int>>()
+                : DC.Organisation.Epreuves.Cast<IEntityWithKey<int>>();
 
             foreach (var ep in epreuvesAInitialiser)
             {

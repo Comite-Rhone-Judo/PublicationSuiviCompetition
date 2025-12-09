@@ -23,6 +23,7 @@ namespace AppPublication.Controles
     public class GestionEvent
     {
         // TODO Revoir la gestion car certains envois de donnees ne se font pas par snapshot (ex: update des combats)
+        // TODO Analyse le comportement de Project_TAS/AppCommissaire/Controles/GestionEvent.cs par rapport aux mise à jour et/ou update complet
 
         #region CONSTANTES
         private const int kDefaultTimeoutMs = 15000;

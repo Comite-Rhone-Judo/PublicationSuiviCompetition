@@ -1,4 +1,5 @@
 
+using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using Tools.Enum;
@@ -9,8 +10,10 @@ namespace KernelImpl.Noyau.Categories
     /// <summary>
     /// Description des Categorie Age
     /// </summary>
-    public class CategorieAge : IIdEntity<int>
+    public class CategorieAge : IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public int id { get; set; }
         public string nom { get; set; }
         public int anneeMin { get; set; }

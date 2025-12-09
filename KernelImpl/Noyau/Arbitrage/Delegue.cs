@@ -1,4 +1,5 @@
 ﻿
+using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using Tools.Enum;
@@ -6,8 +7,10 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Arbitrage
 {
-    public class Delegue : IIdEntity<int>
+    public class Delegue : IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public int id { get; set; }
         public string nom { get; set; }
         public string prenom { get; set; }
