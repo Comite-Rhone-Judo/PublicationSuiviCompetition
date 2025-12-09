@@ -1,4 +1,5 @@
 ﻿
+using KernelImpl.Internal;
 using System;
 using System.Collections;
 using System.Linq;
@@ -7,11 +8,11 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public partial class vue_combat : IIdEntity<int>
+    public partial class vue_combat : IEntityWithKey<int>
     {
-        public int combat_id { get; set; }
+        int IEntityWithKey<int>.EntityKey => combat_id;
 
-        public int id { get { return combat_id; } }
+        public int combat_id { get; set; }
 
         public int combat_numero { get; set; }
         public string combat_reference { get; set; }

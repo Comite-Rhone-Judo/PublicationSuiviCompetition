@@ -1,4 +1,5 @@
 ﻿
+using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +8,10 @@ using Tools.Enum;
 
 namespace KernelImpl.Noyau.Organisation
 {
-    public class vue_epreuve_equipe : i_vue_epreuve_interface, IIdEntity<int>
+    public class vue_epreuve_equipe : i_vue_epreuve_interface, IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public int id { get; set; }
         public string nom { get; set; }
         public EpreuveEquipeTypeEnum type { get; set; }

@@ -1,4 +1,5 @@
 
+using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,8 +13,10 @@ namespace KernelImpl.Noyau.Deroulement
     /// <summary>
     /// Description des Participants
     /// </summary>
-    public class Participant : INotifyPropertyChanged, IIdEntity<int>
+    public class Participant : INotifyPropertyChanged, IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)

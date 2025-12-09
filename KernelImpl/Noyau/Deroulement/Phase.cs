@@ -1,4 +1,5 @@
 ﻿
+using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,10 @@ namespace KernelImpl.Noyau.Deroulement
     /// <summary>
     /// Description des Phases
     /// </summary>
-    public class Phase : IIdEntity<int>
+    public class Phase : IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public int id { get; set; }
         public string libelle { get; set; }
         public int typePhase { get; set; }

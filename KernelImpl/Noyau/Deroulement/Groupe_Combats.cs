@@ -1,4 +1,5 @@
 ﻿
+using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +9,10 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class Groupe_Combats : IIdEntity<int>
+    public class Groupe_Combats : IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public int id { get; set; }
         public int decoupage { get; set; }
         public int tapis { get; set; }

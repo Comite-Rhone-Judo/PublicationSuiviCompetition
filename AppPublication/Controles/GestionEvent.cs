@@ -376,11 +376,13 @@ namespace AppPublication.Controles
 
         public void client_OnUpdateCombats2(object sender, XElement element)
         {
+            // TODO Voir pour différencier les updates partiels des combats via OnUpdateCombats et les updates complets via OnUpdateTapisCombats
             client_OnUpdateCombats(sender, element);
         }
 
         public void client_OnUpdateCombats(object sender, XElement element)
         {
+            // TODO Voir pour différencier les updates partiels des combats via OnUpdateCombats et les updates complets via OnUpdateTapisCombats
             UpdateRequestDispatcher(LectureDonneesCombats, element);
         }
 

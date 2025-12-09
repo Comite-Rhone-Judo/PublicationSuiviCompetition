@@ -1,4 +1,5 @@
 
+using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,10 @@ namespace KernelImpl.Noyau.Deroulement
     /// <summary>
     /// Description des Feuilles (construction d'un tableau)
     /// </summary>
-    public class Feuille : IIdEntity<int>
+    public class Feuille : IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public int id { get; set; }
         public bool repechage { get; set; }
         public int source1 { get; set; }

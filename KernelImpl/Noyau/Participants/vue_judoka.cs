@@ -1,4 +1,5 @@
-﻿using KernelImpl.Noyau.Categories;
+﻿using KernelImpl.Internal;
+using KernelImpl.Noyau.Categories;
 using KernelImpl.Noyau.Organisation;
 using KernelImpl.Noyau.Structures;
 
@@ -11,7 +12,7 @@ using Tools.Enum;
 namespace KernelImpl.Noyau.Participants
 {
 
-    public class vue_judoka :  INotifyPropertyChanged
+    public class vue_judoka :  INotifyPropertyChanged, IEntityWithKey<string>
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -22,14 +23,13 @@ namespace KernelImpl.Noyau.Participants
 
         #region PROPERTIES
 
-        public string ClefUnique
-        {
-            get
-            {
-                return string.Format("{0}-{1}", idcompet, id);
-            }
-        }
+        string IEntityWithKey<string>.EntityKey => _idCache;
 
+        private string _idCache;
+        private void GetIdCache()
+        {
+            _idCache = string.Format("{0}-{1}", id, idepreuve);
+        }
 
         private int _id;
 
@@ -45,6 +45,7 @@ namespace KernelImpl.Noyau.Participants
                 {
                     _id = value;
                     OnPropertyChanged("id");
+                    GetIdCache();
                 }
             }
         }
@@ -442,6 +443,7 @@ namespace KernelImpl.Noyau.Participants
                 {
                     _idepreuve = value;
                     OnPropertyChanged("idepreuve");
+                    GetIdCache();
                 }
             }
         }

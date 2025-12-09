@@ -1,4 +1,5 @@
 ﻿
+using KernelImpl.Internal;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,8 +16,10 @@ namespace KernelImpl.Noyau.Deroulement
     /// <summary>
     /// Description des Rencontres
     /// </summary>
-    public class Rencontre : INotifyPropertyChanged, IIdEntity<int>
+    public class Rencontre : INotifyPropertyChanged, IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)

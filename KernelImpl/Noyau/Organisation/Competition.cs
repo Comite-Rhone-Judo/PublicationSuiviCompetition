@@ -1,5 +1,6 @@
 ﻿
 
+using KernelImpl.Internal;
 using KernelImpl.Noyau.Arbitrage;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace KernelImpl.Noyau.Organisation
     /// <summary>
     /// Description des Competitions
     /// </summary>
-    public class Competition : IIdEntity<int>
+    public class Competition : IEntityWithKey<int>
     {
         public Competition()
         {
@@ -43,6 +44,7 @@ namespace KernelImpl.Noyau.Organisation
 			this.reglementEquipe = ReglementEquipeEnum.FFJDA;
         }
 
+        int IEntityWithKey<int>.EntityKey => id;
 
         public int id { get; set; }
         public string nom { get; set; }

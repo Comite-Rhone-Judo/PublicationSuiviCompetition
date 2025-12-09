@@ -1,4 +1,5 @@
 ﻿
+using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using Tools.Enum;
@@ -9,8 +10,11 @@ namespace KernelImpl.Noyau.Structures
     /// <summary>
     /// Description des Comites
     /// </summary>
-    public class Comite : IIdEntity<string>
+    public class Comite : IEntityWithKey<string>
     {
+        string IEntityWithKey<string>.EntityKey => _idCache;
+        private string _idCache;
+
         private string _id;
         public string id
         {
@@ -29,25 +33,28 @@ namespace KernelImpl.Noyau.Structures
             set
             {
                 _id = value;
+                GetIdCache();
             }
         }
         public string nom { get; set; }
         public string nomCourt { get; set; }
 
-        public string ligue { get; set; }
+        private string _ligue;
+        public string ligue { get { return _ligue; } set { _ligue = value; GetIdCache(); } }
         public string code { get; set; }
         public string secteur { get; set; }
 
 
         public void LoadXml(XElement xcomite)
         {
-            this.id = XMLTools.LectureString(xcomite.Attribute(ConstantXML.Comite_ID));
-            this.ligue = XMLTools.LectureString(xcomite.Attribute(ConstantXML.Comite_Ligue));
+            this._id = XMLTools.LectureString(xcomite.Attribute(ConstantXML.Comite_ID));
+            this._ligue = XMLTools.LectureString(xcomite.Attribute(ConstantXML.Comite_Ligue));
+            GetIdCache();
+
             this.nom = XMLTools.LectureString(xcomite.Element(ConstantXML.Comite_Nom));
             this.nomCourt = this.id;
             this.code = XMLTools.LectureString(xcomite.Attribute(ConstantXML.Comite_RemoteID));
             this.secteur = XMLTools.LectureString(xcomite.Attribute(ConstantXML.Comite_Secteur));
-
         }
 
         public XElement ToXml()
@@ -90,6 +97,11 @@ namespace KernelImpl.Noyau.Structures
                 comites.Add(comite);
             }
             return comites;
+        }
+
+        private void GetIdCache()
+        {
+            this._idCache = string.Format("{0}-{1}", id, ligue);
         }
     }
 }

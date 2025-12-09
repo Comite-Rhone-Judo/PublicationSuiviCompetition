@@ -36,9 +36,9 @@ namespace KernelImpl.Noyau.Logos
             ICollection<string> fede = allLogos.Where(o => o.Contains(ConstantFile.Logo1_dir)).ToList();
             ICollection<string> ligues = allLogos.Where(o => o.Contains(ConstantFile.Logo2_dir)).ToList();
 
-            _logosCache.UpdateSnapshot(logos, o => o);
-            _fedeCache.UpdateSnapshot(logos, o => o);
-            _ligueCache.UpdateSnapshot(logos, o => o);
+            _logosCache.UpdateFullSnapshot(logos, o => o);
+            _fedeCache.UpdateFullSnapshot(logos, o => o);
+            _ligueCache.UpdateFullSnapshot(logos, o => o);
         }
     }
 }

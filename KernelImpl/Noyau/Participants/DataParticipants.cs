@@ -47,11 +47,11 @@ namespace KernelImpl.Noyau.Participants
         public void lecture_judokas(XElement element, JudoData DC)
         {
             ICollection<Judoka> judokasRecu = Judoka.LectureJudoka(element, null);
-            _judokasCache.UpdateSnapshot(judokasRecu, o => o.id);
+            _judokasCache.UpdateFullSnapshot(judokasRecu);
 
             // Genere les vues et le dictionnaire associés
             var (vueJudokas, judokasParEpreuve) = GenereVueJudokas(DC);
-            _vue_judokasCache.UpdateSnapshot(vueJudokas, o => o.ClefUnique);
+            _vue_judokasCache.UpdateFullSnapshot(vueJudokas);
             _vjudokasEpreuveMap.UpdateSnapshot(judokasParEpreuve);
         }
 
@@ -77,7 +77,7 @@ namespace KernelImpl.Noyau.Participants
         public void lecture_equipes(XElement element)
         {
             ICollection<Equipe> equipes = Equipe.LectureEquipes(element, null);
-            _equipesCache.UpdateSnapshot(equipes, o => o.id);
+            _equipesCache.UpdateFullSnapshot(equipes);
 
         }
 
@@ -94,7 +94,7 @@ namespace KernelImpl.Noyau.Participants
         public void lecture_epreuves_judokas(XElement element, JudoData DC)
         {
             ICollection<EpreuveJudoka> ejs = EpreuveJudoka.LectureEpreuveJudokas(element, null);
-            _epreuvejudokasCache.UpdateSnapshot(ejs, o => o.id);
+            _epreuvejudokasCache.UpdateFullSnapshot(ejs);
 
             // 3. Propagation de l'état aux Judokas (Optimisation)
 
@@ -168,8 +168,8 @@ namespace KernelImpl.Noyau.Participants
 
             foreach (var ep in epreuvesAInitialiser)
             {
-                if (!nouveauDico.ContainsKey(ep.id))
-                    nouveauDico[ep.id] = new List<vue_judoka>();
+                if (!nouveauDico.ContainsKey(ep.EntityKey))
+                    nouveauDico[ep.EntityKey] = new List<vue_judoka>();
             }
 
             // 3.2 Remplissage

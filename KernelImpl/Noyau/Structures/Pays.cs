@@ -1,4 +1,5 @@
 ﻿
+using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,8 +10,10 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Structures
 {
-    public class Pays : IIdEntity<int>
+    public class Pays : IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public int id { get; set; }
         public int code { get; set; }
         public string abr2 { get; set; }

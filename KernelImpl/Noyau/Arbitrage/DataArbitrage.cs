@@ -30,7 +30,7 @@ namespace KernelImpl.Noyau.Arbitrage
         public void lecture_commissaires(XElement element)
         {
             ICollection<Commissaire> commissaires = Commissaire.LectureCommissaire(element, null);
-            _commissairesCache.UpdateSnapshot(commissaires, o => o.id);
+            _commissairesCache.UpdateFullSnapshot(commissaires);
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace KernelImpl.Noyau.Arbitrage
         public void lecture_arbitres(XElement element)
         {
             ICollection<Arbitre> arbitres = Arbitre.LectureArbitre(element, null);
-            _arbitresCache.UpdateSnapshot(arbitres, o => o.id); 
+            _arbitresCache.UpdateFullSnapshot(arbitres); 
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace KernelImpl.Noyau.Arbitrage
         public void lecture_delegues(XElement element)
         {
             ICollection<Delegue> delegues = Delegue.LectureDelegue(element, null);
-            _deleguesCache.UpdateSnapshot(delegues, o => o.id);
+            _deleguesCache.UpdateFullSnapshot(delegues);
         }
     }
 }

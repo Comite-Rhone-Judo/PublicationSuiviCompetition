@@ -1,4 +1,5 @@
 
+using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using Tools.Enum;
@@ -9,8 +10,10 @@ namespace KernelImpl.Noyau.Categories
     /// <summary>
     /// Description des Ceintures
     /// </summary>
-    public class Ceintures : IIdEntity<int>
+    public class Ceintures : IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public int id { get; set; }
         public string nom { get; set; }
         public string ordre { get; set; }

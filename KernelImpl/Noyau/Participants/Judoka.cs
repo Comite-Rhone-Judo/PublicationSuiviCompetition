@@ -1,4 +1,5 @@
 
+using KernelImpl.Internal;
 using KernelImpl.Noyau.Deroulement;
 using System;
 using System.Collections;
@@ -14,8 +15,10 @@ namespace KernelImpl.Noyau.Participants
     /// <summary>
     /// Description des Judokas
     /// </summary>
-    public class Judoka : INotifyPropertyChanged, IIdEntity<int>
+    public class Judoka : INotifyPropertyChanged, IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)

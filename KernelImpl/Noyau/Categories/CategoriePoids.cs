@@ -1,4 +1,5 @@
 
+using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using Tools.Enum;
@@ -9,8 +10,10 @@ namespace KernelImpl.Noyau.Categories
     /// <summary>
     /// Description des Categorie Poids
     /// </summary>
-    public class CategoriePoids : IIdEntity<int>
+    public class CategoriePoids : IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public int id { get; set; }
         public string nom { get; set; }
         public string remoteId { get; set; }

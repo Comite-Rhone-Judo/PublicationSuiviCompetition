@@ -1,4 +1,5 @@
 ﻿
+using KernelImpl.Internal;
 using System;
 using System.Linq;
 using System.Xml.Linq;
@@ -6,8 +7,10 @@ using Tools.Enum;
 
 namespace KernelImpl.Noyau.Organisation
 {
-    public class vue_epreuve : i_vue_epreuve_interface
+    public class vue_epreuve : i_vue_epreuve_interface, IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public int id { get; set; }
         public string nom { get; set; }
         public DateTime debut { get; set; }

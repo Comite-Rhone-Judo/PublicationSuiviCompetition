@@ -1,3 +1,4 @@
+using KernelImpl.Internal;
 using KernelImpl.Noyau.Organisation;
 
 using System.Collections.Generic;
@@ -11,8 +12,10 @@ namespace KernelImpl.Noyau.Participants
     /// <summary>
     /// Description des Epreuve auxquelles sont inscrit les Judokas
     /// </summary>
-    public class EpreuveJudoka : IIdEntity<int>
+    public class EpreuveJudoka : IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public int epreuve { get; set; }
         public int judoka { get; set; }
         public int etat { get; set; }

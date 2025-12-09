@@ -34,7 +34,7 @@ namespace KernelImpl.Noyau.Organisation
         public void lecture_competitions(XElement element, JudoData DC)
         {
             ICollection<Competition> competitions = Competition.LectureCompetitions(element, null);
-            _competitionsCache.UpdateSnapshot(competitions, o => o.id); 
+            _competitionsCache.UpdateFullSnapshot(competitions); 
 
             DC.competition = Competitions.FirstOrDefault();
             DC.competitions = Competitions.ToList();
@@ -50,10 +50,10 @@ namespace KernelImpl.Noyau.Organisation
         public void lecture_epreuves_equipe(XElement element, JudoData DC)
         {
             ICollection<Epreuve_Equipe> epreuves = Epreuve_Equipe.LectureEpreuveEquipes(element, null);
-            _epreuve_equipesCache.UpdateSnapshot(epreuves, o => o.id);
+            _epreuve_equipesCache.UpdateFullSnapshot(epreuves);
 
             ICollection<vue_epreuve_equipe> vepreuves = GenereVueEpreuveEquipe(epreuves, DC);
-            _vepreuves_equipeCache.UpdateSnapshot(vepreuves, o => o.id);
+            _vepreuves_equipeCache.UpdateFullSnapshot(vepreuves);
         }
 
         public ICollection<Epreuve_Equipe> LectureEpreuveEquipes(XElement xelement, OutilsTools.MontreInformation1 MI)
@@ -70,10 +70,10 @@ namespace KernelImpl.Noyau.Organisation
         public void lecture_epreuves(XElement element, JudoData DC)
         {
             ICollection<Epreuve> epreuves = Epreuve.LectureEpreuves(element, null);
-            _epreuvesCache.UpdateSnapshot(epreuves, o => o.id);
+            _epreuvesCache.UpdateFullSnapshot(epreuves);
             
             ICollection<vue_epreuve> vepreuves = GenereVueEpreuves(epreuves, DC);
-            _vepreuvesCache.UpdateSnapshot(vepreuves, o => o.id);
+            _vepreuvesCache.UpdateFullSnapshot(vepreuves);
         }
 
         public ICollection<Epreuve> LectureEpreuves(XElement xelement, OutilsTools.MontreInformation1 MI)

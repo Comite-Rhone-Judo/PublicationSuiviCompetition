@@ -1,4 +1,5 @@
 ﻿
+using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using Tools.Enum;
@@ -9,8 +10,10 @@ namespace KernelImpl.Noyau.Structures
     /// <summary>
     /// Description des Secteurs
     /// </summary>
-    public class Secteur : IIdEntity<string>
+    public class Secteur : IEntityWithKey<string>
     {
+        string IEntityWithKey<string>.EntityKey => id;
+
         public string id { get; set; }
         public string nom { get; set; }
         public string nomCourt { get; set; }

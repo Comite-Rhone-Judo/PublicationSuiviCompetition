@@ -32,7 +32,7 @@ namespace KernelImpl.Noyau.Categories
         public void lecture_cateages(XElement element)
         {
             ICollection<CategorieAge> cateages = CategorieAge.LectureCategorieAge(element, null);
-            _cAgesCache.UpdateSnapshot(cateages, o => o.id);
+            _cAgesCache.UpdateFullSnapshot(cateages);
         }
 
 
@@ -44,7 +44,7 @@ namespace KernelImpl.Noyau.Categories
         public void lecture_catepoids(XElement element)
         {
             ICollection<CategoriePoids> catepoids = CategoriePoids.LectureCategoriePoids(element, null);
-            _cPoidsCache.UpdateSnapshot(catepoids, o => o.id);
+            _cPoidsCache.UpdateFullSnapshot(catepoids);
         }
 
 
@@ -56,7 +56,7 @@ namespace KernelImpl.Noyau.Categories
         public void lecture_ceintures(XElement element)
         {
             ICollection<Ceintures> ceintures = Ceintures.LectureCeintures(element, null);
-            _gradesCache.UpdateSnapshot(ceintures, o => o.id);
+            _gradesCache.UpdateFullSnapshot(ceintures);
 
             Ceintures grade = Grades.FirstOrDefault(o => o.nom == "1D");
             if (grade != null)

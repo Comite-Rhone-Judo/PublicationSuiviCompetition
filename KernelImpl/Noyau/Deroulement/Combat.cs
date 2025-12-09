@@ -1,4 +1,5 @@
 using KernelImpl;
+using KernelImpl.Internal;
 using KernelImpl.Noyau.Categories;
 using KernelImpl.Noyau.Deroulement;
 using KernelImpl.Noyau.Organisation;
@@ -17,8 +18,10 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class Combat : INotifyPropertyChanged, IIdEntity<int>
+    public class Combat : INotifyPropertyChanged, IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
