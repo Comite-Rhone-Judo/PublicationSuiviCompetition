@@ -209,9 +209,9 @@ namespace KernelImpl.Noyau.Deroulement
             xcombat.SetAttributeValue(ConstantXML.Combat_Reference, reference);
             xcombat.SetAttributeValue(ConstantXML.Combat_Groupe, groupe);
             xcombat.SetAttributeValue(ConstantXML.Combat_FirstRencontre, first_rencontre);
-            using (TimedLock.Lock((DC.Organisation.vepreuves as ICollection).SyncRoot))
+            using (TimedLock.Lock((DC.Organisation.VueEpreuves as ICollection).SyncRoot))
             {
-                vue_epreuve ep = DC.Organisation.vepreuves.FirstOrDefault(o => o.id == first_rencontre);
+                vue_epreuve ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == first_rencontre);
                 string lib = string.Empty;
                 if (ep != null) {
                     // Pour les epreuves mixte, on ajoute le sexe de l'epreuve qui commence, sinon, juste le nom de la cate de poids
@@ -560,9 +560,9 @@ namespace KernelImpl.Noyau.Deroulement
                 if (p1 != null)
                 {
                     vue_judoka vj = null;
-                    using (TimedLock.Lock((DC.Participants.vjudokas as ICollection).SyncRoot))
+                    using (TimedLock.Lock((DC.Participants.Vuejudokas as ICollection).SyncRoot))
                     {
-                        vj = DC.Participants.vjudokas.FirstOrDefault(o => o.id == p1.judoka);
+                        vj = DC.Participants.Vuejudokas.FirstOrDefault(o => o.id == p1.judoka);
                     }
 
                     int count_combat = DC.Deroulement.GetNbCombatJudoka(vj.licence, DC);
@@ -585,9 +585,9 @@ namespace KernelImpl.Noyau.Deroulement
                 if (p2 != null)
                 {
                     vue_judoka vj = null;
-                    using (TimedLock.Lock((DC.Participants.vjudokas as ICollection).SyncRoot))
+                    using (TimedLock.Lock((DC.Participants.Vuejudokas as ICollection).SyncRoot))
                     {
-                        vj = DC.Participants.vjudokas.FirstOrDefault(o => o.id == p2.judoka);
+                        vj = DC.Participants.Vuejudokas.FirstOrDefault(o => o.id == p2.judoka);
                     }
 
                     int count_combat = DC.Deroulement.GetNbCombatJudoka(vj.licence, DC);
@@ -1036,7 +1036,7 @@ namespace KernelImpl.Noyau.Deroulement
                 Judoka j1 = null;
                 Judoka j2 = null;
 
-                using (TimedLock.Lock((DC.Participants.vjudokas as ICollection).SyncRoot))
+                using (TimedLock.Lock((DC.Participants.Vuejudokas as ICollection).SyncRoot))
                 {
                     j1 = DC.Participants.Judokas.FirstOrDefault(o => o.id == this.participant1);
                     j2 = DC.Participants.Judokas.FirstOrDefault(o => o.id == this.participant2);
@@ -1528,7 +1528,7 @@ namespace KernelImpl.Noyau.Deroulement
 
 
                     int maxPenalites = 4;
-                    vue_epreuve ep = DC.Organisation.vepreuves.FirstOrDefault(o => o.id == this.epreuve);
+                    vue_epreuve ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == this.epreuve);
                     if (!(ep is null))
                     {
                         CategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == ep.categorieAge);
@@ -1600,7 +1600,7 @@ namespace KernelImpl.Noyau.Deroulement
             if (discipline == CompetitionDisciplineEnum.JujitsuNeWaza)
             {
                 maxPenalites = 4;
-                vue_epreuve ep = DC.Organisation.vepreuves.FirstOrDefault(o => o.id == this.epreuve);
+                vue_epreuve ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == this.epreuve);
                 if (!(ep is null))
                 {
                     CategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == ep.categorieAge);

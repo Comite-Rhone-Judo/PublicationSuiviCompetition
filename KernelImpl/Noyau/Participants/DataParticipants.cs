@@ -13,7 +13,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Participants
 {
-    public class DataParticipants
+    public class DataParticipants : IParticipantsData
     {
         private readonly DeduplicatedCachedData<int, Equipe> _equipesCache = new DeduplicatedCachedData<int, Equipe>();
         private readonly DeduplicatedCachedData<int, Judoka> _judokasCache = new DeduplicatedCachedData<int, Judoka>();
@@ -23,12 +23,12 @@ namespace KernelImpl.Noyau.Participants
         // Accesseurs O(1)
         public IReadOnlyList<Equipe> Equipes { get { return _equipesCache.Cache; } }
         public IReadOnlyList<Judoka> Judokas { get { return _judokasCache.Cache; } }
-        public IReadOnlyList<EpreuveJudoka> EJS { get { return _epreuvejudokasCache.Cache; } }
-        public IReadOnlyList<vue_judoka> vjudokas { get { return _vue_judokasCache.Cache; } }
+        public IReadOnlyList<EpreuveJudoka> EpreuveJudokas { get { return _epreuvejudokasCache.Cache; } }
+        public IReadOnlyList<vue_judoka> Vuejudokas { get { return _vue_judokasCache.Cache; } }
 
         public IEnumerable<Judoka> GetJudokaEpreuve(int epreuve)
         {
-            IEnumerable<int> judokas = EJS.Where(o => o.epreuve == epreuve).Select(o => o.judoka).Distinct();
+            IEnumerable<int> judokas = EpreuveJudokas.Where(o => o.epreuve == epreuve).Select(o => o.judoka).Distinct();
             return Judokas.Where(o => judokas.Contains(o.id));
         }
 
@@ -108,7 +108,7 @@ namespace KernelImpl.Noyau.Participants
             var judokaMap = listeJudokas.ToDictionary(j => j.id);
 
             // On parcourt les EpreuvesJudokas (O(M))
-            foreach (EpreuveJudoka ej in EJS)
+            foreach (EpreuveJudoka ej in EpreuveJudokas)
             {
                 // Recherche instantanée O(1) grâce au dictionnaire
                 if (judokaMap.TryGetValue(ej.judoka, out Judoka j))
@@ -145,7 +145,7 @@ namespace KernelImpl.Noyau.Participants
         {
             // 1. Capture des Snapshots locaux (Lecture O(1)) pour cohérence durant le traitement
             var sourceJudokas = Judokas;
-            var sourceEJS = EJS;
+            var sourceEJS = EpreuveJudokas;
             var sourceEpreuves = DC.Organisation.Epreuves;
 
             // 2. Construction de la Liste Plate (LINQ)

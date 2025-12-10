@@ -9,7 +9,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class DataDeroulement
+    public class DataDeroulement : IDeroulementData
     {
         #region Champs privés
         private readonly DeduplicatedCachedData<int, Rencontre> _rencontresCache = new DeduplicatedCachedData<int, Rencontre>();
@@ -34,8 +34,8 @@ namespace KernelImpl.Noyau.Deroulement
         public IReadOnlyList<Phase> Phases { get { return _phasesCache.Cache; } }
         public IReadOnlyList<Poule> Poules { get { return _poulesCache.Cache; } }
         public IReadOnlyList<Participant> Participants { get { return _participantsCache.Cache; } }
-        public IReadOnlyList<vue_groupe> vgroupes { get { return _vgroupesCache.Cache; } }
-        public IReadOnlyList<vue_combat> vcombats { get { return _vcombatsCache.Cache; } }
+        public IReadOnlyList<vue_groupe> VueGroupes { get { return _vgroupesCache.Cache; } }
+        public IReadOnlyList<vue_combat> VueCombats { get { return _vcombatsCache.Cache; } }
 
 
         public IEnumerable<Participant> ListeParticipant1(int epreuve, JudoData DC)
@@ -53,7 +53,7 @@ namespace KernelImpl.Noyau.Deroulement
         public int GetNbCombatJudoka(string licence, JudoData DC)
         {
             int result = 0;
-            using (TimedLock.Lock((DC.Participants.vjudokas as ICollection).SyncRoot))
+            using (TimedLock.Lock((DC.Participants.Vuejudokas as ICollection).SyncRoot))
             {
                 foreach (Participants.Judoka vj in DC.Participants.Judokas.Where(o => o.licence == licence))
                 {
@@ -66,7 +66,7 @@ namespace KernelImpl.Noyau.Deroulement
         public int GetNbPointJudoka(string licence, JudoData DC)
         {
             int result = 0;
-            using (TimedLock.Lock((DC.Participants.vjudokas as ICollection).SyncRoot))
+            using (TimedLock.Lock((DC.Participants.Vuejudokas as ICollection).SyncRoot))
             {
                 foreach (Participants.Judoka vj in DC.Participants.Judokas.Where(o => o.licence == licence))
                 {

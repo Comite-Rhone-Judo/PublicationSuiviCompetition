@@ -10,7 +10,7 @@ using KernelImpl.Internal;
 
 namespace KernelImpl.Noyau.Arbitrage
 {
-    public class DataArbitrage
+    public class DataArbitrage : IArbitrageData
     {
         // 1. Le stockage privé est le "DataCache"
         private readonly DeduplicatedCachedData<int, Commissaire> _commissairesCache = new DeduplicatedCachedData<int, Commissaire>();

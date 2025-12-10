@@ -11,7 +11,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Organisation
 {
-    public class DataOrganisation
+    public class DataOrganisation : IOrganisationData
     {
         private readonly DeduplicatedCachedData<int, Competition> _competitionsCache = new DeduplicatedCachedData<int, Competition>();
         private readonly DeduplicatedCachedData<int, Epreuve> _epreuvesCache = new DeduplicatedCachedData<int, Epreuve>();
@@ -23,8 +23,8 @@ namespace KernelImpl.Noyau.Organisation
         public IReadOnlyList<Competition> Competitions { get { return _competitionsCache.Cache; } }
         public IReadOnlyList<Epreuve> Epreuves { get { return _epreuvesCache.Cache; } }
         public IReadOnlyList<Epreuve_Equipe> EpreuveEquipes { get { return _epreuve_equipesCache.Cache; } }
-        public IReadOnlyList<vue_epreuve_equipe> vepreuves_equipe { get { return _vepreuves_equipeCache.Cache; } }
-        public IReadOnlyList<vue_epreuve> vepreuves { get { return _vepreuvesCache.Cache; } }
+        public IReadOnlyList<vue_epreuve_equipe> VueEpreuveEquipes { get { return _vepreuves_equipeCache.Cache; } }
+        public IReadOnlyList<vue_epreuve> VueEpreuves { get { return _vepreuvesCache.Cache; } }
 
         /// <summary>
         /// lecture des compétitions

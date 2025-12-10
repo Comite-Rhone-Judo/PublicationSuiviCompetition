@@ -48,11 +48,11 @@ namespace KernelImpl.Noyau.Deroulement
             Organisation.i_vue_epreuve_interface ep = null;
             if (DC.competition.IsEquipe())
             {
-                ep = DC.Organisation.vepreuves_equipe.FirstOrDefault(o => o.id == this.epreuve);
+                ep = DC.Organisation.VueEpreuveEquipes.FirstOrDefault(o => o.id == this.epreuve);
             }
             else
             {
-                ep = DC.Organisation.vepreuves.FirstOrDefault(o => o.id == this.epreuve);
+                ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == this.epreuve);
             }
             return ep;
         }

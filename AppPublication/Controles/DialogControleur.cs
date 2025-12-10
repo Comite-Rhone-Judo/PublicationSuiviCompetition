@@ -237,7 +237,7 @@ namespace AppPublication.Controles
                     _connection = new GestionConnection();
                     _stats = new GestionStatistiques();
                     _site = new GestionSite(_stats);
-
+                    GestionEvent.Instance.BusyStatusChanged += OnBusyStatusChanged;
                 }
                 catch (Exception ex)
                 {
@@ -819,6 +819,22 @@ namespace AppPublication.Controles
             }
         }
 
+        #endregion
+
+        #region EVENT HANDLER
+        // Le gestionnaire d'événement (Thread-Safe pour l'UI)
+        private void OnBusyStatusChanged(object sender, BusyStatusEventArgs e)
+        {
+            System.Windows.Application.Current.ExecOnUiThread(new Action(() =>
+            {
+                DialogControleur.Instance.IsBusy = e.IsBusy;
+                if (e.IsBusy)
+                {
+                    DialogControleur.Instance.BusyStatus = e.Status;
+                }
+            }
+            ));
+        }
         #endregion
     }
 }

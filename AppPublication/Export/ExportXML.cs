@@ -332,12 +332,12 @@ namespace AppPublication.Export
 
             try
             {
-                using (TimedLock.Lock((DC.Participants.vjudokas as ICollection).SyncRoot))
+                using (TimedLock.Lock((DC.Participants.Vuejudokas as ICollection).SyncRoot))
                 {
                     using (TimedLock.Lock((DC.Structures.Clubs as ICollection).SyncRoot))
                     {
                         clubs = (from c in DC.Structures.Clubs
-                                 join j in DC.Participants.vjudokas on c.id equals j.club
+                                 join j in DC.Participants.Vuejudokas on c.id equals j.club
                                  select c).Distinct().ToList();
                     }
                 }
@@ -455,7 +455,7 @@ namespace AppPublication.Export
             IList<Epreuve_Equipe> epreuves2 = DC.Organisation.EpreuveEquipes.ToList();
             //IList<i_vue_epreuve_interface> vepreuves = DC.Organisation.vepreuves.ToList();
             IList<Phase> phases = DC.Deroulement.Phases.ToList();
-            IList<vue_groupe> groupes = DC.Deroulement.vgroupes.ToList();
+            IList<vue_groupe> groupes = DC.Deroulement.VueGroupes.ToList();
 
             foreach (Competition competition in competitions)
             {
@@ -478,11 +478,11 @@ namespace AppPublication.Export
                 IList<i_vue_epreuve_interface> epreuves_compet = null;
                 if (competition.IsEquipe())
                 {
-                    epreuves_compet = DC.Organisation.vepreuves_equipe.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>().ToList();
+                    epreuves_compet = DC.Organisation.VueEpreuveEquipes.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>().ToList();
                 }
                 else
                 {
-                    epreuves_compet = DC.Organisation.vepreuves.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>().ToList();
+                    epreuves_compet = DC.Organisation.VueEpreuves.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>().ToList();
                 }
 
 
@@ -577,7 +577,7 @@ namespace AppPublication.Export
                     }
 
                     // Ajoute les judokas de la competition
-                    IList<vue_judoka> vjudokas = DC.Participants.vjudokas.Where(vj => vj.idcompet == competition.id).ToList();
+                    IList<vue_judoka> vjudokas = DC.Participants.Vuejudokas.Where(vj => vj.idcompet == competition.id).ToList();
                     XElement xjudokas = new XElement(ConstantXML.GroupeEngagements_judokas);
                     foreach (vue_judoka vj in vjudokas)
                     {
@@ -641,11 +641,11 @@ namespace AppPublication.Export
                 IList<i_vue_epreuve_interface> epreuves_compet = null;
                 if (competition.IsEquipe())
                 {
-                    epreuves_compet = DC.Organisation.vepreuves_equipe.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>().ToList();
+                    epreuves_compet = DC.Organisation.VueEpreuveEquipes.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>().ToList();
                 }
                 else
                 {
-                    epreuves_compet = DC.Organisation.vepreuves.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>().ToList();
+                    epreuves_compet = DC.Organisation.VueEpreuves.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>().ToList();
                 }
 
 
@@ -691,7 +691,7 @@ namespace AppPublication.Export
                         // {
                         // Cherche tous les numeros de tapis sur les combats de la phase de l'epreuve si la phase n'est pas terminee
                         // List<int?> tapisEpreuve = DC.Deroulement.Combats.Where(o => o.epreuve == ep.id && o.tapis > 0).Join(phaseEnCours, o => o.phase, idx => idx, (o, idx) => o).Select(o => o.tapis).Distinct().ToList();
-                        List<int> tapisEpreuve = DC.Deroulement.vcombats.Where(o => o.epreuve_id == ep.id
+                        List<int> tapisEpreuve = DC.Deroulement.VueCombats.Where(o => o.epreuve_id == ep.id
                                                                                && o.combat_tapis > 0
                                                                                && o.phase_etat == (int)EtatPhaseEnum.TirageValide
                                                                                && o.combat_vaiqueur == null).Select(o => o.combat_tapis).Distinct().ToList();
@@ -763,9 +763,9 @@ namespace AppPublication.Export
             ICollection<int> id_compet_combats = new List<int>();   // Pour savoir les IDS de la ou des competitions des combats
             ICollection<XElement> xTapisList = new List<XElement>();
 
-            ICollection<vue_groupe> groupes = DC.Deroulement.vgroupes.ToList();
-            ICollection<vue_epreuve> epreuves = DC.Organisation.vepreuves.ToList();
-            ICollection<vue_epreuve_equipe> epreuves_eq = DC.Organisation.vepreuves_equipe.ToList();
+            ICollection<vue_groupe> groupes = DC.Deroulement.VueGroupes.ToList();
+            ICollection<vue_epreuve> epreuves = DC.Organisation.VueEpreuves.ToList();
+            ICollection<vue_epreuve_equipe> epreuves_eq = DC.Organisation.VueEpreuveEquipes.ToList();
             ICollection<Judoka> judokas = DC.Participants.Judokas.ToList();
             ICollection<Equipe> equipes = DC.Participants.Equipes.ToList();
             ICollection<Combat> combats = DC.Deroulement.Combats.ToList();
@@ -1022,7 +1022,7 @@ namespace AppPublication.Export
             //IList<IJudoka> judokas_inscrit = DC.Database.SqlQuery<IJudoka>(query).ToList();
 
             IList<Judoka> judokas_inscrit = DC.Participants.GetJudokaEpreuve(epreuve.id).ToList();
-            IList<EpreuveJudoka> epj = DC.Participants.EJS.ToList();
+            IList<EpreuveJudoka> epj = DC.Participants.EpreuveJudokas.ToList();
 
             foreach (Judoka judoka in judokas_inscrit)
             {

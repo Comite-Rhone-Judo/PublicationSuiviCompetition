@@ -9,7 +9,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Structures
 {
-    public class DataStructures
+    public class DataStructures : IStructuresData
     {
         private readonly DeduplicatedCachedData<string, Club> _clubsCache = new DeduplicatedCachedData<string, Club>();
         private readonly DeduplicatedCachedData<string, Comite> _comitesCache = new DeduplicatedCachedData<string, Comite>();

@@ -10,7 +10,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Categories
 {
-    public class DataCategories
+    public class DataCategories : ICategoriesData
     {
         private readonly DeduplicatedCachedData<int, CategorieAge> _cAgesCache = new DeduplicatedCachedData<int, CategorieAge>();
         private readonly DeduplicatedCachedData<int, CategoriePoids> _cPoidsCache = new DeduplicatedCachedData<int, CategoriePoids>();

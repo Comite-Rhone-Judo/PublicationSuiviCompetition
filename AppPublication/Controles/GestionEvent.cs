@@ -11,15 +11,31 @@ using System.Xml.Linq;
 using Telerik.Windows.Controls;
 using Tools.Enum;
 using Tools.Outils;
+using KernelImpl;
 
 namespace AppPublication.Controles
 {
+    #region CLASSES ANNEXES
     public enum ClientJudoStatusEnum
     {
         Idle = 0,               // En attente de recevoir les informations apres initialisation - update uniquement
         Initializing = 1,       // En cours d'initialisation
         Disconnected = 2        // Deconnecte
     }
+
+    // EventArgs pour transporter l'info
+    public class BusyStatusEventArgs : EventArgs
+    {
+        public bool IsBusy { get; }
+        public BusyStatusEnum Status { get; }
+
+        public BusyStatusEventArgs(bool isBusy, BusyStatusEnum status)
+        {
+            IsBusy = isBusy;
+            Status = status;
+        }
+    }
+#endregion
 
     public class GestionEvent
     {
@@ -35,6 +51,14 @@ namespace AppPublication.Controles
 
         private readonly object _lockDirty = new object();  // Objet de verrouillage pour garantir l'accès exclusif
         private bool _isCombatsCacheDirty = false; // Le flag d'état
+
+        private IJudoDataManager _dataManager = null;
+
+        #endregion
+
+        #region EVENT HANDLER
+        // Déclaration de l'événement
+        public event EventHandler<BusyStatusEventArgs> BusyStatusChanged;
         #endregion
 
         #region CONSTRUCTEUR
@@ -516,7 +540,14 @@ namespace AppPublication.Controles
         {
             LogTools.DataLogger.Debug("client_OnUpdateCombats: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
-            // On continue de traiter les updates meme si le cache Combat est sale, de toute façon on le rechargera completement avant la prochaine generation de site
+            // Si le cache est sale, on ignore strictement les mises à jour partielles
+            // car elles pourraient corrompre davantage la mémoire ou crasher.
+            if (IsCombatsCacheDirty)
+            {
+                LogTools.Logger.Warn("Update partiel ignoré car le cache est invalide (Dirty).");
+                return;
+            }
+
             UpdateRequestDispatcher(LectureDonneesCombatsDiff, element);
         }
 
@@ -616,45 +647,43 @@ namespace AppPublication.Controles
         /// <param name="status"></param>
         private void SetBusyStatus(Tools.Enum.BusyStatusEnum status)
         {
-            System.Windows.Application.Current.ExecOnUiThread(new Action(() =>
+            /*
+            bool isb = false;
+            switch (e.Status)
             {
-                bool isb = false;
-                switch (status)
-                {
-                    case Tools.Enum.BusyStatusEnum.InitDonneesStructures:
-                    case Tools.Enum.BusyStatusEnum.InitDonneesCategories:
-                    case Tools.Enum.BusyStatusEnum.InitDonneesLogos:
-                    case Tools.Enum.BusyStatusEnum.InitDonneesJudokas:
-                    case Tools.Enum.BusyStatusEnum.InitDonneesOrganisation:
-                    case Tools.Enum.BusyStatusEnum.InitDonneesPhases:
-                    case Tools.Enum.BusyStatusEnum.InitDonneesCombats:
-                    case Tools.Enum.BusyStatusEnum.InitDonneesArbitres:
-                    case Tools.Enum.BusyStatusEnum.DemandeDonneesStructures:
-                    case Tools.Enum.BusyStatusEnum.DemandeDonneesCategories:
-                    case Tools.Enum.BusyStatusEnum.DemandeDonneesLogos:
-                    case Tools.Enum.BusyStatusEnum.DemandeDonneesJudokas:
-                    case Tools.Enum.BusyStatusEnum.DemandeDonneesOrganisation:
-                    case Tools.Enum.BusyStatusEnum.DemandeDonneesPhases:
-                    case Tools.Enum.BusyStatusEnum.DemandeDonneesCombats:
-                    case Tools.Enum.BusyStatusEnum.DemandeDonneesArbitres:
-                        {
-                            isb = true;
-                            break;
-                        }
-                    case Tools.Enum.BusyStatusEnum.None:
-                    default:
-                        {
-                            isb = false;
-                            break;
-                        }
-                }
+                case Tools.Enum.BusyStatusEnum.InitDonneesStructures:
+                case Tools.Enum.BusyStatusEnum.InitDonneesCategories:
+                case Tools.Enum.BusyStatusEnum.InitDonneesLogos:
+                case Tools.Enum.BusyStatusEnum.InitDonneesJudokas:
+                case Tools.Enum.BusyStatusEnum.InitDonneesOrganisation:
+                case Tools.Enum.BusyStatusEnum.InitDonneesPhases:
+                case Tools.Enum.BusyStatusEnum.InitDonneesCombats:
+                case Tools.Enum.BusyStatusEnum.InitDonneesArbitres:
+                case Tools.Enum.BusyStatusEnum.DemandeDonneesStructures:
+                case Tools.Enum.BusyStatusEnum.DemandeDonneesCategories:
+                case Tools.Enum.BusyStatusEnum.DemandeDonneesLogos:
+                case Tools.Enum.BusyStatusEnum.DemandeDonneesJudokas:
+                case Tools.Enum.BusyStatusEnum.DemandeDonneesOrganisation:
+                case Tools.Enum.BusyStatusEnum.DemandeDonneesPhases:
+                case Tools.Enum.BusyStatusEnum.DemandeDonneesCombats:
+                case Tools.Enum.BusyStatusEnum.DemandeDonneesArbitres:
+                    {
+                        isb = true;
+                        break;
+                    }
+                case Tools.Enum.BusyStatusEnum.None:
+                default:
+                    {
+                        isb = false;
+                        break;
+                    }
+            }
+            */
 
-                DialogControleur.Instance.IsBusy = isb;
-                if (isb)
-                {
-                    DialogControleur.Instance.BusyStatus = status;
-                }
-            }));
+            bool isBusy = status != BusyStatusEnum.None;
+
+            // On déclenche l'événement. Le ?.Invoke permet de ne rien faire si personne n'écoute.
+            BusyStatusChanged?.Invoke(this, new BusyStatusEventArgs(isBusy, status));
         }
 
         /// <summary>

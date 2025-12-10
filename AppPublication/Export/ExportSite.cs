@@ -55,11 +55,11 @@ namespace AppPublication.Export
                 i_vue_epreuve_interface i_vue_epreuve = null;
                 if (phase.isEquipe)
                 {
-                    i_vue_epreuve = DC.Organisation.vepreuves_equipe.FirstOrDefault(o => o.id == phase.epreuve);
+                    i_vue_epreuve = DC.Organisation.VueEpreuveEquipes.FirstOrDefault(o => o.id == phase.epreuve);
                 }
                 else
                 {
-                    i_vue_epreuve = DC.Organisation.vepreuves.FirstOrDefault(o => o.id == phase.epreuve);
+                    i_vue_epreuve = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == phase.epreuve);
                 }
 
                 //Epreuve epreuve = DC.Epreuve.FirstOrDefault(o => o.id == phase.epreuve);

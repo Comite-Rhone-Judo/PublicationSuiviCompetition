@@ -51,23 +51,38 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="IJudoDataManager.cs" />
+    <Compile Include="IJudoDataSnapshot.cs" />
     <Compile Include="Internal\AtomicCachedBased.cs" />
     <Compile Include="Internal\CacheExtensions.cs" />
     <Compile Include="Internal\DeduplicatedDataCache.cs" />
     <Compile Include="Internal\SimpleCachedData.cs" />
     <Compile Include="JudoData.cs" />
+    <Compile Include="JudoDataSnapshot.cs" />
+    <Compile Include="Noyau\Arbitrage\ArbitrageSnapshot.cs" />
     <Compile Include="Noyau\Arbitrage\DataArbitrage.cs" />
     <Compile Include="Noyau\Arbitrage\Arbitre.cs" />
+    <Compile Include="Noyau\Arbitrage\IArbitrageData.cs" />
+    <Compile Include="Noyau\Categories\CategoriesSnapshot.cs" />
     <Compile Include="Noyau\Categories\DataCategories.cs" />
     <Compile Include="Noyau\Categories\CategorieAge.cs" />
     <Compile Include="Noyau\Categories\CategoriePoids.cs" />
     <Compile Include="Noyau\Categories\Ceintures.cs" />
+    <Compile Include="Noyau\Categories\ICategoriesData.cs" />
     <Compile Include="Noyau\Deroulement\DataDeroulement.cs" />
     <Compile Include="Internal\IEntityWithKey.cs" />
+    <Compile Include="Noyau\Deroulement\DeroulementSnapshot.cs" />
+    <Compile Include="Noyau\Deroulement\IDeroulementData.cs" />
     <Compile Include="Noyau\Logos\DataLogos.cs" />
+    <Compile Include="Noyau\Logos\IlogosData.cs" />
+    <Compile Include="Noyau\Logos\LogosSnapshot.cs" />
     <Compile Include="Noyau\Organisation\DataOrganisation.cs" />
+    <Compile Include="Noyau\Organisation\IOrganisationData.cs" />
     <Compile Include="Noyau\Organisation\i_vue_epreuve_interface.cs" />
+    <Compile Include="Noyau\Organisation\OrganisationSnapshot.cs" />
     <Compile Include="Noyau\Participants\DataParticipants.cs" />
+    <Compile Include="Noyau\Participants\IParticipantsData.cs" />
+    <Compile Include="Noyau\Participants\ParticipantsSnapshot.cs" />
     <Compile Include="Noyau\Structures\Club.cs" />
     <Compile Include="Noyau\Structures\DataStructures.cs" />
     <Compile Include="Noyau\Deroulement\Combat.cs" />
@@ -82,6 +97,7 @@
     <Compile Include="Noyau\Deroulement\Feuille.cs" />
     <Compile Include="Noyau\Deroulement\Groupe_Combats.cs" />
     <Compile Include="Noyau\Participants\Judoka.cs" />
+    <Compile Include="Noyau\Structures\IStructuresData.cs" />
     <Compile Include="Noyau\Structures\Secteur.cs" />
     <Compile Include="Noyau\Structures\Ligue.cs" />
     <Compile Include="Noyau\Deroulement\Participant.cs" />
@@ -96,6 +112,7 @@
     <Compile Include="Noyau\Deroulement\vue_epreuve_phase.cs" />
     <Compile Include="Noyau\Deroulement\vue_groupe.cs" />
     <Compile Include="Noyau\Participants\vue_judoka.cs" />
+    <Compile Include="Noyau\Structures\StructuresSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

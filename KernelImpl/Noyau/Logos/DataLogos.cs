@@ -11,7 +11,7 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Logos
 {
-    public class DataLogos
+    public class DataLogos : ILogosData
     {
         private readonly DeduplicatedCachedData<string, string> _fedeCache = new DeduplicatedCachedData<string, string>();
         private readonly DeduplicatedCachedData<string, string> _ligueCache = new DeduplicatedCachedData<string, string>();

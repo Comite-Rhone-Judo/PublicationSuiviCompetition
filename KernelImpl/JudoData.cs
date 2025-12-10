@@ -1,14 +1,56 @@
 ﻿using KernelImpl.Noyau.Organisation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using Tools.Enum;
 using Tools.Outils;
 
 namespace KernelImpl
 {
-    public class JudoData : NotificationBase
+    public class JudoData : NotificationBase, IJudoDataManager
     {
+        // --- Verrouillage ---
+        private readonly ReaderWriterLockSlim _globalLock = new ReaderWriterLockSlim();
+
+        #region Implémentation IJudoDataManager
+
+        /// <summary>
+        /// Obtient un snapshot immuable et thread-safe.
+        /// </summary>
+        public IJudoDataSnapshot GetSnapshot()
+        {
+            _globalLock.EnterReadLock();
+            try
+            {
+                // Crée le snapshot en copiant les références des listes actuelles
+                return new ServerDataSnapshot(this);
+            }
+            finally
+            {
+                _globalLock.ExitReadLock();
+            }
+        }
+
+        /// <summary>
+        /// Exécute une mise à jour (écriture) sous verrou exclusif.
+        /// </summary>
+        public void RunSafeDataUpdate(Action actionToRun)
+        {
+            _globalLock.EnterWriteLock();
+            try
+            {
+                actionToRun();
+            }
+            finally
+            {
+                _globalLock.ExitWriteLock();
+            }
+        }
+
+        #endregion
+
         public IPAddress IpAddress { get; set; }
         public int Port { get; set; }
 
