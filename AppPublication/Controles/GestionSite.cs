@@ -31,6 +31,7 @@ using Tools.Windows;
 using KernelImpl.Noyau.Organisation;
 using System.Collections;
 using NLog;
+using JudoClient.Communication;
 
 namespace AppPublication.Controles
 {
@@ -70,6 +71,9 @@ namespace AppPublication.Controles
         private const string kSettingEntitePublicationFFJudo = "EntitePublicationFFJudo";
         private const string kSettingSelectedLogo = "SelectedLogo";
         private const string kSettingInterfaceLocalPublication = "InterfaceLocalPublication";
+
+        private const int kDelaiAttenteReponseMs = 2000; // Délai d'attente de réponse du serveur TAS
+
         #endregion
 
         #region MEMBRES
@@ -1586,8 +1590,6 @@ namespace AppPublication.Controles
         {
             // Status = new StatusGenerationSite(StateGenerationEnum.Idle);
             Status = StatusGenerationSite.Instance(StateGenerationEnum.Idle);
-            DateTime wakeUpTime = DateTime.Now;
-            int delaiScrutationMs = 1000;
 
             // Reset le token d'arret
             if (_tokenSource != null)
@@ -1616,109 +1618,7 @@ namespace AppPublication.Controles
                     }
 
                     // Lance la tache de generation
-                    _taskGeneration = Task.Factory.StartNew(() =>
-                    {
-                        while (!_tokenSource.Token.IsCancellationRequested)
-                        {
-                            if (DateTime.Now >= wakeUpTime)
-                            {
-                                // Pour controler la duree total par rapport au timer
-                                Stopwatch watcherTotal = new Stopwatch();
-                                watcherTotal.Start();
-
-                                // Pousse les commandes de generation dans le thread de travail
-                                // Status = new StatusGenerationSite(StateGenerationEnum.Generating, "Generation du site ...");
-                                Status = StatusGenerationSite.Instance(StateGenerationEnum.Generating);
-
-                                StatExecution statGeneration = new StatExecution();
-                                Stopwatch watcherGen = new Stopwatch();
-                                watcherGen.Start();
-
-                                // Charge le fichier de cache de checksum
-                                List<FileWithChecksum> checksumCache = LoadChecksumFichiersGeneres();
-                                List<FileWithChecksum> checksumGenere = GenereAll();
-                                SiteGenere = (checksumGenere.Count > 0);
-                                watcherGen.Stop();
-                                statGeneration.DelaiExecutionMs = watcherGen.ElapsedMilliseconds;
-                                // Status = new StatusGenerationSite(StateGenerationEnum.Idle, "En attente ...");
-                                Status = StatusGenerationSite.Instance(StateGenerationEnum.Idle);
-
-                                _statMgr.EnregistrerGeneration(watcherGen.ElapsedMilliseconds / 1000F);
-
-                                if (SiteGenere)
-                                {
-                                    // Met a jour la date de generation puisque le site a ete traite
-                                    DerniereGeneration = statGeneration;
-
-                                    // Si le site distant est actif, transfere la mise a jour
-                                    if ( SiteDistantSelectionne != null &&  SiteDistantSelectionne.IsActif)
-                                    {
-                                        // string localRoot = Path.Combine(ConstantFile.ExportSite_dir, DialogControleur.Instance.ServerData.competition.remoteId);
-                                        string localRoot = _structureRepertoires.RepertoireCompetition;
-
-                                        // Le site distant sur lequel charger les fichiers selon si on isole ou pas
-                                        StatExecution statSync = new StatExecution();
-                                        Stopwatch watcherSync = new Stopwatch();
-                                        watcherSync.Start();
-
-                                        // Calcul les fichiers a prendre en compte
-                                        List<FileInfo> filesToSync = null;
-                                        if (checksumCache != null && checksumCache.Count > 0)
-                                        {
-                                            // Extrait les fichiers generes qui sont differents du cache
-                                            List<FileWithChecksum> chkToSync = checksumGenere.Except(checksumCache, new FileWithChecksumComparer()).ToList();
-                                            filesToSync = chkToSync.Select(o => o.File).ToList();
-
-                                            // For Debug only
-                                            if (filesToSync.Count <= 0)
-                                            {
-                                                LogTools.Logger.Debug("Fichiers a synchroniser: {0}", string.Join(",", filesToSync.Select(f => f.Name)));
-                                            }
-                                        }
-
-                                        // Synchronise le site FTP
-                                        UploadStatus uploadOut = SiteDistantSelectionne.UploadSite(localRoot, filesToSync);
-                                        SiteSynchronise = uploadOut.IsSuccess;
-
-                                        watcherSync.Stop();
-                                        statSync.DelaiExecutionMs = watcherSync.ElapsedMilliseconds;
-
-                                        _statMgr.EnregistrerSynchronisation(watcherSync.ElapsedMilliseconds / 1000F, uploadOut);
-
-                                        if (SiteSynchronise)
-                                        {
-                                            // Enregistre les checksums en cache maintenant qu'on sait que l'etat distant est synchrone
-                                            SaveChecksumFichiersGeneres(checksumGenere);
-                                            DerniereSynchronisation = statSync;
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    _statMgr.EnregistrerErreurGeneration();
-                                }
-
-                                watcherTotal.Stop();
-
-                                // Si le transfert a duree plus que le temps d'attente, on attend au plus 5 sec
-                                // Sinon, on attend la difference restantes
-                                int delaiThread = (int)Math.Max(DelaiGenerationSec * 1000 - watcherTotal.ElapsedMilliseconds, 5000);
-
-                                // Met le thread en attente pour la prochaine generation
-                                Status.NextGenerationSec = (int)Math.Round(delaiThread / 1000.0);
-
-                                _statMgr.EnregsitrerDelaiGeneration(delaiThread / 1000F);
-
-                                // prochaine heure de generation
-                                wakeUpTime = DateTime.Now.AddMilliseconds(delaiThread);
-
-                                StatExecution tmp = DerniereGeneration;
-                                tmp.DateProchaineGeneration = wakeUpTime;
-                                DerniereGeneration = tmp;
-                            }
-                            Thread.Sleep(delaiScrutationMs);
-                        }
-                    }, _tokenSource.Token);
+                    _taskGeneration = Task.Factory.StartNew(GenerationRun, _tokenSource.Token);
                 }
                 catch (Exception ex)
                 {
@@ -1777,6 +1677,158 @@ namespace AppPublication.Controles
             // Etat de la generation
             // Status = new StatusGenerationSite(StateGenerationEnum.Stopped);
             Status = StatusGenerationSite.Instance(StateGenerationEnum.Stopped);
+        }
+
+        private void GenerationRun()
+        {
+            DateTime wakeUpTime = DateTime.Now;
+            int delaiScrutationMs = 1000;
+
+            while (!_tokenSource.Token.IsCancellationRequested)
+            {
+                if (DateTime.Now >= wakeUpTime)
+                {
+                    // Pour controler la duree total par rapport au timer
+                    Stopwatch watcherTotal = new Stopwatch();
+                    watcherTotal.Start();
+
+                    // Pousse les commandes de generation dans le thread de travail
+                    Status = StatusGenerationSite.Instance(StateGenerationEnum.Generating);
+                    SiteGenere = false; // Reset du flag de succès pour ce cycle
+
+                    // Commence par garantir que les données des caches sont consistantes
+                    bool dataConsistent = false;
+                    try
+                    {
+                        // Appel bloquant (avec timeout) vers GestionEvent
+                        dataConsistent = GestionEvent.Instance.EnsureDataConstistency();
+                    }
+                    catch (Exception ex)
+                    {
+                        LogTools.Logger.Error(ex, "Exception lors du controle de la consistance données recues.");
+                    }
+
+                    if (dataConsistent)
+                    {
+                        StatExecution statGeneration = new StatExecution();
+                        Stopwatch watcherGen = new Stopwatch();
+                        watcherGen.Start();
+
+                        try
+                        {
+                            // Charge le fichier de cache de checksum
+                            List<FileWithChecksum> checksumCache = LoadChecksumFichiersGeneres();
+                            List<FileWithChecksum> checksumGenere = GenereAll();
+                            SiteGenere = (checksumGenere.Count > 0);
+                            watcherGen.Stop();
+                            statGeneration.DelaiExecutionMs = watcherGen.ElapsedMilliseconds;
+                            // Status = new StatusGenerationSite(StateGenerationEnum.Idle, "En attente ...");
+                            Status = StatusGenerationSite.Instance(StateGenerationEnum.Idle);
+
+                            _statMgr.EnregistrerGeneration(watcherGen.ElapsedMilliseconds / 1000F);
+
+                            // On ne traite le transfert que si le site a bien ete generee
+                            if (SiteGenere)
+                            {
+                                // Met a jour la date de generation puisque le site a ete traite
+                                DerniereGeneration = statGeneration;
+
+                                // Si le site distant est actif, transfere la mise a jour
+                                if (SiteDistantSelectionne != null && SiteDistantSelectionne.IsActif)
+                                {
+                                    try
+                                    {
+                                        // string localRoot = Path.Combine(ConstantFile.ExportSite_dir, DialogControleur.Instance.ServerData.competition.remoteId);
+                                        string localRoot = _structureRepertoires.RepertoireCompetition;
+
+                                        // Le site distant sur lequel charger les fichiers selon si on isole ou pas
+                                        StatExecution statSync = new StatExecution();
+                                        Stopwatch watcherSync = new Stopwatch();
+                                        watcherSync.Start();
+
+                                        // Calcul les fichiers a prendre en compte
+                                        List<FileInfo> filesToSync = null;
+                                        if (checksumCache != null && checksumCache.Count > 0)
+                                        {
+                                            // Extrait les fichiers generes qui sont differents du cache
+                                            List<FileWithChecksum> chkToSync = checksumGenere.Except(checksumCache, new FileWithChecksumComparer()).ToList();
+                                            filesToSync = chkToSync.Select(o => o.File).ToList();
+
+                                            // For Debug only
+                                            if (filesToSync.Count <= 0)
+                                            {
+                                                LogTools.Logger.Debug("Fichiers a synchroniser: {0}", string.Join(",", filesToSync.Select(f => f.Name)));
+                                            }
+                                        }
+
+                                        // Synchronise le site FTP
+                                        UploadStatus uploadOut = SiteDistantSelectionne.UploadSite(localRoot, filesToSync);
+                                        SiteSynchronise = uploadOut.IsSuccess;
+
+                                        watcherSync.Stop();
+                                        statSync.DelaiExecutionMs = watcherSync.ElapsedMilliseconds;
+
+                                        _statMgr.EnregistrerSynchronisation(watcherSync.ElapsedMilliseconds / 1000F, uploadOut);
+
+                                        if (SiteSynchronise)
+                                        {
+                                            // Enregistre les checksums en cache maintenant qu'on sait que l'etat distant est synchrone
+                                            SaveChecksumFichiersGeneres(checksumGenere);
+                                            DerniereSynchronisation = statSync;
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        LogTools.Logger.Error(ex, "Une erreur est survenue pendant la tentative de synchronisation");
+                                        SiteSynchronise = false;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                LogTools.Logger.Debug("Site non genere, pas de synchronisation distante");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            LogTools.Logger.Error(ex, "Une erreur est survenue durant la sequence de generation du site");
+                            SiteGenere = false;
+                        }
+                    }
+                    else
+                    {
+                        // Le controle d'integrite a echoue
+                        LogTools.Logger.Warn("Impossible de valider l'intégrité des données combats (Timeout ou déconnexion).");
+                    }
+
+                    // Controle final si tout s'est bien passe
+                    if (!SiteGenere)
+                    {
+                        _statMgr.EnregistrerErreurGeneration();
+                    }
+
+                    watcherTotal.Stop();
+
+                    // Si le transfert a duree plus que le temps d'attente, on attend au plus 5 sec
+                    // Sinon, on attend la difference restantes
+                    int delaiThread = (int)Math.Max(DelaiGenerationSec * 1000 - watcherTotal.ElapsedMilliseconds, 5000);
+
+                    // Met le thread en attente pour la prochaine generation
+                    Status.NextGenerationSec = (int)Math.Round(delaiThread / 1000.0);
+
+                    _statMgr.EnregsitrerDelaiGeneration(delaiThread / 1000F);
+
+                    // prochaine heure de generation
+                    wakeUpTime = DateTime.Now.AddMilliseconds(delaiThread);
+
+                    StatExecution tmp = DerniereGeneration;
+                    tmp.DateProchaineGeneration = wakeUpTime;
+                    DerniereGeneration = tmp;
+                }
+
+                // Endort le thread pour le delai de scrutation
+                Thread.Sleep(delaiScrutationMs);
+            }
         }
 
         /// <summary>

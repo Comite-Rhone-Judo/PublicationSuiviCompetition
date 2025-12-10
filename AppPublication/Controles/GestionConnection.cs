@@ -100,7 +100,7 @@ namespace AppPublication.Controles
 
             _client.TraitementDeroulement.OnListeCombats += GestionEvent.Instance.client_OnListeCombats;
             _client.TraitementDeroulement.OnUpdateCombats += GestionEvent.Instance.client_OnUpdateCombats;
-            _client.TraitementDeroulement.OnUpdateTapisCombats += GestionEvent.Instance.client_OnUpdateCombats2;
+            _client.TraitementDeroulement.OnUpdateTapisCombats += GestionEvent.Instance.client_OnUpdateTapisCombats;
             _client.TraitementDeroulement.OnUpdateRencontreReceived += GestionEvent.Instance.client_onUpdateRencontres;
 
             _client.TraitementArbitrage.OnListeArbitrage += GestionEvent.Instance.client_OnListeArbitrage;

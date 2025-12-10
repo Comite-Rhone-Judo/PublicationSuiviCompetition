@@ -3,6 +3,7 @@ using KernelImpl.Internal;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Xml.Linq;
 using Tools.Outils;
 
@@ -10,8 +11,7 @@ namespace KernelImpl.Noyau.Deroulement
 {
     public class DataDeroulement
     {
-        // TODO Prendre en compte la suppression par erreur des fonctions clear
-
+        #region Champs privés
         private readonly DeduplicatedCachedData<int, Rencontre> _rencontresCache = new DeduplicatedCachedData<int, Rencontre>();
         private readonly DeduplicatedCachedData<int, Feuille> _feuillesCache = new DeduplicatedCachedData<int, Feuille>();
         private readonly DeduplicatedCachedData<int, Combat> _combatsCache = new DeduplicatedCachedData<int, Combat>();
@@ -22,6 +22,8 @@ namespace KernelImpl.Noyau.Deroulement
         private readonly DeduplicatedCachedData<int, Participant> _participantsCache = new DeduplicatedCachedData<int, Participant>();
         private readonly DeduplicatedCachedData<int, vue_groupe> _vgroupesCache = new DeduplicatedCachedData<int, vue_groupe>();
         private readonly DeduplicatedCachedData<int, vue_combat> _vcombatsCache = new DeduplicatedCachedData<int, vue_combat>();
+        #endregion
+
 
         // Accesseurs O(1)
         public IReadOnlyList<Combat> Combats { get { return _combatsCache.Cache; } }
@@ -151,15 +153,23 @@ namespace KernelImpl.Noyau.Deroulement
         /// lecture des combats
         /// </summary>
         /// <param name="element">element XML contenant les combats</param>
-        /// <param name="DC"></param>
-        public void lecture_combats(XElement element/*, bool suppression, int? tapis, ICombat CantDelete*/, JudoData DC)
+        /// <param name="DC">Data Context</param>
+        /// <param name="isFull">True si on traite le snapshot comme complet</param>
+        public void lecture_combats(XElement element, JudoData DC, bool isFull)
         {
-            // TODO c'est le seul cas pour lequel on recoit des donnees differentielles et pas un snapshot complet
             ICollection<Combat> combats = Combat.LectureCombats(element, null);
-            _combatsCache.UpdateDifferentialSnapshot(combats);
-
             ICollection<vue_combat> vcombats = GenereVueCombat(combats, DC);
-            _vcombatsCache.UpdateFullSnapshot(vcombats);
+
+            if (isFull)
+            {
+                _combatsCache.UpdateFullSnapshot(combats);
+                _vcombatsCache.UpdateFullSnapshot(vcombats);
+            }
+            else
+            {
+                _combatsCache.UpdateDifferentialSnapshot(combats);
+                _vcombatsCache.UpdateDifferentialSnapshot(vcombats);
+            }
         }
 
         /// <summary
@@ -181,11 +191,18 @@ namespace KernelImpl.Noyau.Deroulement
         /// lecture des rencontres
         /// </summary>
         /// <param name="element">element XML contenant les rencontres</param>
-        /// <param name="DC"></param>
-        public void lecture_rencontres(XElement element/*, bool suppression, int? tapis*/)
+        /// <param name="isFull">True si on traite le snapshot comme complet</param>
+        public void lecture_rencontres(XElement element, bool isFull)
         {
             ICollection<Rencontre> rencontres = Rencontre.LectureRencontres(element, null);
-            _rencontresCache.UpdateFullSnapshot(rencontres);
+            if (isFull)
+            {
+                _rencontresCache.UpdateFullSnapshot(rencontres);
+            }
+            else
+            {
+                _rencontresCache.UpdateDifferentialSnapshot(rencontres);
+            }
         }
 
         public ICollection<Rencontre> LectureRencontres(XElement xelement, /*int? tapis,*/ OutilsTools.MontreInformation1 MI)
@@ -197,11 +214,18 @@ namespace KernelImpl.Noyau.Deroulement
         /// lecture des feuilles
         /// </summary>
         /// <param name="element">element XML contenant les feuilles</param>
-        /// <param name="DC"></param>
-        public void lecture_feuilles(XElement element/*, bool suppression*/)
+        /// <param name="isFull">True si on traite le snapshot comme complet</param>
+        public void lecture_feuilles(XElement element, bool isFull)
         {
             ICollection<Feuille> feuilles = Feuille.LectureFeuilles(element, null);
-            _feuillesCache.UpdateDifferentialSnapshot(feuilles); 
+            if (isFull)
+            {
+                _feuillesCache.UpdateFullSnapshot(feuilles);
+            }
+            else
+            {
+                _feuillesCache.UpdateDifferentialSnapshot(feuilles);
+            }
         }
 
         public ICollection<Feuille> LectureFeuilles(XElement xelement, OutilsTools.MontreInformation1 MI)

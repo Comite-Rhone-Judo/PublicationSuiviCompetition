@@ -87,7 +87,7 @@ namespace AppPublication.Export
                     ExportXML.AddPublicationInfo(ref xmlResultat, config);
                     ExportXML.AddCeintures(ref xmlResultat, DC);
                     AddStructures(ref xmlResultat);
-                    LogTools.Logger.Debug("XML genere: '{0}'", xmlResultat.InnerXml);
+                    LogTools.DataLogger.Debug("XML genere: '{0}'", xmlResultat.InnerXml);
 
                     ExportHTML.ToHTMLSite(xmlResultat, type2, fileSave2, argsList2);
                     urls.Add(fileSave2 + ".html");
@@ -106,7 +106,7 @@ namespace AppPublication.Export
                     ExportXML.AddPublicationInfo(ref xmlResultat, config);
                     ExportXML.AddCeintures(ref xmlResultat, DC);
                     AddStructures(ref xmlResultat);
-                    LogTools.Logger.Debug("XML genere: '{0}'", xmlResultat.InnerXml);
+                    LogTools.DataLogger.Debug("XML genere: '{0}'", xmlResultat.InnerXml);
 
                     ExportHTML.ToHTMLSite(xmlResultat, type2, fileSave2, argsList2);
                     urls.Add(fileSave2 + ".html");
@@ -129,7 +129,7 @@ namespace AppPublication.Export
                     XmlDocument xmlFeuilleCombat = ExportXML.CreateDocumentFeuilleCombat(DC, phase, null);
                     ExportXML.AddPublicationInfo(ref xmlFeuilleCombat, config);
                     AddStructures(ref xmlFeuilleCombat);
-                    LogTools.Logger.Debug("XML genere: '{0}'", xmlFeuilleCombat.InnerXml);
+                    LogTools.DataLogger.Debug("XML genere: '{0}'", xmlFeuilleCombat.InnerXml);
 
                     ExportHTML.ToHTMLSite(xmlFeuilleCombat, type, fileSave, argsList);
                     urls.Add(fileSave + ".html");
@@ -167,7 +167,7 @@ namespace AppPublication.Export
                 XmlDocument xml = ExportXML.CreateDocumentEpreuve(DC, epreuve);
                 ExportXML.AddPublicationInfo(ref xml, config);
                 AddStructures(ref xml);
-                LogTools.Logger.Debug("XML genere: '{0}'", xml.InnerXml);
+                LogTools.DataLogger.Debug("XML genere: '{0}'", xml.InnerXml);
 
                 ExportHTML.ToHTMLSite(xml, type, fileSave, argsList);
 
@@ -205,7 +205,7 @@ namespace AppPublication.Export
                 XmlDocument xml = ExportXML.CreateDocumentFeuilleCombat(DC, null, null);
                 ExportXML.AddPublicationInfo(ref xml, config);
                 AddStructures(ref xml);
-                LogTools.Logger.Debug("XML genere: '{0}'", xml.InnerXml);
+                LogTools.DataLogger.Debug("XML genere: '{0}'", xml.InnerXml);
 
                 ExportHTML.ToHTMLSite(xml, type, fileSave, argsList);
 
@@ -232,7 +232,7 @@ namespace AppPublication.Export
             {
                 XmlDocument docindex = ExportXML.CreateDocumentIndex(DC, siteStruct);
                 ExportXML.AddPublicationInfo(ref docindex, config);
-                LogTools.Logger.Debug("XML genere: '{0}'", docindex.InnerXml);
+                LogTools.DataLogger.Debug("XML genere: '{0}'", docindex.InnerXml);
 
                 // Genere l'index
                 type = ExportEnum.Site_Index;
@@ -298,7 +298,7 @@ namespace AppPublication.Export
 
                 XmlDocument docmenu = ExportXML.CreateDocumentMenu(DC, EDC, siteStruct);
                 ExportXML.AddPublicationInfo(ref docmenu, config);
-                LogTools.Logger.Debug("XML genere: '{0}'", docmenu.InnerXml);
+                LogTools.DataLogger.Debug("XML genere: '{0}'", docmenu.InnerXml);
 
                 // Genere le menu de d'avancement
                 type = ExportEnum.Site_MenuAvancement;
@@ -380,7 +380,7 @@ namespace AppPublication.Export
 
                 XmlDocument docAffectation = ExportXML.CreateDocumentAffectationTapis(DC);
                 ExportXML.AddPublicationInfo(ref docAffectation, config);
-                LogTools.Logger.Debug("XML genere: '{0}'", docAffectation.InnerXml);
+                LogTools.DataLogger.Debug("XML genere: '{0}'", docAffectation.InnerXml);
 
                 ExportHTML.ToHTMLSite(docAffectation, type, fileSave, argsList);
 
@@ -425,7 +425,7 @@ namespace AppPublication.Export
                 _docEngagements = ExportXML.CreateDocumentEngagements(DC, EDC);
                 ExportXML.AddPublicationInfo(ref _docEngagements, config);
                 AddStructures(ref _docEngagements);
-                LogTools.Logger.Debug("XML genere: '{0}'", _docEngagements.InnerXml);
+                LogTools.DataLogger.Debug("XML genere: '{0}'", _docEngagements.InnerXml);
             }
         }
 

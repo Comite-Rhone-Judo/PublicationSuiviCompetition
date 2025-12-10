@@ -8,6 +8,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using Telerik.Windows.Controls;
 using Tools.Enum;
 using Tools.Outils;
 
@@ -22,9 +23,6 @@ namespace AppPublication.Controles
 
     public class GestionEvent
     {
-        // TODO Revoir la gestion car certains envois de donnees ne se font pas par snapshot (ex: update des combats)
-        // TODO Analyse le comportement de Project_TAS/AppCommissaire/Controles/GestionEvent.cs par rapport aux mise à jour et/ou update complet
-
         #region CONSTANTES
         private const int kDefaultTimeoutMs = 15000;
         #endregion
@@ -35,6 +33,8 @@ namespace AppPublication.Controles
         private ClientJudoStatusEnum _status = ClientJudoStatusEnum.Idle;   // Le statut du client
         SingleShotTimer _timerReponse = null;     // Timer d'attente d'une reponse la reponse
 
+        private readonly object _lockDirty = new object();  // Objet de verrouillage pour garantir l'accès exclusif
+        private bool _isCombatsCacheDirty = false; // Le flag d'état
         #endregion
 
         #region CONSTRUCTEUR
@@ -62,10 +62,24 @@ namespace AppPublication.Controles
         #endregion
 
         #region PROPERTIES
+
+        /// <summary>
+        /// Indique si les données de combats sont potentiellement incohérentes (suite à un update partiel).
+        /// </summary>
+        public bool IsCombatsCacheDirty
+        {
+            get { lock (_lockDirty) return _isCombatsCacheDirty; }
+            set { lock (_lockDirty) _isCombatsCacheDirty = value; }
+        }
+
         public int Timeout { get; set; } = kDefaultTimeoutMs;
         #endregion
 
         #region EVENT
+
+        // Signal de synchronisation : L'état initial est non-signifié (false)
+        // AutoResetEvent passera automatiquement à false après qu'un thread l'ait passé
+        private readonly AutoResetEvent _combatsDonneesRecuesSignal = new AutoResetEvent(false);
 
         /// <summary>
         /// Callback appele si le timer de reponse arrive a expiration
@@ -109,7 +123,7 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         public void clientjudo_OnAcceptConnectionCOM(object sender, XElement element)
         {
-            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.DataLogger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
             lock (_lock)
             {
@@ -156,6 +170,8 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         public void client_OnListeStructures(object sender, XElement element)
         {
+            LogTools.DataLogger.Debug("client_OnListeStructures: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesStructures,
                                                     LectureDonneesStructures,
                                                     BusyStatusEnum.DemandeDonneesCategories,
@@ -170,6 +186,8 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         public void client_OnUpdateStructures(object sender, XElement element)
         {
+            LogTools.DataLogger.Debug("client_OnUpdateStructures: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             UpdateRequestDispatcher(LectureDonneesStructures, element);
         }
 
@@ -192,6 +210,8 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         public void client_OnListeCategories(object sender, XElement element)
         {
+            LogTools.DataLogger.Debug("client_OnListeCategories: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesCategories,
                                         LectureDonneesCategories,
                                         BusyStatusEnum.DemandeDonneesLogos,
@@ -201,6 +221,8 @@ namespace AppPublication.Controles
 
         public void client_OnUpdateCategories(object sender, XElement element)
         {
+            LogTools.DataLogger.Debug("client_OnUpdateCategories: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             UpdateRequestDispatcher(LectureDonneesCategories, element);
         }
 
@@ -215,6 +237,8 @@ namespace AppPublication.Controles
 
         public void client_OnListeLogos(object sender, XElement element)
         {
+            LogTools.DataLogger.Debug("client_OnListeLogos: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesLogos,
                             LectureDonneesLogos,
                             BusyStatusEnum.DemandeDonneesOrganisation,
@@ -224,6 +248,8 @@ namespace AppPublication.Controles
 
         public void client_OnUpdateLogos(object sender, XElement element)
         {
+            LogTools.DataLogger.Debug("client_OnUpdateLogos: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            
             UpdateRequestDispatcher(LectureDonneesLogos, element);
         }
 
@@ -241,6 +267,8 @@ namespace AppPublication.Controles
 
         public void client_OnListeOrganisation(object sender, XElement element)
         {
+            LogTools.DataLogger.Debug("client_OnListeOrganisation: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesOrganisation,
                             LectureDonneesOrganisations,
                             BusyStatusEnum.DemandeDonneesJudokas,
@@ -261,6 +289,8 @@ namespace AppPublication.Controles
 
         public void client_OnUpdateOrganisation(object sender, XElement element)
         {
+            LogTools.DataLogger.Debug("client_OnUpdateOrganisation: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             UpdateRequestDispatcher( (XElement elem) =>
             {
                 LectureDonneesOrganisations(elem);
@@ -284,6 +314,7 @@ namespace AppPublication.Controles
 
         public void client_OnListeEquipes(object sender, XElement element)
         {
+            LogTools.DataLogger.Debug("client_OnListeEquipes: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesJudokas,
                             LectureDonneesEquipes,
@@ -295,6 +326,8 @@ namespace AppPublication.Controles
 
         public void client_OnUpdateEquipes(object sender, XElement element)
         {
+            LogTools.DataLogger.Debug("client_OnUpdateEquipes: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             UpdateRequestDispatcher(LectureDonneesEquipes, element);
         }
 
@@ -311,6 +344,8 @@ namespace AppPublication.Controles
 
         public void client_OnListeJudokas(object sender, XElement element)
         {
+            LogTools.DataLogger.Debug("client_OnListeJudokas: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesJudokas,
                             LectureDonneesJudokas,
                             BusyStatusEnum.DemandeDonneesPhases,
@@ -321,6 +356,8 @@ namespace AppPublication.Controles
 
         public void client_OnUpdateJudokas(object sender, XElement element)
         {
+            LogTools.DataLogger.Debug("client_OnUpdateJudokas: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             UpdateRequestDispatcher(LectureDonneesJudokas, element);
         }
 
@@ -341,6 +378,8 @@ namespace AppPublication.Controles
 
         public void client_OnListePhases(object sender, XElement element)
         {
+            LogTools.DataLogger.Debug("client_OnListePhases: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesPhases,
                             LectureDonneesPhases,
                             BusyStatusEnum.DemandeDonneesCombats,
@@ -350,6 +389,8 @@ namespace AppPublication.Controles
 
         public void client_OnUpdatePhases(object sender, XElement element)
         {
+            LogTools.DataLogger.Debug("client_OnUpdatePhases: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             UpdateRequestDispatcher(LectureDonneesPhases, element);
         }
 
@@ -357,33 +398,126 @@ namespace AppPublication.Controles
         /// Lecture des donnees des combats contenu dans element
         /// </summary>
         /// <param name="element"></param>
-        private void LectureDonneesCombats(XElement element)
+        private void LectureDonneesCombats(XElement element, bool isFull)
         {
             DialogControleur DC = DialogControleur.Instance;
-            DC.ServerData.Deroulement.lecture_rencontres(element);
-            DC.ServerData.Deroulement.lecture_feuilles(element);
-            DC.ServerData.Deroulement.lecture_combats(element, DC.ServerData);
+            DC.ServerData.Deroulement.lecture_rencontres(element, isFull);
+            DC.ServerData.Deroulement.lecture_feuilles(element, isFull);
+            DC.ServerData.Deroulement.lecture_combats(element, DC.ServerData, isFull);
+        }
+
+
+        private void LectureDonneesCombatsFull(XElement element)
+        {
+            LectureDonneesCombats(element, true);
+        }
+
+        private void LectureDonneesCombatsDiff(XElement element)
+        {
+            LectureDonneesCombats(element, false);
         }
 
         public void client_OnListeCombats(object sender, XElement element)
         {
-            InitializationRequestDispatcher(BusyStatusEnum.InitDonneesCombats,
-                            LectureDonneesCombats,
-                            BusyStatusEnum.DemandeDonneesArbitres,
-                            DialogControleur.Instance.Connection.Client.DemandeArbitrage,
-                            element);
+            LogTools.DataLogger.Debug("client_OnListeCombats: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
+            bool isIdle = false;
+            lock(_lock)
+            {
+                switch (_status)
+                {
+                    case ClientJudoStatusEnum.Idle:
+                        {
+                            isIdle = true;
+                            break;
+                        }
+                    case ClientJudoStatusEnum.Initializing:
+                        {
+                            isIdle = false;
+                            break;
+                        }
+                    case ClientJudoStatusEnum.Disconnected:
+                    default:
+                        {
+                            LogTools.Logger.Warn("Reception d'un snapshot de combats en dehors des contextes autorises");
+                            return;
+                        }
+                }
+            }
+
+            if (isIdle)
+            {
+                // Cas d'usage suite a une demande d'avoir le snapshot complet des combats
+                UpdateRequestDispatcher(LectureDonneesCombatsFull, element);
+
+                // On signale que les données sont propres et reçues
+                IsCombatsCacheDirty = false;
+                _combatsDonneesRecuesSignal.Set();
+            }
+            else
+            {
+                // Cas d'usage pendant l'initialisation
+                InitializationRequestDispatcher(BusyStatusEnum.InitDonneesCombats,
+                                LectureDonneesCombatsFull,
+                                BusyStatusEnum.DemandeDonneesArbitres,
+                                DialogControleur.Instance.Connection.Client.DemandeArbitrage,
+                                element);
+            }
         }
 
-        public void client_OnUpdateCombats2(object sender, XElement element)
+        /// <summary>
+        /// Vérifie l'intégrité du cache des combats. Si le cache est marqué "Sale" (Dirty),
+        /// cette méthode déclenche une mise à jour complète et bloque l'exécution jusqu'à réception
+        /// des données ou expiration du délai.
+        /// </summary>
+        /// <returns>True si les données sont garanties intègres, False si la récupération a échoué (Timeout ou déconnexion).</returns>
+        public bool EnsureDataConstistency()
         {
-            // TODO Voir pour différencier les updates partiels des combats via OnUpdateCombats et les updates complets via OnUpdateTapisCombats
-            client_OnUpdateCombats(sender, element);
+            // 1. Si les données sont déjà propres, on passe tout de suite
+            if (!IsCombatsCacheDirty)
+            {
+                return true;
+            }
+
+            // 2. Si les données sont sales, on tente une réparation
+            var client = DialogControleur.Instance.Connection.Client;
+            if (client != null)
+            {
+                // On demande le snapshot complet (Type C1 sûr)
+                client.DemandeCombats();
+
+                // On attend que client_OnListeCombats reçoive la réponse et débloque le signal
+                bool success = _combatsDonneesRecuesSignal.WaitOne(kDefaultTimeoutMs);
+
+                if (!success)
+                {
+                    LogTools.Logger.Warn("Timeout lors de la sécurisation des données combats. Les donnees n'ont pas ete actualisees");
+                }
+
+                return success;
+            }
+
+            return false; // Pas de client connecté pour réparer
+        }
+
+        public void client_OnUpdateTapisCombats(object sender, XElement element)
+        {
+            LogTools.DataLogger.Debug("client_OnUpdateTapisCombats: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
+            // MODIFICATION CRITIQUE : 
+            // On intercepte UpdateTapisCombats qui est ambigu (C1 vs C2).
+            // On marque le cache comme sale pour forcer un rechargement complet avant la prochaine génération.
+            IsCombatsCacheDirty = true;
+
+            // ON NE TRAITE PAS les données pour éviter la corruption du cache
         }
 
         public void client_OnUpdateCombats(object sender, XElement element)
         {
-            // TODO Voir pour différencier les updates partiels des combats via OnUpdateCombats et les updates complets via OnUpdateTapisCombats
-            UpdateRequestDispatcher(LectureDonneesCombats, element);
+            LogTools.DataLogger.Debug("client_OnUpdateCombats: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
+            // On continue de traiter les updates meme si le cache Combat est sale, de toute façon on le rechargera completement avant la prochaine generation de site
+            UpdateRequestDispatcher(LectureDonneesCombatsDiff, element);
         }
 
         /// <summary>
@@ -393,11 +527,13 @@ namespace AppPublication.Controles
         private void LectureDonneesRencontres(XElement element)
         {
             DialogControleur DC = DialogControleur.Instance;
-            DC.ServerData.Deroulement.lecture_rencontres(element);
+            DC.ServerData.Deroulement.lecture_rencontres(element, true);
         }
 
         public void client_onUpdateRencontres(object sender, XElement element)
         {
+            LogTools.DataLogger.Debug("client_onUpdateRencontres: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             UpdateRequestDispatcher(LectureDonneesRencontres, element);
         }
 
@@ -415,6 +551,8 @@ namespace AppPublication.Controles
 
         public void client_OnListeArbitrage(object sender, XElement element)
         {
+            LogTools.DataLogger.Debug("client_OnListeArbitrage: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesArbitres,
                                                    (XElement elem) =>
                                                    {
@@ -429,6 +567,8 @@ namespace AppPublication.Controles
 
         public void client_OnUpdateArbitrage(object sender, XElement element)
         {
+            LogTools.DataLogger.Debug("client_OnUpdateArbitrage: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             UpdateRequestDispatcher(LectureDonneesArbitrage, element);
         }
 
@@ -529,7 +669,7 @@ namespace AppPublication.Controles
         {
             lock (_lock)
             {
-                LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+                LogTools.DataLogger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
                 // Arrete le timer de reponse
                 _timerReponse.Stop();
@@ -581,7 +721,7 @@ namespace AppPublication.Controles
 
         private void UpdateRequestDispatcher(Action<XElement> action, XElement element)
         {
-            LogTools.Logger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.DataLogger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
             // Verifie l'etat du gestionnaire (on ne peut pas recevoir ces donnees pendant une initialisation)
             lock (_lock)
