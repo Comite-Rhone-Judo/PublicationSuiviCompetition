@@ -555,13 +555,13 @@ namespace KernelImpl.Noyau.Deroulement
         //    return result;
         //}
 
-        public Combat UpdateCombat(int? vainqueur, JudoData DC)
+        public Combat UpdateCombat(int? vainqueur, IJudoData DC)
         {
 
             IList<Rencontre> rencontres = DC.Deroulement.Rencontres.Where(o => o.combat == this.combat).ToList();
 
             bool combatDecisifProLeagueEnAttente = false;
-            if (DC.competition.IsProLeague())
+            if (DC.Organisation.Competition.IsProLeague())
             {
                 Combat c = DC.Deroulement.Combats.FirstOrDefault(o => o.id == this.combat);
                 if(!(c is null))
@@ -634,7 +634,7 @@ namespace KernelImpl.Noyau.Deroulement
 
                 int? v = null;
 
-                if (DC.competition.IsProLeague())
+                if (DC.Organisation.Competition.IsProLeague())
                 {
                     Phase phase = DC.Deroulement.Phases.FirstOrDefault(o => o.id == combat.phase);
 

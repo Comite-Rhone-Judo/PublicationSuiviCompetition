@@ -200,7 +200,7 @@ namespace KernelImpl.Noyau.Deroulement
             //this.epreuve = OutilsTools.LectureInt(xinfo.Parent.Parent.Element(ConstantXML.Epreuve).Attribute(ConstantXML.Epreuve_ID));
         }
 
-        public XElement ToXml(JudoData DC)
+        public XElement ToXml(IJudoData DC)
         {
             XElement xcombat = new XElement(ConstantXML.Combat);
 
@@ -317,7 +317,7 @@ namespace KernelImpl.Noyau.Deroulement
 
 
         public void Save(int? vainqueur, int score1, int score2, int kinza1, int kinza2, int penalite1, int penalite2, int nb1, int nb2,
-           EtatCombattantEnum etat1, EtatCombattantEnum etat2, JudoData DC)
+           EtatCombattantEnum etat1, EtatCombattantEnum etat2, IJudoData DC)
         {
 
 
@@ -399,7 +399,7 @@ namespace KernelImpl.Noyau.Deroulement
                     p2.nbVictoiresInd = p2.nbVictoiresInd + (this.vainqueur == this.participant1 ? this.nbVictoire2 : this.nbVictoire1);
                 }
 
-                if ((CompetitionTypeEnum)DC.competition.type == CompetitionTypeEnum.Shiai)
+                if ((CompetitionTypeEnum)DC.Organisation.Competition.type == CompetitionTypeEnum.Shiai)
                 {
                     int pointsGRCH = this.CalculeScoreGRCH(DC, this.vainqueur);
                     if (this.vainqueur == this.participant1)
@@ -416,7 +416,7 @@ namespace KernelImpl.Noyau.Deroulement
                     p1.cumulPointsGRCH = p1.cumulPointsGRCH + pointsGRCH;// this.CalculeScoreGRCH(DC, this.vainqueur);
                     p1.cumulPoints = p1.cumulPointsGRCH; //p1.cumulPoints + this.CalculeScoreGRCH(null, this.vainqueur);
                 }
-                else if ((CompetitionTypeEnum)DC.competition.type == CompetitionTypeEnum.Equipe)
+                else if ((CompetitionTypeEnum)DC.Organisation.Competition.type == CompetitionTypeEnum.Equipe)
                 {
                     if (p1 != null)
                     {
@@ -430,7 +430,7 @@ namespace KernelImpl.Noyau.Deroulement
                 {
                     if (p1 != null)
                     {
-                        if (DC.competition.disciplineId == CompetitionDisciplineEnum.Judo)
+                        if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.Judo)
                         {
                             p1.cumulPoints = p1.cumulPoints + this.CalculeScore();
                         }
@@ -458,7 +458,7 @@ namespace KernelImpl.Noyau.Deroulement
                             this.pointsGRCH2 = pointsGRCH == -1 ? 0 : pointsGRCH;
                             this.pointsGRCH1 = 0;
                         }
-                        if (DC.competition.disciplineId != CompetitionDisciplineEnum.Judo)
+                        if (DC.Organisation.Competition.disciplineId != CompetitionDisciplineEnum.Judo)
                         {
                             //jujitsu
                             if (pointsGRCH == -1)
@@ -478,7 +478,7 @@ namespace KernelImpl.Noyau.Deroulement
                     }
                     if (p2 != null)
                     {
-                        if (DC.competition.disciplineId == CompetitionDisciplineEnum.Judo)
+                        if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.Judo)
                         {
                             p2.cumulPoints = p2.cumulPoints + this.CalculeScorePerdant();
                         }
@@ -554,7 +554,7 @@ namespace KernelImpl.Noyau.Deroulement
             }
 
 
-            if (DC.competition.type == (int)CompetitionTypeEnum.Shiai)
+            if (DC.Organisation.Competition.type == (int)CompetitionTypeEnum.Shiai)
             {
                 Participant p1 = DC.Deroulement.Participants.FirstOrDefault(o => o.judoka == this.participant1);
                 if (p1 != null)
@@ -796,7 +796,7 @@ namespace KernelImpl.Noyau.Deroulement
         }
 
 
-        public int CalculePointVainqueurJujitsu(JudoData DC, Participant pVainqueur)
+        public int CalculePointVainqueurJujitsu(IJudoData DC, Participant pVainqueur)
         {
             int res = 0;
             Feuille feuille = DC.Deroulement.Feuilles.FirstOrDefault(o => o.combat == this.id);
@@ -826,7 +826,7 @@ namespace KernelImpl.Noyau.Deroulement
 
             return res;
         }
-        public int CalculePointPerdantJujitsu(JudoData DC, Participant pPerdant)
+        public int CalculePointPerdantJujitsu(IJudoData DC, Participant pPerdant)
         {
             int res = 0;
             Feuille feuille = DC.Deroulement.Feuilles.FirstOrDefault(o => o.combat == this.id);
@@ -997,9 +997,9 @@ namespace KernelImpl.Noyau.Deroulement
         /// </summary>
         /// <param name="DC"></param>
 
-        public int CalculeScoreGRCH(JudoData DC, int? participant)
+        public int CalculeScoreGRCH(IJudoData DC, int? participant)
         {
-            if (DC.competition.type == (int)CompetitionTypeEnum.Equipe)
+            if (DC.Organisation.Competition.type == (int)CompetitionTypeEnum.Equipe)
             {
                 return 0;
             }
@@ -1011,7 +1011,7 @@ namespace KernelImpl.Noyau.Deroulement
                 zero = zero || participant == null || participant == 0;     // Participant inconnu
                 zero = zero || this.vainqueur == null;                      // pas de vainqueur identifie
                 zero = zero || this.vainqueur != participant;               // Si le judoka n'est pas le vainqueur (perdant = 0 pts)
-                if (DC.competition.disciplineId == CompetitionDisciplineEnum.Judo)
+                if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.Judo)
                 {
                     zero = zero || (this.score1 < 10 && this.score2 < 10);      // Si aucun Waza-Ari ou Ippon dans les scores
                 }
@@ -1043,7 +1043,7 @@ namespace KernelImpl.Noyau.Deroulement
                 }
 
                 Ceintures grademin = DC.Categories.Grades.FirstOrDefault(o => o.remoteId == "MA");
-                if (DC.competition.disciplineId == CompetitionDisciplineEnum.Judo)
+                if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.Judo)
                 {
                     zero = zero || ((j1?.ceinture ?? 0) < grademin.id || (j2?.ceinture ?? 0) < grademin.id);  //SI GRADE INFERIEUR A MARRON
                 }
@@ -1083,14 +1083,14 @@ namespace KernelImpl.Noyau.Deroulement
 
 
                 // DGR 2022-03-26 Vu avec Eric Fauroux, en shiai on ne fait pas ce controle pour permettre le deroulement sur les 2D/3D (manque de participant)
-                if (DC.competition.type != (int)CompetitionTypeEnum.Shiai)
+                if (DC.Organisation.Competition.type != (int)CompetitionTypeEnum.Shiai)
                 {
                     // A cette etape de code, le participant est forcement le vainqueur (cas contraire elimine au debut du code)
                     zero = zero || (j1?.id == participant && j1?.ceinture > j2?.ceinture);  //SI GRADE INFERIEUR
                     zero = zero || (j2?.id == participant && j2?.ceinture > j1?.ceinture);  //SI GRADE INFERIEUR
                 }
 
-                if (DC.competition.disciplineId == CompetitionDisciplineEnum.Judo)
+                if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.Judo)
                 {
                     // Les comnbats de barrage en individuelle ne marque pas de points
                     zero = zero || (this.reference.StartsWith("3.")); //SI COMBAT DE BARRAGE
@@ -1142,7 +1142,7 @@ namespace KernelImpl.Noyau.Deroulement
                 }
 
 
-                if (DC.competition.disciplineId == CompetitionDisciplineEnum.Judo)
+                if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.Judo)
                 {
                     if (score11 >= 100 || score11 >= 20)
                     {
@@ -1160,7 +1160,7 @@ namespace KernelImpl.Noyau.Deroulement
                     ScoresJujitsu scoresJson = Newtonsoft.Json.JsonConvert.DeserializeObject<ScoresJujitsu>(this.scoresJujitsu);
                     if (scoresJson is null) scoresJson = new ScoresJujitsu();
 
-                    if (DC.competition.disciplineId == CompetitionDisciplineEnum.JujitsuCombat)
+                    if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.JujitsuCombat)
                     {
                         if (participant == participant1)
                         {
@@ -1260,20 +1260,20 @@ namespace KernelImpl.Noyau.Deroulement
             }
         }
 
-        public string GetScoreVainqueur(JudoData DC)
+        public string GetScoreVainqueur(IJudoData DC)
         {
             if (virtuel || this.vainqueur == null)
             {
                 return "";
             }
 
-            bool isEquipe = DC.competition.type == (int)CompetitionTypeEnum.Equipe;
+            bool isEquipe = DC.Organisation.Competition.type == (int)CompetitionTypeEnum.Equipe;
 
             int nbV = 0;
             int score = 0;
             int pen = 0;
 
-            if (DC.competition.disciplineId == CompetitionDisciplineEnum.Judo)
+            if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.Judo)
             {
                 if (this.vainqueur == this.participant1)
                 {
@@ -1310,7 +1310,7 @@ namespace KernelImpl.Noyau.Deroulement
 
                 if (isEquipe)
                 {
-                    switch (DC.competition.reglementEquipe)
+                    switch (DC.Organisation.Competition.reglementEquipe)
                     {
                         case ReglementEquipeEnum.FIJ:
                             return string.Format("{0}v", nbV);
@@ -1333,7 +1333,7 @@ namespace KernelImpl.Noyau.Deroulement
             else
             {
                 string res = "";
-                CompetitionDisciplineEnum discipline = CompetitionDisciplineEnum_Extension.ByString2(DC.competition.discipline);
+                CompetitionDisciplineEnum discipline = CompetitionDisciplineEnum_Extension.ByString2(DC.Organisation.Competition.discipline);
                 if (this.vainqueur == this.participant1)
                 {
                     res = this.GetScoreJujitsu(discipline, DC, 1);
@@ -1351,7 +1351,7 @@ namespace KernelImpl.Noyau.Deroulement
 
         }
 
-        public string GetScorePerdant(JudoData DC)
+        public string GetScorePerdant(IJudoData DC)
         {
             if (virtuel || this.vainqueur == null)
             {
@@ -1361,7 +1361,7 @@ namespace KernelImpl.Noyau.Deroulement
             int score = 0;
             int nbV = 0;
 
-            if (DC.competition.disciplineId == CompetitionDisciplineEnum.Judo)
+            if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.Judo)
             {
                 if (this.vainqueur == this.participant2)
                 {
@@ -1378,9 +1378,9 @@ namespace KernelImpl.Noyau.Deroulement
                     return "";
                 }
 
-                if (DC.competition.type == (int)CompetitionTypeEnum.Equipe)
+                if (DC.Organisation.Competition.type == (int)CompetitionTypeEnum.Equipe)
                 {
-                    switch (DC.competition.reglementEquipe)
+                    switch (DC.Organisation.Competition.reglementEquipe)
                     {
                         case ReglementEquipeEnum.FIJ:
                             return string.Format("{0}v", nbV);
@@ -1403,7 +1403,7 @@ namespace KernelImpl.Noyau.Deroulement
             }
             else
             {
-                CompetitionDisciplineEnum discipline = CompetitionDisciplineEnum_Extension.ByString2(DC.competition.discipline);
+                CompetitionDisciplineEnum discipline = CompetitionDisciplineEnum_Extension.ByString2(DC.Organisation.Competition.discipline);
                 if (this.vainqueur == this.participant2)
                 {
                     return this.GetScoreJujitsu(discipline, DC, 1);
@@ -1420,10 +1420,10 @@ namespace KernelImpl.Noyau.Deroulement
 
         }
 
-        public int? getVainqueur(EtatCombattantEnum etat1, EtatCombattantEnum etat2, JudoData DC)
+        public int? getVainqueur(EtatCombattantEnum etat1, EtatCombattantEnum etat2, IJudoData DC)
         {
             int? res = null;
-            if (DC.competition.disciplineId == CompetitionDisciplineEnum.Judo)
+            if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.Judo)
             {
                 if (etat1 == EtatCombattantEnum.Decision)
                 {
@@ -1469,7 +1469,7 @@ namespace KernelImpl.Noyau.Deroulement
                 ScoresJujitsu scoresJson = Newtonsoft.Json.JsonConvert.DeserializeObject<ScoresJujitsu>(this.scoresJujitsu);
                 if (scoresJson is null) scoresJson = new ScoresJujitsu();
 
-                if (DC.competition.disciplineId == CompetitionDisciplineEnum.JujitsuCombat)
+                if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.JujitsuCombat)
                 {
                     int nbPartiesValideesJujitsuCombat1 = scoresJson.NbPartiesValides(1);
                     int nbPartiesValideesJujitsuCombat2 = scoresJson.NbPartiesValides(2);
@@ -1589,7 +1589,7 @@ namespace KernelImpl.Noyau.Deroulement
             return res;
         }
 
-        public string GetScoreJujitsu(CompetitionDisciplineEnum discipline, JudoData DC, int judoka = -1)
+        public string GetScoreJujitsu(CompetitionDisciplineEnum discipline, IJudoData DC, int judoka = -1)
         {
             string res1 = "";
             string res2 = "";

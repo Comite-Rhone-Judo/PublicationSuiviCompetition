@@ -47,7 +47,7 @@ namespace KernelManager
 
 
 
-        public vue_combat CreateVueCombat(Combat combat, KernelImpl.JudoData DC)
+        public vue_combat CreateVueCombat(Combat combat, KernelImpl.IJudoData DC)
         {
             return new vue_combat(combat, DC);
         }
@@ -57,7 +57,7 @@ namespace KernelManager
             return new vue_epreuve_phase(phase);
         }
 
-        public vue_groupe CreateVueGroupe(Groupe_Combats groupe, KernelImpl.JudoData DC)
+        public vue_groupe CreateVueGroupe(Groupe_Combats groupe, KernelImpl.IJudoData DC)
         {
             return new vue_groupe(groupe, DC);
         }

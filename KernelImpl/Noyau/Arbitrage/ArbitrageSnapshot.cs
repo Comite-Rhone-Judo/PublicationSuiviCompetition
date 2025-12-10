@@ -9,9 +9,9 @@ namespace KernelImpl.Noyau.Arbitrage
 {
     public class ArbitrageSnapshot : IArbitrageData
     {
-        public IReadOnlyList<Commissaire> Commissaires { get; }
-        public IReadOnlyList<Arbitre> Arbitres { get; }
-        public IReadOnlyList<Delegue> Delegues { get; }
+        public IReadOnlyList<Commissaire> Commissaires { get; private set; }
+        public IReadOnlyList<Arbitre> Arbitres { get; private set; }
+        public IReadOnlyList<Delegue> Delegues { get; private set; }
 
         public ArbitrageSnapshot(DataArbitrage source)
         {

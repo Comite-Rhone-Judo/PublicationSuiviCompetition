@@ -12,7 +12,7 @@ namespace KernelImpl
     /// Implémentation concrète du snapshot.
     /// Cet objet est immuable : une fois créé, ses listes ne changent jamais.
     /// </summary>
-    public class ServerDataSnapshot : IJudoDataSnapshot
+    public class JudoDataSnapshot : IJudoData
     {
         public IDeroulementData Deroulement { get; private set; }
         public IParticipantsData Participants { get; private set; }
@@ -22,7 +22,7 @@ namespace KernelImpl
         public IArbitrageData Arbitrage { get; private set; }
         public ILogosData Logos { get; private set; }
 
-        internal ServerDataSnapshot(JudoData source)
+        internal JudoDataSnapshot(JudoData source)
         {
             // Capture des références vers les gestionnaires existants
             // Note: Les sous-snapshots capturent les LISTES, pas les objets DataManager

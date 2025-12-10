@@ -434,7 +434,7 @@ namespace KernelImpl.Noyau.Participants
             this.equipe = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Judoka_Equipe));
         }
 
-        public XElement ToXml(JudoData DC)
+        public XElement ToXml(IJudoData DC)
         {
             XElement xjudoka = new XElement(ConstantXML.Judoka);
 

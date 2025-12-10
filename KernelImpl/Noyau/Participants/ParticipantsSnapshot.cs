@@ -8,11 +8,11 @@ namespace KernelImpl.Noyau.Participants
 {
     public class ParticipantsSnapshot : IParticipantsData
     {
-        public IReadOnlyList<Judoka> Judokas { get; }
-        public IReadOnlyList<Equipe> Equipes { get; }
-        public IReadOnlyList<EpreuveJudoka> EpreuveJudokas { get; }
+        public IReadOnlyList<Judoka> Judokas { get; private set; }
+        public IReadOnlyList<Equipe> Equipes { get; private set; }
+        public IReadOnlyList<EpreuveJudoka> EpreuveJudokas { get; private set; }
 
-        public IReadOnlyList<vue_judoka> Vuejudokas { get; }
+        public IReadOnlyList<vue_judoka> Vuejudokas { get; private set; }
 
         public ParticipantsSnapshot(DataParticipants source)
         {

@@ -24,7 +24,6 @@ namespace KernelImpl.Noyau.Deroulement
         private readonly DeduplicatedCachedData<int, vue_combat> _vcombatsCache = new DeduplicatedCachedData<int, vue_combat>();
         #endregion
 
-
         // Accesseurs O(1)
         public IReadOnlyList<Combat> Combats { get { return _combatsCache.Cache; } }
         public IReadOnlyList<Rencontre> Rencontres { get { return _rencontresCache.Cache; } }
@@ -36,48 +35,6 @@ namespace KernelImpl.Noyau.Deroulement
         public IReadOnlyList<Participant> Participants { get { return _participantsCache.Cache; } }
         public IReadOnlyList<vue_groupe> VueGroupes { get { return _vgroupesCache.Cache; } }
         public IReadOnlyList<vue_combat> VueCombats { get { return _vcombatsCache.Cache; } }
-
-
-        public IEnumerable<Participant> ListeParticipant1(int epreuve, JudoData DC)
-        {
-            IEnumerable<int> phases = DC.Deroulement.Phases.Where(o => o.epreuve == epreuve && o.suivant != 0).Select(o => o.id).Distinct();
-            return Participants.Where(o => phases.Contains(o.phase));
-        }
-
-        public IEnumerable<Participant> ListeParticipant2(int epreuve, JudoData DC)
-        {
-            IEnumerable<int> phases = DC.Deroulement.Phases.Where(o => o.epreuve == epreuve && o.suivant == 0).Select(o => o.id).Distinct();
-            return Participants.Where(o => phases.Contains(o.phase));
-        }
-
-        public int GetNbCombatJudoka(string licence, JudoData DC)
-        {
-            int result = 0;
-            using (TimedLock.Lock((DC.Participants.Vuejudokas as ICollection).SyncRoot))
-            {
-                foreach (Participants.Judoka vj in DC.Participants.Judokas.Where(o => o.licence == licence))
-                {
-                    result += DC.Deroulement.Combats.Count(o => o.vainqueur.HasValue && o.vainqueur > 0 && (o.participant1 == vj.id || o.participant2 == vj.id));
-                }
-            }
-            return result;
-        }
-
-        public int GetNbPointJudoka(string licence, JudoData DC)
-        {
-            int result = 0;
-            using (TimedLock.Lock((DC.Participants.Vuejudokas as ICollection).SyncRoot))
-            {
-                foreach (Participants.Judoka vj in DC.Participants.Judokas.Where(o => o.licence == licence))
-                {
-                    foreach (Participant participant in DC.Deroulement.Participants.Where(o => o.judoka == vj.id))
-                    {
-                        result += participant.cumulPointsGRCH;
-                    }
-                }
-            }
-            return result;
-        }
 
         /// <summary>
         /// lecture des participants
@@ -117,7 +74,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// </summary>
         /// <param name="element">element XML contenant les groupes</param>
         /// <param name="DC"></param>
-        public void lecture_groupes(XElement element, JudoData DC)
+        public void lecture_groupes(XElement element, IJudoData DC)
         {
             ICollection<Groupe_Combats> groupes = Groupe_Combats.LectureGroupes(element, null);
             _groupesCache.UpdateFullSnapshot(groupes);
@@ -132,7 +89,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// </summary>
         /// <param name="groupes">Le snapshot des groupes</param>
         /// <param name="DC"></param>
-        private ICollection<vue_groupe> GenereVueGroupe(ICollection<Groupe_Combats> groupes, JudoData DC)
+        private ICollection<vue_groupe> GenereVueGroupe(ICollection<Groupe_Combats> groupes, IJudoData DC)
         {
             return groupes.Select(o => new vue_groupe(o, DC)).ToList();
         }
@@ -155,7 +112,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// <param name="element">element XML contenant les combats</param>
         /// <param name="DC">Data Context</param>
         /// <param name="isFull">True si on traite le snapshot comme complet</param>
-        public void lecture_combats(XElement element, JudoData DC, bool isFull)
+        public void lecture_combats(XElement element, IJudoData DC, bool isFull)
         {
             ICollection<Combat> combats = Combat.LectureCombats(element, null);
             ICollection<vue_combat> vcombats = GenereVueCombat(combats, DC);
@@ -177,7 +134,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// </summary>
         /// <param name="groupes">Le snapshot des groupes</param>
         /// <param name="DC"></param>
-        private ICollection<vue_combat> GenereVueCombat(ICollection<Combat> combats, JudoData DC)
+        private ICollection<vue_combat> GenereVueCombat(ICollection<Combat> combats, IJudoData DC)
         {
             return combats.Select(o => new vue_combat(o, DC)).ToList();
         }

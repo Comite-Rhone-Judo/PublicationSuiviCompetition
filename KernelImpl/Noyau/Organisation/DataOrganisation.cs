@@ -26,19 +26,23 @@ namespace KernelImpl.Noyau.Organisation
         public IReadOnlyList<vue_epreuve_equipe> VueEpreuveEquipes { get { return _vepreuves_equipeCache.Cache; } }
         public IReadOnlyList<vue_epreuve> VueEpreuves { get { return _vepreuvesCache.Cache; } }
 
+        public Competition Competition { get; private set; }
+
         /// <summary>
         /// lecture des compétitions
         /// </summary>
         /// <param name="element">element XML contenant les compétitions</param>
         /// <param name="DC"></param>
-        public void lecture_competitions(XElement element, JudoData DC)
+        public void lecture_competitions(XElement element, IJudoData DC)
         {
             ICollection<Competition> competitions = Competition.LectureCompetitions(element, null);
             _competitionsCache.UpdateFullSnapshot(competitions); 
+            Competition = competitions.FirstOrDefault();
 
-            DC.competition = Competitions.FirstOrDefault();
-            DC.competitions = Competitions.ToList();
-            ExportTools.default_competition = DC.competition.remoteId;
+            // TODO A quoi cela sert-il de l'avoir ici alors qu'on a la copie dans Organisation
+            // DC.Competition = Competitions.FirstOrDefault();
+            // DC.Competitions = Competitions.ToList();
+            ExportTools.default_competition = DC.Organisation.Competition.remoteId;
         }
 
 
@@ -47,7 +51,7 @@ namespace KernelImpl.Noyau.Organisation
         /// </summary>
         /// <param name="element">element XML contenant les épreuves (équipe)</param>
         /// <param name="DC"></param>
-        public void lecture_epreuves_equipe(XElement element, JudoData DC)
+        public void lecture_epreuves_equipe(XElement element, IJudoData DC)
         {
             ICollection<Epreuve_Equipe> epreuves = Epreuve_Equipe.LectureEpreuveEquipes(element, null);
             _epreuve_equipesCache.UpdateFullSnapshot(epreuves);
@@ -67,7 +71,7 @@ namespace KernelImpl.Noyau.Organisation
         /// </summary>
         /// <param name="element">element XML contenant les épreuves</param>
         /// <param name="DC"></param>
-        public void lecture_epreuves(XElement element, JudoData DC)
+        public void lecture_epreuves(XElement element, IJudoData DC)
         {
             ICollection<Epreuve> epreuves = Epreuve.LectureEpreuves(element, null);
             _epreuvesCache.UpdateFullSnapshot(epreuves);
@@ -86,7 +90,7 @@ namespace KernelImpl.Noyau.Organisation
         /// </summary>
         /// <param name="equipes">element XML contenant les épreuves (équipe)</param>
         /// <param name="DC"></param>
-        private ICollection<vue_epreuve_equipe> GenereVueEpreuveEquipe(ICollection<Epreuve_Equipe> epreuves, JudoData DC)
+        private ICollection<vue_epreuve_equipe> GenereVueEpreuveEquipe(ICollection<Epreuve_Equipe> epreuves, IJudoData DC)
         {
             return epreuves.Select(epreuve => new vue_epreuve_equipe(epreuve, DC)).ToList();
         }
@@ -96,7 +100,7 @@ namespace KernelImpl.Noyau.Organisation
         /// </summary>
         /// <param name="element">element XML contenant les épreuves</param>
         /// <param name="DC"></param>
-        private ICollection<vue_epreuve> GenereVueEpreuves(ICollection<Epreuve> epreuves, JudoData DC)
+        private ICollection<vue_epreuve> GenereVueEpreuves(ICollection<Epreuve> epreuves, IJudoData DC)
         {
             return epreuves.Select(epreuve => new vue_epreuve(epreuve, DC)).ToList();
         }

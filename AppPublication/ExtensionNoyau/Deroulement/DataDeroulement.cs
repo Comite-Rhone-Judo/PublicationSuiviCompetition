@@ -29,7 +29,7 @@ namespace AppPublication.ExtensionNoyau.Deroulement
             }
         }
 
-        public void SyncAll(JudoData DC)
+        public void SyncAll(IJudoData DC)
         {
             GetGroupesEngagements(DC);
         }
@@ -92,7 +92,7 @@ namespace AppPublication.ExtensionNoyau.Deroulement
         /// </summary>
         /// <param name="niveau"></param>
         /// <returns></returns>
-        public void GetGroupesEngagements(JudoData DC)
+        public void GetGroupesEngagements(IJudoData DC)
         {
             // Vide la precedente liste
             _groupesEngages.Clear();

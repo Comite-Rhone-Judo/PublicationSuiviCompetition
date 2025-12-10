@@ -23,7 +23,7 @@ namespace KernelImpl.Noyau.Deroulement
         public bool verrouille { get; set; }
 
 
-        public Organisation.Epreuve GetEpreuve(JudoData DC)
+        public Organisation.Epreuve GetEpreuve(IJudoData DC)
         {
             Phase_Decoupage decoup = DC.Deroulement.Decoupages.FirstOrDefault(o => o.id == this.decoupage);
             if (decoup == null)
@@ -40,7 +40,7 @@ namespace KernelImpl.Noyau.Deroulement
             return DC.Organisation.Epreuves.FirstOrDefault(o => o.id == phase.epreuve);
         }
 
-        public Phase GetPhase(JudoData DC)
+        public Phase GetPhase(IJudoData DC)
         {
             Phase_Decoupage decoup = DC.Deroulement.Decoupages.FirstOrDefault(o => o.id == this.decoupage);
             if (decoup == null)

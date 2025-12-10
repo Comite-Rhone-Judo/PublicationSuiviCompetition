@@ -97,6 +97,20 @@ namespace AppPublication.Controles
         }
 
         public int Timeout { get; set; } = kDefaultTimeoutMs;
+
+        private IJudoDataManager DataManager
+        {
+            get
+            {
+                // Idéalement injecté, mais ici on garde la compatibilité avec l'existant
+                if (_dataManager == null)
+                {
+                    _dataManager = DialogControleur.Instance.ServerData as IJudoDataManager;
+                }
+                return _dataManager;
+            }
+        }
+
         #endregion
 
         #region EVENT
@@ -180,11 +194,12 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         private void LectureDonneesStructures(XElement element)
         {
-            DialogControleur.Instance.ServerData.Structures.lecture_clubs(element);
-            DialogControleur.Instance.ServerData.Structures.lecture_comites(element);
-            DialogControleur.Instance.ServerData.Structures.lecture_secteurs(element);
-            DialogControleur.Instance.ServerData.Structures.lecture_ligues(element);
-            DialogControleur.Instance.ServerData.Structures.lecture_pays(element);
+            var judoDataInstance = DataManager as JudoData;
+            judoDataInstance.Structures.lecture_clubs(element);
+            judoDataInstance.Structures.lecture_comites(element);
+            judoDataInstance.Structures.lecture_secteurs(element);
+            judoDataInstance.Structures.lecture_ligues(element);
+            judoDataInstance.Structures.lecture_pays(element);
         }
 
         /// <summary>
@@ -221,10 +236,10 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         private void LectureDonneesCategories(XElement element)
         {
-            DialogControleur DC = DialogControleur.Instance;
-            DC.ServerData.Categories.lecture_cateages(element);
-            DC.ServerData.Categories.lecture_catepoids(element);
-            DC.ServerData.Categories.lecture_ceintures(element);
+            var judoDataInstance = DataManager as JudoData;
+            judoDataInstance.Categories.lecture_cateages(element);
+            judoDataInstance.Categories.lecture_catepoids(element);
+            judoDataInstance.Categories.lecture_ceintures(element);
         }
 
         /// <summary>
@@ -256,7 +271,8 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         private void LectureDonneesLogos(XElement element)
         {
-            DialogControleur.Instance.ServerData.Logos.lecture_logos(element);
+            var judoDataInstance = DataManager as JudoData;
+            judoDataInstance.Logos.lecture_logos(element);
         }
 
         public void client_OnListeLogos(object sender, XElement element)
@@ -283,10 +299,10 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         private void LectureDonneesOrganisations(XElement element)
         {
-            DialogControleur DC = DialogControleur.Instance;
-            DC.ServerData.Organisation.lecture_competitions(element, DC.ServerData);
-            DC.ServerData.Organisation.lecture_epreuves_equipe(element, DC.ServerData);
-            DC.ServerData.Organisation.lecture_epreuves(element, DC.ServerData);
+            var judoDataInstance = DataManager as JudoData;
+            judoDataInstance.Organisation.lecture_competitions(element, judoDataInstance);
+            judoDataInstance.Organisation.lecture_epreuves_equipe(element, judoDataInstance);
+            judoDataInstance.Organisation.lecture_epreuves(element, judoDataInstance);
         }
 
         public void client_OnListeOrganisation(object sender, XElement element)
@@ -298,8 +314,8 @@ namespace AppPublication.Controles
                             BusyStatusEnum.DemandeDonneesJudokas,
                            () =>
                            {
-                               DialogControleur DC = DialogControleur.Instance;
-                               if (DC.ServerData.competition.IsEquipe())
+                               var judoDataInstance = DataManager as JudoData;
+                               if (judoDataInstance.Competition.IsEquipe())
                                {
                                    DialogControleur.Instance.Connection.Client.DemandeEquipes();
                                }
@@ -330,10 +346,10 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         private void LectureDonneesEquipes(XElement element)
         {
-            DialogControleur DC = DialogControleur.Instance;
-            DC.ServerData.Participants.lecture_epreuves_judokas(element, DC.ServerData);
-            DC.ServerData.Participants.lecture_equipes(element);
-            DC.ServerData.Participants.lecture_judokas(element, DC.ServerData);
+            var judoDataInstance = DataManager as JudoData;
+            judoDataInstance.Participants.lecture_epreuves_judokas(element, judoDataInstance);
+            judoDataInstance.Participants.lecture_equipes(element);
+            judoDataInstance.Participants.lecture_judokas(element, judoDataInstance);
         }
 
         public void client_OnListeEquipes(object sender, XElement element)
@@ -361,9 +377,9 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         private void LectureDonneesJudokas(XElement element)
         {
-            DialogControleur DC = DialogControleur.Instance;
-            DC.ServerData.Participants.lecture_epreuves_judokas(element, DC.ServerData);
-            DC.ServerData.Participants.lecture_judokas(element, DC.ServerData);
+            var judoDataInstance = DataManager as JudoData;
+            judoDataInstance.Participants.lecture_epreuves_judokas(element, judoDataInstance);
+            judoDataInstance.Participants.lecture_judokas(element, judoDataInstance);
         }
 
         public void client_OnListeJudokas(object sender, XElement element)
@@ -391,13 +407,13 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         private void LectureDonneesPhases(XElement element)
         {
-            DialogControleur DC = DialogControleur.Instance;
+            var judoDataInstance = DataManager as JudoData;
             // DC.ServerData.Deroulement.clear_deroulement();
-            DC.ServerData.Deroulement.lecture_phases(element);
-            DC.ServerData.Deroulement.lecture_participants(element);
-            DC.ServerData.Deroulement.lecture_decoupages(element);
-            DC.ServerData.Deroulement.lecture_poules(element);
-            DC.ServerData.Deroulement.lecture_groupes(element, DC.ServerData);
+            judoDataInstance.Deroulement.lecture_phases(element);
+            judoDataInstance.Deroulement.lecture_participants(element);
+            judoDataInstance.Deroulement.lecture_decoupages(element);
+            judoDataInstance.Deroulement.lecture_poules(element);
+            judoDataInstance.Deroulement.lecture_groupes(element, judoDataInstance);
         }
 
         public void client_OnListePhases(object sender, XElement element)
@@ -424,10 +440,10 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         private void LectureDonneesCombats(XElement element, bool isFull)
         {
-            DialogControleur DC = DialogControleur.Instance;
-            DC.ServerData.Deroulement.lecture_rencontres(element, isFull);
-            DC.ServerData.Deroulement.lecture_feuilles(element, isFull);
-            DC.ServerData.Deroulement.lecture_combats(element, DC.ServerData, isFull);
+            var judoDataInstance = DataManager as JudoData;
+            judoDataInstance.Deroulement.lecture_rencontres(element, isFull);
+            judoDataInstance.Deroulement.lecture_feuilles(element, isFull);
+            judoDataInstance.Deroulement.lecture_combats(element, judoDataInstance, isFull);
         }
 
 
@@ -507,7 +523,11 @@ namespace AppPublication.Controles
             var client = DialogControleur.Instance.Connection.Client;
             if (client != null)
             {
+                // Reset du signal avant la demande
+                _combatsDonneesRecuesSignal.Reset();
+
                 // On demande le snapshot complet (Type C1 sûr)
+                LogTools.Logger.Debug("Incohérence détectée (Dirty Cache), demande de snapshot complet..."); 
                 client.DemandeCombats();
 
                 // On attend que client_OnListeCombats reçoive la réponse et débloque le signal
@@ -557,8 +577,8 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         private void LectureDonneesRencontres(XElement element)
         {
-            DialogControleur DC = DialogControleur.Instance;
-            DC.ServerData.Deroulement.lecture_rencontres(element, true);
+            var judoDataInstance = DataManager as JudoData;
+            judoDataInstance.Deroulement.lecture_rencontres(element, true);
         }
 
         public void client_onUpdateRencontres(object sender, XElement element)
@@ -574,10 +594,10 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         private void LectureDonneesArbitrage(XElement element)
         {
-            DialogControleur DC = DialogControleur.Instance;
-            DC.ServerData.Arbitrage.lecture_arbitres(element);
-            DC.ServerData.Arbitrage.lecture_commissaires(element);
-            DC.ServerData.Arbitrage.lecture_delegues(element);
+            var judoDataInstance = DataManager as JudoData;
+            judoDataInstance.Arbitrage.lecture_arbitres(element);
+            judoDataInstance.Arbitrage.lecture_commissaires(element);
+            judoDataInstance.Arbitrage.lecture_delegues(element);
         }
 
         public void client_OnListeArbitrage(object sender, XElement element)
@@ -719,8 +739,19 @@ namespace AppPublication.Controles
                     doc.Add(element);
                     doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
 
-                    // Appelle  le callback pour traiter les donnees
-                    dataAction?.Invoke(element);
+                    // Appelle  le callback pour traiter les donnees via le contexte securise
+                    if (DataManager != null)
+                    {
+                        DataManager.RunSafeDataUpdate(() =>
+                        {
+                            dataAction?.Invoke(element);
+                        });
+                    }
+                    else
+                    {
+                        // Fallback si pas de manager (ne devrait pas arriver)
+                        dataAction?.Invoke(element);
+                    }
 
                     // Effectue la demande suivante si necessaire
                     if (nextStatus != BusyStatusEnum.None && null != nextAction)
@@ -767,7 +798,19 @@ namespace AppPublication.Controles
                 doc.Add(element);
                 doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
 
-                action?.Invoke(element);
+                // Appel la methode de traitement via le callback securise
+                if (DataManager != null)
+                {
+                    DataManager.RunSafeDataUpdate(() =>
+                    {
+                        action?.Invoke(element);
+                    });
+                }
+                else
+                {
+                    // Fallback si pas de manager (ne devrait pas arriver)
+                    action?.Invoke(element);
+                }
 
             }
             catch (Exception ex)

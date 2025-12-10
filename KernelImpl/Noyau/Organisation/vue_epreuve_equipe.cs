@@ -60,7 +60,7 @@ namespace KernelImpl.Noyau.Organisation
         }
 
 
-        public vue_epreuve_equipe(Epreuve_Equipe epreuve, JudoData DC)
+        public vue_epreuve_equipe(Epreuve_Equipe epreuve, IJudoData DC)
         {
             id = epreuve.id;
             nom = epreuve.libelle;
@@ -93,7 +93,7 @@ namespace KernelImpl.Noyau.Organisation
 
 
 
-        public XElement ToXml(JudoData DC)
+        public XElement ToXml(IJudoData DC)
         {
             XElement xepreuve = new XElement(ConstantXML.Epreuve);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_Categorie_Age, categorieAge.ToString());

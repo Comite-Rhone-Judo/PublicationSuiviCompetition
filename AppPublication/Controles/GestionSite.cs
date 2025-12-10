@@ -2,10 +2,7 @@
 using AppPublication.Tools;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
-using KernelImpl.Noyau.Structures;
 using AppPublication.ExtensionNoyau.Deroulement;
-// using Microsoft.Win32;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,25 +10,18 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web.Configuration;
 using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Xml;
 using System.Xml.Linq;
-using Telerik.Windows.Controls;
 using Tools.Enum;
 using Tools.Export;
 using Tools.Outils;
 using Tools.Windows;
 using KernelImpl.Noyau.Organisation;
-using System.Collections;
-using NLog;
-using JudoClient.Communication;
 
 namespace AppPublication.Controles
 {
@@ -95,6 +85,8 @@ namespace AppPublication.Controles
         private int _nbGeneration = 0;                              // Nombre de generation en cours pour le site distant   
         private List<int> _allTaskProgress = new List<int>();       // Progression de chacune des taches (clef = Id)
 
+        private IJudoDataManager _judoDataManager;
+
         /// <summary>
         /// Structure interne pour gerer les parametres de generation du site
         /// </summary>
@@ -108,8 +100,10 @@ namespace AppPublication.Controles
         #endregion
 
         #region CONSTRUCTEURS
-        public GestionSite(GestionStatistiques statMgr)
+        public GestionSite(IJudoDataManager dataManager, GestionStatistiques statMgr)
         {
+            if (dataManager == null) throw new ArgumentNullException();
+
             try
             {
                 // Initialise les objets de gestion des sites Web
@@ -117,6 +111,7 @@ namespace AppPublication.Controles
                 _siteDistant = new MiniSite(false, kSiteDistantInstanceName, true, true);           // on utilise un prefix vide pour le site distant pour des questions de retrocompatibilite
                 _siteFranceJudo = new MiniSite(false, kSiteFranceJudoInstanceName, false, true);    // On ne garde pas le detail des configuration pour le site FFJudo
                 _statMgr = (statMgr != null) ? statMgr : new GestionStatistiques();
+                _judoDataManager = dataManager;
 
                 // Initialise la liste des logos
                 InitFichiersLogo();
@@ -139,6 +134,7 @@ namespace AppPublication.Controles
         #endregion
 
         #region PROPRIETES
+
         private bool _easyConfigDisponible;
 
         /// <summary>
@@ -993,11 +989,11 @@ namespace AppPublication.Controles
                 URLDistantPublication = CalculURLSiteDistant();
                 URLLocalPublication = CalculURLSiteLocal();
                 // On ne peut publier que en individuelle
-                CanPublierAffectation = DialogControleur.Instance.ServerData.competition.IsIndividuelle();
-                CanPublierEngagements = DialogControleur.Instance.ServerData.competition.IsIndividuelle() || DialogControleur.Instance.ServerData.competition.IsShiai();
+                CanPublierAffectation = DialogControleur.Instance.ServerData.Competition.IsIndividuelle();
+                CanPublierEngagements = DialogControleur.Instance.ServerData.Competition.IsIndividuelle() || DialogControleur.Instance.ServerData.Competition.IsShiai();
 
                 // Si on est en Shiai, par defaut on met les poules en colonnes
-                if (DialogControleur.Instance.ServerData.competition.IsShiai())
+                if (DialogControleur.Instance.ServerData.Competition.IsShiai())
                 {
                     PouleEnColonnes = true;
                     PouleToujoursEnColonnes = true;
@@ -1694,6 +1690,8 @@ namespace AppPublication.Controles
 
                     try
                     {
+                        IJudoData snapshot = _judoDataManager.GetSnapshot();
+
                         // Pousse les commandes de generation dans le thread de travail
                         Status = StatusGenerationSite.Instance(StateGenerationEnum.Generating);
                         SiteGenere = false; // Reset du flag de succès pour ce cycle
@@ -1720,7 +1718,7 @@ namespace AppPublication.Controles
                             {
                                 // Charge le fichier de cache de checksum
                                 List<FileWithChecksum> checksumCache = LoadChecksumFichiersGeneres();
-                                List<FileWithChecksum> checksumGenere = GenereAll();
+                                List<FileWithChecksum> checksumGenere = GenereAll(snapshot);
                                 SiteGenere = (checksumGenere.Count > 0);
                                 watcherGen.Stop();
                                 statGeneration.DelaiExecutionMs = watcherGen.ElapsedMilliseconds;
@@ -1843,38 +1841,38 @@ namespace AppPublication.Controles
         /// Declenche l'exportation
         /// </summary>
         /// <param name="genere">Type d'exportation</param>
-        private List<FileWithChecksum> Exporter(GenereSiteStruct genere, ConfigurationExportSite cfg, IProgress<GenerationProgressInfo> progress, int workId)
+        private List<FileWithChecksum> Exporter(IJudoData dataContext, GenereSiteStruct genere, ConfigurationExportSite cfg, IProgress<GenerationProgressInfo> progress, int workId)
         {
             List<FileWithChecksum> urls = new List<FileWithChecksum>();
 
             try
             {
-                JudoData DC = DialogControleur.Instance.ServerData;
+                // JudoData DC = DialogControleur.Instance.ServerData;
                 ExtensionNoyau.ExtensionJudoData EDC = DialogControleur.Instance.ExtendedServerData;
                 ExportSiteStructure structRep = _structureRepertoires.Clone();  // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread
 
                 switch (genere.type)
                 {
                     case SiteEnum.AllTapis:
-                        urls = ExportSite.GenereWebSiteAllTapis(DC, cfg, structRep, progress, workId);
+                        urls = ExportSite.GenereWebSiteAllTapis(dataContext, cfg, structRep, progress, workId);
                         break;
                     case SiteEnum.Classement:
-                        urls = ExportSite.GenereWebSiteClassement(DC, genere.phase.GetVueEpreuve(DC), cfg, structRep, progress, workId);
+                        urls = ExportSite.GenereWebSiteClassement(dataContext, genere.phase.GetVueEpreuve(dataContext), cfg, structRep, progress, workId);
                         break;
                     case SiteEnum.Index:
-                        urls = ExportSite.GenereWebSiteIndex(DC, cfg, structRep, progress, workId);
+                        urls = ExportSite.GenereWebSiteIndex(dataContext, cfg, structRep, progress, workId);
                         break;
                     case SiteEnum.Menu:
-                        urls = ExportSite.GenereWebSiteMenu(DC, EDC, cfg, structRep, progress, workId);
+                        urls = ExportSite.GenereWebSiteMenu(dataContext, EDC, cfg, structRep, progress, workId);
                         break;
                     case SiteEnum.Phase:
-                        urls = ExportSite.GenereWebSitePhase(DC, genere.phase, cfg, structRep, progress, workId);
+                        urls = ExportSite.GenereWebSitePhase(dataContext, genere.phase, cfg, structRep, progress, workId);
                         break;
                     case SiteEnum.AffectationTapis:
-                        urls = ExportSite.GenereWebSiteAffectation(DC, cfg, structRep, progress, workId);
+                        urls = ExportSite.GenereWebSiteAffectation(dataContext, cfg, structRep, progress, workId);
                         break;
                     case SiteEnum.Engagements:
-                        urls = ExportSite.GenereWebSiteEngagements(DC, EDC, genere.groupeEngages, cfg, structRep, progress, workId);
+                        urls = ExportSite.GenereWebSiteEngagements(dataContext, EDC, genere.groupeEngages, cfg, structRep, progress, workId);
                         break;
                 }
             }
@@ -1894,7 +1892,7 @@ namespace AppPublication.Controles
         /// <param name="tapis"></param>
         /// <param name="groupeP">Identifiant du groupe de participant</param>
         /// <returns></returns>
-        public Task<List<FileWithChecksum>> AddWork(SiteEnum type, Phase phase, int? tapis, ConfigurationExportSite cfg, List<GroupeEngagements> groupeP = null)
+        public Task<List<FileWithChecksum>> AddWork(IJudoData dataContext, SiteEnum type, Phase phase, int? tapis, ConfigurationExportSite cfg, List<GroupeEngagements> groupeP = null)
         {
             Task<List<FileWithChecksum>> output = null;
 
@@ -1914,7 +1912,7 @@ namespace AppPublication.Controles
                 output = OutilsTools.Factory.StartNew(() =>
                 {
                     Progress<GenerationProgressInfo> progress = new Progress<GenerationProgressInfo>(onReportProgress);
-                    return Exporter(export, cfg, progress, workId);
+                    return Exporter(dataContext, export, cfg, progress, workId);
                 });
             }
 
@@ -1926,7 +1924,7 @@ namespace AppPublication.Controles
         /// Genere la totalite du site
         /// </summary>
         /// <returns></returns>
-        public List<FileWithChecksum> GenereAll()
+        public List<FileWithChecksum> GenereAll(IJudoData dataContext)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
             ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierEngagements && CanPublierEngagements, EngagementsAbsents, EngagementsTousCombats, ScoreEngagesGagnantPerdant, AfficherPositionCombat, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes, UseIntituleCommun, IntituleCommun);
@@ -1936,38 +1934,39 @@ namespace AppPublication.Controles
                 if (_generationCounter < long.MaxValue) { _generationCounter++; }                
                 LogTools.Logger.Debug("Lancement de la {0}eme generation du site", _generationCounter);
 
-                JudoData DC = DialogControleur.Instance.ServerData;
+                // JudoData DC = DialogControleur.Instance.ServerData;
+                // TODO, il faut mettre cela en snapshot aussi. A voir si on ne ferait pas le SyncAll avant l'appel au moment de faire le snapshot
                 ExtensionNoyau.ExtensionJudoData EDC = DialogControleur.Instance.ExtendedServerData;
                 // Initialise les extended data
                 EDC.SyncAll();
 
-                if (DC.Organisation.Competitions.Count > 0)
+                if (dataContext.Organisation.Competitions.Count > 0)
                 {
                     List<Task<List<FileWithChecksum>>> listTaskGeneration = new List<Task<List<FileWithChecksum>>>();
 
                     // Initialise les donnees partagees de generation
-                    ExportSite.InitSharedData(DC, EDC, cfg);
+                    ExportSite.InitSharedData(dataContext, EDC, cfg);
                     _allTaskProgress.Clear();
                     _workCounter = 0;
                     _nbGeneration = 0;
 
-                    listTaskGeneration.Add(AddWork(SiteEnum.Index, null, null, cfg, null));
-                    listTaskGeneration.Add(AddWork(SiteEnum.Menu, null, null, cfg, null));
+                    listTaskGeneration.Add(AddWork(dataContext, SiteEnum.Index, null, null, cfg, null));
+                    listTaskGeneration.Add(AddWork(dataContext, SiteEnum.Menu, null, null, cfg, null));
                     if (PublierAffectationTapis && CanPublierAffectation)
                     {
-                        listTaskGeneration.Add(AddWork(SiteEnum.AffectationTapis, null, null, cfg, null));
+                        listTaskGeneration.Add(AddWork(dataContext, SiteEnum.AffectationTapis, null, null, cfg, null));
                     }
 
                     // On ne genere pas les informations de prochains combat si ce n'est pas necessaire
                     if (PublierProchainsCombats)
                     {
-                        listTaskGeneration.Add(AddWork(SiteEnum.AllTapis, null, null, cfg, null));
+                        listTaskGeneration.Add(AddWork(dataContext, SiteEnum.AllTapis, null, null, cfg, null));
                     }
 
                     
                     if(PublierEngagements && CanPublierEngagements)
                     {
-                        foreach(Competition comp in DC.Organisation.Competitions)
+                        foreach(Competition comp in dataContext.Organisation.Competitions)
                         {
                             // Recupere les groupes en fonction du type de groupement
                             List<EchelonEnum> typesGrp = ExtensionNoyau.Deroulement.DataDeroulement.GetTypeGroupe(comp);
@@ -1979,7 +1978,7 @@ namespace AppPublication.Controles
 
                                 // Ce code est plus efficace qye celui qui cree une tache par groupe
                                 // sans doute car le lancement de nombreuses Task est couteux mais il provoque une latence a la fin de la generation
-                                listTaskGeneration.Add(AddWork(SiteEnum.Engagements, null, null, cfg, groupesP));
+                                listTaskGeneration.Add(AddWork(dataContext, SiteEnum.Engagements, null, null, cfg, groupesP));
 
                                 // foreach (GroupeEngagements g in groupesP)
                                 // {
@@ -1990,10 +1989,10 @@ namespace AppPublication.Controles
                         }
                     }                    
 
-                    foreach (Phase phase in DC.Deroulement.Phases)
+                    foreach (Phase phase in dataContext.Deroulement.Phases)
                     {
-                        listTaskGeneration.Add(AddWork(SiteEnum.Phase, phase, null, cfg, null));
-                        listTaskGeneration.Add(AddWork(SiteEnum.Classement, phase, null, cfg, null));
+                        listTaskGeneration.Add(AddWork(dataContext, SiteEnum.Phase, phase, null, cfg, null));
+                        listTaskGeneration.Add(AddWork(dataContext, SiteEnum.Classement, phase, null, cfg, null));
                     }
 
                     try

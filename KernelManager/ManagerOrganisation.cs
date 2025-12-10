@@ -22,12 +22,12 @@ namespace KernelManager
 
 
 
-        public vue_epreuve CreateVueEpreuve(Epreuve ep, KernelImpl.JudoData DC)
+        public vue_epreuve CreateVueEpreuve(Epreuve ep, KernelImpl.IJudoData DC)
         {
             return new vue_epreuve(ep, DC);
         }
 
-        public vue_epreuve_equipe CreateVueEpreuveEquipe(Epreuve_Equipe ep, KernelImpl.JudoData DC)
+        public vue_epreuve_equipe CreateVueEpreuveEquipe(Epreuve_Equipe ep, KernelImpl.IJudoData DC)
         {
             return new vue_epreuve_equipe(ep, DC);
         }

@@ -15,7 +15,7 @@ namespace KernelImpl
         /// <summary>
         /// Obtient une vue figée et thread-safe des données (Lecture).
         /// </summary>
-        IJudoDataSnapshot GetSnapshot();
+        IJudoData GetSnapshot();
 
         /// <summary>
         /// Exécute une modification des données de manière sécurisée (Écriture).

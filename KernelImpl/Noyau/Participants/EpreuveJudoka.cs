@@ -26,11 +26,11 @@ namespace KernelImpl.Noyau.Participants
         public int observation { get; set; }
         public int points { get; set; }
 
-        public Epreuve Epreuve1(JudoData DC)
+        public Epreuve Epreuve1(IJudoData DC)
         {
             return DC.Organisation.Epreuves.FirstOrDefault(o => o.id == epreuve);
         }
-        public Judoka Judoka1(JudoData DC)
+        public Judoka Judoka1(IJudoData DC)
         {
             return DC.Participants.Judokas.FirstOrDefault(o => o.id == judoka);
         }

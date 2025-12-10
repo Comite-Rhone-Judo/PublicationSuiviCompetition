@@ -8,11 +8,11 @@ namespace KernelImpl.Noyau.Structures
 {
     public class StructuresSnapshot : IStructuresData
     {
-        public IReadOnlyList<Club> Clubs { get; }
-        public IReadOnlyList<Comite> Comites { get; }
-        public IReadOnlyList<Ligue> Ligues { get; }
-        public IReadOnlyList<Secteur> Secteurs { get; }
-        public IReadOnlyList<Pays> LesPays { get; }
+        public IReadOnlyList<Club> Clubs { get; private set; }
+        public IReadOnlyList<Comite> Comites { get; private set; }
+        public IReadOnlyList<Ligue> Ligues { get; private set; }
+        public IReadOnlyList<Secteur> Secteurs { get;   private set;     }
+        public IReadOnlyList<Pays> LesPays { get; private set; }
 
         public StructuresSnapshot(DataStructures source)
         {

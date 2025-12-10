@@ -87,7 +87,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="doc">le document</param>
         /// <param name="DC"></param>
-        public static void AddLogo(ref XmlDocument doc, JudoData DC)
+        public static void AddLogo(ref XmlDocument doc, IJudoData DC)
         {
             //Logos logo1 = DC.Logos.FirstOrDefault(o => o.type == 1);
             string logo1 = "";
@@ -201,17 +201,14 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static List<XElement> GetComites(JudoData DC)
+        public static List<XElement> GetComites(IJudoData DC)
         {
             ICollection<Comite> comites = null;
             List<XElement> output = new List<XElement>();
 
             try
             {
-                using (TimedLock.Lock((DC.Structures.Comites as ICollection).SyncRoot))
-                {
-                    comites = DC.Structures.Comites.ToList();
-                }
+                comites = DC.Structures.Comites.ToList();
 
                 foreach (Comite comite in comites)
                 {
@@ -231,17 +228,14 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static List<XElement> GetLigues(JudoData DC)
+        public static List<XElement> GetLigues(IJudoData DC)
         {
             ICollection<Ligue> ligues = null;
             List<XElement> output = new List<XElement>();
 
             try
             {
-                using (TimedLock.Lock((DC.Structures.Ligues as ICollection).SyncRoot))
-                {
-                    ligues = DC.Structures.Ligues.ToList();
-                }
+                ligues = DC.Structures.Ligues.ToList();
 
                 foreach (Ligue ligue in ligues)
                 {
@@ -263,17 +257,14 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static List<XElement> GetSecteurs(JudoData DC)
+        public static List<XElement> GetSecteurs(IJudoData DC)
         {
             ICollection<Secteur> secteurs = null;
             List<XElement> output = new List<XElement>();
 
             try
             {
-                using (TimedLock.Lock((DC.Structures.Secteurs as ICollection).SyncRoot))
-                {
-                    secteurs = DC.Structures.Secteurs.ToList();
-                }
+                secteurs = DC.Structures.Secteurs.ToList();
 
                 foreach (Secteur secteur in secteurs)
                 {
@@ -294,17 +285,14 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static List<XElement> GetPays(JudoData DC)
+        public static List<XElement> GetPays(IJudoData DC)
         {
             ICollection<Pays> pays = null;
             List<XElement> output = new List<XElement>();
 
             try
             {
-                using (TimedLock.Lock((DC.Structures.LesPays as ICollection).SyncRoot))
-                {
-                    pays = DC.Structures.LesPays.ToList();
-                }
+                pays = DC.Structures.LesPays.ToList();
 
                 foreach (Pays pays1 in pays)
                 {
@@ -325,37 +313,25 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static List<XElement> GetClubs(JudoData DC)
+        public static List<XElement> GetClubs(IJudoData DC)
         {
             ICollection<Club> clubs = null;
             List<XElement> output = new List<XElement> ();
 
             try
             {
-                using (TimedLock.Lock((DC.Participants.Vuejudokas as ICollection).SyncRoot))
-                {
-                    using (TimedLock.Lock((DC.Structures.Clubs as ICollection).SyncRoot))
-                    {
-                        clubs = (from c in DC.Structures.Clubs
-                                 join j in DC.Participants.Vuejudokas on c.id equals j.club
-                                 select c).Distinct().ToList();
-                    }
-                }
+                clubs = (from c in DC.Structures.Clubs
+                         join j in DC.Participants.Vuejudokas on c.id equals j.club
+                         select c).Distinct().ToList();
 
                 foreach (Club club in clubs)
                 {
                     output.Add(club.ToXml());
                 }
 
-                using (TimedLock.Lock((DC.Participants.Equipes as ICollection).SyncRoot))
-                {
-                    using (TimedLock.Lock((DC.Structures.Clubs as ICollection).SyncRoot))
-                    {
-                        clubs = (from c in DC.Structures.Clubs
-                                 join eq in DC.Participants.Equipes on c.id equals eq.club
-                                 select c).Distinct().ToList();
-                    }
-                }
+                clubs = (from c in DC.Structures.Clubs
+                         join eq in DC.Participants.Equipes on c.id equals eq.club
+                         select c).Distinct().ToList();
 
                 foreach (Club club in clubs)
                 {
@@ -375,10 +351,9 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="doc">le document</param>
         /// <param name="DC"></param>
-        public static void AddCeintures(ref XmlDocument doc, JudoData DC)
+        public static void AddCeintures(ref XmlDocument doc, IJudoData DC)
         {
             XDocument xdoc = doc.ToXDocument();
-
 
             foreach (Ceintures ceinture in DC.Categories.Grades.ToList())
             {
@@ -422,7 +397,7 @@ namespace AppPublication.Export
         /// <param name="DC"></param>
         /// <param name="siteStructure"></param>
         /// <returns></returns>
-        public static XmlDocument CreateDocumentIndex(JudoData DC, ExportSiteStructure siteStructure)
+        public static XmlDocument CreateDocumentIndex(IJudoData DC, ExportSiteStructure siteStructure)
         {
             XDocument doc = new XDocument();
             XElement xcompetitions = new XElement(ConstantXML.Competitions);
@@ -444,7 +419,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static XmlDocument CreateDocumentMenu(JudoData DC, ExtensionJudoData EDC, ExportSiteStructure siteStructure)
+        public static XmlDocument CreateDocumentMenu(IJudoData DC, ExtensionJudoData EDC, ExportSiteStructure siteStructure)
         {
             XDocument doc = new XDocument();
             XElement xcompetitions = new XElement(ConstantXML.Competitions);
@@ -541,7 +516,7 @@ namespace AppPublication.Export
         }
 
         /// <summary>
-        public static XmlDocument CreateDocumentEngagements(JudoData DC, ExtensionJudoData EDC)
+        public static XmlDocument CreateDocumentEngagements(IJudoData DC, ExtensionJudoData EDC)
         {
             XDocument doc = new XDocument();
             XElement xcompetitions = new XElement(ConstantXML.Competitions);
@@ -620,7 +595,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static XmlDocument CreateDocumentAffectationTapis(JudoData DC)
+        public static XmlDocument CreateDocumentAffectationTapis(IJudoData DC)
         {
             XDocument doc = new XDocument();
             XElement xcompetitions = new XElement(ConstantXML.Competitions);
@@ -711,7 +686,7 @@ namespace AppPublication.Export
             return doc.ToXmlDocument();
         }
 
-        public static XmlDocument CreateDocumentEpreuve(JudoData DC, i_vue_epreuve_interface epreuve)
+        public static XmlDocument CreateDocumentEpreuve(IJudoData DC, i_vue_epreuve_interface epreuve)
         {
             Competition competition = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
 
@@ -723,7 +698,7 @@ namespace AppPublication.Export
             return doc.ToXmlDocument();
         }
 
-        public static XmlDocument CreateDocumentPhase(i_vue_epreuve_interface epreuve, Phase phase, JudoData DC)
+        public static XmlDocument CreateDocumentPhase(i_vue_epreuve_interface epreuve, Phase phase, IJudoData DC)
         {
             Competition competition = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
 
@@ -738,7 +713,7 @@ namespace AppPublication.Export
             return doc.ToXmlDocument();
         }
 
-        public static XmlDocument CreateDocumentFeuilleCombat(JudoData DC, Phase _phase, int? tapis)
+        public static XmlDocument CreateDocumentFeuilleCombat(IJudoData DC, Phase _phase, int? tapis)
         {
             int nbtapis = DC.Organisation.Competitions.Max(o => o.nbTapis);
             // Competition competition = DC.Organisation.Competitions.FirstOrDefault();
@@ -919,7 +894,7 @@ namespace AppPublication.Export
                         if (!participant_id_ajoute.Contains(p.judoka))
                         {
                             XElement xparticipant = p.ToXml(DC);
-                            switch ((CompetitionTypeEnum)DC.competition.type)
+                            switch ((CompetitionTypeEnum)DC.Organisation.Competition.type)
                             {
                                 case CompetitionTypeEnum.Individuel:
                                 case CompetitionTypeEnum.Shiai:
@@ -1007,7 +982,7 @@ namespace AppPublication.Export
             return doc.ToXmlDocument();
         }
 
-        private static XElement ExportEpreuve(JudoData DC, i_vue_epreuve_interface epreuve)
+        private static XElement ExportEpreuve(IJudoData DC, i_vue_epreuve_interface epreuve)
         {
             XElement xepreuve = epreuve.ToXml(DC);
 
@@ -1057,7 +1032,7 @@ namespace AppPublication.Export
             return xepreuve;
         }
 
-        private static XElement ExportPhase(JudoData DC, Phase phase)
+        private static XElement ExportPhase(IJudoData DC, Phase phase)
         {
             List<Judoka> judokas = DC.Participants.Judokas.ToList();
             List<Equipe> equipes = DC.Participants.Equipes.ToList();
@@ -1082,7 +1057,7 @@ namespace AppPublication.Export
             foreach (Participant p in DC.Deroulement.Participants.Where(o => o.phase == phase.id).ToList())
             {
                 XElement xparticipant = p.ToXml(DC);
-                switch ((CompetitionTypeEnum)DC.competition.type)
+                switch ((CompetitionTypeEnum)DC.Organisation.Competition.type)
                 {
                     case CompetitionTypeEnum.Individuel:
                     case CompetitionTypeEnum.Shiai:
@@ -1134,7 +1109,7 @@ namespace AppPublication.Export
             return xphase;
         }
 
-        private static XElement ExportClassementFinal(JudoData DC, i_vue_epreuve_interface epreuve)
+        private static XElement ExportClassementFinal(IJudoData DC, i_vue_epreuve_interface epreuve)
         {
             List<Judoka> judokas = DC.Participants.Judokas.ToList();
             List<Equipe> equipes = DC.Participants.Equipes.ToList();
@@ -1142,8 +1117,8 @@ namespace AppPublication.Export
 
             XElement xclassement = new XElement(ConstantXML.Classement);
 
-            ICollection<Participant> participants1 = DC.Deroulement.ListeParticipant2(epreuve.id, DC).ToList();
-            ICollection<Participant> participants2 = DC.Deroulement.ListeParticipant1(epreuve.id, DC).ToList();
+            ICollection<Participant> participants1 = DC.Deroulement.ListeParticipant2(epreuve.id).ToList();
+            ICollection<Participant> participants2 = DC.Deroulement.ListeParticipant1(epreuve.id).ToList();
 
             //ICollection<IParticipant> participants2 = DC.Database.SqlQuery<IParticipant>(query).ToList();
 
@@ -1160,7 +1135,7 @@ namespace AppPublication.Export
             foreach (Participant p in participants1.OrderBy(o => o.classementFinal))
             {
                 XElement xparticipant = p.ToXml(DC);
-                switch ((CompetitionTypeEnum)DC.competition.type)
+                switch ((CompetitionTypeEnum)DC.Organisation.Competition.type)
                 {
                     case CompetitionTypeEnum.Individuel:
                     case CompetitionTypeEnum.Shiai:

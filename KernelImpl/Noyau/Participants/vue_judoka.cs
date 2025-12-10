@@ -1061,7 +1061,7 @@ namespace KernelImpl.Noyau.Participants
         #endregion
         #region CONSTRUCTEURS
 
-        public vue_judoka(Judoka judoka, JudoData DC)
+        public vue_judoka(Judoka judoka, IJudoData DC)
         {
             EpreuveJudoka ej = DC.Participants.EpreuveJudokas.FirstOrDefault(o => o.judoka == judoka.id);
             Epreuve ep = ej != null ? DC.Organisation.Epreuves.FirstOrDefault(o => o.id == ej.epreuve) : null;
@@ -1230,7 +1230,7 @@ namespace KernelImpl.Noyau.Participants
             }
         }
 
-        public vue_judoka(Judoka judoka, Epreuve epreuve, JudoData DC)
+        public vue_judoka(Judoka judoka, Epreuve epreuve, IJudoData DC)
         {
             EpreuveJudoka ej = DC.Participants.EpreuveJudokas.FirstOrDefault(o => o.judoka == judoka.id && o.epreuve == epreuve.id);
             Epreuve ep = ej != null ? DC.Organisation.Epreuves.FirstOrDefault(o => o.id == ej.epreuve) : null;
@@ -1399,7 +1399,7 @@ namespace KernelImpl.Noyau.Participants
             }
         }
 
-        public vue_judoka(Judoka judoka, Epreuve epreuve, vue_judoka old_vj, JudoData DC)
+        public vue_judoka(Judoka judoka, Epreuve epreuve, vue_judoka old_vj, IJudoData DC)
         {
             EpreuveJudoka ej = DC.Participants.EpreuveJudokas.FirstOrDefault(o => o.judoka == judoka.id && o.epreuve == old_vj.idepreuve);
 

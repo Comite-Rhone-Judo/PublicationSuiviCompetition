@@ -32,6 +32,6 @@ namespace KernelImpl.Noyau.Organisation
         Nullable<int> phase1 { get; set; }
         Nullable<int> phase2 { get; set; }
 
-        System.Xml.Linq.XElement ToXml(JudoData DC);
+        System.Xml.Linq.XElement ToXml(IJudoData DC);
     }
 }

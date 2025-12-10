@@ -38,7 +38,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <param name="phase">la phase</param>
-        public static List<FileWithChecksum> GenereWebSitePhase(JudoData DC, Phase phase, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
+        public static List<FileWithChecksum> GenereWebSitePhase(IJudoData DC, Phase phase, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
         {
             List<string> urls = new List<string>();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
@@ -149,7 +149,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <param name="epreuve"></param>
-        public static List<FileWithChecksum> GenereWebSiteClassement(JudoData DC, i_vue_epreuve_interface epreuve, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
+        public static List<FileWithChecksum> GenereWebSiteClassement(IJudoData DC, i_vue_epreuve_interface epreuve, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
@@ -182,7 +182,7 @@ namespace AppPublication.Export
         /// Génére les premiers combats de tous les tapis
         /// </summary>
         /// <param name="DC"></param>
-        public static List<FileWithChecksum> GenereWebSiteAllTapis(JudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
+        public static List<FileWithChecksum> GenereWebSiteAllTapis(IJudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
@@ -198,7 +198,7 @@ namespace AppPublication.Export
                 XsltArgumentList argsList = new XsltArgumentList();
                 argsList.AddParam("istapis", "", "alltapis");
                 // si plus d'une competition et intitule commun configure, on l'utilise plutot que le titre d'une des competitions
-                bool useIntituleCommun = (DC.competitions.Count() > 1) && config.UseIntituleCommun && !string.IsNullOrEmpty(config.IntituleCommun);
+                bool useIntituleCommun = (DC.Organisation.Competitions.Count() > 1) && config.UseIntituleCommun && !string.IsNullOrEmpty(config.IntituleCommun);
                 argsList.AddParam("useIntituleCommun", "", useIntituleCommun.ToString().ToLower());
                 AddStructureArgument(argsList, siteStruct, fileSave);
 
@@ -220,7 +220,7 @@ namespace AppPublication.Export
         /// Génére L'index
         /// </summary>
         /// <param name="DC"></param>
-        public static List<FileWithChecksum> GenereWebSiteIndex(JudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
+        public static List<FileWithChecksum> GenereWebSiteIndex(IJudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
         {
             List<string> urls = new List<string>();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
@@ -276,7 +276,7 @@ namespace AppPublication.Export
         /// Génére le menu
         /// </summary>
         /// <param name="DC"></param>
-        public static List<FileWithChecksum> GenereWebSiteMenu(JudoData DC, ExtensionJudoData EDC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
+        public static List<FileWithChecksum> GenereWebSiteMenu(IJudoData DC, ExtensionJudoData EDC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
             if (DC != null && EDC != null && config != null && siteStruct != null)
@@ -363,7 +363,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static List<FileWithChecksum> GenereWebSiteAffectation(JudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
+        public static List<FileWithChecksum> GenereWebSiteAffectation(IJudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
@@ -398,7 +398,7 @@ namespace AppPublication.Export
         /// <param name="DC"></param>
         /// <param name="EDC"></param>
         /// <param name="config"></param>
-        public static void InitSharedData(JudoData DC, ExtensionJudoData EDC, ConfigurationExportSite config)
+        public static void InitSharedData(IJudoData DC, ExtensionJudoData EDC, ConfigurationExportSite config)
         {
             using (TimedLock.Lock(_xClubs))
             {
@@ -434,7 +434,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static List<FileWithChecksum> GenereWebSiteEngagements(JudoData DC, ExtensionJudoData EDC, List<GroupeEngagements> grps, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
+        public static List<FileWithChecksum> GenereWebSiteEngagements(IJudoData DC, ExtensionJudoData EDC, List<GroupeEngagements> grps, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 

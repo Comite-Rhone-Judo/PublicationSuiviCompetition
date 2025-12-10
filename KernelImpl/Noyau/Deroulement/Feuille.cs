@@ -35,7 +35,7 @@ namespace KernelImpl.Noyau.Deroulement
 
 
 
-        public Combat Combat1(JudoData DC)
+        public Combat Combat1(IJudoData DC)
         {
             return DC.Deroulement.Combats.FirstOrDefault(o => o.id == this.combat);
         }

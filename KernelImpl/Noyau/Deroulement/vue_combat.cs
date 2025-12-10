@@ -105,7 +105,7 @@ namespace KernelImpl.Noyau.Deroulement
         public string judoka2_prenom1 { get; set; }
         public string judoka2_club1 { get; set; }
 
-        public vue_combat(Combat combat, JudoData DC)
+        public vue_combat(Combat combat, IJudoData DC)
         {
             combat_id = combat.id;
             combat_numero = combat.numero;
@@ -156,7 +156,7 @@ namespace KernelImpl.Noyau.Deroulement
                 }
             }
 
-            if ((CompetitionTypeEnum)DC.competition.type != CompetitionTypeEnum.Equipe)
+            if ((CompetitionTypeEnum)DC.Organisation.Competition.type != CompetitionTypeEnum.Equipe)
             {
                 Participants.Judoka judoka1 = null;
                 using (TimedLock.Lock((DC.Participants.Judokas as ICollection).SyncRoot))

@@ -8,16 +8,16 @@ namespace KernelImpl.Noyau.Deroulement
 {
     public class DeroulementSnapshot : IDeroulementData
     {
-        public IReadOnlyList<Combat> Combats { get; }
-        public IReadOnlyList<Rencontre> Rencontres { get; }
-        public IReadOnlyList<Feuille> Feuilles { get; }
-        public IReadOnlyList<Phase_Decoupage> Decoupages { get; }
-        public IReadOnlyList<Groupe_Combats> Groupes { get; }
-        public IReadOnlyList<Phase> Phases { get; }
-        public IReadOnlyList<Poule> Poules { get; }
-        public IReadOnlyList<Participant> Participants { get; }
-        public IReadOnlyList<vue_groupe> VueGroupes { get; }
-        public IReadOnlyList<vue_combat> VueCombats { get; }
+        public IReadOnlyList<Combat> Combats { get; private set; }
+        public IReadOnlyList<Rencontre> Rencontres { get; private set; }
+        public IReadOnlyList<Feuille> Feuilles { get; private set; }
+        public IReadOnlyList<Phase_Decoupage> Decoupages { get; private set; }
+        public IReadOnlyList<Groupe_Combats> Groupes { get; private set; }
+        public IReadOnlyList<Phase> Phases { get; private set; }
+        public IReadOnlyList<Poule> Poules { get; private set; }
+        public IReadOnlyList<Participant> Participants { get; private set; }
+        public IReadOnlyList<vue_groupe> VueGroupes { get; private set; }
+        public IReadOnlyList<vue_combat> VueCombats { get; private set; }
 
         public DeroulementSnapshot(DataDeroulement source)
         {

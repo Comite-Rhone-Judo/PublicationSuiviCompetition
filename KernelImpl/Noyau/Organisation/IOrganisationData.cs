@@ -8,6 +8,7 @@ namespace KernelImpl.Noyau.Organisation
 {
     public interface IOrganisationData
     {
+        Competition Competition { get; }
         IReadOnlyList<Competition> Competitions { get; }
         IReadOnlyList<Epreuve> Epreuves { get; }
         IReadOnlyList<Epreuve_Equipe> EpreuveEquipes { get; }

@@ -222,7 +222,7 @@ namespace AppPublication.Controles
         /// </summary>
         public void UpdateCompetition()
         {
-            GestionSite.IdCompetition = (ServerData.competition != null) ? ServerData.competition.remoteId : string.Empty;
+            GestionSite.IdCompetition = (ServerData.Competition != null) ? ServerData.Competition.remoteId : string.Empty;
         }
 
         /// <summary>
@@ -236,7 +236,7 @@ namespace AppPublication.Controles
                 {
                     _connection = new GestionConnection();
                     _stats = new GestionStatistiques();
-                    _site = new GestionSite(_stats);
+                    _site = new GestionSite(DialogControleur.Instance.ServerData, _stats);
                     GestionEvent.Instance.BusyStatusChanged += OnBusyStatusChanged;
                 }
                 catch (Exception ex)

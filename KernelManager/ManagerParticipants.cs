@@ -21,7 +21,7 @@ namespace KernelManager
         }
 
 
-        public vue_judoka CreateVueJudoka(Judoka judoka, KernelImpl.JudoData DC)
+        public vue_judoka CreateVueJudoka(Judoka judoka, KernelImpl.IJudoData DC)
         {
             return new vue_judoka(judoka, DC);
         }

@@ -9,11 +9,11 @@ namespace KernelImpl.Noyau.Categories
 {
     public class CategoriesSnapshot : ICategoriesData
     {
-        public IReadOnlyList<CategorieAge> CAges { get; }
+        public IReadOnlyList<CategorieAge> CAges { get; private set; }
 
-        public IReadOnlyList<CategoriePoids> CPoids { get; }
+        public IReadOnlyList<CategoriePoids> CPoids { get; private set; }
 
-        public IReadOnlyList<Ceintures> Grades { get; }
+        public IReadOnlyList<Ceintures> Grades { get; private set; }
 
         public CategoriesSnapshot(DataCategories source)
         {

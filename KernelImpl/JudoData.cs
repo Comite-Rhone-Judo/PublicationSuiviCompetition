@@ -1,4 +1,10 @@
-﻿using KernelImpl.Noyau.Organisation;
+﻿using KernelImpl.Noyau.Arbitrage;
+using KernelImpl.Noyau.Categories;
+using KernelImpl.Noyau.Deroulement;
+using KernelImpl.Noyau.Logos;
+using KernelImpl.Noyau.Organisation;
+using KernelImpl.Noyau.Participants;
+using KernelImpl.Noyau.Structures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +15,7 @@ using Tools.Outils;
 
 namespace KernelImpl
 {
-    public class JudoData : NotificationBase, IJudoDataManager
+    public class JudoData : NotificationBase, IJudoDataManager, IJudoData
     {
         // --- Verrouillage ---
         private readonly ReaderWriterLockSlim _globalLock = new ReaderWriterLockSlim();
@@ -19,13 +25,13 @@ namespace KernelImpl
         /// <summary>
         /// Obtient un snapshot immuable et thread-safe.
         /// </summary>
-        public IJudoDataSnapshot GetSnapshot()
+        public IJudoData GetSnapshot()
         {
             _globalLock.EnterReadLock();
             try
             {
                 // Crée le snapshot en copiant les références des listes actuelles
-                return new ServerDataSnapshot(this);
+                return new JudoDataSnapshot(this);
             }
             finally
             {
@@ -51,18 +57,39 @@ namespace KernelImpl
 
         #endregion
 
-        public IPAddress IpAddress { get; set; }
-        public int Port { get; set; }
+        #region Implémentation Explicite de IJudoDataSource
+
+        // Ces propriétés ne sont visibles que lorsqu'on manipule l'objet via l'interface IJudoDataSource.
+        // Elles redirigent vers vos propriétés concrètes existantes.
+
+        IDeroulementData IJudoData.Deroulement => this.Deroulement;
+
+        IParticipantsData IJudoData.Participants => this.Participants;
+
+        IOrganisationData IJudoData.Organisation => this.Organisation;
+
+        IStructuresData IJudoData.Structures => this.Structures;
+
+        ICategoriesData IJudoData.Categories => this.Categories;
+
+        IArbitrageData IJudoData.Arbitrage => this.Arbitrage;
+
+        ILogosData IJudoData.Logos => this.Logos;
+
+        #endregion
+
+        #region Interface concrete
 
         private Competition _competition = new Competition { type = (int)CompetitionTypeEnum.Individuel };
-		 private List<Competition> _competitions = new List<Competition>();
-        public Competition competition
+		private List<Competition> _competitions = new List<Competition>();
+
+        public Competition Competition
         {
             get { return _competition; }
             set { _competition = value; NotifyPropertyChanged(); }
         }
 
-        public List<Competition> competitions
+        public List<Competition> Competitions
         {
             get { return _competitions; }
             set { _competitions = value; }
@@ -117,17 +144,6 @@ namespace KernelImpl
             set { _arbitrage = value; }
         }
 
-
-        public int GetCategorie(int annee)
-        {
-            try
-            {
-                return _categories.CAges.FirstOrDefault(o => o.anneeMin <= annee && annee <= o.anneeMax).id;
-            }
-            catch
-            {
-                return 0;
-            }
-        }
+        #endregion
     }
 }

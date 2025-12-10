@@ -32,7 +32,7 @@ namespace KernelImpl.Noyau.Deroulement
         public string epreuve_libsexe { get; set; }
 
 
-        public vue_groupe(Groupe_Combats groupe, JudoData DC)
+        public vue_groupe(Groupe_Combats groupe, IJudoData DC)
         {
             groupe_id = groupe.id;
             groupe_tapis = groupe.tapis;

@@ -249,12 +249,12 @@ namespace KernelImpl.Noyau.Deroulement
             }
         }
 
-        public Participants.Judoka Judoka1(JudoData DC)
+        public Participants.Judoka Judoka1(IJudoData DC)
         {
             return DC.Participants.Judokas.FirstOrDefault(o => o.id == this.judoka);
         }
 
-        public Participants.Equipe Equipe1(JudoData DC)
+        public Participants.Equipe Equipe1(IJudoData DC)
         {
             return DC.Participants.Equipes.FirstOrDefault(o => o.id == this.judoka);
         }
@@ -281,7 +281,7 @@ namespace KernelImpl.Noyau.Deroulement
         }
 
 
-        public XElement ToXml(JudoData DC)
+        public XElement ToXml(IJudoData DC)
         {
             XElement xparticipant = new XElement(ConstantXML.Participant);
 

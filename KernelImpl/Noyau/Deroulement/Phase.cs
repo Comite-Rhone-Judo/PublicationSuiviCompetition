@@ -43,10 +43,10 @@ namespace KernelImpl.Noyau.Deroulement
         public int niveauRepeches2 { get; set; }
 
 
-        public Organisation.i_vue_epreuve_interface GetVueEpreuve(JudoData DC)
+        public Organisation.i_vue_epreuve_interface GetVueEpreuve(IJudoData DC)
         {
             Organisation.i_vue_epreuve_interface ep = null;
-            if (DC.competition.IsEquipe())
+            if (DC.Organisation.Competition.IsEquipe())
             {
                 ep = DC.Organisation.VueEpreuveEquipes.FirstOrDefault(o => o.id == this.epreuve);
             }

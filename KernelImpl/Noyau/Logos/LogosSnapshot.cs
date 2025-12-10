@@ -9,9 +9,9 @@ namespace KernelImpl.Noyau.Logos
 {
     public class LogosSnapshot : ILogosData
     {
-        public IReadOnlyList<string> Fede { get; }
-        public IReadOnlyList<string> Ligue { get; }
-        public IReadOnlyList<string> Sponsors { get; }
+        public IReadOnlyList<string> Fede { get; private set; }
+        public IReadOnlyList<string> Ligue { get; private set; }
+        public IReadOnlyList<string> Sponsors { get; private set; }
 
         public LogosSnapshot(DataLogos   source)
         {

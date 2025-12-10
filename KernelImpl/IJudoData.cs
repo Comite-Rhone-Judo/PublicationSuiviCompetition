@@ -11,7 +11,7 @@ namespace KernelImpl
     /// <summary>
     /// Interface racine représentant une vue figée et cohérente des données du serveur.
     /// </summary>
-    public interface IJudoDataSnapshot
+    public interface IJudoData
     {
         IDeroulementData Deroulement { get; }
         IParticipantsData Participants { get; }
