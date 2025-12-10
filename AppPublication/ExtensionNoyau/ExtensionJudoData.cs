@@ -10,10 +10,12 @@ namespace AppPublication.ExtensionNoyau
     public class ExtensionJudoData
     {
         #region MEMBRES
+        // TODO travailler a partir de l'interface
         private JudoData _serverData = null;
         #endregion
 
         #region CONSTRUCTEURS
+        // TODO a voir pour que la donnees soit reprise a chaque fois par rapport au snapshot
         public ExtensionJudoData(JudoData serverData)
         {
             _serverData = serverData;
@@ -21,6 +23,8 @@ namespace AppPublication.ExtensionNoyau
         }
 
         #endregion
+
+        // TODO Voir pour renommer cela en engagement
 
         #region PROPERTIES
         private ExtensionNoyau.Deroulement.DataDeroulement _deroulement = null;

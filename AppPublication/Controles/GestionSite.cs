@@ -62,8 +62,6 @@ namespace AppPublication.Controles
         private const string kSettingSelectedLogo = "SelectedLogo";
         private const string kSettingInterfaceLocalPublication = "InterfaceLocalPublication";
 
-        private const int kDelaiAttenteReponseMs = 2000; // Délai d'attente de réponse du serveur TAS
-
         #endregion
 
         #region MEMBRES
@@ -85,7 +83,7 @@ namespace AppPublication.Controles
         private int _nbGeneration = 0;                              // Nombre de generation en cours pour le site distant   
         private List<int> _allTaskProgress = new List<int>();       // Progression de chacune des taches (clef = Id)
 
-        private IJudoDataManager _judoDataManager;
+        private IJudoDataManager _judoDataManager;                  // Le gestionnaire de données interne
 
         /// <summary>
         /// Structure interne pour gerer les parametres de generation du site
@@ -100,8 +98,15 @@ namespace AppPublication.Controles
         #endregion
 
         #region CONSTRUCTEURS
+        /// <summary>
+        /// Constructeur
+        /// </summary>
+        /// <param name="dataManager">Le gestionnaire de données</param>
+        /// <param name="statMgr">le gestionnaire de statitiques</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public GestionSite(IJudoDataManager dataManager, GestionStatistiques statMgr)
         {
+            // Impossible d'etre null
             if (dataManager == null) throw new ArgumentNullException();
 
             try
@@ -1281,6 +1286,9 @@ namespace AppPublication.Controles
             }
         }
 
+        /// <summary>
+        /// Initialise la liste des fichiers de logos
+        /// </summary>
         private void InitFichiersLogo()
         {
             // Recupere le repertoire des images du site
@@ -1690,9 +1698,7 @@ namespace AppPublication.Controles
 
                     try
                     {
-                        IJudoData snapshot = _judoDataManager.GetSnapshot();
-
-                        // Pousse les commandes de generation dans le thread de travail
+                         // Pousse les commandes de generation dans le thread de travail
                         Status = StatusGenerationSite.Instance(StateGenerationEnum.Generating);
                         SiteGenere = false; // Reset du flag de succès pour ce cycle
 
@@ -1710,6 +1716,12 @@ namespace AppPublication.Controles
 
                         if (dataConsistent)
                         {
+                            // Recupere le snapshot des données (thread safe)
+                            IJudoData snapshot = _judoDataManager.GetSnapshot();
+
+                            // TODO c'est ici qu'il faut mettre le EDC SyncAll et le passer ensuite a GenereAll
+
+
                             StatExecution statGeneration = new StatExecution();
                             Stopwatch watcherGen = new Stopwatch();
                             watcherGen.Start();
@@ -1936,6 +1948,7 @@ namespace AppPublication.Controles
 
                 // JudoData DC = DialogControleur.Instance.ServerData;
                 // TODO, il faut mettre cela en snapshot aussi. A voir si on ne ferait pas le SyncAll avant l'appel au moment de faire le snapshot
+                // On n'a pas les mêmes contraintes si on génére les données à partir du snapshot (elles ne viennent pas du reseau directement)
                 ExtensionNoyau.ExtensionJudoData EDC = DialogControleur.Instance.ExtendedServerData;
                 // Initialise les extended data
                 EDC.SyncAll();

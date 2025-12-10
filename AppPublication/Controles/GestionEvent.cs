@@ -41,6 +41,7 @@ namespace AppPublication.Controles
     {
         #region CONSTANTES
         private const int kDefaultTimeoutMs = 15000;
+        private const int kTimeoutAttenteReponseMs = 5000;
         #endregion
 
         #region MEMBRES
@@ -513,6 +514,8 @@ namespace AppPublication.Controles
         /// <returns>True si les données sont garanties intègres, False si la récupération a échoué (Timeout ou déconnexion).</returns>
         public bool EnsureDataConstistency()
         {
+            // TODO Verifie race condition
+
             // 1. Si les données sont déjà propres, on passe tout de suite
             if (!IsCombatsCacheDirty)
             {
@@ -531,7 +534,7 @@ namespace AppPublication.Controles
                 client.DemandeCombats();
 
                 // On attend que client_OnListeCombats reçoive la réponse et débloque le signal
-                bool success = _combatsDonneesRecuesSignal.WaitOne(kDefaultTimeoutMs);
+                bool success = _combatsDonneesRecuesSignal.WaitOne(kTimeoutAttenteReponseMs);
 
                 if (!success)
                 {
