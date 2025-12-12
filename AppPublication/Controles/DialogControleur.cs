@@ -22,22 +22,23 @@ namespace AppPublication.Controles
     public class DialogControleur : NotificationBase
     {
         #region MEMBRES
-        private static DialogControleur _currentControleur = null;      // instance singletion
+        private static DialogControleur _instance = null;      // instance singletion
         private AppPublication.IHM.Commissaire.StatistiquesView _statWindow = null;
         private AppPublication.IHM.Commissaire.InformationsView _infoWindow = null;
         private PdfViewer _manuelViewer = null;
         private AppPublication.IHM.Commissaire.ConfigurationPublication _cfgWindow = null;
+        private readonly JudoData _serverData;
         #endregion
 
         #region CONSTRUCTEUR
 
-        private DialogControleur()
+        // Constructeur privé : inaccessible depuis l'extérieur
+        private DialogControleur(JudoData data)
         {
+            _serverData = data ?? throw new ArgumentNullException(nameof(data));
+
             FileAndDirectTools.InitDataDirectories();
-
             InitControleur();
-
-            // Initialise les informations de l'application
             AppInformation = AppInformation.Instance;
         }
 
@@ -68,15 +69,9 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (null == _currentControleur)
-                {
-                    _currentControleur = new DialogControleur();
-                }
-                return _currentControleur;
-            }
-            private set
-            {
-                _currentControleur = value;
+                if (_instance == null)
+                    throw new InvalidOperationException("DialogControleur non initialisé ! Appelez DialogControleur.Initialiser() dans App.xaml.cs.");
+                return _instance;
             }
         }
 
@@ -131,7 +126,6 @@ namespace AppPublication.Controles
             private set { _stats = value; }
         }
 
-        private JudoData _serverData;
         /// <summary>
         /// Le bloc de donnees recupere du serveur
         /// </summary>
@@ -139,10 +133,6 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_serverData == null)
-                {
-                    _serverData = KernelManager.Manager.manager.m_JudoData;
-                }
                 return _serverData;
             }
         }
@@ -218,6 +208,18 @@ namespace AppPublication.Controles
         #region METHODES
 
         /// <summary>
+        /// Seule méthode autorisée pour créer l'instance unique.
+        /// </summary>
+        public static DialogControleur CreateInstance(JudoData data)
+        {
+            if (_instance != null)
+                throw new InvalidOperationException("Violation du Singleton : DialogControleur déjà instancié.");
+
+            _instance = new DialogControleur(data);
+            return _instance;
+        }
+
+        /// <summary>
         /// Actualise l'ID de competition (necessaire pour faire le lien avec la reception des donnees)
         /// </summary>
         public void UpdateCompetition()
@@ -236,7 +238,7 @@ namespace AppPublication.Controles
                 {
                     _connection = new GestionConnection();
                     _stats = new GestionStatistiques();
-                    _site = new GestionSite(DialogControleur.Instance.ServerData, _stats);
+                    _site = new GestionSite(this.ServerData, _stats);
                     GestionEvent.Instance.BusyStatusChanged += OnBusyStatusChanged;
                 }
                 catch (Exception ex)

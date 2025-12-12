@@ -17,8 +17,23 @@ namespace KernelImpl
 {
     public class JudoData : NotificationBase, IJudoDataManager, IJudoData
     {
+        #region MEMBRES
         // --- Verrouillage ---
         private readonly ReaderWriterLockSlim _globalLock = new ReaderWriterLockSlim();
+        #endregion
+
+        #region Constructeurs
+        public JudoData()
+        {
+            Arbitrage = new DataArbitrage();
+            Categories = new DataCategories();
+            Deroulement = new DataDeroulement();
+            Logos = new DataLogos();
+            Organisation = new DataOrganisation();
+            Participants = new DataParticipants();
+            Structures = new DataStructures();
+        }
+        #endregion
 
         #region Implémentation IJudoDataManager
 

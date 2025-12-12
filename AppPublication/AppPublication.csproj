@@ -259,10 +259,6 @@
       <Project>{392bddab-3d85-46c8-b419-0d8c81dc5146}</Project>
       <Name>KernelImpl</Name>
     </ProjectReference>
-    <ProjectReference Include="..\KernelManager\KernelManager.csproj">
-      <Project>{8b0012a9-d366-4764-bfc9-85cf60d3cdb5}</Project>
-      <Name>KernelManager</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Tools\Tools.csproj">
       <Project>{319d52c2-081b-42af-bf17-57efd5dc0d9c}</Project>
       <Name>Tools</Name>
