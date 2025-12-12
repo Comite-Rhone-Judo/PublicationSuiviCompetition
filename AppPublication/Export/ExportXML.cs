@@ -17,7 +17,7 @@ using System.Xml.Linq;
 using Tools.Enum;
 using Tools.Export;
 using Tools.Outils;
-using AppPublication.ExtensionNoyau.Deroulement;
+using AppPublication.ExtensionNoyau.Engagement;
 
 namespace AppPublication.Export
 {
@@ -419,7 +419,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static XmlDocument CreateDocumentMenu(IJudoData DC, ExtensionJudoData EDC, ExportSiteStructure siteStructure)
+        public static XmlDocument CreateDocumentMenu(IJudoData DC, ExtendedJudoData EDC, ExportSiteStructure siteStructure)
         {
             XDocument doc = new XDocument();
             XElement xcompetitions = new XElement(ConstantXML.Competitions);
@@ -492,7 +492,7 @@ namespace AppPublication.Export
                 }
 
                 // Ajoute les groupes dans la structure XML
-                List<EchelonEnum> typesGroupes = ExtensionNoyau.Deroulement.DataDeroulement.GetTypeGroupe(competition);
+                List<EchelonEnum> typesGroupes = ExtensionNoyau.Engagement.DataEngagement.GetTypeGroupe(competition);
                 foreach (EchelonEnum typeGroupe in typesGroupes)
                 {
                     XElement xgroupesP = new XElement(ConstantXML.GroupeEngagements_groupes);
@@ -516,7 +516,7 @@ namespace AppPublication.Export
         }
 
         /// <summary>
-        public static XmlDocument CreateDocumentEngagements(IJudoData DC, ExtensionJudoData EDC)
+        public static XmlDocument CreateDocumentEngagements(IJudoData DC, ExtendedJudoData EDC)
         {
             XDocument doc = new XDocument();
             XElement xcompetitions = new XElement(ConstantXML.Competitions);
@@ -532,7 +532,7 @@ namespace AppPublication.Export
                     xcompetitions.Add(xcompetition);
 
                     // Ajoute les groupes dans la structure XML
-                    List<EchelonEnum> typesGroupes = ExtensionNoyau.Deroulement.DataDeroulement.GetTypeGroupe(competition);
+                    List<EchelonEnum> typesGroupes = ExtensionNoyau.Engagement.DataEngagement.GetTypeGroupe(competition);
                     foreach (EchelonEnum typeGroupe in typesGroupes)
                     {
                         XElement xgroupesP = new XElement(ConstantXML.GroupeEngagements_groupes);

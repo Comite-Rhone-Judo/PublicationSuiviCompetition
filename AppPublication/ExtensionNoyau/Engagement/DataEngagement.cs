@@ -12,16 +12,16 @@ using System.Xml.Linq;
 using Tools.Enum;
 using Tools.Outils;
 
-namespace AppPublication.ExtensionNoyau.Deroulement
+namespace AppPublication.ExtensionNoyau.Engagement
 {
-    public class DataDeroulement
+    public class DataEngagement : IEngagementData
     {
         private List<GroupeEngagements> _groupesEngages = new List<GroupeEngagements>();
 
         /// <summary>
         /// Contient la liste des groupes de engages (par rapport a la derniere generation Par GetGroupesEngagements) par echelon
         /// </summary>
-        public List<GroupeEngagements> GroupesEngages
+        public IReadOnlyList<GroupeEngagements> GroupesEngages
         {
             get
             {
@@ -92,7 +92,7 @@ namespace AppPublication.ExtensionNoyau.Deroulement
         /// </summary>
         /// <param name="niveau"></param>
         /// <returns></returns>
-        public void GetGroupesEngagements(IJudoData DC)
+        private void GetGroupesEngagements(IJudoData DC)
         {
             // Vide la precedente liste
             _groupesEngages.Clear();

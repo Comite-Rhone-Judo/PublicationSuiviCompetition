@@ -52,8 +52,11 @@ namespace AppPublication.Controles
 
         private readonly object _lockDirty = new object();  // Objet de verrouillage pour garantir l'accès exclusif
         private bool _isCombatsCacheDirty = false; // Le flag d'état
+        private readonly object _repairLock = new object(); // Verrou dédié pour sérialiser les demandes de réparation (évite les requêtes multiples simultanées)
+        private bool _concurrentRequestReceived = false;  // Indicateur qu'une modification (UpdateCombat ou Tapis) a été rejetée ou reçue pendant l'attente
 
         private IJudoDataManager _dataManager = null;
+        private GestionStatistiques _statManager = null;
 
         #endregion
 
@@ -64,8 +67,11 @@ namespace AppPublication.Controles
 
         #region CONSTRUCTEUR
 
-        private GestionEvent()
+        private GestionEvent(IJudoDataManager dataMgr, GestionStatistiques statMgr )
         {
+            DataManager = dataMgr;
+            StatistiquesManager = statMgr;
+
             _lock = new object();
             _status = ClientJudoStatusEnum.Disconnected;
             _timerReponse = new SingleShotTimer();
@@ -78,10 +84,21 @@ namespace AppPublication.Controles
             {
                 if (_instance == null)
                 {
-                    _instance = new GestionEvent();
+                    throw new InvalidOperationException("L'instance de GestionEvent n'a pas été initialisée.");
                 }
+
                 return _instance;
             }
+        }
+
+        public static GestionEvent CreateInstance(IJudoDataManager dataMgr, GestionStatistiques statMgr)
+        {
+            if (_instance != null)
+            {
+                throw new InvalidOperationException("L'instance de GestionEvent a déjà été initialisée.");
+            }
+            _instance = new GestionEvent(dataMgr, statMgr);
+            return _instance;
         }
 
         #endregion
@@ -99,18 +116,50 @@ namespace AppPublication.Controles
 
         public int Timeout { get; set; } = kDefaultTimeoutMs;
 
-        private IJudoDataManager DataManager
+        public IJudoDataManager DataManager
         {
             get
             {
                 // Idéalement injecté, mais ici on garde la compatibilité avec l'existant
                 if (_dataManager == null)
                 {
-                    _dataManager = DialogControleur.Instance.ServerData as IJudoDataManager;
+                    throw new InvalidOperationException("Le gestionnaire de données n'a pas été initialisé.");
                 }
                 return _dataManager;
             }
+
+            private set
+            {
+                if(value == null)
+                {
+                    throw new ArgumentNullException(nameof(value), "Le gestionnaire de données ne peut pas être null.");
+                }
+                _dataManager = value;
+            }
         }
+
+        public GestionStatistiques StatistiquesManager
+        {
+            get
+            {
+                // Idéalement injecté, mais ici on garde la compatibilité avec l'existant
+                if (_statManager == null)
+                {
+                    throw new InvalidOperationException("Le gestionnaire de statistiques n'a pas été initialisé.");
+                }
+                return _statManager;
+            }
+
+            private set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(value), "Le gestionnaire de statistiques ne peut pas être null.");
+                }
+                _statManager = value;
+            }
+        }
+
 
         #endregion
 
@@ -462,42 +511,42 @@ namespace AppPublication.Controles
         {
             LogTools.DataLogger.Debug("client_OnListeCombats: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
-            bool isIdle = false;
-            lock(_lock)
+            // Détection sécurisée de l'état Idle
+            bool isIdleContext = false;
+            lock (_lock)
             {
-                switch (_status)
-                {
-                    case ClientJudoStatusEnum.Idle:
-                        {
-                            isIdle = true;
-                            break;
-                        }
-                    case ClientJudoStatusEnum.Initializing:
-                        {
-                            isIdle = false;
-                            break;
-                        }
-                    case ClientJudoStatusEnum.Disconnected:
-                    default:
-                        {
-                            LogTools.Logger.Warn("Reception d'un snapshot de combats en dehors des contextes autorises");
-                            return;
-                        }
-                }
+                isIdleContext = (_status == ClientJudoStatusEnum.Idle);
             }
 
-            if (isIdle)
+            if (isIdleContext)
             {
-                // Cas d'usage suite a une demande d'avoir le snapshot complet des combats
+                // Etape 1 : On intègre les données (Opération lourde)
                 UpdateRequestDispatcher(LectureDonneesCombatsFull, element);
 
-                // On signale que les données sont propres et reçues
-                IsCombatsCacheDirty = false;
+                // Etape 2 : Validation conditionnelle du cache
+                lock (_lockDirty)
+                {
+                    if (_concurrentRequestReceived)
+                    {
+                        // Une mise à jour a été rejetée PENDANT que nous traitions ce snapshot.
+                        // Ce snapshot est valide structurellement, mais il lui manque des données récentes.
+                        // ON LAISSE IsCombatsCacheDirty = true.
+                        LogTools.Logger.Debug("Snapshot intégré, mais des modifications concurrentes ont été détectées. Le cache reste 'Dirty'.");
+                    }
+                    else
+                    {
+                        // Tout est calme, le snapshot est l'image exacte du serveur.
+                        IsCombatsCacheDirty = false;
+                        LogTools.Logger.Debug("Snapshot intégré avec succès. Cache validé.");
+                    }
+                }
+
+                // Etape 3 : On libère le thread qui attend dans EnsureDataConstistency
                 _combatsDonneesRecuesSignal.Set();
             }
             else
             {
-                // Cas d'usage pendant l'initialisation
+                // Logique d'initialisation standard (au démarrage de l'app)
                 InitializationRequestDispatcher(BusyStatusEnum.InitDonneesCombats,
                                 LectureDonneesCombatsFull,
                                 BusyStatusEnum.DemandeDonneesArbitres,
@@ -514,47 +563,75 @@ namespace AppPublication.Controles
         /// <returns>True si les données sont garanties intègres, False si la récupération a échoué (Timeout ou déconnexion).</returns>
         public bool EnsureDataConstistency()
         {
-            // TODO Verifie race condition
-
-            // 1. Si les données sont déjà propres, on passe tout de suite
-            if (!IsCombatsCacheDirty)
+            // Verrou de réparation : Un seul thread peut piloter la réparation à la fois.
+            lock (_repairLock)
             {
-                return true;
-            }
+                // Lecture thread-safe de la propriété (qui utilise _lockDirty en interne)
+                if (!IsCombatsCacheDirty) return true;
 
-            // 2. Si les données sont sales, on tente une réparation
-            var client = DialogControleur.Instance.Connection.Client;
-            if (client != null)
-            {
-                // Reset du signal avant la demande
-                _combatsDonneesRecuesSignal.Reset();
+                LogTools.Logger.Debug("Cache Dirty détecté. Démarrage de la procédure de réparation...");
 
-                // On demande le snapshot complet (Type C1 sûr)
-                LogTools.Logger.Debug("Incohérence détectée (Dirty Cache), demande de snapshot complet..."); 
-                client.DemandeCombats();
-
-                // On attend que client_OnListeCombats reçoive la réponse et débloque le signal
-                bool success = _combatsDonneesRecuesSignal.WaitOne(kTimeoutAttenteReponseMs);
-
-                if (!success)
+                var client = DialogControleur.Instance.Connection.Client;
+                if (client != null)
                 {
-                    LogTools.Logger.Warn("Timeout lors de la sécurisation des données combats. Les donnees n'ont pas ete actualisees");
+                    // 1. Reset du signal d'attente
+                    _combatsDonneesRecuesSignal.Reset();
+
+                    // 2. Reset du détecteur d'interférence (On commence une nouvelle tentative propre)
+                    lock (_lockDirty)
+                    {
+                        _concurrentRequestReceived = false;
+                    }
+
+                    // Enregistrement de la demande dans les stats
+                    _statManager?.EnregistrerDemandeSnapshot();
+
+                    // 3. Envoi de la demande (Asynchrone)
+                    client.DemandeCombats();
+
+                    // 4. Attente bloquante de la réponse
+                    bool received = _combatsDonneesRecuesSignal.WaitOne(kTimeoutAttenteReponseMs);
+
+                    if (!received)
+                    {
+                        LogTools.Logger.Error("Timeout en attendant le snapshot complet.");
+                        return false;
+                    }
+
+                    // 5. Vérification finale
+                    // Le snapshot est arrivé et a été traité par client_OnListeCombats.
+                    // Si une interférence a eu lieu pendant le transfert, IsCombatsCacheDirty sera encore à true.
+                    bool isClean;
+                    lock (_lockDirty) { isClean = !IsCombatsCacheDirty; }
+
+                    if (!isClean)
+                    {
+                        LogTools.Logger.Debug("Le snapshot a été reçu mais des données concurrentes ont empêché la validation du cache.");
+                        // On retourne TRUE car on a chargé un snapshot valide (le "moins pire" disponible).
+                        // La génération se fera, et au prochain cycle, EnsureDataConstistency verra que c'est toujours Dirty et recommencera.
+                        return true;
+                    }
+
+                    return true; // Cache propre et validé
                 }
 
-                return success;
+                return false; // Pas de client connecté
             }
-
-            return false; // Pas de client connecté pour réparer
         }
 
         public void client_OnUpdateTapisCombats(object sender, XElement element)
         {
             LogTools.DataLogger.Debug("client_OnUpdateTapisCombats: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
-            // MODIFICATION CRITIQUE : 
-            // On intercepte UpdateTapisCombats qui est ambigu (C1 vs C2).
-            // On marque le cache comme sale pour forcer un rechargement complet avant la prochaine génération.
-            IsCombatsCacheDirty = true;
+            lock (_lockDirty)
+            {
+                // 1. On invalide le cache
+                IsCombatsCacheDirty = true;
+
+                // 2. On signale qu'une modification majeure a eu lieu.
+                // Si un snapshot était en cours de réception, il est désormais potentiellement obsolète.
+                _concurrentRequestReceived = true;
+            }
 
             // ON NE TRAITE PAS les données pour éviter la corruption du cache
         }
@@ -563,14 +640,20 @@ namespace AppPublication.Controles
         {
             LogTools.DataLogger.Debug("client_OnUpdateCombats: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
-            // Si le cache est sale, on ignore strictement les mises à jour partielles
-            // car elles pourraient corrompre davantage la mémoire ou crasher.
-            if (IsCombatsCacheDirty)
+            lock (_lockDirty)
             {
-                LogTools.Logger.Warn("Update partiel ignoré car le cache est invalide (Dirty).");
-                return;
+                if (IsCombatsCacheDirty)
+                {
+                    // SITUATION CRITIQUE : Le cache est invalide, on ne peut pas appliquer le différentiel.
+                    // On rejette la donnée, MAIS on lève le drapeau.
+                    // Cela forcera EnsureDataConstistency à redemander un snapshot complet qui contiendra cette donnée.
+                    _concurrentRequestReceived = true;
+                    LogTools.Logger.Warn("UpdateCombat ignoré (Cache Dirty). Flag d'interférence levé pour rechargement futur.");
+                    return;
+                }
             }
 
+            // Si le cache est propre, on applique normalement
             UpdateRequestDispatcher(LectureDonneesCombatsDiff, element);
         }
 

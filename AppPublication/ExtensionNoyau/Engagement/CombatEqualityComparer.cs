@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppPublication.ExtensionNoyau.Deroulement
+namespace AppPublication.ExtensionNoyau.Engagement
 {
     public class CombatEqualityComparer : IEqualityComparer<Combat>
     {

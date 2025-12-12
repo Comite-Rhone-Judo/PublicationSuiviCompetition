@@ -7,28 +7,25 @@ using System.Threading.Tasks;
 
 namespace AppPublication.ExtensionNoyau
 {
-    public class ExtensionJudoData
+    public class ExtendedJudoData : IExtendedJudoData
     {
         #region MEMBRES
-        // TODO travailler a partir de l'interface
         private JudoData _serverData = null;
         #endregion
 
         #region CONSTRUCTEURS
         // TODO a voir pour que la donnees soit reprise a chaque fois par rapport au snapshot
-        public ExtensionJudoData(JudoData serverData)
+        public ExtendedJudoData(JudoData serverData)
         {
             _serverData = serverData;
-            _deroulement = new ExtensionNoyau.Deroulement.DataDeroulement();
+            _deroulement = new ExtensionNoyau.Engagement.DataEngagement();
         }
 
         #endregion
 
-        // TODO Voir pour renommer cela en engagement
-
         #region PROPERTIES
-        private ExtensionNoyau.Deroulement.DataDeroulement _deroulement = null;
-        public ExtensionNoyau.Deroulement.DataDeroulement Deroulement
+        private ExtensionNoyau.Engagement.DataEngagement _deroulement = null;
+        public ExtensionNoyau.Engagement.DataEngagement Deroulement
         {
             get { return _deroulement; }
             set { _deroulement = value; }
@@ -38,7 +35,8 @@ namespace AppPublication.ExtensionNoyau
         #region METHODES
         public void SyncAll()
         {
-            Deroulement.SyncAll(_serverData);
+            IJudoData snapshot = _serverData?.GetSnapshot();
+            Deroulement.SyncAll(snapshot);
         }
 
         #endregion

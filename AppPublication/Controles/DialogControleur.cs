@@ -93,7 +93,7 @@ namespace AppPublication.Controles
         }
 
 
-        private GestionConnection _connection = new GestionConnection();
+        private GestionConnection _connection = null;
         /// <summary>
         /// Le gestionnaire de la connexion au serveur - Lecture seule
         /// </summary>
@@ -137,17 +137,17 @@ namespace AppPublication.Controles
             }
         }
 
-        private ExtensionNoyau.ExtensionJudoData _extendedServerData;
+        private ExtensionNoyau.ExtendedJudoData _extendedServerData;
         /// <summary>
         /// Le bloc de donnees recupere du serveur
         /// </summary>
-        public ExtensionNoyau.ExtensionJudoData ExtendedServerData
+        public ExtensionNoyau.ExtendedJudoData ExtendedServerData
         {
             get
             {
                 if (_extendedServerData == null)
                 {
-                    _extendedServerData = new ExtensionNoyau.ExtensionJudoData(ServerData);
+                    _extendedServerData = new ExtensionNoyau.ExtendedJudoData(ServerData);
                 }
                 return _extendedServerData;
             }
@@ -236,9 +236,18 @@ namespace AppPublication.Controles
             {
                 try
                 {
-                    _connection = new GestionConnection();
+                    // Commence par le gestionnaire de statistiques
                     _stats = new GestionStatistiques();
+
+                    // Initialise le gestionnaire d'evenements
+                    GestionEvent.CreateInstance(this.ServerData, _stats);
+
+                    // Initialise le gestionnaire de connexion en lui donnant le gestionnaire d'evenement a utiliser
+                    _connection = new GestionConnection(GestionEvent.Instance);
+
+                    // Le gestionnaire de site de publication
                     _site = new GestionSite(this.ServerData, _stats);
+
                     GestionEvent.Instance.BusyStatusChanged += OnBusyStatusChanged;
                 }
                 catch (Exception ex)

@@ -29,13 +29,14 @@ namespace AppPublication.Controles
         private DispatcherTimer _timer = null;
         private DateTime _reference = DateTime.Now;
         private int _nRetry = 0;
+        private GestionEvent _eventManager = null;
 
-        public GestionConnection()
+        public GestionConnection(GestionEvent eventMgr)
         {
+            _eventManager = eventMgr ?? throw new ArgumentNullException(nameof(eventMgr));
             _timer = new DispatcherTimer();
             _timer.Tick += new EventHandler(dispatcherTimer0_Tick);
             _timer.Interval = new TimeSpan(0, 0, 0, 1, 0);
-            //_timer.Start();
         }
 
         public ClientJudo Client
@@ -73,41 +74,42 @@ namespace AppPublication.Controles
                 return;
             }
 
-            _client.OnEndConnection += GestionEvent.Instance.client_OnEndConnection;
+            _client.OnEndConnection += _eventManager.client_OnEndConnection;
 
-            _client.TraitementConnexion.OnAcceptConnectionCOM += GestionEvent.Instance.clientjudo_OnAcceptConnectionCOM;
+            _client.TraitementConnexion.OnAcceptConnectionCOM += _eventManager.clientjudo_OnAcceptConnectionCOM;
 
-            _client.TraitementStructure.OnListeStructures += GestionEvent.Instance.client_OnListeStructures;
-            _client.TraitementStructure.OnUpdateStructures += GestionEvent.Instance.client_OnUpdateStructures;
+            _client.TraitementStructure.OnListeStructures += _eventManager.client_OnListeStructures;
+            _client.TraitementStructure.OnUpdateStructures += _eventManager.client_OnUpdateStructures;
 
-            _client.TraitementCategories.OnListeCategories += GestionEvent.Instance.client_OnListeCategories;
-            _client.TraitementCategories.OnUpdateCategories += GestionEvent.Instance.client_OnUpdateCategories;
+            _client.TraitementCategories.OnListeCategories += _eventManager.client_OnListeCategories;
+            _client.TraitementCategories.OnUpdateCategories += _eventManager.client_OnUpdateCategories;
 
-            _client.TraitementLogos.OnListeLogos += GestionEvent.Instance.client_OnListeLogos;
-            _client.TraitementLogos.OnUpdateLogos += GestionEvent.Instance.client_OnUpdateLogos;
+            _client.TraitementLogos.OnListeLogos += _eventManager.client_OnListeLogos;
+            _client.TraitementLogos.OnUpdateLogos += _eventManager.client_OnUpdateLogos;
 
-            _client.TraitementOrganisation.OnListeOrganisation += GestionEvent.Instance.client_OnListeOrganisation;
-            _client.TraitementOrganisation.OnUpdateOrganisation += GestionEvent.Instance.client_OnUpdateOrganisation;
+            _client.TraitementOrganisation.OnListeOrganisation += _eventManager.client_OnListeOrganisation;
+            _client.TraitementOrganisation.OnUpdateOrganisation +=  _eventManager.client_OnUpdateOrganisation;
 
-            _client.TraitementParticipants.OnListeEquipes += GestionEvent.Instance.client_OnListeEquipes;
-            _client.TraitementParticipants.OnUpdateEquipes += GestionEvent.Instance.client_OnUpdateEquipes;
+            _client.TraitementParticipants.OnListeEquipes += _eventManager.client_OnListeEquipes;
+            _client.TraitementParticipants.OnUpdateEquipes += _eventManager .client_OnUpdateEquipes;
 
-            _client.TraitementParticipants.OnListeJudokas += GestionEvent.Instance.client_OnListeJudokas;
-            _client.TraitementParticipants.OnUpdateJudokas += GestionEvent.Instance.client_OnUpdateJudokas;
+            _client.TraitementParticipants.OnListeJudokas += _eventManager.client_OnListeJudokas;
+            _client.TraitementParticipants.OnUpdateJudokas += _eventManager.client_OnUpdateJudokas;
 
-            _client.TraitementDeroulement.OnListePhases += GestionEvent.Instance.client_OnListePhases;
-            _client.TraitementDeroulement.OnUpdatePhases += GestionEvent.Instance.client_OnUpdatePhases;
+            _client.TraitementDeroulement.OnListePhases += _eventManager.client_OnListePhases;
+            _client.TraitementDeroulement.OnUpdatePhases += _eventManager.client_OnUpdatePhases;
 
-            _client.TraitementDeroulement.OnListeCombats += GestionEvent.Instance.client_OnListeCombats;
-            _client.TraitementDeroulement.OnUpdateCombats += GestionEvent.Instance.client_OnUpdateCombats;
-            _client.TraitementDeroulement.OnUpdateTapisCombats += GestionEvent.Instance.client_OnUpdateTapisCombats;
-            _client.TraitementDeroulement.OnUpdateRencontreReceived += GestionEvent.Instance.client_onUpdateRencontres;
+            _client.TraitementDeroulement.OnListeCombats += _eventManager.client_OnListeCombats;
+            _client.TraitementDeroulement.OnUpdateCombats += _eventManager.client_OnUpdateCombats;
+            _client.TraitementDeroulement.OnUpdateTapisCombats += _eventManager.client_OnUpdateTapisCombats;
+            _client.TraitementDeroulement.OnUpdateRencontreReceived += _eventManager.client_onUpdateRencontres;
 
-            _client.TraitementArbitrage.OnListeArbitrage += GestionEvent.Instance.client_OnListeArbitrage;
-            _client.TraitementArbitrage.OnUpdateArbitrage += GestionEvent.Instance.client_OnUpdateArbitrage;
+            _client.TraitementArbitrage.OnListeArbitrage += _eventManager.client_OnListeArbitrage;
+            _client.TraitementArbitrage.OnUpdateArbitrage += _eventManager.client_OnUpdateArbitrage;
 
             _client.TraitementConnexion.OnAcceptConnectionTest += clientjudo_OnDemandeConnectionTest;
 
+            // TODO il faudrait virer cela ...
             DialogControleur.Instance.IsBusy = true;
             DialogControleur.Instance.BusyStatus = Tools.Enum.BusyStatusEnum.InitDonneesStructures;
 

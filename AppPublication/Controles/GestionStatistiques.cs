@@ -22,6 +22,11 @@ namespace AppPublication.Controles
             NbFichierSynchronisation = 3
         }
 
+        public enum CompteurDonneesEnum
+        {
+            NbDemandeSnapshot = 0
+        }
+
         #region MEMBRES
         #endregion
 
@@ -48,6 +53,11 @@ namespace AppPublication.Controles
             cptSyncD.Add(CompteurSynchronisationEnum.NbSynchronisation, new StatistiqueItemCompteur("NbSynchronisation", "Nb de synchronisation"));
             cptSyncD.Add(CompteurSynchronisationEnum.NbErreurSynchronisation, new StatistiqueItemCompteur("NbErreurSynchronisation", "Nb d'erreur de synchronisation"));
             CompteursSynchronisationDifference = cptSyncD;
+
+            // --- AJOUT : Initialisation du dictionnaire Données ---
+            Dictionary<CompteurDonneesEnum, StatistiqueItem> cptData = new Dictionary<CompteurDonneesEnum, StatistiqueItem>();
+            cptData.Add(CompteurDonneesEnum.NbDemandeSnapshot, new StatistiqueItemCompteur("NbDemandeSnapshot", "Resynchro. (Snapshots)"));
+            CompteursDonnees = cptData;
 
         }
         #endregion
@@ -92,6 +102,20 @@ namespace AppPublication.Controles
             private set
             {
                 _compteursSynchronisationDifference = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private Dictionary<CompteurDonneesEnum, StatistiqueItem> _compteursDonnees = null;
+        public Dictionary<CompteurDonneesEnum, StatistiqueItem> CompteursDonnees
+        {
+            get
+            {
+                return _compteursDonnees;
+            }
+            private set
+            {
+                _compteursDonnees = value;
                 NotifyPropertyChanged();
             }
         }
@@ -141,6 +165,15 @@ namespace AppPublication.Controles
             {
                 item = statDict[CompteurSynchronisationEnum.NbFichierSynchronisation];
                 item.EnregistrerValeur(syncStatus.nbUpload);
+            }
+        }
+
+        public void EnregistrerDemandeSnapshot()
+        {
+            if (_compteursDonnees != null && _compteursDonnees.ContainsKey(CompteurDonneesEnum.NbDemandeSnapshot))
+            {
+                StatistiqueItem item = _compteursDonnees[CompteurDonneesEnum.NbDemandeSnapshot];
+                item.EnregistrerValeur();
             }
         }
 

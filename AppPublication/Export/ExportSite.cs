@@ -16,7 +16,7 @@ using Tools.Export;
 using Tools.Outils;
 using KernelImpl.Noyau.Structures;
 using System.Collections;
-using AppPublication.ExtensionNoyau.Deroulement;
+using AppPublication.ExtensionNoyau.Engagement;
 using System;
 using AppPublication.Tools;
 
@@ -276,7 +276,7 @@ namespace AppPublication.Export
         /// Génére le menu
         /// </summary>
         /// <param name="DC"></param>
-        public static List<FileWithChecksum> GenereWebSiteMenu(IJudoData DC, ExtensionJudoData EDC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
+        public static List<FileWithChecksum> GenereWebSiteMenu(IJudoData DC, ExtendedJudoData EDC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
             if (DC != null && EDC != null && config != null && siteStruct != null)
@@ -398,7 +398,7 @@ namespace AppPublication.Export
         /// <param name="DC"></param>
         /// <param name="EDC"></param>
         /// <param name="config"></param>
-        public static void InitSharedData(IJudoData DC, ExtensionJudoData EDC, ConfigurationExportSite config)
+        public static void InitSharedData(IJudoData DC, ExtendedJudoData EDC, ConfigurationExportSite config)
         {
             using (TimedLock.Lock(_xClubs))
             {
@@ -434,7 +434,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static List<FileWithChecksum> GenereWebSiteEngagements(IJudoData DC, ExtensionJudoData EDC, List<GroupeEngagements> grps, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
+        public static List<FileWithChecksum> GenereWebSiteEngagements(IJudoData DC, ExtendedJudoData EDC, List<GroupeEngagements> grps, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 

@@ -2,7 +2,7 @@
 using AppPublication.Tools;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
-using AppPublication.ExtensionNoyau.Deroulement;
+using AppPublication.ExtensionNoyau.Engagement;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -1719,6 +1719,17 @@ namespace AppPublication.Controles
                             // Recupere le snapshot des données (thread safe)
                             IJudoData snapshot = _judoDataManager.GetSnapshot();
 
+                            // Met a jour les données de l'extension
+
+                            // JudoData DC = DialogControleur.Instance.ServerData;
+                            // TODO, il faut mettre cela en snapshot aussi. A voir si on ne ferait pas le SyncAll avant l'appel au moment de faire le snapshot
+                            // On n'a pas les mêmes contraintes si on génére les données à partir du snapshot (elles ne viennent pas du reseau directement)
+                            ExtensionNoyau.ExtendedJudoData EDCSnapshot = DialogControleur.Instance.ExtendedServerData;
+                            // Initialise les extended data
+                            EDCSnapshot.SyncAll(snapshot);
+
+
+
                             // TODO c'est ici qu'il faut mettre le EDC SyncAll et le passer ensuite a GenereAll
 
 
@@ -1860,7 +1871,7 @@ namespace AppPublication.Controles
             try
             {
                 // JudoData DC = DialogControleur.Instance.ServerData;
-                ExtensionNoyau.ExtensionJudoData EDC = DialogControleur.Instance.ExtendedServerData;
+                ExtensionNoyau.ExtendedJudoData EDC = DialogControleur.Instance.ExtendedServerData;
                 ExportSiteStructure structRep = _structureRepertoires.Clone();  // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread
 
                 switch (genere.type)
@@ -1949,7 +1960,7 @@ namespace AppPublication.Controles
                 // JudoData DC = DialogControleur.Instance.ServerData;
                 // TODO, il faut mettre cela en snapshot aussi. A voir si on ne ferait pas le SyncAll avant l'appel au moment de faire le snapshot
                 // On n'a pas les mêmes contraintes si on génére les données à partir du snapshot (elles ne viennent pas du reseau directement)
-                ExtensionNoyau.ExtensionJudoData EDC = DialogControleur.Instance.ExtendedServerData;
+                ExtensionNoyau.ExtendedJudoData EDC = DialogControleur.Instance.ExtendedServerData;
                 // Initialise les extended data
                 EDC.SyncAll();
 
@@ -1982,7 +1993,7 @@ namespace AppPublication.Controles
                         foreach(Competition comp in dataContext.Organisation.Competitions)
                         {
                             // Recupere les groupes en fonction du type de groupement
-                            List<EchelonEnum> typesGrp = ExtensionNoyau.Deroulement.DataDeroulement.GetTypeGroupe(comp);
+                            List<EchelonEnum> typesGrp = ExtensionNoyau.Engagement.DataEngagement.GetTypeGroupe(comp);
 
                             // On genere les engagements pour chaque type de groupe
                             foreach (EchelonEnum typeGrp in typesGrp)

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Tools.Enum;
 
-namespace AppPublication.ExtensionNoyau.Deroulement
+namespace AppPublication.ExtensionNoyau.Engagement
 {
     public class GroupeEngagements
     {
