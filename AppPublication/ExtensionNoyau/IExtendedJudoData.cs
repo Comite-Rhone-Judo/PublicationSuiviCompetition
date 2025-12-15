@@ -10,7 +10,15 @@ namespace AppPublication.ExtensionNoyau
 {
     public interface IExtendedJudoData
     {
-        DataEngagement Deroulement { get; set; }
-        void SyncAll();
+        /// <summary>
+        /// Retourne la section de donnees d'engagement
+        /// </summary>
+        DataEngagement Engagement { get; set; }
+        
+        /// <summary>
+        /// Synchronise les donnees etendue avec les donnees principales
+        /// </summary>
+        /// <param name="snapshot"></param>
+        void SyncAll(IJudoData snapshot);
     }
 }

@@ -175,6 +175,7 @@ namespace AppPublication.Controles
         /// <param name="state"></param>
         public void OnResponseTimeout(object state)
         {
+            LogTools.Logger.Debug("Expiration du timer de reception de message");
             lock (_lock)
             {
                 // Demande l'arret du client si on est bien en phase d'init. Dans le cas contraire, on ignore le timer car cet evenement 
@@ -198,6 +199,8 @@ namespace AppPublication.Controles
         /// <param name="sender"></param>
         public void client_OnEndConnection(object sender)
         {
+            LogTools.Logger.Debug("Fin de connexion");
+
             if (DialogControleur.Instance.Connection.Client == (ClientJudo)sender)
             {
                 StopClient(true);   // Il faut arreter le timer suite a la deconnexion
@@ -211,7 +214,8 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         public void clientjudo_OnAcceptConnectionCOM(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.Logger.Debug("clientjudo_OnAcceptConnectionCOM");
+            LogTools.DataLogger.Debug("clientjudo_OnAcceptConnectionCOM - Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
             lock (_lock)
             {
@@ -259,7 +263,7 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         public void client_OnListeStructures(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("client_OnListeStructures: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.Logger.Debug("client_OnListeStructures");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesStructures,
                                                     LectureDonneesStructures,
@@ -275,7 +279,7 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         public void client_OnUpdateStructures(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("client_OnUpdateStructures: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.Logger.Debug("client_OnUpdateStructures");
 
             UpdateRequestDispatcher(LectureDonneesStructures, element);
         }
@@ -299,7 +303,7 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         public void client_OnListeCategories(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("client_OnListeCategories: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.Logger.Debug("client_OnListeCategories");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesCategories,
                                         LectureDonneesCategories,
@@ -310,7 +314,7 @@ namespace AppPublication.Controles
 
         public void client_OnUpdateCategories(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("client_OnUpdateCategories: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.Logger.Debug("client_OnUpdateCategories");
 
             UpdateRequestDispatcher(LectureDonneesCategories, element);
         }
@@ -327,7 +331,7 @@ namespace AppPublication.Controles
 
         public void client_OnListeLogos(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("client_OnListeLogos: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.Logger.Debug("client_OnListeLogos");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesLogos,
                             LectureDonneesLogos,
@@ -338,7 +342,7 @@ namespace AppPublication.Controles
 
         public void client_OnUpdateLogos(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("client_OnUpdateLogos: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.DataLogger.Debug("client_OnUpdateLogos");
             
             UpdateRequestDispatcher(LectureDonneesLogos, element);
         }
@@ -357,7 +361,7 @@ namespace AppPublication.Controles
 
         public void client_OnListeOrganisation(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("client_OnListeOrganisation: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.Logger.Debug("client_OnListeOrganisation");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesOrganisation,
                             LectureDonneesOrganisations,
@@ -365,7 +369,7 @@ namespace AppPublication.Controles
                            () =>
                            {
                                var judoDataInstance = DataManager as JudoData;
-                               if (judoDataInstance.Competition.IsEquipe())
+                               if (judoDataInstance.Organisation.Competition.IsEquipe())
                                {
                                    DialogControleur.Instance.Connection.Client.DemandeEquipes();
                                }
@@ -379,7 +383,7 @@ namespace AppPublication.Controles
 
         public void client_OnUpdateOrganisation(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("client_OnUpdateOrganisation: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.Logger.Debug("client_OnUpdateOrganisation");
 
             UpdateRequestDispatcher( (XElement elem) =>
             {
@@ -404,7 +408,7 @@ namespace AppPublication.Controles
 
         public void client_OnListeEquipes(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("client_OnListeEquipes: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.Logger.Debug("client_OnListeEquipes");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesJudokas,
                             LectureDonneesEquipes,
@@ -416,7 +420,7 @@ namespace AppPublication.Controles
 
         public void client_OnUpdateEquipes(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("client_OnUpdateEquipes: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.Logger.Debug("client_OnUpdateEquipes");
 
             UpdateRequestDispatcher(LectureDonneesEquipes, element);
         }
@@ -434,7 +438,7 @@ namespace AppPublication.Controles
 
         public void client_OnListeJudokas(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("client_OnListeJudokas: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.Logger.Debug("client_OnListeJudokas");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesJudokas,
                             LectureDonneesJudokas,
@@ -446,7 +450,7 @@ namespace AppPublication.Controles
 
         public void client_OnUpdateJudokas(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("client_OnUpdateJudokas: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.Logger.Debug("client_OnUpdateJudokas");
 
             UpdateRequestDispatcher(LectureDonneesJudokas, element);
         }
@@ -468,7 +472,7 @@ namespace AppPublication.Controles
 
         public void client_OnListePhases(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("client_OnListePhases: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.Logger.Debug("client_OnListePhases");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesPhases,
                             LectureDonneesPhases,
@@ -479,7 +483,7 @@ namespace AppPublication.Controles
 
         public void client_OnUpdatePhases(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("client_OnUpdatePhases: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.Logger.Debug("client_OnUpdatePhases");
 
             UpdateRequestDispatcher(LectureDonneesPhases, element);
         }
@@ -509,7 +513,7 @@ namespace AppPublication.Controles
 
         public void client_OnListeCombats(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("client_OnListeCombats: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.Logger.Debug("client_OnListeCombats");
 
             // Détection sécurisée de l'état Idle
             bool isIdleContext = false;
@@ -621,7 +625,7 @@ namespace AppPublication.Controles
 
         public void client_OnUpdateTapisCombats(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("client_OnUpdateTapisCombats: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.Logger.Debug("client_OnUpdateTapisCombats, invalidation du cache");
 
             lock (_lockDirty)
             {
@@ -638,7 +642,7 @@ namespace AppPublication.Controles
 
         public void client_OnUpdateCombats(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("client_OnUpdateCombats: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.Logger.Debug("client_OnUpdateCombats");
 
             lock (_lockDirty)
             {
@@ -669,7 +673,7 @@ namespace AppPublication.Controles
 
         public void client_onUpdateRencontres(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("client_onUpdateRencontres: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.Logger.Debug("client_onUpdateRencontres");
 
             UpdateRequestDispatcher(LectureDonneesRencontres, element);
         }
@@ -688,7 +692,7 @@ namespace AppPublication.Controles
 
         public void client_OnListeArbitrage(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("client_OnListeArbitrage: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.Logger.Debug("client_OnListeArbitrage");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesArbitres,
                                                    (XElement elem) =>
@@ -704,7 +708,7 @@ namespace AppPublication.Controles
 
         public void client_OnUpdateArbitrage(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("client_OnUpdateArbitrage: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.Logger.Debug("client_OnUpdateArbitrage");
 
             UpdateRequestDispatcher(LectureDonneesArbitrage, element);
         }
@@ -802,10 +806,11 @@ namespace AppPublication.Controles
         /// <param name="element">Les donnees recues</param>
         private void InitializationRequestDispatcher(BusyStatusEnum currentStatus, Action<XElement> dataAction, BusyStatusEnum nextStatus, Action nextAction, XElement element)
         {
+            LogTools.Logger.Debug("Traitement Request initialisation");
+            LogTools.DataLogger.Debug("Traitement Request initialisation: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+
             lock (_lock)
             {
-                LogTools.DataLogger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
-
                 // Arrete le timer de reponse
                 _timerReponse.Stop();
 
@@ -867,7 +872,8 @@ namespace AppPublication.Controles
 
         private void UpdateRequestDispatcher(Action<XElement> action, XElement element)
         {
-            LogTools.DataLogger.Debug("Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.Logger.Debug("Traitement request update");
+            LogTools.DataLogger.Debug("Traitement request update: '{0}'", element.ToString(SaveOptions.DisableFormatting));
 
             // Verifie l'etat du gestionnaire (on ne peut pas recevoir ces donnees pendant une initialisation)
             lock (_lock)

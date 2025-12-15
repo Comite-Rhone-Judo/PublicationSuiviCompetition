@@ -95,21 +95,6 @@ namespace KernelImpl
 
         #region Interface concrete
 
-        private Competition _competition = new Competition { type = (int)CompetitionTypeEnum.Individuel };
-		private List<Competition> _competitions = new List<Competition>();
-
-        public Competition Competition
-        {
-            get { return _competition; }
-            set { _competition = value; NotifyPropertyChanged(); }
-        }
-
-        public List<Competition> Competitions
-        {
-            get { return _competitions; }
-            set { _competitions = value; }
-        }
-
         private Noyau.Structures.DataStructures _structures = null;
         public Noyau.Structures.DataStructures Structures
         {

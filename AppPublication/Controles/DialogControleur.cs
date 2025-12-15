@@ -137,22 +137,6 @@ namespace AppPublication.Controles
             }
         }
 
-        private ExtensionNoyau.ExtendedJudoData _extendedServerData;
-        /// <summary>
-        /// Le bloc de donnees recupere du serveur
-        /// </summary>
-        public ExtensionNoyau.ExtendedJudoData ExtendedServerData
-        {
-            get
-            {
-                if (_extendedServerData == null)
-                {
-                    _extendedServerData = new ExtensionNoyau.ExtendedJudoData(ServerData);
-                }
-                return _extendedServerData;
-            }
-        }
-
         private bool _isBusy;
         /// <summary>
         /// Indique si l'application est occupee (chargement de données)
@@ -224,7 +208,7 @@ namespace AppPublication.Controles
         /// </summary>
         public void UpdateCompetition()
         {
-            GestionSite.IdCompetition = (ServerData.Competition != null) ? ServerData.Competition.remoteId : string.Empty;
+            GestionSite.IdCompetition = (ServerData.Organisation.Competition != null) ? ServerData.Organisation.Competition.remoteId : string.Empty;
         }
 
         /// <summary>

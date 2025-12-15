@@ -1,12 +1,18 @@
 ﻿using AppPublication.Controles;
+using AppPublication.ExtensionNoyau;
+using AppPublication.ExtensionNoyau.Engagement;
+using AppPublication.Tools;
 using AppPublication.Tools.Enum;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
 using KernelImpl.Noyau.Organisation;
-using AppPublication.ExtensionNoyau;
+using KernelImpl.Noyau.Structures;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Policy;
 using System.Web.UI.WebControls;
 using System.Xml;
 using System.Xml.Linq;
@@ -14,11 +20,6 @@ using System.Xml.Xsl;
 using Tools.Enum;
 using Tools.Export;
 using Tools.Outils;
-using KernelImpl.Noyau.Structures;
-using System.Collections;
-using AppPublication.ExtensionNoyau.Engagement;
-using System;
-using AppPublication.Tools;
 
 namespace AppPublication.Export
 {
@@ -40,6 +41,8 @@ namespace AppPublication.Export
         /// <param name="phase">la phase</param>
         public static List<FileWithChecksum> GenereWebSitePhase(IJudoData DC, Phase phase, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
         {
+            LogTools.Logger.Debug("Phase = {0}", phase?.libelle);
+
             List<string> urls = new List<string>();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
             int nbGen = 1;
@@ -91,6 +94,8 @@ namespace AppPublication.Export
 
                     ExportHTML.ToHTMLSite(xmlResultat, type2, fileSave2, argsList2);
                     urls.Add(fileSave2 + ".html");
+                    LogTools.Logger.Debug("Poule = {0}", urls.Count);
+
                     progress.Report(GenerationProgressInfo.ProgressInstance(workId, 1)); // Report the progress of the task
                 }
                 else if (phase.typePhase == (int)TypePhaseEnum.Tableau)
@@ -110,6 +115,8 @@ namespace AppPublication.Export
 
                     ExportHTML.ToHTMLSite(xmlResultat, type2, fileSave2, argsList2);
                     urls.Add(fileSave2 + ".html");
+                    LogTools.Logger.Debug("Tableau = {0}", urls.Count);
+
                     progress.Report(GenerationProgressInfo.ProgressInstance(workId, 1)); // Report the progress of the task
                 }
 
@@ -133,6 +140,8 @@ namespace AppPublication.Export
 
                     ExportHTML.ToHTMLSite(xmlFeuilleCombat, type, fileSave, argsList);
                     urls.Add(fileSave + ".html");
+                    LogTools.Logger.Debug("ProchainsCombats = {0}", urls.Count);
+
                     progress.Report(GenerationProgressInfo.ProgressInstance(workId, 2)); // Report the progress of the task
                 }
 
@@ -173,6 +182,8 @@ namespace AppPublication.Export
 
                 output.Add(new FileWithChecksum(fileSave + ".html"));
             }
+            LogTools.Logger.Debug("Classement = {0}", output.Count);
+
 
             progress?.Report(GenerationProgressInfo.ProgressInstance(workId, 1)); // Report the end of the task
             return output;
@@ -211,6 +222,9 @@ namespace AppPublication.Export
 
                 output.Add(new FileWithChecksum(fileSave + ".html"));
             }
+
+            LogTools.Logger.Debug("ProchainsCombats Tapis = {0}", output.Count);
+
 
             progress?.Report( GenerationProgressInfo.ProgressInstance(workId, 1)); // Report the end of the task
             return output;
@@ -355,6 +369,9 @@ namespace AppPublication.Export
                 }
             }
 
+            LogTools.Logger.Debug("Menu = {0}", output.Count);
+
+
             return output;
         }
 
@@ -386,6 +403,9 @@ namespace AppPublication.Export
 
                 output.Add(new FileWithChecksum(fileSave + ".html"));
             }
+
+            LogTools.Logger.Debug("Affectation = {0}", output.Count);
+
 
             progress?.Report(GenerationProgressInfo.ProgressInstance(workId, 1)); // Report the end of the task
             return output;
@@ -463,6 +483,9 @@ namespace AppPublication.Export
                     progress?.Report( GenerationProgressInfo.ProgressInstance(workId, i+1)); // Report the end of the task
                 }
             }
+
+            LogTools.Logger.Debug("Engagements = {0}", output.Count);
+
 
             return output;
         }

@@ -492,14 +492,14 @@ namespace AppPublication.Export
                 }
 
                 // Ajoute les groupes dans la structure XML
-                List<EchelonEnum> typesGroupes = ExtensionNoyau.Engagement.DataEngagement.GetTypeGroupe(competition);
+                List<EchelonEnum> typesGroupes =EDC.Engagement.TypesGroupes[competition.id];
                 foreach (EchelonEnum typeGroupe in typesGroupes)
                 {
                     XElement xgroupesP = new XElement(ConstantXML.GroupeEngagements_groupes);
                     xgroupesP.SetAttributeValue(ConstantXML.GroupeEngagements_type, (int) typeGroupe);
 
                     // Recupere les groupes d'engagements pour la competition et le type de groupe en cours
-                    IList<GroupeEngagements> grpEngages = EDC.Deroulement.GroupesEngages.Where(g => g.Competition == competition.id && g.Type == (int)typeGroupe).ToList();
+                    IList<GroupeEngagements> grpEngages = EDC.Engagement.GroupesEngages.Where(g => g.Competition == competition.id && g.Type == (int)typeGroupe).ToList();
 
                     // Convertit en XML et ajoute a l'element racine
                     foreach (GroupeEngagements grp in grpEngages)
@@ -532,14 +532,14 @@ namespace AppPublication.Export
                     xcompetitions.Add(xcompetition);
 
                     // Ajoute les groupes dans la structure XML
-                    List<EchelonEnum> typesGroupes = ExtensionNoyau.Engagement.DataEngagement.GetTypeGroupe(competition);
+                    List<EchelonEnum> typesGroupes = EDC.Engagement.TypesGroupes[competition.id];
                     foreach (EchelonEnum typeGroupe in typesGroupes)
                     {
                         XElement xgroupesP = new XElement(ConstantXML.GroupeEngagements_groupes);
                         xgroupesP.SetAttributeValue(ConstantXML.GroupeEngagements_type, (int) typeGroupe);
 
                         // Recupere les groupes d'engagements pour la competition et le type de groupe en cours
-                        IList<GroupeEngagements> groupes = EDC.Deroulement.GroupesEngages.Where(g => g.Competition == competition.id && g.Type == (int)typeGroupe).ToList();
+                        IList<GroupeEngagements> groupes = EDC.Engagement.GroupesEngages.Where(g => g.Competition == competition.id && g.Type == (int)typeGroupe).ToList();
 
                         // Convertit en XML et ajoute a l'element racine
                         foreach (GroupeEngagements groupe in groupes)

@@ -17,6 +17,7 @@ namespace AppPublication.ExtensionNoyau.Engagement
     public class DataEngagement : IEngagementData
     {
         private List<GroupeEngagements> _groupesEngages = new List<GroupeEngagements>();
+        private Dictionary<int, List<EchelonEnum>> _typesGroupes = new Dictionary<int, List<EchelonEnum>>();
 
         /// <summary>
         /// Contient la liste des groupes de engages (par rapport a la derniere generation Par GetGroupesEngagements) par echelon
@@ -29,8 +30,20 @@ namespace AppPublication.ExtensionNoyau.Engagement
             }
         }
 
+        /// <summary>
+        /// Contient le liste des types de groupes par ID de competition
+        /// </summary>
+        public IReadOnlyDictionary<int, List<EchelonEnum>> TypesGroupes
+        {
+            get
+            {
+                return _typesGroupes;
+            }
+        }
+
         public void SyncAll(IJudoData DC)
         {
+            GetTypesGroupes(DC);
             GetGroupesEngagements(DC);
         }
 
@@ -39,52 +52,59 @@ namespace AppPublication.ExtensionNoyau.Engagement
         /// </summary>
         /// <param name="c">La competition</param>
         /// <returns>Le typ de groupement</returns>
-        public static List<EchelonEnum> GetTypeGroupe(Competition c)
+        private void GetTypesGroupes(IJudoData dataContext)
         {
-            List<EchelonEnum> output = new List<EchelonEnum>();
+            // Efface le precedent contenu
+            _typesGroupes.Clear();
 
-            // on a toujours au moins par Nom
-            output.Add(EchelonEnum.Aucun);
-
-            // ajoute les niveaux en fonction de la celui de la competition
-            switch (c.niveau)
+            foreach (Competition comp in dataContext.Organisation.Competitions)
             {
-                case (int)EchelonEnum.Club:
-                    {
-                        output.Add(EchelonEnum.Club);
-                        break;
-                    }
-                case (int)EchelonEnum.Departement:
-                    {
-                        output.Add(EchelonEnum.Club);
-                        output.Add(EchelonEnum.Departement);
-                        break;
-                    }
-                case (int)EchelonEnum.Ligue:
-                    {
-                        output.Add(EchelonEnum.Club);
-                        output.Add(EchelonEnum.Departement);
-                        output.Add(EchelonEnum.Ligue);
-                        break;
-                    }
-                case (int)EchelonEnum.National:
-                case (int)EchelonEnum.International:
-                    {
-                        output.Add(EchelonEnum.Club);
-                        output.Add(EchelonEnum.Departement);
-                        output.Add(EchelonEnum.Ligue);
-                        output.Add(EchelonEnum.National);
-                        break;
-                    }
-                default:
-                    {
-                        // Pas de niveau connu, on ajoute le niveau le plus bas (club)
-                        output.Add(EchelonEnum.Club);
-                        break;
-                    }
-            }
+                List<EchelonEnum> listEchelon = new List<EchelonEnum>();
 
-            return output;  
+                // on a toujours au moins par Nom
+                listEchelon.Add(EchelonEnum.Aucun);
+
+                // ajoute les niveaux en fonction de la celui de la competition
+                switch (comp.niveau)
+                {
+                    case (int)EchelonEnum.Club:
+                        {
+                            listEchelon.Add(EchelonEnum.Club);
+                            break;
+                        }
+                    case (int)EchelonEnum.Departement:
+                        {
+                            listEchelon.Add(EchelonEnum.Club);
+                            listEchelon.Add(EchelonEnum.Departement);
+                            break;
+                        }
+                    case (int)EchelonEnum.Ligue:
+                        {
+                            listEchelon.Add(EchelonEnum.Club);
+                            listEchelon.Add(EchelonEnum.Departement);
+                            listEchelon.Add(EchelonEnum.Ligue);
+                            break;
+                        }
+                    case (int)EchelonEnum.National:
+                    case (int)EchelonEnum.International:
+                        {
+                            listEchelon.Add(EchelonEnum.Club);
+                            listEchelon.Add(EchelonEnum.Departement);
+                            listEchelon.Add(EchelonEnum.Ligue);
+                            listEchelon.Add(EchelonEnum.National);
+                            break;
+                        }
+                    default:
+                        {
+                            // Pas de niveau connu, on ajoute le niveau le plus bas (club)
+                            listEchelon.Add(EchelonEnum.Club);
+                            break;
+                        }
+                }
+
+                // Ajoute la liste pour la competition en cours
+                _typesGroupes.Add(comp.id, listEchelon);
+            }
         }
 
         /// <summary>

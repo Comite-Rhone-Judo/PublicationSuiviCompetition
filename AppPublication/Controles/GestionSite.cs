@@ -2,6 +2,7 @@
 using AppPublication.Tools;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
+using AppPublication.ExtensionNoyau;
 using AppPublication.ExtensionNoyau.Engagement;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,7 @@ using Tools.Export;
 using Tools.Outils;
 using Tools.Windows;
 using KernelImpl.Noyau.Organisation;
+
 
 namespace AppPublication.Controles
 {
@@ -139,6 +141,22 @@ namespace AppPublication.Controles
         #endregion
 
         #region PROPRIETES
+
+        private ExtendedJudoData _extendedJudoData;
+        /// <summary>
+        /// Le bloc de donnees etendue
+        /// </summary>
+        public ExtendedJudoData ExtendedJudoData
+        {
+            get
+            {
+                if (_extendedJudoData == null)
+                {
+                    _extendedJudoData = new ExtendedJudoData();
+                }
+                return _extendedJudoData;
+            }
+        }
 
         private bool _easyConfigDisponible;
 
@@ -994,11 +1012,13 @@ namespace AppPublication.Controles
                 URLDistantPublication = CalculURLSiteDistant();
                 URLLocalPublication = CalculURLSiteLocal();
                 // On ne peut publier que en individuelle
-                CanPublierAffectation = DialogControleur.Instance.ServerData.Competition.IsIndividuelle();
-                CanPublierEngagements = DialogControleur.Instance.ServerData.Competition.IsIndividuelle() || DialogControleur.Instance.ServerData.Competition.IsShiai();
+                // Note: ici on devrait dans l'absolu utiliser le snapshot mais le traitement est rapide et a peu de chance de changer
+                var DC = _judoDataManager as IJudoData;
+                CanPublierAffectation = DC.Organisation.Competition.IsIndividuelle();
+                CanPublierEngagements = DC.Organisation.Competition.IsIndividuelle() || DC.Organisation.Competition.IsShiai();
 
                 // Si on est en Shiai, par defaut on met les poules en colonnes
-                if (DialogControleur.Instance.ServerData.Competition.IsShiai())
+                if (DC.Organisation.Competition.IsShiai())
                 {
                     PouleEnColonnes = true;
                     PouleToujoursEnColonnes = true;
@@ -1720,18 +1740,7 @@ namespace AppPublication.Controles
                             IJudoData snapshot = _judoDataManager.GetSnapshot();
 
                             // Met a jour les données de l'extension
-
-                            // JudoData DC = DialogControleur.Instance.ServerData;
-                            // TODO, il faut mettre cela en snapshot aussi. A voir si on ne ferait pas le SyncAll avant l'appel au moment de faire le snapshot
-                            // On n'a pas les mêmes contraintes si on génére les données à partir du snapshot (elles ne viennent pas du reseau directement)
-                            ExtensionNoyau.ExtendedJudoData EDCSnapshot = DialogControleur.Instance.ExtendedServerData;
-                            // Initialise les extended data
-                            EDCSnapshot.SyncAll(snapshot);
-
-
-
-                            // TODO c'est ici qu'il faut mettre le EDC SyncAll et le passer ensuite a GenereAll
-
+                            ExtendedJudoData.SyncAll(snapshot);
 
                             StatExecution statGeneration = new StatExecution();
                             Stopwatch watcherGen = new Stopwatch();
@@ -1870,8 +1879,6 @@ namespace AppPublication.Controles
 
             try
             {
-                // JudoData DC = DialogControleur.Instance.ServerData;
-                ExtensionNoyau.ExtendedJudoData EDC = DialogControleur.Instance.ExtendedServerData;
                 ExportSiteStructure structRep = _structureRepertoires.Clone();  // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread
 
                 switch (genere.type)
@@ -1886,7 +1893,7 @@ namespace AppPublication.Controles
                         urls = ExportSite.GenereWebSiteIndex(dataContext, cfg, structRep, progress, workId);
                         break;
                     case SiteEnum.Menu:
-                        urls = ExportSite.GenereWebSiteMenu(dataContext, EDC, cfg, structRep, progress, workId);
+                        urls = ExportSite.GenereWebSiteMenu(dataContext, ExtendedJudoData, cfg, structRep, progress, workId);
                         break;
                     case SiteEnum.Phase:
                         urls = ExportSite.GenereWebSitePhase(dataContext, genere.phase, cfg, structRep, progress, workId);
@@ -1895,7 +1902,7 @@ namespace AppPublication.Controles
                         urls = ExportSite.GenereWebSiteAffectation(dataContext, cfg, structRep, progress, workId);
                         break;
                     case SiteEnum.Engagements:
-                        urls = ExportSite.GenereWebSiteEngagements(dataContext, EDC, genere.groupeEngages, cfg, structRep, progress, workId);
+                        urls = ExportSite.GenereWebSiteEngagements(dataContext, ExtendedJudoData, genere.groupeEngages, cfg, structRep, progress, workId);
                         break;
                 }
             }
@@ -1957,19 +1964,12 @@ namespace AppPublication.Controles
                 if (_generationCounter < long.MaxValue) { _generationCounter++; }                
                 LogTools.Logger.Debug("Lancement de la {0}eme generation du site", _generationCounter);
 
-                // JudoData DC = DialogControleur.Instance.ServerData;
-                // TODO, il faut mettre cela en snapshot aussi. A voir si on ne ferait pas le SyncAll avant l'appel au moment de faire le snapshot
-                // On n'a pas les mêmes contraintes si on génére les données à partir du snapshot (elles ne viennent pas du reseau directement)
-                ExtensionNoyau.ExtendedJudoData EDC = DialogControleur.Instance.ExtendedServerData;
-                // Initialise les extended data
-                EDC.SyncAll();
-
                 if (dataContext.Organisation.Competitions.Count > 0)
                 {
                     List<Task<List<FileWithChecksum>>> listTaskGeneration = new List<Task<List<FileWithChecksum>>>();
 
                     // Initialise les donnees partagees de generation
-                    ExportSite.InitSharedData(dataContext, EDC, cfg);
+                    ExportSite.InitSharedData(dataContext, ExtendedJudoData, cfg);
                     _allTaskProgress.Clear();
                     _workCounter = 0;
                     _nbGeneration = 0;
@@ -1990,15 +1990,15 @@ namespace AppPublication.Controles
                     
                     if(PublierEngagements && CanPublierEngagements)
                     {
-                        foreach(Competition comp in dataContext.Organisation.Competitions)
+                        foreach (Competition comp in dataContext.Organisation.Competitions)
                         {
                             // Recupere les groupes en fonction du type de groupement
-                            List<EchelonEnum> typesGrp = ExtensionNoyau.Engagement.DataEngagement.GetTypeGroupe(comp);
+                            List<EchelonEnum> typesGrp = ExtendedJudoData.Engagement.TypesGroupes[comp.id]; 
 
                             // On genere les engagements pour chaque type de groupe
                             foreach (EchelonEnum typeGrp in typesGrp)
                             {
-                                List<GroupeEngagements> groupesP = EDC.Deroulement.GroupesEngages.Where(g => g.Competition == comp.id && g.Type == (int)typeGrp).ToList();
+                                List<GroupeEngagements> groupesP = ExtendedJudoData.Engagement.GroupesEngages.Where(g => g.Competition == comp.id && g.Type == (int)typeGrp).ToList();
 
                                 // Ce code est plus efficace qye celui qui cree une tache par groupe
                                 // sans doute car le lancement de nombreuses Task est couteux mais il provoque une latence a la fin de la generation
