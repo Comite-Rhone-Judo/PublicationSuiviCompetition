@@ -100,6 +100,7 @@ namespace Tools.TCP_Tools.Client
                 }
                 catch
                 {
+                    LogTools.Logger.Debug("ClientGenerique IsConnected - Exception sur la verification de la connection");
                     return false;
                 }
             }

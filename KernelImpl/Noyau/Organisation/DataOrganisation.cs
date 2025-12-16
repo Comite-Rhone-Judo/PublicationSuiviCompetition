@@ -39,9 +39,6 @@ namespace KernelImpl.Noyau.Organisation
             _competitionsCache.UpdateFullSnapshot(competitions); 
             Competition = competitions.FirstOrDefault();
 
-            // TODO A quoi cela sert-il de l'avoir ici alors qu'on a la copie dans Organisation
-            // DC.Competition = Competitions.FirstOrDefault();
-            // DC.Competitions = Competitions.ToList();
             ExportTools.default_competition = DC.Organisation.Competition.remoteId;
         }
 

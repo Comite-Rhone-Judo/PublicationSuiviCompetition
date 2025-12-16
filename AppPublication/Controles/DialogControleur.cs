@@ -2,6 +2,7 @@
 using AppPublication.Tools.Enum;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
+using KernelImpl.Noyau.Organisation;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Information;
 using System;
 using System.IO;
@@ -47,6 +48,24 @@ namespace AppPublication.Controles
 
         #region PROPRIETES
 
+        private Competition _competition = null;
+        /// <summary>
+        /// On expose la competition courante pour liaison avec l'IHM (et la notification de changement)
+        /// </summary>
+        public Competition Competition
+        {
+            get
+            {
+                return _competition;
+            }
+
+            private set { 
+                _competition = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+
         private AppInformation _appInformation = null;
 
         public AppInformation AppInformation
@@ -71,7 +90,7 @@ namespace AppPublication.Controles
             get
             {
                 if (_instance == null)
-                    throw new InvalidOperationException("DialogControleur non initialisé ! Appelez DialogControleur.Initialiser() dans App.xaml.cs.");
+                    throw new InvalidOperationException("DialogControleur non initialise ! Appelez DialogControleur.Initialiser() dans App.xaml.cs.");
                 return _instance;
             }
         }
@@ -198,7 +217,7 @@ namespace AppPublication.Controles
         public static DialogControleur CreateInstance(JudoData data)
         {
             if (_instance != null)
-                throw new InvalidOperationException("Violation du Singleton : DialogControleur déjà instancié.");
+                throw new InvalidOperationException("Violation du Singleton : DialogControleur deja instancie.");
 
             _instance = new DialogControleur(data);
             return _instance;
@@ -209,6 +228,7 @@ namespace AppPublication.Controles
         /// </summary>
         public void UpdateCompetition()
         {
+            Competition = ServerData.Organisation.Competition;  // Met a jour la competition courante pour l'IHM
             GestionSite.IdCompetition = (ServerData.Organisation.Competition != null) ? ServerData.Organisation.Competition.remoteId : string.Empty;
         }
 
@@ -548,29 +568,6 @@ namespace AppPublication.Controles
                 return _cmdArreterGeneration;
             }
         }
-
-        /*private void ButSite_Click_1(object sender, RoutedEventArgs e)
-        {
-            DialogControleur DC = DialogControleur.Instance;
-            try
-            {
-                string url = "";
-                if (DialogControleur.Instance.GestionSite.SiteLocal.IsLocal)
-                {
-                    url = ExportTools.GetURLSiteLocal(
-                         DialogControleur.Instance.GestionSite.SiteLocal.ServerHTTP.ListeningIpAddress.ToString(),
-                         DialogControleur.Instance.GestionSite.SiteLocal.ServerHTTP.Port,
-                         DialogControleur.Instance.ServerData.competition.remoteId);
-                }
-                else if (!DialogControleur.Instance.GestionSite.SiteLocal.IsLocal && DialogControleur.Instance.GestionSite.SiteLocal.SiteFTPDistant == NetworkTools.FTP_EJUDO_SUIVI_URL)
-                {
-                    url = ExportTools.GetURLSiteFTP(DialogControleur.Instance.ServerData.competition.remoteId);
-                }
-
-                System.Diagnostics.Process.Start(url);
-            }
-            catch { }
-        }*/
 
         private ICommand _cmdAfficherSiteLocal = null;
         /// <summary>

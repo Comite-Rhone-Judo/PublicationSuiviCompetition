@@ -41,7 +41,7 @@ namespace AppPublication.Export
         /// <param name="phase">la phase</param>
         public static List<FileWithChecksum> GenereWebSitePhase(IJudoData DC, Phase phase, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
         {
-            LogTools.Logger.Debug("Phase = {0}", phase?.libelle);
+            LogTools.Logger.Debug("Phase ({1}) '{0}'", phase?.libelle, phase?.id);
 
             List<string> urls = new List<string>();
             List<FileWithChecksum> output = new List<FileWithChecksum>();

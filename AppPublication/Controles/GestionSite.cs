@@ -1646,13 +1646,14 @@ namespace AppPublication.Controles
                 }
                 catch (Exception ex)
                 {
-                    // On RAZ l'etat du lecteur
+                    LogTools.Logger.Error(ex, "Erreur lors du lancement de la generation du site");
                     throw new Exception("Erreur lors du lancement de la generation du site", ex);
                 }
             }
             else
             {
-                throw new Exception("Une tache de génération est déjà en cours d'exécution");
+                LogTools.Logger.Error("Une tache de generation est deja en cours d'execution");
+                throw new Exception("Une tache de generation est deja en cours d'execution");
             }
         }
 
@@ -1676,13 +1677,14 @@ namespace AppPublication.Controles
                 }
                 catch (Exception ex)
                 {
-                    // On RAZ l'etat du lecteur
+                    LogTools.Logger.Error(ex, "Erreur lors du lancement du nettoyage du site");
                     throw new Exception("Erreur lors du lancement du nettoyage du site", ex);
                 }
             }
             else
             {
-                throw new Exception("Une tache de nettoyage est déjà en cours d'exécution");
+                LogTools.Logger.Error("Une tache de nettoyage est deja en cours d'execution");
+                throw new Exception("Une tache de nettoyage est deja en cours d'execution");
             }
         }
 
@@ -1731,7 +1733,7 @@ namespace AppPublication.Controles
                         }
                         catch (Exception ex)
                         {
-                            LogTools.Logger.Error(ex, "Exception lors du controle de la consistance données recues.");
+                            LogTools.Logger.Error(ex, "Exception lors du controle de la consistance donnees recues.");
                         }
 
                         if (dataConsistent)
@@ -1829,7 +1831,7 @@ namespace AppPublication.Controles
                         else
                         {
                             // Le controle d'integrite a echoue
-                            LogTools.Logger.Warn("Impossible de valider l'intégrité des données combats (Timeout ou déconnexion).");
+                            LogTools.Logger.Warn("Impossible de valider l'integrite des donnees combats (Timeout ou deconnexion).");
                         }
                     }
                     finally

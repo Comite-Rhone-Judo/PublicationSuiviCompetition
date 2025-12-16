@@ -280,7 +280,7 @@ namespace AppPublication.Controles
         /// </summary>
         private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
         {
-            LogTools.Logger.Debug("Client déconnecté à {0}", e.DisconnectionTime);
+            LogTools.Logger.Debug("Client deconnecte a {0}", e.DisconnectionTime);
 
             lock (_lock)
             {
@@ -675,13 +675,13 @@ namespace AppPublication.Controles
                         // Une mise à jour a été rejetée PENDANT que nous traitions ce snapshot.
                         // Ce snapshot est valide structurellement, mais il lui manque des données récentes.
                         // ON LAISSE IsCombatsCacheDirty = true.
-                        LogTools.Logger.Debug("Snapshot intégré, mais des modifications concurrentes ont été détectées. Le cache reste 'Dirty'.");
+                        LogTools.Logger.Debug("Snapshot integre, mais des modifications concurrentes ont ete detectees. Le cache reste 'Dirty'.");
                     }
                     else
                     {
                         // Tout est calme, le snapshot est l'image exacte du serveur.
                         IsCombatsCacheDirty = false;
-                        LogTools.Logger.Debug("Snapshot intégré avec succès. Cache validé.");
+                        LogTools.Logger.Debug("Snapshot integre avec succes. Cache valide.");
                     }
                 }
 
@@ -717,7 +717,7 @@ namespace AppPublication.Controles
                 // Lecture thread-safe de la propriété (qui utilise _lockDirty en interne)
                 if (!IsCombatsCacheDirty) return true;
 
-                LogTools.Logger.Debug("Cache Dirty détecté. Démarrage de la procédure de réparation...");
+                LogTools.Logger.Debug("Cache Dirty detecte. Demarrage de la procedure de reparation...");
 
                 var client = _clientProvider.Client;
                 if (client != null)
@@ -754,7 +754,7 @@ namespace AppPublication.Controles
 
                     if (!isClean)
                     {
-                        LogTools.Logger.Debug("Le snapshot a été reçu mais des données concurrentes ont empêché la validation du cache.");
+                        LogTools.Logger.Debug("Le snapshot a ete reçu mais des donnees concurrentes ont empeche la validation du cache.");
                         // On retourne TRUE car on a chargé un snapshot valide (le "moins pire" disponible).
                         // La génération se fera, et au prochain cycle, EnsureDataConstistency verra que c'est toujours Dirty et recommencera.
                         return true;
@@ -796,7 +796,7 @@ namespace AppPublication.Controles
                     // On rejette la donnée, MAIS on lève le drapeau.
                     // Cela forcera EnsureDataConstistency à redemander un snapshot complet qui contiendra cette donnée.
                     _concurrentRequestReceived = true;
-                    LogTools.Logger.Warn("UpdateCombat ignoré (Cache Dirty). Flag d'interférence levé pour rechargement futur.");
+                    LogTools.Logger.Warn("UpdateCombat ignore (Cache Dirty). Flag d'interference leve pour rechargement futur.");
                     return;
                 }
             }
@@ -958,7 +958,7 @@ namespace AppPublication.Controles
             catch (Exception ex)
             {
                 // Log but don't throw - we're in cleanup mode
-                LogTools.Logger.Warn(ex, "Erreur lors du désabonnement des événements client");
+                LogTools.Logger.Warn(ex, "Erreur lors du desabonnement des evenements client");
             }
         }
 
