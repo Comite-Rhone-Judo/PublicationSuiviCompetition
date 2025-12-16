@@ -51,6 +51,7 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Enum\CategorieDonneesEnum.cs" />
     <Compile Include="IJudoDataManager.cs" />
     <Compile Include="IJudoData.cs" />
     <Compile Include="Internal\AtomicCachedBased.cs" />

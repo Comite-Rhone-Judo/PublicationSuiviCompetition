@@ -10,7 +10,7 @@ namespace JudoClient.Communication
             XDocument doc = Common.CreateDocument(ServerCommandEnum.DemandLogos);
 
             string result = doc.ToString(SaveOptions.None);
-            client.Client.Write(result);
+            client.NetworkClient.Write(result);
         }
     }
 }

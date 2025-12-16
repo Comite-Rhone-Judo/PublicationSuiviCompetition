@@ -34,7 +34,7 @@ namespace AppPublication.IHM.Commissaire
         {
             if (DialogControleur.Instance.Connection.Client != null)
             {
-                DialogControleur.Instance.Connection.Client.Client.Stop();
+                DialogControleur.Instance.Connection.Client.NetworkClient.Stop();
             }
 
             LogTools.LogStop();

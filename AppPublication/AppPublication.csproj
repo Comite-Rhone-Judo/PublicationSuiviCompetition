@@ -134,6 +134,7 @@
       <Link>VersionInfo.cs</Link>
     </Compile>
     <Compile Include="Controles\GestionStatistiques.cs" />
+    <Compile Include="Controles\IClientProvider.cs" />
     <Compile Include="Controles\RelayCommand.cs" />
     <Compile Include="ExtensionNoyau\Engagement\CombatEqualityComparer.cs" />
     <Compile Include="ExtensionNoyau\Engagement\DataEngagement.cs" />

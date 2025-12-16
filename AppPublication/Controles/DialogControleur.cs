@@ -1,6 +1,7 @@
 ﻿using AppPublication.Tools;
 using AppPublication.Tools.Enum;
 using KernelImpl;
+using KernelImpl.Noyau.Deroulement;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Information;
 using System;
 using System.IO;
@@ -223,16 +224,20 @@ namespace AppPublication.Controles
                     // Commence par le gestionnaire de statistiques
                     _stats = new GestionStatistiques();
 
-                    // Initialise le gestionnaire d'evenements
-                    GestionEvent.CreateInstance(this.ServerData, _stats);
+                    // Initialise le gestionnaire de connexion
+                    _connection = new GestionConnection();
+                    // et on s'abonne aux evenements pour pouvoir mettre a jour l'IHM
+                    _connection.ClientReady += OnClientReady;
+                    _connection.ClientDisconnected += OnClientDisconnected;
 
-                    // Initialise le gestionnaire de connexion en lui donnant le gestionnaire d'evenement a utiliser
-                    _connection = new GestionConnection(GestionEvent.Instance);
+                    // Initialise le gestionnaire d'evenements
+                    var evtMgr = GestionEvent.CreateInstance(this.ServerData, _stats, _connection);
+                    // et on s'abonne aux evenements pour pouvoir mettre a jour l'IHM
+                    evtMgr.BusyStatusChanged += OnBusyStatusChanged;
+                    evtMgr.DataUpdated += OnDataUpdated;
 
                     // Le gestionnaire de site de publication
                     _site = new GestionSite(this.ServerData, _stats);
-
-                    GestionEvent.Instance.BusyStatusChanged += OnBusyStatusChanged;
                 }
                 catch (Exception ex)
                 {
@@ -817,7 +822,12 @@ namespace AppPublication.Controles
         #endregion
 
         #region EVENT HANDLER
-        // Le gestionnaire d'événement (Thread-Safe pour l'UI)
+
+        /// <summary>
+        /// Gestion de l'evenement de changement de statut d'occupation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnBusyStatusChanged(object sender, BusyStatusEventArgs e)
         {
             System.Windows.Application.Current.ExecOnUiThread(new Action(() =>
@@ -829,6 +839,47 @@ namespace AppPublication.Controles
                 }
             }
             ));
+        }
+
+        /// <summary>
+        /// Evenement de mise a jour des donnees
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnDataUpdated(object sender, DataUpdateEventArgs e)
+        {
+            LogTools.Logger.Debug("Donnees mises a jour pour la categorie: {0}", e.CategorieDonnee.ToString());
+
+            if (e.CategorieDonnee == KernelImpl.Enum.CategorieDonneesEnum.Organisation)
+            {
+                this.UpdateCompetition();
+            }
+        }
+
+        /// <summary>
+        /// Traitement de l'evenement de disponibilite du client
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnClientReady(object sender, ClientReadyEventArgs e)
+        {
+            LogTools.Logger.Info("Client connecte et pret: {0}", e.Client.NetworkClient.IP);
+        }
+
+        /// <summary>
+        /// Evenement de deconnexion du client
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
+        {
+            LogTools.Logger.Info("Client deconnecte a {0}", e.DisconnectionTime);
+
+            Application.Current.ExecOnUiThread(() =>
+            {
+                this.IsBusy = false;
+                this.BusyStatus = BusyStatusEnum.None;
+            });
         }
         #endregion
     }

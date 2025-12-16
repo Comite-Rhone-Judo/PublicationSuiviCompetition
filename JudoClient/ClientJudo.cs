@@ -7,14 +7,15 @@ using Tools.TCP_Tools.Client;
 
 namespace JudoClient
 {
+    public delegate void OnEndConnectionHandler(object sender);
+
     public class ClientJudo
     {
         ClientGenerique _client = null;
 
-        public delegate void OnEndConnectionHandler(object sender);
         public event OnEndConnectionHandler OnEndConnection;
 
-        public ClientGenerique Client { get { return _client; } }
+        public ClientGenerique NetworkClient { get { return _client; } }
 
 
         private TraitementArbitrage _traitement_arb = null;

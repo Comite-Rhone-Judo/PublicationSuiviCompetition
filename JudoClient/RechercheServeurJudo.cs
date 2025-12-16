@@ -229,12 +229,12 @@ namespace JudoClient
                 XElement xcompetition = xvaleur.Element(ConstantXML.Competition);
 
                 onServerTrouve(this, new System.Net.IPEndPoint(
-                    System.Net.IPAddress.Parse(clientjudo.Client.IP), clientjudo.Client.Port), machine, user, xcompetition);
+                    System.Net.IPAddress.Parse(clientjudo.NetworkClient.IP), clientjudo.NetworkClient.Port), machine, user, xcompetition);
 
-                clientjudo.Client.Stop();
+                clientjudo.NetworkClient.Stop();
             }
             //}
-            AdresseTerminee(clientjudo.Client.IP, clientjudo.Client.Port, ServerResponseEnum.ConnectionOK);
+            AdresseTerminee(clientjudo.NetworkClient.IP, clientjudo.NetworkClient.Port, ServerResponseEnum.ConnectionOK);
         }
 
         void clientjudo_OnConnection(object sender)

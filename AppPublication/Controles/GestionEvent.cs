@@ -2,6 +2,9 @@
 using AppPublication.Tools.Enum;
 using JudoClient;
 using JudoClient.Communication;
+using KernelImpl;
+using KernelImpl.Enum;
+using OfficeOpenXml.FormulaParsing.Utilities;
 using System;
 using System.Linq;
 using System.Threading;
@@ -11,7 +14,6 @@ using System.Xml.Linq;
 using Telerik.Windows.Controls;
 using Tools.Enum;
 using Tools.Outils;
-using KernelImpl;
 
 namespace AppPublication.Controles
 {
@@ -35,7 +37,19 @@ namespace AppPublication.Controles
             Status = status;
         }
     }
-#endregion
+
+    // EventArgs pour transporter l'info d'une mise a jour de donnees
+    public class DataUpdateEventArgs : EventArgs
+    {
+        public CategorieDonneesEnum CategorieDonnee { get; }
+
+        public DataUpdateEventArgs(CategorieDonneesEnum cat)
+        {
+            CategorieDonnee = cat;
+        }
+    }
+
+    #endregion
 
     public class GestionEvent
     {
@@ -57,20 +71,23 @@ namespace AppPublication.Controles
 
         private IJudoDataManager _dataManager = null;
         private GestionStatistiques _statManager = null;
-
+        private IClientProvider _clientProvider = null;
         #endregion
 
         #region EVENT HANDLER
-        // Déclaration de l'événement
+        // Déclaration de l'événement d'un chagement de statut d'occupation
         public event EventHandler<BusyStatusEventArgs> BusyStatusChanged;
+
+        public event EventHandler<DataUpdateEventArgs> DataUpdated;
         #endregion
 
         #region CONSTRUCTEUR
 
-        private GestionEvent(IJudoDataManager dataMgr, GestionStatistiques statMgr )
+        private GestionEvent(IJudoDataManager dataMgr, GestionStatistiques statMgr, IClientProvider provider )
         {
             DataManager = dataMgr;
             StatistiquesManager = statMgr;
+            ClientProvider = provider;
 
             _lock = new object();
             _status = ClientJudoStatusEnum.Disconnected;
@@ -91,13 +108,13 @@ namespace AppPublication.Controles
             }
         }
 
-        public static GestionEvent CreateInstance(IJudoDataManager dataMgr, GestionStatistiques statMgr)
+        public static GestionEvent CreateInstance(IJudoDataManager dataMgr, GestionStatistiques statMgr, IClientProvider provider)
         {
             if (_instance != null)
             {
                 throw new InvalidOperationException("L'instance de GestionEvent a déjà été initialisée.");
             }
-            _instance = new GestionEvent(dataMgr, statMgr);
+            _instance = new GestionEvent(dataMgr, statMgr, provider);
             return _instance;
         }
 
@@ -115,6 +132,33 @@ namespace AppPublication.Controles
         }
 
         public int Timeout { get; set; } = kDefaultTimeoutMs;
+
+        /// <summary>
+        /// Retourne le client provider enregistre (ou une exception si non enregistre)
+        /// </summary>
+        public IClientProvider ClientProvider
+        {
+            get
+            {
+                if(_clientProvider == null)
+                {
+                    throw new InvalidOperationException("Le fournisseur de client n'a pas ete enregistre.");
+                }
+                return _clientProvider;
+            }
+
+            private set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(value), "Le fournisseur de client ne peut pas être null.");
+                }
+
+                _clientProvider = value;
+                _clientProvider.ClientReady += OnClientReady;
+                _clientProvider.ClientDisconnected += OnClientDisconnected;
+            }
+        }
 
         public IJudoDataManager DataManager
         {
@@ -187,6 +231,65 @@ namespace AppPublication.Controles
             }
         }
 
+        /// <summary>
+        /// Appelé quand un client est prêt et configuré
+        /// </summary>
+        private void OnClientReady(object sender, ClientReadyEventArgs e)
+        {
+            LogTools.Logger.Debug("Client pret, abonnement aux evenements du serveur");
+
+            var client = e.Client;
+
+            // NOW subscribe to all ClientJudo events (moved from GestionConnection.setClient)
+            client.OnEndConnection += client_OnEndConnection;
+
+            client.TraitementConnexion.OnAcceptConnectionCOM += clientjudo_OnAcceptConnectionCOM;
+
+            client.TraitementStructure.OnListeStructures += client_OnListeStructures;
+            client.TraitementStructure.OnUpdateStructures += client_OnUpdateStructures;
+
+            client.TraitementCategories.OnListeCategories += client_OnListeCategories;
+            client.TraitementCategories.OnUpdateCategories += client_OnUpdateCategories;
+
+            client.TraitementLogos.OnListeLogos += client_OnListeLogos;
+            client.TraitementLogos.OnUpdateLogos += client_OnUpdateLogos;
+
+            client.TraitementOrganisation.OnListeOrganisation += client_OnListeOrganisation;
+            client.TraitementOrganisation.OnUpdateOrganisation += client_OnUpdateOrganisation;
+
+            client.TraitementParticipants.OnListeEquipes += client_OnListeEquipes;
+            client.TraitementParticipants.OnUpdateEquipes += client_OnUpdateEquipes;
+
+            client.TraitementParticipants.OnListeJudokas += client_OnListeJudokas;
+            client.TraitementParticipants.OnUpdateJudokas += client_OnUpdateJudokas;
+
+            client.TraitementDeroulement.OnListePhases += client_OnListePhases;
+            client.TraitementDeroulement.OnUpdatePhases += client_OnUpdatePhases;
+
+            client.TraitementDeroulement.OnListeCombats += client_OnListeCombats;
+            client.TraitementDeroulement.OnUpdateCombats += client_OnUpdateCombats;
+            client.TraitementDeroulement.OnUpdateTapisCombats += client_OnUpdateTapisCombats;
+            client.TraitementDeroulement.OnUpdateRencontreReceived += client_onUpdateRencontres;
+
+            client.TraitementArbitrage.OnListeArbitrage += client_OnListeArbitrage;
+            client.TraitementArbitrage.OnUpdateArbitrage += client_OnUpdateArbitrage;
+        }
+
+        /// <summary>
+        /// Appelé quand le client se déconnecte
+        /// </summary>
+        private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
+        {
+            LogTools.Logger.Debug("Client déconnecté à {0}", e.DisconnectionTime);
+
+            lock (_lock)
+            {
+                _status = ClientJudoStatusEnum.Disconnected;
+            }
+
+            SetBusyStatus(Tools.Enum.BusyStatusEnum.None);
+        }
+
         #endregion
 
         #region EVENT SERVER
@@ -201,9 +304,16 @@ namespace AppPublication.Controles
         {
             LogTools.Logger.Debug("Fin de connexion");
 
-            if (DialogControleur.Instance.Connection.Client == (ClientJudo)sender)
+            try
             {
-                StopClient(true);   // Il faut arreter le timer suite a la deconnexion
+                if (_clientProvider.Client == (ClientJudo)sender)
+                {
+                    StopClient(true);   // Il faut arreter le timer suite a la deconnexion
+                }
+            }
+            catch (Exception ex)
+            {
+                LogTools.Logger.Error(ex, "Erreur lors de la gestion de la deconnexion");
             }
         }
 
@@ -227,7 +337,7 @@ namespace AppPublication.Controles
                     SetBusyStatus(Tools.Enum.BusyStatusEnum.DemandeDonneesStructures);
 
                     // Demande les structures au serveur
-                    DialogControleur.Instance.Connection.Client.DemandeStructures();
+                    _clientProvider.Client.DemandeStructures();
 
                     // Demarre le timer d'attente de la reponse a la demande
                     _timerReponse.Start(Timeout);
@@ -266,9 +376,13 @@ namespace AppPublication.Controles
             LogTools.Logger.Debug("client_OnListeStructures");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesStructures,
-                                                    LectureDonneesStructures,
+                                                    (XElement elem) =>
+                                                    {
+                                                        LectureDonneesStructures(elem);
+                                                        NotifyDataUpdated(CategorieDonneesEnum.Structures);
+                                                    },
                                                     BusyStatusEnum.DemandeDonneesCategories,
-                                                    DialogControleur.Instance.Connection.Client.DemandeCategories,
+                                                    _clientProvider.Client.DemandeCategories,
                                                     element);
         }
 
@@ -282,6 +396,7 @@ namespace AppPublication.Controles
             LogTools.Logger.Debug("client_OnUpdateStructures");
 
             UpdateRequestDispatcher(LectureDonneesStructures, element);
+            NotifyDataUpdated(CategorieDonneesEnum.Structures);
         }
 
         /// <summary>
@@ -306,9 +421,13 @@ namespace AppPublication.Controles
             LogTools.Logger.Debug("client_OnListeCategories");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesCategories,
-                                        LectureDonneesCategories,
+                                        (XElement elem) =>
+                                        {
+                                            LectureDonneesCategories(elem);
+                                            NotifyDataUpdated(CategorieDonneesEnum.Categories);
+                                        },
                                         BusyStatusEnum.DemandeDonneesLogos,
-                                        DialogControleur.Instance.Connection.Client.DemandeLogos,
+                                        _clientProvider.Client.DemandeLogos,
                                         element);
         }
 
@@ -317,6 +436,7 @@ namespace AppPublication.Controles
             LogTools.Logger.Debug("client_OnUpdateCategories");
 
             UpdateRequestDispatcher(LectureDonneesCategories, element);
+            NotifyDataUpdated(CategorieDonneesEnum.Categories);
         }
 
         /// <summary>
@@ -334,9 +454,13 @@ namespace AppPublication.Controles
             LogTools.Logger.Debug("client_OnListeLogos");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesLogos,
-                            LectureDonneesLogos,
+                            (XElement elem) =>
+                            {
+                                LectureDonneesLogos(elem);
+                                NotifyDataUpdated(CategorieDonneesEnum.Logos);
+                            },
                             BusyStatusEnum.DemandeDonneesOrganisation,
-                            DialogControleur.Instance.Connection.Client.DemandeOrganisation,
+                            _clientProvider.Client.DemandeOrganisation,
                             element);
         }
 
@@ -345,6 +469,7 @@ namespace AppPublication.Controles
             LogTools.DataLogger.Debug("client_OnUpdateLogos");
             
             UpdateRequestDispatcher(LectureDonneesLogos, element);
+            NotifyDataUpdated(CategorieDonneesEnum.Logos);
         }
 
         /// <summary>
@@ -364,18 +489,22 @@ namespace AppPublication.Controles
             LogTools.Logger.Debug("client_OnListeOrganisation");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesOrganisation,
-                            LectureDonneesOrganisations,
+                            (XElement elem) =>
+                            {
+                                LectureDonneesOrganisations(elem);
+                                NotifyDataUpdated(CategorieDonneesEnum.Organisation);
+                            },
                             BusyStatusEnum.DemandeDonneesJudokas,
                            () =>
                            {
                                var judoDataInstance = DataManager as JudoData;
                                if (judoDataInstance.Organisation.Competition.IsEquipe())
                                {
-                                   DialogControleur.Instance.Connection.Client.DemandeEquipes();
+                                   _clientProvider.Client.DemandeEquipes();
                                }
                                else
                                {
-                                   DialogControleur.Instance.Connection.Client.DemandeJudokas();
+                                   _clientProvider.Client.DemandeJudokas();
                                }
                            },
                             element);
@@ -385,13 +514,8 @@ namespace AppPublication.Controles
         {
             LogTools.Logger.Debug("client_OnUpdateOrganisation");
 
-            UpdateRequestDispatcher( (XElement elem) =>
-            {
-                LectureDonneesOrganisations(elem);
-                // Signale la mise a jour de la competition
-                DialogControleur.Instance.UpdateCompetition();
-            },
-            element);
+            UpdateRequestDispatcher(LectureDonneesOrganisations, element);
+            NotifyDataUpdated(CategorieDonneesEnum.Organisation);
         }
 
         /// <summary>
@@ -411,9 +535,13 @@ namespace AppPublication.Controles
             LogTools.Logger.Debug("client_OnListeEquipes");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesJudokas,
-                            LectureDonneesEquipes,
+                            (XElement elem) =>
+                            {
+                                LectureDonneesEquipes(elem);
+                                NotifyDataUpdated(CategorieDonneesEnum.Participants);
+                            },
                             BusyStatusEnum.DemandeDonneesPhases,
-                            DialogControleur.Instance.Connection.Client.DemandePhases,
+                            _clientProvider.Client.DemandePhases,
                             element);
         }
 
@@ -423,6 +551,7 @@ namespace AppPublication.Controles
             LogTools.Logger.Debug("client_OnUpdateEquipes");
 
             UpdateRequestDispatcher(LectureDonneesEquipes, element);
+            NotifyDataUpdated(CategorieDonneesEnum.Participants);
         }
 
         /// <summary>
@@ -441,9 +570,13 @@ namespace AppPublication.Controles
             LogTools.Logger.Debug("client_OnListeJudokas");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesJudokas,
-                            LectureDonneesJudokas,
+                            (XElement elem) =>
+                            {
+                                LectureDonneesJudokas(elem);
+                                NotifyDataUpdated(CategorieDonneesEnum.Participants);
+                            },
                             BusyStatusEnum.DemandeDonneesPhases,
-                            DialogControleur.Instance.Connection.Client.DemandePhases,
+                            _clientProvider.Client.DemandePhases,
                             element);
 
         }
@@ -453,6 +586,7 @@ namespace AppPublication.Controles
             LogTools.Logger.Debug("client_OnUpdateJudokas");
 
             UpdateRequestDispatcher(LectureDonneesJudokas, element);
+            NotifyDataUpdated(CategorieDonneesEnum.Participants);
         }
 
         /// <summary>
@@ -475,9 +609,13 @@ namespace AppPublication.Controles
             LogTools.Logger.Debug("client_OnListePhases");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesPhases,
-                            LectureDonneesPhases,
+                            (XElement elem) =>
+                            {
+                                LectureDonneesPhases(elem);
+                                NotifyDataUpdated(CategorieDonneesEnum.Deroulement);
+                            },
                             BusyStatusEnum.DemandeDonneesCombats,
-                            DialogControleur.Instance.Connection.Client.DemandeCombats,
+                            _clientProvider.Client.DemandeCombats,
                             element);
         }
 
@@ -486,6 +624,7 @@ namespace AppPublication.Controles
             LogTools.Logger.Debug("client_OnUpdatePhases");
 
             UpdateRequestDispatcher(LectureDonneesPhases, element);
+            NotifyDataUpdated(CategorieDonneesEnum.Deroulement);
         }
 
         /// <summary>
@@ -526,6 +665,7 @@ namespace AppPublication.Controles
             {
                 // Etape 1 : On intègre les données (Opération lourde)
                 UpdateRequestDispatcher(LectureDonneesCombatsFull, element);
+                NotifyDataUpdated(CategorieDonneesEnum.Deroulement);
 
                 // Etape 2 : Validation conditionnelle du cache
                 lock (_lockDirty)
@@ -552,9 +692,13 @@ namespace AppPublication.Controles
             {
                 // Logique d'initialisation standard (au démarrage de l'app)
                 InitializationRequestDispatcher(BusyStatusEnum.InitDonneesCombats,
-                                LectureDonneesCombatsFull,
+                                (XElement elem) =>
+                                {
+                                    LectureDonneesCombatsFull(elem);
+                                    NotifyDataUpdated(CategorieDonneesEnum.Deroulement);
+                                },
                                 BusyStatusEnum.DemandeDonneesArbitres,
-                                DialogControleur.Instance.Connection.Client.DemandeArbitrage,
+                                _clientProvider.Client.DemandeArbitrage,
                                 element);
             }
         }
@@ -575,7 +719,7 @@ namespace AppPublication.Controles
 
                 LogTools.Logger.Debug("Cache Dirty détecté. Démarrage de la procédure de réparation...");
 
-                var client = DialogControleur.Instance.Connection.Client;
+                var client = _clientProvider.Client;
                 if (client != null)
                 {
                     // 1. Reset du signal d'attente
@@ -659,6 +803,7 @@ namespace AppPublication.Controles
 
             // Si le cache est propre, on applique normalement
             UpdateRequestDispatcher(LectureDonneesCombatsDiff, element);
+            NotifyDataUpdated(CategorieDonneesEnum.Deroulement);
         }
 
         /// <summary>
@@ -676,6 +821,7 @@ namespace AppPublication.Controles
             LogTools.Logger.Debug("client_onUpdateRencontres");
 
             UpdateRequestDispatcher(LectureDonneesRencontres, element);
+            NotifyDataUpdated(CategorieDonneesEnum.Deroulement);
         }
 
         /// <summary>
@@ -698,8 +844,7 @@ namespace AppPublication.Controles
                                                    (XElement elem) =>
                                                    {
                                                        LectureDonneesArbitrage(elem);
-                                                       // Signale la mise a jour de la competition a la fin du processus
-                                                       DialogControleur.Instance.UpdateCompetition();
+                                                       NotifyDataUpdated(CategorieDonneesEnum.Arbitrage);
                                                    },
                                                    BusyStatusEnum.None,
                                                    null,
@@ -711,8 +856,31 @@ namespace AppPublication.Controles
             LogTools.Logger.Debug("client_OnUpdateArbitrage");
 
             UpdateRequestDispatcher(LectureDonneesArbitrage, element);
+            NotifyDataUpdated(CategorieDonneesEnum.Arbitrage);
         }
 
+        #endregion
+
+        #region METHODES PUBLIQUES
+        /// <summary>
+        /// Nettoie les abonnements (à appeler lors de la fermeture de l'application)
+        /// </summary>
+        public void Cleanup()
+        {
+            if (_clientProvider != null)
+            {
+                _clientProvider.ClientReady -= OnClientReady;
+                _clientProvider.ClientDisconnected -= OnClientDisconnected;
+                _clientProvider = null;
+            }
+
+            // Unsubscribe from client events if still connected
+            var client = _clientProvider?.Client;
+            if (client != null)
+            {
+                UnsubscribeFromClientEvents(client);
+            }
+        }
         #endregion
 
         #region METHODES INTERNES
@@ -734,9 +902,16 @@ namespace AppPublication.Controles
         /// </summary>
         private void StopClient(bool stopTimer = false)
         {
-            DialogControleur.Instance.Connection.Client.Client.Stop();
-            DialogControleur.Instance.Connection.Client = null;
+            // ÉTAPE 1 : Unsubscribe from client events (avoid memory leaks)
+            var client = _clientProvider?.Client;
+            if (client != null)
+            {
+                UnsubscribeFromClientEvents(client);
+            }
 
+            // ÉTAPE 2 : Demander à GestionConnection de fermer proprement le client
+            // (GestionConnection gère le lifecycle complet)
+            _clientProvider?.DisposeClient(); // This will trigger ClientDisconnected event
 
             lock (_lock)
             {
@@ -750,6 +925,42 @@ namespace AppPublication.Controles
             SetBusyStatus(Tools.Enum.BusyStatusEnum.None);
         }
 
+        /// <summary>
+        /// Désabonne tous les événements du client (évite les fuites mémoire)
+        /// </summary>
+        private void UnsubscribeFromClientEvents(ClientJudo client)
+        {
+            try
+            {
+                client.OnEndConnection -= client_OnEndConnection;
+                client.TraitementConnexion.OnAcceptConnectionCOM -= clientjudo_OnAcceptConnectionCOM;
+                client.TraitementStructure.OnListeStructures -= client_OnListeStructures;
+                client.TraitementStructure.OnUpdateStructures -= client_OnUpdateStructures;
+                client.TraitementCategories.OnListeCategories -= client_OnListeCategories;
+                client.TraitementCategories.OnUpdateCategories -= client_OnUpdateCategories;
+                client.TraitementLogos.OnListeLogos -= client_OnListeLogos;
+                client.TraitementLogos.OnUpdateLogos -= client_OnUpdateLogos;
+                client.TraitementOrganisation.OnListeOrganisation -= client_OnListeOrganisation;
+                client.TraitementOrganisation.OnUpdateOrganisation -= client_OnUpdateOrganisation;
+                client.TraitementParticipants.OnListeEquipes -= client_OnListeEquipes;
+                client.TraitementParticipants.OnUpdateEquipes -= client_OnUpdateEquipes;
+                client.TraitementParticipants.OnListeJudokas -= client_OnListeJudokas;
+                client.TraitementParticipants.OnUpdateJudokas -= client_OnUpdateJudokas;
+                client.TraitementDeroulement.OnListePhases -= client_OnListePhases;
+                client.TraitementDeroulement.OnUpdatePhases -= client_OnUpdatePhases;
+                client.TraitementDeroulement.OnListeCombats -= client_OnListeCombats;
+                client.TraitementDeroulement.OnUpdateCombats -= client_OnUpdateCombats;
+                client.TraitementDeroulement.OnUpdateTapisCombats -= client_OnUpdateTapisCombats;
+                client.TraitementDeroulement.OnUpdateRencontreReceived -= client_onUpdateRencontres;
+                client.TraitementArbitrage.OnListeArbitrage -= client_OnListeArbitrage;
+                client.TraitementArbitrage.OnUpdateArbitrage -= client_OnUpdateArbitrage;
+            }
+            catch (Exception ex)
+            {
+                // Log but don't throw - we're in cleanup mode
+                LogTools.Logger.Warn(ex, "Erreur lors du désabonnement des événements client");
+            }
+        }
 
         /// <summary>
         /// Positionne le status d'occupation du gestionnaire de connexion
@@ -757,43 +968,19 @@ namespace AppPublication.Controles
         /// <param name="status"></param>
         private void SetBusyStatus(Tools.Enum.BusyStatusEnum status)
         {
-            /*
-            bool isb = false;
-            switch (e.Status)
-            {
-                case Tools.Enum.BusyStatusEnum.InitDonneesStructures:
-                case Tools.Enum.BusyStatusEnum.InitDonneesCategories:
-                case Tools.Enum.BusyStatusEnum.InitDonneesLogos:
-                case Tools.Enum.BusyStatusEnum.InitDonneesJudokas:
-                case Tools.Enum.BusyStatusEnum.InitDonneesOrganisation:
-                case Tools.Enum.BusyStatusEnum.InitDonneesPhases:
-                case Tools.Enum.BusyStatusEnum.InitDonneesCombats:
-                case Tools.Enum.BusyStatusEnum.InitDonneesArbitres:
-                case Tools.Enum.BusyStatusEnum.DemandeDonneesStructures:
-                case Tools.Enum.BusyStatusEnum.DemandeDonneesCategories:
-                case Tools.Enum.BusyStatusEnum.DemandeDonneesLogos:
-                case Tools.Enum.BusyStatusEnum.DemandeDonneesJudokas:
-                case Tools.Enum.BusyStatusEnum.DemandeDonneesOrganisation:
-                case Tools.Enum.BusyStatusEnum.DemandeDonneesPhases:
-                case Tools.Enum.BusyStatusEnum.DemandeDonneesCombats:
-                case Tools.Enum.BusyStatusEnum.DemandeDonneesArbitres:
-                    {
-                        isb = true;
-                        break;
-                    }
-                case Tools.Enum.BusyStatusEnum.None:
-                default:
-                    {
-                        isb = false;
-                        break;
-                    }
-            }
-            */
-
             bool isBusy = status != BusyStatusEnum.None;
 
             // On déclenche l'événement. Le ?.Invoke permet de ne rien faire si personne n'écoute.
             BusyStatusChanged?.Invoke(this, new BusyStatusEventArgs(isBusy, status));
+        }
+
+        /// <summary>
+        /// NOtifie d'une mise a jour de donnees
+        /// </summary>
+        /// <param name="datCat"></param>
+        private void NotifyDataUpdated(CategorieDonneesEnum datCat)
+        {
+            DataUpdated?.Invoke(this, new DataUpdateEventArgs(datCat));
         }
 
         /// <summary>

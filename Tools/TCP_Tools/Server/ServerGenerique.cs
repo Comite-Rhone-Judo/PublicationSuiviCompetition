@@ -155,9 +155,6 @@ namespace Tools.TCP_Tools.Server
             {
                 //Stop Listening 
 
-                //LogTools.Log(ex);
-                //Controles.DialogControleur.log.Debug("ServerGenerique => " + ex.Message);
-
                 if (objListenerAndClient.Client != null)
                 {
                     objListenerAndClient.Client.Close();

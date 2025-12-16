@@ -1770,7 +1770,6 @@ namespace AppPublication.Controles
                                     {
                                         try
                                         {
-                                            // string localRoot = Path.Combine(ConstantFile.ExportSite_dir, DialogControleur.Instance.ServerData.competition.remoteId);
                                             string localRoot = _structureRepertoires.RepertoireCompetition;
 
                                             // Le site distant sur lequel charger les fichiers selon si on isole ou pas

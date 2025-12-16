@@ -1,4 +1,5 @@
-﻿using JudoClient;
+﻿using AppPublication.Tools.Enum;
+using JudoClient;
 using JudoClient.Communication;
 using System;
 using System.Windows.Threading;
@@ -7,10 +8,14 @@ using Tools.Outils;
 
 namespace AppPublication.Controles
 {
-    public class GestionConnection : NotificationBase
+    public class GestionConnection : NotificationBase, IClientProvider
     {
         private const Int32 TEST_CONNECT = 15;
         private const Int32 MAX_RETRY = 5;
+
+        public event EventHandler<ClientReadyEventArgs> ClientReady;
+        public event EventHandler<ClientDisconnectedEventArgs> ClientDisconnected;
+        public event EventHandler<ConnectionStatusEventArgs> ConnectionStatusChanged;
 
         public string IpAdress
         {
@@ -24,16 +29,16 @@ namespace AppPublication.Controles
             set;
         }
 
+        public bool IsConnected => _isconnected;
+
         private ClientJudo _client = null;
         private bool _isconnected = false;
         private DispatcherTimer _timer = null;
         private DateTime _reference = DateTime.Now;
         private int _nRetry = 0;
-        private GestionEvent _eventManager = null;
 
-        public GestionConnection(GestionEvent eventMgr)
+        public GestionConnection()
         {
-            _eventManager = eventMgr ?? throw new ArgumentNullException(nameof(eventMgr));
             _timer = new DispatcherTimer();
             _timer.Tick += new EventHandler(dispatcherTimer0_Tick);
             _timer.Interval = new TimeSpan(0, 0, 0, 1, 0);
@@ -51,7 +56,7 @@ namespace AppPublication.Controles
                 _isconnected = true;
 
                 NotifyPropertyChanged();
-                setClient();
+                SetupClient();
             }
         }
 
@@ -67,53 +72,50 @@ namespace AppPublication.Controles
             _nRetry++;
         }
 
-        private void setClient()
+        /// <summary>
+        /// Supprime le client et libere les ressources
+        /// </summary>
+        public void DisposeClient()
+        {
+            if(this.Client != null)
+            {
+                this.Client.NetworkClient.Stop();
+                this.Client = null;
+                _isconnected = false;
+
+                // Notify subscribers of disconnection
+                ClientDisconnected?.Invoke(this, new ClientDisconnectedEventArgs());
+            }
+        }
+
+        /// <summary>
+        /// Initialise a configure le client en connexion avec les evenements
+        /// </summary>
+        private void SetupClient()
         {
             if (_client == null)
             {
                 return;
             }
 
-            _client.OnEndConnection += _eventManager.client_OnEndConnection;
-
-            _client.TraitementConnexion.OnAcceptConnectionCOM += _eventManager.clientjudo_OnAcceptConnectionCOM;
-
-            _client.TraitementStructure.OnListeStructures += _eventManager.client_OnListeStructures;
-            _client.TraitementStructure.OnUpdateStructures += _eventManager.client_OnUpdateStructures;
-
-            _client.TraitementCategories.OnListeCategories += _eventManager.client_OnListeCategories;
-            _client.TraitementCategories.OnUpdateCategories += _eventManager.client_OnUpdateCategories;
-
-            _client.TraitementLogos.OnListeLogos += _eventManager.client_OnListeLogos;
-            _client.TraitementLogos.OnUpdateLogos += _eventManager.client_OnUpdateLogos;
-
-            _client.TraitementOrganisation.OnListeOrganisation += _eventManager.client_OnListeOrganisation;
-            _client.TraitementOrganisation.OnUpdateOrganisation +=  _eventManager.client_OnUpdateOrganisation;
-
-            _client.TraitementParticipants.OnListeEquipes += _eventManager.client_OnListeEquipes;
-            _client.TraitementParticipants.OnUpdateEquipes += _eventManager .client_OnUpdateEquipes;
-
-            _client.TraitementParticipants.OnListeJudokas += _eventManager.client_OnListeJudokas;
-            _client.TraitementParticipants.OnUpdateJudokas += _eventManager.client_OnUpdateJudokas;
-
-            _client.TraitementDeroulement.OnListePhases += _eventManager.client_OnListePhases;
-            _client.TraitementDeroulement.OnUpdatePhases += _eventManager.client_OnUpdatePhases;
-
-            _client.TraitementDeroulement.OnListeCombats += _eventManager.client_OnListeCombats;
-            _client.TraitementDeroulement.OnUpdateCombats += _eventManager.client_OnUpdateCombats;
-            _client.TraitementDeroulement.OnUpdateTapisCombats += _eventManager.client_OnUpdateTapisCombats;
-            _client.TraitementDeroulement.OnUpdateRencontreReceived += _eventManager.client_onUpdateRencontres;
-
-            _client.TraitementArbitrage.OnListeArbitrage += _eventManager.client_OnListeArbitrage;
-            _client.TraitementArbitrage.OnUpdateArbitrage += _eventManager.client_OnUpdateArbitrage;
-
+            // Only subscribe to connection test (internal to GestionConnection)
             _client.TraitementConnexion.OnAcceptConnectionTest += clientjudo_OnDemandeConnectionTest;
 
-            // TODO il faudrait virer cela ...
-            DialogControleur.Instance.IsBusy = true;
-            DialogControleur.Instance.BusyStatus = Tools.Enum.BusyStatusEnum.InitDonneesStructures;
+            // Raise event so GestionEvent can subscribe to client events
+            ClientReady?.Invoke(this, new ClientReadyEventArgs(_client));
 
+            RaiseConnectionStatusChanged(true, BusyStatusEnum.InitDonneesStructures);
+
+            // Start connection handshake
             _client.DemandConnectionCOM();
+        }
+
+        /// <summary>
+        /// Notifie les abonnés d'un changement d'état de connexion
+        /// </summary>
+        private void RaiseConnectionStatusChanged(bool isBusy, BusyStatusEnum status)
+        {
+            ConnectionStatusChanged?.Invoke(this, new ConnectionStatusEventArgs(isBusy, status));
         }
 
         private void clientjudo_OnDemandeConnectionTest(object sender, XElement doc)
@@ -133,17 +135,7 @@ namespace AppPublication.Controles
             DateTime now = DateTime.Now;
             double elapseSec = (now - _reference).TotalSeconds;
 
-            /*
-            if (_isconnected && (now - _reference).TotalSeconds > TEST_CONNECT)
-            {
-                this.TesteConnection();
-            }
-            else if (!_isconnected && (now - _reference).TotalSeconds > TEST_CONNECT && _nRetry > MAX_RETRY)
-            {
-                this.Client.Client.Stop();
-                this.Client = null;
-            }
-            */
+
             if (_isconnected)
             {
                 // Verifie si le delai avant de tester la connexion est echue ou non
@@ -161,7 +153,7 @@ namespace AppPublication.Controles
                     if (_nRetry > MAX_RETRY)
                     {
                         // on a deja essaye plusieurs fois, on est vraiment deconnecte
-                        this.Client.Client.Stop();
+                        this.Client.NetworkClient.Stop();
                         this.Client = null;
                     }
                     else
