@@ -1,17 +1,21 @@
 ﻿using AppPublication.Tools;
 using AppPublication.Tools.Enum;
+using AppPublication.Tools.LectureFile;
 using JudoClient;
 using JudoClient.Communication;
 using KernelImpl;
 using KernelImpl.Enum;
 using OfficeOpenXml.FormulaParsing.Utilities;
 using System;
+using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using Telerik.Windows.Controls;
+using Telerik.Windows.Data;
 using Tools.Enum;
 using Tools.Outils;
 
@@ -49,6 +53,7 @@ namespace AppPublication.Controles
         }
     }
 
+
     #endregion
 
     public class GestionEvent
@@ -72,6 +77,9 @@ namespace AppPublication.Controles
         private IJudoDataManager _dataManager = null;
         private GestionStatistiques _statManager = null;
         private IClientProvider _clientProvider = null;
+
+        private ConcurrentDictionary<ServerCommandEnum, EchangeMarkup> _balisesEchanges;
+
         #endregion
 
         #region EVENT HANDLER
@@ -93,6 +101,9 @@ namespace AppPublication.Controles
             _status = ClientJudoStatusEnum.Disconnected;
             _timerReponse = new SingleShotTimer();
             _timerReponse.Elapsed += OnResponseTimeout;
+
+            // Intialisation balises d'echange
+            _balisesEchanges = new ConcurrentDictionary<ServerCommandEnum, EchangeMarkup>();
         }
 
         public static GestionEvent Instance
@@ -309,13 +320,16 @@ namespace AppPublication.Controles
                 if (_clientProvider.Client == (ClientJudo)sender)
                 {
                     StopClient(true);   // Il faut arreter le timer suite a la deconnexion
+
+                    // Enregistre la deconnexion dans les stats
+                    _statManager?.EnregistrerDeconnexion();
                 }
             }
             catch (Exception ex)
             {
                 LogTools.Logger.Error(ex, "Erreur lors de la gestion de la deconnexion");
             }
-        }
+        }     
 
         /// <summary>
         /// Reponse d'acception de la demande de connexion
@@ -337,10 +351,14 @@ namespace AppPublication.Controles
                     SetBusyStatus(Tools.Enum.BusyStatusEnum.DemandeDonneesStructures);
 
                     // Demande les structures au serveur
+                    EnregistrerDebutEchange(ServerCommandEnum.DemandStructures);
                     _clientProvider.Client.DemandeStructures();
 
                     // Demarre le timer d'attente de la reponse a la demande
                     _timerReponse.Start(Timeout);
+
+                    // Enregistre la connexion dans les stats
+                    _statManager?.EnregistrerConnexion();
                 }
                 catch (Exception ex)
                 {
@@ -378,11 +396,17 @@ namespace AppPublication.Controles
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesStructures,
                                                     (XElement elem) =>
                                                     {
-                                                        LectureDonneesStructures(elem);
+                                                        EnregistrerFinEchange(ServerCommandEnum.DemandStructures);
+                                                        double delai = ActionWatcher.Execute( () => { LectureDonneesStructures(elem); });
                                                         NotifyDataUpdated(CategorieDonneesEnum.Structures);
+                                                        // Enregistre la reception du snapshot complet dans les stats
+                                                        _statManager?.EnregistrerSnapshotCompletRecu(delai);
                                                     },
                                                     BusyStatusEnum.DemandeDonneesCategories,
-                                                    _clientProvider.Client.DemandeCategories,
+                                                    () => {
+                                                        EnregistrerDebutEchange(ServerCommandEnum.DemandCategories);
+                                                        _clientProvider.Client.DemandeCategories();
+                                                        },
                                                     element);
         }
 
@@ -395,7 +419,12 @@ namespace AppPublication.Controles
         {
             LogTools.Logger.Debug("client_OnUpdateStructures");
 
-            UpdateRequestDispatcher(LectureDonneesStructures, element);
+            UpdateRequestDispatcher( (XElement elem) =>
+                                        {
+                                            double delai = ActionWatcher.Execute( () => { LectureDonneesStructures(elem); });
+                                            _statManager?.EnregistrerSnapshotDifferentielRecu(delai);
+                                        }
+            , element);
             NotifyDataUpdated(CategorieDonneesEnum.Structures);
         }
 
@@ -423,11 +452,17 @@ namespace AppPublication.Controles
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesCategories,
                                         (XElement elem) =>
                                         {
-                                            LectureDonneesCategories(elem);
+                                            EnregistrerFinEchange(ServerCommandEnum.DemandCategories);
+                                            double delai = ActionWatcher.Execute(() => { LectureDonneesCategories(elem); });
                                             NotifyDataUpdated(CategorieDonneesEnum.Categories);
+                                            // Enregistre la reception du snapshot complet dans les stats
+                                            _statManager?.EnregistrerSnapshotCompletRecu(delai);
                                         },
                                         BusyStatusEnum.DemandeDonneesLogos,
-                                        _clientProvider.Client.DemandeLogos,
+                                        () => {
+                                            EnregistrerDebutEchange(ServerCommandEnum.DemandLogos);
+                                            _clientProvider.Client.DemandeLogos();
+                                            },
                                         element);
         }
 
@@ -435,7 +470,12 @@ namespace AppPublication.Controles
         {
             LogTools.Logger.Debug("client_OnUpdateCategories");
 
-            UpdateRequestDispatcher(LectureDonneesCategories, element);
+            UpdateRequestDispatcher((XElement elem) =>
+            {
+                double delai = ActionWatcher.Execute(() => { LectureDonneesCategories(elem); });
+                _statManager?.EnregistrerSnapshotDifferentielRecu(delai);
+            }, element);
+
             NotifyDataUpdated(CategorieDonneesEnum.Categories);
         }
 
@@ -456,11 +496,18 @@ namespace AppPublication.Controles
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesLogos,
                             (XElement elem) =>
                             {
-                                LectureDonneesLogos(elem);
+                                EnregistrerFinEchange(ServerCommandEnum.DemandLogos);
+                                double delai = ActionWatcher.Execute(() => { LectureDonneesLogos(elem); });
                                 NotifyDataUpdated(CategorieDonneesEnum.Logos);
+                                // Enregistre la reception du snapshot complet dans les stats
+                                _statManager?.EnregistrerSnapshotCompletRecu(delai);
                             },
                             BusyStatusEnum.DemandeDonneesOrganisation,
-                            _clientProvider.Client.DemandeOrganisation,
+                            () =>
+                            {
+                                EnregistrerDebutEchange(ServerCommandEnum.DemandOrganisation);
+                                _clientProvider.Client.DemandeOrganisation();
+                            },
                             element);
         }
 
@@ -468,7 +515,12 @@ namespace AppPublication.Controles
         {
             LogTools.DataLogger.Debug("client_OnUpdateLogos");
             
-            UpdateRequestDispatcher(LectureDonneesLogos, element);
+            UpdateRequestDispatcher((XElement elem) =>
+            {
+                double delai = ActionWatcher.Execute(() => { LectureDonneesLogos(elem); });
+                _statManager?.EnregistrerSnapshotDifferentielRecu(delai);
+            }
+            , element);
             NotifyDataUpdated(CategorieDonneesEnum.Logos);
         }
 
@@ -491,8 +543,11 @@ namespace AppPublication.Controles
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesOrganisation,
                             (XElement elem) =>
                             {
-                                LectureDonneesOrganisations(elem);
+                                EnregistrerFinEchange(ServerCommandEnum.DemandOrganisation);
+                                double delai = ActionWatcher.Execute( () => { LectureDonneesOrganisations(elem); });
                                 NotifyDataUpdated(CategorieDonneesEnum.Organisation);
+                                // Enregistre la reception du snapshot complet dans les stats
+                                _statManager?.EnregistrerSnapshotCompletRecu(delai);
                             },
                             BusyStatusEnum.DemandeDonneesJudokas,
                            () =>
@@ -500,10 +555,12 @@ namespace AppPublication.Controles
                                var judoDataInstance = DataManager as JudoData;
                                if (judoDataInstance.Organisation.Competition.IsEquipe())
                                {
+                                   EnregistrerDebutEchange(ServerCommandEnum.DemandEquipes);
                                    _clientProvider.Client.DemandeEquipes();
                                }
                                else
                                {
+                                   EnregistrerDebutEchange(ServerCommandEnum.DemandJudokas);
                                    _clientProvider.Client.DemandeJudokas();
                                }
                            },
@@ -514,7 +571,11 @@ namespace AppPublication.Controles
         {
             LogTools.Logger.Debug("client_OnUpdateOrganisation");
 
-            UpdateRequestDispatcher(LectureDonneesOrganisations, element);
+            UpdateRequestDispatcher((XElement elem) =>
+            {
+                double delai = ActionWatcher.Execute(() => { LectureDonneesOrganisations(elem); });
+                _statManager?.EnregistrerSnapshotDifferentielRecu(delai);
+                }, element);
             NotifyDataUpdated(CategorieDonneesEnum.Organisation);
         }
 
@@ -537,11 +598,18 @@ namespace AppPublication.Controles
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesJudokas,
                             (XElement elem) =>
                             {
-                                LectureDonneesEquipes(elem);
+                                EnregistrerFinEchange(ServerCommandEnum.DemandEquipes);
+                                double delai = ActionWatcher.Execute( () => { LectureDonneesEquipes(elem); });
                                 NotifyDataUpdated(CategorieDonneesEnum.Participants);
+                                // Enregistre la reception du snapshot complet dans les stats
+                                _statManager?.EnregistrerSnapshotCompletRecu(delai);
                             },
                             BusyStatusEnum.DemandeDonneesPhases,
-                            _clientProvider.Client.DemandePhases,
+                            () =>
+                            {
+                                EnregistrerDebutEchange(ServerCommandEnum.DemandPhases);
+                                _clientProvider.Client.DemandePhases();
+                            },
                             element);
         }
 
@@ -550,7 +618,12 @@ namespace AppPublication.Controles
         {
             LogTools.Logger.Debug("client_OnUpdateEquipes");
 
-            UpdateRequestDispatcher(LectureDonneesEquipes, element);
+            UpdateRequestDispatcher((XElement elem) =>
+            {
+                double delai = ActionWatcher.Execute(() => { LectureDonneesEquipes(elem); });
+                _statManager?.EnregistrerSnapshotDifferentielRecu(delai);
+            },
+            element);
             NotifyDataUpdated(CategorieDonneesEnum.Participants);
         }
 
@@ -572,11 +645,18 @@ namespace AppPublication.Controles
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesJudokas,
                             (XElement elem) =>
                             {
-                                LectureDonneesJudokas(elem);
+                                EnregistrerFinEchange(ServerCommandEnum.DemandJudokas);
+                                double delai = ActionWatcher.Execute( () => { LectureDonneesJudokas(elem); });
                                 NotifyDataUpdated(CategorieDonneesEnum.Participants);
+                                // Enregistre la reception du snapshot complet dans les stats
+                                _statManager?.EnregistrerSnapshotCompletRecu(delai);
                             },
                             BusyStatusEnum.DemandeDonneesPhases,
-                            _clientProvider.Client.DemandePhases,
+                            () =>
+                            {
+                                EnregistrerDebutEchange(ServerCommandEnum.DemandPhases);
+                                _clientProvider.Client.DemandePhases();
+                            },
                             element);
 
         }
@@ -585,7 +665,11 @@ namespace AppPublication.Controles
         {
             LogTools.Logger.Debug("client_OnUpdateJudokas");
 
-            UpdateRequestDispatcher(LectureDonneesJudokas, element);
+            UpdateRequestDispatcher((XElement elem) =>
+            {
+                double delai = ActionWatcher.Execute(() => { LectureDonneesJudokas(elem); });
+                _statManager?.EnregistrerSnapshotDifferentielRecu(delai);
+            }, element);
             NotifyDataUpdated(CategorieDonneesEnum.Participants);
         }
 
@@ -611,11 +695,18 @@ namespace AppPublication.Controles
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesPhases,
                             (XElement elem) =>
                             {
-                                LectureDonneesPhases(elem);
+                                EnregistrerFinEchange(ServerCommandEnum.DemandPhases);
+                                double delai = ActionWatcher.Execute( () => { LectureDonneesPhases(elem); });
                                 NotifyDataUpdated(CategorieDonneesEnum.Deroulement);
+                                // Enregistre la reception du snapshot complet dans les stats
+                                _statManager?.EnregistrerSnapshotCompletRecu(delai);
                             },
                             BusyStatusEnum.DemandeDonneesCombats,
-                            _clientProvider.Client.DemandeCombats,
+                            () =>
+                            {
+                                EnregistrerDebutEchange(ServerCommandEnum.DemandCombats);
+                                _clientProvider.Client.DemandeCombats();
+                            },
                             element);
         }
 
@@ -623,7 +714,11 @@ namespace AppPublication.Controles
         {
             LogTools.Logger.Debug("client_OnUpdatePhases");
 
-            UpdateRequestDispatcher(LectureDonneesPhases, element);
+            UpdateRequestDispatcher((XElement elem) =>
+            {
+                double delai = ActionWatcher.Execute(() => { LectureDonneesPhases(elem); });
+                _statManager?.EnregistrerSnapshotDifferentielRecu(delai);
+            }, element);
             NotifyDataUpdated(CategorieDonneesEnum.Deroulement);
         }
 
@@ -664,7 +759,13 @@ namespace AppPublication.Controles
             if (isIdleContext)
             {
                 // Etape 1 : On intègre les données (Opération lourde)
-                UpdateRequestDispatcher(LectureDonneesCombatsFull, element);
+                UpdateRequestDispatcher( (XElement elem) =>
+                {
+                    EnregistrerFinEchange(ServerCommandEnum.DemandCombats);
+                    double delai = ActionWatcher.Execute(() => { LectureDonneesCombatsFull(elem); } );
+                    _statManager?.EnregistrerSnapshotCompletRecu(delai);
+                },
+                element);
                 NotifyDataUpdated(CategorieDonneesEnum.Deroulement);
 
                 // Etape 2 : Validation conditionnelle du cache
@@ -694,11 +795,18 @@ namespace AppPublication.Controles
                 InitializationRequestDispatcher(BusyStatusEnum.InitDonneesCombats,
                                 (XElement elem) =>
                                 {
-                                    LectureDonneesCombatsFull(elem);
+                                    EnregistrerFinEchange(ServerCommandEnum.DemandCombats);
+                                    double delai = ActionWatcher.Execute(() => { LectureDonneesCombatsFull(elem); });
                                     NotifyDataUpdated(CategorieDonneesEnum.Deroulement);
+                                    // Enregistre la reception du snapshot complet dans les stats
+                                    _statManager?.EnregistrerSnapshotCompletRecu(delai);
                                 },
                                 BusyStatusEnum.DemandeDonneesArbitres,
-                                _clientProvider.Client.DemandeArbitrage,
+                                () =>
+                                {
+                                    EnregistrerDebutEchange(ServerCommandEnum.DemandArbitrage);
+                                    _clientProvider.Client.DemandeArbitrage();
+                                },
                                 element);
             }
         }
@@ -782,6 +890,9 @@ namespace AppPublication.Controles
             }
 
             // ON NE TRAITE PAS les données pour éviter la corruption du cache
+            // Enregistre la reception du snapshot complet dans les stats
+            _statManager?.EnregistrerSnapshotInvalideRecu();
+
         }
 
         public void client_OnUpdateCombats(object sender, XElement element)
@@ -796,13 +907,18 @@ namespace AppPublication.Controles
                     // On rejette la donnée, MAIS on lève le drapeau.
                     // Cela forcera EnsureDataConstistency à redemander un snapshot complet qui contiendra cette donnée.
                     _concurrentRequestReceived = true;
+                    _statManager.EnregistrerSnapshotIgnore();
                     LogTools.Logger.Warn("UpdateCombat ignore (Cache Dirty). Flag d'interference leve pour rechargement futur.");
                     return;
                 }
             }
 
             // Si le cache est propre, on applique normalement
-            UpdateRequestDispatcher(LectureDonneesCombatsDiff, element);
+            UpdateRequestDispatcher((XElement elem) =>
+            {
+                double delai = ActionWatcher.Execute(() => { LectureDonneesCombatsDiff(elem); });
+                _statManager?.EnregistrerSnapshotDifferentielRecu(delai);
+            }, element);
             NotifyDataUpdated(CategorieDonneesEnum.Deroulement);
         }
 
@@ -820,7 +936,11 @@ namespace AppPublication.Controles
         {
             LogTools.Logger.Debug("client_onUpdateRencontres");
 
-            UpdateRequestDispatcher(LectureDonneesRencontres, element);
+            UpdateRequestDispatcher((XElement elem) =>
+            {
+                double delai = ActionWatcher.Execute(() => { LectureDonneesRencontres(elem); });
+                _statManager?.EnregistrerSnapshotDifferentielRecu(delai);
+            }, element);
             NotifyDataUpdated(CategorieDonneesEnum.Deroulement);
         }
 
@@ -843,8 +963,11 @@ namespace AppPublication.Controles
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesArbitres,
                                                    (XElement elem) =>
                                                    {
-                                                       LectureDonneesArbitrage(elem);
+                                                       EnregistrerFinEchange(ServerCommandEnum.DemandArbitrage);
+                                                       double delai = ActionWatcher.Execute( () => { LectureDonneesArbitrage(elem); });
                                                        NotifyDataUpdated(CategorieDonneesEnum.Arbitrage);
+                                                       // Enregistre la reception du snapshot complet dans les stats
+                                                       _statManager?.EnregistrerSnapshotCompletRecu(delai);
                                                    },
                                                    BusyStatusEnum.None,
                                                    null,
@@ -855,7 +978,11 @@ namespace AppPublication.Controles
         {
             LogTools.Logger.Debug("client_OnUpdateArbitrage");
 
-            UpdateRequestDispatcher(LectureDonneesArbitrage, element);
+            UpdateRequestDispatcher((XElement elem) =>
+            {
+                double delai = ActionWatcher.Execute(() => { LectureDonneesArbitrage(elem); });
+                _statManager?.EnregistrerSnapshotDifferentielRecu(delai);
+                }, element);
             NotifyDataUpdated(CategorieDonneesEnum.Arbitrage);
         }
 
@@ -884,6 +1011,51 @@ namespace AppPublication.Controles
         #endregion
 
         #region METHODES INTERNES
+
+        /// <summary>
+        /// Enregistre le debut d'un echange avec le serveur
+        /// </summary>
+        /// <param name="categorie"></param>
+        protected void EnregistrerDebutEchange(ServerCommandEnum categorie)
+        {
+            try
+            {
+                EchangeMarkup tag = _balisesEchanges.GetOrAdd(categorie, new EchangeMarkup());
+                tag.DemandeEmise();
+            }
+            catch (Exception ex)
+            {
+                LogTools.Logger.Debug(ex, "Erreur lors de l'enregistrement du debut d'echange pour la categorie {0}", categorie.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Enregistre la fin d'un echange avec le serveur
+        /// </summary>
+        /// <param name="categorie"></param>
+        protected void EnregistrerFinEchange(ServerCommandEnum categorie)
+        {
+            try
+            {
+                EchangeMarkup cTag;
+                if (_balisesEchanges.TryGetValue(categorie, out cTag))
+                {
+                    double? delai = cTag.ReponseRecue();
+                    if (delai.HasValue)
+                    {
+                        _statManager.EnregistrerDelaiEchange(delai.Value);
+                    }
+                }
+                else
+                {
+                    LogTools.Logger.Debug("Reponse recu pour un echange inconnu {0}", categorie.ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                LogTools.Logger.Debug(ex, "Erreur lors de l'enregistrement de la fin d'echange pour la categorie {0}", categorie.ToString());
+            }
+        }
 
         private void StopOnError(bool withMessage = false, bool stopTimer = false)
         {

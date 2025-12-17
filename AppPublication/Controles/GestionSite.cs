@@ -1854,7 +1854,7 @@ namespace AppPublication.Controles
                         // Met le thread en attente pour la prochaine generation
                         Status.NextGenerationSec = (int)Math.Round(delaiThread / 1000.0);
 
-                        _statMgr.EnregsitrerDelaiGeneration(delaiThread / 1000F);
+                        _statMgr.EnregistrerDelaiGeneration(delaiThread / 1000F);
 
                         // prochaine heure de generation
                         wakeUpTime = DateTime.Now.AddMilliseconds(delaiThread);

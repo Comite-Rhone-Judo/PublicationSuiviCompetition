@@ -10,21 +10,30 @@ namespace AppPublication.Controles
         {
             TempsGeneration = 0,
             DelaiGeneration = 1,
-            NbGeneration = 2,
+            // NbGeneration = 2,
             NbErreurGeneration = 3
         }
 
         public enum CompteurSynchronisationEnum
         {
             TempsSynchronisation = 0,
-            NbSynchronisation = 1,
+            // NbSynchronisation = 1,
             NbErreurSynchronisation = 2,
             NbFichierSynchronisation = 3
         }
 
         public enum CompteurDonneesEnum
         {
-            NbDemandeSnapshot = 0
+            NbDemandeSnapshot = 0,
+            // NbSnapshotCompletsRecus = 1,
+            // NbSnapshotDifferentielRecus = 2,
+            NbSnapshotInvalidesRecus = 3,
+            NbSnapshotIgnores = 4,
+            NbConnexion = 5,
+            NbDeconnexion = 6,
+            DelaiEchange = 7,
+            DelaiIntegrationSnapshotComplet = 8,
+            DelaiIntegrationSnapshotDifferentiel = 9
         }
 
         #region MEMBRES
@@ -33,32 +42,47 @@ namespace AppPublication.Controles
         #region CONSTRUCTEURS
         public GestionStatistiques()
         {
-            Dictionary<CompteurGenerationEnum, StatistiqueItem> cpt = new Dictionary<CompteurGenerationEnum, StatistiqueItem>();
-            cpt.Add(CompteurGenerationEnum.TempsGeneration, new StatistiqueItemMoyenneur("TempsGeneration", "Durée de génération (Sec.)"));
-            cpt.Add(CompteurGenerationEnum.DelaiGeneration, new StatistiqueItemMoyenneur("DelaiGeneration", "Délai entre génération (Sec.)"));
-            cpt.Add(CompteurGenerationEnum.NbGeneration, new StatistiqueItemCompteur("NbGeneration", "Nb de génération"));
-            cpt.Add(CompteurGenerationEnum.NbErreurGeneration, new StatistiqueItemCompteur("NbErreurGeneration", "Nb d'erreur de génération"));
-            CompteursGeneration = cpt;
+            try
+            {
+                Dictionary<CompteurGenerationEnum, StatistiqueItem> cpt = new Dictionary<CompteurGenerationEnum, StatistiqueItem>();
+                cpt.Add(CompteurGenerationEnum.TempsGeneration, new StatistiqueItemMoyenneur(CompteurGenerationEnum.TempsGeneration.ToString(), "Durée de génération (Sec.)"));
+                cpt.Add(CompteurGenerationEnum.DelaiGeneration, new StatistiqueItemMoyenneur(CompteurGenerationEnum.DelaiGeneration.ToString(), "Délai entre génération (Sec.)"));
+                // cpt.Add(CompteurGenerationEnum.NbGeneration, new StatistiqueItemCompteur(CompteurGenerationEnum.NbGeneration.ToString(), "Nb de générations"));
+                cpt.Add(CompteurGenerationEnum.NbErreurGeneration, new StatistiqueItemCompteur(CompteurGenerationEnum.NbErreurGeneration.ToString(), "Nb d'erreurs de génération"));
+                CompteursGeneration = cpt;
 
-            Dictionary<CompteurSynchronisationEnum, StatistiqueItem> cptSyncC = new Dictionary<CompteurSynchronisationEnum, StatistiqueItem>();
-            cptSyncC.Add(CompteurSynchronisationEnum.TempsSynchronisation, new StatistiqueItemMoyenneur("TempsSynchronisation", "Durée de Synchronisation (Sec.)"));
-            cptSyncC.Add(CompteurSynchronisationEnum.NbFichierSynchronisation, new StatistiqueItemMoyenneur("NbFichiersSynchronises", "Nb de fichiers synchronisés"));
-            cptSyncC.Add(CompteurSynchronisationEnum.NbSynchronisation, new StatistiqueItemCompteur("NbSynchronisation", "Nb de synchronisation"));
-            cptSyncC.Add(CompteurSynchronisationEnum.NbErreurSynchronisation, new StatistiqueItemCompteur("NbErreurSynchronisation", "Nb d'erreur de synchronisation"));
-            CompteursSynchronisationComplete = cptSyncC;
+                Dictionary<CompteurSynchronisationEnum, StatistiqueItem> cptSyncC = new Dictionary<CompteurSynchronisationEnum, StatistiqueItem>();
+                cptSyncC.Add(CompteurSynchronisationEnum.TempsSynchronisation, new StatistiqueItemMoyenneur(CompteurSynchronisationEnum.TempsSynchronisation.ToString(), "Durée de Synchronisation (Sec.)"));
+                cptSyncC.Add(CompteurSynchronisationEnum.NbFichierSynchronisation, new StatistiqueItemMoyenneur(CompteurSynchronisationEnum.NbFichierSynchronisation.ToString(), "Nb de fichiers synchronisés"));
+                // cptSyncC.Add(CompteurSynchronisationEnum.NbSynchronisation, new StatistiqueItemCompteur(CompteurSynchronisationEnum.NbSynchronisation.ToString(), "Nb de synchronisatiosn"));
+                cptSyncC.Add(CompteurSynchronisationEnum.NbErreurSynchronisation, new StatistiqueItemCompteur(CompteurSynchronisationEnum.NbErreurSynchronisation.ToString(), "Nb d'erreurs de synchronisation"));
+                CompteursSynchronisationComplete = cptSyncC;
 
-            Dictionary<CompteurSynchronisationEnum, StatistiqueItem> cptSyncD = new Dictionary<CompteurSynchronisationEnum, StatistiqueItem>();
-            cptSyncD.Add(CompteurSynchronisationEnum.TempsSynchronisation, new StatistiqueItemMoyenneur("TempsSynchronisation", "Durée de Synchronisation (Sec.)"));
-            cptSyncD.Add(CompteurSynchronisationEnum.NbFichierSynchronisation, new StatistiqueItemMoyenneur("NbFichiersSynchronises", "Nb de fichiers synchronisés"));
-            cptSyncD.Add(CompteurSynchronisationEnum.NbSynchronisation, new StatistiqueItemCompteur("NbSynchronisation", "Nb de synchronisation"));
-            cptSyncD.Add(CompteurSynchronisationEnum.NbErreurSynchronisation, new StatistiqueItemCompteur("NbErreurSynchronisation", "Nb d'erreur de synchronisation"));
-            CompteursSynchronisationDifference = cptSyncD;
+                Dictionary<CompteurSynchronisationEnum, StatistiqueItem> cptSyncD = new Dictionary<CompteurSynchronisationEnum, StatistiqueItem>();
+                cptSyncD.Add(CompteurSynchronisationEnum.TempsSynchronisation, new StatistiqueItemMoyenneur(CompteurSynchronisationEnum.TempsSynchronisation.ToString(), "Durée de Synchronisation (Sec.)"));
+                cptSyncD.Add(CompteurSynchronisationEnum.NbFichierSynchronisation, new StatistiqueItemMoyenneur(CompteurSynchronisationEnum.NbFichierSynchronisation.ToString(), "Nb de fichiers synchronisés"));
+                // cptSyncD.Add(CompteurSynchronisationEnum.NbSynchronisation, new StatistiqueItemCompteur(CompteurSynchronisationEnum.NbSynchronisation.ToString(), "Nb de synchronisations"));
+                cptSyncD.Add(CompteurSynchronisationEnum.NbErreurSynchronisation, new StatistiqueItemCompteur(CompteurSynchronisationEnum.NbErreurSynchronisation.ToString(), "Nb d'erreurs de synchronisation"));
+                CompteursSynchronisationDifference = cptSyncD;
 
-            // --- AJOUT : Initialisation du dictionnaire Données ---
-            Dictionary<CompteurDonneesEnum, StatistiqueItem> cptData = new Dictionary<CompteurDonneesEnum, StatistiqueItem>();
-            cptData.Add(CompteurDonneesEnum.NbDemandeSnapshot, new StatistiqueItemCompteur("NbDemandeSnapshot", "Resynchro. (Snapshots)"));
-            CompteursDonnees = cptData;
-
+                // --- AJOUT : Initialisation du dictionnaire Données ---
+                Dictionary<CompteurDonneesEnum, StatistiqueItem> cptData = new Dictionary<CompteurDonneesEnum, StatistiqueItem>();
+                cptData.Add(CompteurDonneesEnum.NbDemandeSnapshot, new StatistiqueItemCompteur(CompteurDonneesEnum.NbDemandeSnapshot.ToString(), "Resynchro. (Snapshots)"));
+                // cptData.Add(CompteurDonneesEnum.NbSnapshotCompletsRecus, new StatistiqueItemCompteur(CompteurDonneesEnum.NbSnapshotCompletsRecus.ToString(), "Nb de snapshots complets reçus"));
+                cptData.Add(CompteurDonneesEnum.DelaiIntegrationSnapshotComplet, new StatistiqueItemMoyenneur(CompteurDonneesEnum.DelaiIntegrationSnapshotComplet.ToString(), "Intégration Snapshot complet (Ms)"));
+                // cptData.Add(CompteurDonneesEnum.NbSnapshotDifferentielRecus, new StatistiqueItemCompteur(CompteurDonneesEnum.NbSnapshotDifferentielRecus.ToString(), "Nb de snapshots différentiels reçus"));
+                cptData.Add(CompteurDonneesEnum.DelaiIntegrationSnapshotDifferentiel, new StatistiqueItemMoyenneur(CompteurDonneesEnum.DelaiIntegrationSnapshotDifferentiel.ToString(), "Intégration Snapshot diff. (Ms)"));
+                cptData.Add(CompteurDonneesEnum.NbSnapshotInvalidesRecus, new StatistiqueItemCompteur(CompteurDonneesEnum.NbSnapshotInvalidesRecus.ToString(), "Nb de snapshots invalides reçus"));
+                cptData.Add(CompteurDonneesEnum.NbSnapshotIgnores, new StatistiqueItemCompteur(CompteurDonneesEnum.NbSnapshotIgnores.ToString(), "Nb de snapshots ignores"));
+                cptData.Add(CompteurDonneesEnum.NbConnexion, new StatistiqueItemCompteur(CompteurDonneesEnum.NbConnexion.ToString(), "Nb de connexions"));
+                cptData.Add(CompteurDonneesEnum.NbDeconnexion, new StatistiqueItemCompteur(CompteurDonneesEnum.NbDeconnexion.ToString(), "Nb de déconnexions"));
+                cptData.Add(CompteurDonneesEnum.DelaiEchange, new StatistiqueItemMoyenneur(CompteurDonneesEnum.DelaiEchange.ToString(), "Délai Demande/Réponse (Ms)"));
+                CompteursDonnees = cptData;
+            }
+            catch (System.Exception ex)
+            {
+                LogTools.Logger.Error(ex, "Erreur lors de l'initialisation des statistiques");
+            }
         }
         #endregion
 
@@ -125,55 +149,162 @@ namespace AppPublication.Controles
         #region METHODES
         public void EnregistrerErreurGeneration()
         {
-            StatistiqueItem item = _compteursGeneration[CompteurGenerationEnum.NbErreurGeneration];
-            item.EnregistrerValeur();
+            try
+            {
+                StatistiqueItem item = _compteursGeneration[CompteurGenerationEnum.NbErreurGeneration];
+                item?.EnregistrerValeur();
+            }
+            catch (System.Exception ex)
+            {
+                LogTools.Logger.Error(ex, "Erreur lors de l'enregistrement d'une erreur de generation");
+            }
         }
 
         public void EnregistrerGeneration(float duree)
         {
-
-            StatistiqueItem item = _compteursGeneration[CompteurGenerationEnum.NbGeneration];
-            item.EnregistrerValeur();
-            item = _compteursGeneration[CompteurGenerationEnum.TempsGeneration];
-            item.EnregistrerValeur(duree);
+            try
+            {
+                // StatistiqueItem item = _compteursGeneration[CompteurGenerationEnum.NbGeneration];
+                // item.EnregistrerValeur();
+                StatistiqueItem item = _compteursGeneration[CompteurGenerationEnum.TempsGeneration];
+                item?.EnregistrerValeur(duree);
+            }
+            catch (System.Exception ex)
+            {
+                LogTools.Logger.Error(ex, "Erreur lors de l'enregistrement d'une generation");
+            }
         }
 
-        public void EnregsitrerDelaiGeneration(float delai)
+        public void EnregistrerDelaiGeneration(float delai)
         {
-            StatistiqueItem item = _compteursGeneration[CompteurGenerationEnum.DelaiGeneration];
-            item.EnregistrerValeur(delai);
+            try
+            {
+                StatistiqueItem item = _compteursGeneration[CompteurGenerationEnum.DelaiGeneration];
+                item?.EnregistrerValeur(delai);
+            }
+            catch (System.Exception ex)
+            {
+                LogTools.Logger.Error(ex, "Erreur lors de l'enregistrement du delai de generation");
+            }
         }
 
         public void EnregistrerSynchronisation(float duree, UploadStatus syncStatus)
         {
-            // Selectionne le dictionnaire en fonction du type de synchronisation
-            Dictionary<CompteurSynchronisationEnum, StatistiqueItem> statDict = (syncStatus.IsComplet) ? _compteursSynchronisationComplete : _compteursSynchronisationDifference;
-
-            // Enregistre les donnees dans les compteurs respectifs
-            StatistiqueItem item = statDict[CompteurSynchronisationEnum.TempsSynchronisation];
-            item.EnregistrerValeur(duree);
-            item = statDict[CompteurSynchronisationEnum.NbSynchronisation];
-            item.EnregistrerValeur();
-
-            if (!syncStatus.IsSuccess)
+            try
             {
-                item = statDict[CompteurSynchronisationEnum.NbErreurSynchronisation];
-                item.EnregistrerValeur();
+                // Selectionne le dictionnaire en fonction du type de synchronisation
+                Dictionary<CompteurSynchronisationEnum, StatistiqueItem> statDict = (syncStatus.IsComplet) ? _compteursSynchronisationComplete : _compteursSynchronisationDifference;
+
+                // Enregistre les donnees dans les compteurs respectifs
+                StatistiqueItem item = statDict[CompteurSynchronisationEnum.TempsSynchronisation];
+                item?.EnregistrerValeur(duree);
+                // item = statDict[CompteurSynchronisationEnum.NbSynchronisation];
+                // item.EnregistrerValeur();
+
+                if (!syncStatus.IsSuccess)
+                {
+                    item = statDict[CompteurSynchronisationEnum.NbErreurSynchronisation];
+                    item?.EnregistrerValeur();
+                }
+
+                if (syncStatus.nbUpload > 0)
+                {
+                    item = statDict[CompteurSynchronisationEnum.NbFichierSynchronisation];
+                    item?.EnregistrerValeur(syncStatus.nbUpload);
+                }
             }
-
-            if (syncStatus.nbUpload > 0)
+            catch (System.Exception ex)
             {
-                item = statDict[CompteurSynchronisationEnum.NbFichierSynchronisation];
-                item.EnregistrerValeur(syncStatus.nbUpload);
+                LogTools.Logger.Error(ex, "Erreur lors de l'enregistrement d'une synchronisation");
             }
         }
 
         public void EnregistrerDemandeSnapshot()
         {
-            if (_compteursDonnees != null && _compteursDonnees.ContainsKey(CompteurDonneesEnum.NbDemandeSnapshot))
+            EnregistreCompteurDonnees(_compteursDonnees, CompteurDonneesEnum.NbDemandeSnapshot);
+        }
+
+        public void EnregistrerSnapshotCompletRecu(double delai)
+        {
+            try
             {
-                StatistiqueItem item = _compteursDonnees[CompteurDonneesEnum.NbDemandeSnapshot];
-                item.EnregistrerValeur();
+                // EnregistreCompteurDonnees(_compteursDonnees, CompteurDonneesEnum.NbSnapshotCompletsRecus);
+                StatistiqueItem item = _compteursDonnees[CompteurDonneesEnum.DelaiIntegrationSnapshotComplet];
+                item?.EnregistrerValeur((float)delai);
+                LogTools.Logger.Debug("delai integration: {0} ms", delai);
+            }
+            catch (System.Exception ex)
+            {
+                LogTools.Logger.Error(ex, "Erreur lors de l'enregistrement du delai d'integration du snapshot complet");
+            }
+        }
+
+        public void EnregistrerSnapshotDifferentielRecu(double delai)
+        {
+            try
+            {
+                // EnregistreCompteurDonnees(_compteursDonnees, CompteurDonneesEnum.NbSnapshotDifferentielRecus);
+                StatistiqueItem item = _compteursDonnees[CompteurDonneesEnum.DelaiIntegrationSnapshotDifferentiel];
+                item?.EnregistrerValeur((float)delai);
+                LogTools.Logger.Debug("delai integration: {0} ms", delai);
+            }
+            catch (System.Exception ex)
+            {
+                LogTools.Logger.Error(ex, "Erreur lors de l'enregistrement du delai d'integration du snapshot differentiel");
+            }
+        }
+
+        public void EnregistrerSnapshotInvalideRecu()
+        {
+            EnregistreCompteurDonnees(_compteursDonnees, CompteurDonneesEnum.NbSnapshotInvalidesRecus);
+        }
+
+        public void EnregistrerSnapshotIgnore()
+        {
+            EnregistreCompteurDonnees(_compteursDonnees, CompteurDonneesEnum.NbSnapshotIgnores);
+        }
+
+        public void EnregistrerConnexion()
+        {
+            EnregistreCompteurDonnees(_compteursDonnees, CompteurDonneesEnum.NbConnexion);
+        }
+
+        public void EnregistrerDeconnexion()
+        {
+            EnregistreCompteurDonnees(_compteursDonnees, CompteurDonneesEnum.NbDeconnexion);
+        }
+
+        public void EnregistrerDelaiEchange(double delai)
+        {
+            try
+            {
+                StatistiqueItem item = _compteursDonnees[CompteurDonneesEnum.DelaiEchange];
+                item?.EnregistrerValeur((float)delai);
+                LogTools.Logger.Debug("delai d'echange: {0} ms", delai);
+            }
+            catch (System.Exception ex)
+            {
+                LogTools.Logger.Error(ex, "Erreur lors de l'enregistrement du delai d'echange");
+            }
+        }
+
+        #endregion
+
+        #region METHODES PRIVEES
+
+        public void EnregistreCompteurDonnees(Dictionary<CompteurDonneesEnum, StatistiqueItem> cpt, CompteurDonneesEnum idCpt)
+        {
+            try
+            {
+                if (cpt != null && cpt.ContainsKey(idCpt))
+                {
+                    StatistiqueItem item = cpt[idCpt];
+                    item?.EnregistrerValeur();
+                }
+            }
+            catch (System.Exception ex)
+            {
+                LogTools.Logger.Error(ex, "Erreur lors de l'enregistrement du compteur de donnees : " + idCpt.ToString());
             }
         }
 
