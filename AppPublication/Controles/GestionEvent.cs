@@ -422,7 +422,7 @@ namespace AppPublication.Controles
             UpdateRequestDispatcher( (XElement elem) =>
                                         {
                                             double delai = ActionWatcher.Execute( () => { LectureDonneesStructures(elem); });
-                                            _statManager?.EnregistrerSnapshotDifferentielRecu(delai);
+                                            _statManager?.EnregistrerSnapshotCompletRecu(delai);
                                         }
             , element);
             NotifyDataUpdated(CategorieDonneesEnum.Structures);
@@ -473,7 +473,7 @@ namespace AppPublication.Controles
             UpdateRequestDispatcher((XElement elem) =>
             {
                 double delai = ActionWatcher.Execute(() => { LectureDonneesCategories(elem); });
-                _statManager?.EnregistrerSnapshotDifferentielRecu(delai);
+                _statManager?.EnregistrerSnapshotCompletRecu(delai);
             }, element);
 
             NotifyDataUpdated(CategorieDonneesEnum.Categories);
@@ -518,7 +518,7 @@ namespace AppPublication.Controles
             UpdateRequestDispatcher((XElement elem) =>
             {
                 double delai = ActionWatcher.Execute(() => { LectureDonneesLogos(elem); });
-                _statManager?.EnregistrerSnapshotDifferentielRecu(delai);
+                _statManager?.EnregistrerSnapshotCompletRecu(delai);
             }
             , element);
             NotifyDataUpdated(CategorieDonneesEnum.Logos);
@@ -574,7 +574,7 @@ namespace AppPublication.Controles
             UpdateRequestDispatcher((XElement elem) =>
             {
                 double delai = ActionWatcher.Execute(() => { LectureDonneesOrganisations(elem); });
-                _statManager?.EnregistrerSnapshotDifferentielRecu(delai);
+                _statManager?.EnregistrerSnapshotCompletRecu(delai);
                 }, element);
             NotifyDataUpdated(CategorieDonneesEnum.Organisation);
         }
@@ -621,7 +621,7 @@ namespace AppPublication.Controles
             UpdateRequestDispatcher((XElement elem) =>
             {
                 double delai = ActionWatcher.Execute(() => { LectureDonneesEquipes(elem); });
-                _statManager?.EnregistrerSnapshotDifferentielRecu(delai);
+                _statManager?.EnregistrerSnapshotCompletRecu(delai);
             },
             element);
             NotifyDataUpdated(CategorieDonneesEnum.Participants);
@@ -668,7 +668,7 @@ namespace AppPublication.Controles
             UpdateRequestDispatcher((XElement elem) =>
             {
                 double delai = ActionWatcher.Execute(() => { LectureDonneesJudokas(elem); });
-                _statManager?.EnregistrerSnapshotDifferentielRecu(delai);
+                _statManager?.EnregistrerSnapshotCompletRecu(delai);
             }, element);
             NotifyDataUpdated(CategorieDonneesEnum.Participants);
         }
@@ -717,7 +717,7 @@ namespace AppPublication.Controles
             UpdateRequestDispatcher((XElement elem) =>
             {
                 double delai = ActionWatcher.Execute(() => { LectureDonneesPhases(elem); });
-                _statManager?.EnregistrerSnapshotDifferentielRecu(delai);
+                _statManager?.EnregistrerSnapshotCompletRecu(delai);
             }, element);
             NotifyDataUpdated(CategorieDonneesEnum.Deroulement);
         }
@@ -939,7 +939,7 @@ namespace AppPublication.Controles
             UpdateRequestDispatcher((XElement elem) =>
             {
                 double delai = ActionWatcher.Execute(() => { LectureDonneesRencontres(elem); });
-                _statManager?.EnregistrerSnapshotDifferentielRecu(delai);
+                _statManager?.EnregistrerSnapshotCompletRecu(delai);
             }, element);
             NotifyDataUpdated(CategorieDonneesEnum.Deroulement);
         }
@@ -981,7 +981,7 @@ namespace AppPublication.Controles
             UpdateRequestDispatcher((XElement elem) =>
             {
                 double delai = ActionWatcher.Execute(() => { LectureDonneesArbitrage(elem); });
-                _statManager?.EnregistrerSnapshotDifferentielRecu(delai);
+                _statManager?.EnregistrerSnapshotCompletRecu(delai);
                 }, element);
             NotifyDataUpdated(CategorieDonneesEnum.Arbitrage);
         }
