@@ -33,7 +33,8 @@ namespace AppPublication.Controles
             NbDeconnexion = 6,
             DelaiEchange = 7,
             DelaiIntegrationSnapshotComplet = 8,
-            DelaiIntegrationSnapshotDifferentiel = 9
+            DelaiIntegrationSnapshotDifferentiel = 9,
+            NbErreurReceptionDonnees = 10
         }
 
         #region MEMBRES
@@ -77,6 +78,7 @@ namespace AppPublication.Controles
                 cptData.Add(CompteurDonneesEnum.NbConnexion, new StatistiqueItemCompteur(CompteurDonneesEnum.NbConnexion.ToString(), "Nb de connexions"));
                 cptData.Add(CompteurDonneesEnum.NbDeconnexion, new StatistiqueItemCompteur(CompteurDonneesEnum.NbDeconnexion.ToString(), "Nb de déconnexions"));
                 cptData.Add(CompteurDonneesEnum.DelaiEchange, new StatistiqueItemMoyenneur(CompteurDonneesEnum.DelaiEchange.ToString(), "Délai Demande/Réponse (Ms)"));
+                cptData.Add(CompteurDonneesEnum.NbErreurReceptionDonnees, new StatistiqueItemMoyenneur(CompteurDonneesEnum.NbErreurReceptionDonnees.ToString(), "Nb d'erreur de données"));
                 CompteursDonnees = cptData;
             }
             catch (System.Exception ex)
@@ -273,6 +275,12 @@ namespace AppPublication.Controles
         {
             EnregistreCompteurDonnees(_compteursDonnees, CompteurDonneesEnum.NbDeconnexion);
         }
+
+        public void EnregistrerErreurDonnees()
+        {
+            EnregistreCompteurDonnees(_compteursDonnees, CompteurDonneesEnum.NbErreurReceptionDonnees);
+        }
+
 
         public void EnregistrerDelaiEchange(double delai)
         {

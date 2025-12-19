@@ -29,6 +29,14 @@ namespace AppPublication.Controles
         Disconnected = 2        // Deconnecte
     }
 
+    public enum ClientJudoComQuality
+    {
+        None = 0,
+        Poor = 1,
+        Average = 2,
+        Good = 3
+    }
+
     // EventArgs pour transporter l'info
     public class BusyStatusEventArgs : EventArgs
     {
@@ -56,7 +64,7 @@ namespace AppPublication.Controles
 
     #endregion
 
-    public class GestionEvent
+    public class GestionEvent : NotificationBase
     {
         #region CONSTANTES
         private const int kDefaultTimeoutMs = 15000;
@@ -68,6 +76,8 @@ namespace AppPublication.Controles
         private object _lock = new object();            // Pour les verrous
         private ClientJudoStatusEnum _status = ClientJudoStatusEnum.Idle;   // Le statut du client
         SingleShotTimer _timerReponse = null;     // Timer d'attente d'une reponse la reponse
+        // TO
+        SingleShotTimer _timerComQualityReset = null;   // Timer de remise a zero de la qualite des donnees
 
         private readonly object _lockDirty = new object();  // Objet de verrouillage pour garantir l'accès exclusif
         private bool _isCombatsCacheDirty = false; // Le flag d'état
@@ -102,6 +112,9 @@ namespace AppPublication.Controles
             _timerReponse = new SingleShotTimer();
             _timerReponse.Elapsed += OnResponseTimeout;
 
+            _timerComQualityReset = new SingleShotTimer();
+            _timerComQualityReset.Elapsed += OnDataQualityResetTimeout;
+
             // Intialisation balises d'echange
             _balisesEchanges = new ConcurrentDictionary<ServerCommandEnum, EchangeMarkup>();
         }
@@ -132,6 +145,8 @@ namespace AppPublication.Controles
         #endregion
 
         #region PROPERTIES
+
+        public ClientJudoComQuality QualiteCommunication { get; set; } = ClientJudoComQuality.None;
 
         /// <summary>
         /// Indique si les données de combats sont potentiellement incohérentes (suite à un update partiel).
@@ -241,6 +256,21 @@ namespace AppPublication.Controles
                 }
             }
         }
+
+        public void OnDataQualityResetTimeout(object state)
+        {
+            LogTools.Logger.Debug("Expiration du timer de calcul de la qualite des donnees");
+            lock (_lock)
+            {
+                // Demande l'arret du client si on est bien en phase d'init. Dans le cas contraire, on ignore le timer car cet evenement 
+                // ne doit pas arriver si on est deja connecté ou pas encore
+                if (_status == ClientJudoStatusEnum.Initializing)
+                {
+                    StopOnError(true, false);      // Demande l'affichage du message mais n'arrete pas le timer car on est deja dans le callback
+                }
+            }
+        }
+        
 
         /// <summary>
         /// Appelé quand un client est prêt et configuré
