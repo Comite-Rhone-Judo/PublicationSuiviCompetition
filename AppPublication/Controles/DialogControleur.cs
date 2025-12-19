@@ -270,9 +270,35 @@ namespace AppPublication.Controles
 
         #region COMMANDES
 
+        private ICommand _cmdAcquitterErreurCommunication = null;
 
+        /// <summary>
+        /// Commande permettant d'acquitter une erreur de communication
+        /// </summary>
+        public ICommand CmdAcquitterErreurCommunication
+        {
+            get
+            {
+                if (_cmdAcquitterErreurCommunication == null)
+                {
+                    _cmdAcquitterErreurCommunication = new RelayCommand(
+                            o =>
+                            {
+                                if (Connection != null && Connection.HasErreurTransmission)
+                                {
+                                    LogTools.Logger.Info("Erreur de transmission acquittee par l'utilisateur.");
+                                    Connection.HasErreurTransmission = false;
+                                }
+                            },
+                            o =>
+                            {
+                                return true;
+                            });
+                }
+                return _cmdAcquitterErreurCommunication;
+            }
+        }
 
-        
 
         private ICommand _cmdCopyUrlLocal = null;
         /// <summary>

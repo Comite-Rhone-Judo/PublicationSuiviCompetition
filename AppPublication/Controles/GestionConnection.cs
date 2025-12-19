@@ -30,6 +30,8 @@ namespace AppPublication.Controles
         private DateTime _reference = DateTime.Now;
         private int _nRetry = 0;
         private object _lock = new object();
+        private volatile bool _isDisposing = false;
+        private bool _hasErreurTransmission = false;
         #endregion
 
         #region PROPERTIES
@@ -54,7 +56,47 @@ namespace AppPublication.Controles
         /// <summary>
         /// Etat de connexion au serveur Judo
         /// </summary>
-        public bool IsConnected => _isconnected;
+        public bool IsConnected
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _isconnected;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Indique si une erreur de transmission a ete detectee
+        /// </summary>
+        public bool HasErreurTransmission
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _hasErreurTransmission;
+                }
+            }
+            set
+            {
+                bool changed = false;
+                lock (_lock)
+                {
+                    if (_hasErreurTransmission != value)
+                    {
+                        _hasErreurTransmission = value;
+                        changed = true;
+                    }
+                }
+
+                if (changed)
+                {
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         /// <summary>
         /// Le client de connexion Judo
@@ -63,15 +105,39 @@ namespace AppPublication.Controles
         {
             get
             {
-                return _client;
+                lock (_lock)
+                {
+                    return _client;
+                }
             }
             set
             {
-                _client = value;
-                _isconnected = true;
+                bool shouldSetup = false;
+                ClientJudo clientToSetup = null;
+
+                lock (_lock)
+                {
+                    _client = value;
+                    _isconnected = value != null;
+
+                    if (value != null)
+                    {
+                        shouldSetup = true;
+                        clientToSetup = value;
+                        _reference = DateTime.Now;
+                        _nRetry = 0;
+                    }
+                }
 
                 NotifyPropertyChanged();
-                SetupClient();
+
+                // Réinitialiser le flag d'erreur via le setter
+                HasErreurTransmission = false;
+
+                if (shouldSetup)
+                {
+                    SetupClient(clientToSetup);
+                }
             }
         }
 
@@ -94,15 +160,30 @@ namespace AppPublication.Controles
         /// </summary>
         public void TesteConnection()
         {
+            ClientJudo clientToTest;
+
             lock (_lock)
             {
+                if (_isDisposing || _client == null)
+                {
+                    return;
+                }
+
                 _isconnected = false;
                 _reference = DateTime.Now;
                 _nRetry++;
+                clientToTest = _client;
             }
 
             // On fait la demande de connection test en dehors du lock pour éviter un deadlock
-            _client?.DemandConnectionTest();
+            try
+            {
+                clientToTest?.DemandConnectionTest();
+            }
+            catch (Exception ex)
+            {
+                LogTools.Logger.Error("Erreur lors du test de connexion", ex);
+            }
         }
 
         /// <summary>
@@ -110,14 +191,49 @@ namespace AppPublication.Controles
         /// </summary>
         public void DisposeClient()
         {
-            if(this.Client != null)
+            ClientJudo clientToDispose = null;
+
+            lock (_lock)
             {
-                this.Client.NetworkClient.Stop();
-                this.Client = null;
+                if (_isDisposing || _client == null)
+                {
+                    return;
+                }
+
+                _isDisposing = true;
+                clientToDispose = _client;
+                _client = null;
                 _isconnected = false;
+            }
+
+            // Arrêt du timer
+            if (_timer != null && _timer.IsEnabled)
+            {
+                _timer.Stop();
+            }
+
+            // Dispose en dehors du lock pour éviter les deadlocks
+            if (clientToDispose != null)
+            {
+                try
+                {
+                    clientToDispose.NetworkClient.Stop();
+                }
+                catch (Exception ex)
+                {
+                    LogTools.Logger.Error("Erreur lors de la fermeture du client", ex);
+                }
 
                 // Notify subscribers of disconnection
                 ClientDisconnected?.Invoke(this, new ClientDisconnectedEventArgs());
+            }
+
+            // Réinitialiser le flag d'erreur via le setter
+            HasErreurTransmission = false;
+
+            lock (_lock)
+            {
+                _isDisposing = false;
             }
         }
         #endregion
@@ -126,26 +242,42 @@ namespace AppPublication.Controles
         /// <summary>
         /// Initialise a configure le client en connexion avec les evenements
         /// </summary>
-        private void SetupClient()
+        private void SetupClient(ClientJudo client)
         {
-            if (_client == null)
+            if (client == null)
             {
                 return;
             }
 
+            // Vérifier que le client est toujours valide
+            lock (_lock)
+            {
+                if (_isDisposing || _client != client)
+                {
+                    // Le client a été changé ou dispose entre temps
+                    return;
+                }
+            }
+
             // Only subscribe to connection test (internal to GestionConnection)
-            _client.TraitementConnexion.OnAcceptConnectionTest += clientjudo_OnDemandeConnectionTest;
-            _client.OnReceivedDataErrorOccured += client_OnReceivedDataErrorOccured;
-            _client.OnReceivedDataSuccessOccured += client_OnReceivedDataSuccessOccured;
+            client.TraitementConnexion.OnAcceptConnectionTest += clientjudo_OnDemandeConnectionTest;
+            client.OnReceivedDataErrorOccured += client_OnReceivedDataErrorOccured;
+            client.OnReceivedDataSuccessOccured += client_OnReceivedDataSuccessOccured;
 
 
             // Raise event so GestionEvent can subscribe to client events
-            ClientReady?.Invoke(this, new ClientReadyEventArgs(_client));
+            ClientReady?.Invoke(this, new ClientReadyEventArgs(client));
 
             RaiseConnectionStatusChanged(true, BusyStatusEnum.InitDonneesStructures);
 
             // Start connection handshake
-            _client.DemandConnectionCOM();
+            client.DemandConnectionCOM();
+
+            // Démarrer le timer de surveillance de la connexion
+            if (_timer != null && !_timer.IsEnabled)
+            {
+                _timer.Start();
+            }
         }
 
         /// <summary>
@@ -164,6 +296,9 @@ namespace AppPublication.Controles
         /// <param name="data"></param>
         private void client_OnReceivedDataErrorOccured(object sender, string data)
         {
+            // Lever le drapeau d'erreur de transmission
+            HasErreurTransmission = true;
+
             LogTools.Logger.Debug("Signalement d'une erreur de donnee recue", data);
         }
 
@@ -174,7 +309,6 @@ namespace AppPublication.Controles
         /// <param name="data"></param>
         private void client_OnReceivedDataSuccessOccured(object sender, string data)
         {
-            // TODO Ajouter le traitement de la qualite de la connexion
             LogTools.Logger.Debug("Donnees recues avec succes signalee");
         }
 
@@ -185,9 +319,15 @@ namespace AppPublication.Controles
         /// <param name="doc"></param>
         private void clientjudo_OnDemandeConnectionTest(object sender, XElement doc)
         {
-            _isconnected = true;
-            _reference = DateTime.Now;
-            _nRetry = 0;
+            lock (_lock)
+            {
+                if (!_isDisposing)
+                {
+                    _isconnected = true;
+                    _reference = DateTime.Now;
+                    _nRetry = 0;
+                }
+            }
         }
 
         /// <summary>
@@ -199,16 +339,29 @@ namespace AppPublication.Controles
         {
             // TODO Voir pour integrer la gestion de la qualite de la connexion ici
 
-            if (_client == null)
+            ClientJudo currentClient;
+            bool isConnected;
+            DateTime reference;
+            int nRetry;
+
+            lock (_lock)
             {
-                return;
+                if (_isDisposing || _client == null)
+                {
+                    return;
+                }
+
+                currentClient = _client;
+                isConnected = _isconnected;
+                reference = _reference;
+                nRetry = _nRetry;
             }
 
             DateTime now = DateTime.Now;
-            double elapseSec = (now - _reference).TotalSeconds;
+            double elapseSec = (now - reference).TotalSeconds;
 
 
-            if (_isconnected)
+            if (isConnected)
             {
                 // Verifie si le delai avant de tester la connexion est echue ou non
                 if (elapseSec > TEST_CONNECT)
@@ -222,11 +375,10 @@ namespace AppPublication.Controles
                 if (elapseSec > TEST_CONNECT)
                 {
                     // Essaye de refaire une demande de connexion
-                    if (_nRetry > MAX_RETRY)
+                    if (nRetry > MAX_RETRY)
                     {
                         // on a deja essaye plusieurs fois, on est vraiment deconnecte
-                        this.Client.NetworkClient.Stop();
-                        this.Client = null;
+                        DisposeClient();
                     }
                     else
                     {

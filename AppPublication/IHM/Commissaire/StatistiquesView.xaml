@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AppPublication.IHM.Commissaire"
         mc:Ignorable="d"
-        Header="Statistiques" Height="596" Width="900"
+        Header="Statistiques" Height="610" Width="900"
         WindowStartupLocation="CenterScreen" 
         CanClose="True" CanMove="True" ResizeMode="CanResize" 
         WindowState="Normal" Name="UI" Background="Black" SizeToContent="True">
