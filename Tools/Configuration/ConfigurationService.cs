@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Markup;
 using Tools.Outils;
 
 namespace Tools.Configuration
@@ -15,9 +16,15 @@ namespace Tools.Configuration
     public class ConfigurationService : IDisposable
     {
         // --- SINGLETON ---
-        private static readonly Lazy<ConfigurationService> _lazyInstance =
-            new Lazy<ConfigurationService>(() => new ConfigurationService());
-        public static ConfigurationService Instance => _lazyInstance.Value;
+        private static ConfigurationService _instance = null;
+        public static ConfigurationService Instance { 
+        get
+            {
+                if (_instance == null)
+                    throw new InvalidOperationException("ConfigurationService non initialise ! Appelez ConfigurationService.CreateInstance()");
+                return _instance;
+            }
+        }
 
         // --- CONCURRENCE ET WORKER ---
         // Verrou global (lent) : Protège l'opération I/O sur disque et la liste des sections à sauvegarder.
@@ -36,6 +43,17 @@ namespace Tools.Configuration
             InternalConfigSectionBase.SectionBecameDirty += HandleSectionDirty;
             StartSaveWorker();
         }
+
+        public static ConfigurationService CreateInstance()
+        {
+            if (_instance != null)
+                throw new InvalidOperationException("Violation du Singleton : ConfigurationService deja instancie.");
+
+            _instance = new ConfigurationService();
+            return _instance;
+        }
+
+
 
         /// <summary>
         /// Démarre le worker de sauvegarde asynchrone s'il n'est pas déjà en cours d'exécution.

@@ -22,14 +22,6 @@ namespace AppPublication.Controles
         Disconnected = 2        // Deconnecte
     }
 
-    public enum ClientJudoComQuality
-    {
-        None = 0,
-        Poor = 1,
-        Average = 2,
-        Good = 3
-    }
-
     // EventArgs pour transporter l'info
     public class BusyStatusEventArgs : EventArgs
     {
@@ -138,8 +130,6 @@ namespace AppPublication.Controles
         #endregion
 
         #region PROPERTIES
-
-        public ClientJudoComQuality QualiteCommunication { get; set; } = ClientJudoComQuality.None;
 
         /// <summary>
         /// Indique si les données de combats sont potentiellement incohérentes (suite à un update partiel).

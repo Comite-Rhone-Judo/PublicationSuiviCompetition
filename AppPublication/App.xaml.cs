@@ -6,6 +6,8 @@ using System.Windows.Threading;
 using Telerik.Windows.Controls;
 using Tools.Outils;
 using Tools.Configuration;
+using KernelImpl;
+using AppPublication.Controles;
 
 namespace AppPublication
 { /// <summary>
@@ -24,17 +26,7 @@ namespace AppPublication
         /// </summary>
         public App()
         {
-            // Attention a l'ordre des initialisations !
-
-            // LogTools.Trace("App is starting");
             LogTools.LogStartup();
-
-            // Démarrage du Service de Configuration (le worker commence ici)
-            // L'accès à .Instance suffit à démarrer le Singleton et le Worker
-            _configSvc = ConfigurationService.Instance;
-
-            // Demarrer le controleur et assure que le logger est bien configure
-            Controles.DialogControleur.Instance.CanManageTracesDebug = LogTools.IsConfigured;
 
             CultureInfo culture = new CultureInfo("fr");
             Thread.CurrentThread.CurrentCulture = culture;
@@ -46,6 +38,10 @@ namespace AppPublication
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            // Démarrage du Service de Configuration (le worker commence ici)
+            // L'accès à .Instance suffit à démarrer le Singleton et le Worker
+            _configSvc = ConfigurationService.CreateInstance();
 
             // Creation du gestionnaire de donnees. C'est le coeur de l'application
             LogTools.Logger.Debug("Creation du gestionnaire de donnees");

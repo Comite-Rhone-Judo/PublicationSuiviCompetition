@@ -1,18 +1,18 @@
 ﻿using AppPublication.Tools;
 using AppPublication.Tools.Enum;
 using KernelImpl;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Information;
+using KernelImpl.Noyau.Organisation;
 using System;
 using System.IO;
-using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Telerik.Windows.Controls;
-using Tools.Enum;
-using Tools.Export;
 using Tools.Outils;
 using Tools.Windows;
+using Tools.Framework;
+using AppPublication.Tools.Streams;
+
 
 namespace AppPublication.Controles
 {
@@ -88,7 +88,7 @@ namespace AppPublication.Controles
             get
             {
                 if (_instance == null)
-                    throw new InvalidOperationException("DialogControleur non initialise ! Appelez DialogControleur.Initialiser() dans App.xaml.cs.");
+                    throw new InvalidOperationException("DialogControleur non initialise ! Appelez DialogControleur.CreateInstance()");
                 return _instance;
             }
         }
