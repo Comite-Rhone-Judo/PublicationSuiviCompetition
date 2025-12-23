@@ -1,4 +1,4 @@
-ï»¿using AppPublication.Config.EcransAppel;
+using AppPublication.Config.EcransAppel;
 using AppPublication.Controles;
 using AppPublication.Managers;
 using System;
@@ -15,13 +15,13 @@ namespace AppPublication.ViewModels
     public class ConfigurationEcransViewModel : NotificationBase
     {
         #region MEMBERS
-        // Collection source (rÃ©fÃ©rence vers celle de GestionSite)
+        // Collection source (référence vers celle de GestionSite)
         private readonly EcranCollectionManager _ecranManager;
         private readonly List<int> _tapisDisponibles;
         #endregion
 
         #region PROPERTIES
-        // Collection de ViewModels affichÃ©e dans la grille
+        // Collection de ViewModels affichée dans la grille
         public ObservableCollection<EcranAppelConfigViewModel> EcransViewModels { get; set; }
 
         #endregion
@@ -58,7 +58,7 @@ namespace AppPublication.ViewModels
 
         #region CONSTRUCTEURS
         /// <summary>
-        /// Constructeur appelÃ© avec la collection de modÃ¨les de GestionSite
+        /// Constructeur appelé avec la collection de modèles de GestionSite
         /// </summary>
         public ConfigurationEcransViewModel(EcranCollectionManager manager, int nbMaxTapis)
         {
@@ -71,11 +71,11 @@ namespace AppPublication.ViewModels
 
         #region METHODS
 
-        // MÃ©thode asynchrone appelÃ©e par le Behavior
+        // Méthode asynchrone appelée par le Behavior
         private async Task LoadDataAsync()
         {
-            // Charger les ViewModels Ã  partir de la collection Runtime de GestionSite
-            // Cette collection a dÃ©jÃ  Ã©tÃ© initialisÃ©e depuis la config au dÃ©marrage de GestionSite
+            // Charger les ViewModels à partir de la collection Runtime de GestionSite
+            // Cette collection a déjà été initialisée depuis la config au démarrage de GestionSite
             if (_ecranManager != null && _ecranManager.Ecrans != null)
             {
                 foreach (var model in _ecranManager.Ecrans)
@@ -86,7 +86,7 @@ namespace AppPublication.ViewModels
                 }
             }
 
-            if (EcransViewModels.Count > 0) return; // Ã‰vite de recharger si dÃ©jÃ  fait
+            if (EcransViewModels.Count > 0) return; // Évite de recharger si déjà fait
 
             try
             {
@@ -99,7 +99,7 @@ namespace AppPublication.ViewModels
                     {
                         foreach (var model in _ecranManager.Ecrans)
                         {
-                            // La crÃ©ation lourde des sous-VM se fait ici
+                            // La création lourde des sous-VM se fait ici
                             var vm = new EcranAppelConfigViewModel(model, _tapisDisponibles);
                             vm.DeleteCommand = new RelayCommand(SupprimerLigne);
                             resultList.Add(vm);
@@ -108,7 +108,7 @@ namespace AppPublication.ViewModels
                     return resultList;
                 });
 
-                // 4. Mise Ã  jour de l'interface sur le Thread Principal
+                // 4. Mise à jour de l'interface sur le Thread Principal
                 foreach (var vm in listTemp)
                 {
                     EcransViewModels.Add(vm);
@@ -116,17 +116,17 @@ namespace AppPublication.ViewModels
             }
             catch(Exception ex)
             {
-                // GÃ©rer les erreurs (logging, message utilisateur, etc.)
+                // Gérer les erreurs (logging, message utilisateur, etc.)
                 LogTools.Logger.Debug(ex, "Erreur lors du chargement des donnees de configuration des ecrans");
             }
         }
 
         private void AjouterEcranAction(object obj)
         {
-            // 1. CrÃ©ation du nouveau modÃ¨le
+            // 1. Création du nouveau modèle
             var nouveauModel = _ecranManager.Add();
 
-            // 3. Ajout Ã  la Configuration (Sauvegarde Disque immÃ©diate)
+            // 3. Ajout à la Configuration (Sauvegarde Disque immédiate)
             var configElement = new EcransAppelConfigElement
             {
                 Id = nouveauModel.Id,
@@ -137,7 +137,7 @@ namespace AppPublication.ViewModels
                 EcransAppelConfigSection.Instance.Ecrans.Add(configElement);
             }
 
-            // 4. CrÃ©ation du ViewModel et ajout Ã  l'interface
+            // 4. Création du ViewModel et ajout à l'interface
             var vm = new EcranAppelConfigViewModel(nouveauModel, _tapisDisponibles);
             vm.DeleteCommand = new RelayCommand(SupprimerLigne);
 
@@ -154,8 +154,8 @@ namespace AppPublication.ViewModels
                 // 1. Supprimer de l'interface
                 EcransViewModels.Remove(vm);
 
-                // 2. Supprimer du modÃ¨le source (GestionSite)
-                // Ici, on cherche par ID pour Ãªtre sÃ»r.
+                // 2. Supprimer du modèle source (GestionSite)
+                // Ici, on cherche par ID pour être sûr.
                 _ecranManager.Remove(vm.Id);
 
                 // 3. Supprimer de la Configuration (Disque)

@@ -6,8 +6,6 @@ using System.Windows.Threading;
 using Telerik.Windows.Controls;
 using Tools.Outils;
 using Tools.Configuration;
-using KernelImpl;
-using AppPublication.Controles;
 
 namespace AppPublication
 { /// <summary>
@@ -41,14 +39,6 @@ namespace AppPublication
             CultureInfo culture = new CultureInfo("fr");
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
-
-            //Window8Palette
-            //Windows8Palette.Palette.AccentColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
-            //Windows8Palette.Palette.BasicColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
-            //Windows8Palette.Palette.StrongColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
-            //Windows8Palette.Palette.MainColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
-            //Windows8Palette.Palette.MarkerColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
-            //Windows8Palette.Palette.ValidationColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);            
 
             StyleManager.ApplicationTheme = new Windows8Theme();
         }
