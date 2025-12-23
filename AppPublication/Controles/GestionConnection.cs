@@ -7,6 +7,7 @@ using System.Web.UI;
 using System.Windows.Threading;
 using System.Xml.Linq;
 using Tools.Framework;
+using Tools.Outils;
 
 namespace AppPublication.Controles
 {

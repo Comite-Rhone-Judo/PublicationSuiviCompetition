@@ -1,8 +1,6 @@
 ﻿using AppPublication.Config.EcransAppel;
 using AppPublication.Controles;
 using AppPublication.Managers;
-using AppPublication.Models;
-using KernelManager;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

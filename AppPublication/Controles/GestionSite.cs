@@ -1,7 +1,7 @@
 ﻿using AppPublication.Config.EcransAppel;
 using AppPublication.Config.Publication;
 using AppPublication.Export;
-using AppPublication.ExtensionNoyau.Deroulement;
+using AppPublication.ExtensionNoyau.Engagement;
 using AppPublication.Generation;
 using AppPublication.Managers;
 using AppPublication.Models;
@@ -13,8 +13,8 @@ using AppPublication.ViewModels;
 using AppPublication.Views.Configuration;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
+using KernelImpl.Noyau.Organisation;
 using AppPublication.ExtensionNoyau;
-using AppPublication.ExtensionNoyau.Engagement;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,17 +22,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web.Configuration;
 using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Xml;
 using System.Xml.Linq;
-using Telerik.Windows.Controls;
 using Tools.Enum;
 using Tools.Export;
 using Tools.Outils;
@@ -52,6 +48,8 @@ namespace AppPublication.Controles
         private const string kSiteLocalInstanceName = "local";
         private const string kSiteDistantInstanceName = "distant";
         private const string kSiteFranceJudoInstanceName = "ffjudo";
+        private const string kSiteEcransAppel = "ecrans";
+
         #endregion
 
         #region MEMBRES
@@ -85,47 +83,6 @@ namespace AppPublication.Controles
             public Phase phase { get; set; }
             public int? tapis { get; set; }
             public List<GroupeEngagements> groupeEngages { get; set; }
-        }
-        #endregion
-
-        #region COMMANDES
-
-        private ICommand _cmdAfficherConfigurationEcransAppel = null;
-        /// <summary>
-        /// Commande d'affichage de la configuration
-        /// </summary>
-        public ICommand CmdAfficherConfigurationEcransAppel
-        {
-            get
-            {
-                if (_cmdAfficherConfigurationEcransAppel == null)
-                {
-                    _cmdAfficherConfigurationEcransAppel = new RelayCommand(
-                            o =>
-                            {
-                                if (_cfgEcransAppelView == null)
-                                {
-                                    // Crée la ViewModel de configuration. Comme on le refait a chaque fois, on est sur d'avoir les dernieres valeurs
-                                    // notamment par rapport aux nombres de tapis de la competition s'il a été modifié
-                                    ConfigurationEcransViewModel vm = new ConfigurationEcransViewModel(this.EcransAppel, this.NbTapis);
-                                    if (vm != null)
-                                    {
-                                        _cfgEcransAppelView = new ConfigurationEcransAppelView(vm);
-                                    }
-                                }
-                                if (_cfgEcransAppelView != null)
-                                {
-                                    _cfgEcransAppelView.ShowDialog();
-                                    _cfgEcransAppelView = null;
-                                }
-                            },
-                            o =>
-                            {
-                                return !this.IsGenerationActive;
-                            });
-                }
-                return _cmdAfficherConfigurationEcransAppel;
-            }
         }
         #endregion
 
@@ -192,9 +149,9 @@ namespace AppPublication.Controles
                 return _extendedJudoData;
             }
         }
-        
-private ObservableCollection<EcranAppelModel> _ecransAppel;
-        public ObservableCollection<EcranAppelModel> EcransAppel
+
+        private EcranCollectionManager _ecransAppel = new EcranCollectionManager();
+        public EcranCollectionManager EcransAppel
         {
             get
             {
@@ -474,131 +431,6 @@ private ObservableCollection<EcranAppelModel> _ecransAppel;
                     PublicationConfigSection.Instance.TailleMaxPouleColonnes = (_tailleMaxPouleColonnes = value);
                     NotifyPropertyChanged();
                 }
-            }
-        }
-
-
-        private ICommand _cmdAjouterLogo;
-
-        /// <summary>
-        /// Commande permettant d'ajouter un logo dans la liste
-        /// </summary>
-        public ICommand CmdAjouterLogo
-        {
-            get
-            {
-                if (_cmdAjouterLogo == null)
-                {
-                    _cmdAjouterLogo = new RelayCommand(
-                            o =>
-                            {
-                                bool allFileOk = true;
-
-                                OpenFileDialog op = new OpenFileDialog();
-                                op.Title = "Sélectionner une image";
-                                op.Filter = "Portable Network Graphic (*.png)|*.png";
-                                op.Multiselect = true;
-                                op.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-                                op.RestoreDirectory = true;
-                                if (op.ShowDialog() == DialogResult.OK)
-                                {
-                                    foreach (string imgFile in op.FileNames)
-                                    {
-                                        try
-                                        {
-                                            if (imgFile.ToLower().Contains("logo"))
-                                            {
-                                                int w, h;
-
-                                                using (var stream = new FileStream(imgFile, FileMode.Open, FileAccess.Read, FileShare.Read))
-                                                {
-                                                    var bitmapFrame = BitmapFrame.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.None);
-                                                    w = bitmapFrame.PixelWidth;
-                                                    h = bitmapFrame.PixelHeight;
-
-                                                    // Verifie la taille de l'image
-                                                    if (w <= 200 && h <= 200)
-                                                    {
-                                                        FilteredFileInfo newItem = new FilteredFileInfo(new FileInfo(imgFile));
-
-                                                        // Copy le fichier dans le répertoire de travail de l'application
-                                                        File.Copy(newItem.FullName, Path.Combine(ConstantFile.ExportStyle_dir, newItem.Name));
-
-                                                        // Actualise la liste des logos
-                                                        FichiersLogo.Add(newItem);
-                                                    }
-                                                    else
-                                                    {
-                                                        LogTools.Logger.Debug("Fichier '{0}' ignore - taille {1}x{2} incorrecte", imgFile, w, h);
-                                                        allFileOk = false;
-                                                    }
-                                                }
-                                            }
-                                            else
-                                            {
-                                                LogTools.Logger.Debug("Fichier '{0}' ignore - Nom ne contient pas 'logo'", imgFile);
-                                                allFileOk = false;
-                                            }
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            LogTools.Logger.Debug("Fichier '{0}' ignore - Exception lors de la lecture du format", imgFile, ex);
-                                            allFileOk = false;
-                                        }
-                                    }
-
-                                    if (!allFileOk)
-                                    {
-                                        AlertWindow win = new AlertWindow("Infomation", "Certains fichiers n'ont pas put être chargé. Veuillez vérifier les noms, formats et dimensions");
-                                        if (win != null)
-                                        {
-                                            win.ShowDialog();
-                                        }
-                                    }
-                                }
-
-                            },
-                            o =>
-                            {
-                                // Meme si le site est demarre on peut ajouter un logo, il n'est pas pris automatiquement enc compte
-                                return true;
-                            });
-                }
-                return _cmdAjouterLogo;
-            }
-        }
-
-        private ICommand _cmdGetRepertoireRacine;
-        /// <summary>
-        /// Commande pour gérer la selection du repertoire Racine
-        /// </summary>
-        public ICommand CmdGetRepertoireRacine
-        {
-            get
-            {
-                if (_cmdGetRepertoireRacine == null)
-                {
-                    _cmdGetRepertoireRacine = new RelayCommand(
-                            o =>
-                            {
-                                string output = string.Empty;
-
-                                FolderBrowserDialog dlg = new FolderBrowserDialog();
-                                dlg.Description = "Sélectionner le répertoire à utiliser pour les exports";
-                                dlg.ShowNewFolderButton = true;
-                                if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                                {
-                                    output = dlg.SelectedPath;
-                                }
-                                RepertoireRacine = output;
-                            },
-                            o =>
-                            {
-                                // On ne peut modifier le repertoire racine que si tous les processus sont arretes
-                                return (SiteDistantSelectionne != null) ? !SiteDistantSelectionne.IsActif && !SiteLocal.IsActif && !IsGenerationActive : true;
-                            });
-                }
-                return _cmdGetRepertoireRacine;
             }
         }
 
@@ -1100,12 +932,13 @@ private ObservableCollection<EcranAppelModel> _ecransAppel;
                 }
                 URLDistantPublication = CalculURLSiteDistant();
                 URLLocalPublication = CalculURLSiteLocal();
-                // On ne peut publier que en individuelle
-                CanPublierAffectation = DialogControleur.Instance.ServerData.competition.IsIndividuelle();
-                CanPublierEngagements = DialogControleur.Instance.ServerData.competition.IsIndividuelle() || DialogControleur.Instance.ServerData.competition.IsShiai();
-                
+                // Note: ici on devrait dans l'absolu utiliser le snapshot mais le traitement est rapide et a peu de chance de changer
+                var DC = _judoDataManager as IJudoData;
+                CanPublierAffectation = DC.Organisation.Competition.IsIndividuelle();
+                CanPublierEngagements = DC.Organisation.Competition.IsIndividuelle() || DC.Organisation.Competition.IsShiai();
+
                 // Le nombre de tapis peut avoir changer selon la compétition
-                NbTapis = DialogControleur.Instance.ServerData.competition.nbTapis;
+                NbTapis = DC.Organisation.Competition.nbTapis;
 
                 // Si on est en Shiai, par defaut on met les poules en colonnes
                 if (DC.Organisation.Competition.IsShiai())

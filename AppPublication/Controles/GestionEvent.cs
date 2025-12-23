@@ -1,23 +1,16 @@
-﻿using AppPublication.Tools;
-using AppPublication.Tools.Enum;
-using AppPublication.Tools.LectureFile;
+﻿using AppPublication.Tools.Enum;
 using JudoClient;
 using JudoClient.Communication;
 using KernelImpl;
 using KernelImpl.Enum;
-using OfficeOpenXml.FormulaParsing.Utilities;
 using System;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using System.Windows;
-using System.Windows.Forms;
 using System.Xml.Linq;
-using Telerik.Windows.Controls;
-using Telerik.Windows.Data;
 using Tools.Enum;
 using Tools.Outils;
+using Tools.Framework;
 
 namespace AppPublication.Controles
 {

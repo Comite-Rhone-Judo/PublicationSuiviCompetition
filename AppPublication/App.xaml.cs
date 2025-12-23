@@ -6,6 +6,8 @@ using System.Windows.Threading;
 using Telerik.Windows.Controls;
 using Tools.Outils;
 using Tools.Configuration;
+using KernelImpl;
+using AppPublication.Controles;
 
 namespace AppPublication
 { /// <summary>

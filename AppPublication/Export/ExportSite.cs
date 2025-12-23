@@ -1,18 +1,13 @@
-﻿using AppPublication.Controles;
-using AppPublication.ExtensionNoyau;
+﻿using AppPublication.ExtensionNoyau;
 using AppPublication.ExtensionNoyau.Engagement;
-using AppPublication.Tools;
 using AppPublication.Tools.Enum;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
 using KernelImpl.Noyau.Organisation;
-using KernelImpl.Noyau.Structures;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Policy;
 using System.Web.UI.WebControls;
 using System.Xml;
 using System.Xml.Linq;
@@ -20,8 +15,6 @@ using System.Xml.Xsl;
 using Tools.Enum;
 using Tools.Export;
 using Tools.Outils;
-using AppPublication.ExtensionNoyau.Deroulement;
-using System;
 using AppPublication.Generation;
 
 namespace AppPublication.Export

@@ -1,6 +1,7 @@
 ﻿using AppPublication.Tools;
 using AppPublication.Tools.Enum;
 using KernelImpl;
+using KernelImpl.Noyau.Organisation;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -20,12 +21,12 @@ namespace AppPublication.Controles
     public class DialogControleur : NotificationBase
     {
         #region MEMBRES
-        private static DialogControleur _currentControleur = null;      // instance singletion
+        private static DialogControleur _instance = null; // Instance unique du singleton
         private AppPublication.Views.Infos.StatistiquesView _statWindow = null;
         private AppPublication.Views.Infos.InformationsView _infoWindow = null;
         private PdfViewer _manuelViewer = null;
-        private AppPublication.Views.Configuration.ConfigurationPublication _cfgWindow = null;
-       private readonly JudoData _serverData;
+        private AppPublication.Views.Configuration.ConfigurationPublicationView _cfgWindow = null;
+        private readonly JudoData _serverData;
         #endregion
 
         #region CONSTRUCTEUR

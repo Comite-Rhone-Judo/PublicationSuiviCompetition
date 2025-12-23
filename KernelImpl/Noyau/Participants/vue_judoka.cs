@@ -1,7 +1,7 @@
-﻿using KernelImpl.Noyau.Categories;
+﻿using KernelImpl.Internal;
+using KernelImpl.Noyau.Categories;
 using KernelImpl.Noyau.Organisation;
 using KernelImpl.Noyau.Structures;
-
 using System;
 using System.ComponentModel;
 using System.Linq;

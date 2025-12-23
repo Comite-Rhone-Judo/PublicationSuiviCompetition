@@ -6,11 +6,7 @@ using KernelImpl.Noyau.Organisation;
 using KernelImpl.Noyau.Participants;
 using KernelImpl.Noyau.Structures;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Threading;
-using Tools.Enum;
 using Tools.Framework;
 
 namespace KernelImpl
