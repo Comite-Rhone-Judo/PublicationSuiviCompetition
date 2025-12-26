@@ -3,13 +3,12 @@ using AppPublication.Config.Publication;
 using AppPublication.Export;
 using AppPublication.ExtensionNoyau.Engagement;
 using AppPublication.Generation;
-using AppPublication.Managers;
-using AppPublication.Models;
+using AppPublication.Models.EcransAppel;
 using AppPublication.Publication;
 using AppPublication.Statistiques;
 using AppPublication.Tools.Files;
 using AppPublication.Tools.FranceJudo;
-using AppPublication.ViewModels;
+using AppPublication.ViewModels.Configuration;
 using AppPublication.Views.Configuration;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
@@ -48,7 +47,10 @@ namespace AppPublication.Controles
         private const string kSiteLocalInstanceName = "local";
         private const string kSiteDistantInstanceName = "distant";
         private const string kSiteFranceJudoInstanceName = "ffjudo";
-        private const string kSiteEcransAppel = "ecrans";
+        private const string kSitePrivateInstanceName = "private";
+
+        private const string kSiteRepertoire = "site";
+        private const string kPrivateSiteRepertoire = "private-site";
 
         #endregion
 
@@ -57,7 +59,8 @@ namespace AppPublication.Controles
         private Task _taskGeneration = null;            // La tache de generation
         private Task _taskNettoyage = null;             // La tache de nettoyage
         private GestionStatistiques _statMgr = null;
-        private ExportSiteStructure _structureRepertoires;         // La structure d'export du site
+        private ExportSiteStructure _structureRepertoiresSite;                      // La structure de repertoire d'export du site
+        private ExportPrivateSiteStructure _structureRepertoiresPrivateSite;        // La structure de repertoire d'export du site prive
         private ExportSiteUrls _structureSiteLocal;                 // la structure d'export du site local
         private ExportSiteUrls _structureSiteDistant;                 // la structure d'export du site distant
         private Dictionary<string, EntitePublicationFFJudo> _allEntitePublicationFFJudo = null;
@@ -101,7 +104,7 @@ namespace AppPublication.Controles
             {
                 // Initialise les objets de gestion des sites Web. Ils chargent automatiquement leur configuration
                 _siteLocal = new MiniSiteConfigurable (true, kSiteLocalInstanceName, true, false);
-                _siteEcransAppel = new MiniSiteConfigurable(true, kSiteEcransAppel, true, false);
+                _sitePrivate = new MiniSiteConfigurable(true, kSitePrivateInstanceName, true, false);
                 _siteDistant = new MiniSiteConfigurable (false, kSiteDistantInstanceName, true, true);           // on utilise un prefix vide pour le site distant pour des questions de retrocompatibilite
                 _siteFranceJudo = new MiniSiteConfigurable (false, kSiteFranceJudoInstanceName, false, true);    // On ne garde pas le detail des configuration pour le site FFJudo
                 _statMgr = (statMgr != null) ? statMgr : new GestionStatistiques();
@@ -449,12 +452,15 @@ namespace AppPublication.Controles
                     NotifyPropertyChanged();
 
                     // Met a jour la constante d'export
-                    string tmp = OutilsTools.GetExportSiteDir(_repertoireRacine);
+                    string tmp = OutilsTools.GetExportDir(_repertoireRacine);
 
                     // Initialise les structures d'export
-                    _structureRepertoires = new ExportSiteStructure(tmp, IdCompetition);
-                    _structureSiteDistant = new ExportSiteUrls(_structureRepertoires);
-                    _structureSiteLocal = new ExportSiteUrls(_structureRepertoires);
+                    _structureRepertoiresSite = new ExportSiteStructure(Path.Combine(tmp, kSiteRepertoire), IdCompetition);
+                    _structureRepertoiresPrivateSite = new ExportPrivateSiteStructure(Path.Combine(tmp, kPrivateSiteRepertoire), IdCompetition);
+
+                    _structureSiteDistant = new ExportSiteUrls(_structureRepertoiresSite);
+                    _structureSiteLocal = new ExportSiteUrls(_structureRepertoiresSite);
+
 
                     // Met a jour les repertoires de l'application
                     InitExportSiteStructure();
@@ -578,15 +584,15 @@ namespace AppPublication.Controles
             }
         }
 
-        private MiniSite _siteEcransAppel = null;
+        private MiniSite _sitePrivate = null;
         /// <summary>
         /// Le site de publication local des ecrans d'appel
         /// </summary>
-        public MiniSite SiteEcransAppel
+        public MiniSite SitePrivate
         {
             get
             {
-                return _siteEcransAppel;
+                return _sitePrivate;
             }
         }
 
@@ -594,20 +600,20 @@ namespace AppPublication.Controles
         /// Propriete passerelle pour selectionner l'interface de publication du site ecrans
         /// Permet de tenir a jour le QR code de l'URL de publication
         /// </summary>
-        public IPAddress InterfaceEcransAppel
+        public IPAddress InterfacePrivateSite
         {
             get
             {
-                return SiteEcransAppel.InterfaceLocalPublication;
+                return SitePrivate.InterfaceLocalPublication;
             }
             set
             {
                 // Verifie que la valeur selectionnee est bien dans la liste des interfaces
                 try
                 {
-                    SiteEcransAppel.InterfaceLocalPublication = value;
+                    SitePrivate.InterfaceLocalPublication = value;
                     NotifyPropertyChanged();
-                    URLEcransAppelPublication = CalculURLSiteEcransAppel();
+                    URLEcransAppelPublication = CalculURLPrivateSite();
                 }
                 catch (ArgumentOutOfRangeException) { }
             }
@@ -920,9 +926,9 @@ namespace AppPublication.Controles
                 NotifyPropertyChanged();
 
                 // Met a jour la structure d'export
-                if (_structureRepertoires != null)
+                if (_structureRepertoiresSite != null)
                 {
-                    _structureRepertoires.IdCompetition = value;
+                    _structureRepertoiresSite.IdCompetition = value;
                 }
 
                 // Recalcul les valeurs des URLs et répertoires distants
@@ -1212,7 +1218,7 @@ namespace AppPublication.Controles
                 // Normalement on ne devrait pas avoir de probleme d'exception ici avec la structure de repertoire
                 try
                 {
-                    output = Path.Combine(_structureRepertoires.RepertoireRacine, ExportTools.getFileName(ExportEnum.Site_Checksum) + ConstantFile.ExtensionXML);
+                    output = Path.Combine(_structureRepertoiresSite.RepertoireRacine, ExportTools.getFileName(ExportEnum.Site_Checksum) + ConstantFile.ExtensionXML);
                 }
                 catch (Exception ex)
                 {
@@ -1402,9 +1408,9 @@ namespace AppPublication.Controles
         {
             // TODO Ajouter ici la strucuture specifique au Ecrans d'appel
 
-            if (_structureRepertoires != null)
+            if (_structureRepertoiresSite != null)
             {
-                FileAndDirectTools.CreateDirectorie(_structureRepertoires.RepertoireRacine);
+                FileAndDirectTools.CreateDirectorie(_structureRepertoiresSite.RepertoireRacine);
             }
         }
 
@@ -1563,7 +1569,7 @@ namespace AppPublication.Controles
                 // L'interface local de publication a ete chargee via la configuration du minisite, il faut juste s'assurer du bon calcul des URLs
                 URLLocalPublication = CalculURLSiteLocal();
 
-                URLEcransAppelPublication = CalculURLSiteEcransAppel();
+                URLEcransAppelPublication = CalculURLPrivateSite();
 
                 // ici on initialise les ecrans d'appel
                 InitEcransAppel();
@@ -1706,15 +1712,15 @@ namespace AppPublication.Controles
         /// Calcul l'URL sur le site ecrans en fonction de la configuration
         /// </summary>
         /// <returns></returns>
-        private string CalculURLSiteEcransAppel()
+        private string CalculURLPrivateSite()
         {
             string output = "Indefinie";
 
             try
             {
-                if (!String.IsNullOrEmpty(IdCompetition) && SiteEcransAppel.ServerHTTP != null && SiteEcransAppel.ServerHTTP.ListeningIpAddress != null && SiteEcransAppel.ServerHTTP.Port > 0)
+                if (!String.IsNullOrEmpty(IdCompetition) && SitePrivate.ServerHTTP != null && SitePrivate.ServerHTTP.ListeningIpAddress != null && SitePrivate.ServerHTTP.Port > 0)
                 {
-                    string urlBase = string.Format("http://{0}:{1}/", SiteEcransAppel.ServerHTTP.ListeningIpAddress.ToString(), SiteEcransAppel.ServerHTTP.Port);
+                    string urlBase = string.Format("http://{0}:{1}/", SitePrivate.ServerHTTP.ListeningIpAddress.ToString(), SitePrivate.ServerHTTP.Port);
 
                     // TODO Ajouter la structure des ecrans d'appel
                     // output = (new Uri(new Uri(urlBase), _structureSiteLocal.UrlPathIndex)).ToString();
@@ -1958,7 +1964,7 @@ namespace AppPublication.Controles
                                     {
                                         try
                                         {
-                                            string localRoot = _structureRepertoires.RepertoireCompetition;
+                                            string localRoot = _structureRepertoiresSite.RepertoireCompetition();
 
                                             // Le site distant sur lequel charger les fichiers selon si on isole ou pas
                                             StatExecution statSync = new StatExecution();
@@ -2066,7 +2072,7 @@ namespace AppPublication.Controles
 
             try
             {
-                ExportSiteStructure structRep = _structureRepertoires.Clone();  // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread
+                ExportSiteStructure structRep = _structureRepertoiresSite.Clone();  // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread
 
                 switch (genere.type)
                 {
@@ -2325,19 +2331,19 @@ namespace AppPublication.Controles
         /// </summary>
         private void ClearRepertoireCompetition()
         {
-            if(_structureRepertoires != null)
+            if(_structureRepertoiresSite != null)
             {
                 // Efface le contenu du repertoire de la competition
-                if(!FileAndDirectTools.DeleteDirectory(_structureRepertoires.RepertoireCompetition, true))
+                if(!FileAndDirectTools.DeleteDirectory(_structureRepertoiresSite.RepertoireCompetition(), true))
                 {
-                    LogTools.Logger.Error("Erreur lors de l'effacement du contenu de  '{0}'", _structureRepertoires.RepertoireCompetition);
+                    LogTools.Logger.Error("Erreur lors de l'effacement du contenu de  '{0}'", _structureRepertoiresSite.RepertoireCompetition());
                 }
 
                 // Charge le contenu du fichier de checksum
                 List<FileWithChecksum> cache = LoadChecksumFichiersGeneres();
 
                 // Elimine tous les fichiers commençant par le répertoire de la competition (ils ont été supprimés)
-                cache.RemoveAll(f => f.File.FullName.StartsWith(_structureRepertoires.RepertoireCompetition));
+                cache.RemoveAll(f => f.File.FullName.StartsWith(_structureRepertoiresSite.RepertoireCompetition()));
                 SaveChecksumFichiersGeneres(cache);
             }
         }

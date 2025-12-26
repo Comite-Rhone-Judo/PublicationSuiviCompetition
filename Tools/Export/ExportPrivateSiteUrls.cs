@@ -13,11 +13,9 @@ using Tools.Outils;
 
 namespace Tools.Export
 {
-    public class ExportSiteUrls : ExportUrlsBase<ExportSiteUrls, ExportSiteStructure>
+    public class ExportPrivateSiteUrls : ExportUrlsBase<ExportPrivateSiteUrls, ExportPrivateSiteStructure>
     {
         #region MEMBRES
-        private const string kCourante = "courante";
-        private bool _isolate = false; 
         #endregion
 
         #region CONSTRUCTEURS
@@ -28,51 +26,34 @@ namespace Tools.Export
         /// <param name="idCompetition"></param>
         /// <param name="isoleCompet"></param>
         /// <param name="maxlen"></param>
-        public ExportSiteUrls(ExportSiteStructure localStructure) : base(localStructure)
+        public ExportPrivateSiteUrls(ExportPrivateSiteStructure localStructure) : base(localStructure)
         {
-            _isolate = true;
         }
         #endregion
 
         #region PROPRIETES
 
         /// <summary>
-        /// Indique si les competitions sont isolees cote serveur Web
+        /// Le chemin URL du redirecteur des écrans d'appel
         /// </summary>
-        public bool CompetitionIsolee
+        public string UrlPathEcransAppelRedirecteur
         {
             get
             {
-                return _isolate;
-            }
-            set
-            {
-                _isolate = value;
-                CalculCompetUrlPath();      // Met a jour le repertoire
+                IsConfiguredGuardRail();
+                return FileAndDirectTools.PathJoin(UrlPathEcransAppel, ExportPrivateSiteStructure.kRedirectorTag);
             }
         }
 
         /// <summary>
         /// Le chemin URL de Common de la competition configuree
         /// </summary>
-        public string UrlPathCommon
+        public string UrlPathEcransAppel
         {
             get
             {
                 IsConfiguredGuardRail();
-                return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportSiteStructure.kCommon);
-            }
-        }
-
-        /// <summary>
-        /// Le chemin URL de l'index de la competition configuree
-        /// </summary>
-        public string UrlPathIndex
-        {
-            get
-            {
-                IsConfiguredGuardRail();
-                return FileAndDirectTools.PathJoin(UrlPathCommon, ExportSiteStructure.kIndex);
+                return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportPrivateSiteStructure.kEcransAppel);
             }
         }
 
@@ -84,7 +65,7 @@ namespace Tools.Export
             get
             {
                 IsConfiguredGuardRail();
-                return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportSiteStructure.kImg);
+                return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportPrivateSiteStructure.kImg);
             }
         }
 
@@ -96,7 +77,7 @@ namespace Tools.Export
             get
             {
                 IsConfiguredGuardRail();
-                return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportSiteStructure.kJs);
+                return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportPrivateSiteStructure.kJs);
             }
         }
 
@@ -108,23 +89,13 @@ namespace Tools.Export
             get
             {
                 IsConfiguredGuardRail();
-                return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportSiteStructure.kCss);
+                return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportPrivateSiteStructure.kCss);
             }
         }
 
         #endregion
 
         #region METHODES INTERNES
-        /// <summary>
-        /// Effectue le calcul du path racine de la competition pour initialiser le membre interne
-        /// </summary>
-        protected override void CalculCompetUrlPath()
-        {
-            if (_parentStructure != null && _parentStructure.IsFullyConfigured)
-            {
-                _rootCompetUrlPath = (_isolate) ? GetUrlPath(_parentStructure.RepertoireCompetition()) : kCourante;
-            }
-        }
         #endregion
     }
 }

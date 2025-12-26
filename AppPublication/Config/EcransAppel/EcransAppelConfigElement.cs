@@ -16,6 +16,7 @@ namespace AppPublication.Config.EcransAppel
         private const string kAdresseIp = "adresseIp";
         private const string kTapisIds = "tapisIds";
         private const string kHostname = "hostname";
+        private const string kGroupement = "groupement";
 
         /// <summary>
         /// Méthode héritée de ConfigElementBase.
@@ -55,6 +56,13 @@ namespace AppPublication.Config.EcransAppel
         {
             get { return GetConfigValue<string>(kAdresseIp, string.Empty); }
             set { SetValueAndMarkDirty(kAdresseIp, value); }
+        }
+
+        [ConfigurationProperty(kGroupement, DefaultValue = 1)]
+        public int Groupement
+        {
+            get { return GetConfigValue<int>(kGroupement, 1); }
+            set { SetValueAndMarkDirty(kGroupement, value); }
         }
 
         /// <summary>

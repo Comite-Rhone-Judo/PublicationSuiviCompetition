@@ -352,6 +352,33 @@ namespace AppPublication.Controles
             }
         }
 
+        private ICommand _cmdCopyUrlEcransAppel = null;
+        /// <summary>
+        /// Commande de copy de l'URL des ecrans d'appel dans la presse papier
+        /// </summary>
+        public ICommand CmdCopyUrlEcransAppel
+        {
+            get
+            {
+                if (_cmdCopyUrlEcransAppel == null)
+                {
+                    _cmdCopyUrlEcransAppel = new RelayCommand(
+                            o =>
+                            {
+                                if (GestionSite.SitePrivate != null && GestionSite.SitePrivate.IsActif)
+                                {
+                                    Clipboard.SetText(GestionSite.URLEcransAppelPublication);
+                                }
+                            },
+                            o =>
+                            {
+                                return (GestionSite.SitePrivate != null) ? GestionSite.SitePrivate.IsActif : false;
+                            });
+                }
+                return _cmdCopyUrlEcransAppel;
+            }
+        }
+
         private ICommand _cmdDemarrerSiteLocal = null;
         /// <summary>
         /// Command de demarrage du site local
@@ -411,23 +438,23 @@ namespace AppPublication.Controles
             }
         }
 
-        private ICommand _cmdDemarrerSiteEcransAppel = null;
+        private ICommand _cmdDemarrerSitePrivate = null;
         /// <summary>
         /// Command de demarrage du site des ecrans d'appel
         /// </summary>
-        public ICommand CmdDemarrerSiteEcransAppel
+        public ICommand CmdDemarrerSitePrivate
         {
             get
             {
-                if (_cmdDemarrerSiteEcransAppel == null)
+                if (_cmdDemarrerSitePrivate == null)
                 {
-                    _cmdDemarrerSiteEcransAppel = new RelayCommand(
+                    _cmdDemarrerSitePrivate = new RelayCommand(
                             o =>
                             {
-                                if (Instance.GestionSite.SiteEcransAppel != null && !Instance.GestionSite.SiteEcransAppel.IsActif)
+                                if (Instance.GestionSite.SitePrivate != null && !Instance.GestionSite.SitePrivate.IsActif)
                                 {
                                     // Demarre le site en local
-                                    Instance.GestionSite.SiteEcransAppel.StartSite();
+                                    Instance.GestionSite.SitePrivate.StartSite();
 
                                     // Force la mise a jour de l'URL
                                     Instance.GestionSite.IdCompetition = Instance.GestionSite.IdCompetition;
@@ -435,38 +462,38 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return !String.IsNullOrEmpty(Instance.GestionSite.IdCompetition) && !Instance.GestionSite.SiteEcransAppel.IsActif && Instance.GestionSite.SiteEcransAppel.IsChanged;
+                                return !String.IsNullOrEmpty(Instance.GestionSite.IdCompetition) && !Instance.GestionSite.SitePrivate.IsActif && Instance.GestionSite.SitePrivate.IsChanged;
                             });
                 }
-                return _cmdDemarrerSiteEcransAppel;
+                return _cmdDemarrerSitePrivate;
             }
         }
 
-        private ICommand _cmdArreterSiteEcransAppel = null;
+        private ICommand _cmdArreterPrivateSite = null;
         /// <summary>
         /// Commande d'arret du site des ecrans d'appel
         /// </summary>
-        public ICommand CmdArreterSiteEcransAppel
+        public ICommand CmdArreterPrivateSite
         {
             get
             {
-                if (_cmdArreterSiteEcransAppel == null)
+                if (_cmdArreterPrivateSite == null)
                 {
-                    _cmdArreterSiteEcransAppel = new RelayCommand(
+                    _cmdArreterPrivateSite = new RelayCommand(
                             o =>
                             {
-                                if (Instance.GestionSite.SiteEcransAppel != null && Instance.GestionSite.SiteEcransAppel.IsActif)
+                                if (Instance.GestionSite.SitePrivate != null && Instance.GestionSite.SitePrivate.IsActif)
                                 {
                                     // Demarre le site en local
-                                    Instance.GestionSite.SiteEcransAppel.StopSite();
+                                    Instance.GestionSite.SitePrivate.StopSite();
                                 }
                             },
                             o =>
                             {
-                                return Instance.GestionSite.SiteEcransAppel.IsActif;
+                                return Instance.GestionSite.SitePrivate.IsActif;
                             });
                 }
-                return _cmdArreterSiteEcransAppel;
+                return _cmdArreterPrivateSite;
             }
         }
 

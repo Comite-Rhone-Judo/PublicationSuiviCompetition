@@ -1,6 +1,6 @@
 ﻿using Tools.Framework;
 
-namespace AppPublication.ViewModels
+namespace AppPublication.ViewModels.Configuration
 {
     public class EcranAppelTapisSelectionViewModel : NotificationBase
     {

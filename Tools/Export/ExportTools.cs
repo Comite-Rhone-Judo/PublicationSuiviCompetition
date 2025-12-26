@@ -176,7 +176,7 @@ namespace Tools.Export
         public static List<string> ExportEmbeddedImg(bool regenere, bool addCustom, ExportSiteStructure structSite)
         {
             List<string> result = new List<string>();
-            string dir = structSite.RepertoireImg;
+            string dir = structSite.RepertoireImg();
 
             // string directory = ExportTools.getDirectory(true, null, null).Replace("common", "");
 
@@ -257,8 +257,8 @@ namespace Tools.Export
         public static List<string> ExportEmbeddedStyleAndJS(bool regenere, ExportSiteStructure structSite)
         {
             List<string> result = new List<string>();
-            string dirJs = structSite.RepertoireJs;
-            string dirStyle = structSite.RepertoireCss;
+            string dirJs = structSite.RepertoireJs();
+            string dirStyle = structSite.RepertoireCss();
 
             // string directory = ExportTools.getDirectory(true, null, null).Replace("common", "");
 

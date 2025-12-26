@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 
-namespace AppPublication.Models
+namespace AppPublication.Models.EcransAppel
 {
     public class EcranAppelModel
     {
@@ -24,6 +24,8 @@ namespace AppPublication.Models
         public IPAddress AdresseIP { get; set; }
         public List<int> TapisIds { get; set; }
 
+        public int Groupement { get; set; }
+
         public EcranAppelModel()
         {
             Id = GetNextId();
@@ -31,6 +33,7 @@ namespace AppPublication.Models
             Description = "Nouvel Écran";
             Hostname = string.Empty;
             AdresseIP = IPAddress.None;
+            Groupement = 1;
         }
     }
 }

@@ -439,7 +439,7 @@ namespace AppPublication.Export
 
                 for (int i = 0; i <= competition.nbTapis; i++)
                 {
-                    string directory = siteStructure.RepertoireCommon;
+                    string directory = siteStructure.RepertoireCommon();
 
                     XElement xtapis = new XElement(ConstantXML.Tapis);
                     xtapis.SetAttributeValue(ConstantXML.Tapis, i);

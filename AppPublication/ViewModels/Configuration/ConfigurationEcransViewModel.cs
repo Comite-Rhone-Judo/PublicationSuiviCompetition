@@ -1,6 +1,6 @@
 using AppPublication.Config.EcransAppel;
 using AppPublication.Controles;
-using AppPublication.Managers;
+using AppPublication.Models.EcransAppel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,7 +10,7 @@ using System.Windows.Input;
 using Tools.Framework;
 using Tools.Outils;
 
-namespace AppPublication.ViewModels
+namespace AppPublication.ViewModels.Configuration
 {
     public class ConfigurationEcransViewModel : NotificationBase
     {

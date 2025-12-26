@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:behave="clr-namespace:Tools.Framework;assembly=Tools"
         mc:Ignorable="d"
-        Title="Configuration des Écrans d'Appel" Height="480" Width="860" Background="Black"
+        Title="Configuration des Écrans d'Appel" Height="480" Width="960" Background="Black"
         WindowStartupLocation="CenterScreen"
         behave:WindowLoadBehavior.LoadedCommand="{Binding CmdOnLoaded}">
 
@@ -99,7 +99,25 @@
                             </telerik:GridViewColumn.CellTemplate>
                         </telerik:GridViewDataColumn>
 
-                        <telerik:GridViewColumn Header="Sélection Tapis" IsResizable="False" Width="240" ToolTip="Liste des tapis à afficher sur l'écean (max. 4)">
+                        <telerik:GridViewDataColumn Header="Groupe" IsResizable="False" Width="90" ToolTip="Nombre de tapis par groupe (1, 2 ou 4)">
+                            <telerik:GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Groupement}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5"/>
+                                </DataTemplate>
+                            </telerik:GridViewColumn.CellTemplate>
+                            <telerik:GridViewColumn.CellEditTemplate>
+                                <DataTemplate>
+                                    <telerik:RadComboBox ItemsSource="{Binding GroupementOptions}" 
+                                                         SelectedItem="{Binding Groupement, Mode=TwoWay}"
+                                                         telerik:StyleManager.Theme="Expression_Dark"
+                                                         VerticalAlignment="Center"
+                                                         HorizontalAlignment="Stretch"
+                                                         Margin="2"/>
+                                </DataTemplate>
+                            </telerik:GridViewColumn.CellEditTemplate>
+                        </telerik:GridViewDataColumn>
+
+                        <telerik:GridViewColumn Header="Tapis" IsResizable="False" Width="240" ToolTip="Liste des tapis à afficher sur l'écean (max. 4)">
                             <telerik:GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding ListeTapisSelectionnesAffiche, FallbackValue='Aucun tapis'}" VerticalAlignment="Center" Margin="5"/>

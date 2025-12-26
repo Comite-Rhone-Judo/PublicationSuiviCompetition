@@ -232,9 +232,14 @@ namespace Tools.Outils
             return true;
         }
 
-        public static string GetExportSiteDir(string racine)
+        /// <summary>
+        /// Racine par defaut pour des donnees France Judo
+        /// </summary>
+        /// <param name="racine"></param>
+        /// <returns></returns>
+        public static string GetExportDir(string racine)
         {
-            return Path.Combine(Path.Combine(racine, "FRANCE-JUDO"),"site");
+            return Path.Combine(racine, "FRANCE-JUDO");
         }
 
         /// <summary>

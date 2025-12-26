@@ -350,14 +350,15 @@
                                         <RowDefinition Height="auto"/>
                                     </Grid.RowDefinitions>
                                     <StackPanel Orientation="Vertical" Grid.Row="0">
-                                        <Label HorizontalAlignment="Left" Content="QRCode et adresse pour les écrans d'appel:" Style="{StaticResource HeaderStyle}" />
+                                        <Label HorizontalAlignment="Left" Content="QRCode et adresse du site interne" Style="{StaticResource HeaderStyle}" />
                                         <WrapPanel>
                                             <WrapPanel Background="White" Margin="50 0 0 0">
                                                 <telerik:RadBarcodeQR Background="White"  Height="120" Mode="Byte" ErrorCorrectionLevel="L" x:Name="QRCodeEcransAppel">
                                                     <telerik:RadBarcodeQR.Text>
                                                         <MultiBinding Converter="{StaticResource DisplayURLStatusConverter}" Mode="OneWay">
                                                             <Binding Path="GestionSite.URLEcransAppelPublication"  Mode="OneWay"/>
-                                                            <Binding Path="GestionSite.SiteEcransAppel.IsActif"  Mode="OneWay"/>
+                                                            <Binding Path="GestionSite.SitePrivate
+                                                                     .IsActif"  Mode="OneWay"/>
                                                         </MultiBinding>
                                                     </telerik:RadBarcodeQR.Text>
                                                 </telerik:RadBarcodeQR>
@@ -381,13 +382,13 @@
                                         <StackPanel Orientation="Horizontal" >
                                             <StackPanel Orientation="Horizontal" >
                                                 <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
-                                                <Rectangle Margin="0" Height="15" Width="15" Style="{StaticResource RunningStatusStyle}" DataContext="{Binding Path=GestionSite.SiteEcransAppel}"/>
-                                                <Label HorizontalAlignment="Left" Content="{Binding Path=GestionSite.SiteEcransAppel.IsActif, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
+                                                <Rectangle Margin="0" Height="15" Width="15" Style="{StaticResource RunningStatusStyle}" DataContext="{Binding Path=GestionSite.SitePrivate}"/>
+                                                <Label HorizontalAlignment="Left" Content="{Binding Path=GestionSite.SitePrivate.IsActif, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
                                             </StackPanel>
                                             <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                             <StackPanel Orientation="Horizontal" >
                                                 <Label HorizontalAlignment="Left" Content="Statut:" Style="{StaticResource LabelStyle}" />
-                                                <Label HorizontalAlignment="Left" Content="{Binding GestionSite.SiteEcransAppel.Status.Message}" Style="{StaticResource LabelStyleValue}" />
+                                                <Label HorizontalAlignment="Left" Content="{Binding GestionSite.SitePrivate.Status.Message}" Style="{StaticResource LabelStyleValue}" />
                                             </StackPanel>
                                         </StackPanel>
                                         <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="1" Stretch="Fill"/>
@@ -396,20 +397,20 @@
                                             <StackPanel Orientation="Horizontal" >
                                                 <Label Content="Adresse de publication:" Margin="0 0 0 0" Style="{StaticResource LabelStyle}"/>
                                                 <telerik:RadComboBox Height="22" MinWidth="200" Style="{StaticResource DropDownStyle}"
-                                                                      ItemsSource="{Binding Path=GestionSite.SiteEcransAppel.InterfacesLocal}"
-                                                                      SelectedItem = "{Binding Path=GestionSite.InterfaceEcransAppel}"
-                                                                      IsEnabled="{Binding Path=GestionSite.SiteEcransAppel.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                                                      ItemsSource="{Binding Path=GestionSite.SitePrivate.InterfacesLocal}"
+                                                                      SelectedItem = "{Binding Path=GestionSite.InterfacePrivateSite}"
+                                                                      IsEnabled="{Binding Path=GestionSite.SitePrivate.IsActif, Converter={StaticResource BoolNotConverter}}"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </StackPanel>
                                     <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                                        <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 20 0" Command="{Binding Path=CmdDemarrerSiteEcransAppel}">
+                                        <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 20 0" Command="{Binding Path=CmdDemarrerSitePrivate}">
                                             <WrapPanel Orientation="Horizontal">
                                                 <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/play-32.png" Height="25" Margin="5 0"/>
                                                 <Label Content="Démarrer" />
                                             </WrapPanel>
                                         </telerik:RadButton>
-                                        <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="20 0 0 0" Command="{Binding Path=CmdArreterSiteEcransAppel}">
+                                        <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="20 0 0 0" Command="{Binding Path=CmdArreterSitePrivate}">
                                             <WrapPanel Orientation="Horizontal">
                                                 <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/stop-32.png" Height="25" Margin="5 0"/>
                                                 <Label Content="Arrêter" />

@@ -1,5 +1,5 @@
 ﻿
-using AppPublication.ViewModels;
+using AppPublication.ViewModels.Configuration;
 using System.Windows;
 
 namespace AppPublication.Views.Configuration

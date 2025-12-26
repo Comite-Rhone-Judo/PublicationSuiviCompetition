@@ -1,5 +1,5 @@
 ﻿using AppPublication.Config.EcransAppel;
-using AppPublication.Models;
+using AppPublication.Models.EcransAppel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,7 +14,7 @@ using Tools.Outils;
 using Tools.Windows;
 using Tools.Framework;
 
-namespace AppPublication.ViewModels
+namespace AppPublication.ViewModels.Configuration
 {
     public class EcranAppelConfigViewModel : NotificationBase
     {
@@ -37,6 +37,8 @@ namespace AppPublication.ViewModels
         private bool _isRechercheIpEnCours;
         private bool _isRechercheHostnameEnCours;
         private CancellationTokenSource _searchCts;
+        private static List<int> _groupementOptionsStatic { get; } = new List<int> { 1, 2, 4 };
+
         #endregion
 
         #region COMMANDES
@@ -78,6 +80,35 @@ namespace AppPublication.ViewModels
         #endregion
 
         #region PROPRIETES
+
+        /// <summary>
+        /// Les options de groupement des tapis (1, 2 ou 4)
+        /// </summary>
+        public List<int> GroupementOptions => _groupementOptionsStatic;
+
+        /// <summary>
+        /// Nombre de tapis par groupe (1, 2 ou 4)
+        /// </summary>
+        public int Groupement
+        {
+            get
+            {
+                return _model.Groupement;
+            }
+            set
+            {
+                if (_model.Groupement != value)
+                {
+                    _model.Groupement = value;
+                    NotifyPropertyChanged();
+
+                    // SAUVEGARDE IMMEDIATE
+                    var cfg = GetConfigElement();
+                    if (cfg != null) cfg.Groupement = value; // Déclenche le IsDirty automatique
+
+                }
+            }
+        }
 
         private string _listeTapisSelectionnesAffiche;
         public string ListeTapisSelectionnesAffiche

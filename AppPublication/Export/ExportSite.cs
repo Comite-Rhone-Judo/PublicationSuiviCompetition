@@ -199,7 +199,7 @@ namespace AppPublication.Export
             {
                 // Genere les prochains combats de tous les tapis, istapis = alltapis (Se Prepare)  => feuille_matchs_site.xslt
                 ExportEnum type = ExportEnum.Site_FeuilleCombatTapis;
-                string directory = siteStruct.RepertoireCommon;
+                string directory = siteStruct.RepertoireCommon();
                 string filename = ExportTools.getFileName(type);
                 string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
                 XsltArgumentList argsList = new XsltArgumentList();
@@ -247,7 +247,7 @@ namespace AppPublication.Export
                 // Genere l'index
                 type = ExportEnum.Site_Index;
                 string filename = ExportTools.getFileName(type);
-                string fileSave = Path.Combine(siteStruct.RepertoireCommon, filename.Replace("/", "_"));
+                string fileSave = Path.Combine(siteStruct.RepertoireCommon(), filename.Replace("/", "_"));
                 XsltArgumentList argsList = new XsltArgumentList();
                 AddStructureArgument(argsList, siteStruct, fileSave);
 
@@ -268,7 +268,7 @@ namespace AppPublication.Export
                 // Genere le script de mise a jour
                 type = ExportEnum.Site_FooterScript;
                 string filenameFooter = ExportTools.getFileName(type);
-                string fileSaveFooter = Path.Combine(siteStruct.RepertoireJs, filenameFooter.Replace("/", "_"));
+                string fileSaveFooter = Path.Combine(siteStruct.RepertoireJs(), filenameFooter.Replace("/", "_"));
                 XsltArgumentList argsListFooter = new XsltArgumentList();
                 AddStructureArgument(argsListFooter, siteStruct, fileSaveFooter);
                 ExportHTML.ToHTMLSite(docindex, type, fileSaveFooter, argsListFooter, "js");
@@ -304,7 +304,7 @@ namespace AppPublication.Export
                 progress?.Report(GenerationProgressInfo.InitInstance(workId, nbGen)); // Report the start of the task with the number of subtask
 
                 ExportEnum type;
-                string directory = siteStruct.RepertoireCommon;
+                string directory = siteStruct.RepertoireCommon();
 
                 XmlDocument docmenu = ExportXML.CreateDocumentMenu(DC, EDC, siteStruct);
                 ExportXML.AddPublicationInfo(ref docmenu, config);
@@ -385,7 +385,7 @@ namespace AppPublication.Export
             if (DC != null && config != null && siteStruct != null)
             {
                 ExportEnum type = ExportEnum.Site_AffectationTapis;
-                string directory = siteStruct.RepertoireCommon;
+                string directory = siteStruct.RepertoireCommon();
                 string filename = ExportTools.getFileName(type);
                 string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
                 XsltArgumentList argsList = new XsltArgumentList();
@@ -525,11 +525,11 @@ namespace AppPublication.Export
             siteStruct.TargetPath = targetFile;
 
             // Ajoute les parametres en relatif par rapport a la position du fichier
-            argsList.AddParam("imgPath", "", PathForUrl(siteStruct.RepertoireImgRelatif));
-            argsList.AddParam("jsPath", "", PathForUrl(siteStruct.RepertoireJsRelatif));
-            argsList.AddParam("cssPath", "", PathForUrl(siteStruct.RepertoireCssRelatif));
-            argsList.AddParam("commonPath", "", PathForUrl(siteStruct.RepertoireCommonRelatif));
-            argsList.AddParam("competitionPath", "", PathForUrl(siteStruct.RepertoireCompetitionRelatif));
+            argsList.AddParam("imgPath", "", PathForUrl(siteStruct.RepertoireImg(relatif: true)));
+            argsList.AddParam("jsPath", "", PathForUrl(siteStruct.RepertoireJs(relatif: true)));
+            argsList.AddParam("cssPath", "", PathForUrl(siteStruct.RepertoireCss(relatif: true)));
+            argsList.AddParam("commonPath", "", PathForUrl(siteStruct.RepertoireCommon(relatif: true)));
+            argsList.AddParam("competitionPath", "", PathForUrl(siteStruct.RepertoireCompetition(relatif: true)));
         }
     }
 }

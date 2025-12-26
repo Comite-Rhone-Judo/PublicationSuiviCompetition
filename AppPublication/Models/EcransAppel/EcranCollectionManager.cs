@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using AppPublication.Models; // Assurez-vous que ce namespace correspond à l'emplacement de EcranAppelModel
 
-namespace AppPublication.Managers
+namespace AppPublication.Models.EcransAppel
 {
     public class EcranCollectionManager
     {
