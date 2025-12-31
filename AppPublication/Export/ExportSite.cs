@@ -19,23 +19,39 @@ using AppPublication.Generation;
 
 namespace AppPublication.Export
 {
-    public static class ExportSite
+    public class ExportSite : ExportSiteBase
     {
-        private const int kTailleMaxNomCompetition = 30;
-        private static XmlDocument _docEngagements = new XmlDocument();     // Instance partagees pour la generation des engages
+        #region Members
+        protected static XmlDocument _docEngagements = new XmlDocument();     // Instance partagees pour la generation des engages
+        #endregion
 
-        private static List<XElement> _xClubs = new List<XElement>();          // Instance partagees pour la liste des clubs
-        private static List<XElement> _xComites = new List<XElement>();          // Instance partagees pour la liste des comites
-        private static List<XElement> _xSecteurs = new List<XElement>();          // Instance partagees pour la liste des secteurs
-        private static List<XElement> _xLigues = new List<XElement>();          // Instance partagees pour la liste des ligues
-        private static List<XElement> _xPays = new List<XElement>();          // Instance partagees pour la liste des pays
+        /// <summary>
+        /// Initialise les structures de donnees partagees pour la generation des documents XML
+        /// </summary>
+        /// <param name="DC"></param>
+        /// <param name="EDC"></param>
+        /// <param name="config"></param>
+        public static void InitSharedData(IJudoData DC, ExtendedJudoData EDC, ConfigurationExportSite config, bool initBase = false)
+        {
+            // Appel la methode de la classe de base si besoin
+            if (initBase) { ExportSiteBase.InitSharedData(DC, EDC); }
+
+            // Ajoute la partie specifique
+            using (TimedLock.Lock(_docEngagements))
+            {
+                _docEngagements = ExportXML.CreateDocumentEngagements(DC, EDC);
+                ExportXML.AddPublicationInfo(ref _docEngagements, config);
+                AddStructures(ref _docEngagements);
+                LogTools.DataLogger.Debug("XML genere: '{0}'", _docEngagements.InnerXml);
+            }
+        }
 
         /// <summary>
         /// Génére les éléments donnés d'une phase
         /// </summary>
         /// <param name="DC"></param>
         /// <param name="phase">la phase</param>
-        public static List<FileWithChecksum> GenereWebSitePhase(IJudoData DC, Phase phase, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
+        public List<FileWithChecksum> GenereWebSitePhase(IJudoData DC, Phase phase, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<BatchProgressInfo> progress)
         {
             LogTools.Logger.Debug("Phase ({1}) '{0}'", phase?.libelle, phase?.id);
 
@@ -47,7 +63,7 @@ namespace AppPublication.Export
                 nbGen++;
             }
 
-            progress?.Report(GenerationProgressInfo.InitInstance(workId, nbGen)); // Report the start of the task with the number of subtask
+            progress?.Report(BatchProgressInfo.Init(nbGen)); // Report the start of the task with the number of subtask
 
             if (DC != null && phase != null && config != null && siteStruct != null)
             {
@@ -92,7 +108,7 @@ namespace AppPublication.Export
                     urls.Add(fileSave2 + ".html");
                     LogTools.Logger.Debug("Poule = {0}", urls.Count);
 
-                    progress.Report(GenerationProgressInfo.ProgressInstance(workId, 1)); // Report the progress of the task
+                    progress.Report(BatchProgressInfo.Step(1)); // Report the progress of the task
                 }
                 else if (phase.typePhase == (int)TypePhaseEnum.Tableau)
                 {
@@ -113,7 +129,7 @@ namespace AppPublication.Export
                     urls.Add(fileSave2 + ".html");
                     LogTools.Logger.Debug("Tableau = {0}", urls.Count);
 
-                    progress.Report(GenerationProgressInfo.ProgressInstance(workId, 1)); // Report the progress of the task
+                    progress.Report(BatchProgressInfo.Step(1)); // Report the progress of the task
                 }
 
                 // Ne genere que les fichiers necessaires
@@ -138,14 +154,14 @@ namespace AppPublication.Export
                     urls.Add(fileSave + ".html");
                     LogTools.Logger.Debug("ProchainsCombats = {0}", urls.Count);
 
-                    progress.Report(GenerationProgressInfo.ProgressInstance(workId, 2)); // Report the progress of the task
+                    progress.Report(BatchProgressInfo.Step(2)); // Report the progress of the task
                 }
 
                 // Genere les checksums des fichiers generes
                 output = urls.Select(o => new FileWithChecksum(o)).ToList();
             }
 
-            progress?.Report(GenerationProgressInfo.ProgressInstance(workId, nbGen)); // Report the end of the task
+            progress.Report(BatchProgressInfo.Step(nbGen)); // Report the end of the task
             return output;
         }
 
@@ -154,11 +170,11 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <param name="epreuve"></param>
-        public static List<FileWithChecksum> GenereWebSiteClassement(IJudoData DC, i_vue_epreuve_interface epreuve, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
+        public List<FileWithChecksum> GenereWebSiteClassement(IJudoData DC, i_vue_epreuve_interface epreuve, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<BatchProgressInfo> progress)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
-            progress?.Report(GenerationProgressInfo.InitInstance(workId, 1)); // Report the start of the task with the number of subtask
+            progress?.Report(BatchProgressInfo.Init(1)); // Report the start of the task with the number of subtask
 
             if (DC != null && epreuve != null && config != null && siteStruct != null)
             {
@@ -181,7 +197,7 @@ namespace AppPublication.Export
             LogTools.Logger.Debug("Classement = {0}", output.Count);
 
 
-            progress?.Report(GenerationProgressInfo.ProgressInstance(workId, 1)); // Report the end of the task
+            progress?.Report(BatchProgressInfo.Step(1)); // Report the end of the task
             return output;
         }
 
@@ -189,11 +205,14 @@ namespace AppPublication.Export
         /// Génére les premiers combats de tous les tapis
         /// </summary>
         /// <param name="DC"></param>
-        public static List<FileWithChecksum> GenereWebSiteAllTapis(IJudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
+        public List<FileWithChecksum> GenereWebSiteAllTapis(IJudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<BatchProgressInfo> progress)
         {
+            // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread (changement de path)
+            ExportSiteStructure structRep = (ExportSiteStructure)siteStruct.Clone();
+
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
-            progress?.Report(GenerationProgressInfo.InitInstance(workId, 1)); // Report the start of the task with the number of subtask
+            progress?.Report(BatchProgressInfo.Init(1)); // Report the start of the task with the number of subtask
 
             if (DC != null && config != null && siteStruct != null)
             {
@@ -222,7 +241,7 @@ namespace AppPublication.Export
             LogTools.Logger.Debug("ProchainsCombats Tapis = {0}", output.Count);
 
 
-            progress?.Report( GenerationProgressInfo.ProgressInstance(workId, 1)); // Report the end of the task
+            progress?.Report(BatchProgressInfo.Step(1)); // Report the end of the task
             return output;
         }
 
@@ -230,13 +249,16 @@ namespace AppPublication.Export
         /// Génére L'index
         /// </summary>
         /// <param name="DC"></param>
-        public static List<FileWithChecksum> GenereWebSiteIndex(IJudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
+        public List<FileWithChecksum> GenereWebSiteIndex(IJudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<BatchProgressInfo> progress)
         {
             List<string> urls = new List<string>();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
+            // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread (changement de path)
+            ExportSiteStructure structRep = (ExportSiteStructure) siteStruct.Clone();
+
             ExportEnum type;
 
-            progress?.Report(GenerationProgressInfo.InitInstance(workId, 2)); // Report the start of the task with the number of subtask
+            progress.Report(BatchProgressInfo.Init(2)); // Report the start of the task with the number of subtask
 
             if (DC != null && config != null && siteStruct != null)
             {
@@ -253,7 +275,7 @@ namespace AppPublication.Export
 
                 ExportHTML.ToHTMLSite(docindex, type, fileSave, argsList);
                 output.Add(new FileWithChecksum(fileSave + ".html"));
-                progress.Report(GenerationProgressInfo.ProgressInstance(workId, 1)); // Report the end of the task
+                progress.Report(BatchProgressInfo.Step(1)); // Report the end of the task
 
                 // No need to regenerate those files, they are usually static unless they are updated
                 urls = urls.Concat(ExportTools.ExportEmbeddedStyleAndJS(true, siteStruct)).ToList();
@@ -273,12 +295,12 @@ namespace AppPublication.Export
                 AddStructureArgument(argsListFooter, siteStruct, fileSaveFooter);
                 ExportHTML.ToHTMLSite(docindex, type, fileSaveFooter, argsListFooter, "js");
                 output.Add(new FileWithChecksum(fileSaveFooter + ".js"));
-                progress.Report(GenerationProgressInfo.ProgressInstance(workId, 2)); // Report the end of the task
+                progress.Report(BatchProgressInfo.Step(2)); // Report the end of the task
 
                 LogTools.Logger.Debug("GenereWebSiteIndex {0}", output.Count);
             }
 
-            progress.Report(GenerationProgressInfo.ProgressInstance(workId, 2)); // Report the end of the task
+            progress.Report(BatchProgressInfo.Step(2)); // Report the end of the task
             return output;
         }
 
@@ -286,8 +308,11 @@ namespace AppPublication.Export
         /// Génére le menu
         /// </summary>
         /// <param name="DC"></param>
-        public static List<FileWithChecksum> GenereWebSiteMenu(IJudoData DC, ExtendedJudoData EDC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
+        public List<FileWithChecksum> GenereWebSiteMenu(IJudoData DC, ExtendedJudoData EDC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<BatchProgressInfo> progress)
         {
+            // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread (changement de path)
+            ExportSiteStructure structRep = (ExportSiteStructure)siteStruct.Clone();
+
             List<FileWithChecksum> output = new List<FileWithChecksum>();
             if (DC != null && EDC != null && config != null && siteStruct != null)
             {
@@ -301,7 +326,7 @@ namespace AppPublication.Export
                     nbGen++;
                 }
 
-                progress?.Report(GenerationProgressInfo.InitInstance(workId, nbGen)); // Report the start of the task with the number of subtask
+                progress?.Report(BatchProgressInfo.Init(nbGen)); // Report the start of the task with the number of subtask
 
                 ExportEnum type;
                 string directory = siteStruct.RepertoireCommon();
@@ -319,7 +344,7 @@ namespace AppPublication.Export
 
                 ExportHTML.ToHTMLSite(docmenu, type, fileSave, argsList);
                 output.Add(new FileWithChecksum(fileSave + ".html"));
-                progress.Report(GenerationProgressInfo.ProgressInstance(workId, 1)); // Report the progress of the task
+                progress.Report(BatchProgressInfo.Step(1)); // Report the progress of the task
 
                 // Genere le menu de classement
                 type = ExportEnum.Site_MenuClassement;
@@ -330,7 +355,7 @@ namespace AppPublication.Export
 
                 ExportHTML.ToHTMLSite(docmenu, type, fileSave2, argsList2);
                 output.Add(new FileWithChecksum(fileSave2 + ".html"));
-                progress.Report(GenerationProgressInfo.ProgressInstance(workId, 2)); // Report the progress of the task
+                progress.Report(BatchProgressInfo.Step(2)); // Report the progress of the task
 
                 // Genere le menu de prochain combat
                 if (config.PublierProchainsCombats)
@@ -343,7 +368,7 @@ namespace AppPublication.Export
 
                     ExportHTML.ToHTMLSite(docmenu, type, fileSavePc, argsListPc);
                     output.Add(new FileWithChecksum(fileSavePc + ".html"));
-                    progress.Report(GenerationProgressInfo.ProgressInstance(workId, 3)); // Report the progress of the task
+                    progress.Report(BatchProgressInfo.Step(3)); // Report the progress of the task
                 }
 
                 // Genere le menu engageements
@@ -361,8 +386,10 @@ namespace AppPublication.Export
 
                     ExportHTML.ToHTMLSite(docmenu, type, fileSavePart, argsListPart);
                     output.Add(new FileWithChecksum(fileSavePart + ".html"));
-                    progress.Report(GenerationProgressInfo.ProgressInstance(workId, 4)); // Report the progress of the task
+                    progress.Report(BatchProgressInfo.Step(4)); // Report the progress of the task
                 }
+
+                progress.Report(BatchProgressInfo.Step(nbGen)); // Report the progress of the task
             }
 
             LogTools.Logger.Debug("Menu = {0}", output.Count);
@@ -376,11 +403,13 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static List<FileWithChecksum> GenereWebSiteAffectation(IJudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
+        public List<FileWithChecksum> GenereWebSiteAffectation(IJudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<BatchProgressInfo> progress)
         {
+            // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread (changement de path)
+            ExportSiteStructure structRep = (ExportSiteStructure)siteStruct.Clone();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
-            progress?.Report(GenerationProgressInfo.InitInstance(workId, 1)); // Report the start of the task with the number of subtask
+            progress?.Report(BatchProgressInfo.Init(1)); // Report the start of the task with the number of subtask
 
             if (DC != null && config != null && siteStruct != null)
             {
@@ -403,54 +432,16 @@ namespace AppPublication.Export
             LogTools.Logger.Debug("Affectation = {0}", output.Count);
 
 
-            progress?.Report(GenerationProgressInfo.ProgressInstance(workId, 1)); // Report the end of the task
+            progress?.Report(BatchProgressInfo.Step(1)); // Report the end of the task
             return output;
-        }
-
-
-        /// <summary>
-        /// Initialise les structures de donnees partagees pour la generation des documents XML
-        /// </summary>
-        /// <param name="DC"></param>
-        /// <param name="EDC"></param>
-        /// <param name="config"></param>
-        public static void InitSharedData(IJudoData DC, ExtendedJudoData EDC, ConfigurationExportSite config)
-        {
-            using (TimedLock.Lock(_xClubs))
-            {
-                _xClubs = ExportXML.GetClubs(DC);
-            }
-            using (TimedLock.Lock(_xComites))
-            {
-                _xComites = ExportXML.GetComites(DC);
-            }
-            using (TimedLock.Lock(_xSecteurs))
-            {
-                _xSecteurs = ExportXML.GetSecteurs(DC);
-            }
-            using (TimedLock.Lock(_xLigues))
-            {
-                _xLigues = ExportXML.GetLigues(DC);
-            }
-            using (TimedLock.Lock(_xPays))
-            {
-                _xPays = ExportXML.GetPays(DC);
-            }
-            using (TimedLock.Lock(_docEngagements))
-            {
-                _docEngagements = ExportXML.CreateDocumentEngagements(DC, EDC);
-                ExportXML.AddPublicationInfo(ref _docEngagements, config);
-                AddStructures(ref _docEngagements);
-                LogTools.DataLogger.Debug("XML genere: '{0}'", _docEngagements.InnerXml);
-            }
-        }
+        }    
 
         /// <summary>
         /// Genere la page des engages
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static List<FileWithChecksum> GenereWebSiteEngagements(IJudoData DC, ExtendedJudoData EDC, List<GroupeEngagements> grps, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
+        public List<FileWithChecksum> GenereWebSiteEngagements(IJudoData DC, ExtendedJudoData EDC, List<GroupeEngagements> grps, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<BatchProgressInfo> progress)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
@@ -458,7 +449,7 @@ namespace AppPublication.Export
             {
                 int nbGrps = grps.Count;
 
-                progress?.Report(GenerationProgressInfo.InitInstance(workId, nbGrps)); // Report the start of the task with the number of subtask
+                progress?.Report(BatchProgressInfo.Init(nbGrps)); // Report the start of the task with the number of subtask
 
 
                 for (int i = 0; i < nbGrps; i++) {
@@ -476,40 +467,13 @@ namespace AppPublication.Export
 
                     output.Add(new FileWithChecksum(fileSave + ".html"));
 
-                    progress?.Report( GenerationProgressInfo.ProgressInstance(workId, i+1)); // Report the end of the task
+                    progress?.Report( BatchProgressInfo.Step(i+1)); // Report the end of the task
                 }
+
+                progress?.Report(BatchProgressInfo.Step(nbGrps)); // Report the end of the task
             }
 
             LogTools.Logger.Debug("Engagements = {0}", output.Count);
-
-
-            return output;
-        }
-
-        /// <summary>
-        /// Ajoute les informations de structure en cache
-        /// </summary>
-        /// <param name="doc"></param>
-        private static void AddStructures(ref XmlDocument doc)
-        {
-            ExportXML.AddStructures(ref doc, _xClubs, _xComites, _xSecteurs, _xLigues, _xPays);
-        }
-
-        /// <summary>
-        /// Nettoie le path specifie pour passer de Repertoire Windows à URL
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        private static string PathForUrl(string path)
-        {
-            string output = path.Replace('\\', '/');
-
-            /*
-             if(output.First() != '/')
-            {
-                output = string.Format("/{0}", output);
-            }
-            */
 
             return output;
         }
@@ -520,16 +484,16 @@ namespace AppPublication.Export
         /// <param name="argsList">La liste d'argument a actualiser</param>
         /// <param name="siteStruct">La structure du site</param>
         /// <param name="targetFile">Le fichier HTML cible</param>
-        private static void AddStructureArgument(XsltArgumentList argsList, ExportSiteStructure siteStruct, string targetFile)
+        protected override void AddStructureArgument(XsltArgumentList argsList, ExportStructureBase siteStruct, string targetFile)
         {
-            siteStruct.TargetPath = targetFile;
+            ExportSiteStructure theSiteStruct = siteStruct as ExportSiteStructure;
 
-            // Ajoute les parametres en relatif par rapport a la position du fichier
-            argsList.AddParam("imgPath", "", PathForUrl(siteStruct.RepertoireImg(relatif: true)));
-            argsList.AddParam("jsPath", "", PathForUrl(siteStruct.RepertoireJs(relatif: true)));
-            argsList.AddParam("cssPath", "", PathForUrl(siteStruct.RepertoireCss(relatif: true)));
-            argsList.AddParam("commonPath", "", PathForUrl(siteStruct.RepertoireCommon(relatif: true)));
-            argsList.AddParam("competitionPath", "", PathForUrl(siteStruct.RepertoireCompetition(relatif: true)));
+            // Ajoute les repertoires de base de la structure
+            siteStruct.TargetPath = targetFile;
+            base.AddStructureArgument(argsList, theSiteStruct, targetFile);
+
+            // Ajoute le repertoire common
+            argsList.AddParam("commonPath", "", PathForUrl(theSiteStruct.RepertoireCommon(relatif: true)));
         }
     }
 }

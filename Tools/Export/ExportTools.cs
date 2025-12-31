@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Tools.Enum;
+using Tools.Outils;
+using System;
 using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Tools.Enum;
-using Tools.Outils;
 
 namespace Tools.Export
 {
@@ -148,8 +148,8 @@ namespace Tools.Export
                     break;
                 case ExportEnum.Site_FooterScript:
                     result = "footer_script";
-					break;
-				case ExportEnum.Site_Engagements:
+                    break;
+                case ExportEnum.Site_Engagements:
                     result = "groupe_engagements";
                     break;
                 case ExportEnum.Site_MenuEngagements:
@@ -309,7 +309,7 @@ namespace Tools.Export
                 {
                     if (s1.Contains(ConstantResource.Export_site_js))
                     {
-                        string fileName = Path.Combine(dirJs,  s1.Replace(ConstantResource.Export_site_js, ""));
+                        string fileName = Path.Combine(dirJs, s1.Replace(ConstantResource.Export_site_js, ""));
 
                         var resource = ResourcesTools.GetAssembyResource(s1);
 

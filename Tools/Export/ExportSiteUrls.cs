@@ -1,23 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Security.Cryptography;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Caching;
-using Tools.Outils;
+﻿using Tools.Outils;
 
 namespace Tools.Export
 {
-    public class ExportSiteUrls : ExportUrlsBase<ExportSiteUrls, ExportSiteStructure>
+    public class ExportSiteUrls : ExportUrlsBase
     {
         #region MEMBRES
         private const string kCourante = "courante";
-        private bool _isolate = false; 
+        private bool _isolate = false;
         #endregion
 
         #region CONSTRUCTEURS

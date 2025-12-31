@@ -6,7 +6,7 @@ public static class ActionWatcher
     /// <summary>
     /// Exécute une action (void) et retourne le temps d'exécution en millisecondes.
     /// </summary>
-    public static double Execute(Action action)
+    public static long Execute(Action action)
     {
         if (action == null) throw new ArgumentNullException(nameof(action));
 
@@ -18,8 +18,8 @@ public static class ActionWatcher
 
         sw.Stop();
 
-        // Retourne le temps total en millisecondes (avec décimales pour la précision)
-        return sw.Elapsed.TotalMilliseconds;
+        // Retourne le temps total en millisecondes pas besoin de precision mieux que la Ms
+        return (long) Math.Round(sw.Elapsed.TotalMilliseconds);
     }
 
     /// <summary>
@@ -36,7 +36,7 @@ public static class ActionWatcher
 
         sw.Stop();
 
-        return new TimedResult<T>(result, sw.Elapsed.TotalMilliseconds);
+        return new TimedResult<T>(result, (long) Math.Round(sw.Elapsed.TotalMilliseconds));
     }
 }
 
@@ -44,9 +44,9 @@ public static class ActionWatcher
 public readonly struct TimedResult<T>
 {
     public T Result { get; }
-    public double DurationMs { get; }
+    public long DurationMs { get; }
 
-    public TimedResult(T result, double durationMs)
+    public TimedResult(T result, long durationMs)
     {
         Result = result;
         DurationMs = durationMs;

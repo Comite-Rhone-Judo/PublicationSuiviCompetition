@@ -15,16 +15,16 @@ namespace AppPublication.Tools.Converter
             // Verifie le type des donnees en entree
             if (values.Count() >= 2)
             {
-                StatExecution theStat = null;
+                TaskExecutionInformation theStat = null;
                 bool genere = false;
 
                 foreach (object item in values)
                 {
                     if (item != null)
                     {
-                        if (item.GetType() == typeof(StatExecution))
+                        if (item.GetType() == typeof(TaskExecutionInformation))
                         {
-                            theStat = (StatExecution)item;
+                            theStat = (TaskExecutionInformation)item;
                         }
                         if (item.GetType() == typeof(bool))
                         {
@@ -37,11 +37,11 @@ namespace AppPublication.Tools.Converter
                 {
                     if (theStat.DateProchaineGeneration == DateTime.MinValue)
                     {
-                        output = string.Format("Dernière à {0} (en {1}s)", theStat.DateFin.ToString("HH:mm:ss"), (int)Math.Round(theStat.DelaiExecutionMs / 1000.0));
+                        output = string.Format("Dernière à {0} (en {1}s)", theStat.DateDemarrage.ToString("HH:mm:ss"), (int)Math.Round(theStat.DelaiExecutionMs / 1000.0));
                     }
                     else
                     {
-                        output = string.Format("Dernière à {0} (en {1}s), Prochaine à {2}", theStat.DateFin.ToString("HH:mm:ss"), (int)Math.Round(theStat.DelaiExecutionMs / 1000.0), theStat.DateProchaineGeneration.ToString("HH:mm:ss"));
+                        output = string.Format("Dernière à {0} (en {1}s), Prochaine à {2}", theStat.DateDemarrage.ToString("HH:mm:ss"), (int)Math.Round(theStat.DelaiExecutionMs / 1000.0), theStat.DateProchaineGeneration.ToString("HH:mm:ss"));
                     }
                 }
             }

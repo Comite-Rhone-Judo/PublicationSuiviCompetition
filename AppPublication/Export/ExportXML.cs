@@ -51,7 +51,7 @@ namespace AppPublication.Export
                 XmlAttribute attrNbProchainsCombats = doc.CreateAttribute(ConstantXML.nbProchainsCombats);
                 attrNbProchainsCombats.Value = config.NbProchainsCombats.ToString().ToLower();
                 XmlAttribute attrMsgProchainsCombats = doc.CreateAttribute(ConstantXML.msgProchainsCombats);
-                attrMsgProchainsCombats.Value = config.MsgProchainCombats;
+                attrMsgProchainsCombats.Value = config.MsgProchainsCombats;
                 XmlAttribute attrDateGeneration = doc.CreateAttribute(ConstantXML.DateGeneration);
                 attrDateGeneration.Value = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
                 XmlAttribute attrAppVersion = doc.CreateAttribute(ConstantXML.AppVersion);

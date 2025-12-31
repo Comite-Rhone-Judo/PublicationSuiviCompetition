@@ -6,9 +6,12 @@ namespace AppPublication.Generation
     public enum StateGenerationEnum
     {
         Stopped = -1,       // La generation est arretee
+        None = 0,           // Aucun statut defini
         Idle = 1,           // La generation est en attente
-        Generating = 2,      // La generation est en cours
-        Cleaning = 3        // Le nettoyage est en cours
+        Generating = 2,     // La generation est en cours
+        Cleaning = 3,       // Le nettoyage est en cours
+        Starting = 4,       // La generation demarre
+        Syncing = 5,        // La synchronisation demarre    
     }
 
 
@@ -28,20 +31,12 @@ namespace AppPublication.Generation
             State = pStatus;
         }
 
-        /*
-        public StatusGenerationSite(StateGenerationEnum pStatus, string pMsg = "-")
-        {
-            State = pStatus;
-            // Message = pMsg;
-        }
-        */
-
         #endregion
 
         #region PROPRIETES
         private StateGenerationEnum _state;
         /// <summary>
-        /// Le statut du minisite
+        /// Le statut de la generation
         /// </summary>
         public StateGenerationEnum State
         {
@@ -131,6 +126,13 @@ namespace AppPublication.Generation
         }
         #endregion
 
+        #region METHODES PUBLIQUES
+        public StatusGenerationSite Clone()
+        {
+            return this.MemberwiseClone() as StatusGenerationSite;
+        }
+        #endregion
+
         #region METHODES
         private void CalculMessage()
         {
@@ -162,6 +164,11 @@ namespace AppPublication.Generation
                 case StateGenerationEnum.Cleaning:
                     {
                         msg = "Nettoyage du site ...";
+                        break;
+                    }
+                case StateGenerationEnum.Starting:
+                    {
+                        msg = "Démarrage ...";
                         break;
                     }
                 default:

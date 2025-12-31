@@ -1,27 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Security.Cryptography;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Caching;
-using Tools.Outils;
+﻿using Tools.Outils;
+using System;
 
 namespace Tools.Export
 {
-            public abstract class ExportUrlsBase<T, PT>
-                                            where T : ExportUrlsBase<T, PT>
-                                            where PT : ExportStructureBase<PT>
+    public abstract class ExportUrlsBase
     {
         #region MEMBRES
 
-        protected PT _parentStructure = null;
+        protected ExportStructureBase _parentStructure = null;
         protected string _rootCompetUrlPath = String.Empty;
-        protected string _idCompetitionLast = string.Empty;
+        protected string _idCompetitionLast = String.Empty;
         #endregion
 
         #region CONSTRUCTEURS
@@ -32,9 +20,9 @@ namespace Tools.Export
         /// <param name="idCompetition"></param>
         /// <param name="isoleCompet"></param>
         /// <param name="maxlen"></param>
-        public ExportUrlsBase(PT localStructure)
+        public ExportUrlsBase(ExportStructureBase localStructure)
         {
-            if(localStructure == null)
+            if (localStructure == null)
             {
                 throw new ArgumentNullException("Impossible d'initialiser une structure de site avec une structure de repertoire null");
             }

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Tools.Outils;
+using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
-using Tools.Outils;
+
 
 namespace Tools.Export
 {
@@ -27,7 +24,7 @@ namespace Tools.Export
             // Stream res = ResourcesTools.SearchAssemblyResource(absoluteUri.OriginalString);
             Stream res = ResourcesTools.GetAssembyResource(resName);
 
-            if(res == null)
+            if (res == null)
             {
                 // Essaye une recherche complete
                 res = ResourcesTools.SearchAssemblyResource(absoluteUri.OriginalString);

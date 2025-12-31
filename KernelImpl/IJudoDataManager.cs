@@ -18,6 +18,11 @@ namespace KernelImpl
         IJudoData GetSnapshot();
 
         /// <summary>
+        /// Vérifie et assure la cohérence des données, retourne True si les données sont cohérentes.
+        /// </summary>
+        bool EnsureDataConsistency();
+
+        /// <summary>
         /// Exécute une modification des données de manière sécurisée (Écriture).
         /// </summary>
         void RunSafeDataUpdate(Action actionMiseAJour);

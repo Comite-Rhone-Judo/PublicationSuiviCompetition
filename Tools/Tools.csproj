@@ -66,14 +66,14 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FluentFTP, Version=51.1.0.0, Culture=neutral, PublicKeyToken=f4af092b1d8df44f, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentFTP.51.1.0\lib\net472\FluentFTP.dll</HintPath>
+    <Reference Include="FluentFTP, Version=53.0.2.0, Culture=neutral, PublicKeyToken=f4af092b1d8df44f, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentFTP.53.0.2\lib\net472\FluentFTP.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.5.3.4\lib\net46\NLog.dll</HintPath>
+    <Reference Include="NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.6.0.7\lib\net46\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -145,12 +145,13 @@
     <Compile Include="Enum\ExportDisplayModeEnum.cs" />
     <Compile Include="Enum\ReglementEquipeEnum.cs" />
     <Compile Include="Enum\ServerResponseEnum.cs" />
-    <Compile Include="Enum\SiteEnum.cs" />
+    <Compile Include="Enum\TypeExportSiteEnum.cs" />
     <Compile Include="Enum\QualifieEnum.cs" />
     <Compile Include="Enum\TypeCSAEnum.cs" />
+    <Compile Include="Export\ConfigurationExportSitePrivate.cs" />
     <Compile Include="Export\ConfigurationExportSite.cs" />
     <Compile Include="Export\ExportHTML.cs" />
-    <Compile Include="Export\ExportPrivateSiteStructure.cs" />
+    <Compile Include="Export\ExportSitePrivateStructure.cs" />
     <Compile Include="Export\ExportPrivateSiteUrls.cs" />
     <Compile Include="Export\ExportUrlsBase.cs" />
     <Compile Include="Export\ExportStructureBase.cs" />
@@ -238,6 +239,7 @@
     <Compile Include="HttpServerModule\Templates\SmartyEngine.cs" />
     <Compile Include="HttpServerModule\Templates\TemplateEngine.cs" />
     <Compile Include="Outils\AppSettings.cs" />
+    <Compile Include="Outils\BatchProgressInfo.cs" />
     <Compile Include="Outils\BlockingCounter.cs" />
     <Compile Include="Outils\Encryption.cs" />
     <Compile Include="Outils\FileAndDirectTools.cs" />
@@ -246,6 +248,7 @@
     <Compile Include="Outils\FTPTools.cs" />
     <Compile Include="Outils\LimitedConcurrencyLevel.cs" />
     <Compile Include="Framework\NotificationBase.cs" />
+    <Compile Include="Outils\ParallelTaskBatcher.cs" />
     <Compile Include="Outils\ResourcesTools.cs" />
     <Compile Include="Outils\ScoresJujitsu.cs" />
     <Compile Include="Outils\ServeurHttp.cs" />

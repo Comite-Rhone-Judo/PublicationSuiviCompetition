@@ -1,18 +1,16 @@
-﻿using System;
+﻿using Tools.Outils;
+using System;
 using System.IO;
-using Tools.Outils;
+
 
 namespace Tools.Export
 {
-    public class ExportSiteStructure : ExportStructureBase<ExportSiteStructure>
+    public class ExportSiteStructure : ExportStructureBase
     {
         #region MEMBRES
         public const string kCourante = "courante";
         public const string kEngagements = "engagements";
         public const string kCommon = "common";
-        public const string kImg = "img";
-        public const string kJs = "js";
-        public const string kCss = "css";
         public const string kIndex = "index.html";
         #endregion
 
@@ -23,7 +21,7 @@ namespace Tools.Export
         /// <param name="racine">Racine dans laquelle on va creer la structure "site"</param>
         /// <param name="idCompetition">ID de la competition</param>
         /// <param name="maxlen">Taille max pour les noms de répertoire</param>
-        public ExportSiteStructure(string racine, string idCompetition, int maxlen = 30) : base( racine, idCompetition, maxlen){}
+        public ExportSiteStructure(string racine, string idCompetition, int maxlen = 30) : base(racine, idCompetition, maxlen) { }
 
         #endregion
 
@@ -31,36 +29,6 @@ namespace Tools.Export
         #endregion
 
         #region METHODES
-
-        /// <summary>
-        ///  Retourne le repertoire Css
-        /// </summary>
-        /// <param name="relatif">True si le path retourne est en relatif</param>
-        /// <returns></returns>
-        public string RepertoireCss(bool relatif = false)
-        {
-            return GetPathRepertoire(kCss, relatif);
-        }
-
-        /// <summary>
-        ///  Retourne le repertoire Js
-        /// </summary>
-        /// <param name="relatif">True si le path retourne est en relatif</param>
-        /// <returns></returns>
-        public string RepertoireJs(bool relatif = false)
-        {
-            return GetPathRepertoire(kJs, relatif);
-        }
-
-        /// <summary>
-        ///  Retourne le repertoire Img
-        /// </summary>
-        /// <param name="relatif">True si le path retourne est en relatif</param>
-        /// <returns></returns>
-        public string RepertoireImg(bool relatif = false)
-        {
-            return GetPathRepertoire(kImg, relatif);
-        }
 
         /// <summary>
         ///  Retourne le repertoire Engagements
@@ -120,7 +88,7 @@ namespace Tools.Export
             }
 
             // Le repertoire de l'epreuve (code)
-            string tmp= idEpreuve + "_" + nomEpreuve;
+            string tmp = idEpreuve + "_" + nomEpreuve;
 
             // On calcul le path complet pour faire le controle d'existence
             string directory = Path.Combine(RepertoireCompetition(), OutilsTools.SubString(OutilsTools.TraiteChaine(tmp), 0, _maxLen));

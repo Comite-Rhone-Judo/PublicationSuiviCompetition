@@ -1,21 +1,19 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Tools.Outils;
 using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Caching;
-using Telerik.Windows.Controls;
-using Tools.Outils;
 
 namespace Tools.Export
 {
-    public abstract class ExportStructureBase<T> where T : ExportStructureBase<T>
+    public abstract class ExportStructureBase
     {
+        #region CONSTANTES
+        public const string kImg = "img";
+        public const string kJs = "js";
+        public const string kCss = "css";
+        #endregion
+
         #region MEMBRES
         protected string _rootDir = string.Empty;
         protected string _rootCompetDir = string.Empty;
@@ -34,7 +32,7 @@ namespace Tools.Export
         /// <param name="racine"></param>
         /// <param name="idCompetition"></param>
         /// <param name="maxlen"></param>
-        
+
         public ExportStructureBase(string racine, string idCompetition, int maxlen = 30)
         {
             _rootDir = racine;
@@ -57,11 +55,11 @@ namespace Tools.Export
             }
             set
             {
-                if(_targetPath != value)
+                if (_targetPath != value)
                 {
                     _targetPath = value;
 
-                    if(IsFullyConfigured)
+                    if (IsFullyConfigured)
                     {
                         // Supprime la racine dans le nom cible
                         string workstr = _targetPath.Replace(RepertoireCompetition(), "");
@@ -161,14 +159,44 @@ namespace Tools.Export
         }
 
         /// <summary>
+        ///  Retourne le repertoire Css
+        /// </summary>
+        /// <param name="relatif">True si le path retourne est en relatif</param>
+        /// <returns></returns>
+        public virtual string RepertoireCss(bool relatif = false)
+        {
+            return GetPathRepertoire(kCss, relatif);
+        }
+
+        /// <summary>
+        ///  Retourne le repertoire Js
+        /// </summary>
+        /// <param name="relatif">True si le path retourne est en relatif</param>
+        /// <returns></returns>
+        public virtual string RepertoireJs(bool relatif = false)
+        {
+            return GetPathRepertoire(kJs, relatif);
+        }
+
+        /// <summary>
+        ///  Retourne le repertoire Img
+        /// </summary>
+        /// <param name="relatif">True si le path retourne est en relatif</param>
+        /// <returns></returns>
+        public virtual string RepertoireImg(bool relatif = false)
+        {
+            return GetPathRepertoire(kImg, relatif);
+        }
+
+        /// <summary>
         /// Clone l'instance de la structure de repertoire (utile dans un contexte de multi-threading)
         /// </summary>
         /// <returns></returns>
-        public T Clone()
+        public ExportStructureBase Clone()
         {
             // 1. Création de la copie superficielle (Shallow Copy)
             // Le runtime crée bien une instance du type enfant réel.
-            T clone = (T)this.MemberwiseClone();
+            ExportStructureBase clone = (ExportStructureBase)this.MemberwiseClone();
 
             // 2. Appel de la méthode virtuelle pour personnaliser la copie
             this.SetupClone(clone);
@@ -195,7 +223,7 @@ namespace Tools.Export
         /// "Hook" virtuel pour permettre aux enfants d'ajouter leur logique
         /// </summary>
         /// <param name="clone"></param>
-        protected virtual void SetupClone(T clone) {}
+        protected virtual void SetupClone(ExportStructureBase clone) { }
 
         /// <summary>
         /// Verifie le nom du repertoire et assure la creation de ce dernier sur le disque (avec le nom filtre)
@@ -206,7 +234,7 @@ namespace Tools.Export
         {
             // Filtre le nom du repertoire
             string output = OutilsTools.TraiteChaineURL(repertoire);
-            
+
             // On s'assure que le repertoire existe bien
             FileAndDirectTools.CreateDirectorie(repertoire);
             return output;
@@ -250,28 +278,29 @@ namespace Tools.Export
             bool idCompetOk = !String.IsNullOrWhiteSpace(_idCompetition) && !string.IsNullOrEmpty(_idCompetition);
             bool rootDirOk = !String.IsNullOrWhiteSpace(_rootDir) && !string.IsNullOrEmpty(_rootDir);
 
-            if(rootDirOk)
+            if (rootDirOk)
             {
                 try
                 {
                     _ = Path.GetFullPath(_rootDir);
                 }
-                catch {
+                catch
+                {
                     rootDirOk = false;
                 }
             }
 
             _hasRootDir = rootDirOk;
-            _isFullyConfigured =  idCompetOk && rootDirOk;
+            _isFullyConfigured = idCompetOk && rootDirOk;
         }
 
         protected void SetRepertoireCompetition(string value)
+        {
+            if (!String.IsNullOrWhiteSpace(value) && _rootCompetDir != value)
             {
-                if (!String.IsNullOrWhiteSpace(value) && _rootCompetDir != value)
-                {
-                    _rootCompetDir = FiltreEtControleRepertoire(value);
-    }
-}
+                _rootCompetDir = FiltreEtControleRepertoire(value);
+            }
+        }
 
         #endregion
     }

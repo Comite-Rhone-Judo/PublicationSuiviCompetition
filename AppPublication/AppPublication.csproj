@@ -140,9 +140,14 @@
     <Compile Include="Config\MiniSite\MiniSiteConfigElement.cs" />
     <Compile Include="Config\MiniSite\MiniSiteConfigSection.cs" />
     <Compile Include="Config\Publication\PublicationConfigSection.cs" />
+    <Compile Include="Controles\GenerationScheduler.cs" />
     <Compile Include="Controles\GestionStatistiques.cs" />
     <Compile Include="Controles\IClientProvider.cs" />
     <Compile Include="Controles\RelayCommand.cs" />
+    <Compile Include="Export\ExportSitePrivate.cs" />
+    <Compile Include="Export\ExportSite.cs" />
+    <Compile Include="Generation\GenerateurSite.cs" />
+    <Compile Include="Generation\IGenerateurSite.cs" />
     <Compile Include="ExtensionNoyau\Engagement\CombatEqualityComparer.cs" />
     <Compile Include="ExtensionNoyau\Engagement\DataEngagement.cs" />
     <Compile Include="ExtensionNoyau\Engagement\GroupeEngagements.cs" />
@@ -153,9 +158,11 @@
     <Compile Include="Models\EcransAppel\EcranAppelModel.cs" />
     <Compile Include="Models\EcransAppel\EcranCollectionManager.cs" />
     <Compile Include="Tools\ActionWatcher.cs" />
+    <Compile Include="Tools\HttpModules\EcransAppelRedirectModule.cs" />
     <Compile Include="ViewModels\Configuration\ConfigurationEcransViewModel.cs" />
     <Compile Include="ViewModels\Configuration\EcranAppelConfigViewModel.cs" />
     <Compile Include="ViewModels\Configuration\EcranAppelTapisSelectionViewModel.cs" />
+    <Compile Include="Controles\GestionSite.cs" />
     <Compile Include="Views\Configuration\ConfigurationPublicationView.xaml.cs">
       <DependentUpon>ConfigurationPublicationView.xaml</DependentUpon>
     </Compile>
@@ -190,7 +197,7 @@
     <Compile Include="Tools\Files\FilteredFileInfo.cs" />
     <Compile Include="Generation\GenerationProgressInfo.cs" />
     <Compile Include="Tools\FranceJudo\LectureStructures.cs" />
-    <Compile Include="Statistiques\StatExecution.cs" />
+    <Compile Include="Statistiques\TaskExecutionInformation.cs" />
     <Compile Include="Generation\StatusGenerationSite.cs" />
     <Compile Include="Tools\Streams\StreamTool.cs" />
     <Compile Include="Tools\Struct\ExportStruct.cs" />
@@ -224,10 +231,9 @@
     </Compile>
     <Compile Include="Controles\DialogControleur.cs" />
     <Compile Include="Controles\GestionConnection.cs" />
-    <Compile Include="Controles\GestionEvent.cs" />
-    <Compile Include="Controles\GestionSite.cs" />
+    <Compile Include="Controles\ConnectedJudoDataManager.cs" />
     <Compile Include="Controles\ICommissaireWindow.cs" />
-    <Compile Include="Export\ExportSite.cs" />
+    <Compile Include="Export\ExportSiteBase.cs" />
     <Compile Include="Export\ExportXML.cs" />
     <Compile Include="Views\Main\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
@@ -307,13 +313,15 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NLog">
-      <Version>5.3.4</Version>
+      <Version>6.0.7</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Logo_AppPublication.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="ViewModels\Main\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

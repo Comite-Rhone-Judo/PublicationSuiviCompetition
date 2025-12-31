@@ -40,7 +40,6 @@ namespace AppPublication
             base.OnStartup(e);
 
             // Démarrage du Service de Configuration (le worker commence ici)
-            // L'accès à .Instance suffit à démarrer le Singleton et le Worker
             _configSvc = ConfigurationService.CreateInstance();
 
             // Creation du gestionnaire de donnees. C'est le coeur de l'application
@@ -49,24 +48,22 @@ namespace AppPublication
 
             // Instanciation du controleur principal en lien avec le gestionnaire de donnees
             LogTools.Logger.Debug("Creation du controleur principal");
-            DialogControleur ctrl =  DialogControleur.CreateInstance(DataManager);
+            DialogControleur.CreateInstance(DataManager);
 
             // Assure que le logger est bien configure
             DialogControleur.Instance.CanManageTracesDebug = LogTools.IsConfigured;
 
-            // Démarrage du Service de Configuration (le worker commence ici)
-            // L'accès à .Instance suffit à démarrer le Singleton et le Worker
-            _configSvc = ConfigurationService.Instance;
-
             // Demarre la fenetre principale et injecte le Dialog controleur en tant que DataContext
             AppPublication.Views.Main.MainView mainWin = new AppPublication.Views.Main.MainView();
+
+            // TODO ici, ce devrait plutôt etre le ViewModel principal ...
             mainWin.DataContext = Controles.DialogControleur.Instance;
             mainWin.Show();
         }
 
 
 
-        private static DispatcherOperationCallback exitFrameCallback = new DispatcherOperationCallback(ExitFrame);
+        private static readonly DispatcherOperationCallback exitFrameCallback = new DispatcherOperationCallback(ExitFrame);
 
         /// <summary> 
         /// Processes all UI messages currently in the message queue.

@@ -1,24 +1,12 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Net;
-using System.Net.Mail;
-using System.Net.Sockets;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Windows;
-using Tools.CustomException;
-using Tools.Enum;
 using Tools.Windows;
 using NLog;
-using NLog.Fluent;
 using NLog.Targets;
 using System.Linq;
-using Telerik.Windows.Documents.Fixed.Model.Editing.Lists;
 using NLog.Layouts;
 
 namespace Tools.Outils

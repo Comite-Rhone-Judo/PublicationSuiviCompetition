@@ -249,13 +249,14 @@ namespace AppPublication.Controles
                     _connection.ClientDisconnected += OnClientDisconnected;
 
                     // Initialise le gestionnaire d'evenements
-                    var evtMgr = GestionEvent.CreateInstance(this.ServerData, _stats, _connection);
+                    var evtMgr = ConnectedJudoDataManager.CreateInstance(this.ServerData, _stats, _connection);
                     // et on s'abonne aux evenements pour pouvoir mettre a jour l'IHM
                     evtMgr.BusyStatusChanged += OnBusyStatusChanged;
                     evtMgr.DataUpdated += OnDataUpdated;
 
-                    // Le gestionnaire de site de publication
-                    _site = new GestionSite(this.ServerData, _stats);
+                    // Le gestionnaire de site de publication. On passe EvtMgr comme gestionnaire de donnees car il gere la reception des donnees
+                    // et fait l'interface avec le noyau interne de donnees
+                    _site = new GestionSite(evtMgr, _stats);
                 }
                 catch (Exception ex)
                 {

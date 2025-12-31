@@ -1,7 +1,6 @@
 ﻿using AppPublication.Config.EcransAppel;
 using AppPublication.Config.Publication;
-using AppPublication.Export;
-using AppPublication.ExtensionNoyau.Engagement;
+using AppPublication.Controles;
 using AppPublication.Generation;
 using AppPublication.Models.EcransAppel;
 using AppPublication.Publication;
@@ -11,36 +10,27 @@ using AppPublication.Tools.FranceJudo;
 using AppPublication.ViewModels.Configuration;
 using AppPublication.Views.Configuration;
 using KernelImpl;
-using KernelImpl.Noyau.Deroulement;
-using KernelImpl.Noyau.Organisation;
-using AppPublication.ExtensionNoyau;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Forms;
 using System.Windows.Media.Imaging;
 using System.Xml;
-using System.Xml.Linq;
 using Tools.Enum;
 using Tools.Export;
+using Tools.Framework;
 using Tools.Outils;
 using Tools.Windows;
-using Tools.Framework;
+using System.Xml.Serialization;
 
 
 namespace AppPublication.Controles
 {
-    /// <summary>
-    /// Classe de gestion du Site auto-généré tout au long de la compétition. Il assure la generation du site et contient les objets de publication
-    /// locaux et distants.
-    /// </summary>
     public class GestionSite : NotificationBase
     {
         #region CONSTANTES
@@ -55,38 +45,28 @@ namespace AppPublication.Controles
         #endregion
 
         #region MEMBRES
-        private CancellationTokenSource _tokenSource;   // Token pour la gestion de la thread de lecture
-        private Task _taskGeneration = null;            // La tache de generation
         private Task _taskNettoyage = null;             // La tache de nettoyage
         private GestionStatistiques _statMgr = null;
+        private GenerationScheduler _schedulerSite = null;  // Le scheduler de generation Site
+        private GenerateurSite _generateurSite = null;  // Le generateur Site
+        private IProgress<float> _progressHandler = null;
+
         private ExportSiteStructure _structureRepertoiresSite;                      // La structure de repertoire d'export du site
-        private ExportPrivateSiteStructure _structureRepertoiresPrivateSite;        // La structure de repertoire d'export du site prive
+        private ExportSitePrivateStructure _structureRepertoiresPrivateSite;        // La structure de repertoire d'export du site prive
+
         private ExportSiteUrls _structureSiteLocal;                 // la structure d'export du site local
         private ExportSiteUrls _structureSiteDistant;                 // la structure d'export du site distant
+
         private Dictionary<string, EntitePublicationFFJudo> _allEntitePublicationFFJudo = null;
         private Dictionary<string, ObservableCollection<EntitePublicationFFJudo>> _allEntitesPublicationFFJudo = null;
 
         private string _ftpEasyConfig = string.Empty;   // Le serveur FTP EasyConfig
         private Uri _httpEasyConfig = null;  // Le serveur http EasyConfig
 
-        private long _generationCounter = 0;                        // Nombre de generation realisees depuis le demarrage
-        private int _workCounter = 0;                               // Compteur de travail en cours pour la generation du site
-        private int _nbGeneration = 0;                              // Nombre de generation en cours pour le site distant   
-        private List<int> _allTaskProgress = new List<int>();       // Progression de chacune des taches (clef = Id)
-		private ConfigurationEcransAppelView _cfgEcransAppelView = null; // La fenetre de configuration des ecrans d'appel
+        private ConfigurationEcransAppelView _cfgEcransAppelView = null; // La fenetre de configuration des ecrans d'appel
 
         private IJudoDataManager _judoDataManager;                  // Le gestionnaire de données interne
 
-        /// <summary>
-        /// Structure interne pour gerer les parametres de generation du site
-        /// </summary>
-        public class GenereSiteStruct
-        {
-            public SiteEnum type { get; set; }
-            public Phase phase { get; set; }
-            public int? tapis { get; set; }
-            public List<GroupeEngagements> groupeEngages { get; set; }
-        }
         #endregion
 
         #region CONSTRUCTEURS
@@ -100,15 +80,26 @@ namespace AppPublication.Controles
         {
             // Impossible d'etre null
             if (dataManager == null) throw new ArgumentNullException();
+
             try
             {
                 // Initialise les objets de gestion des sites Web. Ils chargent automatiquement leur configuration
-                _siteLocal = new MiniSiteConfigurable (true, kSiteLocalInstanceName, true, false);
+                _siteLocal = new MiniSiteConfigurable(true, kSiteLocalInstanceName, true, false);
                 _sitePrivate = new MiniSiteConfigurable(true, kSitePrivateInstanceName, true, false);
-                _siteDistant = new MiniSiteConfigurable (false, kSiteDistantInstanceName, true, true);           // on utilise un prefix vide pour le site distant pour des questions de retrocompatibilite
-                _siteFranceJudo = new MiniSiteConfigurable (false, kSiteFranceJudoInstanceName, false, true);    // On ne garde pas le detail des configuration pour le site FFJudo
+                _siteDistant = new MiniSiteConfigurable(false, kSiteDistantInstanceName, true, true);           // on utilise un prefix vide pour le site distant pour des questions de retrocompatibilite
+                _siteFranceJudo = new MiniSiteConfigurable(false, kSiteFranceJudoInstanceName, false, true);    // On ne garde pas le detail des configuration pour le site FFJudo
                 _statMgr = (statMgr != null) ? statMgr : new GestionStatistiques();
                 _judoDataManager = dataManager;
+
+                // Initialise le progress handler pour la generation de site
+                _progressHandler = new Progress<float>(onGenerationSiteProgressReport);
+
+                // Le generateur de site
+                _generateurSite = new GenerateurSite(_judoDataManager, SiteDistantSelectionne, _progressHandler);
+
+                // Initialise le scheduler de generation de site
+                _schedulerSite = new GenerationScheduler(_statMgr, _generateurSite);
+                _schedulerSite.StateChanged += onSchedulerStateChanged;
 
                 // Initialise la liste des logos
                 InitFichiersLogo();
@@ -121,7 +112,7 @@ namespace AppPublication.Controles
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Fatal(ex, "Impossible d'initialiser le gestionnaire de Site interne. Impossible de continuer");
+                LogTools.Logger.Fatal(ex, "Impossible d'initialiser le ViewModel principal. Impossible de continuer");
                 AlertWindow win = new AlertWindow("Erreur fatale", "Impossible de démarrer un composant interne, l'application doit s'arrêter. Veuillez contacter le support.");
                 if (win != null)
                 {
@@ -137,22 +128,7 @@ namespace AppPublication.Controles
 
         #region PROPRIETES
 
-        private ExtendedJudoData _extendedJudoData;
-        /// <summary>
-        /// Le bloc de donnees etendue
-        /// </summary>
-        public ExtendedJudoData ExtendedJudoData
-        {
-            get
-            {
-                if (_extendedJudoData == null)
-                {
-                    _extendedJudoData = new ExtendedJudoData();
-                }
-                return _extendedJudoData;
-            }
-        }
-
+        // TODO A voir si on garde cela ici
         private EcranCollectionManager _ecransAppel = new EcranCollectionManager();
         public EcranCollectionManager EcransAppel
         {
@@ -169,6 +145,7 @@ namespace AppPublication.Controles
                 }
             }
         }
+
 
         private bool _easyConfigDisponible;
 
@@ -251,6 +228,10 @@ namespace AppPublication.Controles
             private set
             {
                 _siteDistantSelectionne = value;
+
+                // Met a jour le SiteProvider du generateur de site
+                _generateurSite.SiteProvider = _siteDistantSelectionne;
+
                 // Il faut recalculer l'URL du site de publication car on vient de changer de site
                 URLDistantPublication = CalculURLSiteDistant();
                 NotifyPropertyChanged();
@@ -387,6 +368,9 @@ namespace AppPublication.Controles
         }
 
         private bool _pouleEnColonnes;
+        /// <summary>
+        /// Type d'affichage des Poules
+        /// </summary>
         public bool PouleEnColonnes
         {
             get
@@ -397,6 +381,9 @@ namespace AppPublication.Controles
             {
                 if (_pouleEnColonnes != value)
                 {
+                    // Propage la valeur au generateur de site
+                    _generateurSite.ConfigurationGeneration.PouleEnColonnes = value;
+
                     PublicationConfigSection.Instance.PouleEnColonnes = (_pouleEnColonnes = value);
                     NotifyPropertyChanged();
                 }
@@ -404,6 +391,9 @@ namespace AppPublication.Controles
         }
 
         private bool _pouleToujoursEnColonnes;
+        /// <summary>
+        /// Force l'affichage des poules en colonnes
+        /// </summary>
         public bool PouleToujoursEnColonnes
         {
             get
@@ -414,6 +404,9 @@ namespace AppPublication.Controles
             {
                 if (_pouleToujoursEnColonnes != value)
                 {
+                    // Propage la valeur au generateur de site
+                    _generateurSite.ConfigurationGeneration.PouleToujoursEnColonnes = value;
+
                     PublicationConfigSection.Instance.PouleToujoursEnColonnes = (_pouleToujoursEnColonnes = value);
                     NotifyPropertyChanged();
                 }
@@ -421,6 +414,9 @@ namespace AppPublication.Controles
         }
 
         private int _tailleMaxPouleColonnes;
+        /// <summary>
+        /// Taille max d'une poule pour l'affichage en colonnes
+        /// </summary>
         public int TailleMaxPouleColonnes
         {
             get
@@ -431,6 +427,9 @@ namespace AppPublication.Controles
             {
                 if (_tailleMaxPouleColonnes != value)
                 {
+                    // Propage la valeur au generateur de site
+                    _generateurSite.ConfigurationGeneration.TailleMaxPouleColonnes = value;
+                    
                     PublicationConfigSection.Instance.TailleMaxPouleColonnes = (_tailleMaxPouleColonnes = value);
                     NotifyPropertyChanged();
                 }
@@ -438,6 +437,9 @@ namespace AppPublication.Controles
         }
 
         private string _repertoireRacine;
+        /// <summary>
+        /// Le répertoire Racine configuré oar l'utilisateur
+        /// </summary>
         public string RepertoireRacine
         {
             get
@@ -456,28 +458,36 @@ namespace AppPublication.Controles
 
                     // Initialise les structures d'export
                     _structureRepertoiresSite = new ExportSiteStructure(Path.Combine(tmp, kSiteRepertoire), IdCompetition);
-                    _structureRepertoiresPrivateSite = new ExportPrivateSiteStructure(Path.Combine(tmp, kPrivateSiteRepertoire), IdCompetition);
+                    _structureRepertoiresPrivateSite = new ExportSitePrivateStructure(Path.Combine(tmp, kPrivateSiteRepertoire));
 
                     _structureSiteDistant = new ExportSiteUrls(_structureRepertoiresSite);
                     _structureSiteLocal = new ExportSiteUrls(_structureRepertoiresSite);
 
+                    // Propage la valeur au generateur de site
+                    _generateurSite.StructureRepertoire = _structureRepertoiresSite;
 
                     // Met a jour les repertoires de l'application
                     InitExportSiteStructure();
 
                     // Initialise la racine du serveur Web local
                     SiteLocal.ServerHTTP.LocalRootPath = tmp;
+                    // TODO initialiser le repoertoire racine du site prive
                 }
             }
         }
 
         ObservableCollection<FilteredFileInfo> _fichiersLogo = new ObservableCollection<FilteredFileInfo>();
+        /// <summary>
+        /// La liste des fichiers Logos disponibles
+        /// </summary>
         public ObservableCollection<FilteredFileInfo> FichiersLogo
         {
-            get {
+            get
+            {
                 return _fichiersLogo;
             }
-            private set {
+            private set
+            {
                 if (_fichiersLogo != value)
                 {
                     _fichiersLogo = value;
@@ -487,6 +497,9 @@ namespace AppPublication.Controles
         }
 
         FilteredFileInfo _selectedLogo = null;
+        /// <summary>
+        /// Le fichier logo sélectionné
+        /// </summary>
         public FilteredFileInfo SelectedLogo
         {
             get
@@ -497,18 +510,22 @@ namespace AppPublication.Controles
             {
                 if (_selectedLogo != value)
                 {
+                    string logoName = (value != null) ? value.Name : string.Empty;
+                    // Propage la valeur au generateur de site
+                    _generateurSite.ConfigurationGeneration.Logo = logoName;
+
                     _selectedLogo = value;
-                    PublicationConfigSection.Instance.Logo  = _selectedLogo.Name;
+                    PublicationConfigSection.Instance.Logo = logoName;
                     NotifyPropertyChanged();
                 }
             }
         }
 
-        StatExecution _statGeneration;
+        TaskExecutionInformation _statGeneration;
         /// <summary>
         /// Statistique de derniere generation - lecture seule
         /// </summary>
-        public StatExecution DerniereGeneration
+        public TaskExecutionInformation DerniereGeneration
         {
             get
             {
@@ -521,11 +538,11 @@ namespace AppPublication.Controles
             }
         }
 
-        StatExecution _statSyncDistant;
+        TaskExecutionInformation _statSyncDistant;
         /// <summary>
         /// Statistiques de derniere synchronisation - lecture seule
         /// </summary>
-        public StatExecution DerniereSynchronisation
+        public TaskExecutionInformation DerniereSynchronisation
         {
             get
             {
@@ -544,6 +561,7 @@ namespace AppPublication.Controles
         /// </summary>
         public bool SiteGenere
         {
+            // TODO Voir comment on fait 
             get
             {
                 return _siteGenere;
@@ -725,6 +743,9 @@ namespace AppPublication.Controles
             {
                 if (_nbProchainsCombats != value)
                 {
+                    // Propage la valeur au generateur de site
+                    _generateurSite.ConfigurationGeneration.NbProchainsCombats = value;
+
                     PublicationConfigSection.Instance.NbProchainsCombats = (_nbProchainsCombats = value);
                     NotifyPropertyChanged();
                 }
@@ -746,6 +767,9 @@ namespace AppPublication.Controles
             {
                 if (_delaiGenerationSec != value)
                 {
+                    // Configure le scheduler
+                    _schedulerSite.DelaiGenerationSec = value;
+
                     PublicationConfigSection.Instance.DelaiGenerationSec = (_delaiGenerationSec = value);
                     NotifyPropertyChanged();
                 }
@@ -766,6 +790,9 @@ namespace AppPublication.Controles
             {
                 if (_effacerAuDemarrage != value)
                 {
+                    // Configure le scheduler
+                    _schedulerSite.EffacerAuDemarrage = value;
+
                     PublicationConfigSection.Instance.EffacerAuDemarrage = (_effacerAuDemarrage = value);
                     NotifyPropertyChanged();
                 }
@@ -787,6 +814,9 @@ namespace AppPublication.Controles
             {
                 if (_delaiActualisationClientSec != value)
                 {
+                    // Propage au generateur de site
+                    _generateurSite.ConfigurationGeneration.DelaiActualisationClientSec = value;
+
                     PublicationConfigSection.Instance.DelaiActualisationClientSec = (_delaiActualisationClientSec = value);
                     NotifyPropertyChanged();
                 }
@@ -807,6 +837,9 @@ namespace AppPublication.Controles
             {
                 if (_msgProchainsCombats != value)
                 {
+                    // propage au generateur de site
+                    _generateurSite.ConfigurationGeneration.MsgProchainsCombats = value;
+
                     PublicationConfigSection.Instance.MsgProchainsCombats = (_msgProchainsCombats = value);
                     NotifyPropertyChanged();
                 }
@@ -986,6 +1019,9 @@ namespace AppPublication.Controles
             }
             private set
             {
+                // Propage la valeur au generateur de site
+                _generateurSite.ConfigurationGeneration.PublierAffectationTapis = value && PublierAffectationTapis;
+
                 _canPublierAffectation = value;
                 NotifyPropertyChanged();
             }
@@ -1003,6 +1039,9 @@ namespace AppPublication.Controles
             }
             private set
             {
+                // Propage la valeur au generateur de site
+                _generateurSite.ConfigurationGeneration.PublierEngagements = value && PublierEngagements;
+
                 _canPublierEngagements = value;
                 NotifyPropertyChanged();
             }
@@ -1022,6 +1061,9 @@ namespace AppPublication.Controles
             {
                 if (_publierProchainsCombats != value)
                 {
+                    // Propage la valeur au generateur de site
+                    _generateurSite.ConfigurationGeneration.PublierProchainsCombats = value;
+
                     PublicationConfigSection.Instance.PublierProchainsCombats = (_publierProchainsCombats = value);
                     NotifyPropertyChanged();
                 }
@@ -1044,6 +1086,9 @@ namespace AppPublication.Controles
             {
                 if (_publierAffectationTapis != value)
                 {
+                    // Propage la valeur au generateur de site
+                    _generateurSite.ConfigurationGeneration.PublierAffectationTapis = value && CanPublierAffectation;
+
                     PublicationConfigSection.Instance.PublierAffectationTapis = (_publierAffectationTapis = value);
                     NotifyPropertyChanged();
                 }
@@ -1066,6 +1111,9 @@ namespace AppPublication.Controles
             {
                 if (_publierEngagements != value)
                 {
+                    // Propage la valeur au generateur de site
+                    _generateurSite.ConfigurationGeneration.PublierEngagements = value && CanPublierEngagements;
+
                     PublicationConfigSection.Instance.PublierEngagements = (_publierEngagements = value);
                     NotifyPropertyChanged();
                 }
@@ -1087,6 +1135,9 @@ namespace AppPublication.Controles
             {
                 if (_engagementsAbsents != value)
                 {
+                    // Propage la valeur au generateur de site
+                    _generateurSite.ConfigurationGeneration.EngagementsAbsents = value;
+
                     PublicationConfigSection.Instance.EngagementsAbsents = (_engagementsAbsents = value);
                     NotifyPropertyChanged();
                 }
@@ -1108,6 +1159,9 @@ namespace AppPublication.Controles
             {
                 if (_engagementsTousCombats != value)
                 {
+                    // Propage la valeur au generateur de site
+                    _generateurSite.ConfigurationGeneration.EngagementsTousCombats = value;
+
                     PublicationConfigSection.Instance.EngagementsTousCombats = (_engagementsTousCombats = value);
                     NotifyPropertyChanged();
                 }
@@ -1125,6 +1179,9 @@ namespace AppPublication.Controles
             {
                 if (_useIntituleCommun != value)
                 {
+                    // propage la valeur au generateur de site
+                    _generateurSite.ConfigurationGeneration.UseIntituleCommun = value;
+
                     PublicationConfigSection.Instance.UseIntituleCommun = (_useIntituleCommun = value);
                     NotifyPropertyChanged();
                 }
@@ -1143,6 +1200,9 @@ namespace AppPublication.Controles
             {
                 if (_intituleCommun != value)
                 {
+                    // propage la valeur au generateur de site
+                    _generateurSite.ConfigurationGeneration.IntituleCommun = value;
+
                     PublicationConfigSection.Instance.IntituleCommun = (_intituleCommun = value);
                     NotifyPropertyChanged();
                 }
@@ -1160,6 +1220,9 @@ namespace AppPublication.Controles
             {
                 if (_scoreEngagesGagnantPerdant != value)
                 {
+                    // Propage la valeur au generateur de site
+                    _generateurSite.ConfigurationGeneration.EngagementsScoreGP = value;
+
                     PublicationConfigSection.Instance.ScoreEngagesGagnantPerdant = (_scoreEngagesGagnantPerdant = value);
                     NotifyPropertyChanged();
                 }
@@ -1175,9 +1238,12 @@ namespace AppPublication.Controles
             }
             set
             {
-                if( _afficherPositionCombat != value)
+                if (_afficherPositionCombat != value)
                 {
-                    PublicationConfigSection.Instance.AfficherPositionCombat =(_afficherPositionCombat = value);
+                    // Propage la valeur au generateur de site
+                    _generateurSite.ConfigurationGeneration.AfficherPositionCombat = value;
+
+                    PublicationConfigSection.Instance.AfficherPositionCombat = (_afficherPositionCombat = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -1206,34 +1272,11 @@ namespace AppPublication.Controles
                 IsGenerationActive = !(_status.State == StateGenerationEnum.Stopped);
             }
         }
-
-        /// <summary>
-        /// Nom du fichierd de cache utiliser pour le controle des checksums
-        /// </summary>
-        public string ChecksumFileName
-        {
-            get
-            {
-                string output = string.Empty;
-                // Normalement on ne devrait pas avoir de probleme d'exception ici avec la structure de repertoire
-                try
-                {
-                    output = Path.Combine(_structureRepertoiresSite.RepertoireRacine, ExportTools.getFileName(ExportEnum.Site_Checksum) + ConstantFile.ExtensionXML);
-                }
-                catch (Exception ex)
-                {
-                    output = string.Empty;
-                    LogTools.Logger.Error(ex, "Impossible de calculer le nom du fichier Checksum");
-                }
-
-                return output;
-            }
-        }
-
         #endregion
 
         #region COMMANDES
 
+        // TODO A voir si c'est la bonne place
         private ICommand _cmdAfficherConfigurationEcransAppel = null;
         /// <summary>
         /// Commande d'affichage de la configuration
@@ -1401,6 +1444,66 @@ namespace AppPublication.Controles
 
         #region METHODES
 
+        private void onGenerationSiteProgressReport(float valueReported)
+        {
+            LogTools.Logger.Debug($"Progress {valueReported} signale par le generateur");
+
+            // on doit juste s'assurer que tout est bien execute dans le UI Thread
+            System.Windows.Application.Current.ExecOnUiThread(() =>
+            {
+                // TODO A voir sans doute si on doit avoir une notion de phase ou de state à prendre en compte
+
+                // Clone le status courant
+                StatusGenerationSite cpy = Status.Clone();
+
+                // Met a jour le status avec la nouvelle progression et notifie les changements
+                cpy.Progress = (int) Math.Round(valueReported * 100);
+                Status = cpy;
+            });
+        }
+
+        /// <summary>
+        /// Gestionnaire d'evenement pour les changements d'etat du scheduler
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="evt"></param>
+        private void onSchedulerStateChanged(object sender, SchedulerStateEventArgs evt)
+        {
+            LogTools.Logger.Debug($"Event {evt.State} signale par le scheduler");
+
+            // on doit juste s'assurer que tout est bien execute dans le UI Thread
+            System.Windows.Application.Current.ExecOnUiThread(() =>
+                {
+                    // Clone le status courant
+                    StatusGenerationSite cpy = Status.Clone();
+
+                    // Met a jour l'etat avec celui reçu s'il est documente, notifie les changements en assignant la propriete
+                    if (evt.State != StateGenerationEnum.None) { cpy.State = evt.State; }
+                    Status = cpy;
+
+                    // Verifie si on a des infos d'exécution signalées
+                    if(evt.InfosExecution != null)
+                    {
+                        switch(evt.State)
+                        {
+                            case StateGenerationEnum.Syncing:
+                                DerniereSynchronisation = evt.InfosExecution;
+                                break;
+                            default:
+                                DerniereGeneration = evt.InfosExecution;
+                                break;
+                        }
+                    }
+
+                    // Met a jour le delai avant la prochaine generation s'il est documente
+                    if (evt.DelaiNextSec != long.MinValue)
+                    {
+                        // On n'a pas de delai, on met a zero
+                        cpy.NextGenerationSec = (int)evt.DelaiNextSec;
+                    }
+                });
+        }
+
         /// <summary>
         /// Assure l'initialisation de la structure du site
         /// </summary>
@@ -1505,7 +1608,7 @@ namespace AppPublication.Controles
                     EasyConfigDisponible = true;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 // On ne peut pas initialiser le mode EasyConfig
                 LogTools.Logger.Error(ex, "Desactivation du mode easyConfig - Configuration absente ou incorrecte");
@@ -1535,10 +1638,10 @@ namespace AppPublication.Controles
                     string tmp = PublicationConfigSection.Instance.EntitePublicationFFJudo;
 
                     // Charge le niveau selectionne
-                    NiveauPublicationFFJudo =  PublicationConfigSection.Instance.GetNiveauPublicationFFJudo(ListeNiveauxPublicationFFJudo, o => o);
+                    NiveauPublicationFFJudo = PublicationConfigSection.Instance.GetNiveauPublicationFFJudo(ListeNiveauxPublicationFFJudo, o => o);
 
                     // Recherche l'entite a partir de la valeur initiale lue
-                    EntitePublicationFFJudo = PublicationConfigSection.Instance.GetEntitePublicationFFJudo(ListeEntitesPublicationFFJudo, o => o.Nom, tmp);                    
+                    EntitePublicationFFJudo = PublicationConfigSection.Instance.GetEntitePublicationFFJudo(ListeEntitesPublicationFFJudo, o => o.Nom, tmp);
                 }
 
                 // Les autres parametres peuvent suivre
@@ -1676,9 +1779,9 @@ namespace AppPublication.Controles
                 }
             }
             catch (Exception ex)
-            { 
+            {
                 output = string.Empty;
-                LogTools.Logger.Debug(ex,"Impossible de calculer l'URL du site distant");
+                LogTools.Logger.Debug(ex, "Impossible de calculer l'URL du site distant");
             }
             return output;
         }
@@ -1740,7 +1843,7 @@ namespace AppPublication.Controles
         /// <returns></returns>
         private MiniSite CalculSiteDistantSelectionne()
         {
-            return (EasyConfig)? SiteFranceJudo : SiteDistant;
+            return (EasyConfig) ? SiteFranceJudo : SiteDistant;
         }
 
         /// <summary>
@@ -1773,7 +1876,7 @@ namespace AppPublication.Controles
                     output = string.Empty;
                 }
             }
-            
+
             return output;
         }
 
@@ -1782,7 +1885,7 @@ namespace AppPublication.Controles
         /// </summary>
         /// <param name="entite">Entite selectionnee</param>
         private void GenereConfigFTPFranceJudo(EntitePublicationFFJudo entite)
-        {        
+        {
             // Configure le site France Judo
             SiteFranceJudo.LoginSiteFTPDistant = entite.Login;
             SiteFranceJudo.ModeActifFTPDistant = false;
@@ -1804,49 +1907,18 @@ namespace AppPublication.Controles
         {
             // TODO Ajouter la génération des écrans d'appel
 
-            // Status = new StatusGenerationSite(StateGenerationEnum.Idle);
-            Status = StatusGenerationSite.Instance(StateGenerationEnum.Idle);
+            // TODO a voir si on garde un seule boucle de generation ou si on en fait une separee
+            // TODO cela pourrait permettre de separer les instances en ayant des generations dediees
 
-            // Reset le token d'arret
-            if (_tokenSource != null)
-            {
-                _tokenSource = null;
-            }
-            _tokenSource = new CancellationTokenSource();
+            _schedulerSite.StartGeneration();
+        }
 
-            if (_taskGeneration == null || _taskGeneration.IsCompleted)
-            {
-                try
-                {
-                    // Nettoie si necessaire le repertoire avant de lancer la tache
-                    if (EffacerAuDemarrage)
-                    {
-                        Status = StatusGenerationSite.Instance(StateGenerationEnum.Cleaning);
-
-                        // Efface le contenu local
-                        ClearRepertoireCompetition();
-
-                        // Efface egalement le fichier a distance s'il est actif
-                        if (SiteDistantSelectionne.IsActif)
-                        {
-                            SiteDistantSelectionne.NettoyerSite();
-                        }
-                    }
-
-                    // Lance la tache de generation
-                    _taskGeneration = Task.Factory.StartNew(GenerationRun, _tokenSource.Token);
-                }
-                catch (Exception ex)
-                {
-                    LogTools.Logger.Error(ex, "Erreur lors du lancement de la generation du site");
-                    throw new Exception("Erreur lors du lancement de la generation du site", ex);
-                }
-            }
-            else
-            {
-                LogTools.Logger.Error("Une tache de generation est deja en cours d'execution");
-                throw new Exception("Une tache de generation est deja en cours d'execution");
-            }
+        /// <summary>
+        /// Arrete le thread de generation du site
+        /// </summary>
+        public void StopGeneration()
+        {
+            _schedulerSite.StopGeneration();
         }
 
         /// <summary>
@@ -1878,504 +1950,6 @@ namespace AppPublication.Controles
                 LogTools.Logger.Error("Une tache de nettoyage est deja en cours d'execution");
                 throw new Exception("Une tache de nettoyage est deja en cours d'execution");
             }
-        }
-
-        /// <summary>
-        /// Arrete le thread de generation du site
-        /// </summary>
-        public void StopGeneration()
-        {
-            if (_tokenSource != null)
-            {
-                // Arrete le thread de generation
-                _tokenSource.Cancel();
-                _taskGeneration.Wait();
-            }
-
-            // Etat de la generation
-            // Status = new StatusGenerationSite(StateGenerationEnum.Stopped);
-            Status = StatusGenerationSite.Instance(StateGenerationEnum.Stopped);
-        }
-
-        private void GenerationRun()
-        {
-            DateTime wakeUpTime = DateTime.Now;
-            int delaiScrutationMs = 1000;
-
-            while (!_tokenSource.Token.IsCancellationRequested)
-            {
-                if (DateTime.Now >= wakeUpTime)
-                {
-                    // Pour controler la duree total par rapport au timer
-                    Stopwatch watcherTotal = new Stopwatch();
-                    watcherTotal.Start();
-
-                    try
-                    {
-                         // Pousse les commandes de generation dans le thread de travail
-                        Status = StatusGenerationSite.Instance(StateGenerationEnum.Generating);
-                        SiteGenere = false; // Reset du flag de succès pour ce cycle
-
-                        // Commence par garantir que les données des caches sont consistantes
-                        bool dataConsistent = false;
-                        try
-                        {
-                            // Appel bloquant (avec timeout) vers GestionEvent
-                            dataConsistent = GestionEvent.Instance.EnsureDataConstistency();
-                        }
-                        catch (Exception ex)
-                        {
-                            LogTools.Logger.Error(ex, "Exception lors du controle de la consistance donnees recues.");
-                        }
-
-                        if (dataConsistent)
-                        {
-                            // Recupere le snapshot des données (thread safe)
-                            IJudoData snapshot = _judoDataManager.GetSnapshot();
-
-                            // Met a jour les données de l'extension
-                            ExtendedJudoData.SyncAll(snapshot);
-
-                            StatExecution statGeneration = new StatExecution();
-                            Stopwatch watcherGen = new Stopwatch();
-                            watcherGen.Start();
-
-                            try
-                            {
-                                // Charge le fichier de cache de checksum
-                                List<FileWithChecksum> checksumCache = LoadChecksumFichiersGeneres();
-                                List<FileWithChecksum> checksumGenere = GenereAll(snapshot);
-                                SiteGenere = (checksumGenere.Count > 0);
-                                watcherGen.Stop();
-                                statGeneration.DelaiExecutionMs = watcherGen.ElapsedMilliseconds;
-                                // Status = new StatusGenerationSite(StateGenerationEnum.Idle, "En attente ...");
-                                Status = StatusGenerationSite.Instance(StateGenerationEnum.Idle);
-
-                                _statMgr.EnregistrerGeneration(watcherGen.ElapsedMilliseconds / 1000F);
-
-                                // On ne traite le transfert que si le site a bien ete generee
-                                if (SiteGenere)
-                                {
-                                    // Met a jour la date de generation puisque le site a ete traite
-                                    DerniereGeneration = statGeneration;
-
-                                    // Si le site distant est actif, transfere la mise a jour
-                                    if (SiteDistantSelectionne != null && SiteDistantSelectionne.IsActif)
-                                    {
-                                        try
-                                        {
-                                            string localRoot = _structureRepertoiresSite.RepertoireCompetition();
-
-                                            // Le site distant sur lequel charger les fichiers selon si on isole ou pas
-                                            StatExecution statSync = new StatExecution();
-                                            Stopwatch watcherSync = new Stopwatch();
-                                            watcherSync.Start();
-
-                                            // Calcul les fichiers a prendre en compte
-                                            List<FileInfo> filesToSync = null;
-                                            if (checksumCache != null && checksumCache.Count > 0)
-                                            {
-                                                // Extrait les fichiers generes qui sont differents du cache
-                                                List<FileWithChecksum> chkToSync = checksumGenere.Except(checksumCache, new FileWithChecksumComparer()).ToList();
-                                                filesToSync = chkToSync.Select(o => o.File).ToList();
-
-                                                // For Debug only
-                                                if (filesToSync.Count <= 0)
-                                                {
-                                                    LogTools.Logger.Debug("Fichiers a synchroniser: {0}", string.Join(",", filesToSync.Select(f => f.Name)));
-                                                }
-                                            }
-
-                                            // Synchronise le site FTP
-                                            UploadStatus uploadOut = SiteDistantSelectionne.UploadSite(localRoot, filesToSync);
-                                            SiteSynchronise = uploadOut.IsSuccess;
-
-                                            watcherSync.Stop();
-                                            statSync.DelaiExecutionMs = watcherSync.ElapsedMilliseconds;
-
-                                            _statMgr.EnregistrerSynchronisation(watcherSync.ElapsedMilliseconds / 1000F, uploadOut);
-
-                                            if (SiteSynchronise)
-                                            {
-                                                // Enregistre les checksums en cache maintenant qu'on sait que l'etat distant est synchrone
-                                                SaveChecksumFichiersGeneres(checksumGenere);
-                                                DerniereSynchronisation = statSync;
-                                            }
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            LogTools.Logger.Error(ex, "Une erreur est survenue pendant la tentative de synchronisation");
-                                            SiteSynchronise = false;
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    LogTools.Logger.Debug("Site non genere, pas de synchronisation distante");
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                LogTools.Logger.Error(ex, "Une erreur est survenue durant la sequence de generation du site");
-                                SiteGenere = false;
-                            }
-                        }
-                        else
-                        {
-                            // Le controle d'integrite a echoue
-                            LogTools.Logger.Warn("Impossible de valider l'integrite des donnees combats (Timeout ou deconnexion).");
-                        }
-                    }
-                    finally
-                    {
-                        // Met toujours, via le finally, le sstatus a Idle
-                        Status = StatusGenerationSite.Instance(StateGenerationEnum.Idle);
-
-                        // Controle final si tout s'est bien passe
-                        if (!SiteGenere)
-                        {
-                            _statMgr.EnregistrerErreurGeneration();
-                        }
-
-                        watcherTotal.Stop();
-
-                        // Si le transfert a duree plus que le temps d'attente, on attend au plus 5 sec
-                        // Sinon, on attend la difference restantes
-                        int delaiThread = (int)Math.Max(DelaiGenerationSec * 1000 - watcherTotal.ElapsedMilliseconds, 5000);
-
-                        // Met le thread en attente pour la prochaine generation
-                        Status.NextGenerationSec = (int)Math.Round(delaiThread / 1000.0);
-
-                        _statMgr.EnregistrerDelaiGeneration(delaiThread / 1000F);
-
-                        // prochaine heure de generation
-                        wakeUpTime = DateTime.Now.AddMilliseconds(delaiThread);
-
-                        StatExecution tmp = DerniereGeneration;
-                        tmp.DateProchaineGeneration = wakeUpTime;
-                        DerniereGeneration = tmp;
-                    }
-                }
-
-                // Endort le thread pour le delai de scrutation
-                Thread.Sleep(delaiScrutationMs);
-            }
-        }
-
-        /// <summary>
-        /// Declenche l'exportation
-        /// </summary>
-        /// <param name="genere">Type d'exportation</param>
-        private List<FileWithChecksum> Exporter(IJudoData dataContext, GenereSiteStruct genere, ConfigurationExportSite cfg, IProgress<GenerationProgressInfo> progress, int workId)
-        {
-            List<FileWithChecksum> urls = new List<FileWithChecksum>();
-
-            try
-            {
-                ExportSiteStructure structRep = _structureRepertoiresSite.Clone();  // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread
-
-                switch (genere.type)
-                {
-                    case SiteEnum.AllTapis:
-                        urls = ExportSite.GenereWebSiteAllTapis(dataContext, cfg, structRep, progress, workId);
-                        break;
-                    case SiteEnum.Classement:
-                        urls = ExportSite.GenereWebSiteClassement(dataContext, genere.phase.GetVueEpreuve(dataContext), cfg, structRep, progress, workId);
-                        break;
-                    case SiteEnum.Index:
-                        urls = ExportSite.GenereWebSiteIndex(dataContext, cfg, structRep, progress, workId);
-                        break;
-                    case SiteEnum.Menu:
-                        urls = ExportSite.GenereWebSiteMenu(dataContext, ExtendedJudoData, cfg, structRep, progress, workId);
-                        break;
-                    case SiteEnum.Phase:
-                        urls = ExportSite.GenereWebSitePhase(dataContext, genere.phase, cfg, structRep, progress, workId);
-                        break;
-                    case SiteEnum.AffectationTapis:
-                        urls = ExportSite.GenereWebSiteAffectation(dataContext, cfg, structRep, progress, workId);
-                        break;
-                    case SiteEnum.Engagements:
-                        urls = ExportSite.GenereWebSiteEngagements(dataContext, ExtendedJudoData, genere.groupeEngages, cfg, structRep, progress, workId);
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                LogTools.Logger.Error(ex, "Erreur rencontree lors de l'export {0}", genere.type);
-            }
-
-            return urls;
-        }
-
-        /// <summary>
-        /// Ajoute une tache de fond de generation
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="phase"></param>
-        /// <param name="tapis"></param>
-        /// <param name="groupeP">Identifiant du groupe de participant</param>
-        /// <returns></returns>
-        public Task<List<FileWithChecksum>> AddWork(IJudoData dataContext, SiteEnum type, Phase phase, int? tapis, ConfigurationExportSite cfg, List<GroupeEngagements> groupeP = null)
-        {
-            Task<List<FileWithChecksum>> output = null;
-
-            if (IsGenerationActive)
-            {
-                GenereSiteStruct export = new GenereSiteStruct
-                {
-                    type = type,
-                    phase = phase,
-                    tapis = tapis,
-                    groupeEngages = groupeP
-                };
-
-                int workId = _workCounter;    // New work ID
-                _workCounter++;
-                _allTaskProgress.Add(0);
-                output = OutilsTools.Factory.StartNew(() =>
-                {
-                    Progress<GenerationProgressInfo> progress = new Progress<GenerationProgressInfo>(onReportProgress);
-                    return Exporter(dataContext, export, cfg, progress, workId);
-                });
-            }
-
-            return output;
-        }
-
-
-        /// <summary>
-        /// Genere la totalite du site
-        /// </summary>
-        /// <returns></returns>
-        public List<FileWithChecksum> GenereAll(IJudoData dataContext)
-        {
-            List<FileWithChecksum> output = new List<FileWithChecksum>();
-            ConfigurationExportSite cfg = new ConfigurationExportSite(PublierProchainsCombats, PublierAffectationTapis && CanPublierAffectation, PublierEngagements && CanPublierEngagements, EngagementsAbsents, EngagementsTousCombats, ScoreEngagesGagnantPerdant, AfficherPositionCombat, DelaiActualisationClientSec, NbProchainsCombats, MsgProchainsCombats, (SelectedLogo != null) ? SelectedLogo.Name : string.Empty, PouleEnColonnes, PouleToujoursEnColonnes, TailleMaxPouleColonnes, UseIntituleCommun, IntituleCommun);
-
-            if (IsGenerationActive)
-            {
-                if (_generationCounter < long.MaxValue) { _generationCounter++; }                
-                LogTools.Logger.Debug("Lancement de la {0}eme generation du site", _generationCounter);
-
-                if (dataContext.Organisation.Competitions.Count > 0)
-                {
-                    List<Task<List<FileWithChecksum>>> listTaskGeneration = new List<Task<List<FileWithChecksum>>>();
-
-                    // Initialise les donnees partagees de generation
-                    ExportSite.InitSharedData(dataContext, ExtendedJudoData, cfg);
-                    _allTaskProgress.Clear();
-                    _workCounter = 0;
-                    _nbGeneration = 0;
-
-                    listTaskGeneration.Add(AddWork(dataContext, SiteEnum.Index, null, null, cfg, null));
-                    listTaskGeneration.Add(AddWork(dataContext, SiteEnum.Menu, null, null, cfg, null));
-                    if (PublierAffectationTapis && CanPublierAffectation)
-                    {
-                        listTaskGeneration.Add(AddWork(dataContext, SiteEnum.AffectationTapis, null, null, cfg, null));
-                    }
-
-                    // On ne genere pas les informations de prochains combat si ce n'est pas necessaire
-                    if (PublierProchainsCombats)
-                    {
-                        listTaskGeneration.Add(AddWork(dataContext, SiteEnum.AllTapis, null, null, cfg, null));
-                    }
-
-                    
-                    if(PublierEngagements && CanPublierEngagements)
-                    {
-                        foreach (Competition comp in dataContext.Organisation.Competitions)
-                        {
-                            // Recupere les groupes en fonction du type de groupement
-                            List<EchelonEnum> typesGrp = ExtendedJudoData.Engagement.TypesGroupes[comp.id]; 
-
-                            // On genere les engagements pour chaque type de groupe
-                            foreach (EchelonEnum typeGrp in typesGrp)
-                            {
-                                List<GroupeEngagements> groupesP = ExtendedJudoData.Engagement.GroupesEngages.Where(g => g.Competition == comp.id && g.Type == (int)typeGrp).ToList();
-
-                                // Ce code est plus efficace qye celui qui cree une tache par groupe
-                                // sans doute car le lancement de nombreuses Task est couteux mais il provoque une latence a la fin de la generation
-                                listTaskGeneration.Add(AddWork(dataContext, SiteEnum.Engagements, null, null, cfg, groupesP));
-
-                                // foreach (GroupeEngagements g in groupesP)
-                                // {
-                                //   _nbTaskGeneration++;
-                                //  listTaskGeneration.Add(AddWork(SiteEnum.Engagements, null, null, cfg, new List<GroupeEngagements>(1) { g }));
-                                // }
-                            }
-                        }
-                    }                    
-
-                    foreach (Phase phase in dataContext.Deroulement.Phases)
-                    {
-                        listTaskGeneration.Add(AddWork(dataContext, SiteEnum.Phase, phase, null, cfg, null));
-                        listTaskGeneration.Add(AddWork(dataContext, SiteEnum.Classement, phase, null, cfg, null));
-                    }
-
-                    try
-                    {
-                        // Elimine les elements null
-                        listTaskGeneration.RemoveAll(item => item == null);
-                        if (listTaskGeneration.Count > 0)
-                        {
-                            Task<List<FileWithChecksum>> taskAttente = WaitGenereAll(listTaskGeneration);
-                            // Attend la fin de la generation pour rendre la main
-                            taskAttente.Wait();
-                            output = taskAttente.Result;
-
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        LogTools.Error(ex);
-                    }
-                }
-            }
-
-            return output;
-        }
-
-        /// <summary>
-        /// Se met en attente de la fin de tous les travaux de generation. Met a jour l'indicateur de progression en fonction de la fin des taches
-        /// </summary>
-        /// <param name="listTaskGeneration"></param>
-        /// <returns></returns>
-        private async Task<List<FileWithChecksum>> WaitGenereAll(List<Task<List<FileWithChecksum>>> listTaskGeneration)
-        {
-            // int totalTask = _workCounter;
-            int nTask = 0;
-            List<FileWithChecksum> fichiersGeneres = new List<FileWithChecksum>();
-            while (listTaskGeneration.Any())
-            {
-                Task<List<FileWithChecksum>> finishedTask = await Task.WhenAny(listTaskGeneration.ToArray());
-                listTaskGeneration.Remove(finishedTask);
-                nTask++;
-                // Status.Progress = (int)Math.Round(100.0 * nTask / totalTask);
-                fichiersGeneres = fichiersGeneres.Concat(await finishedTask).ToList();
-            }
-
-            return fichiersGeneres;
-        }
-
-
-        /// <summary>
-        /// Callback pour rapporter la progression de la generation du site
-        /// </summary>
-        /// <param name="progressInfo"></param>
-        private void onReportProgress(GenerationProgressInfo progressInfo)
-        {
-            try
-            {
-                if(progressInfo.IsProgress)
-                {
-                    // progress est le pourcentage de retour d'une seule tache
-                    _allTaskProgress[progressInfo.Id] = progressInfo.Progress;
-
-                    // Calcul le pourcentage total de progression
-                    int total = 0;
-                    foreach (int p in _allTaskProgress.ToList())
-                    {
-                        total += p;
-                    }
-
-                    Status.Progress = (int)Math.Round(100.0 * total / _nbGeneration);
-                }
-                else if (progressInfo.IsInit)
-                {
-                    // Ajoute au nombre total de generation prevue
-                    _nbGeneration += progressInfo.NbGeneration;
-                }
-                else
-                {
-                    throw new ArgumentException("Notification de progression incoherente");
-                }
-            }
-            catch(Exception ex)
-            {
-                LogTools.Logger.Error(ex);
-            }
-        }
-
-        /// <summary>
-        /// Sauvegarde une liste de fichiers generes dans le cache de checksum (ecrase le precedent)
-        /// </summary>
-        /// <param name="fichiersGeneres"></param>
-        private void SaveChecksumFichiersGeneres(List<FileWithChecksum> fichiersGeneres)
-        {
-            // Enregistre les checksums des fichiers generes
-            XDocument doc = ExportXML.ExportChecksumFichiers(fichiersGeneres);
-
-            if (!File.Exists(ChecksumFileName) || !FileAndDirectTools.IsFileLocked(ChecksumFileName))
-            {
-                FileAndDirectTools.NeedAccessFile(ChecksumFileName);
-                try
-                {
-                    using (FileStream fs = new FileStream(ChecksumFileName, FileMode.Create))
-                    {
-                        doc.Save(fs);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    LogTools.Error(ex);
-                }
-                finally
-                {
-                    FileAndDirectTools.ReleaseFile(ChecksumFileName);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Vide le contenu du repertoire de la competition
-        /// </summary>
-        private void ClearRepertoireCompetition()
-        {
-            if(_structureRepertoiresSite != null)
-            {
-                // Efface le contenu du repertoire de la competition
-                if(!FileAndDirectTools.DeleteDirectory(_structureRepertoiresSite.RepertoireCompetition(), true))
-                {
-                    LogTools.Logger.Error("Erreur lors de l'effacement du contenu de  '{0}'", _structureRepertoiresSite.RepertoireCompetition());
-                }
-
-                // Charge le contenu du fichier de checksum
-                List<FileWithChecksum> cache = LoadChecksumFichiersGeneres();
-
-                // Elimine tous les fichiers commençant par le répertoire de la competition (ils ont été supprimés)
-                cache.RemoveAll(f => f.File.FullName.StartsWith(_structureRepertoiresSite.RepertoireCompetition()));
-                SaveChecksumFichiersGeneres(cache);
-            }
-        }
-
-        /// <summary>
-        /// Charge le fichier de cache de checksum
-        /// </summary>
-        /// <param name=""></param>
-        /// <returns>Liste vide si le fichier n'existe pas</returns>
-        private List<FileWithChecksum> LoadChecksumFichiersGeneres()
-        {
-            List<FileWithChecksum> output = new List<FileWithChecksum>();
-
-            try
-            {
-                // Charge le fichier
-                XDocument doc = XDocument.Load(ChecksumFileName);
-
-                // Recherche la racine
-                List<XElement> rootElem = doc.Descendants(ConstantXML.checksums).ToList();
-
-                if (rootElem.Count() >= 1)
-                {
-                    output = ExportXML.ImportChecksumFichiers(rootElem.First());
-                }
-            }
-            catch (Exception ex)
-            {
-                LogTools.Error(ex);
-            }
-
-            return output;
         }
 
         #endregion

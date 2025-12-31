@@ -91,6 +91,8 @@ namespace AppPublication.Controles
 
         #region PROPRIETES
 
+        // TODO Ajoute les statitiques de generation privee
+
         private Dictionary<CompteurGenerationEnum, StatistiqueItem> _compteursGeneration = null;
         public Dictionary<CompteurGenerationEnum, StatistiqueItem> CompteursGeneration
         {

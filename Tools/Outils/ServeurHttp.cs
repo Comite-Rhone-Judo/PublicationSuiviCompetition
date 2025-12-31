@@ -1,13 +1,10 @@
-﻿using HttpServer;
-using HttpServer.HttpModules;
-using HttpServer.Sessions;
-using System;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
+﻿using HttpServer.HttpModules;
 using Tools.Enum;
 using HttpListener = HttpServer.HttpListener;
+using System;
+using System.Net;
+using System.Net.Sockets;
+using System.Linq;
 
 namespace Tools.Outils
 {
@@ -126,14 +123,16 @@ namespace Tools.Outils
                 if (!_isStart)
                 {
                     // Verifie que l'on dispose bien du repertoire racine
-                    if(String.IsNullOrEmpty(LocalRootPath)) { 
+                    if (String.IsNullOrEmpty(LocalRootPath))
+                    {
                         throw new ArgumentOutOfRangeException(nameof(LocalRootPath));
                     }
 
                     _isStart = true;
                     CreateNewInstance();
                     _server = new HttpServer.HttpServer();
-                    _server.Add(new BasicFileImgModule(LocalRootPath));
+                    // _server.Add(new BasicFileImgModule(LocalRootPath));
+                    _server.Add(new FileModule("/", LocalRootPath, true));
 
                     // Ecoute sur l'adresse specifiee, sur toutes sinon
                     IPAddress adr = (ListeningIpAddress != null) ? ListeningIpAddress : IPAddress.Any;
@@ -165,6 +164,7 @@ namespace Tools.Outils
         }
     }
 
+    /*
 
     class BasicFileImgModule : HttpModule
     {
@@ -264,4 +264,6 @@ namespace Tools.Outils
             return true;
         }
     }
+
+    */
 }

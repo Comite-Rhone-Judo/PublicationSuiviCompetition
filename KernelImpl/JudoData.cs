@@ -33,6 +33,12 @@ namespace KernelImpl
 
         #region Implémentation IJudoDataManager
 
+        public bool EnsureDataConsistency()
+        {
+            // Par defaut, on considère que les données sont cohérentes
+            return true;
+        }
+
         /// <summary>
         /// Obtient un snapshot immuable et thread-safe.
         /// </summary>
