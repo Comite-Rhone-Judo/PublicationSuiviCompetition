@@ -5,8 +5,9 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Linq;
+using Tools.Logging;
 
-namespace Tools.Outils
+namespace Tools.Net
 {
     public class ServeurHttp
     {

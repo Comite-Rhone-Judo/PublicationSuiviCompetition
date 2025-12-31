@@ -10,12 +10,13 @@ using System.IO;
 using System.Linq;
 using System.Web.UI.WebControls;
 using System.Xml;
-using System.Xml.Linq;
 using System.Xml.Xsl;
 using Tools.Enum;
 using Tools.Export;
+using Tools.Files;
+using Tools.Threading;
+using Tools.Logging;
 using Tools.Outils;
-using AppPublication.Generation;
 
 namespace AppPublication.Export
 {

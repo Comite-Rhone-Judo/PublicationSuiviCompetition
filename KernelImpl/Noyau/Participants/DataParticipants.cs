@@ -1,13 +1,7 @@
 ﻿
 using KernelImpl.Internal;
-using KernelImpl.Noyau.Organisation;
-using NLog;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Security.Principal;
-using System.Threading;
 using System.Xml.Linq;
 using Tools.Outils;
 

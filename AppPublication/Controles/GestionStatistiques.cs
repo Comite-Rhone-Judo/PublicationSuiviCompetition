@@ -1,7 +1,8 @@
 ﻿using AppPublication.Statistiques;
 using System.Collections.Generic;
-using Tools.Outils;
+using Tools.Logging;
 using Tools.Framework;
+using Tools.Net;
 
 namespace AppPublication.Controles
 {

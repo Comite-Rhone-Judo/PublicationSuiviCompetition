@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tools.Outils;
+using Tools.Logging;
 
 namespace KernelImpl.Noyau.Deroulement
 {

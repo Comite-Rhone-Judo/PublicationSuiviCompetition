@@ -7,8 +7,10 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using Tools.Enum;
+using Tools.Files;
+using Tools.Logging;
 
-namespace Tools.Outils
+namespace Tools.XML
 {
     /// <summary>
     /// Outils de lecture des fichiers XML
@@ -16,73 +18,6 @@ namespace Tools.Outils
 
     public static class XMLTools
     {
-        //public delegate void MontreInformations(int index, int maximum, string info1, string info2);
-
-        /// <summary>
-        /// Lecture des Ligues
-        /// </summary>
-        /// <param name="xelement">élément décrivant les Ligues</param>
-        /// <param name="MI">fonction d'info</param>
-        /// <returns>Ligues</returns>
-
-        public static ICollection<string> LectureLogosCommissaire(XElement xelement, OutilsTools.MontreInformation1 MI)
-        {
-            ICollection<string> urls = new List<string>();
-
-            try
-            {
-                FileAndDirectTools.DeleteDirectory(ConstantFile.Logo1_dir);
-                FileAndDirectTools.CreateDirectorie(ConstantFile.Logo1_dir);
-
-                FileAndDirectTools.DeleteDirectory(ConstantFile.Logo2_dir);
-                FileAndDirectTools.CreateDirectorie(ConstantFile.Logo2_dir);
-
-                FileAndDirectTools.DeleteDirectory(ConstantFile.Logo3_dir);
-                FileAndDirectTools.CreateDirectorie(ConstantFile.Logo3_dir);
-
-            }
-            catch (Exception ex)
-            {
-                LogTools.Error(ex);
-            }
-            finally
-            {
-                urls = urls.Concat(XMLTools.LectureElement(xelement, ConstantXML.LogoFede, ConstantFile.Logo1_dir)).ToList();
-                urls = urls.Concat(XMLTools.LectureElement(xelement, ConstantXML.LogoLigue, ConstantFile.Logo2_dir)).ToList();
-                urls = urls.Concat(XMLTools.LectureElement(xelement, ConstantXML.LogoSponsor, ConstantFile.Logo3_dir)).ToList();
-            }
-
-            return urls;
-        }
-
-        private static ICollection<string> LectureElement(XElement xelement, string element, string directory)
-        {
-            ICollection<string> urls = new List<string>();
-            foreach (XElement xinfo in xelement.Descendants(element))
-            {
-                string val = xinfo.Element(ConstantXML.Logo_Valeur) != null ? xinfo.Element(ConstantXML.Logo_Valeur).Value : "";
-                string nom = xinfo.Element(ConstantXML.Logo_Nom) != null ? xinfo.Element(ConstantXML.Logo_Nom).Value : "";
-                if (!String.IsNullOrWhiteSpace(val))
-                {
-                    using (Image img = OutilsTools.StringToImage(val))
-                    {
-                        int index = 0;
-                        while (File.Exists(directory + nom))
-                        {
-                            string filename = Path.GetFileNameWithoutExtension(directory + nom);
-                            string extension = Path.GetExtension(directory + nom);
-
-                            nom = filename + "_" + ++index + extension;
-                        }
-
-                        img.Save(directory + nom);
-                        urls.Add(directory + nom);
-                    }
-                }
-            }
-            return urls;
-        }
-
         /// <summary>
         /// Lecture d'une date
         /// </summary>
@@ -191,29 +126,6 @@ namespace Tools.Outils
                 LogTools.Logger.Error(ex, "Exception lors de la lecture de '{0}'", ladate.Value);
                 return DateTime.Now.TimeOfDay;
             }
-        }
-
-        /// <summary>
-        /// Lecture d'un poids
-        /// </summary>
-        /// <param name="lepoids"></param>
-        /// <returns>poids</returns>
-
-        public static int LecturePoids(string lepoids)
-        {
-            int poid = 0;
-            try
-            {
-                if (!String.IsNullOrWhiteSpace(lepoids))
-                {
-                    int.TryParse(lepoids, out poid);
-                }
-            }
-            catch (Exception ex)
-            {
-                LogTools.Logger.Error(ex, "Exception lors de la lecture de '{0}'", lepoids);
-            }
-            return poid;
         }
 
         /// <summary>

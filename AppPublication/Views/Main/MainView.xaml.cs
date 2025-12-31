@@ -7,7 +7,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Telerik.Windows.Controls;
-using Tools.Outils;
+using Tools.Logging;
 using Tools.Export;
 using Tools.Windows;
 

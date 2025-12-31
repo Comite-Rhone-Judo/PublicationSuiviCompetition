@@ -1,6 +1,6 @@
 ﻿using Tools.Framework;
 
-namespace Tools.Outils
+namespace Tools.Net
 {
     public enum StateMiniSiteEnum
     {

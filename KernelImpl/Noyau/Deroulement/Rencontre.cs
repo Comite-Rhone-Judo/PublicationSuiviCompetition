@@ -1,15 +1,12 @@
 ﻿
 using KernelImpl.Internal;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using Tools.Enum;
 using Tools.Outils;
+using Tools.XML;
 
 namespace KernelImpl.Noyau.Deroulement
 {

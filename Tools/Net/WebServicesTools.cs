@@ -4,8 +4,9 @@ using System.ServiceModel.Channels;
 using System.Xml;
 using Tools.CustomException;
 using Tools.Enum;
+using Tools.Logging;
 
-namespace Tools.Outils
+namespace Tools.Net
 {
     public static class WebServicesTools
     {

@@ -3,9 +3,9 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Xml.Linq;
 using Tools.Enum;
+using Tools.XML;
 
-
-namespace Tools.Outils
+namespace Tools.Files
 {
     public class FileWithChecksum
     {

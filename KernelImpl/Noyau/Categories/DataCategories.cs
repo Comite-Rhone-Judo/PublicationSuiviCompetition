@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using Tools.Outils;
+using Tools.XML;
 
 namespace KernelImpl.Noyau.Categories
 {

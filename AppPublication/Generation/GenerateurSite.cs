@@ -12,7 +12,10 @@ using System.Linq;
 using System.Xml.Linq;
 using Tools.Enum;
 using Tools.Export;
-using Tools.Outils;
+using Tools.Logging;
+using Tools.Threading;
+using Tools.Files;
+using Tools.Net;
 
 
 namespace AppPublication.Generation

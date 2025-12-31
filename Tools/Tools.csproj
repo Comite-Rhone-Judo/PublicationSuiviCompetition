@@ -238,28 +238,28 @@
     <Compile Include="HttpServerModule\Sessions\MemorySessionStore.cs" />
     <Compile Include="HttpServerModule\Templates\SmartyEngine.cs" />
     <Compile Include="HttpServerModule\Templates\TemplateEngine.cs" />
-    <Compile Include="Outils\AppSettings.cs" />
-    <Compile Include="Outils\BatchProgressInfo.cs" />
+    <Compile Include="Configuration\AppSettings.cs" />
+    <Compile Include="Threading\BatchProgressInfo.cs" />
     <Compile Include="Outils\BlockingCounter.cs" />
-    <Compile Include="Outils\Encryption.cs" />
-    <Compile Include="Outils\FileAndDirectTools.cs" />
-    <Compile Include="Outils\FileWithChecksum.cs" />
-    <Compile Include="Outils\FileWithChecksumComparer.cs" />
-    <Compile Include="Outils\FTPTools.cs" />
+    <Compile Include="Security\Encryption.cs" />
+    <Compile Include="Files\FileAndDirectTools.cs" />
+    <Compile Include="Files\FileWithChecksum.cs" />
+    <Compile Include="Files\FileWithChecksumComparer.cs" />
+    <Compile Include="Net\FTPTools.cs" />
     <Compile Include="Outils\LimitedConcurrencyLevel.cs" />
     <Compile Include="Framework\NotificationBase.cs" />
-    <Compile Include="Outils\ParallelTaskBatcher.cs" />
+    <Compile Include="Threading\ParallelTaskBatcher.cs" />
     <Compile Include="Outils\ResourcesTools.cs" />
     <Compile Include="Outils\ScoresJujitsu.cs" />
-    <Compile Include="Outils\ServeurHttp.cs" />
-    <Compile Include="Outils\MiniSite.cs" />
-    <Compile Include="Outils\StatusMiniSite.cs" />
+    <Compile Include="Net\ServeurHttp.cs" />
+    <Compile Include="Net\MiniSite.cs" />
+    <Compile Include="Net\StatusMiniSite.cs" />
     <Compile Include="Outils\TimedLock.cs" />
-    <Compile Include="Outils\SingleShotTimer.cs" />
-    <Compile Include="Outils\XMLTools.cs" />
-    <Compile Include="Outils\LogTools.cs" />
+    <Compile Include="Threading\SingleShotTimer.cs" />
+    <Compile Include="XML\XMLTools.cs" />
+    <Compile Include="Logging\LogTools.cs" />
     <Compile Include="Enum\NetworkTools.cs" />
-    <Compile Include="Outils\WebServicesTools.cs" />
+    <Compile Include="Net\WebServicesTools.cs" />
     <Compile Include="Outils\RechercheXmlTools.cs" />
     <Compile Include="Service References\FFJudoServices\Reference.cs">
       <AutoGen>True</AutoGen>
@@ -286,6 +286,7 @@
     <Compile Include="TCP_Tools\Server\ListenerHelper.cs" />
     <Compile Include="TCP_Tools\Server\LogHelper.cs" />
     <Compile Include="TCP_Tools\Server\ServerGenerique.cs" />
+    <Compile Include="Threading\ThreadingHelper.cs" />
     <Compile Include="UDP_Tools\ClientUDP.cs" />
     <Compile Include="UDP_Tools\ServerUDP.cs" />
     <Compile Include="Windows\ChangeLogWindow.xaml.cs">
@@ -1961,6 +1962,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Export\xslt\Site\niveau_tour_combat.xslt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

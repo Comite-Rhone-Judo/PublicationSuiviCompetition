@@ -1,10 +1,7 @@
 ﻿
 using KernelImpl.Internal;
-using KernelImpl.Noyau.Deroulement;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Xml.Linq;
 using Tools.Export;
 using Tools.Outils;

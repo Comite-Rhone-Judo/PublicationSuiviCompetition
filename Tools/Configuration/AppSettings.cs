@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
 using System.Linq;
-using System.Reflection;
-using System.Security;
+using Tools.Logging;
+using Tools.Security;
 
-namespace Tools.Outils
+namespace Tools.Configuration
 {
     /// <summary>
     /// Classe utilitaire pour la gestion des paramètres d'application dans le fichier de configuration.

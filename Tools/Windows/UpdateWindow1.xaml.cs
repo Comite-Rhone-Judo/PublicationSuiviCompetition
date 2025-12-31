@@ -5,6 +5,7 @@ using System.Net;
 using System.Windows;
 using Telerik.Windows.Controls;
 using Tools.CustomException;
+using Tools.Logging;
 using Tools.Outils;
 
 namespace Tools.Windows

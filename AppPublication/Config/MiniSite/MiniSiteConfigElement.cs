@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
 using Tools.Configuration;
-using Tools.Outils;
+using Tools.Security;
 
 namespace AppPublication.Config.MiniSite
 {

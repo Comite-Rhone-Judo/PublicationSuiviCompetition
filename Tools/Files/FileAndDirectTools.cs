@@ -5,8 +5,10 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using Tools.Enum;
+using Tools.Logging;
+using Tools.Outils;
 
-namespace Tools.Outils
+namespace Tools.Files
 {
     public static class FileAndDirectTools
     {

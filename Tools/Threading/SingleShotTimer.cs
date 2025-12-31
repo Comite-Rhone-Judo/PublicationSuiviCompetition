@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using Tools.Logging;
 
-namespace Tools.Outils
+namespace Tools.Threading
 {
     public class SingleShotTimer : IDisposable
     {

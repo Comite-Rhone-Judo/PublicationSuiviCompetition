@@ -1,12 +1,7 @@
 ﻿using AppPublication.Config.MiniSite;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using Tools.Outils;
+using Tools.Net;
+using Tools.Logging;
 
 namespace AppPublication.Publication
 {

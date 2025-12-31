@@ -1,10 +1,4 @@
-﻿using AppPublication.Generation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tools.Outils;
+﻿using Tools.Net;
 
 namespace AppPublication.Generation
 {

@@ -9,8 +9,8 @@ using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
 using Tools.Enum;
-using Tools.Outils;
-using Tools.Framework;
+using Tools.Threading;
+using Tools.Logging;
 
 namespace AppPublication.Controles
 {

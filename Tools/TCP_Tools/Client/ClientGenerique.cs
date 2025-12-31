@@ -3,7 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using Tools.Enum;
-using Tools.Outils;
+using Tools.Logging;
+using Tools.Files;
 
 namespace Tools.TCP_Tools.Client
 {

@@ -8,9 +8,10 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using Tools.Framework;
+using Tools.Logging;
 
 
-namespace Tools.Outils
+namespace Tools.Net
 {
     public class UploadStatus
     {

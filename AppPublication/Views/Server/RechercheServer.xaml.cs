@@ -7,8 +7,9 @@ using System.Windows.Input;
 using System.Xml.Linq;
 using Telerik.Windows.Controls;
 using Tools.Enum;
-using Tools.Outils;
+using Tools.Logging;
 using Tools.Struct;
+using Tools.Outils;
 
 namespace AppPublication.Views.Server
 {

@@ -1,16 +1,11 @@
 ﻿using KernelImpl;
-using KernelImpl.Noyau.Deroulement;
 using KernelImpl.Noyau.Organisation;
 using KernelImpl.Noyau.Participants;
-using KernelImpl.Noyau.Structures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using Tools.Enum;
-using Tools.Outils;
+using Tools.Logging;
 
 namespace AppPublication.ExtensionNoyau.Engagement
 {

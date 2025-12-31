@@ -4,8 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Markup;
-using Tools.Outils;
+using Tools.Logging;
 
 namespace Tools.Configuration
 {

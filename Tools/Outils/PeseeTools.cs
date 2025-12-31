@@ -5,6 +5,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Tools.Logging;
 
 namespace Tools.Outils
 {

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using Tools.Enum;
 using Tools.Outils;
+using Tools.XML;
 
 namespace KernelImpl.Noyau.Categories
 {

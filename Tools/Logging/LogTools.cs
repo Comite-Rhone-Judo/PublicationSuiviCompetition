@@ -8,8 +8,10 @@ using NLog;
 using NLog.Targets;
 using System.Linq;
 using NLog.Layouts;
+using Tools.Outils;
+using Tools.Threading;
 
-namespace Tools.Outils
+namespace Tools.Logging
 {
     public static class LogTools
     {

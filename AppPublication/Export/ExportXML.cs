@@ -1,14 +1,11 @@
 ﻿using KernelImpl;
-using KernelImpl.Noyau.Arbitrage;
 using KernelImpl.Noyau.Categories;
 using KernelImpl.Noyau.Deroulement;
 using KernelImpl.Noyau.Organisation;
 using KernelImpl.Noyau.Participants;
 using KernelImpl.Noyau.Structures;
 using AppPublication.ExtensionNoyau;
-using OfficeOpenXml.ConditionalFormatting;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,8 +13,10 @@ using System.Xml;
 using System.Xml.Linq;
 using Tools.Enum;
 using Tools.Export;
-using Tools.Outils;
+using Tools.Files;
 using AppPublication.ExtensionNoyau.Engagement;
+using Tools.XML;
+using Tools.Logging;
 
 namespace AppPublication.Export
 {

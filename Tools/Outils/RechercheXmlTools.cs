@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Tools.Enum;
+using Tools.XML;
 
 namespace Tools.Outils
 {

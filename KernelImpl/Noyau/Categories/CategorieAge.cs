@@ -3,6 +3,7 @@ using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using Tools.Enum;
+using Tools.XML;
 using Tools.Outils;
 
 namespace KernelImpl.Noyau.Categories

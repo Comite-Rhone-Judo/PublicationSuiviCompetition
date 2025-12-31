@@ -2,7 +2,7 @@
 using System;
 using System.Xml.Linq;
 using Tools.Enum;
-using Tools.Outils;
+using Tools.Logging;
 using Tools.TCP_Tools.Client;
 
 namespace JudoClient

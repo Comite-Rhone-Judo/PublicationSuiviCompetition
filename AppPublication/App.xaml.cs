@@ -4,7 +4,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using Telerik.Windows.Controls;
-using Tools.Outils;
+using Tools.Logging;
 using Tools.Configuration;
 using KernelImpl;
 using AppPublication.Controles;

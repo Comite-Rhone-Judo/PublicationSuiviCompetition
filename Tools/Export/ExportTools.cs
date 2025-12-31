@@ -1,5 +1,6 @@
 ﻿using Tools.Enum;
 using Tools.Outils;
+using Tools.Files;
 using System;
 using System.IO;
 using System.Collections.Generic;

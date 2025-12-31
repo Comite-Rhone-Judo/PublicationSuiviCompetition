@@ -1,4 +1,6 @@
-﻿using Tools.Outils;
+﻿using Tools.Logging;
+using Tools.Files;
+using Tools.Outils;
 using System;
 using System.IO;
 using System.Collections.Generic;

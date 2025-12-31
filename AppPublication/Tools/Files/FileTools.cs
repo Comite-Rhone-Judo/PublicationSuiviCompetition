@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Tools.Enum;
 using Tools.Outils;
+using Tools.Files;
 
 namespace AppPublication.Tools.Files
 {

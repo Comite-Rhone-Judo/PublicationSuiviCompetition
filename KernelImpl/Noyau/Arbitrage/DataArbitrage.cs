@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Outils;
+using Tools.Logging;
 using KernelImpl.Internal;
 
 namespace KernelImpl.Noyau.Arbitrage

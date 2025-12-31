@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Tools.Outils
+namespace Tools.Files
 {
     public class FileWithChecksumComparer : IEqualityComparer<FileWithChecksum>
     {

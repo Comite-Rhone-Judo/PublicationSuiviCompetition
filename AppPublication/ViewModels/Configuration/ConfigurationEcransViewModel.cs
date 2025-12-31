@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Tools.Framework;
-using Tools.Outils;
+using Tools.Logging;
 
 namespace AppPublication.ViewModels.Configuration
 {

@@ -5,7 +5,7 @@ using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tools.Outils
+namespace Tools.Security
 {
     public class Encryption
     {

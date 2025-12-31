@@ -3,8 +3,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Tools.Logging;
 
-namespace Tools.Outils
+namespace Tools.Threading
 {
     /// <summary>
     /// Gère l'exécution parallèle de tâches qui produisent des listes de résultats.

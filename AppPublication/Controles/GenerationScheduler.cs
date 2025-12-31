@@ -6,7 +6,8 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Tools.Outils;
+using Tools.Logging;
+using Tools.Net;
 
 
 namespace AppPublication.Controles

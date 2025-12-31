@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Xml.Linq;
 using Tools.Enum;
+using Tools.XML;
 using Tools.Outils;
 
 namespace KernelImpl.Noyau.Participants

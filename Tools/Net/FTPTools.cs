@@ -2,8 +2,10 @@
 using System.IO;
 using System.Net;
 using System.Text;
+using Tools.Files;
+using Tools.Logging;
 
-namespace Tools.Outils
+namespace Tools.Net
 {
     public class FTPTools
     {
