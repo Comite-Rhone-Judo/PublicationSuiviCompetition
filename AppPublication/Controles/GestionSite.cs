@@ -563,7 +563,6 @@ namespace AppPublication.Controles
         /// </summary>
         public bool SiteGenere
         {
-            // TODO Voir comment on fait 
             get
             {
                 return _siteGenere;
@@ -1489,9 +1488,11 @@ namespace AppPublication.Controles
                         switch(evt.State)
                         {
                             case StateGenerationEnum.Syncing:
+                                SiteSynchronise = evt.InfosExecution.IsSuccess;
                                 DerniereSynchronisation = evt.InfosExecution;
                                 break;
                             default:
+                                SiteGenere = evt.InfosExecution.IsSuccess;
                                 DerniereGeneration = evt.InfosExecution;
                                 break;
                         }

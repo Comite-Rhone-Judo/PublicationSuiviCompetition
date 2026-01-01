@@ -1,7 +1,8 @@
-﻿using AppPublication.Statistiques;
+﻿using AppPublication.Generation;
+using AppPublication.Statistiques;
 using System.Collections.Generic;
-using Tools.Logging;
 using Tools.Framework;
+using Tools.Logging;
 using Tools.Net;
 
 namespace AppPublication.Controles
@@ -194,12 +195,12 @@ namespace AppPublication.Controles
             }
         }
 
-        public void EnregistrerSynchronisation(float duree, UploadStatus syncStatus)
+        public void EnregistrerSynchronisation(float duree, ResultatOperation syncStatus)
         {
             try
             {
                 // Selectionne le dictionnaire en fonction du type de synchronisation
-                Dictionary<CompteurSynchronisationEnum, StatistiqueItem> statDict = (syncStatus.IsComplet) ? _compteursSynchronisationComplete : _compteursSynchronisationDifference;
+                Dictionary<CompteurSynchronisationEnum, StatistiqueItem> statDict = (syncStatus.IsComplete) ? _compteursSynchronisationComplete : _compteursSynchronisationDifference;
 
                 // Enregistre les donnees dans les compteurs respectifs
                 StatistiqueItem item = statDict[CompteurSynchronisationEnum.TempsSynchronisation];
@@ -213,10 +214,10 @@ namespace AppPublication.Controles
                     item?.EnregistrerValeur();
                 }
 
-                if (syncStatus.nbUpload > 0)
+                if (syncStatus.NbElements > 0)
                 {
                     item = statDict[CompteurSynchronisationEnum.NbFichierSynchronisation];
-                    item?.EnregistrerValeur(syncStatus.nbUpload);
+                    item?.EnregistrerValeur(syncStatus.NbElements);
                 }
             }
             catch (System.Exception ex)

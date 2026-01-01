@@ -2,33 +2,100 @@
 
 namespace AppPublication.Generation
 {
+    #region CLASSE ANNEXE
+
+    /// <summary>
+    /// Definie les étapes de génération
+    /// </summary>
+    public enum EtapeGenerateurSiteEnum
+    {
+        None = -1,
+        CleanupInitial = 0,
+        Demarrage = 1,
+        PrepareGeneration = 2,
+        ExecuteGeneration = 3,
+        ExecuteSynchronisation = 4
+    }
+
+    public class OperationProgress
+    {
+        /// <summary>
+        /// L'étape de génération concernée
+        /// </summary>
+        public EtapeGenerateurSiteEnum Etape { get; }
+
+        /// <summary>
+        /// La progression en % de l'opération
+        /// </summary>
+        public float ProgressPercent { get; }
+
+        public OperationProgress(EtapeGenerateurSiteEnum etape, float progressPercent)
+        {
+            Etape = etape;
+            ProgressPercent = progressPercent;
+        }
+    }
+
+    public class ResultatOperation
+    {
+        /// <summary>
+        /// L'étape de génération concernée
+        /// </summary>
+        public EtapeGenerateurSiteEnum Etape { get;  }
+
+        /// <summary>
+        /// Etat final de la generation
+        /// </summary>
+        public bool IsSuccess { get; }
+
+        /// <summary>
+        /// Generation complete ou non
+        /// </summary>
+        public bool IsComplete { get; }
+
+        /// <summary>
+        /// Nombre d'éléments générés (-1 si non applicable)
+        /// </summary>
+        public long NbElements { get; }
+
+        public ResultatOperation(EtapeGenerateurSiteEnum etape, bool isSuccess, bool isComplete, long nbElements = -1)
+        {
+            Etape = etape;
+            IsSuccess = isSuccess;
+            IsComplete = isComplete;
+            NbElements = nbElements;
+        }
+    }
+
+    #endregion
+
     public interface IGenerateurSite
     {
         /// <summary>
         /// Nettoyage initial avant la generation
         /// </summary>
-        void CleanupInitial();
+        ResultatOperation CleanupInitial();
 
         /// <summary>
         /// Execute les taches au 1er demarrage de la generation
         /// </summary>
-        void Demarrage();
+        ResultatOperation Demarrage();
 
         /// <summary>
         /// Prepare la session de generation. Retourne true si la generation peut commencer.
         /// </summary>
         /// <returns></returns>
-        bool PrepareGeneration();
+        ResultatOperation PrepareGeneration();
 
 
         /// <summary>
-        /// Execute la generation. Retourne True si la generation s'est bien passee.
+        /// Execute la generation. Retourne un ResultatGeneration contenant les informations sur la fin de la tache
         /// </summary>
-        bool ExecuteGeneration();
+        ResultatOperation ExecuteGeneration();
 
         /// <summary>
-        ///  Termine un cycle de generation
+        ///  Termine un cycle de generation. Retourne un ResultatGeneration contenant les informations sur la fin de la tache
         /// </summary>
-        UploadStatus ExecuteSynchronisation();
+        ResultatOperation ExecuteSynchronisation();
     }
 }

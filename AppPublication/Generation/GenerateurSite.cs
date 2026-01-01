@@ -28,13 +28,14 @@ namespace AppPublication.Generation
         private IJudoData _snapshot;                                // Le snapshot des données 
         private ExtendedJudoData _extendedJudoData;
         private MiniSite _site = null;                              // Le site a utilise pour le upload a distance
-        private IProgress<float> _progressHandler;
+        private IProgress<OperationProgress> _progressHandler;      // Utilise pour le suivi de progression
 
         // La structure du site
         private ExportSiteStructure _structureRepertoiresSite;      // La structure de repertoire d'export du site
 
         // Suivi des taches de generation
-        private readonly ParallelTaskBatcher<float, FileWithChecksum> _taskBatcher;          // Le gestionnaire de taches paralleles
+        private EtapeGenerateurSiteEnum _etapeCourante = EtapeGenerateurSiteEnum.None;
+        private readonly ParallelTaskBatcher<OperationProgress, FileWithChecksum> _taskBatcher;          // Le gestionnaire de taches paralleles
         List<FileWithChecksum> _checksumCache;                      // Les fichiers en cache pour le controle des checksums
         List<FileWithChecksum> _checksumGenere;                     // Les fichiers generes lors de la derniere generation  
         #endregion
@@ -66,11 +67,28 @@ namespace AppPublication.Generation
             private set { _cfgExport = value; }
         }
 
+        /// <summary>
+        /// Le gestion de site distant pour faire un transfert FTP
+        /// </summary>
+        public MiniSite SiteProvider
+        {
+            get
+            {
+                return _site;
+            }
+            set
+            {
+                if (_site != value)
+                {
+                    _site = value;
+                }
+            }
+        }
         #endregion
 
         #region CONSTRUCTEURS
 
-        public GenerateurSite(IJudoDataManager dataManager, MiniSite siteDistant, IProgress<float> progressHandler)
+        public GenerateurSite(IJudoDataManager dataManager, MiniSite siteDistant, IProgress<OperationProgress> progressHandler)
         {
             _judoDataManager = dataManager ?? throw new ArgumentNullException(nameof(dataManager));
             _extendedJudoData = new ExtendedJudoData() ?? throw new NullReferenceException(nameof(_extendedJudoData));
@@ -80,7 +98,7 @@ namespace AppPublication.Generation
             try
             {
                 // Initialise le gestionnaire de taches paralleles
-                _taskBatcher = new ParallelTaskBatcher<float, FileWithChecksum>(progressHandler, (f) => { return f; });
+                _taskBatcher = new ParallelTaskBatcher<OperationProgress, FileWithChecksum>(progressHandler, (f) => { return new OperationProgress(_etapeCourante, f);});
             }
             catch (Exception ex)
             {
@@ -90,47 +108,41 @@ namespace AppPublication.Generation
         }
         #endregion
 
-        #region PROPRIETES
-
-        public MiniSite SiteProvider
-        {
-            get
-            {
-                return _site;
-            }
-            set
-            {
-                if(_site != value)
-                {
-                    _site = value;
-                }
-            }
-        }
-
-        #endregion
-
         #region IMPLEMENTATION IGenerateurSite
 
-        public void CleanupInitial()
+        public ResultatOperation CleanupInitial()
         {
-            // Efface le contenu local
-            ClearRepertoireCompetition();
-
-            // Efface egalement le fichier a distance s'il est actif
-            if (_site != null && _site.IsActif)
+            _etapeCourante = EtapeGenerateurSiteEnum.CleanupInitial;
+            try
             {
-                _site.NettoyerSite();
+                // Efface le contenu local
+                ClearRepertoireCompetition();
+
+                // Efface egalement le fichier a distance s'il est actif
+                if (_site != null && _site.IsActif)
+                {
+                    _site.NettoyerSite();
+                }
             }
+            catch(Exception ex)
+            {
+                LogTools.Logger.Error(ex, "Erreur lors du nettoyage initial du site");
+                return new ResultatOperation(EtapeGenerateurSiteEnum.CleanupInitial, false, true, -1);
+            }
+
+            _etapeCourante = EtapeGenerateurSiteEnum.None;
+            return new ResultatOperation(EtapeGenerateurSiteEnum.CleanupInitial, true, true, -1);
         }
 
-        public void Demarrage()
+        public ResultatOperation Demarrage()
         {
-            // Rien de particulier a faire ici
-            return;
+            return new ResultatOperation(EtapeGenerateurSiteEnum.Demarrage, true, true, -1);
         }
 
-        public bool PrepareGeneration()
+        public ResultatOperation PrepareGeneration()
         {
+            _etapeCourante = EtapeGenerateurSiteEnum.PrepareGeneration;
+         
             // Commence par garantir que les données des caches sont consistantes
             bool dataConsistent = false;
             try
@@ -163,11 +175,13 @@ namespace AppPublication.Generation
                 LogTools.Logger.Warn("Impossible de valider l'integrite des donnees combats (Timeout ou deconnexion).");
             }
 
-            return dataConsistent;
+            _etapeCourante = EtapeGenerateurSiteEnum.None;
+            return new ResultatOperation(EtapeGenerateurSiteEnum.PrepareGeneration, dataConsistent, true, -1);
         }
 
-        public bool ExecuteGeneration()
+        public ResultatOperation ExecuteGeneration()
         {
+            _etapeCourante = EtapeGenerateurSiteEnum.ExecuteGeneration;
             // La liste de sortie
             List<FileWithChecksum> output = new List<FileWithChecksum>();   // La liste de sortie
 
@@ -267,11 +281,14 @@ namespace AppPublication.Generation
             }
 
             _checksumGenere = output;
-            return _checksumGenere.Count > 0;
+
+            _etapeCourante = EtapeGenerateurSiteEnum.None;
+            return new ResultatOperation(EtapeGenerateurSiteEnum.ExecuteGeneration, _checksumGenere.Count > 0, true, _checksumGenere.Count);
         }
 
-        public UploadStatus ExecuteSynchronisation()
+        public ResultatOperation ExecuteSynchronisation()
         {
+            _etapeCourante = EtapeGenerateurSiteEnum.ExecuteSynchronisation;
             UploadStatus uploadOut = new UploadStatus();
 
             // Si le site distant est actif, transfere la mise a jour
@@ -315,7 +332,8 @@ namespace AppPublication.Generation
                 LogTools.Logger.Debug("Site distant inactif, pas de upload FTP");
             }
 
-            return uploadOut;
+            _etapeCourante = EtapeGenerateurSiteEnum.None;
+            return new ResultatOperation(EtapeGenerateurSiteEnum.ExecuteSynchronisation, uploadOut.IsSuccess, uploadOut.IsComplet, uploadOut.nbUpload);
         }
 
         #endregion

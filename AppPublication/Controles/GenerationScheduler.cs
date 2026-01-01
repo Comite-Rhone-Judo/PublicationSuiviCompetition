@@ -328,8 +328,8 @@ namespace AppPublication.Controles
                         RaiseState(StateGenerationEnum.Generating);
                         SiteGenere = false; // Reset du flag de succès pour ce cycle
 
-                        bool generationPrete = _generateur.PrepareGeneration();
-                        if (generationPrete)
+                        ResultatOperation generationPrete = _generateur.PrepareGeneration();
+                        if (generationPrete.IsSuccess)
                         {
                             try
                             {
@@ -340,11 +340,12 @@ namespace AppPublication.Controles
                                 TaskExecutionInformation statGeneration = new TaskExecutionInformation();
 
                                 // Lance la tache du generateyr en mesurant son temps de travail
-                                var genTime = ActionWatcher.Execute<bool>(() => { return _generateur.ExecuteGeneration(); });
+                                var genTime = ActionWatcher.Execute<ResultatOperation>(() => { return _generateur.ExecuteGeneration(); });
                                 
                                 // Recupere le resultat et les stats
                                 statGeneration.DelaiExecutionMs = genTime.DurationMs;
-                                SiteGenere = genTime.Result;
+                                statGeneration.IsSuccess = genTime.Result.IsSuccess;
+                                SiteGenere = genTime.Result.IsSuccess;
 
                                 _statMgr.EnregistrerGeneration( (float) genTime.DurationMs / 1000F);
 
@@ -363,10 +364,11 @@ namespace AppPublication.Controles
                                         TaskExecutionInformation statSync = new TaskExecutionInformation();
 
                                         // Execute l'etape de synchronisation du generateur
-                                        var postTime = ActionWatcher.Execute<UploadStatus>(() => { return _generateur.ExecuteSynchronisation(); });
+                                        var postTime = ActionWatcher.Execute<ResultatOperation>(() => { return _generateur.ExecuteSynchronisation(); });
 
                                         SiteSynchronise = postTime.Result.IsSuccess;
                                         statSync.DelaiExecutionMs = postTime.DurationMs;
+                                        statSync.IsSuccess = postTime.Result.IsSuccess;
 
                                         // Met a jour les informations de la tache
                                         _statMgr.EnregistrerSynchronisation((float)postTime.DurationMs / 1000F, postTime.Result);

@@ -11,10 +11,25 @@ namespace AppPublication.Statistiques
             DateDemarrage = DateTime.Now;
             DateProchaineGeneration = DateTime.MinValue;
             DelaiExecutionMs = 0;
+            IsSuccess = false;
         }
         #endregion
 
         #region PROPRIETES
+
+        private bool _isSuccess;
+        public bool IsSuccess {
+            get
+            {
+                return _isSuccess;
+            }
+            set
+            {
+                _isSuccess = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         private DateTime _dateStart;
         public DateTime DateDemarrage
         {

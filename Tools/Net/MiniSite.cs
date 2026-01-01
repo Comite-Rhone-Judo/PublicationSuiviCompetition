@@ -1,18 +1,23 @@
 ﻿using FluentFTP;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.ServiceModel.Channels;
 using System.Threading;
+using System.Windows.Interop;
 using Tools.Framework;
 using Tools.Logging;
 
 
 namespace Tools.Net
 {
+    #region CLASSES ANNEXES
     public class UploadStatus
     {
         public UploadStatus()
@@ -26,7 +31,7 @@ namespace Tools.Net
         public bool IsComplet;  // Upload complet si true, diff only si false
         public int nbUpload;    // Nb de fichier charge
     }
-
+    #endregion
 
     public abstract class MiniSite : NotificationBase
     {
@@ -40,6 +45,8 @@ namespace Tools.Net
         private long _nbSyncDistant = 0;
         private string _instanceName = string.Empty;
         private int _maxRetryFTP = kMaxRetryFTP;
+        // 1. Variable pour stocker le contexte UI
+        private readonly SynchronizationContext _uiContext;
         #endregion
 
         #region CONSTRUCTEURS
@@ -51,6 +58,10 @@ namespace Tools.Net
         /// <param name="instanceName">Nom de l'instance</param>
         public MiniSite(bool local, string instanceName = "")
         {
+            // 2. Capture du contexte au moment de la création (supposée sur le thread UI)
+            // Si pas de contexte (ex: test unitaire), on prend le contexte par défaut (null)
+            _uiContext = SynchronizationContext.Current;
+
             // Initialise les caracteristiques du MiniSite
             InstanceName = instanceName;
 
@@ -372,20 +383,13 @@ namespace Tools.Net
             }
             private set
             {
-                _status = value;
-                NotifyPropertyChanged();
-
-                // Actualise l'etat d'activite du site
-                // Le site doit etre arrete ou en cours de nettoyage
-                IsActif = !(_status.State == StateMiniSiteEnum.Stopped || _status.State == StateMiniSiteEnum.Cleaning);
-                IsCleaning = (_status.State == StateMiniSiteEnum.Cleaning);
+                SetStatusSafe(value);
             }
         }
 
         #endregion
 
         #region METHODES
-
 
         /// <summary>
         /// Tente de définir l'interface de publication à partir d'une chaîne (ex: config).
@@ -425,53 +429,6 @@ namespace Tools.Net
                 {
                     LogTools.Logger.Debug(ex, "Erreur lors de la sélection de l'interface locale pour le MiniSite.");
                 }
-            }
-        }
-
-
-        /// <summary>
-        /// Initialise la liste des interfaces locales disponibles via NetworkInterface.
-        /// Plus rapide et fiable que Dns.GetHostName/GetHostAddresses.
-        /// </summary>
-        protected void InitInterfaces()
-        {
-            try
-            {
-                InterfacesLocal = new List<IPAddress>();
-
-                // Récupère toutes les interfaces réseau
-                var interfaces = NetworkInterface.GetAllNetworkInterfaces();
-
-                // On filtre pour ne garder que les interfaces opérationnelles (Up)
-                // et on exclut le Loopback (127.0.0.1) qui n'est généralement pas utile pour la publication
-                var activeInterfaces = interfaces
-                    .Where(ni => ni.OperationalStatus == OperationalStatus.Up
-                              && ni.NetworkInterfaceType != NetworkInterfaceType.Loopback);
-
-                foreach (var adapter in activeInterfaces)
-                {
-                    var properties = adapter.GetIPProperties();
-
-                    // Récupère les adresses unicast IPv4
-                    var ipv4Addresses = properties.UnicastAddresses
-                        .Where(ua => ua.Address.AddressFamily == AddressFamily.InterNetwork)
-                        .Select(ua => ua.Address);
-
-                    InterfacesLocal.AddRange(ipv4Addresses);
-                }
-
-                // Suppression des doublons potentiels
-                InterfacesLocal = InterfacesLocal.Distinct().ToList();
-
-                // Sélection par défaut
-                if (InterfacesLocal.Count > 0)
-                {
-                    InterfaceLocalPublication = InterfacesLocal.First();
-                }
-            }
-            catch (Exception ex)
-            {
-                LogTools.Error(ex);
             }
         }
 
@@ -579,55 +536,6 @@ namespace Tools.Net
         }
 
         /// <summary>
-        /// Valide la configuration du site distant et initialise le FtpProfile
-        /// </summary>
-        /// <returns></returns>
-        private bool CheckConfigurationSiteDistant()
-        {
-            bool output = false;
-            if (!String.IsNullOrEmpty(SiteFTPDistant) && !String.IsNullOrEmpty(LoginSiteFTPDistant) && !string.IsNullOrEmpty(PasswordSiteFTPDistant))
-            {
-                // Test les parametres de connection
-                // FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
-                FtpClient ftpClient = GetAndConfigureFtpClient();
-
-                try
-                {
-                    List<FtpProfile> profiles = ftpClient.AutoDetect(true);
-
-                    if (profiles.Count > 0)
-                    {
-                        _ftp_profile = profiles.First();
-                        _ftp_profile.DataConnection = (ModeActifFTPDistant) ? FtpDataConnectionType.PORT : FtpDataConnectionType.PASV;
-                        output = true;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    LogTools.Error(ex);
-                    throw ex;
-                }
-                finally
-                {
-                    ftpClient?.Dispose();
-                }
-            }
-
-            return output;
-        }
-
-        private FtpClient GetAndConfigureFtpClient()
-        {
-            // Le client FTP pour la connection
-            FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
-            // Autorise l'utilisation de n'importe quel certificat
-            ftpClient.Config.EncryptionMode = FtpEncryptionMode.Auto;
-            ftpClient.Config.ValidateAnyCertificate = true;
-
-            return ftpClient;
-        }
-
-        /// <summary>
         /// Nettoyer le site distant (efface tous les fichiers et les repertoires)
         /// </summary>
         /// <returns></returns>
@@ -732,36 +640,6 @@ namespace Tools.Net
 
             return output;
         }
-
-        /// <summary>
-        /// Calcul le % de progression, FTP en fonction des informations retournees par FtpProgress
-        /// </summary>
-        /// <param name="p"></param>
-        private void CalculProgressionFTP(FtpProgress p)
-        {
-            if (p != null)
-            {
-                CalculProgressionFTP(p.FileIndex, p.FileCount);
-            }
-        }
-
-        /// <summary>
-        /// Calcul  le % de progressioon FTP
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="total"></param>
-        private void CalculProgressionFTP(int index, int total)
-        {
-            int pct = -1;
-            // Calcul le ratio de transfert du repertoire
-            if (index >= 0 && total > -1)
-            {
-                pct = (int)Math.Round(((index + 1.0) / total) * 100);
-            }
-
-            Status.Progress = pct;
-        }
-
 
         /// <summary>
         /// Charge la structure sur le site FTP
@@ -936,6 +814,135 @@ namespace Tools.Net
             return output;
         }
 
+
+        #endregion
+
+        #region METHODES PRIVEES
+
+        /// <summary>
+        /// Valide la configuration du site distant et initialise le FtpProfile
+        /// </summary>
+        /// <returns></returns>
+        private bool CheckConfigurationSiteDistant()
+        {
+            bool output = false;
+            if (!String.IsNullOrEmpty(SiteFTPDistant) && !String.IsNullOrEmpty(LoginSiteFTPDistant) && !string.IsNullOrEmpty(PasswordSiteFTPDistant))
+            {
+                // Test les parametres de connection
+                // FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
+                FtpClient ftpClient = GetAndConfigureFtpClient();
+
+                try
+                {
+                    List<FtpProfile> profiles = ftpClient.AutoDetect(true);
+
+                    if (profiles.Count > 0)
+                    {
+                        _ftp_profile = profiles.First();
+                        _ftp_profile.DataConnection = (ModeActifFTPDistant) ? FtpDataConnectionType.PORT : FtpDataConnectionType.PASV;
+                        output = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LogTools.Error(ex);
+                    throw ex;
+                }
+                finally
+                {
+                    ftpClient?.Dispose();
+                }
+            }
+
+            return output;
+        }
+
+        /// <summary>
+        /// Initialise la liste des interfaces locales disponibles via NetworkInterface.
+        /// Plus rapide et fiable que Dns.GetHostName/GetHostAddresses.
+        /// </summary>
+        protected void InitInterfaces()
+        {
+            try
+            {
+                InterfacesLocal = new List<IPAddress>();
+
+                // Récupère toutes les interfaces réseau
+                var interfaces = NetworkInterface.GetAllNetworkInterfaces();
+
+                // On filtre pour ne garder que les interfaces opérationnelles (Up)
+                // et on exclut le Loopback (127.0.0.1) qui n'est généralement pas utile pour la publication
+                var activeInterfaces = interfaces
+                    .Where(ni => ni.OperationalStatus == OperationalStatus.Up
+                              && ni.NetworkInterfaceType != NetworkInterfaceType.Loopback);
+
+                foreach (var adapter in activeInterfaces)
+                {
+                    var properties = adapter.GetIPProperties();
+
+                    // Récupère les adresses unicast IPv4
+                    var ipv4Addresses = properties.UnicastAddresses
+                        .Where(ua => ua.Address.AddressFamily == AddressFamily.InterNetwork)
+                        .Select(ua => ua.Address);
+
+                    InterfacesLocal.AddRange(ipv4Addresses);
+                }
+
+                // Suppression des doublons potentiels
+                InterfacesLocal = InterfacesLocal.Distinct().ToList();
+
+                // Sélection par défaut
+                if (InterfacesLocal.Count > 0)
+                {
+                    InterfaceLocalPublication = InterfacesLocal.First();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogTools.Error(ex);
+            }
+        }
+
+        private FtpClient GetAndConfigureFtpClient()
+        {
+            // Le client FTP pour la connection
+            FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
+            // Autorise l'utilisation de n'importe quel certificat
+            ftpClient.Config.EncryptionMode = FtpEncryptionMode.Auto;
+            ftpClient.Config.ValidateAnyCertificate = true;
+
+            return ftpClient;
+        }
+
+        /// <summary>
+        /// Calcul le % de progression, FTP en fonction des informations retournees par FtpProgress
+        /// </summary>
+        /// <param name="p"></param>
+        private void CalculProgressionFTP(FtpProgress p)
+        {
+            if (p != null)
+            {
+                CalculProgressionFTP(p.FileIndex, p.FileCount);
+            }
+        }
+
+        /// <summary>
+        /// Calcul  le % de progressioon FTP
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="total"></param>
+        private void CalculProgressionFTP(int index, int total)
+        {
+            int pct = -1;
+            // Calcul le ratio de transfert du repertoire
+            if (index >= 0 && total > -1)
+            {
+                pct = (int)Math.Round(((index + 1.0) / total) * 100);
+            }
+
+            Status.Progress = pct;
+        }
+
         /// <summary>
         /// Calcul le repertoire de destination FTP a partir du nom de fichier local
         /// </summary>
@@ -961,6 +968,37 @@ namespace Tools.Net
 
             return output;
         }
+
+        /// <summary>
+        /// Méthode helper pour sécuriser la mise à jour
+        /// </summary>
+        /// <param name="newStatus"></param>
+        private void SetStatusSafe(StatusMiniSite newStatus)
+        {
+            // Si on est déjà sur le bon contexte ou s'il n'y a pas de contexte spécifique (Console/Test)
+            if (_uiContext == null || SynchronizationContext.Current == _uiContext)
+            {
+                if (_status != newStatus)
+                {
+                    _status = newStatus;
+                    NotifyPropertyChanged();
+
+                    // Actualise l'etat d'activite du site
+                    // Le site doit etre arrete ou en cours de nettoyage
+                    IsActif = !(_status.State == StateMiniSiteEnum.Stopped || _status.State == StateMiniSiteEnum.Cleaning);
+                    IsCleaning = (_status.State == StateMiniSiteEnum.Cleaning);
+                }
+            }
+            else
+            {
+                // Sinon, on bascule sur le thread UI pour faire l'assignation
+                _uiContext.Post((state) =>
+                {
+                    Status = (StatusMiniSite)state;
+                }, newStatus);
+            }
+        }
+
         #endregion
     }
 }

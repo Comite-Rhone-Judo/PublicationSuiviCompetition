@@ -23,7 +23,7 @@ namespace Tools.Net
             Progress = -1;
         }
 
-        public StatusMiniSite(StateMiniSiteEnum pStatus, string pMsg = "-", string pMsgDet = "")
+        public StatusMiniSite(StateMiniSiteEnum pStatus, string pMsg = "-", string pMsgDet = "", int pProgress = -1)
         {
             State = pStatus;
             Message = pMsg;
