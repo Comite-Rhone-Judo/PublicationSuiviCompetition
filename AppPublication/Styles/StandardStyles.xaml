@@ -14,11 +14,6 @@
     xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
     xmlns:Converter="clr-namespace:AppPublication.Tools.Converter">
 
-    <Converter:StatusMiniSiteProgressVisibilityConverter x:Key="StatusMiniSiteProgressVisibilityConverter" />
-    <Converter:StatusGenerationSiteProgressVisibilityConverter x:Key="StatusGenerationSiteProgressVisibilityConverter" />
-
-    
-
     <Style x:Key="TrailSpinnerStyle" TargetType="Control">
         <!-- <Setter Property="Foreground" Value="#007ACC" /> -->
         <Setter Property="Foreground" Value="White" />
@@ -457,14 +452,19 @@
             <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="Content" Value="{Binding Path=Progress}"/>
             <Setter Property="ContentStringFormat" Value="({0}%)"/>
-            <Setter Property="Visibility" Value="Collapsed"/>
+            <Setter Property="Visibility" Value="Visible"/>
         </Style.Setters>
-        <Style.Triggers>
+        <!-- <Style.Triggers>
             <DataTrigger Binding="{Binding Path=State}" Value="2">
                 <Setter Property="Visibility" Value="Visible" />
             </DataTrigger>
             <DataTrigger Binding="{Binding Path=State}" Value="3">
                 <Setter Property="Visibility" Value="Visible" />
+            </DataTrigger>
+        </Style.Triggers> -->
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=Progress}" Value="-1">
+                <Setter Property="Visibility" Value="Collapsed" />
             </DataTrigger>
         </Style.Triggers>
     </Style>

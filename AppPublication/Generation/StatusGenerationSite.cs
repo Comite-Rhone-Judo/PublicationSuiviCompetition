@@ -29,6 +29,8 @@ namespace AppPublication.Generation
         public StatusGenerationSite(StateGenerationEnum pStatus)
         {
             State = pStatus;
+            _nextGenSec = -1;
+            _progress = -1;
         }
 
         #endregion
@@ -46,13 +48,19 @@ namespace AppPublication.Generation
             }
             set
             {
-                _state = value;
-                NotifyPropertyChanged();
-                if (_state != StateGenerationEnum.Idle)
+                if(_state != value)
                 {
-                    _nextGenSec = -1;
+                    _state = value;
+                    NotifyPropertyChanged();
+                    Progress = -1;
+
+                    if (_state != StateGenerationEnum.Idle)
+                    {
+                        _nextGenSec = -1;
+                    }
+
+                    CalculMessage();
                 }
-                CalculMessage();
             }
         }
 

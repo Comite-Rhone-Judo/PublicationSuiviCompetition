@@ -587,15 +587,18 @@ namespace Tools.Net
 
                 if (ftpClient.IsConnected)
                 {
+                    // TODO A partir de la, il faut lister tous les fichiers et repertoires pour avoir le nombre d'items a supprimer
                     List<FtpListItem> ftpList = ftpClient.GetListing(RepertoireSiteFTPDistant).ToList();
+                    
                     int idx = 0;
                     foreach (FtpListItem ftpItem in ftpList)
                     {
                         switch (ftpItem.Type)
                         {
-
+                            // TODO on est aveugle sur cette partie en terme de progression ...
                             case FtpObjectType.Directory:
                                 {
+                                    // TODO ici il faudrait mettre un appel recursive pour avoir le bon suivi de progression
                                     ftpClient.DeleteDirectory(ftpItem.FullName);
                                 }
                                 break;
@@ -775,6 +778,8 @@ namespace Tools.Net
                                                                                 FtpVerify.None,
                                                                                 null,
                                                                                 _ftpProgressCallback);
+
+                        // TODO vérifier, apparemment, il y a une erreur, on n'arrive pas a cahrger les fichiers de common
 
                         if (uploadOut.Count > 0)
                         {
