@@ -33,6 +33,11 @@ namespace KernelImpl
 
         #region Implémentation IJudoDataManager
 
+        public IJudoData Data
+        {
+            get { return this; }
+        }
+
         public bool EnsureDataConsistency()
         {
             // Par defaut, on considère que les données sont cohérentes
@@ -42,17 +47,20 @@ namespace KernelImpl
         /// <summary>
         /// Obtient un snapshot immuable et thread-safe.
         /// </summary>
-        public IJudoData GetSnapshot()
+        public IJudoData Snapshot
         {
-            _globalLock.EnterReadLock();
-            try
+            get
             {
-                // Crée le snapshot en copiant les références des listes actuelles
-                return new JudoDataSnapshot(this);
-            }
-            finally
-            {
-                _globalLock.ExitReadLock();
+                _globalLock.EnterReadLock();
+                try
+                {
+                    // Crée le snapshot en copiant les références des listes actuelles
+                    return new JudoDataSnapshot(this);
+                }
+                finally
+                {
+                    _globalLock.ExitReadLock();
+                }
             }
         }
 

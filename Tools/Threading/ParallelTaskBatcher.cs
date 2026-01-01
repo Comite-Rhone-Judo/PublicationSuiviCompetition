@@ -94,6 +94,7 @@ namespace Tools.Threading
         public List<TResultItem> WaitAllAndGetResults()
         {
             Task[] tasksToWait;
+            List<TResultItem> finalResult = new List<TResultItem>();
 
             // Snapshot thread-safe de la liste des tâches
             lock (_lockObject)
@@ -124,17 +125,17 @@ namespace Tools.Threading
             }
             finally
             {
+                // 3. Construction de la liste finale
+                // Cette étape est très rapide (simple copie de références en mémoire)
+                // On utilise ToList() pour figer le résultat.
+                finalResult = _resultsBag
+                    .Where(list => list != null) // Sécurité contre les nulls
+                    .SelectMany(x => x)          // Aplatit les listes de listes
+                    .ToList();
+
                 // Nettoyage interne
                 Reset();
             }
-
-            // 3. Construction de la liste finale
-            // Cette étape est très rapide (simple copie de références en mémoire)
-            // On utilise ToList() pour figer le résultat.
-            var finalResult = _resultsBag
-                .Where(list => list != null) // Sécurité contre les nulls
-                .SelectMany(x => x)          // Aplatit les listes de listes
-                .ToList();
 
             return finalResult;
         }

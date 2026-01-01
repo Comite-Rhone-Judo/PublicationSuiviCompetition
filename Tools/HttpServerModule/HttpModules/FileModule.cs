@@ -131,7 +131,7 @@ namespace HttpServer.HttpModules
         /// <exception cref="BadRequestException">Illegal path</exception>
         private string GetPath(Uri uri)
         {
-            if (Contains(uri.AbsolutePath, _forbiddenChars))
+            if (Contains(uri.AbsolutePath, _forbiddenChars))    
                 throw new BadRequestException("Illegal path");
 
             string path = Uri.UnescapeDataString(uri.LocalPath);

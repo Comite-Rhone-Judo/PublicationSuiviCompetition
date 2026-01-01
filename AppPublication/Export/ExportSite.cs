@@ -52,9 +52,12 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <param name="phase">la phase</param>
-        public List<FileWithChecksum> GenereWebSitePhase(IJudoData DC, Phase phase, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSitePhase(IJudoData DC, Phase phase, ConfigurationExportSite config, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
         {
             LogTools.Logger.Debug("Phase ({1}) '{0}'", phase?.libelle, phase?.id);
+
+            // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread (changement de path)
+            ExportSiteStructure siteStruct = (ExportSiteStructure)structRep.Clone();
 
             List<string> urls = new List<string>();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
@@ -171,9 +174,12 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <param name="epreuve"></param>
-        public List<FileWithChecksum> GenereWebSiteClassement(IJudoData DC, i_vue_epreuve_interface epreuve, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteClassement(IJudoData DC, i_vue_epreuve_interface epreuve, ConfigurationExportSite config, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
+
+            // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread (changement de path)
+            ExportSiteStructure siteStruct = (ExportSiteStructure)structRep.Clone();
 
             progress?.Report(BatchProgressInfo.Init(1)); // Report the start of the task with the number of subtask
 
@@ -206,10 +212,10 @@ namespace AppPublication.Export
         /// Génére les premiers combats de tous les tapis
         /// </summary>
         /// <param name="DC"></param>
-        public List<FileWithChecksum> GenereWebSiteAllTapis(IJudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteAllTapis(IJudoData DC, ConfigurationExportSite config, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
         {
             // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread (changement de path)
-            ExportSiteStructure structRep = (ExportSiteStructure)siteStruct.Clone();
+            ExportSiteStructure siteStruct = (ExportSiteStructure)structRep.Clone();
 
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
@@ -250,12 +256,12 @@ namespace AppPublication.Export
         /// Génére L'index
         /// </summary>
         /// <param name="DC"></param>
-        public List<FileWithChecksum> GenereWebSiteIndex(IJudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteIndex(IJudoData DC, ConfigurationExportSite config, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
         {
             List<string> urls = new List<string>();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
             // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread (changement de path)
-            ExportSiteStructure structRep = (ExportSiteStructure) siteStruct.Clone();
+            ExportSiteStructure siteStruct = (ExportSiteStructure) structRep.Clone();
 
             ExportEnum type;
 
@@ -309,10 +315,10 @@ namespace AppPublication.Export
         /// Génére le menu
         /// </summary>
         /// <param name="DC"></param>
-        public List<FileWithChecksum> GenereWebSiteMenu(IJudoData DC, ExtendedJudoData EDC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteMenu(IJudoData DC, ExtendedJudoData EDC, ConfigurationExportSite config, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
         {
             // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread (changement de path)
-            ExportSiteStructure structRep = (ExportSiteStructure)siteStruct.Clone();
+            ExportSiteStructure siteStruct = (ExportSiteStructure)structRep.Clone();
 
             List<FileWithChecksum> output = new List<FileWithChecksum>();
             if (DC != null && EDC != null && config != null && siteStruct != null)
@@ -404,10 +410,10 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public List<FileWithChecksum> GenereWebSiteAffectation(IJudoData DC, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteAffectation(IJudoData DC, ConfigurationExportSite config, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
         {
             // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread (changement de path)
-            ExportSiteStructure structRep = (ExportSiteStructure)siteStruct.Clone();
+            ExportSiteStructure siteStruct = (ExportSiteStructure)structRep.Clone();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             progress?.Report(BatchProgressInfo.Init(1)); // Report the start of the task with the number of subtask
@@ -442,8 +448,10 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public List<FileWithChecksum> GenereWebSiteEngagements(IJudoData DC, ExtendedJudoData EDC, List<GroupeEngagements> grps, ConfigurationExportSite config, ExportSiteStructure siteStruct, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteEngagements(IJudoData DC, ExtendedJudoData EDC, List<GroupeEngagements> grps, ConfigurationExportSite config, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
         {
+            // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread (changement de path)
+            ExportSiteStructure siteStruct = (ExportSiteStructure)structRep.Clone();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             if (DC != null && EDC != null && grps != null && config != null && siteStruct != null)

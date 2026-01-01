@@ -13,6 +13,7 @@ using System.Threading;
 using System.Windows.Interop;
 using Tools.Framework;
 using Tools.Logging;
+using Tools.Threading;
 
 
 namespace Tools.Net
@@ -45,8 +46,6 @@ namespace Tools.Net
         private long _nbSyncDistant = 0;
         private string _instanceName = string.Empty;
         private int _maxRetryFTP = kMaxRetryFTP;
-        // 1. Variable pour stocker le contexte UI
-        private readonly SynchronizationContext _uiContext;
         #endregion
 
         #region CONSTRUCTEURS
@@ -58,10 +57,6 @@ namespace Tools.Net
         /// <param name="instanceName">Nom de l'instance</param>
         public MiniSite(bool local, string instanceName = "")
         {
-            // 2. Capture du contexte au moment de la création (supposée sur le thread UI)
-            // Si pas de contexte (ex: test unitaire), on prend le contexte par défaut (null)
-            _uiContext = SynchronizationContext.Current;
-
             // Initialise les caracteristiques du MiniSite
             InstanceName = instanceName;
 
@@ -383,7 +378,16 @@ namespace Tools.Net
             }
             private set
             {
-                SetStatusSafe(value);
+                System.Windows.Application.Current.ExecOnUiThread(() =>
+                {
+                    _status = value;
+                    NotifyPropertyChanged(nameof(Status));
+
+                    // Actualise l'etat d'activite du site
+                    // Le site doit etre arrete ou en cours de nettoyage
+                    IsActif = !(_status.State == StateMiniSiteEnum.Stopped || _status.State == StateMiniSiteEnum.Cleaning);
+                    IsCleaning = (_status.State == StateMiniSiteEnum.Cleaning);
+                });
             }
         }
 
@@ -968,37 +972,6 @@ namespace Tools.Net
 
             return output;
         }
-
-        /// <summary>
-        /// Méthode helper pour sécuriser la mise à jour
-        /// </summary>
-        /// <param name="newStatus"></param>
-        private void SetStatusSafe(StatusMiniSite newStatus)
-        {
-            // Si on est déjà sur le bon contexte ou s'il n'y a pas de contexte spécifique (Console/Test)
-            if (_uiContext == null || SynchronizationContext.Current == _uiContext)
-            {
-                if (_status != newStatus)
-                {
-                    _status = newStatus;
-                    NotifyPropertyChanged();
-
-                    // Actualise l'etat d'activite du site
-                    // Le site doit etre arrete ou en cours de nettoyage
-                    IsActif = !(_status.State == StateMiniSiteEnum.Stopped || _status.State == StateMiniSiteEnum.Cleaning);
-                    IsCleaning = (_status.State == StateMiniSiteEnum.Cleaning);
-                }
-            }
-            else
-            {
-                // Sinon, on bascule sur le thread UI pour faire l'assignation
-                _uiContext.Post((state) =>
-                {
-                    Status = (StatusMiniSite)state;
-                }, newStatus);
-            }
-        }
-
         #endregion
     }
 }

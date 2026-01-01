@@ -11,7 +11,13 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation">
+    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+    xmlns:Converter="clr-namespace:AppPublication.Tools.Converter">
+
+    <Converter:StatusMiniSiteProgressVisibilityConverter x:Key="StatusMiniSiteProgressVisibilityConverter" />
+    <Converter:StatusGenerationSiteProgressVisibilityConverter x:Key="StatusGenerationSiteProgressVisibilityConverter" />
+
+    
 
     <Style x:Key="TrailSpinnerStyle" TargetType="Control">
         <!-- <Setter Property="Foreground" Value="#007ACC" /> -->
@@ -442,7 +448,7 @@
         </Style.Triggers>
     </Style>
 
-    <Style TargetType="Label" x:Key="StatusProgressLabelStyle">
+    <Style TargetType="Label" x:Key="StatusGenerationSiteProgressLabelStyle">
         <Style.Setters>
             <Setter Property="Foreground" Value="#EEEEEE" />
             <Setter Property="FontSize" Value="12" />
@@ -462,6 +468,25 @@
             </DataTrigger>
         </Style.Triggers>
     </Style>
+
+    <Style TargetType="Label" x:Key="StatusMiniSiteProgressLabelStyle">
+        <Style.Setters>
+            <Setter Property="Foreground" Value="#EEEEEE" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontFamily" Value="{telerik:Windows8Resource ResourceKey=FontFamily}" />
+            <Setter Property="FontStyle"  Value="Italic"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Content" Value="{Binding Path=Progress}"/>
+            <Setter Property="ContentStringFormat" Value="({0}%)"/>
+            <Setter Property="Visibility" Value="Visible"/>
+        </Style.Setters>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=Progress}" Value="-1">
+                <Setter Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
 
     <Style TargetType="Ellipse" x:Key="OperationStatusStyle">
         <Style.Setters>

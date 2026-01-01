@@ -48,6 +48,15 @@ namespace Tools.Net
             {
                 _state = value;
                 NotifyPropertyChanged();
+
+                switch (_state)
+                {
+                    case StateMiniSiteEnum.Stopped:
+                    case StateMiniSiteEnum.Idle:
+                    case StateMiniSiteEnum.Listening:
+                        Progress = -1;
+                        break;
+                }
             }
         }
 

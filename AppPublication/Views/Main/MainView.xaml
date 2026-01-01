@@ -209,7 +209,7 @@
                                             <Label HorizontalAlignment="Left" Width="140" Content="{Binding GestionSite.Status.Message, Mode=OneWay}" Style="{StaticResource LabelStyleValue}" />
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                                 <telerik:RadProgressBar Orientation="Horizontal" Width="100" Height="10" Margin="10 -10 0 0" Minimum="0" Maximum="100" Style="{StaticResource StatusProgressBarStyle}" DataContext="{Binding Path=GestionSite.Status, Mode=OneWay}" />
-                                                <Label Margin="0 -12 0 0" DataContext="{Binding Path=GestionSite.Status, Mode=OneWay}" Style="{StaticResource StatusProgressLabelStyle}" />
+                                                <Label Margin="0 -12 0 0" DataContext="{Binding Path=GestionSite.Status, Mode=OneWay}" Style="{StaticResource StatusGenerationSiteProgressLabelStyle}" />
                                             </StackPanel>
                                         </StackPanel>
                                     </StackPanel>
@@ -474,8 +474,15 @@
                                             <Ellipse Margin="0" Height="15" Width="15" Style="{StaticResource OperationStatusStyle}" DataContext="{Binding Path=GestionSite.SiteDistantSelectionne.Status, Mode=OneWay}"/>
                                             <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                                                 <Label HorizontalAlignment="Left" Width="140" Content="{Binding GestionSite.SiteDistantSelectionne.Status.Message, Mode=OneWay}" Style="{StaticResource LabelStyleValue}" />
-                                                <telerik:RadProgressBar Orientation="Horizontal" Width="140" Height="8" Margin="0 -10 0 0" Minimum="0" Maximum="100" Style="{StaticResource StatusProgressBarStyle}" DataContext="{Binding Path=GestionSite.SiteDistantSelectionne.Status, Mode=OneWay}" />
+                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <telerik:RadProgressBar Orientation="Horizontal" Width="140" Height="8" Margin="0 -10 0 0" Minimum="0" Maximum="100" Style="{StaticResource StatusProgressBarStyle}" DataContext="{Binding Path=GestionSite.SiteDistantSelectionne.Status, Mode=OneWay}" />
+                                                    <Label Margin="0 -12 0 0" DataContext="{Binding Path=GestionSite.SiteDistantSelectionne.Status, Mode=OneWay}" Style="{StaticResource StatusMiniSiteProgressLabelStyle}" />
+                                                </StackPanel>
                                             </StackPanel>
+
+
+
+
                                             <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="25" Margin="5 0" DataContext="{Binding Path=GestionSite.SiteDistantSelectionne.Status, Mode=OneWay}" Style="{StaticResource InfoTooltipStyle}"/>
                                         </StackPanel>
                                         <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>

@@ -10,6 +10,7 @@ using AppPublication.Tools.FranceJudo;
 using AppPublication.ViewModels.Configuration;
 using AppPublication.Views.Configuration;
 using KernelImpl;
+using OfficeOpenXml.Drawing.Chart;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,19 +18,19 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using System.Windows.Forms;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Xml;
 using Tools.Enum;
 using Tools.Export;
-using Tools.Framework;
-using Tools.Windows;
-using Tools.Net;
-using Tools.Logging;
 using Tools.Files;
+using Tools.Framework;
+using Tools.Logging;
+using Tools.Net;
 using Tools.Outils;
 using Tools.Threading;
+using Tools.Windows;
 
 namespace AppPublication.Controles
 {
@@ -51,7 +52,7 @@ namespace AppPublication.Controles
         private GestionStatistiques _statMgr = null;
         private GenerationScheduler _schedulerSite = null;  // Le scheduler de generation Site
         private GenerateurSite _generateurSite = null;  // Le generateur Site
-        private IProgress<float> _progressHandler = null;
+        private IProgress<OperationProgress> _progressHandler = null;
 
         private ExportSiteStructure _structureRepertoiresSite;                      // La structure de repertoire d'export du site
         private ExportSitePrivateStructure _structureRepertoiresPrivateSite;        // La structure de repertoire d'export du site prive
@@ -94,7 +95,7 @@ namespace AppPublication.Controles
                 _judoDataManager = dataManager;
 
                 // Initialise le progress handler pour la generation de site
-                _progressHandler = new Progress<float>(onGenerationSiteProgressReport);
+                _progressHandler = new Progress<OperationProgress>(onGenerationSiteProgressReport);
 
                 // Le generateur de site
                 _generateurSite = new GenerateurSite(_judoDataManager, SiteDistantSelectionne, _progressHandler);
@@ -457,9 +458,10 @@ namespace AppPublication.Controles
 
                     // Met a jour la constante d'export
                     string tmp = OutilsTools.GetExportDir(_repertoireRacine);
+                    string siteRoot = Path.Combine(tmp, kSiteRepertoire);
 
                     // Initialise les structures d'export
-                    _structureRepertoiresSite = new ExportSiteStructure(Path.Combine(tmp, kSiteRepertoire), IdCompetition);
+                    _structureRepertoiresSite = new ExportSiteStructure(siteRoot, IdCompetition);
                     _structureRepertoiresPrivateSite = new ExportSitePrivateStructure(Path.Combine(tmp, kPrivateSiteRepertoire));
 
                     _structureSiteDistant = new ExportSiteUrls(_structureRepertoiresSite);
@@ -472,7 +474,7 @@ namespace AppPublication.Controles
                     InitExportSiteStructure();
 
                     // Initialise la racine du serveur Web local
-                    SiteLocal.ServerHTTP.LocalRootPath = tmp;
+                    SiteLocal.ServerHTTP.LocalRootPath = siteRoot;
                     // TODO initialiser le repoertoire racine du site prive
                 }
             }
@@ -973,7 +975,7 @@ namespace AppPublication.Controles
                 URLDistantPublication = CalculURLSiteDistant();
                 URLLocalPublication = CalculURLSiteLocal();
                 // Note: ici on devrait dans l'absolu utiliser le snapshot mais le traitement est rapide et a peu de chance de changer
-                var DC = _judoDataManager as IJudoData;
+                var DC = _judoDataManager.Data;
                 CanPublierAffectation = DC.Organisation.Competition.IsIndividuelle();
                 CanPublierEngagements = DC.Organisation.Competition.IsIndividuelle() || DC.Organisation.Competition.IsShiai();
 
@@ -1445,21 +1447,22 @@ namespace AppPublication.Controles
 
         #region METHODES
 
-        private void onGenerationSiteProgressReport(float valueReported)
+        private void onGenerationSiteProgressReport(OperationProgress valueReported)
         {
             LogTools.Logger.Debug($"Progress {valueReported} signale par le generateur");
 
             // on doit juste s'assurer que tout est bien execute dans le UI Thread
             System.Windows.Application.Current.ExecOnUiThread(() =>
             {
-                // TODO A voir sans doute si on doit avoir une notion de phase ou de state à prendre en compte
+                if (valueReported != null && valueReported.Etape == EtapeGenerateurSiteEnum.ExecuteGeneration)
+                {
+                    // Clone le status courant
+                    StatusGenerationSite cpy = Status.Clone();
 
-                // Clone le status courant
-                StatusGenerationSite cpy = Status.Clone();
-
-                // Met a jour le status avec la nouvelle progression et notifie les changements
-                cpy.Progress = (int) Math.Round(valueReported * 100);
-                Status = cpy;
+                    // Met a jour le status avec la nouvelle progression et notifie les changements
+                    cpy.Progress = (int)Math.Round(valueReported.ProgressPercent * 100);
+                    Status = cpy;
+                }
             });
         }
 

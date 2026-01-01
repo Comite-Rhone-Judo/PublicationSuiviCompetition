@@ -158,6 +158,8 @@
     <Compile Include="Models\EcransAppel\EcranAppelModel.cs" />
     <Compile Include="Models\EcransAppel\EcranCollectionManager.cs" />
     <Compile Include="Tools\ActionWatcher.cs" />
+    <Compile Include="Tools\Converter\StatusGenerationSiteProgressVisibilityConverter.cs" />
+    <Compile Include="Tools\Converter\StatusMiniSiteProgressVisibilityConverter.cs" />
     <Compile Include="Tools\HttpModules\EcransAppelRedirectModule.cs" />
     <Compile Include="ViewModels\Configuration\ConfigurationEcransViewModel.cs" />
     <Compile Include="ViewModels\Configuration\EcranAppelConfigViewModel.cs" />

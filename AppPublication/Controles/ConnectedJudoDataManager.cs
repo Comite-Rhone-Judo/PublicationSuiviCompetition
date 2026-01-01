@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using Tools.Enum;
 using Tools.Threading;
 using Tools.Logging;
+using Telerik.Windows.Controls.Wizard;
 
 namespace AppPublication.Controles
 {
@@ -86,7 +87,7 @@ namespace AppPublication.Controles
 
         private ConnectedJudoDataManager(JudoData dataMgr, GestionStatistiques statMgr, IClientProvider provider )
         {
-            DataManager = dataMgr;
+            InternalDataManager = dataMgr;
             StatistiquesManager = statMgr;
             ClientProvider = provider;
 
@@ -167,7 +168,7 @@ namespace AppPublication.Controles
         /// <summary>
         /// Propriété pour accéder au gestionnaire de données Judo interne
         /// </summary>
-        private JudoData DataManager
+        private JudoData InternalDataManager
         {
             get
             {
@@ -373,7 +374,7 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         private void LectureDonneesStructures(XElement element)
         {
-            var judoDataInstance = DataManager;
+            var judoDataInstance = InternalDataManager;
             judoDataInstance.Structures.lecture_clubs(element);
             judoDataInstance.Structures.lecture_comites(element);
             judoDataInstance.Structures.lecture_secteurs(element);
@@ -431,7 +432,7 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         private void LectureDonneesCategories(XElement element)
         {
-            var judoDataInstance = DataManager;
+            var judoDataInstance = InternalDataManager;
             judoDataInstance.Categories.lecture_cateages(element);
             judoDataInstance.Categories.lecture_catepoids(element);
             judoDataInstance.Categories.lecture_ceintures(element);
@@ -482,7 +483,7 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         private void LectureDonneesLogos(XElement element)
         {
-            var judoDataInstance = DataManager;
+            var judoDataInstance = InternalDataManager;
             judoDataInstance.Logos.lecture_logos(element);
         }
 
@@ -527,7 +528,7 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         private void LectureDonneesOrganisations(XElement element)
         {
-            var judoDataInstance = DataManager;
+            var judoDataInstance = InternalDataManager;
             judoDataInstance.Organisation.lecture_competitions(element, judoDataInstance);
             judoDataInstance.Organisation.lecture_epreuves_equipe(element, judoDataInstance);
             judoDataInstance.Organisation.lecture_epreuves(element, judoDataInstance);
@@ -549,7 +550,7 @@ namespace AppPublication.Controles
                             BusyStatusEnum.DemandeDonneesJudokas,
                            () =>
                            {
-                               var judoDataInstance = DataManager;
+                               var judoDataInstance = InternalDataManager;
                                if (judoDataInstance.Organisation.Competition.IsEquipe())
                                {
                                    EnregistrerDebutEchange(ServerCommandEnum.DemandEquipes);
@@ -582,7 +583,7 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         private void LectureDonneesEquipes(XElement element)
         {
-            var judoDataInstance = DataManager;
+            var judoDataInstance = InternalDataManager;
             judoDataInstance.Participants.lecture_epreuves_judokas(element, judoDataInstance);
             judoDataInstance.Participants.lecture_equipes(element);
             judoDataInstance.Participants.lecture_judokas(element, judoDataInstance);
@@ -630,7 +631,7 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         private void LectureDonneesJudokas(XElement element)
         {
-            var judoDataInstance = DataManager;
+            var judoDataInstance = InternalDataManager;
             judoDataInstance.Participants.lecture_epreuves_judokas(element, judoDataInstance);
             judoDataInstance.Participants.lecture_judokas(element, judoDataInstance);
         }
@@ -676,7 +677,7 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         private void LectureDonneesPhases(XElement element)
         {
-            var judoDataInstance = DataManager;
+            var judoDataInstance = InternalDataManager;
             // DC.ServerData.Deroulement.clear_deroulement();
             judoDataInstance.Deroulement.lecture_phases(element);
             judoDataInstance.Deroulement.lecture_participants(element);
@@ -725,7 +726,7 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         private void LectureDonneesCombats(XElement element, bool isFull)
         {
-            var judoDataInstance = DataManager;
+            var judoDataInstance = InternalDataManager;
             judoDataInstance.Deroulement.lecture_rencontres(element, isFull);
             judoDataInstance.Deroulement.lecture_feuilles(element, isFull);
             judoDataInstance.Deroulement.lecture_combats(element, judoDataInstance, isFull);
@@ -861,7 +862,7 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         private void LectureDonneesRencontres(XElement element)
         {
-            var judoDataInstance = DataManager;
+            var judoDataInstance = InternalDataManager;
             judoDataInstance.Deroulement.lecture_rencontres(element, true);
         }
 
@@ -883,7 +884,7 @@ namespace AppPublication.Controles
         /// <param name="element"></param>
         private void LectureDonneesArbitrage(XElement element)
         {
-            var judoDataInstance = DataManager;
+            var judoDataInstance = InternalDataManager;
             judoDataInstance.Arbitrage.lecture_arbitres(element);
             judoDataInstance.Arbitrage.lecture_commissaires(element);
             judoDataInstance.Arbitrage.lecture_delegues(element);
@@ -1123,9 +1124,9 @@ namespace AppPublication.Controles
                     doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
 
                     // Appelle  le callback pour traiter les donnees via le contexte securise
-                    if (DataManager != null)
+                    if (InternalDataManager != null)
                     {
-                        DataManager.RunSafeDataUpdate(() =>
+                        InternalDataManager.RunSafeDataUpdate(() =>
                         {
                             dataAction?.Invoke(element);
                         });
@@ -1183,9 +1184,9 @@ namespace AppPublication.Controles
                 doc.Descendants(ConstantXML.Valeur).FirstOrDefault().SetAttributeValue(ConstantXML.Date, DateTime.Today.ToString("dd-MM-yyyy"));
 
                 // Appel la methode de traitement via le callback securise
-                if (DataManager != null)
+                if (InternalDataManager != null)
                 {
-                    DataManager.RunSafeDataUpdate(() =>
+                    InternalDataManager.RunSafeDataUpdate(() =>
                     {
                         action?.Invoke(element);
                     });
@@ -1207,17 +1208,33 @@ namespace AppPublication.Controles
 
         #region IMPLEMENTATION IJudoDataManager
 
+
+        public IJudoData Data
+        {
+            get
+            {
+                if (InternalDataManager != null)
+                {
+                    return InternalDataManager.Data;
+                }
+                return null;
+            }
+        }
+
         /// <summary>
         /// Retourne un snapshot complet des données Judo
         /// </summary>
         /// <returns></returns>
-        public IJudoData GetSnapshot()
+        public IJudoData Snapshot
         {
-            if (DataManager != null)
+            get
             {
-                return DataManager.GetSnapshot();
+                if (InternalDataManager != null)
+                {
+                    return InternalDataManager.Snapshot;
+                }
+                return null;
             }
-            return null;
         }
 
         /// <summary>
@@ -1290,9 +1307,9 @@ namespace AppPublication.Controles
         /// <param name="actionMiseAJour"></param>
         public void RunSafeDataUpdate(Action actionMiseAJour)
         {
-            if (DataManager != null)
+            if (InternalDataManager != null)
             {
-                DataManager.RunSafeDataUpdate(actionMiseAJour);
+                InternalDataManager.RunSafeDataUpdate(actionMiseAJour);
             }
         }
 

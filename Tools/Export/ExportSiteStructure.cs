@@ -92,7 +92,7 @@ namespace Tools.Export
 
             // On calcul le path complet pour faire le controle d'existence
             string directory = Path.Combine(RepertoireCompetition(), OutilsTools.SubString(OutilsTools.TraiteChaine(tmp), 0, _maxLen));
-            FiltreEtControleRepertoire(directory);
+            directory = FiltreEtControleRepertoire(directory);
 
             return (relatif) ? directory.Replace(RepertoireCompetition(), "").Remove(0, 1) : directory;
         }

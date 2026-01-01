@@ -158,7 +158,7 @@ namespace AppPublication.Generation
             if (dataConsistent)
             {
                 // Recupere le snapshot des données (thread safe)
-                _snapshot = _judoDataManager.GetSnapshot();
+                _snapshot = _judoDataManager.Snapshot;
 
                 // Met a jour les données de l'extension
                 _extendedJudoData.SyncAll(_snapshot);
@@ -313,8 +313,7 @@ namespace AppPublication.Generation
                         }
                     }
 
-                    // Synchronise le site FTP
-                    // TODO ici il faudra mettre la logique de IProgress ... 
+                    // Synchronise le site FTP.
                     uploadOut = _site.UploadSite(localRoot, filesToSync);
                     if (uploadOut.IsSuccess)
                     {

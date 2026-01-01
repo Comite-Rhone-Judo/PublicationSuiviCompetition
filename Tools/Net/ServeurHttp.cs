@@ -133,7 +133,9 @@ namespace Tools.Net
                     CreateNewInstance();
                     _server = new HttpServer.HttpServer();
                     // _server.Add(new BasicFileImgModule(LocalRootPath));
-                    _server.Add(new FileModule("/", LocalRootPath, true));
+                    FileModule module = new FileModule("/", LocalRootPath, false);
+                    module.AddDefaultMimeTypes();
+                    _server.Add(module);
 
                     // Ecoute sur l'adresse specifiee, sur toutes sinon
                     IPAddress adr = (ListeningIpAddress != null) ? ListeningIpAddress : IPAddress.Any;

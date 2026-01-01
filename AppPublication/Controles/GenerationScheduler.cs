@@ -96,7 +96,12 @@ namespace AppPublication.Controles
         {
             get
             {
+                if (_statGeneration == null)
+                {
+                    _statGeneration = new TaskExecutionInformation();
+                }
                 return _statGeneration;
+
             }
             private set
             {
@@ -112,6 +117,10 @@ namespace AppPublication.Controles
         {
             get
             {
+                if (_statSync == null)
+                {
+                    _statSync = new TaskExecutionInformation();
+                }
                 return _statSync;
             }
             private set
@@ -411,7 +420,7 @@ namespace AppPublication.Controles
                         // Sinon, on attend la difference restante
                         int delaiThread = (int)Math.Max(DelaiGenerationSec * 1000 - watcherTotal.ElapsedMilliseconds, 5000);
                         // prochaine heure de generation
-                        DerniereGeneration.DateProchaineGeneration = DateTime.Now.AddMilliseconds(delaiThread);
+                        DerniereGeneration.DateProchaineGeneration = (wakeUpTime = DateTime.Now.AddMilliseconds(delaiThread));
 
                         // Dans tous les cas, on repasse Idle
                         RaiseState(StateGenerationEnum.Idle, DerniereGeneration, (int)Math.Round(delaiThread / 1000.0));

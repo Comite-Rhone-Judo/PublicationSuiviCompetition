@@ -218,7 +218,7 @@ namespace Tools.Export
         protected string GetPathRepertoire(string repertoireName, bool relatif)
         {
             IsConfiguredGuardRail();
-            return (relatif) ? FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, repertoireName)) : FileAndDirectTools.PathJoin(_relativeToRoot, repertoireName, true);
+            return (relatif) ? FileAndDirectTools.PathJoin(_relativeToRoot, repertoireName, true) : FiltreEtControleRepertoire(Path.Combine(_rootCompetDir, repertoireName));
         }
 
         /// <summary>
@@ -238,7 +238,7 @@ namespace Tools.Export
             string output = OutilsTools.TraiteChaineURL(repertoire);
 
             // On s'assure que le repertoire existe bien
-            FileAndDirectTools.CreateDirectorie(repertoire);
+            FileAndDirectTools.CreateDirectorie(output);
             return output;
         }
 

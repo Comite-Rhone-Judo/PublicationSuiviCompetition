@@ -15,7 +15,7 @@ namespace KernelImpl
         /// <summary>
         /// Obtient une vue figée et thread-safe des données (Lecture).
         /// </summary>
-        IJudoData GetSnapshot();
+        IJudoData Snapshot { get; }
 
         /// <summary>
         /// Vérifie et assure la cohérence des données, retourne True si les données sont cohérentes.
@@ -26,5 +26,10 @@ namespace KernelImpl
         /// Exécute une modification des données de manière sécurisée (Écriture).
         /// </summary>
         void RunSafeDataUpdate(Action actionMiseAJour);
+
+        /// <summary>
+        /// Obtient l'accès direct a la source de donnees
+        /// </summary>
+        IJudoData Data { get; }
     }
 }
