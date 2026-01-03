@@ -1876,10 +1876,11 @@ namespace AppPublication.Controles
                 {
                     output = FileAndDirectTools.PathJoin(repRoot, _structureSiteDistant.UrlPathCompetition);
                 }
-                catch
+                catch(Exception ex)
                 {
-                    // on a essayer de traiter une structure non configuree
-                    output = string.Empty;
+                    LogTools.Logger.Debug(ex, "Erreur lors du calcul UrlPathCompetition");
+                    // on a essayer de traiter une structure non configuree sans doute
+                    output = repRoot;   // par défaut, on reste sur le répertoire racine configuré
                 }
             }
 

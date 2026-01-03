@@ -11,6 +11,7 @@ using System.Net.Sockets;
 using System.ServiceModel.Channels;
 using System.Threading;
 using System.Windows.Interop;
+using System.Windows.Markup;
 using Tools.Framework;
 using Tools.Logging;
 using Tools.Threading;
@@ -585,6 +586,8 @@ namespace Tools.Net
             {
                 Status = new StatusMiniSite(StateMiniSiteEnum.Cleaning, "Nettoyage FTP ...");
 
+                string repertoire = RepertoireSiteFTPDistant;
+
                 // Essaye de se connecter au serveur FTP
                 ftpClient.Connect(_ftp_profile);
 
@@ -594,10 +597,14 @@ namespace Tools.Net
                     _totalDeleteCount = 0;
 
                     // On commence par compter le nombre total de fichier a traiter (pour la progression)
-                    InternalFtpRecursiveFileCount(RepertoireSiteFTPDistant, ftpClient);
+                    // Recupere le contenu du repertoire
+                    List<FtpListItem> ftpList = ftpClient.GetListing(repertoire, FtpListOption.Recursive).ToList();
+
+                    // Compte les fichiers dans le repertoire courant
+                    _totalDeleteCount = ftpList.Count(o => o.Type == FtpObjectType.File);
 
                     // Efface recursivement mais en calculant la progression (ce que ne fait pas ftpClient.DeleteDirectory)
-                    InternalFtpRecursiveDeleteDirectory(RepertoireSiteFTPDistant, ftpClient, true);
+                    InternalFtpRecursiveDeleteDirectory(repertoire, ftpClient, true);
 
                     // Disconnect
                     ftpClient.Disconnect();
@@ -903,41 +910,6 @@ namespace Tools.Net
         }
 
         /// <summary>
-        /// Retourne le nombre total de fichiers dans un repertoire FTP et ses sous-repertoires (recursif)
-        /// </summary>
-        /// <param name="repertoire"></param>
-        /// <param name="ftpClient">Le client a utilise, suppose connecte</param>
-        /// <returns></returns>
-        private long InternalFtpRecursiveFileCount(string repertoire, FtpClient ftpClient)
-        {
-            if (ftpClient == null || !ftpClient.IsConnected) { throw new ArgumentException("Le client FTP doit etre connecte"); }
-
-            try
-            {
-                // Recupere le contenu du repertoire
-                List<FtpListItem> ftpList = ftpClient.GetListing(repertoire).ToList();
-
-                // Compte les fichiers dans le repertoire courant
-                _totalDeleteCount += ftpList.Count(o => o.Type == FtpObjectType.File);
-
-                // Pour chaque sous-repertoire, lance un appel recursif
-                List<FtpListItem> ftpDir = ftpList.Where(o => o.Type == FtpObjectType.Directory).ToList();
-
-                foreach (var item in ftpDir)
-                {
-                    InternalFtpRecursiveFileCount(item.FullName, ftpClient);
-                }
-            }
-            catch (Exception ex)
-            {
-                LogTools.Logger.Error(ex, "Erreur lors du comptage recursif des fichiers FTP dans le repertoire {0}", repertoire);
-                throw new Exception("Erreur lors du comptage recursif des fichiers FTP", ex);
-            }
-
-            return _totalDeleteCount;
-        }
-
-        /// <summary>
         /// Supprime de maniere recursive tous les fichiers et repertoires dans un repertoire FTP
         /// </summary>
         /// <param name="repertoire"></param>
@@ -1012,9 +984,10 @@ namespace Tools.Net
         {
             int pct = -1;
             // Calcul le ratio de transfert du repertoire
-            if (index >= 0 && total > -1)
+            if (index >= 0 && total > 0)
             {
-                pct = (int)Math.Round(((index + 1.0) / total) * 100);
+                // Pn majore la progression a 100% pour eviter les erreurs d'arrondis
+                pct = Math.Min( 100, (int)Math.Round(((index + 1.0) / total) * 100));
             }
 
             Status.Progress = pct;

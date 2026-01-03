@@ -36,8 +36,8 @@ namespace AppPublication.Generation
         // Suivi des taches de generation
         private EtapeGenerateurSiteEnum _etapeCourante = EtapeGenerateurSiteEnum.None;
         private readonly ParallelTaskBatcher<OperationProgress, FileWithChecksum> _taskBatcher;          // Le gestionnaire de taches paralleles
-        List<FileWithChecksum> _checksumCache;                      // Les fichiers en cache pour le controle des checksums
-        List<FileWithChecksum> _checksumGenere;                     // Les fichiers generes lors de la derniere generation  
+        List<FileWithChecksum> _checksumCache = new List<FileWithChecksum>();                      // Les fichiers en cache pour le controle des checksums
+        List<FileWithChecksum> _checksumGenere = new List<FileWithChecksum>();                     // Les fichiers generes lors de la derniere generation  
         #endregion
 
         #region PROPERTIES PUBLIQUES
@@ -423,7 +423,7 @@ namespace AppPublication.Generation
             // Enregistre les checksums des fichiers generes
             XDocument doc = ExportXML.ExportChecksumFichiers(_checksumGenere);
 
-            if (!File.Exists(ChecksumFileName) || !FileAndDirectTools.IsFileLocked(ChecksumFileName))
+            if (doc != null && !File.Exists(ChecksumFileName) || !FileAndDirectTools.IsFileLocked(ChecksumFileName))
             {
                 FileAndDirectTools.NeedAccessFile(ChecksumFileName);
                 try

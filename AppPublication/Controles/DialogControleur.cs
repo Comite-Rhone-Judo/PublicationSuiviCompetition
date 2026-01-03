@@ -591,7 +591,7 @@ namespace AppPublication.Controles
                                     DialogParameters param = new DialogParameters();
                                     param.OkButtonContent = "Oui";
                                     param.CancelButtonContent = "Non";
-                                    param.Content = "Etes-vous sûr de vouloir supprimer le contenu du site distant ?";
+                                    param.Content = $"Etes-vous sûr de vouloir supprimer le contenu de '{Instance.GestionSite.SiteDistantSelectionne.RepertoireSiteFTPDistant}' sur le site distant ?";
                                     param.Header = "Nettoyer site distant";
 
                                     ConfirmWindow win = new ConfirmWindow(param);
