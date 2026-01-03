@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AppPublication.Views.Configuration"
         mc:Ignorable="d"
-        Title="Configuration de la Publication" Height="520" Width="820" Background="Black">
+        Title="Configuration de la Publication" Height="640" Width="840" Background="Black">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -18,187 +18,54 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <!-- BLOC PUBLICATON -->
-        <!-- Entete -->
-        <StackPanel Grid.Row="0" Grid.Column="0" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
-            <TextBlock Text="Publication" Style="{StaticResource Header1TextStyle}"/>
+        <!-- CONFIGURATION GENERALE -->
+        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
+            <TextBlock Text="Général" Style="{StaticResource Header1TextStyle}"/>
         </StackPanel>
-        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" BorderBrush="White" Margin="10,0,10,10" Width="380" Height="360">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="auto"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
-                    <CheckBox Content="Publier 'Prochains Combats'" Style="{StaticResource CheckboxStyle}"
-                                                        IsChecked="{Binding Path=PublierProchainsCombats}"/>
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0" ToolTip="Si cochée, provoque l'ajout des menus 'Prochains Combats' qui liste les combats à venir par catégories et 'Se Prépare' qui liste les prochains combats sur chaque tapis selon la profondeur de la chambre d'appel."/>
-                </StackPanel>
-                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
-                    <Label HorizontalAlignment="Right" Content="Profondeur chambre d'appel:" Style="{StaticResource LabelStyle}" Margin="30 0 0 0"/>
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Nombres de combats à afficher dans la chambre d'appel."/>
-                </StackPanel>
-                <telerik:RadNumericUpDown  Grid.Row="1" Grid.Column="1" IsEnabled="{Binding Path=PublierProchainsCombats, Mode=OneWay}" Value="{Binding NbProchainsCombats}" Width="80" Height="20" Minimum="1" Maximum="99" SmallChange="1" HideTrailingZeros="True" Margin="5 0 5 0">
-                </telerik:RadNumericUpDown>
-                <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical" Margin="30 0 0 0">
-                    <StackPanel Orientation="Horizontal" >
-                        <Label HorizontalAlignment="Right" Content="Message d'avertissement:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
-                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Message d'avertissement affiché au début des pages prochains combats et se prépare."/>
-                    </StackPanel>
-                    <TextBox  TextWrapping="Wrap" Height="44" VerticalScrollBarVisibility="Auto" Margin="5 5 5 5" MinWidth="300" Text = "{Binding Path=MsgProchainsCombats}"/>
-                </StackPanel>
-
-
-                <StackPanel Grid.Row="3" Grid.Column="0"  Grid.ColumnSpan="2" Orientation="Horizontal">
-                    <CheckBox   Content="Publier 'Affectation tapis'" Style="{StaticResource CheckboxStyle}"
-                                                        IsChecked="{Binding Path=PublierAffectationTapis}"
-                                                        Visibility="{Binding Path=CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}">
-                    </CheckBox>
-                    <Image Visibility="{Binding Path=CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}" Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0" ToolTip="Si cochée, provoque l'ajout du menu 'Affectations' qui liste les tapis assignées pour chaque catégories. Disponible uniquement en compétition Individuelle ou Shiai."/>
-                </StackPanel>
-                <StackPanel Grid.Row="4" Grid.Column="0"  Grid.ColumnSpan="2" Orientation="Horizontal">
-                    <CheckBox   Content="Afficher les Poules en colonnes" Style="{StaticResource CheckboxStyle}"
-                                        IsChecked="{Binding Path=PouleEnColonnes}">
-                    </CheckBox>
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, les poules seront affichées en colonnes selon les critères de taille. Affichage en diagonale sinon."/>
-                </StackPanel>
-                <StackPanel Grid.Row="5" Grid.Column="0" Orientation="Horizontal" Margin="30 -5 0 0">
-                    <CheckBox Style="{StaticResource CheckboxStyle}"
-                        IsChecked="{Binding Path=PouleToujoursEnColonnes, Converter={StaticResource BoolNotConverter}}"
-                        IsEnabled="{Binding Path=PouleEnColonnes, Mode=OneWay}"
-                        Margin="0 0 0 0"
-                              Content="taille max. poule en colonne:">
-                    </CheckBox>
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Taille minimale de la poule au dessus de laquelle la disposition est en diagonale."/>
-                </StackPanel>
-
-                <StackPanel Grid.Row="6" Grid.Column="0"  Grid.ColumnSpan="2" Orientation="Horizontal">
-                    <CheckBox   Content="Publier 'Engagements'" Style="{StaticResource CheckboxStyle}"
-                        IsChecked="{Binding Path=PublierEngagements}"
-                        Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}">
-                    </CheckBox>
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, provoque l'ajout du menu 'Engagements' qui liste les engages, leurs statuts et leurs combats à venir. Disponible uniquement en compétition Individuelle ou Shiai.&#x0a;ATTENTION, cette option augmente sensiblement le temps de génération et le nombre de fichiers a transférer."
-                           Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                </StackPanel>
-                <StackPanel Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical" Margin="25 -10 0 0" Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <StackPanel Orientation="Horizontal">
-                        <Label HorizontalAlignment="Right" Content="Publier:" Style="{StaticResource LabelStyle}"
-                           Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        <CheckBox Style="{StaticResource CheckboxStyle}"
-                        IsChecked="{Binding Path=EngagementsAbsents}"
-                        IsEnabled="{Binding Path=PublierEngagements, Mode=OneWay}"
-                        Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"
-                        Margin="-5 0 0 0"
-                              Content="les absents">
-                        </CheckBox>
-                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affichera les judokas absents."
-                           Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        <CheckBox Style="{StaticResource CheckboxStyle}"
-                        IsChecked="{Binding Path=EngagementsTousCombats}"
-                        IsEnabled="{Binding Path=PublierEngagements, Mode=OneWay}"
-                        Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"
-                        Margin="10 0 0 0"
-                              Content="tous les combats">
-                        </CheckBox>
-                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affichera tous les combats des engages, y compris ceux terminés."
-                           Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
-
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0 -15 0 0">
-                        <Label HorizontalAlignment="Right" Content="Afficher:" Style="{StaticResource LabelStyle}"
-                                Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        <CheckBox Style="{StaticResource CheckboxStyle}"
-                                    IsChecked="{Binding Path=ScoreEngagesGagnantPerdant}"
-                                    IsEnabled="{Binding Path=PublierEngagements, Mode=OneWay}"
-                                    Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"
-                                    Margin="0 0 0 0"
-                                          Content="Scores G/P "/>
-                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, les résultats des combats seront affichés dans l'ordre Gagnant/Perdant, sinon, selon l'ordre 1er Judoka/2nd Judoka"
-                           Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        <CheckBox Style="{StaticResource CheckboxStyle}"
-                                    IsChecked="{Binding Path=AfficherPositionCombat}"
-                                    IsEnabled="{Binding Path=PublierEngagements, Mode=OneWay}"
-                                    Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"
-                                    Margin="10 0 0 0"
-                                          Content="Position combat"/>
-                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affiche la position du combat dans l'ordre de déroulement sur le tapis."
-                           Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                    </StackPanel>
-                </StackPanel>
-                <StackPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
-                    <CheckBox   Content="Utiliser un intitulé commun" Style="{StaticResource CheckboxStyle}"
-                        IsChecked="{Binding Path=UseIntituleCommun}"/>
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, en cas de gestion avec plusieurs compétitions simultanéement (ex. Districts),  utilise l'intitulé commun configuré au lieu du titre de la 1ère compétition."/>
-                </StackPanel>
-                <StackPanel Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="30 0 0 0" > 
-                    <TextBox Height="24" VerticalScrollBarVisibility="Auto" Margin="5 5 5 5" Width="300" Text = "{Binding Path=IntituleCommun}"/>
-                </StackPanel>
-
-                <telerik:RadNumericUpDown  Grid.Row="5" Grid.Column="1" Value="{Binding TailleMaxPouleColonnes}" Width="80" Height="20" Minimum="2" Maximum="999" SmallChange="1" HideTrailingZeros="True" Margin="5 0 5 0">
-                    <telerik:RadNumericUpDown.IsEnabled>
-                        <MultiBinding Converter="{StaticResource BoolOperationConverter}" ConverterParameter="not_a_and_b"  Mode="OneWay">
-                            <Binding Path="PouleToujoursEnColonnes" Mode="OneWay"/>
-                            <Binding Path="PouleEnColonnes" Mode="OneWay"/>
-                        </MultiBinding>
-                    </telerik:RadNumericUpDown.IsEnabled>
-                </telerik:RadNumericUpDown>
-
-            </Grid>
-        </Border>
-
-        <!-- BLOC GENERATION -->
-        <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource Header1Style}" Margin="10,10,10,10" Visibility="Visible" >
-            <TextBlock Text="Génération" Style="{StaticResource Header1TextStyle}"/>
-        </StackPanel>
-        <Border BorderThickness="1" Grid.Row="1" Grid.Column="1" BorderBrush="White" Margin="10 0 10 10" Width="380" Height="360">
+        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="White" Margin="10,0,10,10" Width="800" Height="170">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-                    <Label HorizontalAlignment="Right" Content="Délai de génération:" Style="{StaticResource LabelStyle}" />
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en sec. entre 2 générations du site."/>
+                    <Label HorizontalAlignment="Right" Content="Actualisation site public:" Style="{StaticResource LabelStyle}" />
+                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en sec. entre 2 générations du site pour le grand public."/>
                 </StackPanel>
-                <telerik:RadNumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding DelaiGenerationSec}"
-                          Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="0 0 50 0"/>
+                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                    <telerik:RadNumericUpDown Value="{Binding DelaiGenerationSec}" Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="0 0 0 0"/>
+                    <Label HorizontalAlignment="Right" Content="Sec." Style="{StaticResource LabelStyle}" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal">
+                    <Label HorizontalAlignment="Right" Content="Actualisation site interne:" Style="{StaticResource LabelStyle}" />
+                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en sec. entre 2 générations du site interne."/>
+                </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="4" Orientation="Horizontal">
+                    <telerik:RadNumericUpDown  Value="{Binding DelaiGenerationSec}" Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="0 0 0 0"/>
+                    <Label HorizontalAlignment="Right" Content="Sec." Style="{StaticResource LabelStyle}" />
+                </StackPanel>
+
+                <Line Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" Grid.RowSpan="4" StrokeThickness="1" Stroke="White" Margin="5" Y1="0" Y2="1" Stretch="Fill"/>
 
                 <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="0 10 0 0">
-                    <Label  HorizontalAlignment="Right" Content="Actualisation client:" Style="{StaticResource LabelStyle}" />
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en sec. d'actualisation automatique du site coté client si l'utilisateur coche la case 'Actualiser'."/>
-                </StackPanel>
-                <telerik:RadNumericUpDown  Grid.Row="1" Grid.Column="1" Value="{Binding DelaiActualisationClientSec}"
-                            Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="0 0 50 0"/>
-
-                <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Margin="0 10 0 0">
                     <Label  HorizontalAlignment="Right" Content="Sélection du logo:" Style="{StaticResource LabelStyle}" />
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Logo a afficher dans le bandeau d'entête du site"/>
                 </StackPanel>
-                <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal">
+                <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
                     <telerik:RadComboBox ItemsSource="{Binding FichiersLogo}" Height="20" Width="130" DisplayMemberPath="Name" Name="LogoList" Margin="10 0 0 0" IsSynchronizedWithCurrentItem="True" SelectedItem="{Binding SelectedLogo}"/>
                     <telerik:RadButton ToolTip="Ajouter un logo: Format: png, taille max.: 200x200. le fichier contenir 'logo' dans son nom" telerik:StyleManager.Theme="Expression_Dark" Height="32" Width="32"
                         Focusable="False" Tag="pack://application:,,,/Tools;component/data/images/icons/black/add_image-32.png" Margin="5 0 0 0"
@@ -208,21 +75,22 @@
                         </WrapPanel>
                     </telerik:RadButton>
                 </StackPanel>
-                <Border Grid.Column="1" Grid.Row="2" Grid.RowSpan="2" Background="LightGray" Width="120" Margin="0 0 30 0">
+                <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="23" Background="LightGray" Width="120" Margin="0 0 30 0">
                     <Image  Source="{Binding ElementName=LogoList, Path=SelectedItem.FullName}" Width="120" Height="120"/>
                 </Border>
-                <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal" Margin="0 10 0 0">
+
+                <StackPanel Grid.Row="1" Grid.Column="3" Orientation="Horizontal" Margin="0 10 0 0">
                     <Label HorizontalAlignment="Right" Content="Répertoire d'export:" Style="{StaticResource LabelStyle}" />
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Répertoire racine dans lequel les données du site sont générées et publiés"/>
                 </StackPanel>
-                <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Height="20" Margin="5 -10 5 5" Text = "{Binding Path=RepertoireRacine}" IsEnabled="False"/>
-                <telerik:RadButton Grid.Row="6" Grid.Column="0" Width="95" Height="30" telerik:StyleManager.Theme="Expression_Dark" Command="{Binding CmdGetRepertoireRacine}" Margin="-70 0 0 0">
+                <TextBox Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2" Height="20" Margin="5 -10 5 5" Text = "{Binding Path=RepertoireRacine}" IsEnabled="False"/>
+                <telerik:RadButton Grid.Row="3" Grid.Column="3" Width="95" Height="30" telerik:StyleManager.Theme="Expression_Dark" Command="{Binding CmdGetRepertoireRacine}" Margin="-70 0 0 0">
                     <WrapPanel Orientation="Horizontal">
                         <Label Content="Sélectionner ..." Style="{StaticResource ButtonLabelStyle}"/>
                     </WrapPanel>
                 </telerik:RadButton>
 
-                <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" Margin="0 -5 0 0">
+                <StackPanel Grid.Row="3" Grid.Column="4" Orientation="Horizontal" Margin="0 -5 0 0">
                     <CheckBox Style="{StaticResource CheckboxStyle}"
                         IsChecked="{Binding Path=EffacerAuDemarrage}"
                         Margin="0 0 0 0">
@@ -230,23 +98,155 @@
                     <Label HorizontalAlignment="Right" Content="Effacer au démarage" Style="{StaticResource LabelStyle}"/>
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, Supprimer tout le contenu préalable du répertoire au démarrage. Le site distant sera également effacé."/>
                 </StackPanel>
-                <StackPanel Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0 10 0 0">
-                    <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 0 0"
-                    Command="{Binding Path=CmdAfficherConfigurationEcransAppel}" Height="35">
-                        <WrapPanel Orientation="Horizontal">
-                            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/restore_window-32.png" Height="25" Margin="5 0"/>
-                            <Label Content="Configurer Ecrans d'appel ..." Style="{StaticResource ButtonLabelStyle}"/>
-                        </WrapPanel>
-                    </telerik:RadButton>
-                </StackPanel>
             </Grid>
         </Border>
 
+        <!-- CONFIGURATION PUBLICATION -->
+        <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource Header1Style}" Margin="10" Visibility="Visible" >
+            <TextBlock Text="Publication" Style="{StaticResource Header1TextStyle}"/>
+        </StackPanel>
+            <telerik:RadTabControl Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" telerik:StyleManager.Theme="Expression_Dark"
+                                   Margin="10,0,10,10" Width="800" Height="260" HeaderBackground="Black" BorderThickness="1" BorderBrush="White" Background="Black"
+                                   FontWeight="DemiBold">
+                <telerik:RadTabControl.Items>
+                <telerik:RadTabItem Header="Site Public">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="0 0 0 0">
+                            <Label  HorizontalAlignment="Right" Content="Actualisation client:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
+                            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en sec. d'actualisation automatique du site coté client si l'utilisateur coche la case 'Actualiser'."/>
+                            <telerik:RadNumericUpDown  Value="{Binding DelaiActualisationClientSec}" Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="10 0 0 0"/>
+                            <Label HorizontalAlignment="Right" Content="Sec." Style="{StaticResource LabelStyle}" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Vertical">
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox   Content="Utiliser un intitulé de compétition commun" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=UseIntituleCommun}"/>
+                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, en cas de gestion avec plusieurs compétitions simultanéement (ex. Districts),  utilise l'intitulé commun configuré au lieu du titre de la 1ère compétition."/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="30 -5 0 0" >
+                                <TextBox Height="24" VerticalScrollBarVisibility="Auto" Margin="5 5 5 5" Width="300" Text = "{Binding Path=IntituleCommun}"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical">
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox Content="Publier 'Prochains Combats'" Style="{StaticResource CheckboxStyle}"
+                                                        IsChecked="{Binding Path=PublierProchainsCombats}"/>
+                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0" ToolTip="Si cochée, provoque l'ajout des menus 'Prochains Combats' qui liste les combats à venir par catégories et 'Se Prépare' qui liste les prochains combats sur chaque tapis selon la profondeur de la chambre d'appel."/>
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+                                <StackPanel Orientation="Horizontal" Margin="30 0 0 -5">
+                                    <Label HorizontalAlignment="Right" Content="Profondeur chambre d'appel:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
+                                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Nombres de combats à afficher dans la chambre d'appel."/>
+                                    <telerik:RadNumericUpDown  IsEnabled="{Binding Path=PublierProchainsCombats, Mode=OneWay}" Value="{Binding NbProchainsCombats}" Width="80" Height="20" Minimum="1" Maximum="99" SmallChange="1" HideTrailingZeros="True" Margin="5 0 5 0"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Vertical" Margin="30 0 0 -5">
+                                    <StackPanel Orientation="Horizontal" >
+                                        <Label HorizontalAlignment="Right" Content="Message d'avertissement:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
+                                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Message d'avertissement affiché au début des pages prochains combats et se prépare."/>
+                                    </StackPanel>
+                                    <TextBox  TextWrapping="Wrap" Height="24" VerticalScrollBarVisibility="Auto" Margin="5 5 5 5" MinWidth="300" Text = "{Binding Path=MsgProchainsCombats}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="2" Grid.Column="0"  Orientation="Horizontal" VerticalAlignment="Top">
+                            <CheckBox   Content="Publier 'Affectation tapis'" Style="{StaticResource CheckboxStyle}"
+                                                        IsChecked="{Binding Path=PublierAffectationTapis}"
+                                                        Visibility="{Binding Path=CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}">
+                            </CheckBox>
+                            <Image Visibility="{Binding Path=CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}" Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0" ToolTip="Si cochée, provoque l'ajout du menu 'Affectations' qui liste les tapis assignées pour chaque catégories. Disponible uniquement en compétition Individuelle ou Shiai."/>
+                        </StackPanel>
+
+                        <Line Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Grid.RowSpan="3" StrokeThickness="1" Stroke="White" Margin="5" Y1="0" Y2="1" Stretch="Fill"/>
+                        
+                        <StackPanel Grid.Row="2" Grid.Column="2"  Orientation="Vertical">
+                            <StackPanel  Orientation="Horizontal">
+                                <CheckBox   Content="Afficher les Poules en colonnes" Style="{StaticResource CheckboxStyle}"
+                                        IsChecked="{Binding Path=PouleEnColonnes}">
+                                </CheckBox>
+                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, les poules seront affichées en colonnes selon les critères de taille. Affichage en diagonale sinon."/>
+                            </StackPanel >
+                            <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal" Margin="30 -5 0 0">
+                                <CheckBox Style="{StaticResource CheckboxStyle}"
+                                IsChecked="{Binding Path=PouleToujoursEnColonnes, Converter={StaticResource BoolNotConverter}}"
+                                IsEnabled="{Binding Path=PouleEnColonnes, Mode=OneWay}"
+                                Margin="0 0 0 0"
+                                Content="taille max. poule en colonne:">
+                                </CheckBox>
+                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Taille minimale de la poule au dessus de laquelle la disposition est en diagonale."/>
+                                <telerik:RadNumericUpDown  Grid.Row="2" Grid.Column="3" Value="{Binding TailleMaxPouleColonnes}" Width="80" Height="20" Minimum="2" Maximum="999" SmallChange="1" HideTrailingZeros="True" Margin="5 0 5 0">
+                                    <telerik:RadNumericUpDown.IsEnabled>
+                                        <MultiBinding Converter="{StaticResource BoolOperationConverter}" ConverterParameter="not_a_and_b"  Mode="OneWay">
+                                            <Binding Path="PouleToujoursEnColonnes" Mode="OneWay"/>
+                                            <Binding Path="PouleEnColonnes" Mode="OneWay"/>
+                                        </MultiBinding>
+                                    </telerik:RadNumericUpDown.IsEnabled>
+                                </telerik:RadNumericUpDown>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Grid.Column="2"  Orientation="Vertical" Visibility="{Binding Path=CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel  Orientation="Horizontal">
+                                <CheckBox   Content="Publier 'Engagements'" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=PublierEngagements}"/>
+                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, provoque l'ajout du menu 'Engagements' qui liste les engages, leurs statuts et leurs combats à venir. Disponible uniquement en compétition Individuelle ou Shiai.&#x0a;ATTENTION, cette option augmente sensiblement le temps de génération et le nombre de fichiers a transférer."/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Vertical" Margin="25 0 0 0">
+                                <StackPanel Orientation="Vertical">
+                                    <StackPanel Orientation="Horizontal" Margin="0 0 0 -5">
+                                        <CheckBox Style="{StaticResource CheckboxStyle}"
+                                            IsChecked="{Binding Path=EngagementsAbsents}"
+                                            IsEnabled="{Binding Path=PublierEngagements, Mode=OneWay}"
+                                            Content="Inclure les absents"/>
+                                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affichera les judokas absents."/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0 0 0 -5">
+                                        <CheckBox Style="{StaticResource CheckboxStyle}"
+                                            IsChecked="{Binding Path=EngagementsTousCombats}"
+                                            IsEnabled="{Binding Path=PublierEngagements, Mode=OneWay}"
+                                            Content="Inclure tous les combats"/>
+                                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affichera tous les combats des engages, y compris ceux terminés."/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0 0 0 -5">
+                                        <CheckBox Style="{StaticResource CheckboxStyle}"
+                                            IsChecked="{Binding Path=ScoreEngagesGagnantPerdant}"
+                                            IsEnabled="{Binding Path=PublierEngagements, Mode=OneWay}"
+                                          Content="Afficher les scores Gagnant/Perdant"/>
+                                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, les résultats des combats seront affichés dans l'ordre Gagnant/Perdant, sinon, selon l'ordre 1er Judoka/2nd Judoka"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Style="{StaticResource CheckboxStyle}"
+                                            IsChecked="{Binding Path=AfficherPositionCombat}"
+                                            IsEnabled="{Binding Path=PublierEngagements, Mode=OneWay}"
+                                          Content="Position combat"/>
+                                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affiche la position du combat dans l'ordre de déroulement sur le tapis."/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </telerik:RadTabItem>
+                <telerik:RadTabItem Header="Site Interne">
+                </telerik:RadTabItem>
+            </telerik:RadTabControl.Items>
+            </telerik:RadTabControl>
+
         <!-- BLOC BOUTONS -->
-        <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Grid.Row="2" Margin="10" Grid.ColumnSpan="2" >
+        <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Grid.Row="4" Margin="10" Grid.ColumnSpan="2" >
             <telerik:RadButton x:Name="ButOk" Width="70" Height="30" telerik:StyleManager.Theme="Expression_Dark" Click="ButOk_Click">
                 <WrapPanel Orientation="Horizontal">
-                    <!--<Image Source="pack://application:,,,/Tools;component/data/images/icons/black/ok-32.png" Height="25" Margin="5 0"/>-->
                     <Label x:Name="ButOkLabel"  Content="Ok" Foreground="White"/>
                 </WrapPanel>
             </telerik:RadButton>
