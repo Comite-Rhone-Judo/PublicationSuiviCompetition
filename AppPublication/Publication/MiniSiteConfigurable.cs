@@ -7,6 +7,8 @@ namespace AppPublication.Publication
 {
     public class MiniSiteConfigurable : MiniSite
     {
+        // TODO voir pour faire que MiniSite soit WPF agnostic et mettre les properties bindable dans cette classe
+
         #region CONSTRUCTEURS
         /// <summary>
         /// 

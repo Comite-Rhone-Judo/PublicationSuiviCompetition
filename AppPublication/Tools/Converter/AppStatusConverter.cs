@@ -98,7 +98,7 @@ namespace AppPublication.Tools.Converter
                         }
                     case Enum.BusyStatusEnum.AttenteFinGeneration:
                          {
-                            output = "En attente de la fin de la génération ...";
+                            output = "En attente de la fin du cycle en cours ...";
                             break;
                         }
                     case Enum.BusyStatusEnum.None:

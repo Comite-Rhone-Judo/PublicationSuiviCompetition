@@ -46,6 +46,9 @@ namespace Tools.Net
         private long _nbSyncDistant = 0;
         private string _instanceName = string.Empty;
         private int _maxRetryFTP = kMaxRetryFTP;
+
+        private long _totalDeleteCount = 0;
+        private long _currentDeleteCount = 0;
         #endregion
 
         #region CONSTRUCTEURS
@@ -587,36 +590,14 @@ namespace Tools.Net
 
                 if (ftpClient.IsConnected)
                 {
-                    // TODO A partir de la, il faut lister tous les fichiers et repertoires pour avoir le nombre d'items a supprimer
-                    List<FtpListItem> ftpList = ftpClient.GetListing(RepertoireSiteFTPDistant).ToList();
-                    
-                    int idx = 0;
-                    foreach (FtpListItem ftpItem in ftpList)
-                    {
-                        switch (ftpItem.Type)
-                        {
-                            // TODO on est aveugle sur cette partie en terme de progression ...
-                            case FtpObjectType.Directory:
-                                {
-                                    // TODO ici il faudrait mettre un appel recursive pour avoir le bon suivi de progression
-                                    ftpClient.DeleteDirectory(ftpItem.FullName);
-                                }
-                                break;
+                    _currentDeleteCount = 0;
+                    _totalDeleteCount = 0;
 
-                            case FtpObjectType.File:
-                                {
-                                    ftpClient.DeleteFile(ftpItem.FullName);
-                                }
-                                break;
+                    // On commence par compter le nombre total de fichier a traiter (pour la progression)
+                    InternalFtpRecursiveFileCount(RepertoireSiteFTPDistant, ftpClient);
 
-                            case FtpObjectType.Link:
-                                break;
-                        }
-
-                        // Met a jour la progression du nettoyage
-                        CalculProgressionFTP(idx, ftpList.Count);
-                        idx++;
-                    }
+                    // Efface recursivement mais en calculant la progression (ce que ne fait pas ftpClient.DeleteDirectory)
+                    InternalFtpRecursiveDeleteDirectory(RepertoireSiteFTPDistant, ftpClient, true);
 
                     // Disconnect
                     ftpClient.Disconnect();
@@ -779,8 +760,6 @@ namespace Tools.Net
                                                                                 null,
                                                                                 _ftpProgressCallback);
 
-                        // TODO vérifier, apparemment, il y a une erreur, on n'arrive pas a cahrger les fichiers de common
-
                         if (uploadOut.Count > 0)
                         {
                             output.IsSuccess = true;
@@ -924,6 +903,95 @@ namespace Tools.Net
         }
 
         /// <summary>
+        /// Retourne le nombre total de fichiers dans un repertoire FTP et ses sous-repertoires (recursif)
+        /// </summary>
+        /// <param name="repertoire"></param>
+        /// <param name="ftpClient">Le client a utilise, suppose connecte</param>
+        /// <returns></returns>
+        private long InternalFtpRecursiveFileCount(string repertoire, FtpClient ftpClient)
+        {
+            if (ftpClient == null || !ftpClient.IsConnected) { throw new ArgumentException("Le client FTP doit etre connecte"); }
+
+            try
+            {
+                // Recupere le contenu du repertoire
+                List<FtpListItem> ftpList = ftpClient.GetListing(repertoire).ToList();
+
+                // Compte les fichiers dans le repertoire courant
+                _totalDeleteCount += ftpList.Count(o => o.Type == FtpObjectType.File);
+
+                // Pour chaque sous-repertoire, lance un appel recursif
+                List<FtpListItem> ftpDir = ftpList.Where(o => o.Type == FtpObjectType.Directory).ToList();
+
+                foreach (var item in ftpDir)
+                {
+                    InternalFtpRecursiveFileCount(item.FullName, ftpClient);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogTools.Logger.Error(ex, "Erreur lors du comptage recursif des fichiers FTP dans le repertoire {0}", repertoire);
+                throw new Exception("Erreur lors du comptage recursif des fichiers FTP", ex);
+            }
+
+            return _totalDeleteCount;
+        }
+
+        /// <summary>
+        /// Supprime de maniere recursive tous les fichiers et repertoires dans un repertoire FTP
+        /// </summary>
+        /// <param name="repertoire"></param>
+        /// <param name="ftpClient"></param>
+        /// <param name="onlyContent">True pour ne pas effacer le repertoire lui meme</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="Exception"></exception>
+        private void InternalFtpRecursiveDeleteDirectory(string repertoire, FtpClient ftpClient, bool onlyContent = true)
+        {
+            if (ftpClient == null || !ftpClient.IsConnected) { throw new ArgumentException("Le client FTP doit etre connecte"); }
+
+            bool reportProgress = (_totalDeleteCount > 0);
+
+            try
+            {
+                // Recupere le contenu du repertoire
+                List<FtpListItem> ftpList = ftpClient.GetListing(repertoire).ToList();
+
+                // Supprime les fichiers dans le repertoire courant
+                List<FtpListItem> ftpFic = ftpList.Where(o => o.Type == FtpObjectType.File).ToList();
+
+                foreach (var item in ftpFic)
+                    {
+                    // Supprime le fichier
+                    ftpClient.DeleteFile(item.FullName);
+
+                    // Un de plus a ce niveau d'execution
+                    _currentDeleteCount++;
+
+                    // Met a jour la progression du nettoyage
+                    if (reportProgress) { CalculProgressionFTP(_currentDeleteCount, _totalDeleteCount); }
+                }
+
+                // Pour chaque sous-repertoire, lance un appel recursif
+                List<FtpListItem> ftpDir = ftpList.Where(o => o.Type == FtpObjectType.Directory).ToList();
+
+                foreach (var item in ftpDir)
+                {
+                    // Ce sont des sous repertoires, ont doit donc les effacer avec leur contenu
+                    InternalFtpRecursiveDeleteDirectory(item.FullName, ftpClient, false);
+                }
+
+                // et on fini par supprimer le répertoire qui est vide maintenant sauf si on ne doit vider que le contenu
+                if (!onlyContent) { ftpClient.DeleteDirectory(repertoire); }
+            }
+            catch (Exception ex)
+            {
+                LogTools.Logger.Error(ex, "Erreur lors de la suppression recursive des fichiers FTP dans le repertoire {0}", repertoire);
+                throw new Exception("Erreur lors de la suppression recursive des fichiers FTP", ex);
+            }
+        }
+
+        /// <summary>
         /// Calcul le % de progression, FTP en fonction des informations retournees par FtpProgress
         /// </summary>
         /// <param name="p"></param>
@@ -940,7 +1008,7 @@ namespace Tools.Net
         /// </summary>
         /// <param name="index"></param>
         /// <param name="total"></param>
-        private void CalculProgressionFTP(int index, int total)
+        private void CalculProgressionFTP(long index, long total)
         {
             int pct = -1;
             // Calcul le ratio de transfert du repertoire
