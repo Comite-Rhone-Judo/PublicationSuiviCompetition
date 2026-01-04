@@ -166,9 +166,6 @@
     <Compile Include="Views\Configuration\ConfigurationPublicationView.xaml.cs">
       <DependentUpon>ConfigurationPublicationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Configuration\ConfigurationPublicationViewOld.xaml.cs">
-      <DependentUpon>ConfigurationPublicationViewOld.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Infos\InformationsView.xaml.cs">
       <DependentUpon>InformationsView.xaml</DependentUpon>
     </Compile>
@@ -207,10 +204,6 @@
     <Page Include="Views\Configuration\ConfigurationPublicationView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Configuration\ConfigurationPublicationViewOld.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Main\MainView.xaml">
       <Generator>MSBuild:Compile</Generator>
