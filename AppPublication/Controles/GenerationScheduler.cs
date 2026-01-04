@@ -184,6 +184,7 @@ namespace AppPublication.Controles
         /// </summary>
         public int DelaiGenerationSec
         {
+            // TODO il faudra le modifier pour prendre en compte les differentes instances
             get
             {
                 return _delaiGenerationSec;
@@ -192,7 +193,7 @@ namespace AppPublication.Controles
             {
                 if (_delaiGenerationSec != value)
                 {
-                    PublicationConfigSection.Instance.DelaiGenerationSec = (_delaiGenerationSec = value);
+                    _delaiGenerationSec = value;
                 }
             }
         }
@@ -209,9 +210,10 @@ namespace AppPublication.Controles
             }
             set
             {
+                // TODO il faudra le modifier pour prendre en compte les differentes instances
                 if (_effacerAuDemarrage != value)
                 {
-                    PublicationConfigSection.Instance.EffacerAuDemarrage = (_effacerAuDemarrage = value);
+                    _effacerAuDemarrage = value;
                 }
             }
         }
@@ -440,6 +442,6 @@ namespace AppPublication.Controles
                 Thread.Sleep(delaiScrutationMs);
             }
         }
-        #endregion
+        #endregion      
     }
 }

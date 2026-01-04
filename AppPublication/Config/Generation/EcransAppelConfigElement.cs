@@ -2,13 +2,13 @@
 using System.Configuration;
 using Tools.Configuration;
 
-namespace AppPublication.Config.EcransAppel
+namespace AppPublication.Config.Generation
 {
     /// <summary>
     /// Élément de configuration représentant un écran d'appel.
     /// Hérite de ConfigElementBase pour l'intégration automatique avec le système de sauvegarde.
     /// </summary>
-    public class EcransAppelConfigElement : ConfigElementBase<EcransAppelConfigSection>
+    public class EcransAppelConfigElement : ConfigElementBase<GenerationConfigSection>
     {
         // Constantes pour les noms des propriétés XML
         private const string kId = "id";
@@ -18,18 +18,21 @@ namespace AppPublication.Config.EcransAppel
         private const string kHostname = "hostname";
         private const string kGroupement = "groupement";
 
+        #region METHODES
         /// <summary>
         /// Méthode héritée de ConfigElementBase.
         /// Notifie la section parente qu'une propriété a changé pour déclencher le mécanisme de sauvegarde différée.
         /// </summary>
         protected override void NotifyParentOfModification()
         {
-            if (EcransAppelConfigSection.Instance != null)
+            if (GenerationConfigSection.Instance != null)
             {
-                EcransAppelConfigSection.Instance.NotifyChildModification();
+                GenerationConfigSection.Instance.NotifyChildModification();
             }
         }
+        #endregion
 
+        #region PROPRIETES
         [ConfigurationProperty(kHostname, DefaultValue = "")]
         public string Hostname
         {
@@ -74,5 +77,6 @@ namespace AppPublication.Config.EcransAppel
             get { return GetConfigValue<string>(kTapisIds, string.Empty); }
             set { SetValueAndMarkDirty(kTapisIds, value); }
         }
+        #endregion
     }
 }

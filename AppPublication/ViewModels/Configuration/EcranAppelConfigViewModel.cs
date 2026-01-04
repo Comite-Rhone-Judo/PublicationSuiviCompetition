@@ -1,4 +1,4 @@
-﻿using AppPublication.Config.EcransAppel;
+﻿using AppPublication.Config.Generation;
 using AppPublication.Models.EcransAppel;
 using System;
 using System.Collections.Generic;
@@ -283,9 +283,9 @@ namespace AppPublication.ViewModels.Configuration
         private EcransAppelConfigElement GetConfigElement()
         {
             // On va chercher l'élément correspondant dans la config globale
-            if (EcransAppelConfigSection.Instance != null && EcransAppelConfigSection.Instance.Ecrans != null)
+            if (GenerationConfigSection.Instance != null && GenerationConfigSection.Instance.Ecrans != null)
             {
-                return EcransAppelConfigSection.Instance.Ecrans.GetElementById(Id);
+                return GenerationConfigSection.Instance.Ecrans.GetElementById(Id);
             }
             return null;
         }

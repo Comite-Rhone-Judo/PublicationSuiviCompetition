@@ -1,4 +1,4 @@
-﻿using AppPublication.Config.MiniSite;
+﻿using AppPublication.Config.Publication;
 using System.Net;
 using Tools.Net;
 using Tools.Logging;
@@ -225,13 +225,13 @@ namespace AppPublication.Publication
         /// </summary>
         private MiniSiteConfigElement GetInstanceConfigElement()
         {
-                // Sauvegarde de la config
-                MiniSiteConfigElement cfg = MiniSiteConfigSection.Instance.MiniSites[InstanceName];
+            // Sauvegarde de la config
+                MiniSiteConfigElement cfg = PublicationConfigSection.Instance.MiniSites[InstanceName];
                 if (cfg == null)
                 {
                     // Pas de config trouvée, on crée une config vide par défaut
                     cfg = new MiniSiteConfigElement();
-                    MiniSiteConfigSection.Instance.MiniSites.Add(cfg);
+                    PublicationConfigSection.Instance.MiniSites.Add(cfg);
                 }
 
             return cfg;
@@ -239,12 +239,12 @@ namespace AppPublication.Publication
 
         private void LoadConfiguration()
         {
-            MiniSiteConfigElement cfg = MiniSiteConfigSection.Instance.MiniSites[InstanceName];
+            MiniSiteConfigElement cfg = PublicationConfigSection.Instance.MiniSites[InstanceName];
             if (cfg == null)
             {
                 // Pas de config trouvée, on crée une config vide par défaut
                 cfg = new MiniSiteConfigElement();
-                MiniSiteConfigSection.Instance.MiniSites.Add(cfg);
+                PublicationConfigSection.Instance.MiniSites.Add(cfg);
             }
 
             if (IsLocal)

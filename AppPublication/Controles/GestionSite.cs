@@ -1,5 +1,5 @@
-﻿using AppPublication.Config.EcransAppel;
-using AppPublication.Config.Publication;
+﻿using AppPublication.Config.Publication;
+using AppPublication.Config.Generation;
 using AppPublication.Controles;
 using AppPublication.Generation;
 using AppPublication.Models.EcransAppel;
@@ -187,7 +187,7 @@ namespace AppPublication.Controles
                 if (SiteDistantSelectionne == null || !SiteDistantSelectionne.IsActif)
                 {
                     // Enregistre la valeur en cache
-                    PublicationConfigSection.Instance.EasyConfig = (_easyConfig = value);
+                    PublicationConfigSection.Instance.General.EasyConfig = (_easyConfig = value);
 
                     NotifyPropertyChanged();
 
@@ -301,7 +301,7 @@ namespace AppPublication.Controles
                     {
                         // Garde en memoire la derniere valeur sauvegardee pour ce niveau
                         _allEntitePublicationFFJudo[_niveauPublicationFFJudo] = value;
-                        PublicationConfigSection.Instance.EntitePublicationFFJudo = _entitePublicationFFJudo.Nom;
+                        PublicationConfigSection.Instance.General.EntitePublicationFFJudo = _entitePublicationFFJudo.Nom;
 
                         // On Calcul les parametres FTP en fonction de l'entite selectionne
                         GenereConfigFTPFranceJudo(value);
@@ -345,7 +345,7 @@ namespace AppPublication.Controles
             {
                 if (_niveauPublicationFFJudo != value)
                 {
-                    PublicationConfigSection.Instance.NiveauPublicationFFJudo = (_niveauPublicationFFJudo = value);
+                    PublicationConfigSection.Instance.General.NiveauPublicationFFJudo = (_niveauPublicationFFJudo = value);
 
                     // Ajuste la liste des entites et restaure le dernier element selectionne pour ce niveau
                     ObservableCollection<EntitePublicationFFJudo> ent = null;
@@ -386,7 +386,7 @@ namespace AppPublication.Controles
                     // Propage la valeur au generateur de site
                     _generateurSite.ConfigurationGeneration.PouleEnColonnes = value;
 
-                    PublicationConfigSection.Instance.PouleEnColonnes = (_pouleEnColonnes = value);
+                    GenerationConfigSection.Instance.GenerateurSite.PouleEnColonnes = (_pouleEnColonnes = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -409,7 +409,7 @@ namespace AppPublication.Controles
                     // Propage la valeur au generateur de site
                     _generateurSite.ConfigurationGeneration.PouleToujoursEnColonnes = value;
 
-                    PublicationConfigSection.Instance.PouleToujoursEnColonnes = (_pouleToujoursEnColonnes = value);
+                    GenerationConfigSection.Instance.GenerateurSite.PouleToujoursEnColonnes = (_pouleToujoursEnColonnes = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -432,7 +432,7 @@ namespace AppPublication.Controles
                     // Propage la valeur au generateur de site
                     _generateurSite.ConfigurationGeneration.TailleMaxPouleColonnes = value;
                     
-                    PublicationConfigSection.Instance.TailleMaxPouleColonnes = (_tailleMaxPouleColonnes = value);
+                    GenerationConfigSection.Instance.GenerateurSite.TailleMaxPouleColonnes = (_tailleMaxPouleColonnes = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -452,7 +452,7 @@ namespace AppPublication.Controles
             {
                 if (value != _repertoireRacine)
                 {
-                    PublicationConfigSection.Instance.RepertoireRacine = (_repertoireRacine = value);
+                    PublicationConfigSection.Instance.General.RepertoireRacine = (_repertoireRacine = value);
                     NotifyPropertyChanged();
 
                     // Met a jour la constante d'export
@@ -518,7 +518,7 @@ namespace AppPublication.Controles
                     _generateurSite.ConfigurationGeneration.Logo = logoName;
 
                     _selectedLogo = value;
-                    PublicationConfigSection.Instance.Logo = logoName;
+                    PublicationConfigSection.Instance.General.Logo = logoName;
                     NotifyPropertyChanged();
                 }
             }
@@ -715,7 +715,7 @@ namespace AppPublication.Controles
             }
             set
             {
-                PublicationConfigSection.Instance.IsolerCompetition = (_isolerCompetition = value);
+                PublicationConfigSection.Instance.General.IsolerCompetition = (_isolerCompetition = value);
 
                 // Met a jour la structure d'export
                 if (_structureSiteDistant != null)
@@ -748,7 +748,7 @@ namespace AppPublication.Controles
                     // Propage la valeur au generateur de site
                     _generateurSite.ConfigurationGeneration.NbProchainsCombats = value;
 
-                    PublicationConfigSection.Instance.NbProchainsCombats = (_nbProchainsCombats = value);
+                    GenerationConfigSection.Instance.GenerateurSite.NbProchainsCombats = (_nbProchainsCombats = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -772,7 +772,9 @@ namespace AppPublication.Controles
                     // Configure le scheduler
                     _schedulerSite.DelaiGenerationSec = value;
 
-                    PublicationConfigSection.Instance.DelaiGenerationSec = (_delaiGenerationSec = value);
+                    SchedulerConfigElement cfg = GetInstanceConfigElement("public");
+                    cfg.DelaiGenerationSec = (_delaiGenerationSec = value);
+
                     NotifyPropertyChanged();
                 }
             }
@@ -795,7 +797,7 @@ namespace AppPublication.Controles
                     // Configure le scheduler
                     _schedulerSite.EffacerAuDemarrage = value;
 
-                    PublicationConfigSection.Instance.EffacerAuDemarrage = (_effacerAuDemarrage = value);
+                    PublicationConfigSection.Instance.General.EffacerAuDemarrage = (_effacerAuDemarrage = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -819,7 +821,7 @@ namespace AppPublication.Controles
                     // Propage au generateur de site
                     _generateurSite.ConfigurationGeneration.DelaiActualisationClientSec = value;
 
-                    PublicationConfigSection.Instance.DelaiActualisationClientSec = (_delaiActualisationClientSec = value);
+                    GenerationConfigSection.Instance.GenerateurSite.DelaiActualisationClientSec = (_delaiActualisationClientSec = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -842,7 +844,7 @@ namespace AppPublication.Controles
                     // propage au generateur de site
                     _generateurSite.ConfigurationGeneration.MsgProchainsCombats = value;
 
-                    PublicationConfigSection.Instance.MsgProchainsCombats = (_msgProchainsCombats = value);
+                    GenerationConfigSection.Instance.GenerateurSite.MsgProchainsCombats = (_msgProchainsCombats = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -863,7 +865,7 @@ namespace AppPublication.Controles
             {
                 if (_urlDistant != value)
                 {
-                    PublicationConfigSection.Instance.URLDistant = (_urlDistant = value);
+                    PublicationConfigSection.Instance.General.URLDistant = (_urlDistant = value);
                     NotifyPropertyChanged();
                     URLDistantPublication = CalculURLSiteDistant();
                 }
@@ -935,7 +937,7 @@ namespace AppPublication.Controles
             {
                 if (_ftpRepertoireRacineDistant != value)
                 {
-                    PublicationConfigSection.Instance.RepertoireRacineSiteFTPDistant = (_ftpRepertoireRacineDistant = value);
+                    PublicationConfigSection.Instance.General.RepertoireRacineSiteFTPDistant = (_ftpRepertoireRacineDistant = value);
                     NotifyPropertyChanged();
                     SiteDistant.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();   // Ce parametre ne concerne pas le site FranceJudo
                 }
@@ -1067,7 +1069,7 @@ namespace AppPublication.Controles
                     // Propage la valeur au generateur de site
                     _generateurSite.ConfigurationGeneration.PublierProchainsCombats = value;
 
-                    PublicationConfigSection.Instance.PublierProchainsCombats = (_publierProchainsCombats = value);
+                    GenerationConfigSection.Instance.GenerateurSite.PublierProchainsCombats = (_publierProchainsCombats = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -1092,7 +1094,7 @@ namespace AppPublication.Controles
                     // Propage la valeur au generateur de site
                     _generateurSite.ConfigurationGeneration.PublierAffectationTapis = value && CanPublierAffectation;
 
-                    PublicationConfigSection.Instance.PublierAffectationTapis = (_publierAffectationTapis = value);
+                    GenerationConfigSection.Instance.GenerateurSite.PublierAffectationTapis = (_publierAffectationTapis = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -1117,7 +1119,7 @@ namespace AppPublication.Controles
                     // Propage la valeur au generateur de site
                     _generateurSite.ConfigurationGeneration.PublierEngagements = value && CanPublierEngagements;
 
-                    PublicationConfigSection.Instance.PublierEngagements = (_publierEngagements = value);
+                    GenerationConfigSection.Instance.GenerateurSite.PublierEngagements = (_publierEngagements = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -1141,7 +1143,7 @@ namespace AppPublication.Controles
                     // Propage la valeur au generateur de site
                     _generateurSite.ConfigurationGeneration.EngagementsAbsents = value;
 
-                    PublicationConfigSection.Instance.EngagementsAbsents = (_engagementsAbsents = value);
+                    GenerationConfigSection.Instance.GenerateurSite.EngagementsAbsents = (_engagementsAbsents = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -1165,7 +1167,7 @@ namespace AppPublication.Controles
                     // Propage la valeur au generateur de site
                     _generateurSite.ConfigurationGeneration.EngagementsTousCombats = value;
 
-                    PublicationConfigSection.Instance.EngagementsTousCombats = (_engagementsTousCombats = value);
+                    GenerationConfigSection.Instance.GenerateurSite.EngagementsTousCombats = (_engagementsTousCombats = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -1185,7 +1187,7 @@ namespace AppPublication.Controles
                     // propage la valeur au generateur de site
                     _generateurSite.ConfigurationGeneration.UseIntituleCommun = value;
 
-                    PublicationConfigSection.Instance.UseIntituleCommun = (_useIntituleCommun = value);
+                    GenerationConfigSection.Instance.GenerateurSite.UseIntituleCommun = (_useIntituleCommun = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -1206,7 +1208,7 @@ namespace AppPublication.Controles
                     // propage la valeur au generateur de site
                     _generateurSite.ConfigurationGeneration.IntituleCommun = value;
 
-                    PublicationConfigSection.Instance.IntituleCommun = (_intituleCommun = value);
+                    GenerationConfigSection.Instance.GenerateurSite.IntituleCommun = (_intituleCommun = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -1226,7 +1228,7 @@ namespace AppPublication.Controles
                     // Propage la valeur au generateur de site
                     _generateurSite.ConfigurationGeneration.EngagementsScoreGP = value;
 
-                    PublicationConfigSection.Instance.ScoreEngagesGagnantPerdant = (_scoreEngagesGagnantPerdant = value);
+                    GenerationConfigSection.Instance.GenerateurSite.ScoreEngagesGagnantPerdant = (_scoreEngagesGagnantPerdant = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -1246,7 +1248,7 @@ namespace AppPublication.Controles
                     // Propage la valeur au generateur de site
                     _generateurSite.ConfigurationGeneration.AfficherPositionCombat = value;
 
-                    PublicationConfigSection.Instance.AfficherPositionCombat = (_afficherPositionCombat = value);
+                    GenerationConfigSection.Instance.GenerateurSite.AfficherPositionCombat = (_afficherPositionCombat = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -1406,6 +1408,43 @@ namespace AppPublication.Controles
         #endregion
 
         #region METHODES
+
+        /// <summary>
+        /// Calcul les parametres FTP pour le MiniSite France Judo
+        /// </summary>
+        /// <param name="entite">Entite selectionnee</param>
+        private void GenereConfigFTPFranceJudo(EntitePublicationFFJudo entite)
+        {
+            // Configure le site France Judo
+            SiteFranceJudo.LoginSiteFTPDistant = entite.Login;
+            SiteFranceJudo.ModeActifFTPDistant = false;
+            SiteFranceJudo.SiteFTPDistant = _ftpEasyConfig;
+            SiteFranceJudo.SynchroniseDifferences = true;
+            SiteFranceJudo.MaxRetryFTP = 10;
+
+            // Calcul le repertoire distant en fonction de la competition
+            SiteFranceJudo.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
+
+            // Recalcul l'URL distante
+            URLDistantPublication = CalculURLSiteDistant();
+        }
+
+        /// <summary>
+        /// Recherche l'element de sauvegarde de la configuration, ou l'ajoute s'il n'existe pas
+        /// </summary>
+        private SchedulerConfigElement GetInstanceConfigElement(string instanceName)
+        {
+            // Sauvegarde de la config
+            SchedulerConfigElement cfg = PublicationConfigSection.Instance.Schedulers[instanceName];
+            if (cfg == null)
+            {
+                // Pas de config trouvée, on crée une config vide par défaut
+                cfg = new SchedulerConfigElement();
+                PublicationConfigSection.Instance.Schedulers.Add(cfg);
+            }
+
+            return cfg;
+        }
 
         private void onGenerationSiteProgressReport(OperationProgress valueReported)
         {
@@ -1593,47 +1632,51 @@ namespace AppPublication.Controles
                 // La lecture de la config ne permet pas d'initialiser la structure du site correctement
 
                 // On lit le repertoire racine en 1er afin de pouvoir initialiser la structure du site
-                RepertoireRacine = PublicationConfigSection.Instance.RepertoireRacine;
+                RepertoireRacine = PublicationConfigSection.Instance.General.RepertoireRacine;
 
                 // Charge les valeurs pour la publication FFJudo
                 if (EasyConfigDisponible)
                 {
-                    EasyConfig = PublicationConfigSection.Instance.EasyConfig;
+                    EasyConfig = PublicationConfigSection.Instance.General.EasyConfig;
 
                     // On charge le nom de l'entite en 1er car sinon, en initialisant la liste des niveaux, on fait un reset de la valeur de l'entite a la 1ere de la liste du niveau
-                    string tmp = PublicationConfigSection.Instance.EntitePublicationFFJudo;
+                    string tmp = PublicationConfigSection.Instance.General.EntitePublicationFFJudo;
 
                     // Charge le niveau selectionne
-                    NiveauPublicationFFJudo = PublicationConfigSection.Instance.GetNiveauPublicationFFJudo(ListeNiveauxPublicationFFJudo, o => o);
+                    NiveauPublicationFFJudo = PublicationConfigSection.Instance.General.GetNiveauPublicationFFJudo(ListeNiveauxPublicationFFJudo, o => o);
 
                     // Recherche l'entite a partir de la valeur initiale lue
-                    EntitePublicationFFJudo = PublicationConfigSection.Instance.GetEntitePublicationFFJudo(ListeEntitesPublicationFFJudo, o => o.Nom, tmp);
+                    EntitePublicationFFJudo = PublicationConfigSection.Instance.General.GetEntitePublicationFFJudo(ListeEntitesPublicationFFJudo, o => o.Nom, tmp);
                 }
 
                 // Les autres parametres peuvent suivre
-                URLDistant = PublicationConfigSection.Instance.URLDistant;
-                IsolerCompetition = PublicationConfigSection.Instance.IsolerCompetition;
-                RepertoireRacineSiteFTPDistant = PublicationConfigSection.Instance.RepertoireRacineSiteFTPDistant;
-                PublierProchainsCombats = PublicationConfigSection.Instance.PublierProchainsCombats;
-                NbProchainsCombats = PublicationConfigSection.Instance.NbProchainsCombats;
-                PublierAffectationTapis = PublicationConfigSection.Instance.PublierAffectationTapis;
-                PublierEngagements = PublicationConfigSection.Instance.PublierEngagements;
-                EngagementsAbsents = PublicationConfigSection.Instance.EngagementsAbsents;
-                EngagementsTousCombats = PublicationConfigSection.Instance.EngagementsTousCombats;
-                DelaiGenerationSec = PublicationConfigSection.Instance.DelaiGenerationSec;
-                EffacerAuDemarrage = PublicationConfigSection.Instance.EffacerAuDemarrage;
-                DelaiActualisationClientSec = PublicationConfigSection.Instance.DelaiActualisationClientSec;
-                MsgProchainsCombats = PublicationConfigSection.Instance.MsgProchainsCombats;
-                PouleEnColonnes = PublicationConfigSection.Instance.PouleEnColonnes;
-                PouleToujoursEnColonnes = PublicationConfigSection.Instance.PouleToujoursEnColonnes;
-                TailleMaxPouleColonnes = PublicationConfigSection.Instance.TailleMaxPouleColonnes;
-                UseIntituleCommun = PublicationConfigSection.Instance.UseIntituleCommun;
-                IntituleCommun = PublicationConfigSection.Instance.IntituleCommun;
-                ScoreEngagesGagnantPerdant = PublicationConfigSection.Instance.ScoreEngagesGagnantPerdant;
-                AfficherPositionCombat = PublicationConfigSection.Instance.AfficherPositionCombat;
+                URLDistant = PublicationConfigSection.Instance.General.URLDistant;
+                IsolerCompetition = PublicationConfigSection.Instance.General.IsolerCompetition;
+                RepertoireRacineSiteFTPDistant = PublicationConfigSection.Instance.General.RepertoireRacineSiteFTPDistant;
+                EffacerAuDemarrage = PublicationConfigSection.Instance.General.EffacerAuDemarrage;
+
+                // TODO A ameliorer pour le multi-instance
+                SchedulerConfigElement cfg = GetInstanceConfigElement("public");
+                DelaiGenerationSec = cfg.DelaiGenerationSec;
+
+                PublierProchainsCombats = GenerationConfigSection.Instance.GenerateurSite.PublierProchainsCombats;
+                NbProchainsCombats = GenerationConfigSection.Instance.GenerateurSite.NbProchainsCombats;
+                PublierAffectationTapis = GenerationConfigSection.Instance.GenerateurSite.PublierAffectationTapis;
+                PublierEngagements = GenerationConfigSection.Instance.GenerateurSite.PublierEngagements;
+                EngagementsAbsents = GenerationConfigSection.Instance.GenerateurSite.EngagementsAbsents;
+                EngagementsTousCombats = GenerationConfigSection.Instance.GenerateurSite.EngagementsTousCombats;
+                DelaiActualisationClientSec = GenerationConfigSection.Instance.GenerateurSite.DelaiActualisationClientSec;
+                MsgProchainsCombats = GenerationConfigSection.Instance.GenerateurSite.MsgProchainsCombats;
+                PouleEnColonnes = GenerationConfigSection.Instance.GenerateurSite.PouleEnColonnes;
+                PouleToujoursEnColonnes = GenerationConfigSection.Instance.GenerateurSite.PouleToujoursEnColonnes;
+                TailleMaxPouleColonnes = GenerationConfigSection.Instance.GenerateurSite.TailleMaxPouleColonnes;
+                UseIntituleCommun = GenerationConfigSection.Instance.GenerateurSite.UseIntituleCommun;
+                IntituleCommun = GenerationConfigSection.Instance.GenerateurSite.IntituleCommun;
+                ScoreEngagesGagnantPerdant = GenerationConfigSection.Instance.GenerateurSite.ScoreEngagesGagnantPerdant;
+                AfficherPositionCombat = GenerationConfigSection.Instance.GenerateurSite.AfficherPositionCombat;
 
                 // Recherche le logo dans la liste
-                SelectedLogo = PublicationConfigSection.Instance.GetLogo(FichiersLogo.ToList(), o => o.Name);
+                SelectedLogo = PublicationConfigSection.Instance.General.GetLogo(FichiersLogo.ToList(), o => o.Name);
 
                 // L'interface local de publication a ete chargee via la configuration du minisite, il faut juste s'assurer du bon calcul des URLs
                 URLLocalPublication = CalculURLSiteLocal();
@@ -1659,9 +1702,9 @@ namespace AppPublication.Controles
                 // Chargement des Ecrans depuis la Config vers le Modèle Runtime
                 _ecransAppel = new EcranCollectionManager();
 
-                if (EcransAppelConfigSection.Instance != null && EcransAppelConfigSection.Instance.Ecrans != null)
+                if (GenerationConfigSection.Instance != null && GenerationConfigSection.Instance.Ecrans != null)
                 {
-                    foreach (EcransAppelConfigElement cfg in EcransAppelConfigSection.Instance.Ecrans)
+                    foreach (EcransAppelConfigElement cfg in GenerationConfigSection.Instance.Ecrans)
                     {
                         // Parsing des IDs de tapis "1;2;3" -> List<int>
                         List<int> tapisIds = new List<int>();
@@ -1845,26 +1888,6 @@ namespace AppPublication.Controles
             }
 
             return output;
-        }
-
-        /// <summary>
-        /// Calcul les parametres FTP pour le MiniSite France Judo
-        /// </summary>
-        /// <param name="entite">Entite selectionnee</param>
-        private void GenereConfigFTPFranceJudo(EntitePublicationFFJudo entite)
-        {
-            // Configure le site France Judo
-            SiteFranceJudo.LoginSiteFTPDistant = entite.Login;
-            SiteFranceJudo.ModeActifFTPDistant = false;
-            SiteFranceJudo.SiteFTPDistant = _ftpEasyConfig;
-            SiteFranceJudo.SynchroniseDifferences = true;
-            SiteFranceJudo.MaxRetryFTP = 10;
-
-            // Calcul le repertoire distant en fonction de la competition
-            SiteFranceJudo.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
-
-            // Recalcul l'URL distante
-            URLDistantPublication = CalculURLSiteDistant();
         }
 
         /// <summary>

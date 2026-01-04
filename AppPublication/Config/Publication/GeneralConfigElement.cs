@@ -1,4 +1,9 @@
-﻿using System.Configuration;
+﻿using AppPublication.Config.Generation;
+using AppPublication.Tools.Files;
+using AppPublication.Tools.FranceJudo;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
 using Tools.Configuration;
 
 namespace AppPublication.Config.Publication
@@ -10,23 +15,12 @@ namespace AppPublication.Config.Publication
     /// Implémenté en Singleton pour un accès facile et une sauvegarde "live".
     /// Les 'getters' fournissent des valeurs par défaut dynamiques si la configuration est absente.
     /// </summary>
-    [SectionName(kConfigSectionName)]
-    public class PublicationConfigSection : ConfigSectionBase<PublicationConfigSection>
+
+    public class GeneralConfigElement : ConfigElementBase<PublicationConfigSection>
     {
         #region CONSTANTES
-        // Nom de la section dans app.config
-        public const string kConfigSectionName = "PublicationConfigSection";
-
-        private const string kGeneralElementName = "general";
-        private const string kSchedulerCollectionName = "schedulers";
-        private const string kSchedulerCollectionItemName = "scheduler";
-
-        private const string kCollectionName = "miniSites";
-        private const string kCollectionItemName = "miniSite";
-
 
         // Nom des clefs de configuration
-        /*
         private const string kRepertoireRacine = "repertoireRacine";
         private const string kLogo = "logo";
         private const string kEasyConfig = "easyConfig";
@@ -37,46 +31,25 @@ namespace AppPublication.Config.Publication
 
         private const string kNiveauPublicationFFJudo = "NiveauPublicationFFJudo";
         private const string kEntitePublicationFFJudo = "EntitePublicationFFJudo";
-        */
 
         #endregion
 
-        #region CONSTRUCTEURS
-
-        // Constructeur privé pour le Singleton
-        protected PublicationConfigSection() : base() {}
-
-        #endregion
-
-        #region Collection
-
-        [ConfigurationProperty(kSchedulerCollectionName, IsRequired = true)]
-        [ConfigurationCollection(typeof(SchedulerCollection), AddItemName = kSchedulerCollectionItemName)]
-        public SchedulerCollection Schedulers
+        #region METHODES
+        /// <summary>
+        /// Méthode héritée de ConfigElementBase.
+        /// Notifie la section parente qu'une propriété a changé pour déclencher le mécanisme de sauvegarde différée.
+        /// </summary>
+        protected override void NotifyParentOfModification()
         {
-            get { return (SchedulerCollection)base[kSchedulerCollectionName]; }
+            if (PublicationConfigSection.Instance != null)
+            {
+                PublicationConfigSection.Instance.NotifyChildModification();
+            }
         }
-
-        [ConfigurationProperty(kCollectionName, IsRequired = true)]
-        [ConfigurationCollection(typeof(MiniSiteCollection), AddItemName = kCollectionItemName)]
-        public MiniSiteCollection MiniSites
-        {
-            get { return (MiniSiteCollection)base[kCollectionName]; }
-        }
-
         #endregion
 
         #region PROPRIETES DE CONFIGURATION
-        
 
-        [ConfigurationProperty(kGeneralElementName, IsRequired = true)]
-        public GeneralConfigElement General
-        {
-            get { return (GeneralConfigElement) this[kGeneralElementName]; }
-            set { this[kGeneralElementName] = value; }
-        }
-
-        /*
         [ConfigurationProperty(kNiveauPublicationFFJudo, IsRequired = false)]
         public string NiveauPublicationFFJudo
         {
@@ -111,7 +84,7 @@ namespace AppPublication.Config.Publication
         /// <returns></returns>
         public EntitePublicationFFJudo GetEntitePublicationFFJudo(IEnumerable<EntitePublicationFFJudo> candidates, Func<EntitePublicationFFJudo, string> valueSelector, string val = null)
         {
-            if(val != null)
+            if (val != null)
             {
                 return FindItemFromList(candidates, valueSelector, val);
             }
@@ -122,7 +95,7 @@ namespace AppPublication.Config.Publication
         [ConfigurationProperty(kRepertoireRacine, IsRequired = false)]
         public string RepertoireRacine
         {
-            get { return GetConfigValue<string>(kRepertoireRacine, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));}
+            get { return GetConfigValue<string>(kRepertoireRacine, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)); }
             set { SetValueAndMarkDirty(kRepertoireRacine, value); }
         }
 
@@ -148,14 +121,14 @@ namespace AppPublication.Config.Publication
         public bool EasyConfig
         {
             get { return GetConfigValue<bool>(kEasyConfig, true); }
-            set { SetValueAndMarkDirty(kEasyConfig, value);  }
+            set { SetValueAndMarkDirty(kEasyConfig, value); }
         }
 
         [ConfigurationProperty(kURLDistant, IsRequired = false)]
         public string URLDistant
         {
             get { return GetConfigValue<string>(kURLDistant, string.Empty); }
-            set { SetValueAndMarkDirty(kURLDistant, value);  }
+            set { SetValueAndMarkDirty(kURLDistant, value); }
         }
 
         [ConfigurationProperty(kIsolerCompetition, IsRequired = false)]
@@ -169,7 +142,7 @@ namespace AppPublication.Config.Publication
         public string RepertoireRacineSiteFTPDistant
         {
             get { return GetConfigValue<string>(kRepertoireRacineSiteFTPDistant, string.Empty); }
-            set { SetValueAndMarkDirty(kRepertoireRacineSiteFTPDistant, value);  }
+            set { SetValueAndMarkDirty(kRepertoireRacineSiteFTPDistant, value); }
         }
 
         [ConfigurationProperty(kEffacerAuDemarrage, IsRequired = false)]
@@ -178,7 +151,6 @@ namespace AppPublication.Config.Publication
             get { return GetConfigValue<bool>(kEffacerAuDemarrage, true); }
             set { SetValueAndMarkDirty(kEffacerAuDemarrage, value); }
         }
-        */
         #endregion
     }
 }

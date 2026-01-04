@@ -1,4 +1,4 @@
-using AppPublication.Config.EcransAppel;
+using AppPublication.Config.Generation;
 using AppPublication.Controles;
 using AppPublication.Models.EcransAppel;
 using System;
@@ -136,9 +136,9 @@ namespace AppPublication.ViewModels.Configuration
                 Id = nouveauModel.Id,
                 Description = nouveauModel.Description
             };
-            if (EcransAppelConfigSection.Instance != null)
+            if (GenerationConfigSection.Instance != null)
             {
-                EcransAppelConfigSection.Instance.Ecrans.Add(configElement);
+                GenerationConfigSection.Instance.Ecrans.Add(configElement);
             }
 
             // 4. Création du ViewModel et ajout à l'interface
@@ -175,9 +175,9 @@ namespace AppPublication.ViewModels.Configuration
                     _ecranManager.Remove(vm.Id);
 
                     // 3. Supprimer de la Configuration (Disque)
-                    if (EcransAppelConfigSection.Instance != null)
+                    if (GenerationConfigSection.Instance != null)
                     {
-                        EcransAppelConfigSection.Instance.Ecrans.Remove(vm.Id);
+                        GenerationConfigSection.Instance.Ecrans.Remove(vm.Id);
                     }
                 }
             }

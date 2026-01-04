@@ -2,13 +2,13 @@
 using System.Linq;
 using Tools.Configuration;
 
-namespace AppPublication.Config.EcransAppel
+namespace AppPublication.Config.Generation
 {
     /// <summary>
     /// Collection d'éléments de configuration pour les écrans.
     /// </summary>
     [ConfigurationCollection(typeof(EcransAppelConfigElement), AddItemName = "ecran", CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
-    public class EcransAppelConfigElementCollection : ConfigCollectionBase<EcransAppelConfigSection, EcransAppelConfigElement>
+    public class EcransAppelConfigElementCollection : ConfigCollectionBase<GenerationConfigSection, EcransAppelConfigElement>
     {
         /// <summary>
         /// Seule méthode obligatoire à implémenter : définir la clé unique de l'élément.

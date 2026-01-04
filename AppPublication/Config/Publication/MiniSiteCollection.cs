@@ -1,12 +1,11 @@
-﻿using System.Configuration;
-using Tools.Configuration;
+﻿using Tools.Configuration;
 
-namespace AppPublication.Config.MiniSite
+namespace AppPublication.Config.Publication
 {
     /// <summary>
     /// Collection d'éléments <miniSite>
     /// </summary>
-    public class MiniSiteCollection : ConfigCollectionBase<MiniSiteConfigSection, MiniSiteConfigElement>
+    public class MiniSiteCollection : ConfigCollectionBase<PublicationConfigSection, MiniSiteConfigElement>
     {
         protected override object GetElementKey(MiniSiteConfigElement element)
         {

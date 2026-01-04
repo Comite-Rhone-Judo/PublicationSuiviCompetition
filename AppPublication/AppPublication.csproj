@@ -133,12 +133,15 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
-    <Compile Include="Config\EcransAppel\EcransAppelConfigElementCollection.cs" />
-    <Compile Include="Config\EcransAppel\EcransAppelConfigElement.cs" />
-    <Compile Include="Config\EcransAppel\EcransAppelConfigSection.Cs" />
-    <Compile Include="Config\MiniSite\MiniSiteCollection.cs" />
-    <Compile Include="Config\MiniSite\MiniSiteConfigElement.cs" />
-    <Compile Include="Config\MiniSite\MiniSiteConfigSection.cs" />
+    <Compile Include="Config\Generation\EcransAppelConfigElementCollection.cs" />
+    <Compile Include="Config\Generation\EcransAppelConfigElement.cs" />
+    <Compile Include="Config\Generation\GenerateurSiteConfigElement.cs" />
+    <Compile Include="Config\Publication\GeneralConfigElement.cs" />
+    <Compile Include="Config\Publication\SchedulerConfigElement.cs" />
+    <Compile Include="Config\Publication\SchedulerCollection.cs" />
+    <Compile Include="Config\Generation\GenerationConfigSection.cs" />
+    <Compile Include="Config\Publication\MiniSiteCollection.cs" />
+    <Compile Include="Config\Publication\MiniSiteConfigElement.cs" />
     <Compile Include="Config\Publication\PublicationConfigSection.cs" />
     <Compile Include="Controles\GenerationScheduler.cs" />
     <Compile Include="Controles\GestionStatistiques.cs" />
