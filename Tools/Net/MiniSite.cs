@@ -435,7 +435,7 @@ namespace Tools.Net
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Debug(ex, "Erreur lors de la sélection de l'interface locale pour le MiniSite.");
+                    LogTools.Logger.Debug(ex, "Erreur lors de la selection de l'interface locale pour le MiniSite.");
                 }
             }
         }

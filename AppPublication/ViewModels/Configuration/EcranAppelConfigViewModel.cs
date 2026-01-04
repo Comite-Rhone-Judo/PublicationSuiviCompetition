@@ -379,7 +379,7 @@ namespace AppPublication.ViewModels.Configuration
 
             if (string.IsNullOrWhiteSpace(saisie) || type == TypeSaisieEnum.Inconnu)
             {
-                LogTools.Logger.Debug("LancerRechercheComplementaire: saisie vide ou inconnue, pas de recherche lancée.");
+                LogTools.Logger.Debug("LancerRechercheComplementaire: saisie vide ou inconnue, pas de recherche lancee.");
                 return;
             }
 

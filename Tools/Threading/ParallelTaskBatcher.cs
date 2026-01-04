@@ -48,7 +48,7 @@ namespace Tools.Threading
 
             var taskId = Guid.NewGuid();
 
-            LogTools.Logger.Debug($"Ajout d'une tâche parallèle au Batcher (ID: {taskId}) : {work.Method.Name}"); // Pour le debug
+            LogTools.Logger.Debug($"Ajout d'une tache parallele au Batcher (ID: {taskId}) : {work.Method.Name}"); // Pour le debug
 
             _tasksStates.TryAdd(taskId, new TaskState { Current = 0, Total = initialEstimate });
             RecalculateGlobalProgress();
@@ -70,7 +70,7 @@ namespace Tools.Threading
                 catch (Exception ex)
                 {
                     // 1. TRACE : On capture l'erreur immédiate sur le thread secondaire
-                    LogTools.Logger.Error($"Erreur critique dans une tâche parallèle du Batcher (ID: {taskId})", ex);
+                    LogTools.Logger.Error($"Erreur critique dans une tache parallele du Batcher (ID: {taskId})", ex);
 
                     // 2. RETHROW : Important pour que la Task soit marquée comme "Faulted"
                     // et que l'exception remonte jusqu'au WaitAll.

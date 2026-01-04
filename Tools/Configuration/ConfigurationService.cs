@@ -155,7 +155,7 @@ namespace Tools.Configuration
                     {
                         // 3. GESTION D'ERREUR : Le fichier a changé sur le disque.
                         // On passe en mode "Force Update" via une instance temporaire.
-                        LogTools.Logger.Warn(ex, "Conflit de configuration détecté (fichier modifié). Tentative de sauvegarde forcée via clônage.");
+                        LogTools.Logger.Warn(ex, "Conflit de configuration detecte (fichier modifie). Tentative de sauvegarde forcee via clônage.");
 
                         try
                         {
@@ -174,7 +174,7 @@ namespace Tools.Configuration
                         }
                         catch (Exception exFallback)
                         {
-                            LogTools.Logger.Error(exFallback, "Echec définitif de la sauvegarde de configuration.");
+                            LogTools.Logger.Error(exFallback, "Echec definitif de la sauvegarde de configuration.");
                             return; // On ne vide pas la liste pour retenter plus tard
                         }
                     }
@@ -184,7 +184,7 @@ namespace Tools.Configuration
                         return;
                     }
 
-                    LogTools.Logger.Debug("Configuration sauvegardée.");
+                    LogTools.Logger.Debug("Configuration sauvegardee.");
                 }
                 catch (Exception ex)
                 {
@@ -212,7 +212,7 @@ namespace Tools.Configuration
                 }
                 // Vidage de la liste en une seule opération O(1) ou O(n) interne optimisée
                 _sectionsToSave.Clear();
-                LogTools.Logger.Debug($"Configuration sauvegardée ({count} sections).");
+                LogTools.Logger.Debug($"Configuration sauvegardee ({count} sections).");
             }
             catch (Exception ex) { LogTools.Logger.Error(ex, "Erreur nettoyage."); }
         }

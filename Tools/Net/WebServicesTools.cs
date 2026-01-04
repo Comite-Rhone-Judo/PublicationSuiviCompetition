@@ -284,7 +284,7 @@ namespace Tools.Net
 
             if (events == ConstantXML.Event_erreur_3)
             {
-                LogTools.Info(new ConnexionException("Problème lors du chargement du fichier."));
+                LogTools.Info(new ConnexionException("Probleme lors du chargement du fichier."));
                 return false;
             }
 

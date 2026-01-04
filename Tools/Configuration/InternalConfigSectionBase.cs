@@ -396,7 +396,7 @@ namespace Tools.Configuration
                 _resetCacheActions.Clear();
             }
 
-            LogTools.Logger.Info("Contexte de configuration invalidé et réinitialisé.");
+            LogTools.Logger.Info("Contexte de configuration invalide et réinitialise.");
         }
 
         // ... (Le reste de LoadSectionInstance reste inchangé, cf plus bas pour l'intégration) ...
