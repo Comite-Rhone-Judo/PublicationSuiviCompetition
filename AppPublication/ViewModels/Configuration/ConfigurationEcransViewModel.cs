@@ -7,8 +7,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Telerik.Windows.Controls;
 using Tools.Framework;
 using Tools.Logging;
+using Tools.Windows;
 
 namespace AppPublication.ViewModels.Configuration
 {
@@ -66,6 +68,8 @@ namespace AppPublication.ViewModels.Configuration
             _tapisDisponibles = Enumerable.Range(1, nbMaxTapis).ToList();
 
             EcransViewModels = new ObservableCollection<EcranAppelConfigViewModel>();
+
+            Task.Factory.StartNew( async () => { await LoadDataAsync(); });
         }
         #endregion
 
@@ -149,19 +153,32 @@ namespace AppPublication.ViewModels.Configuration
             var vm = param as EcranAppelConfigViewModel;
             if (vm != null)
             {
-                vm.CancelSearch();
+                DialogParameters dlgParam = new DialogParameters();
+                dlgParam.OkButtonContent = "Oui";
+                dlgParam.CancelButtonContent = "Non";
+                dlgParam.Content = $"Etes-vous sûr de vouloir supprimer l'écran n° {vm.Id}?";
+                dlgParam.Header = "Supprimer un écran";
 
-                // 1. Supprimer de l'interface
-                EcransViewModels.Remove(vm);
+                ConfirmWindow win = new ConfirmWindow(dlgParam);
+                win.ShowDialog();
 
-                // 2. Supprimer du modèle source (GestionSite)
-                // Ici, on cherche par ID pour être sûr.
-                _ecranManager.Remove(vm.Id);
-
-                // 3. Supprimer de la Configuration (Disque)
-                if (EcransAppelConfigSection.Instance != null)
+                if (win.DialogResult.HasValue && (bool)win.DialogResult)
                 {
-                    EcransAppelConfigSection.Instance.Ecrans.Remove(vm.Id);
+                    // Annuler toute recherche en cours
+                    vm.CancelSearch();
+
+                    // 1. Supprimer de l'interface
+                    EcransViewModels.Remove(vm);
+
+                    // 2. Supprimer du modèle source (GestionSite)
+                    // Ici, on cherche par ID pour être sûr.
+                    _ecranManager.Remove(vm.Id);
+
+                    // 3. Supprimer de la Configuration (Disque)
+                    if (EcransAppelConfigSection.Instance != null)
+                    {
+                        EcransAppelConfigSection.Instance.Ecrans.Remove(vm.Id);
+                    }
                 }
             }
         }

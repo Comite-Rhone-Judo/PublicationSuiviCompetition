@@ -217,10 +217,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Configuration\ConfigurationEcransAppelView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Server\RechercheServer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -237,9 +233,6 @@
     <Compile Include="Export\ExportXML.cs" />
     <Compile Include="Views\Main\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Configuration\ConfigurationEcransAppelView.xaml.cs">
-      <DependentUpon>ConfigurationEcransAppelView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Server\RechercheServer.xaml.cs">
       <DependentUpon>RechercheServer.xaml</DependentUpon>

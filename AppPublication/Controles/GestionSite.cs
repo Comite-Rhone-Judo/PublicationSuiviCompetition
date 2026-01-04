@@ -66,9 +66,10 @@ namespace AppPublication.Controles
         private string _ftpEasyConfig = string.Empty;   // Le serveur FTP EasyConfig
         private Uri _httpEasyConfig = null;  // Le serveur http EasyConfig
 
-        private ConfigurationEcransAppelView _cfgEcransAppelView = null; // La fenetre de configuration des ecrans d'appel
-
         private IJudoDataManager _judoDataManager;                  // Le gestionnaire de données interne
+
+        private EcranCollectionManager _ecransAppel = new EcranCollectionManager(); // La configuration des écrans d'appels
+
 
         #endregion
 
@@ -131,24 +132,22 @@ namespace AppPublication.Controles
 
         #region PROPRIETES
 
-        // TODO A voir si on garde cela ici
-        private EcranCollectionManager _ecransAppel = new EcranCollectionManager();
-        public EcranCollectionManager EcransAppel
+        
+        private ConfigurationEcransViewModel _cfgEcransAppelViewModel = null;
+        /// <summary>
+        /// Le ViewModel pour les ecrans (doit etre en Properties pour le binding WPF
+        /// </summary>
+        public ConfigurationEcransViewModel ConfigurationEcransViewModel
         {
             get
             {
-                return _ecransAppel;
-            }
-            set
-            {
-                if (_ecransAppel != value)
+                if (_cfgEcransAppelViewModel == null)
                 {
-                    _ecransAppel = value;
-                    NotifyPropertyChanged();
+                    _cfgEcransAppelViewModel = new ConfigurationEcransViewModel(_ecransAppel, _nbTapis);
                 }
+                return _cfgEcransAppelViewModel;
             }
         }
-
 
         private bool _easyConfigDisponible;
 
@@ -988,8 +987,6 @@ namespace AppPublication.Controles
                     PouleEnColonnes = true;
                     PouleToujoursEnColonnes = true;
                 }
-
-
             }
         }
 
@@ -1005,6 +1002,9 @@ namespace AppPublication.Controles
                 if (_nbTapis != value)
                 {
                     _nbTapis = value;
+                    // RAZ le viewModel des ecrans d'appel, cela forcera la recreation avec le nouveau nombre de tapis en cas de nouvelle configuration
+                    _cfgEcransAppelViewModel = null;
+
                     NotifyPropertyChanged();
                 }
             }
@@ -1278,46 +1278,6 @@ namespace AppPublication.Controles
         #endregion
 
         #region COMMANDES
-
-        // TODO A voir si c'est la bonne place
-        private ICommand _cmdAfficherConfigurationEcransAppel = null;
-        /// <summary>
-        /// Commande d'affichage de la configuration
-        /// </summary>
-        public ICommand CmdAfficherConfigurationEcransAppel
-        {
-            get
-            {
-                if (_cmdAfficherConfigurationEcransAppel == null)
-                {
-                    _cmdAfficherConfigurationEcransAppel = new RelayCommand(
-                            o =>
-                            {
-                                if (_cfgEcransAppelView == null)
-                                {
-                                    // Crée la ViewModel de configuration. Comme on le refait a chaque fois, on est sur d'avoir les dernieres valeurs
-                                    // notamment par rapport aux nombres de tapis de la competition s'il a été modifié
-                                    ConfigurationEcransViewModel vm = new ConfigurationEcransViewModel(this.EcransAppel, this.NbTapis);
-                                    if (vm != null)
-                                    {
-                                        _cfgEcransAppelView = new ConfigurationEcransAppelView(vm);
-                                    }
-                                }
-                                if (_cfgEcransAppelView != null)
-                                {
-                                    _cfgEcransAppelView.ShowDialog();
-                                    _cfgEcransAppelView = null;
-                                }
-                            },
-                            o =>
-                            {
-                                return !this.IsGenerationActive;
-                            });
-                }
-                return _cmdAfficherConfigurationEcransAppel;
-            }
-        }
-
 
         private ICommand _cmdAjouterLogo;
 
