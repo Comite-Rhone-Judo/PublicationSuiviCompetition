@@ -388,19 +388,41 @@
         <Setter Property="Margin" Value="5 5" />
     </Style>
 
-    <Style TargetType="Rectangle" x:Key="RunningStatusStyle">
+    <Style TargetType="Rectangle" x:Key="AnimatedStatusStyle">
+        <Setter Property="Height" Value="15"/>
+        <Setter Property="Width" Value="15"/>
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="Stroke" Value="Transparent"/>
+        <Setter Property="Opacity" Value="1.0"/>
+
+        <Setter Property="Fill" Value="Red"/>
+
         <Style.Triggers>
-            <DataTrigger Binding="{Binding Path=IsGenerationActive}" Value="True">
-                <Setter Property="Fill" Value="Green"/>
-            </DataTrigger>
-            <DataTrigger Binding="{Binding Path=IsGenerationActive}" Value="False">
-                <Setter Property="Fill" Value="Red"/>
-            </DataTrigger>
-            <DataTrigger Binding="{Binding Path=IsActif}" Value="True">
-                <Setter Property="Fill" Value="Green"/>
-            </DataTrigger>
-            <DataTrigger Binding="{Binding Path=IsActif}" Value="False">
-                <Setter Property="Fill" Value="Red"/>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=Tag}" Value="True">
+
+                <Setter Property="Fill" Value="LimeGreen"/>
+
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard x:Name="BlinkStoryboard">
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                             From="1.0" To="0.2" 
+                                             Duration="0:0:0.8"
+                                             AutoReverse="True" 
+                                             RepeatBehavior="Forever"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.EnterActions>
+
+                <DataTrigger.ExitActions>
+                    <RemoveStoryboard BeginStoryboardName="BlinkStoryboard"/>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1.0" Duration="0:0:0.1"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.ExitActions>
+
             </DataTrigger>
         </Style.Triggers>
     </Style>

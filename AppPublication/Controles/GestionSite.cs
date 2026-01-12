@@ -52,7 +52,10 @@ namespace AppPublication.Controles
         private GestionStatistiques _statMgr = null;
         private GenerationScheduler _schedulerSite = null;  // Le scheduler de generation Site
         private GenerateurSite _generateurSite = null;  // Le generateur Site
+        private GenerationScheduler _schedulerSitePrivate = null;  // Le scheduler de generation Site interne
+        private GenerateurSite _generateurSitePrivate = null;  // Le generateur Site
         private IProgress<OperationProgress> _progressHandler = null;
+        private IProgress<OperationProgress> _progressHandlerPrivate = null;
 
         private ExportSiteStructure _structureRepertoiresSite;                      // La structure de repertoire d'export du site
         private ExportSitePrivateStructure _structureRepertoiresPrivateSite;        // La structure de repertoire d'export du site prive
@@ -98,12 +101,13 @@ namespace AppPublication.Controles
                 // Initialise le progress handler pour la generation de site
                 _progressHandler = new Progress<OperationProgress>(onGenerationSiteProgressReport);
 
+
                 // Le generateur de site
                 _generateurSite = new GenerateurSite(_judoDataManager, SiteDistantSelectionne, _progressHandler);
 
                 // Initialise le scheduler de generation de site
-                _schedulerSite = new GenerationScheduler(_statMgr, _generateurSite);
-                _schedulerSite.StateChanged += onSchedulerStateChanged;
+                _schedulerSite = new GenerationScheduler(_statMgr.Generation, _statMgr.Synchronisation, _generateurSite);
+                _schedulerSite.StateChanged += onSchedulerSiteStateChanged;
 
                 // Initialise la liste des logos
                 InitFichiersLogo();
@@ -541,6 +545,23 @@ namespace AppPublication.Controles
             }
         }
 
+        TaskExecutionInformation _statGenerationPrivate;
+        /// <summary>
+        /// Statistique de derniere generation du site interne - lecture seule
+        /// </summary>
+        public TaskExecutionInformation DerniereGenerationPrivate
+        {
+            get
+            {
+                return _statGenerationPrivate;
+            }
+            private set
+            {
+                _statGenerationPrivate = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         TaskExecutionInformation _statSyncDistant;
         /// <summary>
         /// Statistiques de derniere synchronisation - lecture seule
@@ -571,6 +592,23 @@ namespace AppPublication.Controles
             private set
             {
                 _siteGenere = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        bool _sitePrivateGenere = false;
+        /// <summary>
+        /// Indique si le site private a ete bien genere (true) - lecture seule
+        /// </summary>
+        public bool SitePrivateGenere
+        {
+            get
+            {
+                return _sitePrivateGenere;
+            }
+            private set
+            {
+                _sitePrivateGenere = value;
                 NotifyPropertyChanged();
             }
         }
@@ -1277,6 +1315,29 @@ namespace AppPublication.Controles
                 IsGenerationActive = !(_status.State == StateGenerationEnum.Stopped);
             }
         }
+
+        private StatusGenerationSite _statusPrivate;
+        /// <summary>
+        /// Le statut de generation du site interne
+        /// </summary>
+        public StatusGenerationSite StatusPrivate
+        {
+            get
+            {
+                if (null == _statusPrivate)
+                {
+                    _statusPrivate = new StatusGenerationSite();
+                }
+                return _statusPrivate;
+            }
+            set
+            {
+                _statusPrivate = value;
+                NotifyPropertyChanged();
+                // TODO A modifier pour prendre en compte le site private
+                // IsGenerationActive = !(_statusPrivate.State == StateGenerationEnum.Stopped);
+            }
+        }
         #endregion
 
         #region COMMANDES
@@ -1448,6 +1509,21 @@ namespace AppPublication.Controles
 
         private void onGenerationSiteProgressReport(OperationProgress valueReported)
         {
+            ReportGenerationProgress(valueReported, false);
+        }
+
+        private void onGenerationSitePrivateProgressReport(OperationProgress valueReported)
+        {
+            ReportGenerationProgress(valueReported, true);
+        }
+
+        /// <summary>
+        /// Methode interne pour aiguiller le progress vers la bonnne propriete de status
+        /// </summary>
+        /// <param name="valueReported"></param>
+        /// <param name="isPrivate"></param>
+        private void ReportGenerationProgress(OperationProgress valueReported, bool isPrivate)
+        {
             LogTools.Logger.Debug($"Progress {valueReported} signale par le generateur");
 
             // on doit juste s'assurer que tout est bien execute dans le UI Thread
@@ -1460,17 +1536,25 @@ namespace AppPublication.Controles
 
                     // Met a jour le status avec la nouvelle progression et notifie les changements
                     cpy.Progress = (int)Math.Round(valueReported.ProgressPercent * 100);
-                    Status = cpy;
+                    if (isPrivate)
+                    {
+                        StatusPrivate = cpy;
+                    }
+                    else
+                    {
+                        Status = cpy;
+                    }
                 }
             });
         }
+
 
         /// <summary>
         /// Gestionnaire d'evenement pour les changements d'etat du scheduler
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="evt"></param>
-        private void onSchedulerStateChanged(object sender, SchedulerStateEventArgs evt)
+        private void onSchedulerSiteStateChanged(object sender, SchedulerStateEventArgs evt)
         {
             LogTools.Logger.Debug($"Event {evt.State} signale par le scheduler");
 
@@ -1507,6 +1591,41 @@ namespace AppPublication.Controles
                         cpy.NextGenerationSec = (int)evt.DelaiNextSec;
                     }
                 });
+        }
+
+        /// <summary>
+        /// Gestionnaire d'evenement pour les changements d'etat du scheduler
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="evt"></param>
+        private void onSchedulerSitePrivateStateChanged(object sender, SchedulerStateEventArgs evt)
+        {
+            LogTools.Logger.Debug($"Event {evt.State} signale par le scheduler private");
+
+            // on doit juste s'assurer que tout est bien execute dans le UI Thread
+            System.Windows.Application.Current.ExecOnUiThread(() =>
+            {
+                // Clone le status courant
+                StatusGenerationSite cpy = StatusPrivate.Clone();
+
+                // Met a jour l'etat avec celui reçu s'il est documente, notifie les changements en assignant la propriete
+                if (evt.State != StateGenerationEnum.None) { cpy.State = evt.State; }
+                StatusPrivate = cpy;
+
+                // Verifie si on a des infos d'exécution signalées
+                if (evt.InfosExecution != null)
+                {
+                    SitePrivateGenere = evt.InfosExecution.IsSuccess;
+                    DerniereGenerationPrivate = evt.InfosExecution;
+                }
+
+                // Met a jour le delai avant la prochaine generation s'il est documente
+                if (evt.DelaiNextSec != long.MinValue)
+                {
+                    // On n'a pas de delai, on met a zero
+                    cpy.NextGenerationSec = (int)evt.DelaiNextSec;
+                }
+            });
         }
 
         /// <summary>

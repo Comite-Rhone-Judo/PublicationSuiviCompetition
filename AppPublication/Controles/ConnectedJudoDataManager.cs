@@ -12,6 +12,7 @@ using Tools.Enum;
 using Tools.Threading;
 using Tools.Logging;
 using Telerik.Windows.Controls.Wizard;
+using AppPublication.Statistiques;
 
 namespace AppPublication.Controles
 {
@@ -69,7 +70,7 @@ namespace AppPublication.Controles
         private bool _concurrentRequestReceived = false;  // Indicateur qu'une modification (UpdateCombat ou Tapis) a été rejetée ou reçue pendant l'attente
 
         private JudoData _dataManager = null;
-        private GestionStatistiques _statManager = null;
+        private StatMgrDonnees _statManager = null;
         private IClientProvider _clientProvider = null;
 
         private ConcurrentDictionary<ServerCommandEnum, EchangeMarkup> _balisesEchanges;
@@ -85,7 +86,7 @@ namespace AppPublication.Controles
 
         #region CONSTRUCTEUR
 
-        private ConnectedJudoDataManager(JudoData dataMgr, GestionStatistiques statMgr, IClientProvider provider )
+        private ConnectedJudoDataManager(JudoData dataMgr, StatMgrDonnees statMgr, IClientProvider provider )
         {
             InternalDataManager = dataMgr;
             StatistiquesManager = statMgr;
@@ -113,7 +114,7 @@ namespace AppPublication.Controles
             }
         }
 
-        public static ConnectedJudoDataManager CreateInstance(JudoData dataMgr, GestionStatistiques statMgr, IClientProvider provider)
+        public static ConnectedJudoDataManager CreateInstance(JudoData dataMgr, StatMgrDonnees statMgr, IClientProvider provider)
         {
             if (_instance != null)
             {
@@ -190,7 +191,7 @@ namespace AppPublication.Controles
             }
         }
 
-        public GestionStatistiques StatistiquesManager
+        public StatMgrDonnees StatistiquesManager
         {
             get
             {

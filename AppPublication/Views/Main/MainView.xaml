@@ -203,7 +203,9 @@
                                 <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
                                     <StackPanel Orientation="Horizontal" >
                                         <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
-                                        <Rectangle Margin="0" Height="15" Width="15" Style="{StaticResource RunningStatusStyle}" DataContext="{Binding Path=GestionSite}"/>
+                                        <Rectangle  Style="{StaticResource AnimatedStatusStyle}"
+                                                    DataContext="{Binding Path=GestionSite}"
+                                                    Tag="{Binding Path=IsGenerationActive, Converter={StaticResource ValueToBoolConverter}}"/>
                                         <Label HorizontalAlignment="Left" Content="{Binding Path=GestionSite.IsGenerationActive, Mode=OneWay, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
                                     </StackPanel>
                                     <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
@@ -236,18 +238,20 @@
                                 <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
                                     <StackPanel Orientation="Horizontal" >
                                         <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
-                                        <Rectangle Margin="0" Height="15" Width="15" Style="{StaticResource RunningStatusStyle}" DataContext="{Binding Path=GestionSite}"/>
-                                        <Label HorizontalAlignment="Left" Content="{Binding Path=GestionSite.IsGenerationActive, Mode=OneWay, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
+                                        <Rectangle  Style="{StaticResource AnimatedStatusStyle}"
+                                                    DataContext="{Binding Path=GestionSite}"
+                                                    Tag="{Binding Path=IsGenerationPrivateActive, Converter={StaticResource ValueToBoolConverter}}"/>
+                                        <Label HorizontalAlignment="Left" Content="{Binding Path=GestionSite.IsGenerationPrivateActive, Mode=OneWay, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
                                     </StackPanel>
                                     <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                     <StackPanel Orientation="Horizontal" >
                                         <Label HorizontalAlignment="Left" Content="Statut:" Style="{StaticResource LabelStyle}" />
-                                        <Ellipse Margin="0" Height="15" Width="15" Style="{StaticResource OperationStatusStyle}" DataContext="{Binding Path=GestionSite.Status, Mode=OneWay}"/>
+                                        <Ellipse Margin="0" Height="15" Width="15" Style="{StaticResource OperationStatusStyle}" DataContext="{Binding Path=GestionSite.StatusPrivate, Mode=OneWay}"/>
                                         <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                                            <Label HorizontalAlignment="Left" Width="140" Content="{Binding GestionSite.Status.Message, Mode=OneWay}" Style="{StaticResource LabelStyleValue}" />
+                                            <Label HorizontalAlignment="Left" Width="140" Content="{Binding GestionSite.StatusPrivate.Message, Mode=OneWay}" Style="{StaticResource LabelStyleValue}" />
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                <telerik:RadProgressBar Orientation="Horizontal" Width="100" Height="10" Margin="10 -10 0 0" Minimum="0" Maximum="100" Style="{StaticResource StatusProgressBarStyle}" DataContext="{Binding Path=GestionSite.Status, Mode=OneWay}" />
-                                                <Label Margin="0 -12 0 0" DataContext="{Binding Path=GestionSite.Status, Mode=OneWay}" Style="{StaticResource StatusGenerationSiteProgressLabelStyle}" />
+                                                <telerik:RadProgressBar Orientation="Horizontal" Width="100" Height="10" Margin="10 -10 0 0" Minimum="0" Maximum="100" Style="{StaticResource StatusProgressBarStyle}" DataContext="{Binding Path=GestionSite.StatusPrivate, Mode=OneWay}" />
+                                                <Label Margin="0 -12 0 0" DataContext="{Binding Path=GestionSite.StatusPrivate, Mode=OneWay}" Style="{StaticResource StatusGenerationSiteProgressLabelStyle}" />
                                             </StackPanel>
                                         </StackPanel>
                                     </StackPanel>
@@ -360,7 +364,9 @@
                                         <StackPanel Orientation="Horizontal" >
                                             <StackPanel Orientation="Horizontal" >
                                                 <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
-                                                <Rectangle Margin="0" Height="15" Width="15" Style="{StaticResource RunningStatusStyle}" DataContext="{Binding Path=GestionSite.SiteLocal}"/>
+                                                <Rectangle  Style="{StaticResource AnimatedStatusStyle}"
+                                                            DataContext="{Binding Path=GestionSite.SiteLocal}"
+                                                            Tag="{Binding Path=IsActif, Converter={StaticResource ValueToBoolConverter}}"/>
                                                 <Label HorizontalAlignment="Left" Content="{Binding Path=GestionSite.SiteLocal.IsActif, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
                                             </StackPanel>
                                             <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
@@ -438,7 +444,9 @@
                                         <StackPanel Orientation="Horizontal" >
                                             <StackPanel Orientation="Horizontal" >
                                                 <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
-                                                <Rectangle Margin="0" Height="15" Width="15" Style="{StaticResource RunningStatusStyle}" DataContext="{Binding Path=GestionSite.SitePrivate}"/>
+                                                <Rectangle  Style="{StaticResource AnimatedStatusStyle}"
+                                                            DataContext="{Binding Path=GestionSite.SitePrivate}"
+                                                            Tag="{Binding Path=IsActif, Converter={StaticResource ValueToBoolConverter}}"/>
                                                 <Label HorizontalAlignment="Left" Content="{Binding Path=GestionSite.SitePrivate.IsActif, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
                                             </StackPanel>
                                             <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
@@ -521,7 +529,9 @@
                                     <StackPanel Orientation="Horizontal" >
                                         <StackPanel Orientation="Horizontal" >
                                             <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
-                                            <Rectangle Margin="0" Height="15" Width="15" Style="{StaticResource RunningStatusStyle}" DataContext="{Binding Path=GestionSite.SiteDistantSelectionne, Mode=OneWay}"/>
+                                            <Rectangle  Style="{StaticResource AnimatedStatusStyle}"
+                                                            DataContext="{Binding Path=GestionSite.SiteDistantSelectionne, Mode=OneWay}"
+                                                            Tag="{Binding Path=IsActif, Converter={StaticResource ValueToBoolConverter}}"/>
                                             <Label HorizontalAlignment="Left" Content="{Binding Path=GestionSite.SiteDistantSelectionne.IsActif, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
                                         </StackPanel>
                                         <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
@@ -612,11 +622,11 @@
                                                 <RowDefinition Height="auto"/>
                                             </Grid.RowDefinitions>
                                             <Label Grid.Column="0" Content="Racine du site de publication:" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2" HorizontalAlignment="Center"/>
-                                            <TextBox Grid.Row="0" Grid.Column="2" TextWrapping="Wrap" Height="22" Margin="5,13,5,14" MinWidth="300"
+                                            <TextBox Grid.Row="0" Grid.Column="2" TextWrapping="Wrap" Height="22" Margin="5,13,10,14" MinWidth="250"
                                          Text = "{Binding Path=GestionSite.URLDistant}"
                                          IsEnabled="{Binding Path=GestionSite.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
                                             <Label Grid.Row="1" Grid.Column="0" Content="Adresse du site FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
-                                            <TextBox Grid.Row="1" Grid.Column="2" TextWrapping="Wrap" Height="22" Margin="5,13,5,13" MinWidth="300"
+                                            <TextBox Grid.Row="1" Grid.Column="2" TextWrapping="Wrap" Height="22" Margin="5,13,10,13" MinWidth="250"
                                          Text = "{Binding Path=GestionSite.SiteDistant.SiteFTPDistant}"
                                          IsEnabled="{Binding Path=GestionSite.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
                                             <Label Grid.Row="2" Grid.Column="0" Content="Répertoire distant FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>

@@ -253,7 +253,7 @@ namespace AppPublication.Controles
                     _connection.ClientDisconnected += OnClientDisconnected;
 
                     // Initialise le gestionnaire d'evenements
-                    var evtMgr = ConnectedJudoDataManager.CreateInstance(this.ServerData, _stats, _connection);
+                    var evtMgr = ConnectedJudoDataManager.CreateInstance(this.ServerData, _stats.Donnees, _connection);
                     // et on s'abonne aux evenements pour pouvoir mettre a jour l'IHM
                     evtMgr.BusyStatusChanged += OnBusyStatusChanged;
                     evtMgr.DataUpdated += OnDataUpdated;

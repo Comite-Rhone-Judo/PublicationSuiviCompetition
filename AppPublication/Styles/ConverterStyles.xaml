@@ -25,6 +25,7 @@
     <Converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <Converter:BoolOperationConverter x:Key="BoolOperationConverter" />
     <Converter:PassthroughConverter x:Key="PassthroughConverter" />
+    <Converter:ValueToBoolConverter x:Key="ValueToBoolConverter"/>
 
 
     

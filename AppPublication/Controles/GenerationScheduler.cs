@@ -48,7 +48,8 @@ namespace AppPublication.Controles
         #region MEMBRES
         private CancellationTokenSource _tokenSource;   // Token pour la gestion de la thread de lecture
         private Task _taskGeneration = null;            // La tache de generation
-        private GestionStatistiques _statMgr = null;    // Pour le gestion des statistiques
+        private StatMgrGeneration _statMgrGeneration = null;    // Pour le gestion des statistiques
+        private StatMgrSynchronisation _statMgrSynchronisation= null;    // Pour le gestion des statistiques
         private IGenerateurSite _generateur;            // le generateur de site
 
         private long _generationCounter = 0;                        // Nombre de generation realisees depuis le demarrage
@@ -64,16 +65,16 @@ namespace AppPublication.Controles
         /// <param name="statMgr">le gestionnaire de statitiques</param>
         /// <param name="generateur">Le generateur de donnees</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public GenerationScheduler(GestionStatistiques statMgr, IGenerateurSite generateur)
+        public GenerationScheduler(StatMgrGeneration statMgrGen, StatMgrSynchronisation statMgrSync, IGenerateurSite generateur)
         {
             // Impossible d'etre null
-            if (statMgr == null) throw new ArgumentNullException();
             if (generateur == null) throw new ArgumentNullException();
 
             try
             {
                 // Initialise les objets de gestion des sites Web. Ils chargent automatiquement leur configuration
-                _statMgr = statMgr;
+                _statMgrGeneration = statMgrGen;
+                _statMgrSynchronisation = statMgrSync;
                 _generateur = generateur;
             }
             catch (Exception ex)
@@ -358,7 +359,8 @@ namespace AppPublication.Controles
                                 statGeneration.IsSuccess = genTime.Result.IsSuccess;
                                 SiteGenere = genTime.Result.IsSuccess;
 
-                                _statMgr.EnregistrerGeneration( (float) genTime.DurationMs / 1000F);
+                                // TODO la il faut revoir car on ne doit pas partager les compteurs. Le scheduler ne doit pas savoir sur quel compteurs il travaille
+                                _statMgrGeneration.EnregistrerGeneration( (float) genTime.DurationMs / 1000F);
 
                                 if(SiteGenere)
                                 {
@@ -382,7 +384,7 @@ namespace AppPublication.Controles
                                         statSync.IsSuccess = postTime.Result.IsSuccess;
 
                                         // Met a jour les informations de la tache
-                                        _statMgr.EnregistrerSynchronisation((float)postTime.DurationMs / 1000F, postTime.Result);
+                                        _statMgrSynchronisation?.EnregistrerSynchronisation((float)postTime.DurationMs / 1000F, postTime.Result);
 
                                         if (SiteSynchronise)
                                         {
@@ -430,10 +432,10 @@ namespace AppPublication.Controles
                         // Controle final si tout s'est bien passe
                         if (!SiteGenere)
                         {
-                            _statMgr.EnregistrerErreurGeneration();
+                            _statMgrGeneration?.EnregistrerErreurGeneration();
                         }
 
-                        _statMgr.EnregistrerDelaiGeneration(delaiThread / 1000F);
+                        _statMgrGeneration?.EnregistrerDelaiGeneration(delaiThread / 1000F);
 
                     }
                 }

@@ -28,7 +28,7 @@
         <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" BorderBrush="White" Margin="10 0 10 10">
             <StackPanel Orientation="Vertical">
                 <Label HorizontalAlignment="Left" Content="Création des fichiers" Style="{StaticResource HeaderStyle}" />
-                <telerik:RadGridView ItemsSource="{Binding CompteursGeneration}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
+                <telerik:RadGridView ItemsSource="{Binding Generation.CompteursGeneration}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
                     CanUserDeleteRows="False" CanUserGroupColumns="False" CanUserInsertRows="False" ShowGroupPanel="False">
                     <telerik:RadGridView.Columns>
                         <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Libelle}" Header="Compteur" Width="180"/>
@@ -40,7 +40,7 @@
                 </telerik:RadGridView>
                 <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="1" Y1="0" Y2="0" Stretch="Fill"/>
                 <Label HorizontalAlignment="Left" Content="Réception des données" Style="{StaticResource HeaderStyle}" />
-                <telerik:RadGridView ItemsSource="{Binding CompteursDonnees}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
+                <telerik:RadGridView ItemsSource="{Binding Donnees.CompteursDonnees}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
                     CanUserDeleteRows="False" CanUserGroupColumns="False" CanUserInsertRows="False" ShowGroupPanel="False">
                     <telerik:RadGridView.Columns>
                         <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Libelle}" Header="Compteur" Width="180"/>
@@ -61,7 +61,7 @@
             <StackPanel Orientation="Vertical">
                 <!-- SECTION SYNCHRONISATION COMPLETE -->
                 <Label HorizontalAlignment="Left" Content="Synchronisation Complète" Style="{StaticResource HeaderStyle}" />
-                <telerik:RadGridView ItemsSource="{Binding CompteursSynchronisationComplete}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
+                <telerik:RadGridView ItemsSource="{Binding Synchronisation.CompteursSynchronisationComplete}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
                     CanUserDeleteRows="False" CanUserGroupColumns="False" CanUserInsertRows="False" ShowGroupPanel="False">
                     <telerik:RadGridView.Columns>
                         <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Libelle}" Header="Compteur" Width="180"/>
@@ -74,7 +74,7 @@
                 <!-- SECTION SYNCHRONISATION DIFFERENCE -->
                 <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="1" Y1="0" Y2="0" Stretch="Fill"/>
                 <Label HorizontalAlignment="Left" Content="Synchronisation des différences" Style="{StaticResource HeaderStyle}" />
-                <telerik:RadGridView ItemsSource="{Binding CompteursSynchronisationDifference}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
+                <telerik:RadGridView ItemsSource="{Binding Synchronisation.CompteursSynchronisationDifference}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
                     CanUserDeleteRows="False" CanUserGroupColumns="False" CanUserInsertRows="False" ShowGroupPanel="False">
                     <telerik:RadGridView.Columns>
                         <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Libelle}" Header="Compteur" Width="180"/>
