@@ -56,7 +56,7 @@
                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en sec. entre 2 générations du site interne."/>
                 </StackPanel>
                 <StackPanel Grid.Row="0" Grid.Column="4" Orientation="Horizontal">
-                    <telerik:RadNumericUpDown  Value="{Binding DelaiGenerationPrivateSec}" Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="0 0 0 0"/>
+                    <telerik:RadNumericUpDown  Value="{Binding DelaiGenerationInterneSec}" Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="0 0 0 0"/>
                     <Label HorizontalAlignment="Right" Content="Sec." Style="{StaticResource LabelStyle}" />
                 </StackPanel>
 

@@ -8,8 +8,6 @@ using Tools.Configuration;
 
 namespace AppPublication.Config.Generation
 {
-    // TODO A voir comment on fait si on separe les parametres de generation Site et SitePrivate
-
     /// <summary>
     /// Gère les paramètres de publication globaux.
     /// Implémenté en Singleton pour un accès facile et une sauvegarde "live".

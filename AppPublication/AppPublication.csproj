@@ -147,9 +147,9 @@
     <Compile Include="Controles\GestionStatistiques.cs" />
     <Compile Include="Controles\IClientProvider.cs" />
     <Compile Include="Controles\RelayCommand.cs" />
-    <Compile Include="Export\ExportSitePrivate.cs" />
+    <Compile Include="Export\ExportSiteInterne.cs" />
     <Compile Include="Export\ExportSite.cs" />
-    <Compile Include="Generation\GenerateurSitePrivate.cs" />
+    <Compile Include="Generation\GenerateurSiteInterne.cs" />
     <Compile Include="Generation\GenerateurSite.cs" />
     <Compile Include="Generation\IGenerateurSite.cs" />
     <Compile Include="ExtensionNoyau\Engagement\CombatEqualityComparer.cs" />

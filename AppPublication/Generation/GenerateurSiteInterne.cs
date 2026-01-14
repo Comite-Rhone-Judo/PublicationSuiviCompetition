@@ -80,8 +80,8 @@ namespace AppPublication.Generation
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Fatal(ex, "Impossible d'initialiser le generateur de Site Private interne. Impossible de continuer");
-                throw new NotSupportedException("Impossible d'initialiser le generateur de Site Private interne. Impossible de continuer", ex);
+                LogTools.Logger.Fatal(ex, "Impossible d'initialiser le generateur de Site Interne. Impossible de continuer");
+                throw new NotSupportedException("Impossible d'initialiser le generateur de Site Interne. Impossible de continuer", ex);
             }
         }
         #endregion
@@ -134,7 +134,7 @@ namespace AppPublication.Generation
 
                 // Initialise les donnees partagees de generation (ces donnees sont statiques et communes a toutes les taches)
                 // TODO A Revoir
-                // ExportSitePrivate.InitSharedData(_snapshot, _extendedJudoData, ConfigurationGeneration, true);
+                // ExportSiteInterne.InitSharedData(_snapshot, _extendedJudoData, ConfigurationGeneration, true);
             }
             else
             {

@@ -45,7 +45,7 @@
                             </telerik:RadGridView>
                         </telerik:RadTabItem>
                         <telerik:RadTabItem Header="Site Interne" IsSelected="False">
-                            <telerik:RadGridView ItemsSource="{Binding GenerationPrivate.CompteursGeneration}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
+                            <telerik:RadGridView ItemsSource="{Binding GenerationSiteInterne.CompteursGeneration}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
                     CanUserDeleteRows="False" CanUserGroupColumns="False" CanUserInsertRows="False" ShowGroupPanel="False">
                                 <telerik:RadGridView.Columns>
                                     <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Libelle}" Header="Compteur" Width="180"/>

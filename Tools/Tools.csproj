@@ -151,8 +151,8 @@
     <Compile Include="Export\ConfigurationExportSitePrivate.cs" />
     <Compile Include="Export\ConfigurationExportSite.cs" />
     <Compile Include="Export\ExportHTML.cs" />
-    <Compile Include="Export\ExportSitePrivateStructure.cs" />
-    <Compile Include="Export\ExportPrivateSiteUrls.cs" />
+    <Compile Include="Export\ExportSiteInterneStructure.cs" />
+    <Compile Include="Export\ExportSiteInterneUrls.cs" />
     <Compile Include="Export\ExportUrlsBase.cs" />
     <Compile Include="Export\ExportStructureBase.cs" />
     <Compile Include="Export\ExportSiteUrls.cs" />

@@ -5,6 +5,7 @@
     /// </summary>
     public enum TypeExportSiteEnum
     {
+        // Enum plus utilisé
         Index = 1,
         Menu = 2,
         Phase = 3,
