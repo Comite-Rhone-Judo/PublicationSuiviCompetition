@@ -38,10 +38,10 @@ namespace AppPublication.Export
         /// <param name="targetFile">Le fichier HTML cible</param>
         protected override void AddStructureArgument(XsltArgumentList argsList, ExportStructureBase siteStruct, string targetFile)
         {
-            ExportSiteStructure theSiteStruct = siteStruct as ExportSiteStructure;
+            ExportSiteInterneStructure theSiteStruct = siteStruct as ExportSiteInterneStructure;
 
             // Ajoute les repertoires de base de la structure
-            siteStruct.TargetPath = targetFile;
+            theSiteStruct.TargetPath = targetFile;
             base.AddStructureArgument(argsList, theSiteStruct, targetFile);
         }
     }

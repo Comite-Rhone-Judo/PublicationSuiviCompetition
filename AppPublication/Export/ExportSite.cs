@@ -498,7 +498,7 @@ namespace AppPublication.Export
             ExportSiteStructure theSiteStruct = siteStruct as ExportSiteStructure;
 
             // Ajoute les repertoires de base de la structure
-            siteStruct.TargetPath = targetFile;
+            theSiteStruct.TargetPath = targetFile;
             base.AddStructureArgument(argsList, theSiteStruct, targetFile);
 
             // Ajoute le repertoire common
