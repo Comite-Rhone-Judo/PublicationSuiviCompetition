@@ -53,7 +53,7 @@ namespace AppPublication.Controles
         private IGenerateurSite _generateur;            // le generateur de site
 
         private long _generationCounter = 0;                        // Nombre de generation realisees depuis le demarrage
-        // --- Événement unique pour tout changement d'état (Interne ou Métier) ---
+        // --- Événement unique pour tout _statMgr d'état (Interne ou Métier) ---
         public event EventHandler<SchedulerStateEventArgs> StateChanged;
 
         #endregion
@@ -360,7 +360,7 @@ namespace AppPublication.Controles
                                 SiteGenere = genTime.Result.IsSuccess;
 
                                 // TODO la il faut revoir car on ne doit pas partager les compteurs. Le scheduler ne doit pas savoir sur quel compteurs il travaille
-                                _statMgrGeneration.EnregistrerGeneration( (float) genTime.DurationMs / 1000F);
+                                _statMgrGeneration?.EnregistrerGeneration( (float) genTime.DurationMs / 1000F);
 
                                 if(SiteGenere)
                                 {

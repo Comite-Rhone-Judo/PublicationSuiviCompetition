@@ -10,14 +10,14 @@ using AppPublication.Generation;
 
 namespace AppPublication.Export
 {
-    public class ExportSitePrivate : ExportSiteBase
+    public class ExportSiteInterne : ExportSiteBase
     {
         /// <summary>
         /// Genere les pages des ecrans d'Appels
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public List<FileWithChecksum> GenereWebSiteEcransAppel(IJudoData DC, ExtendedJudoData EDC, ConfigurationExportSitePrivate config, ExportSitePrivateStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
+        public List<FileWithChecksum> GenereWebSiteEcransAppel(IJudoData DC, ExtendedJudoData EDC, ConfigurationExportSiteInterne config, ExportSiteInterneStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 

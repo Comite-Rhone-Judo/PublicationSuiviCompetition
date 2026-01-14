@@ -1,6 +1,6 @@
 ﻿namespace Tools.Export
 {
-    public class ExportSitePrivateStructure : ExportStructureBase
+    public class ExportSiteInterneStructure : ExportStructureBase
     {
         #region MEMBRES
         public const string kEcransAppel = "ecrans-appel";
@@ -15,7 +15,7 @@
         /// <param name="racine"></param>
         /// <param name="idCompetition"></param>
         /// <param name="maxlen"></param>
-        public ExportSitePrivateStructure(string racine) : base(racine, kIdCompetitionLive) { }
+        public ExportSiteInterneStructure(string racine) : base(racine, kIdCompetitionLive) { }
 
         #endregion
 

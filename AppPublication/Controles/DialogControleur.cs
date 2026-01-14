@@ -370,14 +370,14 @@ namespace AppPublication.Controles
                     _cmdCopyUrlEcransAppel = new RelayCommand(
                             o =>
                             {
-                                if (GestionSite.SitePrivate != null && GestionSite.SitePrivate.IsActif)
+                                if (GestionSite.SiteInterne != null && GestionSite.SiteInterne.IsActif)
                                 {
                                     Clipboard.SetText(GestionSite.URLEcransAppelPublication);
                                 }
                             },
                             o =>
                             {
-                                return (GestionSite.SitePrivate != null) ? GestionSite.SitePrivate.IsActif : false;
+                                return (GestionSite.SiteInterne != null) ? GestionSite.SiteInterne.IsActif : false;
                             });
                 }
                 return _cmdCopyUrlEcransAppel;
@@ -443,23 +443,23 @@ namespace AppPublication.Controles
             }
         }
 
-        private ICommand _cmdDemarrerSitePrivate = null;
+        private ICommand _cmdDemarrerSiteInterne = null;
         /// <summary>
         /// Command de demarrage du site des ecrans d'appel
         /// </summary>
-        public ICommand CmdDemarrerSitePrivate
+        public ICommand CmdDemarrerSiteInterne
         {
             get
             {
-                if (_cmdDemarrerSitePrivate == null)
+                if (_cmdDemarrerSiteInterne == null)
                 {
-                    _cmdDemarrerSitePrivate = new RelayCommand(
+                    _cmdDemarrerSiteInterne = new RelayCommand(
                             o =>
                             {
-                                if (Instance.GestionSite.SitePrivate != null && !Instance.GestionSite.SitePrivate.IsActif)
+                                if (Instance.GestionSite.SiteInterne != null && !Instance.GestionSite.SiteInterne.IsActif)
                                 {
                                     // Demarre le site en local
-                                    Instance.GestionSite.SitePrivate.StartSite();
+                                    Instance.GestionSite.SiteInterne.StartSite();
 
                                     // Force la mise a jour de l'URL
                                     Instance.GestionSite.IdCompetition = Instance.GestionSite.IdCompetition;
@@ -467,38 +467,38 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return !String.IsNullOrEmpty(Instance.GestionSite.IdCompetition) && !Instance.GestionSite.SitePrivate.IsActif && Instance.GestionSite.SitePrivate.IsChanged;
+                                return !String.IsNullOrEmpty(Instance.GestionSite.IdCompetition) && !Instance.GestionSite.SiteInterne.IsActif && Instance.GestionSite.SiteInterne.IsChanged;
                             });
                 }
-                return _cmdDemarrerSitePrivate;
+                return _cmdDemarrerSiteInterne;
             }
         }
 
-        private ICommand _cmdArreterPrivateSite = null;
+        private ICommand _cmdArreterSiteInterne = null;
         /// <summary>
         /// Commande d'arret du site des ecrans d'appel
         /// </summary>
-        public ICommand CmdArreterPrivateSite
+        public ICommand CmdArreterSiteInterne
         {
             get
             {
-                if (_cmdArreterPrivateSite == null)
+                if (_cmdArreterSiteInterne == null)
                 {
-                    _cmdArreterPrivateSite = new RelayCommand(
+                    _cmdArreterSiteInterne = new RelayCommand(
                             o =>
                             {
-                                if (Instance.GestionSite.SitePrivate != null && Instance.GestionSite.SitePrivate.IsActif)
+                                if (Instance.GestionSite.SiteInterne != null && Instance.GestionSite.SiteInterne.IsActif)
                                 {
                                     // Demarre le site en local
-                                    Instance.GestionSite.SitePrivate.StopSite();
+                                    Instance.GestionSite.SiteInterne.StopSite();
                                 }
                             },
                             o =>
                             {
-                                return Instance.GestionSite.SitePrivate.IsActif;
+                                return Instance.GestionSite.SiteInterne.IsActif;
                             });
                 }
-                return _cmdArreterPrivateSite;
+                return _cmdArreterSiteInterne;
             }
         }
 

@@ -15,6 +15,6 @@
         AffectationTapis = 8,
         Rencontres = 9,
         Engagements = 10,
-        PrivateEcransAppel = 100
+        InterneEcransAppel = 100
     }
 }

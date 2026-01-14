@@ -2,10 +2,10 @@
 
 namespace Tools.Export
 {
-    public class ConfigurationExportSitePrivate
+    public class ConfigurationExportSiteInterne
     {
 
-        public ConfigurationExportSitePrivate(string pLogo = "")
+        public ConfigurationExportSiteInterne(string pLogo = "")
         {
             // TODO Ajouter ici les autres parametres
             Logo = string.IsNullOrEmpty(pLogo) ? ConstantResource.Export_DefaultLogo : pLogo;

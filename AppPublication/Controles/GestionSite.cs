@@ -40,10 +40,12 @@ namespace AppPublication.Controles
         private const string kSiteLocalInstanceName = "local";
         private const string kSiteDistantInstanceName = "distant";
         private const string kSiteFranceJudoInstanceName = "ffjudo";
-        private const string kSitePrivateInstanceName = "private";
+        private const string kSiteInterneInstanceName = "internal";
 
         private const string kSiteRepertoire = "site";
-        private const string kPrivateSiteRepertoire = "private-site";
+        private const string kSiteInterneRepertoire = "internal-site";
+        private const string kCfgSitePublicInstanceName = "public";
+        private const string kCfgSiteInterneInstanceName = "internal";
 
         #endregion
 
@@ -52,13 +54,13 @@ namespace AppPublication.Controles
         private GestionStatistiques _statMgr = null;
         private GenerationScheduler _schedulerSite = null;  // Le scheduler de generation Site
         private GenerateurSite _generateurSite = null;  // Le generateur Site
-        private GenerationScheduler _schedulerSitePrivate = null;  // Le scheduler de generation Site interne
-        private GenerateurSite _generateurSitePrivate = null;  // Le generateur Site
+        private GenerationScheduler _schedulerSiteInterne = null;  // Le scheduler de generation Site interne
+        private GenerateurSiteInterne _generateurSiteInterne = null;  // Le generateur Site
         private IProgress<OperationProgress> _progressHandler = null;
-        private IProgress<OperationProgress> _progressHandlerPrivate = null;
+        private IProgress<OperationProgress> _progressHandlerInterne = null;
 
         private ExportSiteStructure _structureRepertoiresSite;                      // La structure de repertoire d'export du site
-        private ExportSitePrivateStructure _structureRepertoiresPrivateSite;        // La structure de repertoire d'export du site prive
+        private ExportSiteInterneStructure _structureRepertoiresSiteInterne;        // La structure de repertoire d'export du site prive
 
         private ExportSiteUrls _structureSiteLocal;                 // la structure d'export du site local
         private ExportSiteUrls _structureSiteDistant;                 // la structure d'export du site distant
@@ -92,7 +94,7 @@ namespace AppPublication.Controles
             {
                 // Initialise les objets de gestion des sites Web. Ils chargent automatiquement leur configuration
                 _siteLocal = new MiniSiteConfigurable(true, kSiteLocalInstanceName, true, false);
-                _sitePrivate = new MiniSiteConfigurable(true, kSitePrivateInstanceName, true, false);
+                _siteInterne = new MiniSiteConfigurable(true, kSiteInterneInstanceName, true, false);
                 _siteDistant = new MiniSiteConfigurable(false, kSiteDistantInstanceName, true, true);           // on utilise un prefix vide pour le site distant pour des questions de retrocompatibilite
                 _siteFranceJudo = new MiniSiteConfigurable(false, kSiteFranceJudoInstanceName, false, true);    // On ne garde pas le detail des configuration pour le site FFJudo
                 _statMgr = (statMgr != null) ? statMgr : new GestionStatistiques();
@@ -100,14 +102,19 @@ namespace AppPublication.Controles
 
                 // Initialise le progress handler pour la generation de site
                 _progressHandler = new Progress<OperationProgress>(onGenerationSiteProgressReport);
+                _progressHandlerInterne = new Progress<OperationProgress>(onGenerationSiteInterneProgressReport);
 
 
                 // Le generateur de site
                 _generateurSite = new GenerateurSite(_judoDataManager, SiteDistantSelectionne, _progressHandler);
+                _generateurSiteInterne = new GenerateurSiteInterne(_judoDataManager, _progressHandlerInterne);
 
                 // Initialise le scheduler de generation de site
-                _schedulerSite = new GenerationScheduler(_statMgr.Generation, _statMgr.Synchronisation, _generateurSite);
+                _schedulerSite = new GenerationScheduler(_statMgr.GenerationSite, _statMgr.Synchronisation, _generateurSite);
                 _schedulerSite.StateChanged += onSchedulerSiteStateChanged;
+
+                _schedulerSiteInterne = new GenerationScheduler(_statMgr.GenerationSiteInterne, null, _generateurSiteInterne);
+                _schedulerSiteInterne.StateChanged += onSchedulerSiteInterneStateChanged;
 
                 // Initialise la liste des logos
                 InitFichiersLogo();
@@ -462,23 +469,25 @@ namespace AppPublication.Controles
                     // Met a jour la constante d'export
                     string tmp = OutilsTools.GetExportDir(_repertoireRacine);
                     string siteRoot = Path.Combine(tmp, kSiteRepertoire);
+                    string siteRootInterne = Path.Combine(tmp, kSiteInterneRepertoire);
 
                     // Initialise les structures d'export
                     _structureRepertoiresSite = new ExportSiteStructure(siteRoot, IdCompetition);
-                    _structureRepertoiresPrivateSite = new ExportSitePrivateStructure(Path.Combine(tmp, kPrivateSiteRepertoire));
+                    _structureRepertoiresSiteInterne = new ExportSiteInterneStructure(siteRootInterne);
 
                     _structureSiteDistant = new ExportSiteUrls(_structureRepertoiresSite);
                     _structureSiteLocal = new ExportSiteUrls(_structureRepertoiresSite);
 
                     // Propage la valeur au generateur de site
                     _generateurSite.StructureRepertoire = _structureRepertoiresSite;
+                    _generateurSiteInterne.StructureRepertoire = _structureRepertoiresSiteInterne;
 
-                    // Met a jour les repertoires de l'application
+                    // Met a jour les repertoires de l'application (Public et Interne)
                     InitExportSiteStructure();
 
                     // Initialise la racine du serveur Web local
                     SiteLocal.ServerHTTP.LocalRootPath = siteRoot;
-                    // TODO initialiser le repoertoire racine du site prive
+                    SiteInterne.ServerHTTP.LocalRootPath = siteRootInterne;
                 }
             }
         }
@@ -545,19 +554,19 @@ namespace AppPublication.Controles
             }
         }
 
-        TaskExecutionInformation _statGenerationPrivate;
+        TaskExecutionInformation _statGenerationInterne;
         /// <summary>
         /// Statistique de derniere generation du site interne - lecture seule
         /// </summary>
-        public TaskExecutionInformation DerniereGenerationPrivate
+        public TaskExecutionInformation DerniereGenerationInterne
         {
             get
             {
-                return _statGenerationPrivate;
+                return _statGenerationInterne;
             }
             private set
             {
-                _statGenerationPrivate = value;
+                _statGenerationInterne = value;
                 NotifyPropertyChanged();
             }
         }
@@ -596,19 +605,19 @@ namespace AppPublication.Controles
             }
         }
 
-        bool _sitePrivateGenere = false;
+        bool _siteInterneGenere = false;
         /// <summary>
-        /// Indique si le site private a ete bien genere (true) - lecture seule
+        /// Indique si le site Interne a ete bien genere (true) - lecture seule
         /// </summary>
-        public bool SitePrivateGenere
+        public bool SiteInterneGenere
         {
             get
             {
-                return _sitePrivateGenere;
+                return _siteInterneGenere;
             }
             private set
             {
-                _sitePrivateGenere = value;
+                _siteInterneGenere = value;
                 NotifyPropertyChanged();
             }
         }
@@ -642,15 +651,15 @@ namespace AppPublication.Controles
             }
         }
 
-        private MiniSite _sitePrivate = null;
+        private MiniSite _siteInterne = null;
         /// <summary>
         /// Le site de publication local des ecrans d'appel
         /// </summary>
-        public MiniSite SitePrivate
+        public MiniSite SiteInterne
         {
             get
             {
-                return _sitePrivate;
+                return _siteInterne;
             }
         }
 
@@ -658,20 +667,20 @@ namespace AppPublication.Controles
         /// Propriete passerelle pour selectionner l'interface de publication du site ecrans
         /// Permet de tenir a jour le QR code de l'URL de publication
         /// </summary>
-        public IPAddress InterfacePrivateSite
+        public IPAddress InterfaceSiteInterne
         {
             get
             {
-                return SitePrivate.InterfaceLocalPublication;
+                return SiteInterne.InterfaceLocalPublication;
             }
             set
             {
                 // Verifie que la valeur selectionnee est bien dans la liste des interfaces
                 try
                 {
-                    SitePrivate.InterfaceLocalPublication = value;
+                    SiteInterne.InterfaceLocalPublication = value;
                     NotifyPropertyChanged();
-                    URLEcransAppelPublication = CalculURLPrivateSite();
+                    URLEcransAppelPublication = CalculURLSiteInterne();
                 }
                 catch (ArgumentOutOfRangeException) { }
             }
@@ -792,6 +801,30 @@ namespace AppPublication.Controles
             }
         }
 
+        int _delaiGenerationInterneSec = 30;
+        /// <summary>
+        /// Delai entre 2 generations du site Interne
+        /// </summary>
+        public int DelaiGenerationInterneSec
+        {
+            get
+            {
+                return _delaiGenerationInterneSec;
+            }
+            set
+            {
+                if (_delaiGenerationInterneSec != value)
+                {
+                    // Configure le scheduler
+                    _schedulerSiteInterne.DelaiGenerationSec = value;
+
+                    SchedulerConfigElement cfg = GetInstanceConfigElement(kCfgSiteInterneInstanceName);
+                    cfg.DelaiGenerationSec = (_delaiGenerationInterneSec = value);
+
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         int _delaiGenerationSec = 30;
         /// <summary>
@@ -810,7 +843,7 @@ namespace AppPublication.Controles
                     // Configure le scheduler
                     _schedulerSite.DelaiGenerationSec = value;
 
-                    SchedulerConfigElement cfg = GetInstanceConfigElement("public");
+                    SchedulerConfigElement cfg = GetInstanceConfigElement(kCfgSitePublicInstanceName);
                     cfg.DelaiGenerationSec = (_delaiGenerationSec = value);
 
                     NotifyPropertyChanged();
@@ -1316,26 +1349,26 @@ namespace AppPublication.Controles
             }
         }
 
-        private StatusGenerationSite _statusPrivate;
+        private StatusGenerationSite _statusInterne;
         /// <summary>
         /// Le statut de generation du site interne
         /// </summary>
-        public StatusGenerationSite StatusPrivate
+        public StatusGenerationSite StatusInterne
         {
             get
             {
-                if (null == _statusPrivate)
+                if (null == _statusInterne)
                 {
-                    _statusPrivate = new StatusGenerationSite();
+                    _statusInterne = new StatusGenerationSite();
                 }
-                return _statusPrivate;
+                return _statusInterne;
             }
             set
             {
-                _statusPrivate = value;
+                _statusInterne = value;
                 NotifyPropertyChanged();
                 // TODO A modifier pour prendre en compte le site private
-                // IsGenerationActive = !(_statusPrivate.State == StateGenerationEnum.Stopped);
+                // IsGenerationActive = !(_statusInterne.State == StateGenerationEnum.Stopped);
             }
         }
         #endregion
@@ -1512,7 +1545,7 @@ namespace AppPublication.Controles
             ReportGenerationProgress(valueReported, false);
         }
 
-        private void onGenerationSitePrivateProgressReport(OperationProgress valueReported)
+        private void onGenerationSiteInterneProgressReport(OperationProgress valueReported)
         {
             ReportGenerationProgress(valueReported, true);
         }
@@ -1521,8 +1554,8 @@ namespace AppPublication.Controles
         /// Methode interne pour aiguiller le progress vers la bonnne propriete de status
         /// </summary>
         /// <param name="valueReported"></param>
-        /// <param name="isPrivate"></param>
-        private void ReportGenerationProgress(OperationProgress valueReported, bool isPrivate)
+        /// <param name="isInterne"></param>
+        private void ReportGenerationProgress(OperationProgress valueReported, bool isInterne)
         {
             LogTools.Logger.Debug($"Progress {valueReported} signale par le generateur");
 
@@ -1536,9 +1569,9 @@ namespace AppPublication.Controles
 
                     // Met a jour le status avec la nouvelle progression et notifie les changements
                     cpy.Progress = (int)Math.Round(valueReported.ProgressPercent * 100);
-                    if (isPrivate)
+                    if (isInterne)
                     {
-                        StatusPrivate = cpy;
+                        StatusInterne = cpy;
                     }
                     else
                     {
@@ -1598,7 +1631,7 @@ namespace AppPublication.Controles
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="evt"></param>
-        private void onSchedulerSitePrivateStateChanged(object sender, SchedulerStateEventArgs evt)
+        private void onSchedulerSiteInterneStateChanged(object sender, SchedulerStateEventArgs evt)
         {
             LogTools.Logger.Debug($"Event {evt.State} signale par le scheduler private");
 
@@ -1606,17 +1639,17 @@ namespace AppPublication.Controles
             System.Windows.Application.Current.ExecOnUiThread(() =>
             {
                 // Clone le status courant
-                StatusGenerationSite cpy = StatusPrivate.Clone();
+                StatusGenerationSite cpy = StatusInterne.Clone();
 
                 // Met a jour l'etat avec celui reçu s'il est documente, notifie les changements en assignant la propriete
                 if (evt.State != StateGenerationEnum.None) { cpy.State = evt.State; }
-                StatusPrivate = cpy;
+                StatusInterne = cpy;
 
                 // Verifie si on a des infos d'exécution signalées
                 if (evt.InfosExecution != null)
                 {
-                    SitePrivateGenere = evt.InfosExecution.IsSuccess;
-                    DerniereGenerationPrivate = evt.InfosExecution;
+                    SiteInterneGenere = evt.InfosExecution.IsSuccess;
+                    DerniereGenerationInterne = evt.InfosExecution;
                 }
 
                 // Met a jour le delai avant la prochaine generation s'il est documente
@@ -1638,6 +1671,11 @@ namespace AppPublication.Controles
             if (_structureRepertoiresSite != null)
             {
                 FileAndDirectTools.CreateDirectorie(_structureRepertoiresSite.RepertoireRacine);
+            }
+
+            if (_structureRepertoiresSiteInterne != null)
+            {
+                FileAndDirectTools.CreateDirectorie(_structureRepertoiresSiteInterne.RepertoireRacine);
             }
         }
 
@@ -1775,8 +1813,12 @@ namespace AppPublication.Controles
                 EffacerAuDemarrage = PublicationConfigSection.Instance.General.EffacerAuDemarrage;
 
                 // TODO A ameliorer pour le multi-instance
-                SchedulerConfigElement cfg = GetInstanceConfigElement("public");
-                DelaiGenerationSec = cfg.DelaiGenerationSec;
+                SchedulerConfigElement cfgPub = GetInstanceConfigElement(kCfgSitePublicInstanceName);
+                DelaiGenerationSec = cfgPub.DelaiGenerationSec;
+
+                SchedulerConfigElement cfgPriv = GetInstanceConfigElement(kCfgSiteInterneInstanceName);
+                DelaiGenerationInterneSec = cfgPriv.DelaiGenerationSec;
+
 
                 PublierProchainsCombats = GenerationConfigSection.Instance.GenerateurSite.PublierProchainsCombats;
                 NbProchainsCombats = GenerationConfigSection.Instance.GenerateurSite.NbProchainsCombats;
@@ -1800,7 +1842,7 @@ namespace AppPublication.Controles
                 // L'interface local de publication a ete chargee via la configuration du minisite, il faut juste s'assurer du bon calcul des URLs
                 URLLocalPublication = CalculURLSiteLocal();
 
-                URLEcransAppelPublication = CalculURLPrivateSite();
+                URLEcransAppelPublication = CalculURLSiteInterne();
 
                 // ici on initialise les ecrans d'appel
                 InitEcransAppel();
@@ -1943,15 +1985,15 @@ namespace AppPublication.Controles
         /// Calcul l'URL sur le site ecrans en fonction de la configuration
         /// </summary>
         /// <returns></returns>
-        private string CalculURLPrivateSite()
+        private string CalculURLSiteInterne()
         {
             string output = "Indefinie";
 
             try
             {
-                if (!String.IsNullOrEmpty(IdCompetition) && SitePrivate.ServerHTTP != null && SitePrivate.ServerHTTP.ListeningIpAddress != null && SitePrivate.ServerHTTP.Port > 0)
+                if (!String.IsNullOrEmpty(IdCompetition) && SiteInterne.ServerHTTP != null && SiteInterne.ServerHTTP.ListeningIpAddress != null && SiteInterne.ServerHTTP.Port > 0)
                 {
-                    string urlBase = string.Format("http://{0}:{1}/", SitePrivate.ServerHTTP.ListeningIpAddress.ToString(), SitePrivate.ServerHTTP.Port);
+                    string urlBase = string.Format("http://{0}:{1}/", SiteInterne.ServerHTTP.ListeningIpAddress.ToString(), SiteInterne.ServerHTTP.Port);
 
                     // TODO Ajouter la structure des ecrans d'appel
                     // output = (new Uri(new Uri(urlBase), _structureSiteLocal.UrlPathIndex)).ToString();
