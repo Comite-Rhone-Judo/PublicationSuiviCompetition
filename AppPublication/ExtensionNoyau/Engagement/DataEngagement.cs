@@ -189,7 +189,7 @@ namespace AppPublication.ExtensionNoyau.Engagement
                         // Ajoute le Groupement par nom qui est toujours present
                         foreach (char c in alphabet)
                         {  
-                            int nj = judokasParticipants.Count(o => Char.ToUpper(o.nom.First()) == c);
+                            int nj = judokasParticipants.Count(o => !string.IsNullOrEmpty(o.nom) && Char.ToUpper(o.nom.First()) == c);
 
                             if (nj > 0)
                             {

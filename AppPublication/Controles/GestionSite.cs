@@ -1834,15 +1834,23 @@ namespace AppPublication.Controles
                             LogTools.Logger.Warn("Impossible de valider l'integrite des donnees combats (Timeout ou deconnexion).");
                         }
                     }
+                    catch(Exception ex)
+                    {
+                        // Oups
+                        LogTools.Logger.Error(ex, "Une exception inattendue est survenue lors de la generation.");
+                    }
                     finally
                     {
                         // Met toujours, via le finally, le sstatus a Idle
-                        Status = StatusGenerationSite.Instance(StateGenerationEnum.Idle);
-
-                        // Controle final si tout s'est bien passe
                         if (!SiteGenere)
                         {
+                            // Controle final si tout s'est bien passe
+                            Status = StatusGenerationSite.Instance(StateGenerationEnum.IdleWithError);
                             _statMgr.EnregistrerErreurGeneration();
+                        }
+                        else
+                        {
+                            Status = StatusGenerationSite.Instance(StateGenerationEnum.Idle);
                         }
 
                         watcherTotal.Stop();
@@ -1859,9 +1867,12 @@ namespace AppPublication.Controles
                         // prochaine heure de generation
                         wakeUpTime = DateTime.Now.AddMilliseconds(delaiThread);
 
-                        StatExecution tmp = DerniereGeneration;
-                        tmp.DateProchaineGeneration = wakeUpTime;
-                        DerniereGeneration = tmp;
+                        if (DerniereGeneration != null)
+                        {
+                            StatExecution tmp = DerniereGeneration;
+                            tmp.DateProchaineGeneration = wakeUpTime;
+                            DerniereGeneration = tmp;
+                        }
                     }
                 }
 
