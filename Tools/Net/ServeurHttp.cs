@@ -132,6 +132,7 @@ namespace Tools.Net
                     _isStart = true;
                     CreateNewInstance();
                     _server = new HttpServer.HttpServer();
+                    // TODO A voir comment on gere les differents module ... j'aimerai bien via la configuration
                     // _server.Add(new BasicFileImgModule(LocalRootPath));
                     FileModule module = new FileModule("/", LocalRootPath, false);
                     module.AddDefaultMimeTypes();

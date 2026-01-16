@@ -372,7 +372,7 @@ namespace AppPublication.Controles
                             {
                                 if (GestionSite.SiteInterne != null && GestionSite.SiteInterne.IsActif)
                                 {
-                                    Clipboard.SetText(GestionSite.URLEcransAppelPublication);
+                                    Clipboard.SetText(GestionSite.URLInternePublication);
                                 }
                             },
                             o =>

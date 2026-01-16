@@ -64,6 +64,7 @@ namespace AppPublication.Controles
 
         private ExportSiteUrls _structureSiteLocal;                 // la structure d'export du site local
         private ExportSiteUrls _structureSiteDistant;                 // la structure d'export du site distant
+        private ExportSiteInterneUrls _structureSiteInterne;        // la structure d'export du site interne
 
         private Dictionary<string, EntitePublicationFFJudo> _allEntitePublicationFFJudo = null;
         private Dictionary<string, ObservableCollection<EntitePublicationFFJudo>> _allEntitesPublicationFFJudo = null;
@@ -477,6 +478,7 @@ namespace AppPublication.Controles
 
                     _structureSiteDistant = new ExportSiteUrls(_structureRepertoiresSite);
                     _structureSiteLocal = new ExportSiteUrls(_structureRepertoiresSite);
+                    _structureSiteInterne = new ExportSiteInterneUrls(_structureRepertoiresSiteInterne);
 
                     // Propage la valeur au generateur de site
                     _generateurSite.StructureRepertoire = _structureRepertoiresSite;
@@ -680,7 +682,7 @@ namespace AppPublication.Controles
                 {
                     SiteInterne.InterfaceLocalPublication = value;
                     NotifyPropertyChanged();
-                    URLEcransAppelPublication = CalculURLSiteInterne();
+                    URLInternePublication = CalculURLSiteInterne();
                 }
                 catch (ArgumentOutOfRangeException) { }
             }
@@ -981,7 +983,7 @@ namespace AppPublication.Controles
         /// <summary>
         /// URL pour le site local des ecrans d'appel
         /// </summary>
-        public string URLEcransAppelPublication
+        public string URLInternePublication
         {
             get
             {
@@ -1046,6 +1048,8 @@ namespace AppPublication.Controles
                 }
                 URLDistantPublication = CalculURLSiteDistant();
                 URLLocalPublication = CalculURLSiteLocal();
+                URLInternePublication = CalculURLSiteInterne();
+
                 // Note: ici on devrait dans l'absolu utiliser le snapshot mais le traitement est rapide et a peu de chance de changer
                 var DC = _judoDataManager.Data;
                 CanPublierAffectation = DC.Organisation.Competition.IsIndividuelle();
@@ -1842,7 +1846,7 @@ namespace AppPublication.Controles
                 // L'interface local de publication a ete chargee via la configuration du minisite, il faut juste s'assurer du bon calcul des URLs
                 URLLocalPublication = CalculURLSiteLocal();
 
-                URLEcransAppelPublication = CalculURLSiteInterne();
+                URLInternePublication = CalculURLSiteInterne();
 
                 // ici on initialise les ecrans d'appel
                 InitEcransAppel();
@@ -1991,16 +1995,16 @@ namespace AppPublication.Controles
 
             try
             {
-                if (!String.IsNullOrEmpty(IdCompetition) && SiteInterne.ServerHTTP != null && SiteInterne.ServerHTTP.ListeningIpAddress != null && SiteInterne.ServerHTTP.Port > 0)
+                if (!String.IsNullOrEmpty(IdCompetition) && SiteInterne.ServerHTTP != null && SiteInterne.ServerHTTP.ListeningIpAddress != null && SiteInterne.ServerHTTP.Port > 0 && _structureSiteInterne != null)
                 {
                     string urlBase = string.Format("http://{0}:{1}/", SiteInterne.ServerHTTP.ListeningIpAddress.ToString(), SiteInterne.ServerHTTP.Port);
 
                     // TODO Ajouter la structure des ecrans d'appel
-                    // output = (new Uri(new Uri(urlBase), _structureSiteLocal.UrlPathIndex)).ToString();
+                    output = (new Uri(new Uri(urlBase), _structureSiteInterne.UrlPathEcransAppelRedirecteur)).ToString();
                 }
             }
             catch (Exception ex)
-            {
+            { 
                 output = string.Empty;
                 LogTools.Logger.Error(ex, "Impossible de calculer l'URL du site des ecrans d'appel");
             }

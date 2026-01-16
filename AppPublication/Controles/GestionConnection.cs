@@ -203,7 +203,7 @@ namespace AppPublication.Controles
 
                 _isDisposing = true;
                 clientToDispose = _client;
-                _client = null;
+                Client = null;  // Ici il faut passer par la propriété pour bien notifier le changement
                 _isconnected = false;
             }
 

@@ -418,7 +418,7 @@
                                                 <telerik:RadBarcodeQR Background="White"  Height="100" Mode="Byte" ErrorCorrectionLevel="L" x:Name="QRCodeEcransAppel">
                                                     <telerik:RadBarcodeQR.Text>
                                                         <MultiBinding Converter="{StaticResource DisplayURLStatusConverter}" Mode="OneWay">
-                                                            <Binding Path="GestionSite.URLEcransAppelPublication"  Mode="OneWay"/>
+                                                            <Binding Path="GestionSite.URLInternePublication"  Mode="OneWay"/>
                                                             <Binding Path="GestionSite.SiteInterne
                                                                      .IsActif"  Mode="OneWay"/>
                                                         </MultiBinding>
