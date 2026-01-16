@@ -202,7 +202,7 @@ namespace AppPublication.Controles
 
                 _isDisposing = true;
                 clientToDispose = _client;
-                _client = null;
+                Client = null;  // Ici il faut passer par la propriété pour bien notifier le changement
                 _isconnected = false;
             }
 
@@ -337,8 +337,6 @@ namespace AppPublication.Controles
         /// <param name="e"></param>
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
-            // TODO Voir pour integrer la gestion de la qualite de la connexion ici
-
             ClientJudo currentClient;
             bool isConnected;
             DateTime reference;
