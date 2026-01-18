@@ -10,7 +10,7 @@ using Tools.Logging;
 
 namespace Tools.Net
 {
-    public interface ServeurHttp
+    public interface IServeurHttp
     {
         /// <summary>
         /// Adresse IP d'ecoute

@@ -239,6 +239,8 @@
     <Compile Include="HttpServerModule\Templates\SmartyEngine.cs" />
     <Compile Include="HttpServerModule\Templates\TemplateEngine.cs" />
     <Compile Include="Configuration\AppSettings.cs" />
+    <Compile Include="Net\IServeurHttp.cs" />
+    <Compile Include="Net\ServeurHttpBase.cs" />
     <Compile Include="Threading\BatchProgressInfo.cs" />
     <Compile Include="Outils\BlockingCounter.cs" />
     <Compile Include="Security\Encryption.cs" />
@@ -251,7 +253,7 @@
     <Compile Include="Threading\ParallelTaskBatcher.cs" />
     <Compile Include="Outils\ResourcesTools.cs" />
     <Compile Include="Outils\ScoresJujitsu.cs" />
-    <Compile Include="Net\ServeurHttp.cs" />
+    <Compile Include="Net\ServeurHttpBasique.cs" />
     <Compile Include="Net\MiniSite.cs" />
     <Compile Include="Net\StatusMiniSite.cs" />
     <Compile Include="Outils\TimedLock.cs" />
