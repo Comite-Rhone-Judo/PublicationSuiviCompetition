@@ -67,7 +67,7 @@ namespace Tools.Net
             if (local)
             {
                 // Configure un site web local
-                ServerHTTP = new ServeurHttp();
+                ServerHTTP = new ServeurHttpBasique();
 
                 // Initialise les interfaces
                 InitInterfaces();
@@ -175,11 +175,11 @@ namespace Tools.Net
             }
         }
 
-        private ServeurHttp _server = null;
+        private IServeurHttp _server = null;
         /// <summary>
         /// Le serveur HTTP de publication locale (null si distant, lecture seule)
         /// </summary>
-        public ServeurHttp ServerHTTP
+        public IServeurHttp ServerHTTP
         {
             get
             {

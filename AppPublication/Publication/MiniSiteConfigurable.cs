@@ -239,6 +239,7 @@ namespace AppPublication.Publication
 
         private void LoadConfiguration()
         {
+            // TODO Ajouter ici la gestion des types de serveurs HTTP
             MiniSiteConfigElement cfg = PublicationConfigSection.Instance.MiniSites[InstanceName];
             if (cfg == null)
             {
