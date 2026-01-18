@@ -68,7 +68,7 @@
                         <Label HorizontalAlignment="Right" Content="Message d'avertissement:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
                         <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Message d'avertissement affiché au début des pages prochains combats et se prépare."/>
                     </StackPanel>
-                    <TextBox  TextWrapping="Wrap" Height="44" VerticalScrollBarVisibility="Auto" Margin="5 5 5 5" MinWidth="300" Text = "{Binding Path=MsgProchainsCombats}"/>
+                    <TextBox  Height="44" Style="{StaticResource SlimTextBoxStyle}" Margin="5 5 5 5" Width="300" MinWidth="300" Text = "{Binding Path=MsgProchainsCombats}"/>
                 </StackPanel>
 
 
