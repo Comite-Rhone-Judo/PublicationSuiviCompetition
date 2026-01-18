@@ -112,6 +112,16 @@ namespace AppPublication.Controles
             }
             set
             {
+                if (_client == value) return;
+
+                // Se désabonner de l'ancien client pour éviter les fuites de mémoire
+                if (_client != null)
+                {
+                    _client.TraitementConnexion.OnAcceptConnectionTest -= clientjudo_OnDemandeConnectionTest;
+                    _client.OnReceivedDataErrorOccured -= client_OnReceivedDataErrorOccured;
+                    _client.OnReceivedDataSuccessOccured -= client_OnReceivedDataSuccessOccured;
+                }
+
                 bool shouldSetup = false;
                 ClientJudo clientToSetup = null;
 
