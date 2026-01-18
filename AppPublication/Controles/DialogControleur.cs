@@ -1,6 +1,8 @@
 ﻿using AppPublication.Tools;
 using AppPublication.Tools.Enum;
 using KernelImpl;
+using KernelImpl.Noyau.Deroulement;
+using KernelImpl.Noyau.Organisation;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Information;
 using System;
 using System.IO;
@@ -22,28 +24,47 @@ namespace AppPublication.Controles
     public class DialogControleur : NotificationBase
     {
         #region MEMBRES
-        private static DialogControleur _currentControleur = null;      // instance singletion
+        private static DialogControleur _instance = null;      // instance singletion
         private AppPublication.IHM.Commissaire.StatistiquesView _statWindow = null;
         private AppPublication.IHM.Commissaire.InformationsView _infoWindow = null;
         private PdfViewer _manuelViewer = null;
         private AppPublication.IHM.Commissaire.ConfigurationPublication _cfgWindow = null;
+        private readonly JudoData _serverData;
         #endregion
 
         #region CONSTRUCTEUR
 
-        private DialogControleur()
+        // Constructeur privé : inaccessible depuis l'extérieur
+        private DialogControleur(JudoData data)
         {
+            _serverData = data ?? throw new ArgumentNullException(nameof(data));
+
             FileAndDirectTools.InitDataDirectories();
-
             InitControleur();
-
-            // Initialise les informations de l'application
             AppInformation = AppInformation.Instance;
         }
 
         #endregion
 
         #region PROPRIETES
+
+        private Competition _competition = null;
+        /// <summary>
+        /// On expose la competition courante pour liaison avec l'IHM (et la notification de changement)
+        /// </summary>
+        public Competition Competition
+        {
+            get
+            {
+                return _competition;
+            }
+
+            private set { 
+                _competition = value;
+                NotifyPropertyChanged();
+            }
+        }
+
 
         private AppInformation _appInformation = null;
 
@@ -68,15 +89,9 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (null == _currentControleur)
-                {
-                    _currentControleur = new DialogControleur();
-                }
-                return _currentControleur;
-            }
-            private set
-            {
-                _currentControleur = value;
+                if (_instance == null)
+                    throw new InvalidOperationException("DialogControleur non initialise ! Appelez DialogControleur.Initialiser() dans App.xaml.cs.");
+                return _instance;
             }
         }
 
@@ -98,7 +113,7 @@ namespace AppPublication.Controles
         }
 
 
-        private GestionConnection _connection = new GestionConnection();
+        private GestionConnection _connection = null;
         /// <summary>
         /// Le gestionnaire de la connexion au serveur - Lecture seule
         /// </summary>
@@ -131,7 +146,6 @@ namespace AppPublication.Controles
             private set { _stats = value; }
         }
 
-        private JudoData _serverData;
         /// <summary>
         /// Le bloc de donnees recupere du serveur
         /// </summary>
@@ -139,27 +153,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_serverData == null)
-                {
-                    _serverData = KernelManager.Manager.manager.m_JudoData;
-                }
                 return _serverData;
-            }
-        }
-
-        private ExtensionNoyau.ExtensionJudoData _extendedServerData;
-        /// <summary>
-        /// Le bloc de donnees recupere du serveur
-        /// </summary>
-        public ExtensionNoyau.ExtensionJudoData ExtendedServerData
-        {
-            get
-            {
-                if (_extendedServerData == null)
-                {
-                    _extendedServerData = new ExtensionNoyau.ExtensionJudoData(ServerData);
-                }
-                return _extendedServerData;
             }
         }
 
@@ -218,11 +212,24 @@ namespace AppPublication.Controles
         #region METHODES
 
         /// <summary>
+        /// Seule méthode autorisée pour créer l'instance unique.
+        /// </summary>
+        public static DialogControleur CreateInstance(JudoData data)
+        {
+            if (_instance != null)
+                throw new InvalidOperationException("Violation du Singleton : DialogControleur deja instancie.");
+
+            _instance = new DialogControleur(data);
+            return _instance;
+        }
+
+        /// <summary>
         /// Actualise l'ID de competition (necessaire pour faire le lien avec la reception des donnees)
         /// </summary>
         public void UpdateCompetition()
         {
-            GestionSite.IdCompetition = (ServerData.competition != null) ? ServerData.competition.remoteId : string.Empty;
+            Competition = ServerData.Organisation.Competition;  // Met a jour la competition courante pour l'IHM
+            GestionSite.IdCompetition = (ServerData.Organisation.Competition != null) ? ServerData.Organisation.Competition.remoteId : string.Empty;
         }
 
         /// <summary>
@@ -234,10 +241,23 @@ namespace AppPublication.Controles
             {
                 try
                 {
-                    _connection = new GestionConnection();
+                    // Commence par le gestionnaire de statistiques
                     _stats = new GestionStatistiques();
-                    _site = new GestionSite(_stats);
 
+                    // Initialise le gestionnaire de connexion
+                    _connection = new GestionConnection();
+                    // et on s'abonne aux evenements pour pouvoir mettre a jour l'IHM
+                    _connection.ClientReady += OnClientReady;
+                    _connection.ClientDisconnected += OnClientDisconnected;
+
+                    // Initialise le gestionnaire d'evenements
+                    var evtMgr = GestionEvent.CreateInstance(this.ServerData, _stats, _connection);
+                    // et on s'abonne aux evenements pour pouvoir mettre a jour l'IHM
+                    evtMgr.BusyStatusChanged += OnBusyStatusChanged;
+                    evtMgr.DataUpdated += OnDataUpdated;
+
+                    // Le gestionnaire de site de publication
+                    _site = new GestionSite(this.ServerData, _stats);
                 }
                 catch (Exception ex)
                 {
@@ -250,9 +270,35 @@ namespace AppPublication.Controles
 
         #region COMMANDES
 
+        private ICommand _cmdAcquitterErreurCommunication = null;
 
+        /// <summary>
+        /// Commande permettant d'acquitter une erreur de communication
+        /// </summary>
+        public ICommand CmdAcquitterErreurCommunication
+        {
+            get
+            {
+                if (_cmdAcquitterErreurCommunication == null)
+                {
+                    _cmdAcquitterErreurCommunication = new RelayCommand(
+                            o =>
+                            {
+                                if (Connection != null && Connection.HasErreurTransmission)
+                                {
+                                    LogTools.Logger.Info("Erreur de transmission acquittee par l'utilisateur.");
+                                    Connection.HasErreurTransmission = false;
+                                }
+                            },
+                            o =>
+                            {
+                                return true;
+                            });
+                }
+                return _cmdAcquitterErreurCommunication;
+            }
+        }
 
-        
 
         private ICommand _cmdCopyUrlLocal = null;
         /// <summary>
@@ -549,29 +595,6 @@ namespace AppPublication.Controles
             }
         }
 
-        /*private void ButSite_Click_1(object sender, RoutedEventArgs e)
-        {
-            DialogControleur DC = DialogControleur.Instance;
-            try
-            {
-                string url = "";
-                if (DialogControleur.Instance.GestionSite.SiteLocal.IsLocal)
-                {
-                    url = ExportTools.GetURLSiteLocal(
-                         DialogControleur.Instance.GestionSite.SiteLocal.ServerHTTP.ListeningIpAddress.ToString(),
-                         DialogControleur.Instance.GestionSite.SiteLocal.ServerHTTP.Port,
-                         DialogControleur.Instance.ServerData.competition.remoteId);
-                }
-                else if (!DialogControleur.Instance.GestionSite.SiteLocal.IsLocal && DialogControleur.Instance.GestionSite.SiteLocal.SiteFTPDistant == NetworkTools.FTP_EJUDO_SUIVI_URL)
-                {
-                    url = ExportTools.GetURLSiteFTP(DialogControleur.Instance.ServerData.competition.remoteId);
-                }
-
-                System.Diagnostics.Process.Start(url);
-            }
-            catch { }
-        }*/
-
         private ICommand _cmdAfficherSiteLocal = null;
         /// <summary>
         /// Commande d'affichage du site en local
@@ -819,6 +842,68 @@ namespace AppPublication.Controles
             }
         }
 
+        #endregion
+
+        #region EVENT HANDLER
+
+        /// <summary>
+        /// Gestion de l'evenement de changement de statut d'occupation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnBusyStatusChanged(object sender, BusyStatusEventArgs e)
+        {
+            System.Windows.Application.Current.ExecOnUiThread(new Action(() =>
+            {
+                DialogControleur.Instance.IsBusy = e.IsBusy;
+                if (e.IsBusy)
+                {
+                    DialogControleur.Instance.BusyStatus = e.Status;
+                }
+            }
+            ));
+        }
+
+        /// <summary>
+        /// Evenement de mise a jour des donnees
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnDataUpdated(object sender, DataUpdateEventArgs e)
+        {
+            LogTools.Logger.Debug("Donnees mises a jour pour la categorie: {0}", e.CategorieDonnee.ToString());
+
+            if (e.CategorieDonnee == KernelImpl.Enum.CategorieDonneesEnum.Organisation)
+            {
+                this.UpdateCompetition();
+            }
+        }
+
+        /// <summary>
+        /// Traitement de l'evenement de disponibilite du client
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnClientReady(object sender, ClientReadyEventArgs e)
+        {
+            LogTools.Logger.Info("Client connecte et pret: {0}", e.Client.NetworkClient.IP);
+        }
+
+        /// <summary>
+        /// Evenement de deconnexion du client
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
+        {
+            LogTools.Logger.Info("Client deconnecte a {0}", e.DisconnectionTime);
+
+            Application.Current.ExecOnUiThread(() =>
+            {
+                this.IsBusy = false;
+                this.BusyStatus = BusyStatusEnum.None;
+            });
+        }
         #endregion
     }
 }

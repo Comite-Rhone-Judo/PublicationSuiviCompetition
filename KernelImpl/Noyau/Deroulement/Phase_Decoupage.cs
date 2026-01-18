@@ -1,4 +1,5 @@
 ﻿
+using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using Tools.Enum;
@@ -6,8 +7,10 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class Phase_Decoupage
+    public class Phase_Decoupage : IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public int id { get; set; }
         public int phase { get; set; }
         public int decoupage_finales { get; set; }

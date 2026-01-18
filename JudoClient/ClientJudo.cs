@@ -7,14 +7,18 @@ using Tools.TCP_Tools.Client;
 
 namespace JudoClient
 {
+    public delegate void OnEndConnectionHandler(object sender);
+    public delegate void OnReceivedDataEventOccured(object sender, string data);
+
     public class ClientJudo
     {
         ClientGenerique _client = null;
 
-        public delegate void OnEndConnectionHandler(object sender);
         public event OnEndConnectionHandler OnEndConnection;
+        public event OnReceivedDataEventOccured OnReceivedDataErrorOccured;
+        public event OnReceivedDataEventOccured OnReceivedDataSuccessOccured;
 
-        public ClientGenerique Client { get { return _client; } }
+        public ClientGenerique NetworkClient { get { return _client; } }
 
 
         private TraitementArbitrage _traitement_arb = null;
@@ -420,10 +424,22 @@ namespace JudoClient
                             #endregion
                     }
                 }
+
+                // Ajoute un evenement general de reception de donnees avec succes
+                if (OnReceivedDataSuccessOccured != null)
+                {
+                    OnReceivedDataSuccessOccured(this, donnees);
+                }
             }
             catch (Exception ex)
             {
                 LogTools.Error(ex);
+
+                // Appelle le callback d'erreur
+                if (OnReceivedDataErrorOccured != null)
+                {
+                    OnReceivedDataErrorOccured(this, donnees);
+                }
             }
         }
     }

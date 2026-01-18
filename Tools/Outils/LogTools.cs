@@ -27,13 +27,16 @@ namespace Tools.Outils
     {
         #region CONSTANTES
         private const string kloggingLevelVariable = "loggingLevel";
+        private const string kDbgDataLoggerName = "dbgDataLogger";
+        private const string kDefaultLoggerName = "defaultLogger";
         #endregion
 
         #region MEMBRES
         /// <summary>
         /// Define a static logger variable so that it references
         /// </summary>
-        private static Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static Logger _logger = NLog.LogManager.GetLogger(kDefaultLoggerName);
+        private static Logger _dataLogger = NLog.LogManager.GetLogger(kDbgDataLoggerName);
         private static Layout _previousLogLevel = null;
         // private static Logger Logger { get { return _logger; } }
 
@@ -43,6 +46,7 @@ namespace Tools.Outils
 
         // Access direct au Logger NLog
         public static Logger Logger { get { return _logger; } }
+        public static Logger DataLogger { get { return _dataLogger; } }
 
         public static void Error(string msg) { _logger.Error(msg); }
 

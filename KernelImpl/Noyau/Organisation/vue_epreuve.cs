@@ -1,4 +1,5 @@
 ﻿
+using KernelImpl.Internal;
 using System;
 using System.Linq;
 using System.Xml.Linq;
@@ -6,8 +7,10 @@ using Tools.Enum;
 
 namespace KernelImpl.Noyau.Organisation
 {
-    public class vue_epreuve : i_vue_epreuve_interface
+    public class vue_epreuve : i_vue_epreuve_interface, IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public int id { get; set; }
         public string nom { get; set; }
         public DateTime debut { get; set; }
@@ -65,7 +68,7 @@ namespace KernelImpl.Noyau.Organisation
         public CompetitionDisciplineEnum discipline_competition { get; set; } = CompetitionDisciplineEnum.Judo;
 
 
-        public vue_epreuve(Epreuve epreuve, JudoData DC)
+        public vue_epreuve(Epreuve epreuve, IJudoData DC)
         {
             id = epreuve.id;
             nom = epreuve.nom;
@@ -119,7 +122,7 @@ namespace KernelImpl.Noyau.Organisation
             return nom_cateage + " " + lib_sexe + " " + nom_catepoids;
         }
 
-        public XElement ToXml(JudoData DC)
+        public XElement ToXml(IJudoData DC)
         {
             XElement xepreuve = new XElement(ConstantXML.Epreuve);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_Categorie_Age, categorieAge.ToString());

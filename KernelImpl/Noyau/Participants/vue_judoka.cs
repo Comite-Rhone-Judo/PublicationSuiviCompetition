@@ -1,4 +1,5 @@
-﻿using KernelImpl.Noyau.Categories;
+﻿using KernelImpl.Internal;
+using KernelImpl.Noyau.Categories;
 using KernelImpl.Noyau.Organisation;
 using KernelImpl.Noyau.Structures;
 
@@ -11,7 +12,7 @@ using Tools.Enum;
 namespace KernelImpl.Noyau.Participants
 {
 
-    public class vue_judoka :  INotifyPropertyChanged
+    public class vue_judoka :  INotifyPropertyChanged, IEntityWithKey<string>
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -21,6 +22,15 @@ namespace KernelImpl.Noyau.Participants
         }
 
         #region PROPERTIES
+
+        string IEntityWithKey<string>.EntityKey => _idCache;
+
+        private string _idCache;
+        private void GetIdCache()
+        {
+            _idCache = string.Format("{0}-{1}", id, idepreuve);
+        }
+
         private int _id;
 
         /// <summary>
@@ -35,6 +45,7 @@ namespace KernelImpl.Noyau.Participants
                 {
                     _id = value;
                     OnPropertyChanged("id");
+                    GetIdCache();
                 }
             }
         }
@@ -432,6 +443,7 @@ namespace KernelImpl.Noyau.Participants
                 {
                     _idepreuve = value;
                     OnPropertyChanged("idepreuve");
+                    GetIdCache();
                 }
             }
         }
@@ -1049,9 +1061,9 @@ namespace KernelImpl.Noyau.Participants
         #endregion
         #region CONSTRUCTEURS
 
-        public vue_judoka(Judoka judoka, JudoData DC)
+        public vue_judoka(Judoka judoka, IJudoData DC)
         {
-            EpreuveJudoka ej = DC.Participants.EJS.FirstOrDefault(o => o.judoka == judoka.id);
+            EpreuveJudoka ej = DC.Participants.EpreuveJudokas.FirstOrDefault(o => o.judoka == judoka.id);
             Epreuve ep = ej != null ? DC.Organisation.Epreuves.FirstOrDefault(o => o.id == ej.epreuve) : null;
             Ceintures ceinture = DC.Categories.Grades.FirstOrDefault(o => o.id == judoka.ceinture);
             CategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == judoka.categorie);
@@ -1218,9 +1230,9 @@ namespace KernelImpl.Noyau.Participants
             }
         }
 
-        public vue_judoka(Judoka judoka, Epreuve epreuve, JudoData DC)
+        public vue_judoka(Judoka judoka, Epreuve epreuve, IJudoData DC)
         {
-            EpreuveJudoka ej = DC.Participants.EJS.FirstOrDefault(o => o.judoka == judoka.id && o.epreuve == epreuve.id);
+            EpreuveJudoka ej = DC.Participants.EpreuveJudokas.FirstOrDefault(o => o.judoka == judoka.id && o.epreuve == epreuve.id);
             Epreuve ep = ej != null ? DC.Organisation.Epreuves.FirstOrDefault(o => o.id == ej.epreuve) : null;
             Ceintures ceinture = DC.Categories.Grades.FirstOrDefault(o => o.id == judoka.ceinture);
             CategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == judoka.categorie);
@@ -1387,9 +1399,9 @@ namespace KernelImpl.Noyau.Participants
             }
         }
 
-        public vue_judoka(Judoka judoka, Epreuve epreuve, vue_judoka old_vj, JudoData DC)
+        public vue_judoka(Judoka judoka, Epreuve epreuve, vue_judoka old_vj, IJudoData DC)
         {
-            EpreuveJudoka ej = DC.Participants.EJS.FirstOrDefault(o => o.judoka == judoka.id && o.epreuve == old_vj.idepreuve);
+            EpreuveJudoka ej = DC.Participants.EpreuveJudokas.FirstOrDefault(o => o.judoka == judoka.id && o.epreuve == old_vj.idepreuve);
 
             //Epreuve ep = ej != null ? DC.Organisation.Epreuves.FirstOrDefault(o => o.id == ej.epreuve) : null;
             Epreuve ep = epreuve;

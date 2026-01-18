@@ -1,3 +1,4 @@
+using KernelImpl.Internal;
 using KernelImpl.Noyau.Structures;
 using System.Collections.Generic;
 using System.Xml.Linq;
@@ -9,8 +10,10 @@ namespace KernelImpl.Noyau.Structures
     /// <summary>
     /// Description des Club
     /// </summary>
-    public class Club
+    public class Club : IEntityWithKey<string>
     {
+        string IEntityWithKey<string>.EntityKey => id;
+
         public string id { get; set; }
         public string nomCourt { get; set; }
         public string nom { get; set; }

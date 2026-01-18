@@ -1,4 +1,5 @@
 
+using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,8 +13,10 @@ namespace KernelImpl.Noyau.Deroulement
     /// <summary>
     /// Description des Participants
     /// </summary>
-    public class Participant : INotifyPropertyChanged
+    public class Participant : INotifyPropertyChanged, IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
@@ -31,6 +34,20 @@ namespace KernelImpl.Noyau.Deroulement
                 {
                     _judoka = value;
                     OnPropertyChanged("judoka");
+                }
+            }
+        }
+
+        private int _id;
+        public int id
+        {
+            get { return _id; }
+            set
+            {
+                if (_id != value)
+                {
+                    _id = value;
+                    OnPropertyChanged("id");
                 }
             }
         }
@@ -232,12 +249,12 @@ namespace KernelImpl.Noyau.Deroulement
             }
         }
 
-        public Participants.Judoka Judoka1(JudoData DC)
+        public Participants.Judoka Judoka1(IJudoData DC)
         {
             return DC.Participants.Judokas.FirstOrDefault(o => o.id == this.judoka);
         }
 
-        public Participants.Equipe Equipe1(JudoData DC)
+        public Participants.Equipe Equipe1(IJudoData DC)
         {
             return DC.Participants.Equipes.FirstOrDefault(o => o.id == this.judoka);
         }
@@ -245,6 +262,7 @@ namespace KernelImpl.Noyau.Deroulement
         public void LoadXml(XElement xinfo)
         {
             this.judoka = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Participant_Judoka));
+            this.id = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Participant_ID));
 
             this.phase = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Participant_Phase));
             this.ranking = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Participant_Ranking));
@@ -263,7 +281,7 @@ namespace KernelImpl.Noyau.Deroulement
         }
 
 
-        public XElement ToXml(JudoData DC)
+        public XElement ToXml(IJudoData DC)
         {
             XElement xparticipant = new XElement(ConstantXML.Participant);
 

@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AppPublication.IHM.Commissaire"
         mc:Ignorable="d"
-        Header="Statistiques" Height="540" Width="900"
+        Header="Statistiques" Height="610" Width="900"
         WindowStartupLocation="CenterScreen" 
         CanClose="True" CanMove="True" ResizeMode="CanResize" 
         WindowState="Normal" Name="UI" Background="Black" SizeToContent="True">
@@ -35,11 +35,24 @@
         </StackPanel>
         <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" BorderBrush="White" Margin="10 0 10 10">
             <StackPanel Orientation="Vertical">
+                <Label HorizontalAlignment="Left" Content="Création des fichiers" Style="{StaticResource HeaderStyle}" />
                 <telerik:RadGridView ItemsSource="{Binding CompteursGeneration}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
                     CanUserDeleteRows="False" CanUserGroupColumns="False" CanUserInsertRows="False" ShowGroupPanel="False">
                     <telerik:RadGridView.Columns>
                         <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Libelle}" Header="Compteur" Width="180"/>
-                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Valeur, StringFormat=F0}" Header="Valeur" Width="50"/>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Valeur, StringFormat=F0}" Header="Nb" Width="50"/>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Min, StringFormat=F2}" Header="Min." Width="50"/>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Moy, StringFormat=F2}" Header="Moy." Width="50"/>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Max, StringFormat=F2}" Header="Max." Width="50"/>
+                    </telerik:RadGridView.Columns>
+                </telerik:RadGridView>
+                <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="1" Y1="0" Y2="0" Stretch="Fill"/>
+                <Label HorizontalAlignment="Left" Content="Réception des données" Style="{StaticResource HeaderStyle}" />
+                <telerik:RadGridView ItemsSource="{Binding CompteursDonnees}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
+                    CanUserDeleteRows="False" CanUserGroupColumns="False" CanUserInsertRows="False" ShowGroupPanel="False">
+                    <telerik:RadGridView.Columns>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Libelle}" Header="Compteur" Width="180"/>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Valeur, StringFormat=F0}" Header="Nb" Width="50"/>
                         <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Min, StringFormat=F2}" Header="Min." Width="50"/>
                         <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Moy, StringFormat=F2}" Header="Moy." Width="50"/>
                         <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Max, StringFormat=F2}" Header="Max." Width="50"/>
@@ -47,6 +60,7 @@
                 </telerik:RadGridView>
             </StackPanel>
         </Border>
+
         <!-- PANEL SYNCHRONISATION -->
         <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource Header1Style}" Margin="10,10,10,10" Visibility="Visible" >
             <TextBlock Text="Synchronisation du site distant" Style="{StaticResource Header1TextStyle}"/>
@@ -59,7 +73,7 @@
                     CanUserDeleteRows="False" CanUserGroupColumns="False" CanUserInsertRows="False" ShowGroupPanel="False">
                     <telerik:RadGridView.Columns>
                         <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Libelle}" Header="Compteur" Width="180"/>
-                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Valeur, StringFormat=F0}" Header="Valeur" Width="50"/>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Valeur, StringFormat=F0}" Header="Nb" Width="50"/>
                         <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Min, StringFormat=F2}" Header="Min." Width="50"/>
                         <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Moy, StringFormat=F2}" Header="Moy." Width="50"/>
                         <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Max, StringFormat=F2}" Header="Max." Width="50"/>
@@ -72,7 +86,7 @@
                     CanUserDeleteRows="False" CanUserGroupColumns="False" CanUserInsertRows="False" ShowGroupPanel="False">
                     <telerik:RadGridView.Columns>
                         <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Libelle}" Header="Compteur" Width="180"/>
-                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Valeur, StringFormat=F0}" Header="Valeur" Width="50"/>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Valeur, StringFormat=F0}" Header="Nb" Width="50"/>
                         <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Min, StringFormat=F2}" Header="Min." Width="50"/>
                         <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Moy, StringFormat=F2}" Header="Moy." Width="50"/>
                         <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Max, StringFormat=F2}" Header="Max." Width="50"/>

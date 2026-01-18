@@ -1,56 +1,45 @@
 ﻿
+using KernelImpl.Internal;
+using KernelImpl.Noyau.Deroulement;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Xml.Linq;
 using Tools.Export;
 using Tools.Outils;
 
 namespace KernelImpl.Noyau.Organisation
 {
-    public class DataOrganisation
+    public class DataOrganisation : IOrganisationData
     {
-        private IList<Competition> _competitions = new List<Competition>();
-        public IList<Competition> Competitions { get { return _competitions; } }
+        private readonly DeduplicatedCachedData<int, Competition> _competitionsCache = new DeduplicatedCachedData<int, Competition>();
+        private readonly DeduplicatedCachedData<int, Epreuve> _epreuvesCache = new DeduplicatedCachedData<int, Epreuve>();
+        private readonly DeduplicatedCachedData<int, Epreuve_Equipe> _epreuve_equipesCache = new DeduplicatedCachedData<int, Epreuve_Equipe>();
+        private readonly DeduplicatedCachedData<int, vue_epreuve_equipe> _vepreuves_equipeCache = new DeduplicatedCachedData<int, vue_epreuve_equipe>();
+        private readonly DeduplicatedCachedData<int, vue_epreuve> _vepreuvesCache = new DeduplicatedCachedData<int, vue_epreuve>();
 
-        private IList<Epreuve> _epreuves = new List<Epreuve>();
-        public IList<Epreuve> Epreuves { get { return _epreuves; } }
+        // Accesseurs O(1)
+        public IReadOnlyList<Competition> Competitions { get { return _competitionsCache.Cache; } }
+        public IReadOnlyList<Epreuve> Epreuves { get { return _epreuvesCache.Cache; } }
+        public IReadOnlyList<Epreuve_Equipe> EpreuveEquipes { get { return _epreuve_equipesCache.Cache; } }
+        public IReadOnlyList<vue_epreuve_equipe> VueEpreuveEquipes { get { return _vepreuves_equipeCache.Cache; } }
+        public IReadOnlyList<vue_epreuve> VueEpreuves { get { return _vepreuvesCache.Cache; } }
 
-        private IList<Epreuve_Equipe> _epreuve_equipes = new List<Epreuve_Equipe>();
-        public IList<Epreuve_Equipe> EpreuveEquipes { get { return _epreuve_equipes; } }
-
-
-        private IList<vue_epreuve_equipe> _vepreuves_equipe = new List<vue_epreuve_equipe>();
-        public IList<vue_epreuve_equipe> vepreuves_equipe { get { return _vepreuves_equipe; } }
-
-        private IList<vue_epreuve> _vepreuves = new List<vue_epreuve>();
-        public IList<vue_epreuve> vepreuves { get { return _vepreuves; } }
+        public Competition Competition { get; private set; }
 
         /// <summary>
         /// lecture des compétitions
         /// </summary>
         /// <param name="element">element XML contenant les compétitions</param>
         /// <param name="DC"></param>
-        public void lecture_competitions(XElement element, JudoData DC)
+        public void lecture_competitions(XElement element, IJudoData DC)
         {
             ICollection<Competition> competitions = Competition.LectureCompetitions(element, null);
-            using (TimedLock.Lock((_competitions as ICollection).SyncRoot))
-            {
-                //Ajout des nouveaux
-                foreach (Competition competition in competitions)
-                {
-                    Competition p = _competitions.FirstOrDefault(o => o.id == competition.id);
-                    if (p != null)
-                    {
-                        _competitions.Remove(p);
-                    }
-                    _competitions.Add(competition);
-                }
+            _competitionsCache.UpdateFullSnapshot(competitions); 
+            Competition = competitions.FirstOrDefault();
 
-                DC.competition = _competitions.FirstOrDefault();
-                DC.competitions = _competitions.ToList();
-                ExportTools.default_competition = DC.competition.remoteId;
-            }
+            ExportTools.default_competition = DC.Organisation.Competition.remoteId;
         }
 
 
@@ -59,25 +48,15 @@ namespace KernelImpl.Noyau.Organisation
         /// </summary>
         /// <param name="element">element XML contenant les épreuves (équipe)</param>
         /// <param name="DC"></param>
-        public void lecture_epreuves_equipe(XElement element, JudoData DC)
+        public void lecture_epreuves_equipe(XElement element, IJudoData DC)
         {
             ICollection<Epreuve_Equipe> epreuves = Epreuve_Equipe.LectureEpreuveEquipes(element, null);
-            using (TimedLock.Lock((_epreuve_equipes as ICollection).SyncRoot))
-            {
+            _epreuve_equipesCache.UpdateFullSnapshot(epreuves);
 
-                foreach (Epreuve_Equipe epreuve in epreuves)
-                {
-                    Epreuve_Equipe p = _epreuve_equipes.FirstOrDefault(o => o.id == epreuve.id);
-                    if (p != null)
-                    {
-                        _epreuve_equipes.Remove(p);
-                    }
-                    _epreuve_equipes.Add(epreuve);
-                }
-
-                lecture_vue_epreuve_equipe(DC);
-            }
+            ICollection<vue_epreuve_equipe> vepreuves = GenereVueEpreuveEquipe(epreuves, DC);
+            _vepreuves_equipeCache.UpdateFullSnapshot(vepreuves);
         }
+
         public ICollection<Epreuve_Equipe> LectureEpreuveEquipes(XElement xelement, OutilsTools.MontreInformation1 MI)
         {
             return Epreuve_Equipe.LectureEpreuveEquipes(xelement, MI);
@@ -89,152 +68,38 @@ namespace KernelImpl.Noyau.Organisation
         /// </summary>
         /// <param name="element">element XML contenant les épreuves</param>
         /// <param name="DC"></param>
-        public void lecture_epreuves(XElement element, JudoData DC)
+        public void lecture_epreuves(XElement element, IJudoData DC)
         {
             ICollection<Epreuve> epreuves = Epreuve.LectureEpreuves(element, null);
-            //Ajout des nouveaux
-            using (TimedLock.Lock((_epreuves as ICollection).SyncRoot))
-            {
-                foreach (Epreuve epreuve in epreuves)
-                {
-                    Epreuve p = _epreuves.FirstOrDefault(o => o.id == epreuve.id);
-                    if (p != null)
-                    {
-                        _epreuves.Remove(p);
-                    }
-                    _epreuves.Add(epreuve);
-                }
-                lecture_vue_epreuves(DC);
-            }
-
+            _epreuvesCache.UpdateFullSnapshot(epreuves);
+            
+            ICollection<vue_epreuve> vepreuves = GenereVueEpreuves(epreuves, DC);
+            _vepreuvesCache.UpdateFullSnapshot(vepreuves);
         }
+
         public ICollection<Epreuve> LectureEpreuves(XElement xelement, OutilsTools.MontreInformation1 MI)
         {
             return Epreuve.LectureEpreuves(xelement, MI);
         }
 
-
         /// <summary>
-        /// lecture des vue_épreuves (équipe)
+        /// Genere la vue_épreuves (équipe)
         /// </summary>
-        /// <param name="element">element XML contenant les épreuves (équipe)</param>
+        /// <param name="equipes">element XML contenant les épreuves (équipe)</param>
         /// <param name="DC"></param>
-        private void lecture_vue_epreuve_equipe(JudoData DC)
+        private ICollection<vue_epreuve_equipe> GenereVueEpreuveEquipe(ICollection<Epreuve_Equipe> epreuves, IJudoData DC)
         {
-            using (TimedLock.Lock((_vepreuves_equipe as ICollection).SyncRoot))
-            {
-                foreach (Epreuve_Equipe epreuve in _epreuve_equipes)
-                {
-                    vue_epreuve_equipe p = _vepreuves_equipe.FirstOrDefault(o => o.id == epreuve.id);
-                    vue_epreuve_equipe vep = new vue_epreuve_equipe(epreuve, DC);
-                    if (p != null)
-                    {
-                        _vepreuves_equipe.Remove(p);
-                    }
-                    _vepreuves_equipe.Add(vep);
-                    //else
-                    //{
-                    //    p.id = vep.id;
-                    //    p.remoteID = vep.remoteID;
-                    //    p.nom = vep.nom;
-                    //    p.debut = vep.debut;
-                    //    p.fin = vep.fin;
-                    //    p.ordre = vep.ordre;
-                    //    p.nom_compet = vep.nom_compet;
-                    //    p.competition = vep.competition;
-                    //    p.categorieAge = vep.categorieAge;
-                    //    p.remoteId_cateage = vep.remoteId_cateage;
-                    //    p.nom_cateage = vep.nom_cateage;
-                    //    p.nom_catepoids = vep.nom_catepoids;
-                    //    p.lib_sexe = vep.lib_sexe;
-
-                    //    p.ceintureMin = vep.ceintureMin;
-                    //    p.ceintureMax = vep.ceintureMax;
-                    //    p.anneeMin = vep.anneeMin;
-                    //    p.anneeMax = vep.anneeMax;
-
-                    //    p.phase1 = vep.phase1;
-                    //    p.phase2 = vep.phase2;
-                    //}
-                }
-
-                ////Suppression de ceux qui ont été supprimer
-                //ICollection<i_vue_epreuve_equipe> deleted_e = new List<i_vue_epreuve_equipe>();
-                //foreach (i_vue_epreuve_equipe epreuve in _vepreuves_equipe)
-                //{
-                //    IEpreuve_Equipe p = _epreuve_equipes.FirstOrDefault(o => o.id == epreuve.id);
-                //    if (p == null)
-                //    {
-                //        deleted_e.Add(epreuve);
-                //    }
-                //}
-                //foreach (i_vue_epreuve_equipe epreuve in deleted_e)
-                //{
-                //    _vepreuves_equipe.Remove(epreuve);
-                //}
-            }
+            return epreuves.Select(epreuve => new vue_epreuve_equipe(epreuve, DC)).ToList();
         }
 
-
         /// <summary>
-        /// lecture des épreuves
+        /// Genere les vues des épreuves
         /// </summary>
         /// <param name="element">element XML contenant les épreuves</param>
         /// <param name="DC"></param>
-        private void lecture_vue_epreuves(JudoData DC)
+        private ICollection<vue_epreuve> GenereVueEpreuves(ICollection<Epreuve> epreuves, IJudoData DC)
         {
-            //Ajout des nouveaux
-            using (TimedLock.Lock((_vepreuves as ICollection).SyncRoot))
-            {
-                foreach (Epreuve epreuve in _epreuves)
-                {
-                    vue_epreuve p = _vepreuves.FirstOrDefault(o => o.id == epreuve.id);
-                    vue_epreuve vep = new vue_epreuve(epreuve, DC);
-                    if (p != null)
-                    {
-                        _vepreuves.Remove(p);
-                    }
-                    _vepreuves.Add(vep);
-                    //else
-                    //{
-                    //    p.id = vep.id;
-                    //    p.remoteID = vep.remoteID;
-                    //    p.nom = vep.nom;
-                    //    p.debut = vep.debut;
-                    //    p.fin = vep.fin;
-                    //    p.ordre = vep.ordre;
-                    //    p.nom_compet = vep.nom_compet;
-                    //    p.competition = vep.competition;
-                    //    p.categorieAge = vep.categorieAge;
-                    //    p.remoteId_cateage = vep.remoteId_cateage;
-                    //    p.nom_cateage = vep.nom_cateage;
-                    //    p.nom_catepoids = vep.nom_catepoids;
-                    //    p.lib_sexe = vep.lib_sexe;
-
-                    //    p.ceintureMin = vep.ceintureMin;
-                    //    p.ceintureMax = vep.ceintureMax;
-                    //    p.anneeMin = vep.anneeMin;
-                    //    p.anneeMax = vep.anneeMax;
-
-                    //    p.phase1 = vep.phase1;
-                    //    p.phase2 = vep.phase2;
-                    //}
-                }
-                ////Suppression de ceux qui ont été supprimer
-                //ICollection<i_vue_epreuve> deleted_e = new List<i_vue_epreuve>();
-                //foreach (i_vue_epreuve epreuve in _vepreuves)
-                //{
-                //    IEpreuve p = _epreuves.FirstOrDefault(o => o.id == epreuve.id);
-                //    if (p == null)
-                //    {
-                //        deleted_e.Add(epreuve);
-                //    }
-                //}
-                //foreach (i_vue_epreuve epreuve in deleted_e)
-                //{
-                //    _vepreuves.Remove(epreuve);
-                //}
-            }
+            return epreuves.Select(epreuve => new vue_epreuve(epreuve, DC)).ToList();
         }
     }
 }

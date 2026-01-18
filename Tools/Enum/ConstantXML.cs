@@ -337,6 +337,7 @@
 
         //participant 
         public const string Participants = "participants";
+        public const string Participant_ID = "ID";
         public const string Participant = "participant";
         public const string Participant_Judoka = "judoka";
         public const string Participant_Ranking = "ranking";

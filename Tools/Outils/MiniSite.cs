@@ -479,7 +479,10 @@ namespace Tools.Outils
                 ModeActifFTPDistant = AppSettings.ReadSetting(kSettingModeActifFTPDistant, false, _instanceName);
                 SynchroniseDifferences = AppSettings.ReadSetting(kSettingSynchroniseDifferences, false, _instanceName);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                LogTools.Logger.Error(ex, "Erreur lors de la lecture de la configuration FTP du minisite");
+            }
         }
 
         /// <summary>
@@ -593,6 +596,7 @@ namespace Tools.Outils
                     }
                     catch (Exception ex)
                     {
+                        LogTools.Logger.Error(ex, "Erreur lors de la validation de la configuration FTP du minisite");
                         lStatusMsg = "Configuration incorrecte";
                         lStatusDetail = ex.Message;
                     }
@@ -711,6 +715,7 @@ namespace Tools.Outils
             }
             catch (Exception ex)
             {
+                LogTools.Logger.Error(ex, "Erreur lors de la validation de la configuration FTP du minisite");
                 Status = new StatusMiniSite(StateMiniSiteEnum.Idle, "Configuration incorrecte", ex.Message);
                 return output;
             }

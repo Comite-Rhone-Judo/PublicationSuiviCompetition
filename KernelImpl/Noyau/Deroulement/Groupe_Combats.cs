@@ -1,4 +1,5 @@
 ﻿
+using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +9,10 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class Groupe_Combats
+    public class Groupe_Combats : IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public int id { get; set; }
         public int decoupage { get; set; }
         public int tapis { get; set; }
@@ -20,7 +23,7 @@ namespace KernelImpl.Noyau.Deroulement
         public bool verrouille { get; set; }
 
 
-        public Organisation.Epreuve GetEpreuve(JudoData DC)
+        public Organisation.Epreuve GetEpreuve(IJudoData DC)
         {
             Phase_Decoupage decoup = DC.Deroulement.Decoupages.FirstOrDefault(o => o.id == this.decoupage);
             if (decoup == null)
@@ -37,7 +40,7 @@ namespace KernelImpl.Noyau.Deroulement
             return DC.Organisation.Epreuves.FirstOrDefault(o => o.id == phase.epreuve);
         }
 
-        public Phase GetPhase(JudoData DC)
+        public Phase GetPhase(IJudoData DC)
         {
             Phase_Decoupage decoup = DC.Deroulement.Decoupages.FirstOrDefault(o => o.id == this.decoupage);
             if (decoup == null)

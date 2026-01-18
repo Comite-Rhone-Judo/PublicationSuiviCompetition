@@ -8,7 +8,8 @@ namespace AppPublication.Tools
         Stopped = -1,       // La generation est arretee
         Idle = 1,           // La generation est en attente
         Generating = 2,      // La generation est en cours
-        Cleaning = 3        // Le nettoyage est en cours
+        Cleaning = 3,        // Le nettoyage est en cours
+        IdleWithError = 4   // Generation en attente mais avec une erreur precédemment
     }
 
 
@@ -143,6 +144,7 @@ namespace AppPublication.Tools
                         break;
                     }
                 case StateGenerationEnum.Idle:
+                case StateGenerationEnum.IdleWithError:
                     {
                         if (NextGenerationSec > 0)
                         {

@@ -4,7 +4,7 @@ using KernelImpl.Noyau.Participants;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 
 
-namespace AppPublication.ExtensionNoyau.Deroulement
+namespace AppPublication.ExtensionNoyau.Engagement
 {
 
     // Comparateur de judokas pour trier les listes de judokas

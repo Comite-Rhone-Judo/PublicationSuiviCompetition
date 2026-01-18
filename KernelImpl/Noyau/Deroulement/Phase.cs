@@ -1,4 +1,5 @@
 ﻿
+using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,10 @@ namespace KernelImpl.Noyau.Deroulement
     /// <summary>
     /// Description des Phases
     /// </summary>
-    public class Phase
+    public class Phase : IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public int id { get; set; }
         public string libelle { get; set; }
         public int typePhase { get; set; }
@@ -40,16 +43,16 @@ namespace KernelImpl.Noyau.Deroulement
         public int niveauRepeches2 { get; set; }
 
 
-        public Organisation.i_vue_epreuve_interface GetVueEpreuve(JudoData DC)
+        public Organisation.i_vue_epreuve_interface GetVueEpreuve(IJudoData DC)
         {
             Organisation.i_vue_epreuve_interface ep = null;
-            if (DC.competition.IsEquipe())
+            if (DC.Organisation.Competition.IsEquipe())
             {
-                ep = DC.Organisation.vepreuves_equipe.FirstOrDefault(o => o.id == this.epreuve);
+                ep = DC.Organisation.VueEpreuveEquipes.FirstOrDefault(o => o.id == this.epreuve);
             }
             else
             {
-                ep = DC.Organisation.vepreuves.FirstOrDefault(o => o.id == this.epreuve);
+                ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == this.epreuve);
             }
             return ep;
         }

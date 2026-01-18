@@ -29,6 +29,7 @@ namespace AppPublication.Statistiques
                 Moy = (_nValeur > 0) ? _sommeValeur / _nValeur : float.NaN;
                 Max = (Max == null) ? val.Value : Math.Max(Max.Value, val.Value);
                 Min = (Min == null) ? val.Value : Math.Min(Min.Value, val.Value);
+                Valeur = _nValeur;
             }
         }
         #endregion

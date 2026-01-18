@@ -1,4 +1,5 @@
 ﻿
+using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
@@ -10,8 +11,10 @@ namespace KernelImpl.Noyau.Organisation
     /// <summary>
     /// Description des Epreuve Equipe
     /// </summary>
-    public class Epreuve_Equipe
+    public class Epreuve_Equipe : IEntityWithKey<int>
     {
+
+        int IEntityWithKey<int>.EntityKey => id;
         public int id { get; set; }
         public string libelle { get; set; }
         public System.DateTime debut { get; set; }

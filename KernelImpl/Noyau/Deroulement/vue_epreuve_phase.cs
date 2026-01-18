@@ -1,11 +1,14 @@
 ﻿
+using KernelImpl.Internal;
 using System.ComponentModel;
 using Tools.Enum;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class vue_epreuve_phase : INotifyPropertyChanged
+    public class vue_epreuve_phase : INotifyPropertyChanged, IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)

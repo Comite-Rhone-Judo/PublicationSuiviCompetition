@@ -1,4 +1,5 @@
 ﻿
+using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +12,11 @@ namespace KernelImpl.Noyau.Organisation
     /// <summary>
     /// Description des Epreuves
     /// </summary>
-    public class Epreuve
+    public class Epreuve : IEntityWithKey<int>
     {
 
+        int IEntityWithKey<int>.EntityKey => id;
+        
         public int id { get; set; }
         public string nom { get; set; }
         public System.DateTime debut { get; set; }
@@ -104,7 +107,7 @@ namespace KernelImpl.Noyau.Organisation
             this.epreuve_equipe = XMLTools.LectureNullableInt(xinfo.Attribute(ConstantXML.Epreuve_EquipeEP));
         }
 
-        public XElement ToXml(JudoData DC)
+        public XElement ToXml(IJudoData DC)
         {
             XElement xepreuve = new XElement(ConstantXML.Epreuve);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_Categorie_Age, categorieAge.ToString());

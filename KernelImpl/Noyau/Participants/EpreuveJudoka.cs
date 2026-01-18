@@ -1,3 +1,4 @@
+using KernelImpl.Internal;
 using KernelImpl.Noyau.Organisation;
 
 using System.Collections.Generic;
@@ -11,8 +12,10 @@ namespace KernelImpl.Noyau.Participants
     /// <summary>
     /// Description des Epreuve auxquelles sont inscrit les Judokas
     /// </summary>
-    public class EpreuveJudoka
+    public class EpreuveJudoka : IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public int epreuve { get; set; }
         public int judoka { get; set; }
         public int etat { get; set; }
@@ -23,11 +26,11 @@ namespace KernelImpl.Noyau.Participants
         public int observation { get; set; }
         public int points { get; set; }
 
-        public Epreuve Epreuve1(JudoData DC)
+        public Epreuve Epreuve1(IJudoData DC)
         {
             return DC.Organisation.Epreuves.FirstOrDefault(o => o.id == epreuve);
         }
-        public Judoka Judoka1(JudoData DC)
+        public Judoka Judoka1(IJudoData DC)
         {
             return DC.Participants.Judokas.FirstOrDefault(o => o.id == judoka);
         }

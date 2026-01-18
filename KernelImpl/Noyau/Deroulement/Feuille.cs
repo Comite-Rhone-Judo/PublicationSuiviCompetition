@@ -1,4 +1,5 @@
 
+using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,10 @@ namespace KernelImpl.Noyau.Deroulement
     /// <summary>
     /// Description des Feuilles (construction d'un tableau)
     /// </summary>
-    public class Feuille
+    public class Feuille : IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public int id { get; set; }
         public bool repechage { get; set; }
         public int source1 { get; set; }
@@ -32,7 +35,7 @@ namespace KernelImpl.Noyau.Deroulement
 
 
 
-        public Combat Combat1(JudoData DC)
+        public Combat Combat1(IJudoData DC)
         {
             return DC.Deroulement.Combats.FirstOrDefault(o => o.id == this.combat);
         }

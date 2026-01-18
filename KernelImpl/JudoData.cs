@@ -1,30 +1,99 @@
-﻿using KernelImpl.Noyau.Organisation;
+﻿using KernelImpl.Noyau.Arbitrage;
+using KernelImpl.Noyau.Categories;
+using KernelImpl.Noyau.Deroulement;
+using KernelImpl.Noyau.Logos;
+using KernelImpl.Noyau.Organisation;
+using KernelImpl.Noyau.Participants;
+using KernelImpl.Noyau.Structures;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using Tools.Enum;
 using Tools.Outils;
 
 namespace KernelImpl
 {
-    public class JudoData : NotificationBase
+    public class JudoData : NotificationBase, IJudoDataManager, IJudoData
     {
-        public IPAddress IpAddress { get; set; }
-        public int Port { get; set; }
+        #region MEMBRES
+        // --- Verrouillage ---
+        private readonly ReaderWriterLockSlim _globalLock = new ReaderWriterLockSlim();
+        #endregion
 
-        private Competition _competition = new Competition { type = (int)CompetitionTypeEnum.Individuel };
-		 private List<Competition> _competitions = new List<Competition>();
-        public Competition competition
+        #region Constructeurs
+        public JudoData()
         {
-            get { return _competition; }
-            set { _competition = value; NotifyPropertyChanged(); }
+            Arbitrage = new DataArbitrage();
+            Categories = new DataCategories();
+            Deroulement = new DataDeroulement();
+            Logos = new DataLogos();
+            Organisation = new DataOrganisation();
+            Participants = new DataParticipants();
+            Structures = new DataStructures();
+        }
+        #endregion
+
+        #region Implémentation IJudoDataManager
+
+        /// <summary>
+        /// Obtient un snapshot immuable et thread-safe.
+        /// </summary>
+        public IJudoData GetSnapshot()
+        {
+            _globalLock.EnterReadLock();
+            try
+            {
+                // Crée le snapshot en copiant les références des listes actuelles
+                return new JudoDataSnapshot(this);
+            }
+            finally
+            {
+                _globalLock.ExitReadLock();
+            }
         }
 
-        public List<Competition> competitions
+        /// <summary>
+        /// Exécute une mise à jour (écriture) sous verrou exclusif.
+        /// </summary>
+        public void RunSafeDataUpdate(Action actionToRun)
         {
-            get { return _competitions; }
-            set { _competitions = value; }
+            _globalLock.EnterWriteLock();
+            try
+            {
+                actionToRun();
+            }
+            finally
+            {
+                _globalLock.ExitWriteLock();
+            }
         }
+
+        #endregion
+
+        #region Implémentation Explicite de IJudoDataSource
+
+        // Ces propriétés ne sont visibles que lorsqu'on manipule l'objet via l'interface IJudoDataSource.
+        // Elles redirigent vers vos propriétés concrètes existantes.
+
+        IDeroulementData IJudoData.Deroulement => this.Deroulement;
+
+        IParticipantsData IJudoData.Participants => this.Participants;
+
+        IOrganisationData IJudoData.Organisation => this.Organisation;
+
+        IStructuresData IJudoData.Structures => this.Structures;
+
+        ICategoriesData IJudoData.Categories => this.Categories;
+
+        IArbitrageData IJudoData.Arbitrage => this.Arbitrage;
+
+        ILogosData IJudoData.Logos => this.Logos;
+
+        #endregion
+
+        #region Interface concrete
 
         private Noyau.Structures.DataStructures _structures = null;
         public Noyau.Structures.DataStructures Structures
@@ -75,17 +144,6 @@ namespace KernelImpl
             set { _arbitrage = value; }
         }
 
-
-        public int GetCategorie(int annee)
-        {
-            try
-            {
-                return _categories.CAges.FirstOrDefault(o => o.anneeMin <= annee && annee <= o.anneeMax).id;
-            }
-            catch
-            {
-                return 0;
-            }
-        }
+        #endregion
     }
 }

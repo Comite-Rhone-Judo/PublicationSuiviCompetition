@@ -1,4 +1,5 @@
 
+using KernelImpl.Internal;
 using KernelImpl.Noyau.Deroulement;
 using System;
 using System.Collections;
@@ -14,8 +15,10 @@ namespace KernelImpl.Noyau.Participants
     /// <summary>
     /// Description des Judokas
     /// </summary>
-    public class Judoka : INotifyPropertyChanged
+    public class Judoka : INotifyPropertyChanged, IEntityWithKey<int>
     {
+        int IEntityWithKey<int>.EntityKey => id;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
@@ -431,7 +434,7 @@ namespace KernelImpl.Noyau.Participants
             this.equipe = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Judoka_Equipe));
         }
 
-        public XElement ToXml(JudoData DC)
+        public XElement ToXml(IJudoData DC)
         {
             XElement xjudoka = new XElement(ConstantXML.Judoka);
 
@@ -469,9 +472,9 @@ namespace KernelImpl.Noyau.Participants
             xjudoka.SetAttributeValue(ConstantXML.Judoka_Equipe, equipe);
 
             EpreuveJudoka judoka = null;
-            using (TimedLock.Lock((DC.Participants.EJS as ICollection).SyncRoot))
+            using (TimedLock.Lock((DC.Participants.EpreuveJudokas as ICollection).SyncRoot))
             {
-                judoka = DC.Participants.EJS.FirstOrDefault(o => o.judoka == this.id);
+                judoka = DC.Participants.EpreuveJudokas.FirstOrDefault(o => o.judoka == this.id);
             }
 
             if (judoka != null)
@@ -482,9 +485,9 @@ namespace KernelImpl.Noyau.Participants
                 xjudoka.SetAttributeValue(ConstantXML.Judoka_Observation, judoka == null ? 0 : judoka.observation);
 
                 Organisation.vue_epreuve epreuve = null;
-                using (TimedLock.Lock((DC.Organisation.vepreuves as ICollection).SyncRoot))
+                using (TimedLock.Lock((DC.Organisation.VueEpreuves as ICollection).SyncRoot))
                 {
-                    epreuve = DC.Organisation.vepreuves.FirstOrDefault(o => o.id == judoka.epreuve);
+                    epreuve = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == judoka.epreuve);
                 }
 
                 if (epreuve != null)

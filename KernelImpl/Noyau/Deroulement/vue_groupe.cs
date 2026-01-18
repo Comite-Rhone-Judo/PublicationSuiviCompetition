@@ -1,4 +1,5 @@
 ﻿
+using KernelImpl.Internal;
 using System;
 using System.Linq;
 using System.Xml.Linq;
@@ -7,9 +8,13 @@ using Tools.Outils;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public partial class vue_groupe
+    public partial class vue_groupe : IEntityWithKey<int>
     {
+
+        int IEntityWithKey<int>.EntityKey => groupe_id;
+
         public int groupe_id { get; set; }
+
         public int groupe_tapis { get; set; }
         public string groupe_libelle { get; set; }
         public Nullable<System.DateTime> groupe_debut { get; set; }
@@ -27,7 +32,7 @@ namespace KernelImpl.Noyau.Deroulement
         public string epreuve_libsexe { get; set; }
 
 
-        public vue_groupe(Groupe_Combats groupe, JudoData DC)
+        public vue_groupe(Groupe_Combats groupe, IJudoData DC)
         {
             groupe_id = groupe.id;
             groupe_tapis = groupe.tapis;

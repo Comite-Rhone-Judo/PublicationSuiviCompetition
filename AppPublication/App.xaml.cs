@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AppPublication.Controles;
+using KernelImpl;
+using System;
 using System.Globalization;
 using System.Threading;
 using System.Windows;
@@ -12,42 +14,47 @@ namespace AppPublication
   /// </summary>
     public partial class App : Application
     {
+        #region PROPERTIES
+        // Accès global aux données si strictement nécessaire
+        public JudoData DataManager { get; private set; }
+        #endregion
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
         {
-            // BasicConfigurator.Configure();
-
-            // LogTools.Trace("App is starting");
-            LogTools.LogStartup();
-
-            // Assure que le logger est bien configure
-            Controles.DialogControleur.Instance.CanManageTracesDebug = LogTools.IsConfigured;
-
             CultureInfo culture = new CultureInfo("fr");
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
 
-
-            //Window8Palette
-            //Windows8Palette.Palette.AccentColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
-            //Windows8Palette.Palette.BasicColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
-            //Windows8Palette.Palette.StrongColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
-            //Windows8Palette.Palette.MainColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
-            //Windows8Palette.Palette.MarkerColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);
-            //Windows8Palette.Palette.ValidationColor = Color.FromArgb(0xFF, 0x79, 0x25, 0x6B);            
+            // Toute premiere trace !!
+            LogTools.LogStartup();
 
             StyleManager.ApplicationTheme = new Windows8Theme();
-            // Controles.DialogControleur.DC = new Controles.DialogControleur();
-
-            // Demarre la fenetre principale et injecte le Dialog controleur en tant que DataContext
-            AppPublication.IHM.Commissaire.ExportWindow mainWin = new AppPublication.IHM.Commissaire.ExportWindow();
-            mainWin.DataContext = Controles.DialogControleur.Instance;
-            mainWin.Show();
         }
 
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            // Creation du gestionnaire de donnees. C'est le coeur de l'application
+            LogTools.Logger.Debug("Creation du gestionnaire de donnees");
+            DataManager = new JudoData();
+
+            // Instanciation du controleur principal en lien avec le gestionnaire de donnees
+            LogTools.Logger.Debug("Creation du controleur principal");
+            DialogControleur ctrl =  DialogControleur.CreateInstance(DataManager);
+
+            // Assure que le logger est bien configure
+            DialogControleur.Instance.CanManageTracesDebug = LogTools.IsConfigured;
+
+            // Demarre la fenetre principale et injecte le Dialog controleur en tant que DataContext
+            IHM.Commissaire.ExportWindow mainWin = new IHM.Commissaire.ExportWindow();
+            mainWin.DataContext = DialogControleur.Instance;
+            mainWin.Show();
+        }
 
 
         private static DispatcherOperationCallback exitFrameCallback = new DispatcherOperationCallback(ExitFrame);

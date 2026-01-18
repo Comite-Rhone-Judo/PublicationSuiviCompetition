@@ -13,6 +13,37 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation">
 
+    <Style x:Key="SlimTextBoxStyle" TargetType="TextBox">
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+
+        <Style.Resources>
+            <Style TargetType="{x:Type ScrollBar}">
+                <Setter Property="Width" Value="6"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ScrollBar}">
+                            <Grid x:Name="GridRoot" Width="6" Background="Transparent">
+                                <Track x:Name="PART_Track" IsDirectionReversed="true" Focusable="false">
+                                    <Track.Thumb>
+                                        <Thumb>
+                                            <Thumb.Template>
+                                                <ControlTemplate TargetType="{x:Type Thumb}">
+                                                    <Border Background="#FFAAAAAA" CornerRadius="3"/>
+                                                </ControlTemplate>
+                                            </Thumb.Template>
+                                        </Thumb>
+                                    </Track.Thumb>
+                                </Track>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Style.Resources>
+    </Style>
+
     <Style x:Key="GridViewStyle1" TargetType="{x:Type telerik:RadGridView}">
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="HorizontalAlignment" Value="Left" />
@@ -346,6 +377,9 @@
             </DataTrigger>
             <DataTrigger Binding="{Binding Path=State}" Value="3">
                 <Setter Property="Fill" Value="BlueViolet"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Path=State}" Value="4">
+                <Setter Property="Fill" Value="IndianRed"/>
             </DataTrigger>
         </Style.Triggers>
     </Style>
