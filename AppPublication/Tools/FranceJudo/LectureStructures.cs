@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Xml;
 using Tools.Enum;
-using Tools.Outils;
+using Tools.Core;
 
 namespace AppPublication.Tools.FranceJudo
 {

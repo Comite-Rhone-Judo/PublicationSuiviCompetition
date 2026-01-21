@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 
-namespace Tools.Outils
+namespace Tools.Core
 {
     public static class ResourcesTools
     {

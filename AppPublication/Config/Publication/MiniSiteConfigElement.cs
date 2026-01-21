@@ -13,6 +13,8 @@ namespace AppPublication.Config.Publication
     {
         // Constantes pour les attributs XML
         private const string kId = "id";
+        private const string kTypeLocal = "local";
+        private const string kHttpServerClass = "http";
         private const string kInterfaceLocalPublication = "interface";
         private const string kSynchroniseDifferences = "syncDiff";
         private const string kFtpLogin = "ftpLogin";
@@ -36,6 +38,23 @@ namespace AppPublication.Config.Publication
         {
             get { return GetConfigValue<string>(kId, string.Empty); }
             set { SetValueAndMarkDirty(kId, value); }
+        }
+
+        /// <summary>
+        /// Type du minisite
+        /// </summary>
+        [ConfigurationProperty(kTypeLocal, DefaultValue = true)]
+        public bool TypeLocal
+        {
+            get { return GetConfigValue<bool>(kTypeLocal, false); }
+            set { SetValueAndMarkDirty(kTypeLocal, value); }
+        }
+
+        [ConfigurationProperty(kHttpServerClass, IsRequired = false, DefaultValue = "ServeurHttpStatique")]
+        public string HttpServerClass
+        {
+            get { return GetConfigValue<string>(kHttpServerClass, "ServeurHttpStatique"); }
+            set { SetValueAndMarkDirty(kHttpServerClass, value); }
         }
 
         /// <summary>

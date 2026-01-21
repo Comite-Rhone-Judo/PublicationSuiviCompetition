@@ -1,4 +1,4 @@
-﻿using Tools.Outils;
+﻿using Tools.Core;
 
 namespace Tools.Enum
 {

@@ -13,7 +13,7 @@ using Tools.Security;
 using Tools.Windows;
 using Tools.Framework;
 using Tools.Files;
-using Tools.Outils;
+using Tools.Core;
 using AppPublication.Tools.Streams;
 using Tools.Threading;
 

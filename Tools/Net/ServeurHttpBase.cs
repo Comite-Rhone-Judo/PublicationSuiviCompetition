@@ -9,7 +9,6 @@ using Tools.Logging;
 
 namespace Tools.Net
 {
-    // TODO il faut modifier le serveur pour pouvoir en heriter et modifier la gestion des modules
     public abstract class ServeurHttpBase : IServeurHttp
     {
         #region MEMBER
@@ -74,15 +73,18 @@ namespace Tools.Net
         #endregion
 
         #region CONSTRUCTOR
-        public ServeurHttpBase(string server_ipaddress = null)
+        public ServeurHttpBase()
         {
             try
             {
+                // On cherche les adresses IP de la machine
                 string strHostName = Dns.GetHostName();
-                foreach (IPAddress ipaddress in Dns.GetHostAddresses(strHostName).Where(o => o.AddressFamily == AddressFamily.InterNetwork).Reverse())
+                var ipAdresses = Dns.GetHostAddresses(strHostName).Where(o => o.AddressFamily == AddressFamily.InterNetwork).Reverse();
+
+                // Par defaut on assigne la premiere adresse trouvee
+                if (ipAdresses != null && ipAdresses.Count() > 0)
                 {
-                    _ipAddress = ipaddress;
-                    break;
+                    ListeningIpAddress = ipAdresses.First();
                 }
             }
             catch (Exception ex)

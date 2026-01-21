@@ -7,6 +7,7 @@ using System.Threading;
 using Tools.Enum;
 using Tools.Logging;
 using Tools.Outils;
+using Tools.Core;
 
 namespace Tools.Files
 {

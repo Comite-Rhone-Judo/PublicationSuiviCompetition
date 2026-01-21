@@ -45,7 +45,6 @@ namespace Tools.Net
         private FtpProfile _ftp_profile = null;     // Le profile FTP a utiliser pour les connexions
         private Action<FtpProgress> _ftpProgressCallback = null;
         private long _nbSyncDistant = 0;
-        private string _instanceName = string.Empty;
         private int _maxRetryFTP = kMaxRetryFTP;
 
         private long _totalDeleteCount = 0;
@@ -59,15 +58,14 @@ namespace Tools.Net
         /// </summary>
         /// <param name="local">Mode du minisite (local = true, distant = false)</param>
         /// <param name="instanceName">Nom de l'instance</param>
-        public MiniSite(bool local, string instanceName = "")
+        public MiniSite(bool local, IServeurHttp instance = null)
         {
-            // Initialise les caracteristiques du MiniSite
-            InstanceName = instanceName;
+            if(local && instance == null) throw new ArgumentNullException("instance", "Le serveur HTTP local ne peut pas être null en mode local");
 
             if (local)
             {
                 // Configure un site web local
-                ServerHTTP = new ServeurHttpBasique();
+                ServerHTTP = instance;
 
                 // Initialise les interfaces
                 InitInterfaces();
@@ -104,22 +102,6 @@ namespace Tools.Net
             set
             {
                 _maxRetryFTP = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        /// <summary>
-        /// Indique le nom de l'instance du Minisite
-        /// </summary>
-        public string InstanceName
-        {
-            get
-            {
-                return _instanceName;
-            }
-            private set
-            {
-                _instanceName = value;
                 NotifyPropertyChanged();
             }
         }

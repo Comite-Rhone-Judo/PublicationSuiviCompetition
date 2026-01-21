@@ -1,7 +1,7 @@
 ﻿using Tools.Enum;
 using Tools.Logging;
 using Tools.Files;
-using Tools.Outils;
+using Tools.Core;
 using System;
 using System.IO;
 using System.Collections.Generic;

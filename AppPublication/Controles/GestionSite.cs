@@ -31,6 +31,7 @@ using Tools.Net;
 using Tools.Outils;
 using Tools.Threading;
 using Tools.Windows;
+using Tools.Core;
 
 namespace AppPublication.Controles
 {
@@ -94,10 +95,10 @@ namespace AppPublication.Controles
             try
             {
                 // Initialise les objets de gestion des sites Web. Ils chargent automatiquement leur configuration
-                _siteLocal = new MiniSiteConfigurable(true, kSiteLocalInstanceName, true, false);
-                _siteInterne = new MiniSiteConfigurable(true, kSiteInterneInstanceName, true, false);
-                _siteDistant = new MiniSiteConfigurable(false, kSiteDistantInstanceName, true, true);           // on utilise un prefix vide pour le site distant pour des questions de retrocompatibilite
-                _siteFranceJudo = new MiniSiteConfigurable(false, kSiteFranceJudoInstanceName, false, true);    // On ne garde pas le detail des configuration pour le site FFJudo
+                _siteLocal = MiniSiteConfigurable.CreateInstance(kSiteLocalInstanceName, true, false);
+                _siteInterne = MiniSiteConfigurable.CreateInstance(kSiteInterneInstanceName, true, false);
+                _siteDistant = MiniSiteConfigurable.CreateInstance(kSiteDistantInstanceName, true, true);           // on utilise un prefix vide pour le site distant pour des questions de retrocompatibilite
+                _siteFranceJudo = MiniSiteConfigurable.CreateInstance(kSiteFranceJudoInstanceName, false, true);    // On ne garde pas le detail des configuration pour le site FFJudo
                 _statMgr = (statMgr != null) ? statMgr : new GestionStatistiques();
                 _judoDataManager = dataManager;
 

@@ -2,6 +2,9 @@
 using System.Net;
 using Tools.Net;
 using Tools.Logging;
+using Tools.Core;
+using System.Windows.Media;
+using System;
 
 namespace AppPublication.Publication
 {
@@ -17,18 +20,70 @@ namespace AppPublication.Publication
         /// <param name="instanceName">Nom de l'instance</param>
         /// <param name="cacheCfg">True pour activer la mise en cache de la configuration</param>
         /// <param name="cachePwd">True pour activer la mise en cache du mot de passe</param>
-        public MiniSiteConfigurable(bool local, string instanceName = "", bool cacheCfg = true, bool cachePwd = true) : base(local, instanceName)
+        protected MiniSiteConfigurable(bool local, IServeurHttp httpInstance, string instanceName = "", bool cacheCfg = true, bool cachePwd = true) : base(local, httpInstance)
         {
+            // Initialise les caracteristiques du MiniSite
+            InstanceName = instanceName;
             CacheConfig = cacheCfg;
             CachePassword = cachePwd;
 
             // Chargement initial de la configuration
             LoadConfiguration();
-
         }
+
+        /// <summary>
+        /// Factory de création d'une instance de MiniSiteConfigurable
+        /// </summary>
+        /// <param name="instanceName"></param>
+        /// <param name="cacheCfg"></param>
+        /// <param name="cachePwd"></param>
+        /// <returns></returns>
+        public static MiniSiteConfigurable CreateInstance(string instanceName = "", bool cacheCfg = true, bool cachePwd = true)
+        {
+            IServeurHttp httpInstance = null;
+
+            // Ici on force le nom de l'instance car on n'a pas encore d'instance initialisé donc InstanceName n'existe pas
+            MiniSiteConfigElement cfg = GetInstanceConfigElement(instanceName);
+
+            if (cfg.TypeLocal)
+            {
+                // On cherche le type d'instance Htttp
+                try
+                {
+                    httpInstance = ClassFactory.CreateInstance<IServeurHttp>(cfg.HttpServerClass);
+                }
+                catch (Exception ex)
+                {
+                    LogTools.Logger.Error($"Erreur lors de la création de l'instance du serveur HTTP '{cfg.HttpServerClass}' pour le minisite '{instanceName}' : {ex.Message}");
+                    throw new NullReferenceException($"Impossible de créer l'instance du serveur HTTP '{cfg.HttpServerClass}' pour le minisite '{instanceName}'", ex);
+                }
+            }
+            
+            // On appel le constructeur maintenant que l'on connait le type d'instance
+            return new MiniSiteConfigurable(cfg.TypeLocal, httpInstance, instanceName, cacheCfg, cachePwd);
+        }
+
+
         #endregion
 
         #region PROPERTIES
+
+        private string _instanceName = string.Empty;
+        /// <summary>
+        /// Indique le nom de l'instance du Minisite
+        /// </summary>
+        public string InstanceName
+        {
+            get
+            {
+                return _instanceName;
+            }
+            private set
+            {
+                _instanceName = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         bool _cacheConfig = false;
         /// <summary>
@@ -86,7 +141,7 @@ namespace AppPublication.Publication
                     // Sauvegarde de la config si besoin
                     if (CacheConfig && value != null)
                     {
-                        MiniSiteConfigElement cfg = GetInstanceConfigElement();
+                        MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
                         cfg.InterfaceLocalPublication = value.ToString();
                     }
                 }
@@ -111,7 +166,7 @@ namespace AppPublication.Publication
                     // Sauvegarde de la config si besoin
                     if (CacheConfig)
                     {
-                        MiniSiteConfigElement cfg = GetInstanceConfigElement();
+                        MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
                         cfg.FtpSite = value;
                     }
                 }
@@ -136,7 +191,7 @@ namespace AppPublication.Publication
                     // Sauvegarde de la config si besoin
                     if (CacheConfig)
                     {
-                        MiniSiteConfigElement cfg = GetInstanceConfigElement();
+                        MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
                         cfg.FtpLogin = value;
                     }
                 }
@@ -161,7 +216,7 @@ namespace AppPublication.Publication
                     // Sauvegarde de la config si besoin
                     if (CacheConfig)
                     {
-                        MiniSiteConfigElement cfg = GetInstanceConfigElement();
+                        MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
                         cfg.FtpModeActif = value;
                     }
                 }
@@ -186,7 +241,7 @@ namespace AppPublication.Publication
                     // Sauvegarde de la config si besoin
                     if (CacheConfig)
                     {
-                        MiniSiteConfigElement cfg = GetInstanceConfigElement();
+                        MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
                         cfg.FtpPassword = CachePassword ? value : string.Empty;
                     }
                 }
@@ -211,7 +266,7 @@ namespace AppPublication.Publication
                     // Sauvegarde de la config si besoin
                     if (CacheConfig)
                     {
-                        MiniSiteConfigElement cfg = GetInstanceConfigElement();
+                        MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
                         cfg.SynchroniseDifferences = value;
                     }
                 }
@@ -221,32 +276,36 @@ namespace AppPublication.Publication
         #region METHODES
 
         /// <summary>
-        /// Recherche l'element de sauvegarde de la configuration, ou l'ajoute s'il n'existe pas
+        /// Recherche l'element de sauvegarde de la configuration pour l'instance en cours
         /// </summary>
-        private MiniSiteConfigElement GetInstanceConfigElement()
+        private MiniSiteConfigElement GetCurrentInstanceConfigElement()
         {
-            // Sauvegarde de la config
-                MiniSiteConfigElement cfg = PublicationConfigSection.Instance.MiniSites[InstanceName];
-                if (cfg == null)
-                {
-                    // Pas de config trouvée, on crée une config vide par défaut
-                    cfg = new MiniSiteConfigElement();
-                    PublicationConfigSection.Instance.MiniSites.Add(cfg);
-                }
-
-            return cfg;
+            return MiniSiteConfigurable.GetInstanceConfigElement(InstanceName);
         }
 
-        private void LoadConfiguration()
+        /// <summary>
+        /// Recherche l'element de sauvegarde de la configuration pour l'instance donnee, ou l'ajoute s'il n'existe pas
+        /// </summary>
+        private static MiniSiteConfigElement GetInstanceConfigElement(string instanceName)
         {
-            // TODO Ajouter ici la gestion des types de serveurs HTTP
-            MiniSiteConfigElement cfg = PublicationConfigSection.Instance.MiniSites[InstanceName];
+            // Sauvegarde de la config
+            MiniSiteConfigElement cfg = PublicationConfigSection.Instance.MiniSites[instanceName];
             if (cfg == null)
             {
                 // Pas de config trouvée, on crée une config vide par défaut
                 cfg = new MiniSiteConfigElement();
                 PublicationConfigSection.Instance.MiniSites.Add(cfg);
             }
+
+            return cfg;
+        }
+
+        /// <summary>
+        /// Charge la configuration de l'instance courante
+        /// </summary>
+        private void LoadConfiguration()
+        {
+            MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
 
             if (IsLocal)
             {

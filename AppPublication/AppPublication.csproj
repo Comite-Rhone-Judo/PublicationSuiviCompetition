@@ -166,7 +166,9 @@
     <Compile Include="Statistiques\StatMgrSynchronisation.cs" />
     <Compile Include="Tools\ActionWatcher.cs" />
     <Compile Include="Tools\Converter\ValueToBoolConverter.cs" />
-    <Compile Include="Tools\HttpModules\EcransAppelRedirectModule.cs" />
+    <Compile Include="Tools\Http\EcransAppelRedirectModule.cs" />
+    <Compile Include="Tools\Http\ServeurHttpEcransAppel.cs" />
+    <Compile Include="Tools\Http\ServeurHttpStatique.cs" />
     <Compile Include="ViewModels\Configuration\ConfigurationEcransViewModel.cs" />
     <Compile Include="ViewModels\Configuration\EcranAppelConfigViewModel.cs" />
     <Compile Include="ViewModels\Configuration\EcranAppelTapisSelectionViewModel.cs" />

@@ -3,20 +3,29 @@ using HttpServer;
 using HttpServer.Exceptions;
 using HttpServer.HttpModules;
 using HttpServer.Sessions;
+using Tools.Logging;
 
-namespace AppPublication.Tools.HttpModules
+namespace AppPublication.Tools.Http
 {
     public class EcransAppelRedirectModule : HttpModule
     {
+        // Le path de reference pour la redirection
+        private string _path;
+        public string Path
+        {
+            get { return _path; }
+            set { _path = value; }
+        }
+
         public EcransAppelRedirectModule(string path)
         {
-            // Le "path" sera ici "/live/ecransAppel/go"
+            if (string.IsNullOrEmpty(path)) { throw new ArgumentNullException(nameof(path)); }
+
+            Path = path;
         }
 
         public override bool Process(IHttpRequest request, IHttpResponse response, IHttpSession session)
         {
-            return false;
-            /*
             // Vérifie si l'URL commence par le chemin défini pour ce module
             if (!request.Uri.AbsolutePath.StartsWith(this.Path, StringComparison.InvariantCultureIgnoreCase))
             {
@@ -31,12 +40,12 @@ namespace AppPublication.Tools.HttpModules
 
                 // 2. Déterminer la cible en fonction de l'IP
                 // Tu peux ici appeler ta logique métier ou ta configuration existante
-                string targetFile = DetermineTargetForClient(clientIp);
+                // string targetFile = DetermineTargetForClient(clientIp);
+                string targetFile = string.Empty; // TODO Remplace par ta logique
 
                 if (string.IsNullOrEmpty(targetFile))
                 {
-                    // Cas où le client n'est pas reconnu : Redirection par défaut ou erreur 404
-                    targetFile = "/live/ecransAppel/default.html";
+                    return false; // Pas de redirection définie pour ce client
                 }
 
                 // 3. Effectuer la redirection
@@ -47,10 +56,10 @@ namespace AppPublication.Tools.HttpModules
             }
             catch (Exception ex)
             {
+                LogTools.Logger.Error(ex, "Erreur lors de la redirection EcransAppel");
                 // Log l'erreur ici via ton ILogWriter si disponible
                 throw new InternalServerException();
             }
-            */
         }
     }
 }
