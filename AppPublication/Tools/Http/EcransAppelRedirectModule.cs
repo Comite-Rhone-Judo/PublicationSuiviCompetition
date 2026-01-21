@@ -7,6 +7,7 @@ using Tools.Logging;
 
 namespace AppPublication.Tools.Http
 {
+    // TODO on doit avoir une connexion entre le module et le parametrage des ecrans d'appel
     public class EcransAppelRedirectModule : HttpModule
     {
         // Le path de reference pour la redirection
