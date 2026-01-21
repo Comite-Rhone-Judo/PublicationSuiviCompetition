@@ -12,35 +12,49 @@ namespace Tools.Core
 
     public static class ClassFactory
     {
+        /// <summary>
+        /// Instancie une classe située dans l'assembly appelant.
+        /// Accepte le nom complet (Namespace.Classe) ou le nom court (Classe).
+        /// </summary>
         public static T CreateInstance<T>(string nomClasse)
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
+            // Récupère l'assembly du code qui appelle cette méthode (votre Application)
+            // et non l'assembly de la librairie elle-même.
+            Assembly assemblyAppelant = Assembly.GetCallingAssembly();
 
-            // 1. Essai rapide : on suppose que c'est le nom complet (Namespace.Classe)
-            Type type = assembly.GetType(nomClasse);
+            // 1. Recherche exacte (Nom complet avec Namespace)
+            // C'est le plus rapide si la config est précise.
+            Type type = assemblyAppelant.GetType(nomClasse);
 
-            // 2. Si non trouvé, on cherche par le nom court (Classe uniquement)
+            // 2. Recherche souple (Nom de classe seul)
             if (type == null)
             {
-                // On cherche tous les types dont la propriété .Name correspond
-                var resultats = assembly.GetTypes()
-                                        .Where(t => t.Name.Equals(nomClasse, StringComparison.OrdinalIgnoreCase))
-                                        .ToList();
+                // On cherche parmi tous les types de l'assembly appelant
+                var resultats = assemblyAppelant.GetTypes()
+                    .Where(t => t.Name.Equals(nomClasse, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
 
                 if (resultats.Count == 0)
                 {
-                    throw new TypeLoadException($"Aucune classe nommée '{nomClasse}' n'a été trouvée.");
+                    throw new TypeLoadException($"La classe '{nomClasse}' est introuvable dans l'assembly '{assemblyAppelant.GetName().Name}'.");
                 }
-                else if (resultats.Count > 1)
+
+                if (resultats.Count > 1)
                 {
-                    // Cas rare : deux namespaces différents contiennent la même classe (ex: Reseau.Server et UI.Server)
-                    throw new AmbiguousMatchException($"Plusieurs classes portent le nom '{nomClasse}'. Veuillez utiliser le namespace complet.");
+                    throw new AmbiguousMatchException($"Plusieurs classes portent le nom '{nomClasse}' (ex: {resultats[0].FullName}, {resultats[1].FullName}). Veuillez utiliser le namespace complet.");
                 }
 
                 type = resultats[0];
             }
 
-            // 3. Instanciation
+            // 3. Vérification de compatibilité avant instanciation
+            // (Optionnel mais recommandé pour avoir une erreur claire)
+            if (!typeof(T).IsAssignableFrom(type))
+            {
+                throw new InvalidCastException($"La classe '{type.Name}' n'hérite pas de '{typeof(T).Name}'.");
+            }
+
+            // 4. Instanciation
             return (T)Activator.CreateInstance(type);
         }
     }
