@@ -166,7 +166,10 @@
     <Compile Include="Statistiques\StatMgrSynchronisation.cs" />
     <Compile Include="Tools\ActionWatcher.cs" />
     <Compile Include="Tools\Converter\ValueToBoolConverter.cs" />
+    <Compile Include="Tools\Http\ContextProvider.cs" />
     <Compile Include="Tools\Http\EcransAppelRedirectModule.cs" />
+    <Compile Include="Tools\Http\IContextAware.cs" />
+    <Compile Include="Tools\Http\IContextProvider.cs" />
     <Compile Include="Tools\Http\ServeurHttpEcransAppel.cs" />
     <Compile Include="Tools\Http\ServeurHttpStatique.cs" />
     <Compile Include="ViewModels\Configuration\ConfigurationEcransViewModel.cs" />

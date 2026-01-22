@@ -1,16 +1,23 @@
 ﻿using AppPublication.Config.Publication;
-using System.Net;
-using Tools.Net;
-using Tools.Logging;
-using Tools.Core;
-using System.Windows.Media;
+using AppPublication.Tools.Http;
+using HttpServer.HttpModules;
+using KernelImpl.Noyau.Structures;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Runtime.InteropServices;
+using Tools.Core;
+using Tools.Logging;
+using Tools.Net;
 
 namespace AppPublication.Publication
 {
     public class MiniSiteConfigurable : MiniSite
     {
-        // TODO voir pour faire que MiniSite soit WPF agnostic et mettre les properties bindable dans cette classe
+        #region MEMBRES
+        private ContextProvider _context = new ContextProvider();    // Stockage des contextes
+        #endregion
 
         #region CONSTRUCTEURS
         /// <summary>
@@ -50,15 +57,15 @@ namespace AppPublication.Publication
                 // On cherche le type d'instance Htttp
                 try
                 {
-                    httpInstance = ClassFactory.CreateInstance<IServeurHttp>(cfg.HttpServerClass);
+                    httpInstance = ClassFactory.CreateInstance<IServeurHttp>(cfg.HttpServer);
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Error($"Erreur lors de la création de l'instance du serveur HTTP '{cfg.HttpServerClass}' pour le minisite '{instanceName}' : {ex.Message}");
-                    throw new NullReferenceException($"Impossible de créer l'instance du serveur HTTP '{cfg.HttpServerClass}' pour le minisite '{instanceName}'", ex);
+                    LogTools.Logger.Error($"Erreur lors de la creation de l'instance du serveur HTTP '{cfg.HttpServer}' pour le minisite '{instanceName}' : {ex.Message}");
+                    throw new NullReferenceException($"Impossible de creer l'instance du serveur HTTP '{cfg.HttpServer}' pour le minisite '{instanceName}'", ex);
                 }
             }
-            
+
             // On appel le constructeur maintenant que l'on connait le type d'instance
             return new MiniSiteConfigurable(cfg.TypeLocal, httpInstance, instanceName, cacheCfg, cachePwd);
         }
@@ -120,6 +127,17 @@ namespace AppPublication.Publication
         }
         #endregion
 
+        #region METHODES
+
+        /// <summary>
+        /// Permet d'ajouter un contexte
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="context"></param>
+        public void RegisterContext<T>(T context) where T : class
+        {
+            _context.Register(context);
+        }
 
         /// <summary>
         /// Interface (@IP) utilisée pour la publication du site en mode local
@@ -273,7 +291,9 @@ namespace AppPublication.Publication
             }
         }
 
-        #region METHODES
+        #endregion
+
+        #region METHODES PRIVEES
 
         /// <summary>
         /// Recherche l'element de sauvegarde de la configuration pour l'instance en cours
@@ -316,6 +336,45 @@ namespace AppPublication.Publication
                 {
                     SelectInterfaceOrDefault(cfg.InterfaceLocalPublication);
                 }
+
+                // On se charge maintenant des modules HTTP
+                // On cherche les modules HTTP à ajouter
+                List<string> moduleList = cfg.HttpModules.Split(';').ToList();
+                if (moduleList != null)
+                {
+                    foreach (string module in moduleList)
+                    {
+                        try
+                        {
+                            // Création du module
+                            var moduleInstance = ClassFactory.CreateInstance<HttpModule>(module);
+
+                            if (moduleInstance != null)
+                            {
+                                // 2. Injection : On passe notre objet _context dédié
+                                if (moduleInstance is IContextAware contextAwareModule)
+                                {
+                                    contextAwareModule.SetContext(_context);
+                                }
+
+                                // 3. Ajout
+                                .AddModule(moduleInstance);
+                            }
+
+
+
+                            // et on l'ajoute au serveur HTTP
+                            httpInstance.AddModule(theModule);
+                        }
+                        catch (Exception ex)
+                        {
+                            LogTools.Logger.Error($"Erreur lors de la creation le module ${module} du serveur HTTP '{cfg.HttpServer}' pour le minisite '{instanceName}' : {ex.Message}");
+                            throw new NullReferenceException($"Impossible de creer le module ${module} du serveur HTTP '{cfg.HttpServer}' pour le minisite '{instanceName}'", ex);
+                        }
+                    }
+                }
+
+
             }
             else
             {

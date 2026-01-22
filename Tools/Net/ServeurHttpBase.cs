@@ -9,7 +9,7 @@ using Tools.Logging;
 
 namespace Tools.Net
 {
-    public abstract class ServeurHttpBase : IServeurHttp
+    public class ServeurHttpBase : IServeurHttp
     {
         #region MEMBER
         protected IPAddress _ipAddress = null;
@@ -17,8 +17,7 @@ namespace Tools.Net
         protected HttpServer.HttpServer _server = null;
         protected bool _isStart = false;
         protected string _localRoolPath = string.Empty;
-
-        // public static ulong _sent_data = 0;
+        protected FileModule _defaultFileModule = null;     // Le module de gestion des fichiers statiques par defaut
 
         #endregion
 
@@ -66,7 +65,24 @@ namespace Tools.Net
             {
                 if (!String.IsNullOrWhiteSpace(value) && _localRoolPath != value)
                 {
+                    if(_isStart)
+                    {
+                        throw new InvalidOperationException("Impossible de changer le repertoire racine lorsque le serveur est demarre");
+                    }
+
+                    // On retire l'ancien module s'il n'est pas null
+                    if (_defaultFileModule != null)
+                    {
+                        _server.Remove(_defaultFileModule);
+                        _defaultFileModule = null;
+                    }
+
+                    // On change pour une valeur non nulle
                     _localRoolPath = value;
+
+                    _defaultFileModule = new FileModule("/", _localRoolPath, true);
+                    _defaultFileModule.AddDefaultMimeTypes();
+                    _server.Add(_defaultFileModule);    // On l'ajoute toujours en dernier
                 }
             }
         }
@@ -86,6 +102,9 @@ namespace Tools.Net
                 {
                     ListeningIpAddress = ipAdresses.First();
                 }
+
+                // Initialise le serveur interne
+                _server = new HttpServer.HttpServer();
             }
             catch (Exception ex)
             {
@@ -108,13 +127,14 @@ namespace Tools.Net
                     }
 
                     _isStart = true;
-                    CreateNewInstance();
-                    _server = new HttpServer.HttpServer();
 
-                    InitModules();
+                    // Cherche si un port d'ecoute est disponible (exception si Nok)
+                    FindAvailablePort();
 
                     // Ecoute sur l'adresse specifiee, sur toutes sinon
                     IPAddress adr = (ListeningIpAddress != null) ? ListeningIpAddress : IPAddress.Any;
+
+                    // Demarre le serveur d'ecoute (les modules doivent etre ajoutes avant)
                     _server.Start(adr, _port);
                 }
             }
@@ -140,10 +160,47 @@ namespace Tools.Net
                 LogTools.Error(ex);
             }
         }
+
+        /// <summary>
+        /// Ajoute un module au serveur HTTP. On s'assure que le module par defaut est toujours le dernier de la liste
+        /// </summary>
+        /// <param name="module"></param>
+        public void AddModule(HttpModule module)
+        {
+            if(_server != null)
+            {
+                // On retire le module par defaut s'il existe
+                if (_defaultFileModule != null)
+                {
+                    _server.Remove(_defaultFileModule);
+                }
+
+                // On ajoute le nouveau module
+                _server.Add(module);
+
+                // On remet le module par defaut en dernier
+                if (_defaultFileModule != null)
+                {
+                    _server.Add(_defaultFileModule);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Pour l'interface
+        /// </summary>
+        /// <param name="module"></param>
+        public void AddModule(object module)
+        {
+            if (!(module is HttpModule)) { throw new ArgumentException("Le module doit etre de type HttpModule", nameof(module)); }
+
+            AddModule(module as HttpModule);
+        }
+
         #endregion
 
         #region METHODES PRIVEES
-        protected virtual void CreateNewInstance()
+        protected virtual void FindAvailablePort()
         {
             int port = NetworkTools.PortSiteMin;
             bool freePort = false;
@@ -162,7 +219,7 @@ namespace Tools.Net
                     listener.Stop();
 
                     freePort = true;
-                    //LogTools.Trace("GestionSite PORT " + port + " OK", LogTools.Level.DEBUG);
+                    LogTools.Logger.Debug($"Port d'ecoute disponible: {port}");
                 }
                 catch /*(Exception ex)*/
                 {
@@ -172,17 +229,14 @@ namespace Tools.Net
                 }
             }
 
-            //LogTools.Trace("GestionSite OK 1", LogTools.Level.DEBUG);
+            if(!freePort)
+            {
+                LogTools.Logger.Error("Impossible de trouver un port disponible");
+                throw new ArgumentOutOfRangeException("Impossible de trouver un port disponible");
+            }
 
             _port = port;
         }
-
-
-        /// <summary>
-        /// Methodes abstraites initialisatn les modules du serveur HTTP
-        /// </summary>
-        protected abstract void InitModules();
-
         #endregion
     }
 }

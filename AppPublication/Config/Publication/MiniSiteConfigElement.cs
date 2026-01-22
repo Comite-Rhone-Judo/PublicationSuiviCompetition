@@ -14,7 +14,8 @@ namespace AppPublication.Config.Publication
         // Constantes pour les attributs XML
         private const string kId = "id";
         private const string kTypeLocal = "local";
-        private const string kHttpServerClass = "http";
+        private const string kHttpModules = "httpModules";
+        private const string kHttpServer = "httpServer";
         private const string kInterfaceLocalPublication = "interface";
         private const string kSynchroniseDifferences = "syncDiff";
         private const string kFtpLogin = "ftpLogin";
@@ -50,11 +51,18 @@ namespace AppPublication.Config.Publication
             set { SetValueAndMarkDirty(kTypeLocal, value); }
         }
 
-        [ConfigurationProperty(kHttpServerClass, IsRequired = false, DefaultValue = "ServeurHttpStatique")]
-        public string HttpServerClass
+        [ConfigurationProperty(kHttpModules, IsRequired = false, DefaultValue = "")]
+        public string HttpModules
         {
-            get { return GetConfigValue<string>(kHttpServerClass, "ServeurHttpStatique"); }
-            set { SetValueAndMarkDirty(kHttpServerClass, value); }
+            get { return GetConfigValue<string>(kHttpModules, ""); }
+            set { SetValueAndMarkDirty(kHttpModules, value); }
+        }
+
+        [ConfigurationProperty(kHttpServer, IsRequired = false, DefaultValue = "ServeurHttpBase")]
+        public string HttpServer
+        {
+            get { return GetConfigValue<string>(kHttpServer, ""); }
+            set { SetValueAndMarkDirty(kHttpServer, value); }
         }
 
         /// <summary>

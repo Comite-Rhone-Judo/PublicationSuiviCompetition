@@ -1,15 +1,30 @@
-﻿using System;
+﻿using AppPublication.Models.EcransAppel;
 using HttpServer;
 using HttpServer.Exceptions;
 using HttpServer.HttpModules;
 using HttpServer.Sessions;
+using System;
+using System.ComponentModel.Design;
 using Tools.Logging;
 
 namespace AppPublication.Tools.Http
 {
     // TODO on doit avoir une connexion entre le module et le parametrage des ecrans d'appel
-    public class EcransAppelRedirectModule : HttpModule
+    public class EcransAppelRedirectModule : HttpModule, IContextAware
     {
+        // La configuration des ecrans d'appel
+        private EcranCollectionManager _manager = null;
+
+        /// <summary>
+        /// Injection du contexte de l'application
+        /// </summary>
+        /// <param name="container"></param>
+        public void SetContext(IContextProvider container)
+        {
+            // Le module demande explicitement ce dont il a besoin
+            _manager = container.GetContext<EcranCollectionManager>();
+        }
+
         // Le path de reference pour la redirection
         private string _path;
         public string Path

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HttpServer.HttpModules;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -41,5 +42,11 @@ namespace Tools.Net
         /// Arrete le serveur
         /// </summary>
         void Stop();
+
+        /// <summary>
+        /// Ajoute un module au serveur HTTP
+        /// </summary>
+        /// <param name="module"></param>
+        void AddModule(object module)   ;
     }
 }
