@@ -1,5 +1,4 @@
 ﻿using AppPublication.Config.Publication;
-using AppPublication.Tools.Http;
 using HttpServer.HttpModules;
 using KernelImpl.Noyau.Structures;
 using System;
@@ -15,9 +14,6 @@ namespace AppPublication.Publication
 {
     public class MiniSiteConfigurable : MiniSite
     {
-        #region MEMBRES
-        private ContextProvider _context = new ContextProvider();    // Stockage des contextes
-        #endregion
 
         #region CONSTRUCTEURS
         /// <summary>
@@ -35,7 +31,7 @@ namespace AppPublication.Publication
             CachePassword = cachePwd;
 
             // Chargement initial de la configuration
-            LoadConfiguration();
+            LoadFromConfiguration();
         }
 
         /// <summary>
@@ -129,15 +125,7 @@ namespace AppPublication.Publication
 
         #region METHODES
 
-        /// <summary>
-        /// Permet d'ajouter un contexte
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="context"></param>
-        public void RegisterContext<T>(T context) where T : class
-        {
-            _context.Register(context);
-        }
+
 
         /// <summary>
         /// Interface (@IP) utilisée pour la publication du site en mode local
@@ -323,7 +311,7 @@ namespace AppPublication.Publication
         /// <summary>
         /// Charge la configuration de l'instance courante
         /// </summary>
-        private void LoadConfiguration()
+        private void LoadFromConfiguration()
         {
             MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
 
@@ -358,18 +346,13 @@ namespace AppPublication.Publication
                                 }
 
                                 // 3. Ajout
-                                .AddModule(moduleInstance);
+                                ServerHTTP.AddModule(moduleInstance);
                             }
-
-
-
-                            // et on l'ajoute au serveur HTTP
-                            httpInstance.AddModule(theModule);
                         }
                         catch (Exception ex)
                         {
-                            LogTools.Logger.Error($"Erreur lors de la creation le module ${module} du serveur HTTP '{cfg.HttpServer}' pour le minisite '{instanceName}' : {ex.Message}");
-                            throw new NullReferenceException($"Impossible de creer le module ${module} du serveur HTTP '{cfg.HttpServer}' pour le minisite '{instanceName}'", ex);
+                            LogTools.Logger.Error($"Erreur lors de la creation le module ${module} du serveur HTTP '{cfg.HttpServer}' pour le minisite '{_instanceName}' : {ex.Message}");
+                            throw new NullReferenceException($"Impossible de creer le module ${module} du serveur HTTP '{cfg.HttpServer}' pour le minisite '{_instanceName}'", ex);
                         }
                     }
                 }

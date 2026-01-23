@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppPublication.Tools.Http
+namespace Tools.Net
 {
     // Cette classe ne fait qu'une chose : gérer le sac de services.
     public class ContextProvider : IContextProvider

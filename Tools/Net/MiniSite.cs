@@ -42,6 +42,8 @@ namespace Tools.Net
         #endregion
 
         #region MEMBRES
+        protected ContextProvider _context = new ContextProvider();    // Stockage des contextes
+
         private FtpProfile _ftp_profile = null;     // Le profile FTP a utiliser pour les connexions
         private Action<FtpProgress> _ftpProgressCallback = null;
         private long _nbSyncDistant = 0;
@@ -380,6 +382,16 @@ namespace Tools.Net
         #endregion
 
         #region METHODES
+
+        /// <summary>
+        /// Permet d'ajouter un contexte
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="context"></param>
+        public void RegisterContext<T>(T context) where T : class
+        {
+            _context.Register(context);
+        }
 
         /// <summary>
         /// Tente de définir l'interface de publication à partir d'une chaîne (ex: config).

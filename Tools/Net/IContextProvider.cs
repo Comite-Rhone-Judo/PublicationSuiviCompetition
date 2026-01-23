@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppPublication.Tools.Http
+namespace Tools.Net
 {
     /// <summary>
     /// Interface permettant de récupérer un contexte par son type.

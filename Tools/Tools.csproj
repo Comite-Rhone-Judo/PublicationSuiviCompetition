@@ -240,6 +240,9 @@
     <Compile Include="HttpServerModule\Templates\SmartyEngine.cs" />
     <Compile Include="HttpServerModule\Templates\TemplateEngine.cs" />
     <Compile Include="Configuration\AppSettings.cs" />
+    <Compile Include="Net\ContextProvider.cs" />
+    <Compile Include="Net\IContextAware.cs" />
+    <Compile Include="Net\IContextProvider.cs" />
     <Compile Include="Net\IServeurHttp.cs" />
     <Compile Include="Net\ServeurHttpBase.cs" />
     <Compile Include="Threading\BatchProgressInfo.cs" />

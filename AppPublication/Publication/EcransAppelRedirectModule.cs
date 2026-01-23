@@ -6,14 +6,16 @@ using HttpServer.Sessions;
 using System;
 using System.ComponentModel.Design;
 using Tools.Logging;
+using Tools.Net;
 
-namespace AppPublication.Tools.Http
+namespace AppPublication.Publication
 {
     // TODO on doit avoir une connexion entre le module et le parametrage des ecrans d'appel
     public class EcransAppelRedirectModule : HttpModule, IContextAware
     {
         // La configuration des ecrans d'appel
         private EcranCollectionManager _manager = null;
+        private IContextProvider _provider = null;
 
         /// <summary>
         /// Injection du contexte de l'application
@@ -21,8 +23,8 @@ namespace AppPublication.Tools.Http
         /// <param name="container"></param>
         public void SetContext(IContextProvider container)
         {
-            // Le module demande explicitement ce dont il a besoin
-            _manager = container.GetContext<EcranCollectionManager>();
+            // On enregistre le provider, on ne va pas chercher la configuration tout de suite car elle n'est peut être pas encore initialisée
+            _provider = container;
         }
 
         // Le path de reference pour la redirection
@@ -42,10 +44,22 @@ namespace AppPublication.Tools.Http
 
         public override bool Process(IHttpRequest request, IHttpResponse response, IHttpSession session)
         {
+            if (_provider == null)
+            {
+                LogTools.Logger.Error("EcransAppelRedirectModule: Le contexte n'a pas été initialisé.");
+                throw new InternalServerException();
+            }
+
             // Vérifie si l'URL commence par le chemin défini pour ce module
             if (!request.Uri.AbsolutePath.StartsWith(this.Path, StringComparison.InvariantCultureIgnoreCase))
             {
                 return false; // Ce module ne gère pas cette requête, on passe au suivant
+            }
+
+            // Récupère la configuration des écrans d'appel
+            if (_manager == null)
+            {
+                _manager = _provider.GetContext<EcranCollectionManager>();
             }
 
             try
