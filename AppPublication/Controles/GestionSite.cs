@@ -99,7 +99,10 @@ namespace AppPublication.Controles
                 _siteInterne = MiniSiteConfigurable.CreateInstance(kSiteInterneInstanceName, true, false);
                 _siteDistant = MiniSiteConfigurable.CreateInstance(kSiteDistantInstanceName, true, true);           // on utilise un prefix vide pour le site distant pour des questions de retrocompatibilite
                 _siteFranceJudo = MiniSiteConfigurable.CreateInstance(kSiteFranceJudoInstanceName, false, true);    // On ne garde pas le detail des configuration pour le site FFJudo
-                
+
+                // Enregistre les contextes pour les modules HTTP
+                _siteInterne.RegisterContext(_ecransAppel);
+
                 _statMgr = (statMgr != null) ? statMgr : new GestionStatistiques();
                 _judoDataManager = dataManager;
 
@@ -489,9 +492,10 @@ namespace AppPublication.Controles
                     // Met a jour les repertoires de l'application (Public et Interne)
                     InitExportSiteStructure();
 
-                    // Initialise la racine du serveur Web local
+                    // Initialise la racine du serveur Web local et On met a jour les contextes pour les modules HTTP
                     SiteLocal.ServerHTTP.LocalRootPath = siteRoot;
                     SiteInterne.ServerHTTP.LocalRootPath = siteRootInterne;
+                    SiteInterne.RegisterContext(_structureSiteInterne);
                 }
             }
         }

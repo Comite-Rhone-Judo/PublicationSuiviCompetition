@@ -14,10 +14,10 @@ namespace Tools.Net
 
         public void Register<T>(T context) where T : class
         {
-            if (!_contexts.ContainsKey(typeof(T)))
-            {
-                _contexts[typeof(T)] = context;
-            }
+            //if (!_contexts.ContainsKey(typeof(T)))
+            //{
+            _contexts[typeof(T)] = context;
+            //}
         }
 
         public T GetContext<T>() where T : class

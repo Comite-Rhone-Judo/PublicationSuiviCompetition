@@ -5,14 +5,16 @@ using HttpServer.HttpModules;
 using HttpServer.Sessions;
 using System;
 using System.ComponentModel.Design;
+using Tools.Export;
 using Tools.Logging;
 using Tools.Net;
 
 namespace AppPublication.Publication
 {
-    // TODO on doit avoir une connexion entre le module et le parametrage des ecrans d'appel
     public class EcransAppelRedirectModule : HttpModule, IContextAware
     {
+        private const string kDefaultPath = "/live/ecransAppel/go";
+
         // La configuration des ecrans d'appel
         private EcranCollectionManager _manager = null;
         private IContextProvider _provider = null;
@@ -35,7 +37,7 @@ namespace AppPublication.Publication
             set { _path = value; }
         }
 
-        public EcransAppelRedirectModule(string path)
+        public EcransAppelRedirectModule(string path = kDefaultPath)
         {
             if (string.IsNullOrEmpty(path)) { throw new ArgumentNullException(nameof(path)); }
 
@@ -46,9 +48,18 @@ namespace AppPublication.Publication
         {
             if (_provider == null)
             {
-                LogTools.Logger.Error("EcransAppelRedirectModule: Le contexte n'a pas été initialisé.");
+                LogTools.Logger.Error("EcransAppelRedirectModule: Le fournisseur de contexte n'a pas ete initialise.");
                 throw new InternalServerException();
             }
+
+            // Recupere la configuration de l'export de la structure interne pour connaitre le path
+            ExportSiteInterneUrls structInterne = _provider.GetContext<ExportSiteInterneUrls>();
+            if (structInterne == null)
+            {
+                LogTools.Logger.Error("EcransAppelRedirectModule: Le contexte n'a pas ete initialise. ExportSiteInterneUrls manquant");
+                throw new InternalServerException();
+            }
+            Path = structInterne.UrlPathEcransAppel;
 
             // Vérifie si l'URL commence par le chemin défini pour ce module
             if (!request.Uri.AbsolutePath.StartsWith(this.Path, StringComparison.InvariantCultureIgnoreCase))
@@ -56,10 +67,17 @@ namespace AppPublication.Publication
                 return false; // Ce module ne gère pas cette requête, on passe au suivant
             }
 
+            // TODO A Voir si on peut le garder en cache ou si on doit le recharger à chaque requête
+
             // Récupère la configuration des écrans d'appel
             if (_manager == null)
             {
                 _manager = _provider.GetContext<EcranCollectionManager>();
+            }
+            if (_manager == null)
+            { 
+                LogTools.Logger.Error("EcransAppelRedirectModule: Le contexte n'a pas ete initialise. ExportSiteInterneUrls manquant");
+            throw new InternalServerException();
             }
 
             try
