@@ -105,7 +105,7 @@ namespace Tools.Export
         {
             if (_parentStructure != null && _parentStructure.IsFullyConfigured)
             {
-                GetUrlPath(_parentStructure.RepertoireCompetition());
+                _rootCompetUrlPath = GetUrlPath(_parentStructure.RepertoireCompetition());
             }
         }
 

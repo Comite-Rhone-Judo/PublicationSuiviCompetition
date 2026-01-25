@@ -28,6 +28,11 @@ namespace HttpServer.HttpModules
     {
         private readonly Dictionary<string, IPEndPoint> _servers = new Dictionary<string, IPEndPoint>();
 
+        public override void Init()
+        {
+            // No initialization needed.
+        }
+
         /// <summary>
         /// Method that process the url
         /// </summary>

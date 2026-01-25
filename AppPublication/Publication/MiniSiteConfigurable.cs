@@ -332,27 +332,30 @@ namespace AppPublication.Publication
                 {
                     foreach (string module in moduleList)
                     {
-                        try
+                        if (!string.IsNullOrEmpty(module))
                         {
-                            // Création du module
-                            var moduleInstance = ClassFactory.CreateInstance<HttpModule>(module);
-
-                            if (moduleInstance != null)
+                            try
                             {
-                                // 2. Injection : On passe notre objet _context dédié
-                                if (moduleInstance is IContextAware contextAwareModule)
-                                {
-                                    contextAwareModule.SetContext(_context);
-                                }
+                                // Création du module
+                                var moduleInstance = ClassFactory.CreateInstance<HttpModule>(module);
 
-                                // 3. Ajout
-                                ServerHTTP.AddModule(moduleInstance);
+                                if (moduleInstance != null)
+                                {
+                                    // 2. Injection : On passe notre objet _context dédié
+                                    if (moduleInstance is IContextAware contextAwareModule)
+                                    {
+                                        contextAwareModule.SetContext(_context);
+                                    }
+
+                                    // 3. Ajout
+                                    ServerHTTP.AddModule(moduleInstance);
+                                }
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            LogTools.Logger.Error($"Erreur lors de la creation le module ${module} du serveur HTTP '{cfg.HttpServer}' pour le minisite '{_instanceName}' : {ex.Message}");
-                            throw new NullReferenceException($"Impossible de creer le module ${module} du serveur HTTP '{cfg.HttpServer}' pour le minisite '{_instanceName}'", ex);
+                            catch (Exception ex)
+                            {
+                                LogTools.Logger.Error($"Erreur lors de la creation le module ${module} du serveur HTTP '{cfg.HttpServer}' pour le minisite '{_instanceName}' : {ex.Message}");
+                                throw new NullReferenceException($"Impossible de creer le module ${module} du serveur HTTP '{cfg.HttpServer}' pour le minisite '{_instanceName}'", ex);
+                            }
                         }
                     }
                 }

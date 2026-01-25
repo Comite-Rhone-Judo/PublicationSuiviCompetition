@@ -115,6 +115,11 @@ namespace HttpServer.HttpModules
 
         #region Overrides of HttpModule
 
+        public override void Init()
+        {
+            // No initialization needed.
+        }
+
         /// <summary>
         /// Method that process the url
         /// </summary>

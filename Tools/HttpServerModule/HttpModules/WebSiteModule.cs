@@ -42,6 +42,11 @@ namespace HttpServer.HttpModules
             return string.Compare(uri.Host, _host, true) == 0;
         }
 
+        public override void Init()
+        {
+            // No initialization needed.
+        }
+
         /// <summary>
         /// Method that process the url
         /// </summary>

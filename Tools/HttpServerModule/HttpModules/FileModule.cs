@@ -69,6 +69,10 @@ namespace HttpServer.HttpModules
             set { _forbiddenChars = value; }
         }
 
+        public override void Init()
+        {
+            // No initialization needed.
+        }
 
         /// <summary>
         /// Mimtypes that this class can handle per default

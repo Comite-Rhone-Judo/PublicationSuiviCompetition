@@ -3,6 +3,7 @@ using HttpServer;
 using HttpServer.Exceptions;
 using HttpServer.HttpModules;
 using HttpServer.Sessions;
+using NLog;
 using System;
 using System.ComponentModel.Design;
 using Tools.Export;
@@ -30,21 +31,24 @@ namespace AppPublication.Publication
         }
 
         // Le path de reference pour la redirection
-        private string _path;
+        private string _path = string.Empty;
         public string Path
         {
             get { return _path; }
             set { _path = value; }
         }
 
-        public EcransAppelRedirectModule(string path = kDefaultPath)
-        {
-            if (string.IsNullOrEmpty(path)) { throw new ArgumentNullException(nameof(path)); }
+        /// <summary>
+        /// Constructeur
+        /// </summary>
+        /// <param name="path"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public EcransAppelRedirectModule() { }
 
-            Path = path;
-        }
-
-        public override bool Process(IHttpRequest request, IHttpResponse response, IHttpSession session)
+        /// <summary>
+        /// Initialise le module
+        /// </summary>
+        public override void Init()
         {
             if (_provider == null)
             {
@@ -61,23 +65,38 @@ namespace AppPublication.Publication
             }
             Path = structInterne.UrlPathEcransAppel;
 
-            // Vérifie si l'URL commence par le chemin défini pour ce module
-            if (!request.Uri.AbsolutePath.StartsWith(this.Path, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return false; // Ce module ne gère pas cette requête, on passe au suivant
-            }
-
-            // TODO A Voir si on peut le garder en cache ou si on doit le recharger à chaque requête
-
             // Récupère la configuration des écrans d'appel
             if (_manager == null)
             {
                 _manager = _provider.GetContext<EcranCollectionManager>();
             }
             if (_manager == null)
-            { 
+            {
                 LogTools.Logger.Error("EcransAppelRedirectModule: Le contexte n'a pas ete initialise. ExportSiteInterneUrls manquant");
-            throw new InternalServerException();
+                throw new InternalServerException();
+            }
+        }
+
+        public override bool Process(IHttpRequest request, IHttpResponse response, IHttpSession session)
+        {
+            // Vérifie que le chemin est défini
+            if (string.IsNullOrEmpty(this.Path))
+            {
+                LogTools.Logger.Error("EcransAppelRedirectModule: Le Path n'est pas defini.");
+                throw new InternalServerException("EcransAppelRedirectModule: Le Path n'est pas defini.");
+            }
+
+            // Et que le contexte existe
+            if (_manager == null)
+            {
+                LogTools.Logger.Error("EcransAppelRedirectModule: Le contexte n'est pas defini.");
+                throw new InternalServerException("EcransAppelRedirectModule: Le context n'est pas defini.");
+            }
+
+            // Vérifie si l'URL commence par le chemin défini pour ce module
+            if (!request.Uri.AbsolutePath.StartsWith(this.Path, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return false; // Ce module ne gère pas cette requête, on passe au suivant
             }
 
             try

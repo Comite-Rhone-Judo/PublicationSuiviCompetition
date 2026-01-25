@@ -39,6 +39,11 @@ namespace HttpServer.HttpModules
          * */
 
         /// <summary>
+        /// Method called when the module is initialized at server startup
+        /// </summary>
+        public abstract void Init();
+
+        /// <summary>
         /// Set the log writer to use.
         /// </summary>
         /// <param name="writer">logwriter to use.</param>

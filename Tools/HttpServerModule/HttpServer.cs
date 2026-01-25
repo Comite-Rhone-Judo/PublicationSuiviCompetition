@@ -301,6 +301,13 @@ namespace HttpServer
         /// <param name="module">module to add</param>
         public void Add(HttpModule module)
         {
+            if (_httpListener != null || _httpsListener != null)
+            {
+                // A listener is already started, init the module directly before adding it to the list
+                // else init will be called when a listener is started
+                module.Init();
+            }
+
             _modules.Add(module);
         }
 
@@ -488,6 +495,12 @@ namespace HttpServer
             DirectoryInfo info = new DirectoryInfo(tempPath);
             foreach (FileInfo file in info.GetFiles("*.tmp"))
                 file.Delete();
+
+            // Let a chance to the module to initialize themselves.
+            foreach (HttpModule module in _modules)
+            {
+                module.Init();
+            }
 
             _requestQueue.Start();
         }

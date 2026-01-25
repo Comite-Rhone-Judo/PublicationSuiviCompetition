@@ -100,7 +100,7 @@ namespace AppPublication.Controles
                 _siteDistant = MiniSiteConfigurable.CreateInstance(kSiteDistantInstanceName, true, true);           // on utilise un prefix vide pour le site distant pour des questions de retrocompatibilite
                 _siteFranceJudo = MiniSiteConfigurable.CreateInstance(kSiteFranceJudoInstanceName, false, true);    // On ne garde pas le detail des configuration pour le site FFJudo
 
-                // Enregistre les contextes pour les modules HTTP
+                // Enregistre les ecrans d'appels en tant que contextes pour les modules HTTP
                 _siteInterne.RegisterContext(_ecransAppel);
 
                 _statMgr = (statMgr != null) ? statMgr : new GestionStatistiques();

@@ -50,6 +50,11 @@ namespace HttpServer.HttpModules
             return uri.AbsolutePath.StartsWith(_sourceUrl);
         }
 
+        public override void Init()
+        {
+            // No initialization needed.
+        }
+
         /// <summary>
         /// Method that process the url
         /// </summary>
