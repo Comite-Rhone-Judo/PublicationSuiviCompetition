@@ -1,0 +1,227 @@
+﻿using NLog.Layouts;
+using System;
+using System.Drawing;
+using System.Drawing.Printing;
+using System.Reflection;
+using System.Runtime.Remoting.Messaging;
+using System.Web.UI.WebControls;
+using System.Windows;
+using System.Windows.Documents;
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
+using System.Windows.Shapes;
+using Telerik.Windows.Controls;
+using Telerik.Windows.Controls.Book;
+using Telerik.Windows.Documents.Model.Drawing.Charts;
+using static System.Net.Mime.MediaTypeNames;
+
+@charset "utf-8";
+
+/* ============================================================
+   STYLE SPÉCIFIQUE - ÉCRANS D'APPEL / AÉROPORT
+   Gestion uniquement du LAYOUT (Dimensions, Flexbox, Masquage)
+   Les couleurs et polices sont gérées par les classes W3.CSS
+   ============================================================ */
+
+/* Structure Globale : Flexbox vertical pour prendre 100% de la hauteur */
+body {
+    margin: 0;
+padding: 0;
+height: 100vh; /* Force la hauteur de la fenêtre */
+width: 100vw;
+overflow: hidden; /* Interdit les ascenseurs */
+display: flex;
+flex - direction: column;
+}
+
+/* Header (Bandeau haut) */
+.tv - header {
+height: 100px; /* Hauteur fixe */
+display: flex;
+    align - items: center;
+padding: 0 30px;
+    flex - shrink: 0; /* Ne rétrécit jamais */
+    z - index: 10;
+}
+
+.tv - logo {
+height: 80px;
+    margin - right: 30px;
+}
+
+.tv - title {
+    font - size: 2.5em;
+    font - weight: bold;
+    text - transform: uppercase;
+    white - space: nowrap;
+overflow: hidden;
+    text - overflow: ellipsis;
+}
+
+/* Conteneur Principal des Tapis */
+# main-container {
+flex: 1; /* Prend toute la hauteur restante */
+padding: 10px;
+box - sizing: border - box;
+display: flex;
+flex - wrap: wrap; /* Permet le 2x2 */
+align - content: stretch;
+justify - content: center;
+width: 100 %;
+}
+
+/* Carte Tapis (Conteneur externe) */
+.tapis - card {
+    box - sizing: border - box;
+padding: 5px;
+    /* La width et height sont gérées inline par le XSLT */
+}
+
+/* Carte Tapis (Contenu interne) */
+.tapis - inner {
+height: 100 %;
+width: 100 %;
+display: flex;
+    flex - direction: column;
+overflow: hidden;
+}
+
+/* En-tête de la carte tapis */
+.tapis - header {
+    flex - shrink: 0;
+    font - size: 1.8em;
+padding: 10px 0;
+    font - weight: bold;
+}
+
+/* Zone du tableau des combats */
+.tapis - content {
+flex: 1;
+overflow: hidden; /* Coupe ce qui dépasse (paginé par JS) */
+position: relative;
+}
+
+/* Tableaux */
+.combat - list {
+width: 100 %;
+    border - collapse: collapse;
+    table - layout: fixed; /* Respect strict des largeurs de colonnes */
+}
+
+.combat - list th {
+    font-size: 1.1em;
+padding: 8px;
+}
+
+.combat - row td {
+    padding: 8px 10px;
+font - size: 1.2em;
+vertical - align: middle;
+white - space: nowrap;
+overflow: hidden;
+text - overflow: ellipsis;
+}
+
+/* Combat en cours (1ère ligne) - Layout spécifique */
+.combat - row.active - combat td {
+    font-size: 1.4em; /* Plus gros */
+font - weight: bold;
+padding: 15px 10px; /* Plus aéré */
+border - bottom: 2px solid #fff; /* Séparation nette */
+}
+
+/* Typographie Noms */
+.judoka - nom {
+    text - transform: uppercase;
+    font - weight: 700;
+}
+
+.judoka - prenom {
+    margin - left: 5px;
+}
+
+.judoka - club {
+    font - size: 0.75em;
+display: block;
+    margin - top: 2px;
+}
+
+/* Badges Couleurs Judokas */
+.badge - color {
+display: inline - block;
+width: 28px;
+height: 28px;
+    line - height: 28px;
+    text - align: center;
+    border - radius: 50 %;
+    font - size: 0.8em;
+    font - weight: bold;
+border: 1px solid #999;
+}
+
+/* Barre de progression globale (Footer) */
+# progress-container {
+height: 8px;
+width: 100 %;
+flex - shrink: 0;
+}
+
+#progress-bar {
+    height: 100 %;
+width: 0 %;
+transition: width 0.1s linear;
+}
+
+/* Tableaux */
+.combat-list {
+    width: 100%;
+    border-collapse: separate; /* Nécessaire pour l'espacement des cartes */
+    border-spacing: 0 4px;     /* Petit espace vertical entre les lignes */
+    table-layout: fixed;
+}
+
+.combat-list th {
+    font-size: 1.1em;
+    padding: 8px;
+    text-transform: uppercase;
+}
+
+/* On retire les bordures classiques car ce sont les cartes qui font le contour */
+.combat-row td {
+    vertical-align: middle;
+    border: none !important; 
+}
+
+/* Typographie spécifique dans les cartes */
+.judoka-nom {
+    text-transform: uppercase;
+    font-weight: 800; /* Plus gras pour le nom de famille */
+    font-size: 1.1em;
+}
+
+.judoka-prenom {
+    font-weight: 400;
+    font-size: 0.9em;
+}
+
+.judoka-club {
+    font-size: 0.8em;
+    color: #555;
+    font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Adaptation Badge */
+.badge-color {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    line-height: 30px; /* Centrage vertical du texte */
+    text-align: center;
+    border-radius: 50%;
+    font-size: 0.9em;
+    font-weight: bold;
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
