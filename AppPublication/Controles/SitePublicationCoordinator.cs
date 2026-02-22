@@ -307,8 +307,6 @@ namespace AppPublication.Controles
         {
             get
             {
-                // TODO: il faut ajouter qqchose pour synchroniser les repertoires racine de gestionSite et gestionSiteInterne
-
                 if (_cmdGetRepertoireRacine == null)
                 {
                     _cmdGetRepertoireRacine = new RelayCommand(

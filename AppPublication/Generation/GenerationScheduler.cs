@@ -185,7 +185,6 @@ namespace AppPublication.Generation
         /// </summary>
         public int DelaiGenerationSec
         {
-            // TODO il faudra le modifier pour prendre en compte les differentes instances
             get
             {
                 return _delaiGenerationSec;
@@ -211,7 +210,6 @@ namespace AppPublication.Generation
             }
             set
             {
-                // TODO il faudra le modifier pour prendre en compte les differentes instances
                 if (_effacerAuDemarrage != value)
                 {
                     _effacerAuDemarrage = value;
@@ -359,7 +357,6 @@ namespace AppPublication.Generation
                                 statGeneration.IsSuccess = genTime.Result.IsSuccess;
                                 SiteGenere = genTime.Result.IsSuccess;
 
-                                // TODO la il faut revoir car on ne doit pas partager les compteurs. Le scheduler ne doit pas savoir sur quel compteurs il travaille
                                 _statMgrGeneration?.EnregistrerGeneration( (float) genTime.DurationMs / 1000F);
 
                                 if(SiteGenere)

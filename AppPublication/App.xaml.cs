@@ -56,7 +56,6 @@ namespace AppPublication
             // Demarre la fenetre principale et injecte le Dialog controleur en tant que DataContext
             AppPublication.Views.Main.MainView mainWin = new AppPublication.Views.Main.MainView();
 
-            // TODO ici, ce devrait plutôt etre le ViewModel principal ...
             mainWin.DataContext = Controles.DialogControleur.Instance;
             mainWin.Show();
         }
