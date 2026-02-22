@@ -320,14 +320,16 @@ namespace AppPublication.Controles
                     _cmdCopyUrlLocal = new RelayCommand(
                             o =>
                             {
-                                if (SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif)
+                                if (SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif)
                                 {
                                     Clipboard.SetText(SiteCoordinator.GestionnaireSitePublique.URLLocalPublication);
                                 }
                             },
                             o =>
                             {
-                                return SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif;
+
+
+                                return SiteCoordinator.GestionnaireSitePublique.SiteLocal!= null ? SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif : false;
                             });
                 }
                 return _cmdCopyUrlLocal;
@@ -412,7 +414,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return !String.IsNullOrEmpty(Instance.SiteCoordinator.GestionnaireSitePublique.IdCompetition) && !Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif && Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsChanged;
+                                return Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal != null ? !String.IsNullOrEmpty(Instance.SiteCoordinator.GestionnaireSitePublique.IdCompetition) && !Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif && Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsChanged : false;
                             });
                 }
                 return _cmdDemarrerSiteLocal;
@@ -440,7 +442,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif;
+                                return Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal != null ? Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif : false;
                             });
                 }
                 return _cmdArreterSiteLocal;
@@ -471,7 +473,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return !String.IsNullOrEmpty(Instance.SiteCoordinator.GestionnaireSiteInterne.IdCompetition) && !Instance.SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif && Instance.SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsChanged;
+                                return Instance.SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null ? !String.IsNullOrEmpty(Instance.SiteCoordinator.GestionnaireSiteInterne.IdCompetition) && !Instance.SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif && Instance.SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsChanged : false;
                             });
                 }
                 return _cmdDemarrerSiteInterne;
@@ -499,7 +501,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return Instance.SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif;
+                                return Instance.SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null ? Instance.SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif : false;
                             });
                 }
                 return _cmdArreterSiteInterne;
@@ -777,7 +779,7 @@ namespace AppPublication.Controles
                     _cmdAfficherSiteLocal = new RelayCommand(
                             o =>
                             {
-                                if (Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsLocal && Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif)
+                                if (Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsLocal && Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif)
                                 {
                                     string url = Instance.SiteCoordinator.GestionnaireSitePublique.URLLocalPublication;
 
@@ -789,7 +791,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return  Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif && Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsLocal;
+                                return Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal != null ? Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif && Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsLocal : false;
                             });
                 }
                 return _cmdAfficherSiteLocal;
@@ -951,7 +953,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return Instance.SiteCoordinator.IsAllGenerationInactive;
+                                return !Instance.SiteCoordinator.IsGenerationActiveOne;
                             });
                 }
                 return _cmdAfficherConfiguration;

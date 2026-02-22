@@ -204,30 +204,30 @@
                                     <StackPanel Orientation="Horizontal" >
                                         <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
                                         <Rectangle  Style="{StaticResource AnimatedStatusStyle}"
-                                                    DataContext="{Binding Path=GestionSite}"
+                                                    DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique}"
                                                     Tag="{Binding Path=IsGenerationActive, Converter={StaticResource ValueToBoolConverter}}"/>
-                                        <Label HorizontalAlignment="Left" Content="{Binding Path=GestionSite.IsGenerationActive, Mode=OneWay, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
+                                        <Label HorizontalAlignment="Left" Content="{Binding Path=SiteCoordinator.GestionnaireSitePublique.IsGenerationActive, Mode=OneWay, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
                                     </StackPanel>
                                     <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                     <StackPanel Orientation="Horizontal" >
                                         <Label HorizontalAlignment="Left" Content="Statut:" Style="{StaticResource LabelStyle}" />
-                                        <Ellipse Margin="0" Height="15" Width="15" Style="{StaticResource OperationStatusStyle}" DataContext="{Binding Path=GestionSite.Status, Mode=OneWay}"/>
+                                        <Ellipse Margin="0" Height="15" Width="15" Style="{StaticResource OperationStatusStyle}" DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique.Status, Mode=OneWay}"/>
                                         <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                                            <Label HorizontalAlignment="Left" Width="140" Content="{Binding GestionSite.Status.Message, Mode=OneWay}" Style="{StaticResource LabelStyleValue}" />
+                                            <Label HorizontalAlignment="Left" Width="140" Content="{Binding SiteCoordinator.GestionnaireSitePublique.Status.Message, Mode=OneWay}" Style="{StaticResource LabelStyleValue}" />
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                <telerik:RadProgressBar Orientation="Horizontal" Width="100" Height="10" Margin="10 -10 0 0" Minimum="0" Maximum="100" Style="{StaticResource StatusProgressBarStyle}" DataContext="{Binding Path=GestionSite.Status, Mode=OneWay}" />
-                                                <Label Margin="0 -12 0 0" DataContext="{Binding Path=GestionSite.Status, Mode=OneWay}" Style="{StaticResource StatusGenerationSiteProgressLabelStyle}" />
+                                                <telerik:RadProgressBar Orientation="Horizontal" Width="100" Height="10" Margin="10 -10 0 0" Minimum="0" Maximum="100" Style="{StaticResource StatusProgressBarStyle}" DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique.Status, Mode=OneWay}" />
+                                                <Label Margin="0 -12 0 0" DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique.Status, Mode=OneWay}" Style="{StaticResource StatusGenerationSiteProgressLabelStyle}" />
                                             </StackPanel>
                                         </StackPanel>
                                     </StackPanel>
                                     <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                     <StackPanel Orientation="Horizontal" >
                                         <Label HorizontalAlignment="Left" Content="Mise à jour:" Style="{StaticResource LabelStyle}" />
-                                        <Label HorizontalAlignment="Left"  IsEnabled="{Binding GestionSite.SiteGenere}" Style="{StaticResource LabelStyleValue}">
+                                        <Label HorizontalAlignment="Left"  IsEnabled="{Binding SiteCoordinator.GestionnaireSitePublique.SiteGenere}" Style="{StaticResource LabelStyleValue}">
                                             <Label.Content>
                                                 <MultiBinding Converter="{StaticResource StatGenerationConverter}" Mode="OneWay">
-                                                    <Binding Path="GestionSite.DerniereGeneration" Mode="OneWay"/>
-                                                    <Binding Path="GestionSite.SiteGenere" Mode="OneWay"/>
+                                                    <Binding Path="SiteCoordinator.GestionnaireSitePublique.DerniereGeneration" Mode="OneWay"/>
+                                                    <Binding Path="SiteCoordinator.GestionnaireSitePublique.SiteGenere" Mode="OneWay"/>
                                                 </MultiBinding>
                                             </Label.Content>
                                         </Label>
@@ -239,30 +239,30 @@
                                     <StackPanel Orientation="Horizontal" >
                                         <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
                                         <Rectangle  Style="{StaticResource AnimatedStatusStyle}"
-                                                    DataContext="{Binding Path=GestionSite}"
-                                                    Tag="{Binding Path=IsGenerationInterneActive, Converter={StaticResource ValueToBoolConverter}}"/>
-                                        <Label HorizontalAlignment="Left" Content="{Binding Path=GestionSite.IsGenerationInterneActive, Mode=OneWay, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
+                                                    DataContext="{Binding Path=SiteCoordinator.GestionnaireSiteInterne}"
+                                                    Tag="{Binding Path=IsGenerationActive, Converter={StaticResource ValueToBoolConverter}}"/>
+                                        <Label HorizontalAlignment="Left" Content="{Binding Path=SiteCoordinator.GestionnaireSiteInterne.IsGenerationActive, Mode=OneWay, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
                                     </StackPanel>
                                     <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                     <StackPanel Orientation="Horizontal" >
                                         <Label HorizontalAlignment="Left" Content="Statut:" Style="{StaticResource LabelStyle}" />
-                                        <Ellipse Margin="0" Height="15" Width="15" Style="{StaticResource OperationStatusStyle}" DataContext="{Binding Path=GestionSite.StatusInterne, Mode=OneWay}"/>
+                                        <Ellipse Margin="0" Height="15" Width="15" Style="{StaticResource OperationStatusStyle}" DataContext="{Binding Path=SiteCoordinator.GestionnaireSiteInterne.Status, Mode=OneWay}"/>
                                         <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                                            <Label HorizontalAlignment="Left" Width="140" Content="{Binding GestionSite.StatusInterne.Message, Mode=OneWay}" Style="{StaticResource LabelStyleValue}" />
+                                            <Label HorizontalAlignment="Left" Width="140" Content="{Binding SiteCoordinator.GestionnaireSiteInterne.Status.Message, Mode=OneWay}" Style="{StaticResource LabelStyleValue}" />
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                <telerik:RadProgressBar Orientation="Horizontal" Width="100" Height="10" Margin="10 -10 0 0" Minimum="0" Maximum="100" Style="{StaticResource StatusProgressBarStyle}" DataContext="{Binding Path=GestionSite.StatusInterne, Mode=OneWay}" />
-                                                <Label Margin="0 -12 0 0" DataContext="{Binding Path=GestionSite.StatusInterne, Mode=OneWay}" Style="{StaticResource StatusGenerationSiteProgressLabelStyle}" />
+                                                <telerik:RadProgressBar Orientation="Horizontal" Width="100" Height="10" Margin="10 -10 0 0" Minimum="0" Maximum="100" Style="{StaticResource StatusProgressBarStyle}" DataContext="{Binding Path=SiteCoordinator.GestionnaireSiteInterne.Status, Mode=OneWay}" />
+                                                <Label Margin="0 -12 0 0" DataContext="{Binding Path=SiteCoordinator.GestionnaireSiteInterne.Status, Mode=OneWay}" Style="{StaticResource StatusGenerationSiteProgressLabelStyle}" />
                                             </StackPanel>
                                         </StackPanel>
                                     </StackPanel>
                                     <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                     <StackPanel Orientation="Horizontal" >
                                         <Label HorizontalAlignment="Left" Content="Mise à jour:" Style="{StaticResource LabelStyle}" />
-                                        <Label HorizontalAlignment="Left"  IsEnabled="{Binding GestionSite.SiteGenere}" Style="{StaticResource LabelStyleValue}">
+                                        <Label HorizontalAlignment="Left"  IsEnabled="{Binding SiteCoordinator.GestionnaireSitePublique.SiteGenere}" Style="{StaticResource LabelStyleValue}">
                                             <Label.Content>
                                                 <MultiBinding Converter="{StaticResource StatGenerationConverter}" Mode="OneWay">
-                                                    <Binding Path="GestionSite.DerniereGeneration" Mode="OneWay"/>
-                                                    <Binding Path="GestionSite.SiteGenere" Mode="OneWay"/>
+                                                    <Binding Path="SiteCoordinator.GestionnaireSitePublique.DerniereGeneration" Mode="OneWay"/>
+                                                    <Binding Path="SiteCoordinator.GestionnaireSitePublique.SiteGenere" Mode="OneWay"/>
                                                 </MultiBinding>
                                             </Label.Content>
                                         </Label>
@@ -339,8 +339,8 @@
                                                 <telerik:RadBarcodeQR Background="White"  Height="100" Mode="Byte" ErrorCorrectionLevel="L" x:Name="QRCodeLocal">
                                                     <telerik:RadBarcodeQR.Text>
                                                         <MultiBinding Converter="{StaticResource DisplayURLStatusConverter}" Mode="OneWay">
-                                                            <Binding Path="GestionSite.URLLocalPublication"  Mode="OneWay"/>
-                                                            <Binding Path="GestionSite.SiteLocal.IsActif"  Mode="OneWay"/>
+                                                            <Binding Path="SiteCoordinator.GestionnaireSitePublique.URLLocalPublication"  Mode="OneWay"/>
+                                                            <Binding Path="SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif"  Mode="OneWay"/>
                                                         </MultiBinding>
                                                     </telerik:RadBarcodeQR.Text>
                                                 </telerik:RadBarcodeQR>
@@ -348,7 +348,7 @@
                                             <WrapPanel Orientation="Vertical" >
                                                 <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="10 0 0 0" Width="32" HorizontalAlignment="Left"
                                        Click="QRCodeLocalCopy_Click"
-                                       IsEnabled="{Binding Path=GestionSite.SiteLocal.IsActif}">
+                                       IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif}">
                                                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier le QRCode"/>
                                                 </telerik:RadButton>
                                                 <WrapPanel Orientation="Horizontal" >
@@ -365,14 +365,14 @@
                                             <StackPanel Orientation="Horizontal" >
                                                 <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
                                                 <Rectangle  Style="{StaticResource AnimatedStatusStyle}"
-                                                            DataContext="{Binding Path=GestionSite.SiteLocal}"
+                                                            DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteLocal}"
                                                             Tag="{Binding Path=IsActif, Converter={StaticResource ValueToBoolConverter}}"/>
-                                                <Label HorizontalAlignment="Left" Content="{Binding Path=GestionSite.SiteLocal.IsActif, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
+                                                <Label HorizontalAlignment="Left" Content="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
                                             </StackPanel>
                                             <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                             <StackPanel Orientation="Horizontal" >
                                                 <Label HorizontalAlignment="Left" Content="Statut:" Style="{StaticResource LabelStyle}" />
-                                                <Label HorizontalAlignment="Left" Content="{Binding GestionSite.SiteLocal.Status.Message}" Style="{StaticResource LabelStyleValue}" />
+                                                <Label HorizontalAlignment="Left" Content="{Binding SiteCoordinator.GestionnaireSitePublique.SiteLocal.Status.Message}" Style="{StaticResource LabelStyleValue}" />
                                             </StackPanel>
                                         </StackPanel>
                                         <Line StrokeThickness="1" Stroke="White" Margin="5" X1="0" X2="1" Stretch="Fill"/>
@@ -381,9 +381,9 @@
                                             <StackPanel Orientation="Horizontal" >
                                                 <Label Content="Adresse de publication:" Margin="0 0 0 0" Style="{StaticResource LabelStyle}"/>
                                                 <telerik:RadComboBox Height="22" MinWidth="200" Style="{StaticResource DropDownStyle}"
-                                                                      ItemsSource="{Binding Path=GestionSite.SiteLocal.InterfacesLocal}"
-                                                                      SelectedItem = "{Binding Path=GestionSite.InterfaceLocalPublication}"
-                                                                      IsEnabled="{Binding Path=GestionSite.SiteLocal.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                                                      ItemsSource="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteLocal.InterfacesLocal}"
+                                                                      SelectedItem = "{Binding Path=SiteCoordinator.GestionnaireSitePublique.InterfaceLocalPublication}"
+                                                                      IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif, Converter={StaticResource BoolNotConverter}}"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </StackPanel>
@@ -418,9 +418,8 @@
                                                 <telerik:RadBarcodeQR Background="White"  Height="100" Mode="Byte" ErrorCorrectionLevel="L" x:Name="QRCodeEcransAppel">
                                                     <telerik:RadBarcodeQR.Text>
                                                         <MultiBinding Converter="{StaticResource DisplayURLStatusConverter}" Mode="OneWay">
-                                                            <Binding Path="GestionSite.URLInternePublication"  Mode="OneWay"/>
-                                                            <Binding Path="GestionSite.SiteInterne
-                                                                     .IsActif"  Mode="OneWay"/>
+                                                            <Binding Path="SiteCoordinator.GestionnaireSiteInterne.URLLocalPublication"  Mode="OneWay"/>
+                                                            <Binding Path="SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif"  Mode="OneWay"/>
                                                         </MultiBinding>
                                                     </telerik:RadBarcodeQR.Text>
                                                 </telerik:RadBarcodeQR>
@@ -428,7 +427,7 @@
                                             <WrapPanel Orientation="Vertical" >
                                                 <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="10 0 0 0" Width="32" HorizontalAlignment="Left"
                                        Click="QRCodeEcransAppelCopy_Click"
-                                       IsEnabled="{Binding Path=GestionSite.SiteLocal.IsActif}">
+                                       IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif}">
                                                     <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier le QRCode"/>
                                                 </telerik:RadButton>
                                                 <WrapPanel Orientation="Horizontal" >
@@ -445,14 +444,14 @@
                                             <StackPanel Orientation="Horizontal" >
                                                 <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
                                                 <Rectangle  Style="{StaticResource AnimatedStatusStyle}"
-                                                            DataContext="{Binding Path=GestionSite.SiteInterne}"
+                                                            DataContext="{Binding Path=SiteCoordinator.GestionnaireSiteInterne.SiteLocal}"
                                                             Tag="{Binding Path=IsActif, Converter={StaticResource ValueToBoolConverter}}"/>
-                                                <Label HorizontalAlignment="Left" Content="{Binding Path=GestionSite.SiteInterne.IsActif, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
+                                                <Label HorizontalAlignment="Left" Content="{Binding Path=SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
                                             </StackPanel>
                                             <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                             <StackPanel Orientation="Horizontal" >
                                                 <Label HorizontalAlignment="Left" Content="Statut:" Style="{StaticResource LabelStyle}" />
-                                                <Label HorizontalAlignment="Left" Content="{Binding GestionSite.SiteInterne.Status.Message}" Style="{StaticResource LabelStyleValue}" />
+                                                <Label HorizontalAlignment="Left" Content="{Binding SiteCoordinator.GestionnaireSiteInterne.SiteLocal.Status.Message}" Style="{StaticResource LabelStyleValue}" />
                                             </StackPanel>
                                         </StackPanel>
                                         <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="1" Stretch="Fill"/>
@@ -461,9 +460,9 @@
                                             <StackPanel Orientation="Horizontal" >
                                                 <Label Content="Adresse de publication:" Margin="0 0 0 0" Style="{StaticResource LabelStyle}"/>
                                                 <telerik:RadComboBox Height="22" MinWidth="200" Style="{StaticResource DropDownStyle}"
-                                                                      ItemsSource="{Binding Path=GestionSite.SiteInterne.InterfacesLocal}"
-                                                                      SelectedItem = "{Binding Path=GestionSite.InterfaceSiteInterne}"
-                                                                      IsEnabled="{Binding Path=GestionSite.SiteInterne.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                                                      ItemsSource="{Binding Path=SiteCoordinator.GestionnaireSiteInterne.SiteLocal.InterfacesLocal}"
+                                                                      SelectedItem = "{Binding Path=SiteCoordinator.GestionnaireSiteInterne.InterfaceLocalPublication}"
+                                                                      IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif, Converter={StaticResource BoolNotConverter}}"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </StackPanel>
@@ -504,8 +503,8 @@
                                             <telerik:RadBarcodeQR Background="White"  Height="100" Mode="Byte" ErrorCorrectionLevel="L" x:Name="QRCodeDistant">
                                                 <telerik:RadBarcodeQR.Text>
                                                     <MultiBinding Converter="{StaticResource DisplayURLStatusConverter}" Mode="OneWay">
-                                                        <Binding Path="GestionSite.URLDistantPublication"  Mode="OneWay"/>
-                                                        <Binding Path="GestionSite.SiteDistantSelectionne.IsActif"  Mode="OneWay"/>
+                                                        <Binding Path="SiteCoordinator.GestionnaireSitePublique.URLDistantPublication"  Mode="OneWay"/>
+                                                        <Binding Path="SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif"  Mode="OneWay"/>
                                                     </MultiBinding>
                                                 </telerik:RadBarcodeQR.Text>
                                             </telerik:RadBarcodeQR>
@@ -513,7 +512,7 @@
                                         <WrapPanel Orientation="Vertical" >
                                             <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="10 0 0 0" Width="32" HorizontalAlignment="Left"
                                                                Click="QRCodeDistantCopy_Click"
-                                                               IsEnabled="{Binding Path=GestionSite.SiteDistantSelectionne.IsActif}">
+                                                               IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif}">
                                                 <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier le QRCode"/>
                                             </telerik:RadButton>
                                             <WrapPanel Orientation="Horizontal" >
@@ -530,34 +529,34 @@
                                         <StackPanel Orientation="Horizontal" >
                                             <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
                                             <Rectangle  Style="{StaticResource AnimatedStatusStyle}"
-                                                            DataContext="{Binding Path=GestionSite.SiteDistantSelectionne, Mode=OneWay}"
+                                                            DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne, Mode=OneWay}"
                                                             Tag="{Binding Path=IsActif, Converter={StaticResource ValueToBoolConverter}}"/>
-                                            <Label HorizontalAlignment="Left" Content="{Binding Path=GestionSite.SiteDistantSelectionne.IsActif, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
+                                            <Label HorizontalAlignment="Left" Content="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
                                         </StackPanel>
                                         <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                         <StackPanel Orientation="Horizontal" >
                                             <Label HorizontalAlignment="Left" Content="Statut:" Style="{StaticResource LabelStyle}" />
-                                            <Ellipse Margin="0" Height="15" Width="15" Style="{StaticResource OperationStatusStyle}" DataContext="{Binding Path=GestionSite.SiteDistantSelectionne.Status, Mode=OneWay}"/>
+                                            <Ellipse Margin="0" Height="15" Width="15" Style="{StaticResource OperationStatusStyle}" DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.Status, Mode=OneWay}"/>
                                             <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                                                <Label HorizontalAlignment="Left" Width="140" Content="{Binding GestionSite.SiteDistantSelectionne.Status.Message, Mode=OneWay}" Style="{StaticResource LabelStyleValue}" />
+                                                <Label HorizontalAlignment="Left" Width="140" Content="{Binding SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.Status.Message, Mode=OneWay}" Style="{StaticResource LabelStyleValue}" />
                                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                    <telerik:RadProgressBar Orientation="Horizontal" Width="140" Height="8" Margin="0 -10 0 0" Minimum="0" Maximum="100" Style="{StaticResource StatusProgressBarStyle}" DataContext="{Binding Path=GestionSite.SiteDistantSelectionne.Status, Mode=OneWay}" />
-                                                    <Label Margin="0 -12 0 0" DataContext="{Binding Path=GestionSite.SiteDistantSelectionne.Status, Mode=OneWay}" Style="{StaticResource StatusMiniSiteProgressLabelStyle}" />
+                                                    <telerik:RadProgressBar Orientation="Horizontal" Width="140" Height="8" Margin="0 -10 0 0" Minimum="0" Maximum="100" Style="{StaticResource StatusProgressBarStyle}" DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.Status, Mode=OneWay}" />
+                                                    <Label Margin="0 -12 0 0" DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.Status, Mode=OneWay}" Style="{StaticResource StatusMiniSiteProgressLabelStyle}" />
                                                 </StackPanel>
                                             </StackPanel>
 
 
 
 
-                                            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="25" Margin="5 0" DataContext="{Binding Path=GestionSite.SiteDistantSelectionne.Status, Mode=OneWay}" Style="{StaticResource InfoTooltipStyle}"/>
+                                            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="25" Margin="5 0" DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.Status, Mode=OneWay}" Style="{StaticResource InfoTooltipStyle}"/>
                                         </StackPanel>
                                         <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                         <StackPanel Orientation="Horizontal" >
                                             <Label HorizontalAlignment="Left" Content="Synchronisation:" Style="{StaticResource LabelStyle}" />
                                             <Label HorizontalAlignment="Left" Style="{StaticResource LabelStyleValue}" >
                                                 <MultiBinding Converter="{StaticResource StatGenerationConverter}" Mode="OneWay">
-                                                    <Binding Path="GestionSite.DerniereSynchronisation" Mode="OneWay"/>
-                                                    <Binding Path="GestionSite.SiteSynchronise" Mode="OneWay"/>
+                                                    <Binding Path="SiteCoordinator.GestionnaireSitePublique.DerniereSynchronisation" Mode="OneWay"/>
+                                                    <Binding Path="SiteCoordinator.GestionnaireSitePublique.SiteSynchronise" Mode="OneWay"/>
                                                 </MultiBinding>
                                             </Label>
                                         </StackPanel>
@@ -565,18 +564,18 @@
                                     <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="1" Stretch="Fill"/>
                                     <StackPanel Orientation="Horizontal">
                                         <Label HorizontalAlignment="Left" Content="Parametres:" Style="{StaticResource HeaderStyle}" />
-                                        <CheckBox Content="Configuration avancée" IsChecked="{Binding Path=GestionSite.AdvancedConfig}" Style="{StaticResource CheckboxStyle}">
+                                        <CheckBox Content="Configuration avancée" IsChecked="{Binding Path=SiteCoordinator.GestionnaireSitePublique.AdvancedConfig}" Style="{StaticResource CheckboxStyle}">
                                             <CheckBox.IsEnabled>
                                                 <MultiBinding Converter="{StaticResource BoolOperationConverter}" ConverterParameter="a_and_not_b"  Mode="OneWay">
-                                                    <Binding Path="GestionSite.EasyConfigDisponible" Mode="OneWay"/>
-                                                    <Binding Path="GestionSite.SiteDistantSelectionne.IsActif" Mode="OneWay"/>
+                                                    <Binding Path="SiteCoordinator.GestionnaireSitePublique.EasyConfigDisponible" Mode="OneWay"/>
+                                                    <Binding Path="SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif" Mode="OneWay"/>
                                                 </MultiBinding>
                                             </CheckBox.IsEnabled>
                                         </CheckBox>
                                     </StackPanel>
-                                    <CheckBox Content="Isoler les compétitions" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.IsolerCompetition}" IsEnabled="{Binding Path=GestionSite.SiteDistantSelectionne.IsActif, Converter={StaticResource BoolNotConverter}}" Margin="10 0 0 0"/>
+                                    <CheckBox Content="Isoler les compétitions" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=SiteCoordinator.GestionnaireSitePublique.IsolerCompetition}" IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif, Converter={StaticResource BoolNotConverter}}" Margin="10 0 0 0"/>
                                     <!-- ZONE EASY CONFIG -->
-                                    <StackPanel Visibility="{Binding Path=GestionSite.EasyConfig, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <StackPanel Visibility="{Binding Path=SiteCoordinator.GestionnaireSitePublique.EasyConfig, Converter={StaticResource BoolToVisibilityConverter}}">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="auto"/>
@@ -590,24 +589,24 @@
                                             
                                             <Label Grid.Column="0" Content="Niveau de publication:" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right"/>
                                             <telerik:RadComboBox Grid.Column="1" Style="{StaticResource DropDownStyle}" MinWidth="120"
-                                                                             ItemsSource="{Binding Path=GestionSite.ListeNiveauxPublicationFFJudo}"
-                                                                             SelectedValue="{Binding Path=GestionSite.NiveauPublicationFFJudo}" Margin="5,0,0,0"
-                                                                             IsEnabled="{Binding Path=GestionSite.SiteFranceJudo.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                                                             ItemsSource="{Binding Path=SiteCoordinator.GestionnaireSitePublique.ListeNiveauxPublicationFFJudo}"
+                                                                             SelectedValue="{Binding Path=SiteCoordinator.GestionnaireSitePublique.NiveauPublicationFFJudo}" Margin="5,0,0,0"
+                                                                             IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.IsActif, Converter={StaticResource BoolNotConverter}}"/>
                                             <Label Grid.Column="0" Grid.Row="1" Content="Entité de publication:" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right"/>
                                             <telerik:RadComboBox Grid.Column="1" Grid.Row="1" Style="{StaticResource DropDownStyle}" MinWidth="180"
-                                                                             ItemsSource="{Binding Path=GestionSite.ListeEntitesPublicationFFJudo}" DisplayMemberPath="Libelle"
-                                                                             SelectedItem="{Binding Path=GestionSite.EntitePublicationFFJudo}" Margin="5,0,0,0"
-                                                                             IsEnabled="{Binding Path=GestionSite.SiteFranceJudo.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                                                             ItemsSource="{Binding Path=SiteCoordinator.GestionnaireSitePublique.ListeEntitesPublicationFFJudo}" DisplayMemberPath="Libelle"
+                                                                             SelectedItem="{Binding Path=SiteCoordinator.GestionnaireSitePublique.EntitePublicationFFJudo}" Margin="5,0,0,0"
+                                                                             IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.IsActif, Converter={StaticResource BoolNotConverter}}"/>
                                             <Label Grid.Column="0" Grid.Row="2" Content="Mot de passe:" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right"/>
                                             <telerik:RadPasswordBox Name="EasyConfigPwd" Grid.Column="1" Grid.Row="2" TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
-                                                                Text = "{Binding Path=GestionSite.SiteFranceJudo.PasswordSiteFTPDistant}"
+                                                                Text = "{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.PasswordSiteFTPDistant}"
                                                                 WatermarkContent="Entrer votre mot de passe"
                                                                 ShowPasswordButtonVisibility="Auto"
-                                                                IsEnabled="{Binding Path=GestionSite.SiteFranceJudo.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                                                IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.IsActif, Converter={StaticResource BoolNotConverter}}"/>
                                         </Grid>
                                     </StackPanel>
                                     <!-- ZONE CONFIG AVANCEE -->
-                                    <StackPanel Visibility="{Binding Path=GestionSite.AdvancedConfig, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <StackPanel Visibility="{Binding Path=SiteCoordinator.GestionnaireSitePublique.AdvancedConfig, Converter={StaticResource BoolToVisibilityConverter}}">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="62"/>
@@ -623,32 +622,32 @@
                                             </Grid.RowDefinitions>
                                             <Label Grid.Column="0" Content="Racine du site de publication:" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2" HorizontalAlignment="Center"/>
                                             <TextBox Grid.Row="0" Grid.Column="2" TextWrapping="Wrap" Height="22" Margin="5,13,10,14" MinWidth="250"
-                                         Text = "{Binding Path=GestionSite.URLDistant}"
-                                         IsEnabled="{Binding Path=GestionSite.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                         Text = "{Binding Path=SiteCoordinator.GestionnaireSitePublique.URLDistant}"
+                                         IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
                                             <Label Grid.Row="1" Grid.Column="0" Content="Adresse du site FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
                                             <TextBox Grid.Row="1" Grid.Column="2" TextWrapping="Wrap" Height="22" Margin="5,13,10,13" MinWidth="250"
-                                         Text = "{Binding Path=GestionSite.SiteDistant.SiteFTPDistant}"
-                                         IsEnabled="{Binding Path=GestionSite.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                         Text = "{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.SiteFTPDistant}"
+                                         IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
                                             <Label Grid.Row="2" Grid.Column="0" Content="Répertoire distant FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
                                             <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="0,48,0,48" Grid.RowSpan="3">
                                                 <TextBox  TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
-                                         Text = "{Binding Path=GestionSite.RepertoireRacineSiteFTPDistant}"
-                                         IsEnabled="{Binding Path=GestionSite.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                         Text = "{Binding Path=SiteCoordinator.GestionnaireSitePublique.RepertoireRacineSiteFTPDistant}"
+                                         IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
                                             </StackPanel>
                                             <Label Grid.Row="3" Grid.Column="0" Content="Login FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
                                             <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal">
                                                 <TextBox TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
-                                            Text = "{Binding Path=GestionSite.SiteDistant.LoginSiteFTPDistant}"
-                                            IsEnabled="{Binding Path=GestionSite.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
-                                                <CheckBox Content="Mode FTP Actif" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.SiteDistant.ModeActifFTPDistant}" IsEnabled="{Binding Path=GestionSite.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" />
+                                            Text = "{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.LoginSiteFTPDistant}"
+                                            IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                                <CheckBox Content="Mode FTP Actif" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.ModeActifFTPDistant}" IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" />
                                             </StackPanel>
                                             <Label Grid.Row="4" Grid.Column="0" Content="Mot de passe FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
                                             <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal" Margin="0,48,0,0" Grid.RowSpan="2">
                                                 <telerik:RadPasswordBox Name="AdvancedPwd" TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
                                                                 WatermarkContent="Entrez votre mot de passe"
                                                                 ShowPasswordButtonVisibility="Auto"
-                                                                IsEnabled="{Binding Path=GestionSite.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
-                                                <CheckBox Content="Sync. les differences" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionSite.SiteDistant.SynchroniseDifferences}" IsEnabled="{Binding Path=GestionSite.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" />
+                                                                IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                                <CheckBox Content="Sync. les differences" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.SynchroniseDifferences}" IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" />
                                             </StackPanel>
                                         </Grid>
                                     </StackPanel>

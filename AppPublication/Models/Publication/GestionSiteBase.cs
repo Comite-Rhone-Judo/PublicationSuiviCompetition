@@ -187,7 +187,6 @@ namespace AppPublication.Models.Publication
                     {
                         _schedulerSite.EffacerAuDemarrage = value;
                     }
-                    PublicationConfigSection.Instance.General.EffacerAuDemarrage = value;
                     NotifyPropertyChanged();
                 }
             }

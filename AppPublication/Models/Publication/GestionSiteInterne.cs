@@ -73,7 +73,7 @@ namespace AppPublication.Models.Publication
 
         private ConfigurationEcransViewModel _cfgEcransAppelViewModel = null;
         /// <summary>
-        /// Le ViewModel pour les ecrans (doit etre en Properties pour le binding WPF
+        /// Le ViewModel pour les ecrans (doit etre en Properties pour le binding WPF)
         /// </summary>
         public ConfigurationEcransViewModel ConfigurationEcransViewModel
         {
@@ -126,8 +126,6 @@ namespace AppPublication.Models.Publication
             {
                 // Note: le repertoire racine et le logo sont lus par l'orchestrateur
                 // Les autres parametres peuvent suivre
-                EffacerAuDemarrage = PublicationConfigSection.Instance.General.EffacerAuDemarrage;
-
                 // Lecture des donnees specifiques de l'instance
                 SchedulerConfigElement cfgPriv = PublicationConfigSection.GetInstanceConfigElement(kCfgSiteLocalInstanceName);
                 DelaiGenerationSec = cfgPriv.DelaiGenerationSec;

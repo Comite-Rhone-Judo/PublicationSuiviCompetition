@@ -61,6 +61,17 @@ namespace AppPublication.Controles
             }
         }
 
+        /// <summary>
+        /// Indique si au moins une génération est active
+        /// </summary>
+        public bool IsGenerationActiveOne
+        {
+            get
+            {
+                return GestionnaireSitePublique.IsGenerationActive || GestionnaireSiteInterne.IsGenerationActive;
+            }
+        }
+
         private string _idCompetition = string.Empty;
         /// <summary>
         /// ID de la competition en cours
@@ -132,6 +143,8 @@ namespace AppPublication.Controles
             {
                 if (_selectedLogo != value)
                 {
+                    _selectedLogo = value;
+
                     // Sauvegarde la valeur
                     string logoName = (value != null) ? value.Name : string.Empty;
                     PublicationConfigSection.Instance.General.Logo = logoName;
@@ -165,6 +178,28 @@ namespace AppPublication.Controles
                     // Propage le repertoire racine dans les gestionnaires de site
                     _gestionSite.RepertoireRacine = value;
                     _gestionSiteInterne.RepertoireRacine = value;
+                }
+            }
+        }
+
+
+        private bool _effacerAuDemarrage = true;
+        /// <summary>
+        /// Indique si on doit faire un RAZ du contenu du répertoire au demarrage de la generation
+        /// </summary>
+        public bool EffacerAuDemarrage
+        {
+            get { return _effacerAuDemarrage; }
+            set
+            {
+                if (_effacerAuDemarrage != value)
+                {
+                    _effacerAuDemarrage = value;
+                    PublicationConfigSection.Instance.General.EffacerAuDemarrage = value;
+                    NotifyPropertyChanged();
+
+                    GestionnaireSiteInterne.EffacerAuDemarrage = value;
+                    GestionnaireSitePublique.EffacerAuDemarrage = value;
                 }
             }
         }

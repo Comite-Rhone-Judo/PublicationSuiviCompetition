@@ -745,9 +745,7 @@ namespace AppPublication.Models.Publication
                 URLDistant = PublicationConfigSection.Instance.General.URLDistant;
                 IsolerCompetition = PublicationConfigSection.Instance.General.IsolerCompetition;
                 RepertoireRacineSiteFTPDistant = PublicationConfigSection.Instance.General.RepertoireRacineSiteFTPDistant;
-                EffacerAuDemarrage = PublicationConfigSection.Instance.General.EffacerAuDemarrage;
 
-                // TODO A ameliorer pour le multi-instance
                 SchedulerConfigElement cfgPub = PublicationConfigSection.GetInstanceConfigElement(kCfgSitePublicInstanceName);
                 DelaiGenerationSec = cfgPub.DelaiGenerationSec;
 
