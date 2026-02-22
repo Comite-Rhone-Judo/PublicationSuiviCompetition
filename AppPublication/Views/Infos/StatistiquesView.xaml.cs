@@ -1,4 +1,4 @@
-﻿using AppPublication.Controles;
+﻿using AppPublication.Models.Statistiques;
 using Telerik.Windows.Controls;
 
 namespace AppPublication.Views.Infos

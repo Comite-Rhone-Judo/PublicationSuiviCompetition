@@ -1,4 +1,5 @@
 ﻿using AppPublication.Controles;
+using AppPublication.ViewModels.Configuration;
 using System.Windows;
 
 namespace AppPublication.Views.Configuration
@@ -8,7 +9,7 @@ namespace AppPublication.Views.Configuration
     /// </summary>
     public partial class ConfigurationPublicationView : Window
     {
-        public ConfigurationPublicationView(GestionSite dataCtx)
+        public ConfigurationPublicationView(SitePublicationCoordinator dataCtx)
         {
             if (dataCtx != null)
             {

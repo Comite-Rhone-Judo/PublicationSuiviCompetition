@@ -162,6 +162,7 @@
     <Compile Include="Core\ClassFactory.cs" />
     <Content Include="Export\xslt\Site\ecrans_appel_site.xslt" />
     <Content Include="Export\style\site\style-ecransappel.css" />
+    <Compile Include="Framework\RelayCommand.cs" />
     <Compile Include="Framework\WindowLoadBehavior.cs" />
     <Compile Include="HttpServerModule\Authentication\AuthenticationModule.cs" />
     <Compile Include="HttpServerModule\Authentication\BasicAuthentication.cs" />

@@ -17,11 +17,11 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public List<FileWithChecksum> GenereWebSiteEcransAppel(IJudoData DC, ExtendedJudoData EDC, ConfigurationExportSiteInterne config, ExportSiteInterneStructure siteStruct, IProgress<GenerationProgressInfo> progress, int workId)
+        public List<FileWithChecksum> GenereWebSiteEcransAppel(IJudoData DC, ConfigurationExportSiteInterne config, ExportSiteInterneStructure siteStruct, IProgress<GenerationProgressInfo> progress)
         {
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
-            if (DC != null && EDC != null && config != null && siteStruct != null)
+            if (DC != null && config != null && siteStruct != null)
             {
             }
 

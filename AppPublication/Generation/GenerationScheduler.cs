@@ -10,7 +10,7 @@ using Tools.Logging;
 using Tools.Net;
 
 
-namespace AppPublication.Controles
+namespace AppPublication.Generation
 {
     /// <summary>
     /// Events de notification de changement d'etat du scheduler

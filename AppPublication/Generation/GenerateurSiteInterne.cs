@@ -1,7 +1,8 @@
 ﻿using AppPublication.Controles;
+using AppPublication.Export;
 using AppPublication.ExtensionNoyau;
 using AppPublication.ExtensionNoyau.Engagement;
-using AppPublication.Export;
+using AppPublication.Models.EcransAppel;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
 using KernelImpl.Noyau.Organisation;
@@ -12,10 +13,10 @@ using System.Linq;
 using System.Xml.Linq;
 using Tools.Enum;
 using Tools.Export;
-using Tools.Logging;
-using Tools.Threading;
 using Tools.Files;
+using Tools.Logging;
 using Tools.Net;
+using Tools.Threading;
 
 
 namespace AppPublication.Generation
@@ -27,6 +28,8 @@ namespace AppPublication.Generation
         private IJudoDataManager _judoDataManager;                  // Le gestionnaire de données interne
         private IJudoData _snapshot;                                // Le snapshot des données 
         private IProgress<OperationProgress> _progressHandler;      // Utilise pour le suivi de progression
+
+        EcranCollectionManager _ecransAppel;                        // La configuration des ecrans d'appel (pour les combats)
 
         // La structure du site
         private ExportSiteInterneStructure _structureRepertoiresSiteInterne;      // La structure de repertoire d'export du site
@@ -62,6 +65,17 @@ namespace AppPublication.Generation
                 return _cfgExport;
             }
             private set { _cfgExport = value; }
+        }
+
+        private EcranCollectionManager EcransAppel
+        {
+            get
+            {
+                return _ecransAppel;
+            }
+            set {
+                _ecransAppel = value;
+            }
         }
 
         #endregion

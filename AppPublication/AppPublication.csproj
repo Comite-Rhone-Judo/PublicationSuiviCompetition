@@ -143,10 +143,12 @@
     <Compile Include="Config\Publication\MiniSiteCollection.cs" />
     <Compile Include="Config\Publication\MiniSiteConfigElement.cs" />
     <Compile Include="Config\Publication\PublicationConfigSection.cs" />
-    <Compile Include="Controles\GenerationScheduler.cs" />
-    <Compile Include="Controles\GestionStatistiques.cs" />
+    <Compile Include="Generation\GenerationScheduler.cs" />
+    <Compile Include="Models\Publication\GestionSiteBase.cs" />
+    <Compile Include="Models\Publication\GestionSiteInterne.cs" />
+    <Compile Include="Models\Publication\GestionSitePublique.cs" />
+    <Compile Include="Models\Statistiques\GestionStatistiques.cs" />
     <Compile Include="Controles\IClientProvider.cs" />
-    <Compile Include="Controles\RelayCommand.cs" />
     <Compile Include="Export\ExportSiteInterne.cs" />
     <Compile Include="Export\ExportSite.cs" />
     <Compile Include="Generation\GenerateurSiteInterne.cs" />
@@ -168,9 +170,9 @@
     <Compile Include="Tools\Converter\ValueToBoolConverter.cs" />
     <Compile Include="Publication\EcransAppelRedirectModule.cs" />
     <Compile Include="ViewModels\Configuration\ConfigurationEcransViewModel.cs" />
+    <Compile Include="Controles\SitePublicationCoordinator.cs" />
     <Compile Include="ViewModels\Configuration\EcranAppelConfigViewModel.cs" />
     <Compile Include="ViewModels\Configuration\EcranAppelTapisSelectionViewModel.cs" />
-    <Compile Include="Controles\GestionSite.cs" />
     <Compile Include="Views\Configuration\ConfigurationPublicationView.xaml.cs">
       <DependentUpon>ConfigurationPublicationView.xaml</DependentUpon>
     </Compile>
@@ -235,8 +237,7 @@
     </Compile>
     <Compile Include="Controles\DialogControleur.cs" />
     <Compile Include="Controles\GestionConnection.cs" />
-    <Compile Include="Controles\ConnectedJudoDataManager.cs" />
-    <Compile Include="Controles\ICommissaireWindow.cs" />
+    <Compile Include="Data\ConnectedJudoDataManager.cs" />
     <Compile Include="Export\ExportSiteBase.cs" />
     <Compile Include="Export\ExportXML.cs" />
     <Compile Include="Views\Main\MainView.xaml.cs">

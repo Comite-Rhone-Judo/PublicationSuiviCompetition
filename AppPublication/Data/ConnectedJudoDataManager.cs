@@ -11,10 +11,10 @@ using System.Xml.Linq;
 using Tools.Enum;
 using Tools.Threading;
 using Tools.Logging;
-using Telerik.Windows.Controls.Wizard;
 using AppPublication.Statistiques;
+using AppPublication.Controles;
 
-namespace AppPublication.Controles
+namespace AppPublication.Data
 {
     #region CLASSES ANNEXES
     public enum ClientJudoStatusEnum

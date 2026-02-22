@@ -178,5 +178,24 @@ namespace AppPublication.Config.Publication
         }
         */
         #endregion
+
+        #region METHODES PUBLIQUES
+        /// <summary>
+        /// Recherche l'element de sauvegarde de la configuration, ou l'ajoute s'il n'existe pas
+        /// </summary>
+        public static SchedulerConfigElement GetInstanceConfigElement(string instanceName)
+        {
+            // Sauvegarde de la config
+            SchedulerConfigElement cfg = PublicationConfigSection.Instance.Schedulers[instanceName];
+            if (cfg == null)
+            {
+                // Pas de config trouvée, on crée une config vide par défaut
+                cfg = new SchedulerConfigElement();
+                PublicationConfigSection.Instance.Schedulers.Add(cfg);
+            }
+
+            return cfg;
+        }
+        #endregion
     }
 }

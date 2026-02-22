@@ -5,7 +5,7 @@ using Tools.Framework;
 using Tools.Logging;
 using Tools.Net;
 
-namespace AppPublication.Controles
+namespace AppPublication.Models.Statistiques
 {
     public class GestionStatistiques : NotificationBase
     {

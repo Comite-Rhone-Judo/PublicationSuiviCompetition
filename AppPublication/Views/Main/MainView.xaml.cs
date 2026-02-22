@@ -104,8 +104,8 @@ namespace AppPublication.Views.Main
             if(e!= null && e.NewValue != null && e.NewValue.GetType() == typeof(DialogControleur) )
             {
                 DialogControleur dc = (DialogControleur)e.NewValue;
-                this.AdvancedPwd.Password = dc.GestionSite.SiteDistant.PasswordSiteFTPDistant;
-                this.EasyConfigPwd.Password = dc.GestionSite.SiteFranceJudo.PasswordSiteFTPDistant;
+                this.AdvancedPwd.Password = dc.SiteCoordinator.GestionnaireSitePublique.SiteDistant.PasswordSiteFTPDistant;
+                this.EasyConfigPwd.Password = dc.SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.PasswordSiteFTPDistant;
             }
         }
     }
