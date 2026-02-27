@@ -10,8 +10,14 @@ namespace KernelImpl.Noyau.Participants
     {
         public static IEnumerable<Judoka> GetJudokaEpreuve(this IParticipantsData dataContext, int epreuve)
         {
-            IEnumerable<int> judokas = dataContext.EpreuveJudokas.Where(o => o.epreuve == epreuve).Select(o => o.judoka).Distinct();
-            return dataContext.Judokas.Where(o => judokas.Contains(o.id));
+            // On matérialise instantanément les IDs dans un HashSet.
+            // La recherche (Contains) sera désormais ultra-rapide (O(1)).
+            HashSet<int> judokasIds = dataContext.EpreuveJudokas
+                                                 .Where(o => o.epreuve == epreuve)
+                                                 .Select(o => o.judoka)
+                                                 .ToHashSet();
+
+            return dataContext.Judokas.Where(o => judokasIds.Contains(o.id));
         }
     }
 }

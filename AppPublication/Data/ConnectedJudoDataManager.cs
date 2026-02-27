@@ -338,7 +338,7 @@ namespace AppPublication.Data
         public void clientjudo_OnAcceptConnectionCOM(object sender, XElement element)
         {
             LogTools.Logger.Debug("clientjudo_OnAcceptConnectionCOM");
-            LogTools.DataLogger.Debug("clientjudo_OnAcceptConnectionCOM - Reception donnees: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.DebugLogData("clientjudo_OnAcceptConnectionCOM - Reception donnees: '{0}'", element);
 
             lock (_lock)
             {
@@ -512,7 +512,7 @@ namespace AppPublication.Data
 
         public void client_OnUpdateLogos(object sender, XElement element)
         {
-            LogTools.DataLogger.Debug("client_OnUpdateLogos");
+            LogTools.Logger.Debug("client_OnUpdateLogos");
             
             UpdateRequestDispatcher((XElement elem) =>
             {
@@ -1101,7 +1101,7 @@ namespace AppPublication.Data
         private void InitializationRequestDispatcher(BusyStatusEnum currentStatus, Action<XElement> dataAction, BusyStatusEnum nextStatus, Action nextAction, XElement element)
         {
             LogTools.Logger.Debug("Traitement Request initialisation");
-            LogTools.DataLogger.Debug("Traitement Request initialisation: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.DebugLogData("Traitement Request initialisation: '{0}'", element);
 
             lock (_lock)
             {
@@ -1167,7 +1167,7 @@ namespace AppPublication.Data
         private void UpdateRequestDispatcher(Action<XElement> action, XElement element)
         {
             LogTools.Logger.Debug("Traitement request update");
-            LogTools.DataLogger.Debug("Traitement request update: '{0}'", element.ToString(SaveOptions.DisableFormatting));
+            LogTools.DebugLogData("Traitement request update: '{0}'", element);
 
             // Verifie l'etat du gestionnaire (on ne peut pas recevoir ces donnees pendant une initialisation)
             lock (_lock)

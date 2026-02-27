@@ -1,33 +1,24 @@
-﻿using Tools.Enum;
-using Tools.Logging;
-using Tools.Files;
-using Tools.Core;
-using System;
-using System.IO;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
+using System.Xml.Linq; // Indispensable pour l'usage de XDocument
 using System.Xml.Xsl;
+using Tools.Core;
+using Tools.Enum;
+using Tools.Files;
+using Tools.Logging;
 
 namespace Tools.Export
 {
     public static class ExportHTML
     {
         // Dictionnaire pour mettre en cache les XSLT compilés
-        private static Dictionary<string, XslCompiledTransform> _xsltCache = new Dictionary<string, XslCompiledTransform>();
-        private static object _xsltCacheLock = new object();
+        private static readonly ConcurrentDictionary<string, Lazy<XslCompiledTransform>> _xsltCache = new ConcurrentDictionary<string, Lazy<XslCompiledTransform>>();
 
-        public static void ToHTMLSite(XmlDocument xml, ExportEnum export_type, string fileSave, XsltArgumentList argsList, string fileExtension = "html", bool useCache = false)
+        public static void ToHTMLSite(XDocument xml, ExportEnum export_type, string fileSave, XsltArgumentList argsList, string fileExtension = "html", bool useCache = false)
         {
-            //argsList.AddParam("style", "", ExportTools.getStyleDirectory(site: true));
-
-            // argsList.AddParam("js", "", ExportTools.getEmbeddedJS());
-            //argsList.AddParam("menu", "", ExportTools.getDirectory(true, null, null) + @"\menu.html");
-
-            // Ces fichiers sont generes en parallele par le processus de generation, le fait de les appeler ici provoque des blocages
-            // sur les fichiers et leur generation n'est pas compte dans la liste des fichiers generes
-            // ExportTools.ExportStyleAndJS(false);
-            // ExportTools.ExportImg(false);
-
             string xslt = ExportTools.GetXsltSite(export_type);
             ExportHTML.ToHTML(xml, fileSave, argsList, xslt, fileExtension, useCache);
         }
@@ -40,24 +31,14 @@ namespace Tools.Export
         /// <param name="argsList"></param>
         /// <param name="xslt_st"></param>
         /// <param name="fileExtension"></param>
-        public static void ToHTML(XmlDocument xml, string fileSave, XsltArgumentList argsList, string xslt_st, string fileExtension = "html", bool useCache = true)
+        public static void ToHTML(XDocument xml, string fileSave, XsltArgumentList argsList, string xslt_st, string fileExtension = "html", bool useCache = true)
         {
             XslCompiledTransform xslt = null;
 
             if (useCache)
             {
-
-                lock (_xsltCacheLock)
-                {
-                    bool isXsltCached = _xsltCache.TryGetValue(xslt_st, out xslt);
-                    // Check if the XSLT is already compiled and cached
-                    if (!isXsltCached)
-                    {
-                        // Lecture et mise en cache du XSLT
-                        xslt = GetXsltFromResource(xslt_st);
-                        _xsltCache[xslt_st] = xslt;
-                    }
-                }
+                var lazyXslt = _xsltCache.GetOrAdd(xslt_st, key => new Lazy<XslCompiledTransform>(() => GetXsltFromResource(key)));
+                xslt = lazyXslt.Value;
             }
             else
             {
@@ -65,7 +46,7 @@ namespace Tools.Export
                 xslt = GetXsltFromResource(xslt_st);
             }
 
-            string fileSaveWithExt = fileSave + "." + fileExtension;
+            string fileSaveWithExt = Path.ChangeExtension(fileSave, fileExtension);
 
             // Create the FileStream.
             try
@@ -73,8 +54,12 @@ namespace Tools.Export
                 FileAndDirectTools.NeedAccessFile(fileSaveWithExt);
                 using (FileStream fs = new FileStream(fileSaveWithExt, FileMode.Create))
                 {
-                    // Execute the transformation.
-                    xslt.Transform(xml, argsList, fs);
+                    // Utilisation d'un XmlReader pour lire le XDocument à la volée sans allocation mémoire
+                    using (XmlReader reader = xml.CreateReader())
+                    {
+                        // Execute the transformation.
+                        xslt.Transform(reader, argsList, fs);
+                    }
                 }
             }
             catch (Exception ex)
@@ -86,7 +71,6 @@ namespace Tools.Export
                 FileAndDirectTools.ReleaseFile(fileSaveWithExt);
             }
         }
-
 
         /// <summary>
         /// Lit le XSLT depuis les ressources de l'assembly
@@ -104,14 +88,16 @@ namespace Tools.Export
             settings.EnableDocumentFunction = true;
             settings.EnableScript = true;
             var resource = ResourcesTools.GetAssembyResource(xslt_st);
-            XmlReader xsltReader = XmlReader.Create(resource, readerSettings);
 
-            xslt = new XslCompiledTransform();
-            InAssemblyUrlResolver resolver = new InAssemblyUrlResolver();
-            xslt.Load(xsltReader, settings, resolver);
+            // L'ajout du bloc using garantit la bonne libération du flux de la ressource
+            using (XmlReader xsltReader = XmlReader.Create(resource, readerSettings))
+            {
+                xslt = new XslCompiledTransform();
+                InAssemblyUrlResolver resolver = new InAssemblyUrlResolver();
+                xslt.Load(xsltReader, settings, resolver);
+            }
 
             return xslt;
         }
     }
 }
-

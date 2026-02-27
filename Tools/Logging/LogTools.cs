@@ -1,15 +1,16 @@
-﻿using System;
+﻿using NLog;
+using NLog.Layouts;
+using NLog.Targets;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Windows;
-using Tools.Windows;
-using NLog;
-using NLog.Targets;
 using System.Linq;
-using NLog.Layouts;
+using System.Windows;
+using System.Xml.Linq;
 using Tools.Outils;
 using Tools.Threading;
+using Tools.Windows;
 
 namespace Tools.Logging
 {
@@ -59,6 +60,36 @@ namespace Tools.Logging
         public static void Debug(Exception ex) { _logger.Debug(ex); }
 
         #endregion
+
+        /// <summary>
+        /// Trace un flux XML en mode Debug. 
+        /// La lourde sérialisation (ToString) n'est exécutée que si le log Debug est activé.
+        /// </summary>
+        /// <param name="xmlNode">Le nœud ou document XML à tracer</param>
+        /// <param name="label">Un libellé optionnel pour identifier le log</param>
+        public static void DebugLogData(XNode xmlNode)
+        {
+            DebugLogData("XML genere: '{0}'", xmlNode);
+        }
+
+        /// <summary>
+        /// Trace un flux XML en mode Debug. 
+        /// La lourde sérialisation (ToString) n'est exécutée que si le log Debug est activé.
+        /// </summary>
+        /// <param name="format">Le message de formatage (ex: "XML genere: '{0}'")</param>
+        /// <param name="xmlNode">Le document (XDocument) ou l'élément (XElement) à tracer</param>
+        public static void DebugLogData(string format, XNode xmlNode)
+        {
+            // On ne fait strictement rien en production
+            if (DataLogger.IsDebugEnabled && xmlNode != null)
+            {
+                // La règle de formatage (sur une ligne) est centralisée ici !
+                string xmlContent = xmlNode.ToString(SaveOptions.DisableFormatting);
+
+                // On injecte le XML généré dans votre format ("XML genere: '{0}'")
+                DataLogger.Debug(string.Format(format, xmlContent));
+            }
+        }
 
         public static void LogStartup() 
         {

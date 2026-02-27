@@ -149,6 +149,9 @@ namespace AppPublication.Generation
                 // Initialise les donnees partagees de generation (ces donnees sont statiques et communes a toutes les taches)
                 // TODO A Revoir
                 // ExportSiteInterne.InitSharedData(_snapshot, _extendedJudoData, ConfigurationGeneration, true);
+
+
+
             }
             else
             {
