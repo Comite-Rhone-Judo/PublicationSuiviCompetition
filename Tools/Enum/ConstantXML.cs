@@ -50,6 +50,7 @@
         public const string Logo_Valeur = "valeur";
         public const string Logo_Nom = "nom";
 
+        public const string SiteConfiguration = "SiteConfiguration";
         public const string publierProchainsCombats = "PublierProchainsCombats";
         public const string publierAffectationTapis = "PublierAffectationTapis";
         public const string publierEngagements = "PublierEngagements";

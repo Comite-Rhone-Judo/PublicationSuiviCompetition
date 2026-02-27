@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 using Tools.Core;
@@ -897,7 +898,7 @@ namespace AppPublication.Models.Publication
             {
                 // Charge la structure XML en memoire depuis les resources
                 XmlReader structureReader = XmlReader.Create(ResourcesTools.GetAssembyResource(ConstantResource.PublicationFFJUDO));
-                XmlDocument doc = new XmlDocument();
+                XDocument doc = new XDocument();
                 doc.Load(structureReader);
 
                 // Charge les informations sur le serveur de publication depuis l'element racine

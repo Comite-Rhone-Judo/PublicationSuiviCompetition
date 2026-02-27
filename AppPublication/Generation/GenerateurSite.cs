@@ -29,6 +29,7 @@ namespace AppPublication.Generation
         private ExtendedJudoData _extendedJudoData;
         private MiniSite _site = null;                              // Le site a utilise pour le upload a distance
         private IProgress<OperationProgress> _progressHandler;      // Utilise pour le suivi de progression
+        private ExportSharedContext _currentContext = null;         // Le contexte de generation courant (a passer aux taches de generation)
 
         // La structure du site
         private ExportSiteStructure _structureRepertoiresSite;      // La structure de repertoire d'export du site
@@ -164,7 +165,11 @@ namespace AppPublication.Generation
                 _extendedJudoData.SyncAll(_snapshot);
 
                 // Initialise les donnees partagees de generation (ces donnees sont statiques et communes a toutes les taches)
-                ExportSite.InitSharedData(_snapshot, _extendedJudoData, ConfigurationGeneration, true);
+                _currentContext = ExportSharedContext.Instance(_snapshot, _extendedJudoData);
+
+                // Ajoute la partie configuration
+                ExportXML.AddPublicationInfo(ref _currentContext.Equals);
+
 
                 // Charge le contenu du fichier de checksum
                 LoadChecksumFichiersGeneres();
@@ -198,7 +203,7 @@ namespace AppPublication.Generation
                 try
                 {
                     // Ok, a partir d'ici on peut lancer les tasks dans le batcher
-                    ExportSite exporter = new ExportSite();     // L'exporteur
+                    ExportSite<ExportSharedContext> exporter = new ExportSite<ExportSharedContext>(_currentContext);     // L'exporteur
 
                     _taskBatcher.AddWork(p =>
                     {
@@ -281,6 +286,7 @@ namespace AppPublication.Generation
             }
 
             _checksumGenere = output;
+            _currentContext = null;     // Pour s'assurer que l'on libere les resources a la fin de la generation
 
             _etapeCourante = EtapeGenerateurSiteEnum.None;
             return new ResultatOperation(EtapeGenerateurSiteEnum.ExecuteGeneration, _checksumGenere.Count > 0, true, _checksumGenere.Count);

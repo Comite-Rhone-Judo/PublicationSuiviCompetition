@@ -148,8 +148,8 @@
     <Compile Include="Enum\TypeExportSiteEnum.cs" />
     <Compile Include="Enum\QualifieEnum.cs" />
     <Compile Include="Enum\TypeCSAEnum.cs" />
-    <Compile Include="Export\ConfigurationExportSitePrivate.cs" />
-    <Compile Include="Export\ConfigurationExportSite.cs" />
+    <Compile Include="Export\ConfigurationExportSite_.cs" />
+    <Compile Include="Export\ConfigurationExportSiteInterne.cs" />
     <Compile Include="Export\ExportHTML.cs" />
     <Compile Include="Export\ExportSiteInterneStructure.cs" />
     <Compile Include="Export\ExportSiteInterneUrls.cs" />
@@ -248,6 +248,7 @@
     <Compile Include="Net\IContextProvider.cs" />
     <Compile Include="Net\IServeurHttp.cs" />
     <Compile Include="Net\ServeurHttpBase.cs" />
+    <Compile Include="Outils\AppInformation.cs" />
     <Compile Include="Threading\BatchProgressInfo.cs" />
     <Compile Include="Outils\BlockingCounter.cs" />
     <Compile Include="Security\Encryption.cs" />

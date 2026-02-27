@@ -1,5 +1,6 @@
 ﻿using AppPublication.ExtensionNoyau;
 using AppPublication.ExtensionNoyau.Engagement;
+using AppPublication.Generation;
 using AppPublication.Tools.Enum;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Web.UI.WebControls;
 using System.Xml;
 using System.Xml.Linq;
@@ -15,57 +17,17 @@ using System.Xml.Xsl;
 using Tools.Enum;
 using Tools.Export;
 using Tools.Outils;
-using AppPublication.Generation;
 
 namespace AppPublication.Export
 {
-    public abstract class ExportSiteBase
+    public abstract class ExportSiteBase<TContext> where TContext : ExportSharedContextBase
     {
         protected const int kTailleMaxNomCompetition = 30;
+        protected readonly TContext _context;
 
-        protected static List<XElement> _xClubs = new List<XElement>();          // Instance partagees pour la liste des clubs
-        protected static List<XElement> _xComites = new List<XElement>();          // Instance partagees pour la liste des comites
-        protected static List<XElement> _xSecteurs = new List<XElement>();          // Instance partagees pour la liste des secteurs
-        protected static List<XElement> _xLigues = new List<XElement>();          // Instance partagees pour la liste des ligues
-        protected static List<XElement> _xPays = new List<XElement>();          // Instance partagees pour la liste des pays
-
-        /// <summary>
-        /// Initialise les structures de donnees partagees pour la generation des documents XML
-        /// </summary>
-        /// <param name="DC"></param>
-        /// <param name="EDC"></param>
-        /// <param name="config"></param>
-        public static void InitSharedData(IJudoData DC, ExtendedJudoData EDC)
+        public ExportSiteBase(TContext context)
         {
-            using (TimedLock.Lock(_xClubs))
-            {
-                _xClubs = ExportXML.GetClubs(DC);
-            }
-            using (TimedLock.Lock(_xComites))
-            {
-                _xComites = ExportXML.GetComites(DC);
-            }
-            using (TimedLock.Lock(_xSecteurs))
-            {
-                _xSecteurs = ExportXML.GetSecteurs(DC);
-            }
-            using (TimedLock.Lock(_xLigues))
-            {
-                _xLigues = ExportXML.GetLigues(DC);
-            }
-            using (TimedLock.Lock(_xPays))
-            {
-                _xPays = ExportXML.GetPays(DC);
-            }
-        }
-                
-        /// <summary>
-        /// Ajoute les informations de structure en cache
-        /// </summary>
-        /// <param name="doc"></param>
-        protected static void AddStructures(ref XmlDocument doc)
-        {
-            ExportXML.AddStructures(ref doc, _xClubs, _xComites, _xSecteurs, _xLigues, _xPays);
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         /// <summary>
@@ -73,7 +35,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        protected static string PathForUrl(string path)
+        protected string PathForUrl(string path)
         {
             string output = path.Replace('\\', '/');
 

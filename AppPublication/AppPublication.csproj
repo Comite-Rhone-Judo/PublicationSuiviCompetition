@@ -143,6 +143,9 @@
     <Compile Include="Config\Publication\MiniSiteCollection.cs" />
     <Compile Include="Config\Publication\MiniSiteConfigElement.cs" />
     <Compile Include="Config\Publication\PublicationConfigSection.cs" />
+    <Compile Include="Export\ExportSharedContextInterne.cs" />
+    <Compile Include="Export\ExportSharedContext.cs" />
+    <Compile Include="Export\ExportSharedContextBase.cs" />
     <Compile Include="Generation\GenerationScheduler.cs" />
     <Compile Include="Models\Publication\GestionSiteBase.cs" />
     <Compile Include="Models\Publication\GestionSiteInterne.cs" />
