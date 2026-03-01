@@ -896,79 +896,83 @@ namespace AppPublication.Models.Publication
         {
             try
             {
-                // Charge la structure XML en memoire depuis les resources
-                XmlReader structureReader = XmlReader.Create(ResourcesTools.GetAssembyResource(ConstantResource.PublicationFFJUDO));
-                XDocument doc = new XDocument();
-                doc.Load(structureReader);
-
-                // Charge les informations sur le serveur de publication depuis l'element racine
-                // <Publication ftp="ftp.ffjudo.com" http="http://ftp.ffjudo.com">
-                if (doc.DocumentElement == null || doc.DocumentElement.Name != ConstantXML.EasyConfig_Racine)
+                // 1. Chargement avec LINQ to XML
+                XDocument doc;
+                using (var stream = ResourcesTools.GetAssembyResource(ConstantResource.PublicationFFJUDO))
                 {
-                    throw new NullReferenceException("Racine du fichier de configuration inconnue ou manquante");
+                    doc = XDocument.Load(stream);
                 }
-                XmlElement root = doc.DocumentElement;
 
-                if (root.Attributes == null || root.Attributes[ConstantXML.EasyConfig_Racine_Ftp] == null
-                    || string.IsNullOrEmpty(root.Attributes[ConstantXML.EasyConfig_Racine_Ftp].Value)
-                    || root.Attributes[ConstantXML.EasyConfig_Racine_Http] == null || string.IsNullOrEmpty(root.Attributes[ConstantXML.EasyConfig_Racine_Http].Value))
+                XElement root = doc.Root;
+
+                // 2. Vérification de la racine
+                if (root == null || root.Name != ConstantXML.EasyConfig_Racine)
                 {
-                    throw new NullReferenceException("Attributs manquants a la racine");
+                    throw new InvalidOperationException("Racine du fichier de configuration inconnue ou manquante");
                 }
-                _ftpEasyConfig = root.Attributes[ConstantXML.EasyConfig_Racine_Ftp].Value;
-                _httpEasyConfig = new Uri(root.Attributes[ConstantXML.EasyConfig_Racine_Http].Value);
 
-                // Parcours les elements
-                if (doc.DocumentElement.HasChildNodes)
+                // 3. Extraction des attributs FTP/HTTP avec cast direct
+                _ftpEasyConfig = (string)root.Attribute(ConstantXML.EasyConfig_Racine_Ftp);
+                string httpVal = (string)root.Attribute(ConstantXML.EasyConfig_Racine_Http);
+
+                if (string.IsNullOrEmpty(_ftpEasyConfig) || string.IsNullOrEmpty(httpVal))
                 {
-                    ObservableCollection<string> tmp = new ObservableCollection<string>();
+                    throw new InvalidOperationException("Attributs FTP ou HTTP manquants à la racine");
+                }
+                _httpEasyConfig = new Uri(httpVal);
+
+                // 4. Parcours des éléments (Niveaux / Echelons)
+                if (root.HasElements)
+                {
+                    var tmpNiveaux = new ObservableCollection<string>();
                     _allEntitePublicationFFJudo = new Dictionary<string, EntitePublicationFFJudo>();
                     _allEntitesPublicationFFJudo = new Dictionary<string, ObservableCollection<EntitePublicationFFJudo>>();
 
-                    // Extrait chaque element comme une entite si les attributs necessaires sont presents
-                    foreach (XmlNode node in doc.DocumentElement.ChildNodes)
+                    foreach (XElement niveauNode in root.Elements())
                     {
-                        ObservableCollection<EntitePublicationFFJudo> tmpNiveau = new ObservableCollection<EntitePublicationFFJudo>();
-                        if (node.HasChildNodes && node.Attributes != null && node.Attributes[ConstantXML.EasyConfig_Entite_Echelon] != null)
-                        {
-                            // Element commun pour la suite
-                            int ech = int.Parse(node.Attributes[ConstantXML.EasyConfig_Entite_Echelon].Value);
+                        var tmpEntitesNiveau = new ObservableCollection<EntitePublicationFFJudo>();
 
-                            foreach (XmlNode childNode in node.ChildNodes)
+                        // Récupération de l'échelon (attribut du noeud parent ex: <Ligues echelon="2">)
+                        string echStr = (string)niveauNode.Attribute(ConstantXML.EasyConfig_Entite_Echelon);
+
+                        if (niveauNode.HasElements && !string.IsNullOrEmpty(echStr))
+                        {
+                            int ech = int.Parse(echStr);
+
+                            foreach (XElement childNode in niveauNode.Elements())
                             {
-                                // Parcours les differentes entites
-                                if (childNode.Attributes != null && childNode.Attributes[ConstantXML.EasyConfig_Entite_Nom] != null
-                                    && childNode.Attributes[ConstantXML.EasyConfig_Entite_Libelle] != null
-                                    && childNode.Attributes[ConstantXML.EasyConfig_Entite_Login] != null
-                                    && childNode.Attributes[ConstantXML.EasyConfig_Entite_RacineFtp] != null
-                                    && childNode.Attributes[ConstantXML.EasyConfig_Entite_RacineHttp] != null)
+                                // Extraction sécurisée des attributs de l'entité
+                                string nom = (string)childNode.Attribute(ConstantXML.EasyConfig_Entite_Nom);
+                                string libelle = (string)childNode.Attribute(ConstantXML.EasyConfig_Entite_Libelle);
+                                string login = (string)childNode.Attribute(ConstantXML.EasyConfig_Entite_Login);
+                                string rFtp = (string)childNode.Attribute(ConstantXML.EasyConfig_Entite_RacineFtp);
+                                string rHttp = (string)childNode.Attribute(ConstantXML.EasyConfig_Entite_RacineHttp);
+
+                                if (!string.IsNullOrEmpty(nom) && !string.IsNullOrEmpty(libelle) &&
+                                    !string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(rFtp) &&
+                                    !string.IsNullOrEmpty(rHttp))
                                 {
-                                    tmpNiveau.Add(new EntitePublicationFFJudo(childNode.Attributes[ConstantXML.EasyConfig_Entite_Nom].Value,
-                                                                                childNode.Attributes[ConstantXML.EasyConfig_Entite_Libelle].Value,
-                                                                                ech,
-                                                                                childNode.Attributes[ConstantXML.EasyConfig_Entite_Login].Value,
-                                                                                childNode.Attributes[ConstantXML.EasyConfig_Entite_RacineFtp].Value,
-                                                                                childNode.Attributes[ConstantXML.EasyConfig_Entite_RacineHttp].Value));
+                                    tmpEntitesNiveau.Add(new EntitePublicationFFJudo(nom, libelle, ech, login, rFtp, rHttp));
                                 }
                             }
 
-                            // On ne tient compte d'un niveau que s'il a des entites en dessous
-                            if (tmpNiveau.Count > 0)
+                            // On ne tient compte d'un niveau que s'il a des entites valides
+                            if (tmpEntitesNiveau.Count > 0)
                             {
-                                tmp.Add(node.Name);
-                                _allEntitePublicationFFJudo.Add(node.Name, tmpNiveau.First());
-                                _allEntitesPublicationFFJudo.Add(node.Name, tmpNiveau);
+                                string niveauName = niveauNode.Name.LocalName;
+                                tmpNiveaux.Add(niveauName);
+                                _allEntitePublicationFFJudo.Add(niveauName, tmpEntitesNiveau.First());
+                                _allEntitesPublicationFFJudo.Add(niveauName, tmpEntitesNiveau);
                             }
                         }
                     }
-                    ListeNiveauxPublicationFFJudo = tmp;
+                    ListeNiveauxPublicationFFJudo = tmpNiveaux;
                     EasyConfigDisponible = true;
                 }
             }
             catch (Exception ex)
             {
-                // On ne peut pas initialiser le mode EasyConfig
-                LogTools.Logger.Error(ex, "Desactivation du mode easyConfig - Configuration absente ou incorrecte");
+                LogTools.Logger.Error(ex, "Désactivation du mode EasyConfig - Configuration absente ou incorrecte");
                 EasyConfig = false;
                 EasyConfigDisponible = false;
             }

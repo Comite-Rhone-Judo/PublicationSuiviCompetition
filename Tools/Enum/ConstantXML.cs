@@ -155,7 +155,7 @@
         public const string Ligue_RemoteID = "remoteID";
 
         //Pays 
-        public const string Pays1 = "pays1";
+        public const string LesPays = "lesPays";
         public const string Pays = "pays";
         public const string Pays_ID = "ID";
         public const string Pays_Code = "code";

@@ -111,6 +111,10 @@ namespace AppPublication.Generation
 
         #region IMPLEMENTATION IGenerateurSite
 
+        /// <summary>
+        /// Effectue le nettoyage initial du site, en supprimant les fichiers locaux et distants si nécessaire.
+        /// </summary>
+        /// <returns></returns>
         public ResultatOperation CleanupInitial()
         {
             _etapeCourante = EtapeGenerateurSiteEnum.CleanupInitial;
@@ -135,11 +139,19 @@ namespace AppPublication.Generation
             return new ResultatOperation(EtapeGenerateurSiteEnum.CleanupInitial, true, true, -1);
         }
 
+        /// <summary>
+        /// Démarre le générateur de site.
+        /// </summary>
+        /// <returns></returns>
         public ResultatOperation Demarrage()
         {
             return new ResultatOperation(EtapeGenerateurSiteEnum.Demarrage, true, true, -1);
         }
 
+        /// <summary>
+        /// Prépare la génération du site en vérifiant la consistance des données et en initialisant le contexte partagé.
+        /// </summary>
+        /// <returns></returns>
         public ResultatOperation PrepareGeneration()
         {
             _etapeCourante = EtapeGenerateurSiteEnum.PrepareGeneration;
@@ -165,11 +177,7 @@ namespace AppPublication.Generation
                 _extendedJudoData.SyncAll(_snapshot);
 
                 // Initialise les donnees partagees de generation (ces donnees sont statiques et communes a toutes les taches)
-                _currentContext = ExportSharedContext.Instance(_snapshot, _extendedJudoData);
-
-                // Ajoute la partie configuration
-                ExportXML.AddPublicationInfo(ref _currentContext.Equals);
-
+                _currentContext = ExportSharedContext.Instance(_snapshot, _extendedJudoData, _cfgExport);
 
                 // Charge le contenu du fichier de checksum
                 LoadChecksumFichiersGeneres();
@@ -184,6 +192,11 @@ namespace AppPublication.Generation
             return new ResultatOperation(EtapeGenerateurSiteEnum.PrepareGeneration, dataConsistent, true, -1);
         }
 
+        /// <summary>
+        /// Exécute la génération du site en utilisant les données et le contexte partagé.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public ResultatOperation ExecuteGeneration()
         {
             _etapeCourante = EtapeGenerateurSiteEnum.ExecuteGeneration;
@@ -207,19 +220,19 @@ namespace AppPublication.Generation
 
                     _taskBatcher.AddWork(p =>
                     {
-                        return exporter.GenereWebSiteIndex(_snapshot, _cfgExport, _structureRepertoiresSite, p);
+                        return exporter.GenereWebSiteIndex(_snapshot, _currentContext, _structureRepertoiresSite, p);
                     });
 
                     _taskBatcher.AddWork(p =>
                     {
-                        return exporter.GenereWebSiteMenu(_snapshot, _extendedJudoData, _cfgExport, _structureRepertoiresSite, p);
+                        return exporter.GenereWebSiteMenu(_snapshot, _extendedJudoData, _currentContext, _structureRepertoiresSite, p);
                     });
 
                     if (_cfgExport.PublierAffectationTapis)
                     {
                         _taskBatcher.AddWork(p =>
                         {
-                            return exporter.GenereWebSiteAffectation(_snapshot, _cfgExport, _structureRepertoiresSite, p);
+                            return exporter.GenereWebSiteAffectation(_snapshot, _currentContext, _structureRepertoiresSite, p);
                         });
                     }
 
@@ -228,7 +241,7 @@ namespace AppPublication.Generation
                     {
                         _taskBatcher.AddWork(p =>
                         {
-                            return exporter.GenereWebSiteAllTapis(_snapshot, _cfgExport, _structureRepertoiresSite, p);
+                            return exporter.GenereWebSiteAllTapis(_snapshot, _currentContext, _structureRepertoiresSite, p);
                         });
                     }
 
@@ -248,7 +261,7 @@ namespace AppPublication.Generation
                                 // sans doute car le lancement de nombreuses Task est couteux mais il provoque une latence a la fin de la generation
                                 _taskBatcher.AddWork(p =>
                                 {
-                                    return exporter.GenereWebSiteEngagements(_snapshot, _extendedJudoData, groupesP, _cfgExport, _structureRepertoiresSite, p);
+                                    return exporter.GenereWebSiteEngagements(_snapshot, _extendedJudoData, groupesP, _currentContext, _structureRepertoiresSite, p);
                                 });
 
                                 // foreach (GroupeEngagements g in groupesP)
@@ -264,11 +277,11 @@ namespace AppPublication.Generation
                     {
                         _taskBatcher.AddWork(p =>
                         {
-                            return exporter.GenereWebSitePhase(_snapshot, phase, _cfgExport, _structureRepertoiresSite, p);
+                            return exporter.GenereWebSitePhase(_snapshot, phase, _currentContext, _structureRepertoiresSite, p);
                         });
                         _taskBatcher.AddWork(p =>
                         {
-                            return exporter.GenereWebSiteClassement(_snapshot, phase.GetVueEpreuve(_snapshot), _cfgExport, _structureRepertoiresSite, p);
+                            return exporter.GenereWebSiteClassement(_snapshot, phase.GetVueEpreuve(_snapshot), _currentContext, _structureRepertoiresSite, p);
                         });
                     }
 
@@ -292,6 +305,10 @@ namespace AppPublication.Generation
             return new ResultatOperation(EtapeGenerateurSiteEnum.ExecuteGeneration, _checksumGenere.Count > 0, true, _checksumGenere.Count);
         }
 
+        /// <summary>
+        /// Execute la synchronisation du site distant avec les fichiers generes localement.
+        /// </summary>
+        /// <returns></returns>
         public ResultatOperation ExecuteSynchronisation()
         {
             _etapeCourante = EtapeGenerateurSiteEnum.ExecuteSynchronisation;

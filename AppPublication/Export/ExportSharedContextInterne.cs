@@ -19,6 +19,18 @@ namespace AppPublication.Export
 
         #region PROPERTIES
         public XElement SiteConfiguration { get; private set; }
+
+        public XDocument DocCombats
+        {
+            get
+            {
+                return _docCombats;
+            }
+            private set
+            {
+                _docCombats = value;
+            }
+        }
         #endregion
 
         #region CONSTRUCTORS
@@ -30,19 +42,19 @@ namespace AppPublication.Export
         /// <param name="DC"></param>
         /// <param name="EDC"></param>
         /// <returns></returns>
-        public static new ExportSharedContextInterne Instance(IJudoData DC, ExtendedJudoData EDC, ConfigurationExportSiteInterne config)
+        public static ExportSharedContextInterne Instance(IJudoData DC, ConfigurationExportSiteInterne config)
         {
             var output = new ExportSharedContextInterne();
-            output.Initialize(DC, EDC, config);
+            output.Initialize(DC, config);
             return output;
         }
         #endregion
 
         #region METHODES PUBLIQUES
-        protected virtual void Initialize(IJudoData DC, ExtendedJudoData EDC, ConfigurationExportSiteInterne config)
+        protected virtual void Initialize(IJudoData DC, ConfigurationExportSiteInterne config)
         {
             // Execute l'initialisation du parent
-            base.Initialize(DC, EDC);
+            base.Initialize(DC);
 
             // Recupere la configuration du site
             // TODO Ajouter la méthode ToXml

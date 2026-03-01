@@ -6,6 +6,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using NLog.LayoutRenderers;
 
 namespace Tools.Export
 {
@@ -155,6 +156,9 @@ namespace Tools.Export
                     break;
                 case ExportEnum.Site_MenuEngagements:
                     result = "engagements";
+                    break;
+                case ExportEnum.Site_Interne_EcranAppel:
+                    result = "ecran";
                     break;
             }
 
@@ -525,6 +529,9 @@ namespace Tools.Export
                     break;
                 case ExportEnum.Site_FooterScript:
                     name = ConstantResource.Export_Site_res + "footer_script";
+                    break;
+                case ExportEnum.Site_Interne_EcranAppel:
+                        name = ConstantResource.Export_Site_res + "ecrans_appel";
                     break;
                 default:
                     return "";

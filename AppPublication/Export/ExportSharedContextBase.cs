@@ -11,13 +11,13 @@ namespace AppPublication.Export
     {
         #region MEMBRES
         // Collections en lecture seule pour garantir le thread-safety lors de la lecture
-        public IReadOnlyList<XElement> Clubs { get; private set; }
-        public IReadOnlyList<XElement> Comites { get; private set; }
-        public IReadOnlyList<XElement> Secteurs { get; private set; }
-        public IReadOnlyList<XElement> Ligues { get; private set; }
-        public IReadOnlyList<XElement> Pays { get; private set; }
+        public XElement Clubs { get; private set; }
+        public XElement Comites { get; private set; }
+        public XElement Secteurs { get; private set; }
+        public XElement Ligues { get; private set; }
+        public XElement Pays { get; private set; }
 
-        public IReadOnlyList<XElement> Ceintures { get; private set; }
+        public XElement Ceintures { get; private set; }
         #endregion
 
         #region CONSTRUCTEURS
@@ -37,10 +37,11 @@ namespace AppPublication.Export
         public static ExportSharedContextBase Instance(IJudoData DC, ExtendedJudoData EDC)
         {
             var output =  new ExportSharedContextBase();
-            output.Initialize(DC, EDC);
+            output.Initialize(DC);
 
             return output;
         }
+
         #endregion
 
         #region METHODES PUBLIQUES
@@ -50,9 +51,22 @@ namespace AppPublication.Export
         /// <param name="doc"></param>
         public virtual void AddFullXmlContext(XDocument doc)
         {
-            // Note on ajoute les ceintures tout le temps, l'overhead est faire mais cela simplifie beaucoup le code
-            doc?.Root?.Add(Clubs, Comites, Ligues, Secteurs, Pays, Ceintures);
+            if (doc?.Root == null) return;
+
+            // On regroupe les éléments dans un tableau pour un traitement propre
+            XElement[] structures = { Clubs, Comites, Ligues, Secteurs, Pays, Ceintures };
+
+            foreach (XElement structure in structures)
+            {
+                // 1. On s'assure que la propriété du contexte n'est pas null
+                // 2. On vérifie qu'un élément du même nom n'existe pas déjà à la racine du document
+                if (structure != null && doc.Root?.Element(structure.Name) == null)
+                {
+                    doc.Root?.Add(structure);
+                }
+            }
         }
+
         #endregion
 
         #region METHODES PRIVEES
@@ -61,7 +75,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <param name="EDC"></param>
-        protected virtual void Initialize(IJudoData DC, ExtendedJudoData EDC)
+        protected virtual void Initialize(IJudoData DC)
         {
             Clubs = ExportXML.GetClubs(DC);
             Comites = ExportXML.GetComites(DC);

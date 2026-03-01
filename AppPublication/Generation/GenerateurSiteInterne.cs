@@ -33,6 +33,7 @@ namespace AppPublication.Generation
 
         // La structure du site
         private ExportSiteInterneStructure _structureRepertoiresSiteInterne;      // La structure de repertoire d'export du site
+        private ExportSharedContextInterne _currentContext;             // Le contexte de generation partage (donnees statiques communes a toutes les taches)
 
         // Suivi des taches de generation
         private EtapeGenerateurSiteEnum _etapeCourante = EtapeGenerateurSiteEnum.None;
@@ -102,6 +103,10 @@ namespace AppPublication.Generation
 
         #region IMPLEMENTATION IGenerateurSite
 
+        /// <summary>
+        /// Effectue le nettoyage initial du site interne.
+        /// </summary>
+        /// <returns></returns>
         public ResultatOperation CleanupInitial()
         {
             _etapeCourante = EtapeGenerateurSiteEnum.CleanupInitial;
@@ -120,11 +125,19 @@ namespace AppPublication.Generation
             return new ResultatOperation(EtapeGenerateurSiteEnum.CleanupInitial, true, true, -1);
         }
 
+        /// <summary>
+        /// Effectue le démarrage du site interne.
+        /// </summary>
+        /// <returns></returns>
         public ResultatOperation Demarrage()
         {
             return new ResultatOperation(EtapeGenerateurSiteEnum.Demarrage, true, true, -1);
         }
 
+        /// <summary>
+        /// Prépare la génération du site interne en vérifiant la consistance des données.
+        /// </summary>
+        /// <returns></returns>
         public ResultatOperation PrepareGeneration()
         {
             _etapeCourante = EtapeGenerateurSiteEnum.PrepareGeneration;
@@ -147,11 +160,7 @@ namespace AppPublication.Generation
                 _snapshot = _judoDataManager.Snapshot;
 
                 // Initialise les donnees partagees de generation (ces donnees sont statiques et communes a toutes les taches)
-                // TODO A Revoir
-                // ExportSiteInterne.InitSharedData(_snapshot, _extendedJudoData, ConfigurationGeneration, true);
-
-
-
+                _currentContext = ExportSharedContextInterne.Instance(_snapshot, _cfgExport);
             }
             else
             {
@@ -163,6 +172,11 @@ namespace AppPublication.Generation
             return new ResultatOperation(EtapeGenerateurSiteEnum.PrepareGeneration, dataConsistent, true, -1);
         }
 
+        /// <summary>
+        /// Effectue la génération du site interne.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public ResultatOperation ExecuteGeneration()
         {
             _etapeCourante = EtapeGenerateurSiteEnum.ExecuteGeneration;
@@ -182,9 +196,8 @@ namespace AppPublication.Generation
                 try
                 {
                     // Ok, a partir d'ici on peut lancer les tasks dans le batcher
-                    ExportSiteInterne exporter = new ExportSiteInterne();     // L'exporteur
+                    ExportSite<ExportSharedContextInterne> exporter = new ExportSite<ExportSharedContextInterne>(_currentContext);     // L'exporteur
 
-                    // TODO C'est ici que l'on va mettre les fonction de traitement
                     /*
                     _taskBatcher.AddWork(p =>
                     {

@@ -4,13 +4,14 @@ using AppPublication.Tools.Enum;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
 using KernelImpl.Noyau.Organisation;
+using OfficeOpenXml.Table.PivotTable;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml.Linq;
 using System.Web.UI.WebControls;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Xsl;
 using Tools.Enum;
 using Tools.Export;
@@ -30,6 +31,34 @@ namespace AppPublication.Export
         #endregion
 
         #region METHODES PRIVEES
+
+        /// <summary>
+        /// Crée une XsltArgumentList pré-remplie avec la structure du site et des paramètres optionnels.
+        /// </summary>
+        /// <param name="siteStruct"></param>
+        /// <param name="savePath"></param>
+        /// <param name="extraParams"></param>
+        /// <returns></returns>
+        private XsltArgumentList CreateAllXsltArgs(ExportSiteStructure siteStruct, string savePath, params (string name, object value)[] extraParams)
+        {
+            XsltArgumentList args = new XsltArgumentList();
+
+            // On factorise l'appel systématique
+            AddStructureArgument(args, siteStruct, savePath);
+
+            // On ajoute les paramètres à la volée s'il y en a
+            if (extraParams != null)
+            {
+                foreach (var (name, value) in extraParams)
+                {
+                    if (value != null)
+                        args.AddParam(name, "", value);
+                }
+            }
+
+            return args;
+        }
+
         /// <summary>
         /// Ajoute les arguments de structure du site pour les templates xslt
         /// </summary>
@@ -49,23 +78,65 @@ namespace AppPublication.Export
         }
 
         /// <summary>
-        /// Génère le chemin de sauvegarde complet et standardisé pour un fichier d'export lié à une épreuve.
+        /// Génère le chemin de sauvegarde complet et standardisé pour un fichier d'export.
         /// </summary>
-        /// <param name="siteStruct">La structure de répertoires du site</param>
-        /// <param name="epreuveId">L'identifiant de l'épreuve</param>
-        /// <param name="epreuveNom">Le nom de l'épreuve</param>
+        /// <param name="targetDirectory">Le répertoire cible (commun ou spécifique à une épreuve)</param>
         /// <param name="exportType">Le type de fichier à exporter</param>
-        /// <returns>Le chemin complet du fichier</returns>
-        private static string GetFileSavePath(ExportSiteStructure siteStruct, int epreuveId, string epreuveNom, ExportEnum exportType)
+        /// <returns>Le chemin complet du fichier (sans l'extension)</returns>
+        private static string GetFileSavePath(string targetDirectory, ExportEnum exportType)
         {
-            string directory = siteStruct.RepertoireEpreuve(epreuveId.ToString(), epreuveNom);
             string filename = ExportTools.getFileName(exportType).Replace("/", "_");
-
-            return Path.Combine(directory, filename);
+            return Path.Combine(targetDirectory, filename);
         }
+
+        /// <summary>
+        /// Génère un fichier de menu spécifique et retourne ses informations de checksum.
+        /// </summary>
+        /// <param name="exportType"></param>
+        /// <param name="targetDirectory"></param>
+        /// <param name="siteStructure"></param>
+        /// <param name="docMenu"></param>
+        /// <returns></returns>
+        private FileWithChecksum GenerateMenuFile(ExportEnum exportType, string targetDirectory, ExportSiteStructure siteStructure, XDocument docMenu)
+        {
+            // Utilisation de notre utilitaire universel
+            string savePath = GetFileSavePath(targetDirectory, exportType);
+
+            var xsltArgs = CreateAllXsltArgs(siteStructure, savePath);
+
+            ExportHTML.ToHTMLSite(docMenu, exportType, savePath, xsltArgs);
+
+            return new FileWithChecksum($"{savePath}.html");
+        }
+
         #endregion
 
         #region METHODES PUBLIQUES
+
+        public List<FileWithChecksum> GenereEcranAppel(IJudoData DC, ExportSharedContextInterne ctx, ExportSiteInterneStructure structRep, IProgress<BatchProgressInfo> progress)
+        {
+            ExportSiteStructure siteStructure = (ExportSiteStructure)structRep.Clone();
+            List<FileWithChecksum> output = new List<FileWithChecksum>();
+
+            var exportType = ExportEnum.Site_Interne_EcranAppel;
+            var targetDirectory = structRep.RepertoireEcransAppel();
+
+            // Le fichier de destination
+            string savePath = GetFileSavePath(targetDirectory, exportType);
+
+            // Les arguments XSLT (inclut la structure du site et le chemin cible)
+            var xsltArgs = CreateAllXsltArgs(siteStructure, savePath);
+
+            progress?.Report(BatchProgressInfo.Init(1));
+
+            ExportHTML.ToHTMLSite(ctx.DocCombats, exportType, savePath, xsltArgs);
+
+            output.Add(new FileWithChecksum($"{savePath}.html"));
+
+            progress?.Report(BatchProgressInfo.Step(1));
+
+            return output;
+        }
 
         /// <summary>
         /// Génére les éléments donnés d'une phase
@@ -96,23 +167,27 @@ namespace AppPublication.Export
 
                 if (vueEpreuve == null) return output;
 
+                // Détermination du répertoire cible UNE SEULE FOIS pour cette épreuve
+                string targetDirectory = siteStructure.RepertoireEpreuve(vueEpreuve.id.ToString(), vueEpreuve.nom);
+
                 // --- 1. TRAITEMENTS POULE / TABLEAU ---
                 if (phase.typePhase == (int)TypePhaseEnum.Poule || phase.typePhase == (int)TypePhaseEnum.Tableau)
                 {
                     bool isPoule = phase.typePhase == (int)TypePhaseEnum.Poule;
 
                     ExportEnum exportType = isPoule ? ExportEnum.Site_Poule_Resultat : ExportEnum.Site_Tableau_Competition;
-                    string savePath = GetFileSavePath(siteStructure, vueEpreuve.id, vueEpreuve.nom, exportType);
+                    string savePath = GetFileSavePath(targetDirectory, exportType);
 
-                    XsltArgumentList xsltArgs = new XsltArgumentList();
-                    AddStructureArgument(xsltArgs, siteStructure, savePath);
-
+                    var phaseParams = new List<(string, object)>();
                     if (isPoule)
                     {
                         int typePoule = config.PouleEnColonnes ? (config.PouleToujoursEnColonnes ? (int)TypePouleEnum.Colonnes : (int)TypePouleEnum.Auto) : (int)TypePouleEnum.Diagonale;
-                        xsltArgs.AddParam("typePoule", "", typePoule);
-                        xsltArgs.AddParam("tailleMaxPouleColonne", "", config.TailleMaxPouleColonnes);
+                        phaseParams.Add(("typePoule", typePoule));
+                        phaseParams.Add(("tailleMaxPouleColonne", config.TailleMaxPouleColonnes));
                     }
+
+                    // Utilisation de la fabrique (AddStructureArgument est inclus dedans)
+                    var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, phaseParams.ToArray());
 
                     XDocument xmlResultat = ExportXML.CreateDocumentPhase(vueEpreuve, phase, DC);
                     ctx.AddFullXmlContext(xmlResultat);
@@ -130,11 +205,9 @@ namespace AppPublication.Export
                 if (config.PublierProchainsCombats)
                 {
                     ExportEnum exportType = ExportEnum.Site_FeuilleCombat;
-                    string savePath = GetFileSavePath(siteStructure, vueEpreuve.id, vueEpreuve.nom, exportType);
+                    string savePath = GetFileSavePath(targetDirectory, exportType);
 
-                    XsltArgumentList xsltArgs = new XsltArgumentList();
-                    xsltArgs.AddParam("istapis", "", "epreuve");
-                    AddStructureArgument(xsltArgs, siteStructure, savePath);
+                    var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, ("istapis", "epreuve"));
 
                     XDocument xmlFeuilleCombat = ExportXML.CreateDocumentFeuilleCombat(DC, phase, null);
                     ctx.AddFullXmlContext(xmlFeuilleCombat);
@@ -164,6 +237,8 @@ namespace AppPublication.Export
         /// <returns></returns>
         public List<FileWithChecksum> GenereWebSiteClassement(IJudoData DC, i_vue_epreuve_interface epreuve, ExportSharedContext ctx, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
         {
+            LogTools.Logger.Debug("Epreuve ({1}) '{0}'", epreuve?.nom, epreuve?.id);
+
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             // Clone la structure de répertoires pour le contexte multi-thread
@@ -173,13 +248,14 @@ namespace AppPublication.Export
 
             if (DC != null && epreuve != null && ctx != null && siteStructure != null)
             {
+                // Détermination du répertoire cible pour cette épreuve
+                string targetDirectory = siteStructure.RepertoireEpreuve(epreuve.id.ToString(), epreuve.nom);
                 ExportEnum exportType = ExportEnum.Site_ClassementFinal;
 
                 // Utilisation de la méthode mutualisée pour le chemin
-                string savePath = GetFileSavePath(siteStructure, epreuve.id, epreuve.nom, exportType);
+                string savePath = GetFileSavePath(targetDirectory, exportType);
 
-                XsltArgumentList xsltArgs = new XsltArgumentList();
-                AddStructureArgument(xsltArgs, siteStructure, savePath);
+                var xsltArgs = CreateAllXsltArgs(siteStructure, savePath);
 
                 // 1. Génération du document de base
                 XDocument xmlClassement = ExportXML.CreateDocumentEpreuve(DC, epreuve);
@@ -202,278 +278,280 @@ namespace AppPublication.Export
         }
 
         /// <summary>
-        /// Génére les premiers combats de tous les tapis
+        /// Génère les prochains combats de tous les tapis (vue d'ensemble pour le site).
         /// </summary>
         /// <param name="DC"></param>
-        public List<FileWithChecksum> GenereWebSiteAllTapis(IJudoData DC, ConfigurationExportSite config, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
+        /// <param name="ctx"></param>
+        /// <param name="structRep"></param>
+        /// <param name="progress"></param>
+        /// <returns></returns>
+        public List<FileWithChecksum> GenereWebSiteAllTapis(IJudoData DC, ExportSharedContext ctx, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
         {
-            // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread (changement de path)
-            ExportSiteStructure siteStruct = (ExportSiteStructure)structRep.Clone();
+            // Clone la structure de répertoires pour le contexte multi-thread
+            ExportSiteStructure siteStructure = (ExportSiteStructure)structRep.Clone();
 
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
-            progress?.Report(BatchProgressInfo.Init(1)); // Report the start of the task with the number of subtask
+            // Report the start of the task
+            progress?.Report(BatchProgressInfo.Init(1));
 
-            if (DC != null && config != null && siteStruct != null)
+            if (DC != null && ctx != null && siteStructure != null)
             {
-                // Genere les prochains combats de tous les tapis, istapis = alltapis (Se Prepare)  => feuille_matchs_site.xslt
-                ExportEnum type = ExportEnum.Site_FeuilleCombatTapis;
-                string directory = siteStruct.RepertoireCommon();
-                string filename = ExportTools.getFileName(type);
-                string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
-                XsltArgumentList argsList = new XsltArgumentList();
-                argsList.AddParam("istapis", "", "alltapis");
-                // si plus d'une competition et intitule commun configure, on l'utilise plutot que le titre d'une des competitions
-                bool useIntituleCommun = (DC.Organisation.Competitions.Count() > 1) && config.UseIntituleCommun && !string.IsNullOrEmpty(config.IntituleCommun);
-                argsList.AddParam("useIntituleCommun", "", useIntituleCommun.ToString().ToLower());
-                AddStructureArgument(argsList, siteStruct, fileSave);
+                string targetDirectory = siteStructure.RepertoireCommon();
+                ExportEnum exportType = ExportEnum.Site_FeuilleCombatTapis;
 
-                XDocument xml = ExportXML.CreateDocumentFeuilleCombat(DC, null, null);
-                ExportXML.AddPublicationInfo(ref xml, config);
-                AddStructures(ref xml);
-                LogTools.DebugLogData(xml);
+                // Construction du chemin pour le répertoire commun
+                string savePath = GetFileSavePath(targetDirectory, exportType);
 
-                ExportHTML.ToHTMLSite(xml, type, fileSave, argsList);
+                bool useIntituleCommun = DC.Organisation.Competitions.Count() > 1
+                         && ctx.Config.UseIntituleCommun
+                         && !string.IsNullOrEmpty(ctx.Config.IntituleCommun);
 
-                output.Add(new FileWithChecksum(fileSave + ".html"));
+                var xsltArgs = CreateAllXsltArgs(siteStructure, savePath,
+                    ("istapis", "alltapis"),
+                    ("useIntituleCommun", useIntituleCommun.ToString().ToLower())
+                );
+
+                // 1. Génération du document (Utilise notre version optimisée de CreateDocumentFeuilleCombat)
+                // Les paramètres null, null indiquent qu'on veut tous les tapis et toutes les phases.
+                XDocument xmlAllTapis = ExportXML.CreateDocumentFeuilleCombat(DC, null, null);
+
+                // 2. Enrichissement via le contexte (PublicationInfo + Structures)
+                ctx.AddFullXmlContext(xmlAllTapis);
+
+                LogTools.DebugLogData(xmlAllTapis);
+
+                // 3. Transformation HTML
+                ExportHTML.ToHTMLSite(xmlAllTapis, exportType, savePath, xsltArgs);
+
+                output.Add(new FileWithChecksum($"{savePath}.html"));
             }
 
             LogTools.Logger.Debug("ProchainsCombats Tapis = {0}", output.Count);
 
+            // Report the end of the task
+            progress?.Report(BatchProgressInfo.Step(1));
 
-            progress?.Report(BatchProgressInfo.Step(1)); // Report the end of the task
             return output;
         }
 
+
         /// <summary>
-        /// Génére L'index
+        /// Génère la page d'index du site, les scripts de mise à jour et exporte les ressources statiques.
         /// </summary>
-        /// <param name="DC"></param>
-        public List<FileWithChecksum> GenereWebSiteIndex(IJudoData DC, ConfigurationExportSite config, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteIndex(IJudoData DC, ExportSharedContext ctx, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
         {
-            List<string> urls = new List<string>();
+            // Clone la structure de répertoires pour le contexte multi-thread
+            ExportSiteStructure siteStructure = (ExportSiteStructure)structRep.Clone();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
-            // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread (changement de path)
-            ExportSiteStructure siteStruct = (ExportSiteStructure) structRep.Clone();
 
-            ExportEnum type;
+            progress?.Report(BatchProgressInfo.Init(2));
 
-            progress.Report(BatchProgressInfo.Init(2)); // Report the start of the task with the number of subtask
-
-            if (DC != null && config != null && siteStruct != null)
+            if (DC != null && ctx != null && siteStructure != null)
             {
-                XDocument docindex = ExportXML.CreateDocumentIndex(DC, siteStruct);
-                ExportXML.AddPublicationInfo(ref docindex, config);
-                LogTools.DebugLogData(docindex);
+                // 1. Génération du document d'index de base
+                XDocument docIndex = ExportXML.CreateDocumentIndex(DC);
 
-                // Genere l'index
-                type = ExportEnum.Site_Index;
-                string filename = ExportTools.getFileName(type);
-                string fileSave = Path.Combine(siteStruct.RepertoireCommon(), filename.Replace("/", "_"));
-                XsltArgumentList argsList = new XsltArgumentList();
-                AddStructureArgument(argsList, siteStruct, fileSave);
+                // 2. Ajout de la CONFIGURATION uniquement (pas de structures de clubs/ligues)
+                // On suppose que cette méthode dans ctx injecte PublicationInfo et SiteConfiguration
+                ctx.AddConfigurationXmlContext(docIndex);
 
-                ExportHTML.ToHTMLSite(docindex, type, fileSave, argsList);
-                output.Add(new FileWithChecksum(fileSave + ".html"));
-                progress.Report(BatchProgressInfo.Step(1)); // Report the end of the task
+                LogTools.DebugLogData(docIndex);
 
-                // No need to regenerate those files, they are usually static unless they are updated
-                urls = urls.Concat(ExportTools.ExportEmbeddedStyleAndJS(true, siteStruct)).ToList();
-                LogTools.Logger.Debug("GenereWebSiteIndex - ExportStyleAndJS {0}", urls.Count);
+                // --- 3. GÉNÉRATION DE L'INDEX HTML ---
+                ExportEnum indexType = ExportEnum.Site_Index;
+                string indexFilename = ExportTools.getFileName(indexType).Replace("/", "_");
+                string indexSavePath = Path.Combine(siteStructure.RepertoireCommon(), indexFilename);
 
-                // Genere les images "par defaut" contenues dans l'application et les images personnalises de l'utilisateur
-                urls = urls.Concat(ExportTools.ExportEmbeddedImg(true, true, siteStruct)).ToList();
-                LogTools.Logger.Debug("GenereWebSiteIndex - ExportImg {0}", urls.Count);
+                var indexArgs = CreateAllXsltArgs(siteStructure, indexSavePath);
 
-                output.AddRange(urls.Select(o => new FileWithChecksum(o)).ToList());
+                ExportHTML.ToHTMLSite(docIndex, indexType, indexSavePath, indexArgs);
+                output.Add(new FileWithChecksum($"{indexSavePath}.html"));
 
-                // Genere le script de mise a jour
-                type = ExportEnum.Site_FooterScript;
-                string filenameFooter = ExportTools.getFileName(type);
-                string fileSaveFooter = Path.Combine(siteStruct.RepertoireJs(), filenameFooter.Replace("/", "_"));
-                XsltArgumentList argsListFooter = new XsltArgumentList();
-                AddStructureArgument(argsListFooter, siteStruct, fileSaveFooter);
-                ExportHTML.ToHTMLSite(docindex, type, fileSaveFooter, argsListFooter, "js");
-                output.Add(new FileWithChecksum(fileSaveFooter + ".js"));
-                progress.Report(BatchProgressInfo.Step(2)); // Report the end of the task
+                progress?.Report(BatchProgressInfo.Step(1));
 
-                LogTools.Logger.Debug("GenereWebSiteIndex {0}", output.Count);
+                // --- 4. RESSOURCES STATIQUES (CSS, JS, IMG) ---
+                // Export direct des styles et scripts
+                var staticFiles = ExportTools.ExportEmbeddedStyleAndJS(true, siteStructure);
+                output.AddRange(staticFiles.Select(path => new FileWithChecksum(path)));
+                LogTools.Logger.Debug("GenereWebSiteIndex - Style/JS: {0} fichiers", staticFiles.Count);
+
+                // Export des images
+                var imageFiles = ExportTools.ExportEmbeddedImg(true, true, siteStructure);
+                output.AddRange(imageFiles.Select(path => new FileWithChecksum(path)));
+                LogTools.Logger.Debug("GenereWebSiteIndex - Images: {0} fichiers", imageFiles.Count);
+
+                // --- 5. GÉNÉRATION DU SCRIPT DE MISE À JOUR (FOOTER) ---
+                ExportEnum footerType = ExportEnum.Site_FooterScript;
+                string footerFilename = ExportTools.getFileName(footerType).Replace("/", "_");
+                string footerSavePath = Path.Combine(siteStructure.RepertoireJs(), footerFilename);
+
+                var footerArgs = CreateAllXsltArgs(siteStructure, footerSavePath);
+
+                // Utilisation du même docIndex pour générer le JS via XSLT
+                ExportHTML.ToHTMLSite(docIndex, footerType, footerSavePath, footerArgs, "js");
+                output.Add(new FileWithChecksum($"{footerSavePath}.js"));
+
+                LogTools.Logger.Debug("GenereWebSiteIndex Terminé - Total: {0} ressources", output.Count);
+                progress?.Report(BatchProgressInfo.Step(2));
             }
 
-            progress.Report(BatchProgressInfo.Step(2)); // Report the end of the task
+            progress?.Report(BatchProgressInfo.Step(2));
             return output;
         }
 
         /// <summary>
-        /// Génére le menu
+        /// Génère les différents menus de navigation du site (Avancement, Classement, et optionnellement Prochains Combats / Engagements).
         /// </summary>
         /// <param name="DC"></param>
-        public List<FileWithChecksum> GenereWebSiteMenu(IJudoData DC, ExtendedJudoData EDC, ConfigurationExportSite config, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
+        /// <param name="EDC"></param>
+        /// <param name="ctx"></param>
+        /// <param name="structRep"></param>
+        /// <param name="progress"></param>
+        /// <returns></returns>
+        public List<FileWithChecksum> GenereWebSiteMenu(IJudoData DC, ExtendedJudoData EDC, ExportSharedContext ctx, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
         {
-            // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread (changement de path)
-            ExportSiteStructure siteStruct = (ExportSiteStructure)structRep.Clone();
-
+            // Clone la structure de répertoires pour le contexte multi-thread
+            ExportSiteStructure siteStructure = (ExportSiteStructure)structRep.Clone();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
-            if (DC != null && EDC != null && config != null && siteStruct != null)
+
+            if (DC == null || EDC == null || ctx == null || siteStructure == null)
+                return output;
+
+            ConfigurationExportSite config = ctx.Config;
+
+            // Calcul dynamique du nombre d'étapes pour la barre de progression
+            int nbGen = 2 + (config.PublierProchainsCombats ? 1 : 0) + (config.PublierEngagements ? 1 : 0);
+            progress?.Report(BatchProgressInfo.Init(nbGen));
+
+            int currentStep = 0;
+
+            // Le répertoire cible est défini une seule fois pour tous les menus (racine du site)
+            string targetDirectory = siteStructure.RepertoireCommon();
+
+            // 1. Création du document XML de base
+            XDocument docMenu = ExportXML.CreateDocumentMenu(DC, EDC, siteStructure);
+
+            // 2. Ajout de la configuration contextuelle (infos de publication, etc.)
+            ctx.AddConfigurationXmlContext(docMenu);
+            LogTools.DebugLogData(docMenu);
+
+            // 3. Génération des menus de base (toujours présents)
+            output.Add(GenerateMenuFile(ExportEnum.Site_MenuAvancement, targetDirectory, siteStructure, docMenu));
+            progress?.Report(BatchProgressInfo.Step(++currentStep));
+
+            output.Add(GenerateMenuFile(ExportEnum.Site_MenuClassement, targetDirectory, siteStructure, docMenu));
+            progress?.Report(BatchProgressInfo.Step(++currentStep));
+
+            // 4. Génération du menu des prochains combats
+            if (config.PublierProchainsCombats)
             {
-                int nbGen = 2;
-                if (config.PublierProchainsCombats)
-                {
-                    nbGen++;
-                }
-                if (config.PublierEngagements)
-                {
-                    nbGen++;
-                }
+                output.Add(GenerateMenuFile(ExportEnum.Site_MenuProchainCombats, targetDirectory, siteStructure, docMenu));
+                progress?.Report(BatchProgressInfo.Step(++currentStep));
+            }
 
-                progress?.Report(BatchProgressInfo.Init(nbGen)); // Report the start of the task with the number of subtask
+            // 5. Génération du menu des engagements
+            if (config.PublierEngagements)
+            {
+                // Enrichissement lourd (structures géographiques, clubs) uniquement pour ce dernier fichier
+                // afin de ne pas alourdir inutilement le XML des menus précédents
+                ctx.AddFullXmlContext(docMenu);
 
-                ExportEnum type;
-                string directory = siteStruct.RepertoireCommon();
-
-                XDocument docmenu = ExportXML.CreateDocumentMenu(DC, EDC, siteStruct);
-                // TODO Il faut revoir tous les acces a la configuration via la nouvelle balise et plus dans la competition
-                ExportXML.AddPublicationInfo(ref docmenu, config);
-                LogTools.DebugLogData(docmenu);
-
-                // Genere le menu de d'avancement
-                type = ExportEnum.Site_MenuAvancement;
-                string filename = ExportTools.getFileName(type);
-                string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
-                XsltArgumentList argsList = new XsltArgumentList();
-                AddStructureArgument(argsList, siteStruct, fileSave);
-
-                ExportHTML.ToHTMLSite(docmenu, type, fileSave, argsList);
-                output.Add(new FileWithChecksum(fileSave + ".html"));
-                progress.Report(BatchProgressInfo.Step(1)); // Report the progress of the task
-
-                // Genere le menu de classement
-                type = ExportEnum.Site_MenuClassement;
-                string filename2 = ExportTools.getFileName(type);
-                string fileSave2 = Path.Combine(directory, filename2.Replace("/", "_"));
-                XsltArgumentList argsList2 = new XsltArgumentList();
-                AddStructureArgument(argsList2, siteStruct, fileSave2);
-
-                ExportHTML.ToHTMLSite(docmenu, type, fileSave2, argsList2);
-                output.Add(new FileWithChecksum(fileSave2 + ".html"));
-                progress.Report(BatchProgressInfo.Step(2)); // Report the progress of the task
-
-                // Genere le menu de prochain combat
-                if (config.PublierProchainsCombats)
-                {
-                    type = ExportEnum.Site_MenuProchainCombats;
-                    string filenamePc = ExportTools.getFileName(type);
-                    string fileSavePc = Path.Combine(directory, filenamePc.Replace("/", "_"));
-                    XsltArgumentList argsListPc = new XsltArgumentList();
-                    AddStructureArgument(argsListPc, siteStruct, fileSavePc);
-
-                    ExportHTML.ToHTMLSite(docmenu, type, fileSavePc, argsListPc);
-                    output.Add(new FileWithChecksum(fileSavePc + ".html"));
-                    progress.Report(BatchProgressInfo.Step(3)); // Report the progress of the task
-                }
-
-                // Genere le menu engageements
-                if (config.PublierEngagements)
-                {
-                    // Ajoute les informations necessaire pour les engages
-                    ExportXML.AddPublicationInfo(ref docmenu, config);
-                    AddStructures(ref docmenu);
-
-                    type = ExportEnum.Site_MenuEngagements;
-                    string filenamePart = ExportTools.getFileName(type);
-                    string fileSavePart = Path.Combine(directory, filenamePart.Replace("/", "_"));
-                    XsltArgumentList argsListPart = new XsltArgumentList();
-                    AddStructureArgument(argsListPart, siteStruct, fileSavePart);
-
-                    ExportHTML.ToHTMLSite(docmenu, type, fileSavePart, argsListPart);
-                    output.Add(new FileWithChecksum(fileSavePart + ".html"));
-                    progress.Report(BatchProgressInfo.Step(4)); // Report the progress of the task
-                }
-
-                progress.Report(BatchProgressInfo.Step(nbGen)); // Report the progress of the task
+                output.Add(GenerateMenuFile(ExportEnum.Site_MenuEngagements, targetDirectory, siteStructure, docMenu));
+                progress?.Report(BatchProgressInfo.Step(++currentStep));
             }
 
             LogTools.Logger.Debug("Menu = {0}", output.Count);
 
-
             return output;
         }
+
 
         /// <summary>
         /// Genere la page d'affectation des tapis
         /// </summary>
         /// <param name="DC"></param>
+        /// <param name="config"></param>
+        /// <param name="structRep"></param>
+        /// <param name="progress"></param>
         /// <returns></returns>
-        public List<FileWithChecksum> GenereWebSiteAffectation(IJudoData DC, ConfigurationExportSite config, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteAffectation(IJudoData DC, ExportSharedContext ctx, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
         {
-            // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread (changement de path)
-            ExportSiteStructure siteStruct = (ExportSiteStructure)structRep.Clone();
+            ExportSiteStructure siteStructure = (ExportSiteStructure)structRep.Clone();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
-            progress?.Report(BatchProgressInfo.Init(1)); // Report the start of the task with the number of subtask
+            progress?.Report(BatchProgressInfo.Init(1));
 
-            if (DC != null && config != null && siteStruct != null)
+            if (DC != null && ctx != null && siteStructure != null)
             {
-                ExportEnum type = ExportEnum.Site_AffectationTapis;
-                string directory = siteStruct.RepertoireCommon();
-                string filename = ExportTools.getFileName(type);
-                string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
-                XsltArgumentList argsList = new XsltArgumentList();
-                AddStructureArgument(argsList, siteStruct, fileSave);
+                string targetDirectory = siteStructure.RepertoireCommon();
+                ExportEnum exportType = ExportEnum.Site_AffectationTapis;
 
+                // Appel unifié avec notre méthode utilitaire
+                string savePath = GetFileSavePath(targetDirectory, exportType);
+                
+                var xsltArgs = CreateAllXsltArgs(siteStructure, savePath);
+
+                // Génération du document et enrichissement via le contexte
                 XDocument docAffectation = ExportXML.CreateDocumentAffectationTapis(DC);
-                ExportXML.AddPublicationInfo(ref docAffectation, config);
+                ctx.AddConfigurationXmlContext(docAffectation);
+
                 LogTools.DebugLogData(docAffectation);
 
-                ExportHTML.ToHTMLSite(docAffectation, type, fileSave, argsList);
+                ExportHTML.ToHTMLSite(docAffectation, exportType, savePath, xsltArgs);
 
-                output.Add(new FileWithChecksum(fileSave + ".html"));
+                output.Add(new FileWithChecksum($"{savePath}.html"));
             }
 
             LogTools.Logger.Debug("Affectation = {0}", output.Count);
+            progress?.Report(BatchProgressInfo.Step(1));
 
-
-            progress?.Report(BatchProgressInfo.Step(1)); // Report the end of the task
             return output;
-        }    
+        }
 
         /// <summary>
         /// Genere la page des engages
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public List<FileWithChecksum> GenereWebSiteEngagements(IJudoData DC, ExtendedJudoData EDC, List<GroupeEngagements> grps, ConfigurationExportSite config, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
+        /// <summary>
+        public List<FileWithChecksum> GenereWebSiteEngagements(IJudoData DC, ExtendedJudoData EDC, List<GroupeEngagements> grps, ExportSharedContext ctx, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
         {
-            // Clone la structure de repertoires pour ne pas l'altérer dans le contexte multi-thread (changement de path)
-            ExportSiteStructure siteStruct = (ExportSiteStructure)structRep.Clone();
+            ExportSiteStructure siteStructure = (ExportSiteStructure)structRep.Clone();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
-            if (DC != null && EDC != null && grps != null && config != null && siteStruct != null)
+            if (DC != null && EDC != null && grps != null && ctx != null && siteStructure != null)
             {
                 int nbGrps = grps.Count;
+                progress?.Report(BatchProgressInfo.Init(nbGrps));
 
-                progress?.Report(BatchProgressInfo.Init(nbGrps)); // Report the start of the task with the number of subtask
+                ExportEnum exportType = ExportEnum.Site_Engagements;
 
+                // On récupère le document des engagements depuis notre contexte unifié 
+                // au lieu d'utiliser une vieille variable globale de classe (_docEngagements)
+                XDocument docEngagements = ctx.DocEngagements;
 
-                for (int i = 0; i < nbGrps; i++) {
-                    GroupeEngagements grp = grps[i];
-                    ExportEnum type = ExportEnum.Site_Engagements;
-                    string filename = ExportTools.getFileName(type);
-                    string directory = siteStruct.RepertoireGroupeEngagements(grp.Id);
-                    string fileSave = Path.Combine(directory, filename.Replace("/", "_"));
-                    XsltArgumentList argsList = new XsltArgumentList();
-                    argsList.AddParam("idgroupe", "", grp.Id);
-                    argsList.AddParam("idcompetition", "", grp.Competition);
-                    AddStructureArgument(argsList, siteStruct, fileSave);
+                int currentStep = 0;
 
-                    ExportHTML.ToHTMLSite(_docEngagements, type, fileSave, argsList);
+                // Remplacement de la boucle 'for' par un 'foreach' plus lisible
+                foreach (GroupeEngagements grp in grps)
+                {
+                    // Détermination du répertoire cible dynamique pour ce groupe
+                    string targetDirectory = siteStructure.RepertoireGroupeEngagements(grp.Id);
+                    string savePath = GetFileSavePath(targetDirectory, exportType);
 
-                    output.Add(new FileWithChecksum(fileSave + ".html"));
+                    var xsltArgs = CreateAllXsltArgs(siteStructure, savePath,
+                        ("idgroupe", grp.Id),
+                        ("idcompetition", grp.Competition)
+                    );
 
-                    progress?.Report( BatchProgressInfo.Step(i+1)); // Report the end of the task
+                    // Transformation HTML à partir du document contextuel
+                    ExportHTML.ToHTMLSite(docEngagements, exportType, savePath, xsltArgs);
+
+                    output.Add(new FileWithChecksum($"{savePath}.html"));
+
+                    progress?.Report(BatchProgressInfo.Step(++currentStep));
                 }
-
-                progress?.Report(BatchProgressInfo.Step(nbGrps)); // Report the end of the task
             }
 
             LogTools.Logger.Debug("Engagements = {0}", output.Count);

@@ -10,8 +10,14 @@ using AppPublication.Generation;
 
 namespace AppPublication.Export
 {
-    public class ExportSiteInterne : ExportSiteBase
+    public class ExportSiteInterne<TContext> : ExportSiteBase<TContext> where TContext : ExportSharedContextBase
     {
+        #region CONSTRUCTEURS
+        public ExportSiteInterne(TContext context) : base(context)
+        {
+        }
+        #endregion
+
         /// <summary>
         /// Genere les pages des ecrans d'Appels
         /// </summary>

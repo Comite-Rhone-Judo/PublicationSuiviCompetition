@@ -44,16 +44,18 @@ namespace AppPublication.Export
 
         #region METHODES PUBLIQUES
         /// <summary>
-        /// Ajoute les informations de structure se trouvant dans le contexte d'export au document XML
+        /// Ajoute toutes les informations se trouvant dans le contexte d'export au document XML
         /// </summary>
         /// <param name="doc"></param>
         public override void AddFullXmlContext(XDocument doc)
         {
-            // Ajoute les informations de structure de base (clubs, comites, secteurs, ligues, pays)
+            if (doc?.Root == null) return;
+
+            // Ajoute les informations de structure de base (clubs, comités, etc.) de manière sécurisée
             base.AddFullXmlContext(doc);
 
-            // Ajoute la configuration specifiques
-            doc?.Root?.Add(SiteConfiguration);   
+            // Ajoute la configuration spécifique uniquement si elle n'est pas déjà présente
+            AddConfigurationXmlContext(doc);
         }
 
         /// <summary>
@@ -66,13 +68,28 @@ namespace AppPublication.Export
             base.AddFullXmlContext(doc);
         }
 
+        /// <summary>
+        /// Ajoute les informations de configuration se trouvant dans le contexte d'export au document XML
+        /// </summary>
+        /// <param name="doc"></param>
+        public void AddConfigurationXmlContext(XDocument doc)
+        {
+            // Ajoute la configuration specifiques
+            if (SiteConfiguration != null && doc.Root?.Element(SiteConfiguration.Name) == null)
+            {
+                doc.Root?.Add(SiteConfiguration);
+            }
+        }
+
+
+
         #endregion
 
         #region METHODES PRIVEES
         protected virtual void Initialize(IJudoData DC, ExtendedJudoData EDC, ConfigurationExportSite config)
         {
             // Execute l'initialisation du parent
-            base.Initialize(DC, EDC);
+            base.Initialize(DC);
 
             // Stock la configuration
             Config = config;

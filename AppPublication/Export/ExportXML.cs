@@ -27,21 +27,21 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static List<XElement> GetComites(IJudoData DC)
+        public static XElement GetComites(IJudoData DC)
         {
             try
             {
                 // On utilise AsEnumerable() pour lire les données en flux continu 
                 // et on les transforme à la volée avec Select()
-                return DC.Structures.Comites
+                return new XElement(ConstantXML.Comites, 
+                        DC.Structures.Comites
                          .AsEnumerable()
-                         .Select(comite => comite.ToXml())
-                         .ToList();
+                         .Select(comite => comite.ToXml()));
             }
             catch (Exception ex)
             {
                 LogTools.Logger.Debug(ex);
-                return new List<XElement>(); // On retourne une liste vide en cas d'erreur, comme votre code d'origine
+                return new XElement(ConstantXML.Comites); // On retourne une liste vide en cas d'erreur, comme votre code d'origine
             }
         }
 
@@ -50,20 +50,20 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static List<XElement> GetLigues(IJudoData DC)
+        public static XElement GetLigues(IJudoData DC)
         {
             try
             {
                 // Lecture en flux et transformation directe via LINQ
-                return DC.Structures.Ligues
+                return new XElement(ConstantXML.Ligues, 
+                            DC.Structures.Ligues
                          .AsEnumerable()
-                         .Select(ligue => ligue.ToXml())
-                         .ToList();
+                         .Select(ligue => ligue.ToXml()));
             }
             catch (Exception ex)
             {
                 LogTools.Logger.Debug(ex);
-                return new List<XElement>(); // Retour sécurisé d'une liste vide en cas de plantage
+                return new XElement(ConstantXML.Ligues); // Retour sécurisé d'une liste vide en cas de plantage
             }
         }
 
@@ -72,20 +72,20 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static List<XElement> GetSecteurs(IJudoData DC)
+        public static XElement GetSecteurs(IJudoData DC)
         {
             try
             {
                 // On stream la lecture et on convertit à la volée
-                return DC.Structures.Secteurs
+                return new XElement(ConstantXML.Secteurs,
+                        DC.Structures.Secteurs
                          .AsEnumerable()
-                         .Select(secteur => secteur.ToXml())
-                         .ToList();
+                         .Select(secteur => secteur.ToXml()));
             }
             catch (Exception ex)
             {
                 LogTools.Logger.Debug(ex);
-                return new List<XElement>(); // En cas d'erreur, on renvoie une liste vide pour éviter un NullReferenceException plus haut
+                return new XElement(ConstantXML.Secteurs); // En cas d'erreur, on renvoie une liste vide pour éviter un NullReferenceException plus haut
             }
         }
 
@@ -94,19 +94,19 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static List<XElement> GetPays(IJudoData DC)
+        public static XElement GetPays(IJudoData DC)
         {
             try
             {
-                return DC.Structures.LesPays
-                         .AsEnumerable()
-                         .Select(pays => pays.ToXml())
-                         .ToList();
+                return new XElement(ConstantXML.LesPays, 
+                            DC.Structures.LesPays
+                                 .AsEnumerable()
+                                 .Select(pays => pays.ToXml()));
             }
             catch (Exception ex)
             {
                 LogTools.Logger.Debug(ex);
-                return new List<XElement>();
+                return new XElement(ConstantXML.LesPays);
             }
         }
 
@@ -116,7 +116,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static List<XElement> GetClubs(IJudoData DC)
+        public static XElement GetClubs(IJudoData DC)
         {
             try
             {
@@ -132,16 +132,16 @@ namespace AppPublication.Export
 
                 // 3. On fusionne (Union gère l'élimination des doublons entre les deux groupes), 
                 // on exécute la requête, et on transforme en XML à la volée.
-                return clubsJudokas
+                return new XElement(ConstantXML.Clubs,
+                    clubsJudokas
                          .Union(clubsEquipes)
                          .AsEnumerable()
-                         .Select(club => club.ToXml())
-                         .ToList();
+                         .Select(club => club.ToXml()));
             }
             catch (Exception ex)
             {
                 LogTools.Logger.Debug(ex);
-                return new List<XElement>();
+                return new XElement(ConstantXML.Clubs);
             }
         }
 
@@ -150,19 +150,20 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="doc">le document</param>
         /// <param name="DC"></param>
-        public static List<XElement> GetCeintures(IJudoData DC)
+        public static XElement GetCeintures(IJudoData DC)
         {
 
             try
             {
-                return DC.Categories.Grades
+                return new XElement(ConstantXML.Ceintures, 
+                            DC.Categories.Grades
                             .AsEnumerable()
-                            .Select(ceinture => ceinture.ToXml()).ToList();
+                            .Select(ceinture => ceinture.ToXml()));
             }
             catch (Exception ex)
             {
                 LogTools.Logger.Debug(ex);
-                return new List<XElement>();
+                return new XElement(ConstantXML.Ceintures);
             }            
         }
 
@@ -549,7 +550,7 @@ namespace AppPublication.Export
             var equipesDict = DC.Participants.Equipes.GroupBy(e => e.id).ToDictionary(g => g.Key, g => g.First());
 
             // Utilisation de ToLookup pour les relations "Un-vers-Plusieurs" (évite les .Where() dans les boucles)
-            var judokasByEquipe = DC.Participants.Judokas.Where(j => j.equipe.HasValue).ToLookup(j => j.equipe.Value);
+            var judokasByEquipe = DC.Participants.Judokas.ToLookup(j => j.equipe);
             var rencontresByCombat = DC.Deroulement.Rencontres.Where(r => r.combat.HasValue).ToLookup(r => r.combat.Value);
             var poulesByPhase = DC.Deroulement.Poules.ToLookup(p => p.phase);
             var participantsByPhase = DC.Deroulement.Participants.ToLookup(p => p.phase);

@@ -59,6 +59,8 @@
         Site_MenuProchainCombats = 116,
         Site_MenuEngagements = 117,
         Site_Engagements = 118,
-        Site_FooterScript = 119
+        Site_FooterScript = 119,
+
+        Site_Interne_EcranAppel = 1000
     }
 }
