@@ -33,7 +33,7 @@
                             FontWeight="DemiBold">
                     <telerik:RadTabControl.Items>
                         <telerik:RadTabItem Header="Site Public" IsSelected="True">
-                            <telerik:RadGridView ItemsSource="{Binding Generation.CompteursGeneration}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
+                            <telerik:RadGridView ItemsSource="{Binding GenerationSite.CompteursGeneration}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
                     CanUserDeleteRows="False" CanUserGroupColumns="False" CanUserInsertRows="False" ShowGroupPanel="False">
                                 <telerik:RadGridView.Columns>
                                     <telerik:GridViewDataColumn DataMemberBinding="{Binding Value.Libelle}" Header="Compteur" Width="180"/>
