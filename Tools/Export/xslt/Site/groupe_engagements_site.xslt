@@ -39,7 +39,7 @@
 
 	<xsl:variable name="selectedCompetition" select="/competitions/competition[@ID = $idcompetition]"/>
 
-
+	<!-- TODO Les configurations sont passées dans une balise dediee desormais -->
 	<xsl:variable select="$selectedCompetition/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
 	<xsl:variable select="$selectedCompetition/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
 	<xsl:variable select="$selectedCompetition/@EngagementsAbsents = 'true'" name="affEngagementsAbsents"/>

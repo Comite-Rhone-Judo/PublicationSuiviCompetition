@@ -6,7 +6,7 @@
 	<xsl:param name="imgPath" select="'img/site/'"/>
 	<xsl:param name="jsPath" select="'js/'"/>
 	<xsl:param name="cssPath" select="'style/site/'"/>
-
+	<!-- TODO A revoir completement, notamment la partie entete et la configuration -->
 	<xsl:param name="LayoutMode" select="'4'"/>
 	<xsl:param name="DureeRotation" select="'15'"/>
 	<xsl:param name="NbCombatsParPage" select="'6'"/>

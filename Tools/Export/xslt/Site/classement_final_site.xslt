@@ -22,7 +22,7 @@
 			<xsl:apply-templates/>
 		</html>
 	</xsl:template>
-
+	<!-- TODO Les configurations sont passées dans une balise dediee desormais -->
 	<xsl:variable select="/competition/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
 	<xsl:variable select="/competition/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
 	<xsl:variable select="/competition/@PublierEngagements = 'true'" name="affEngagements"/>

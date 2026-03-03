@@ -20,7 +20,6 @@
 
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
-
 	<xsl:variable name="couleur1" select="//competition/@couleur1"> </xsl:variable>
 	<xsl:variable name="couleur2" select="//competition/@couleur2"> </xsl:variable>
 	<xsl:variable name="idCompetition" select="//competition/@ID"> </xsl:variable>
@@ -33,6 +32,7 @@
 		</html>
 	</xsl:template>
 
+	<!-- TODO Les configurations sont passées dans une balise dediee desormais -->
 	<xsl:variable select="/competition/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
 	<xsl:variable select="/competition/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
 	<xsl:variable select="/competition/@PublierEngagements = 'true'" name="affEngagements"/>

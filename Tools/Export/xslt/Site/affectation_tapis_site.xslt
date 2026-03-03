@@ -24,6 +24,7 @@
 		</html>
 	</xsl:template>
 
+	<!-- TODO Les configurations sont passées dans une balise dediee desormais -->
 	<xsl:variable select="count(/competitions/competition[@PublierProchainsCombats = 'true']) > 0" name="affProchainCombats"/>
 	<xsl:variable select="count(/competitions/competition[@PublierAffectationTapis = 'true']) > 0" name="affAffectationTapis"/>
 	<xsl:variable select="count(/competitions/competition[@PublierEngagements = 'true']) > 0" name="affEngagements"/>
