@@ -55,7 +55,7 @@ namespace AppPublication.Export
 
             progress?.Report(BatchProgressInfo.Init(1));
 
-            ExportHTML.ToHTMLSite(ctx.DocCombats, exportType, savePath, xsltArgs);
+            ExportHTML.ToHTMLSite(ctx.ExportDocument, exportType, savePath, xsltArgs);
 
             output.Add(new FileWithChecksum($"{savePath}.html"));
 

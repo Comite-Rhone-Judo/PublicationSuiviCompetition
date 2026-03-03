@@ -128,7 +128,7 @@ namespace AppPublication.Export
                     var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, phaseParams.ToArray());
 
                     XDocument xmlResultat = ExportXML.CreateDocumentPhase(vueEpreuve, phase, DC);
-                    ctx.AddFullXmlContext(xmlResultat);
+                    ctx.EnrichWithFullContext(xmlResultat);
                     LogTools.DebugLogData(xmlResultat);
 
                     ExportHTML.ToHTMLSite(xmlResultat, exportType, savePath, xsltArgs);
@@ -148,7 +148,7 @@ namespace AppPublication.Export
                     var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, ("istapis", "epreuve"));
 
                     XDocument xmlFeuilleCombat = ExportXML.CreateDocumentFeuilleCombat(DC, phase, null);
-                    ctx.AddFullXmlContext(xmlFeuilleCombat);
+                    ctx.EnrichWithFullContext(xmlFeuilleCombat);
                     LogTools.DebugLogData(xmlFeuilleCombat);
 
                     ExportHTML.ToHTMLSite(xmlFeuilleCombat, exportType, savePath, xsltArgs);
@@ -199,7 +199,7 @@ namespace AppPublication.Export
                 XDocument xmlClassement = ExportXML.CreateDocumentEpreuve(DC, epreuve);
 
                 // 2. Enrichissement via le contexte (Porte la Config, les structures et les infos de publication)
-                ctx.AddFullXmlContext(xmlClassement);
+                ctx.EnrichWithFullContext(xmlClassement);
 
                 LogTools.DebugLogData(xmlClassement);
 
@@ -255,7 +255,7 @@ namespace AppPublication.Export
                 XDocument xmlAllTapis = ExportXML.CreateDocumentFeuilleCombat(DC, null, null);
 
                 // 2. Enrichissement via le contexte (PublicationInfo + Structures)
-                ctx.AddFullXmlContext(xmlAllTapis);
+                ctx.EnrichWithFullContext(xmlAllTapis);
 
                 LogTools.DebugLogData(xmlAllTapis);
 
@@ -292,7 +292,7 @@ namespace AppPublication.Export
 
                 // 2. Ajout de la CONFIGURATION uniquement (pas de structures de clubs/ligues)
                 // On suppose que cette méthode dans ctx injecte PublicationInfo et SiteConfiguration
-                ctx.AddConfigurationXmlContext(docIndex);
+                ctx.EnrichWithConfiguration(docIndex);
 
                 LogTools.DebugLogData(docIndex);
 
@@ -371,7 +371,7 @@ namespace AppPublication.Export
             XDocument docMenu = ExportXML.CreateDocumentMenu(DC, EDC, siteStructure);
 
             // 2. Ajout de la configuration contextuelle (infos de publication, etc.)
-            ctx.AddConfigurationXmlContext(docMenu);
+            ctx.EnrichWithConfiguration(docMenu);
             LogTools.DebugLogData(docMenu);
 
             // 3. Génération des menus de base (toujours présents)
@@ -393,7 +393,7 @@ namespace AppPublication.Export
             {
                 // Enrichissement lourd (structures géographiques, clubs) uniquement pour ce dernier fichier
                 // afin de ne pas alourdir inutilement le XML des menus précédents
-                ctx.AddFullXmlContext(docMenu);
+                ctx.EnrichWithFullContext(docMenu);
 
                 output.Add(GenerateMenuFile(ExportEnum.Site_MenuEngagements, targetDirectory, siteStructure, docMenu));
                 progress?.Report(BatchProgressInfo.Step(++currentStep));
@@ -432,7 +432,7 @@ namespace AppPublication.Export
 
                 // Génération du document et enrichissement via le contexte
                 XDocument docAffectation = ExportXML.CreateDocumentAffectationTapis(DC);
-                ctx.AddConfigurationXmlContext(docAffectation);
+                ctx.EnrichWithConfiguration(docAffectation);
 
                 LogTools.DebugLogData(docAffectation);
 
@@ -467,7 +467,7 @@ namespace AppPublication.Export
 
                 // On récupère le document des engagements depuis notre contexte unifié 
                 // au lieu d'utiliser une vieille variable globale de classe (_docEngagements)
-                XDocument docEngagements = ctx.DocEngagements;
+                XDocument docEngagements = ctx.ExportDocument;
 
                 int currentStep = 0;
 

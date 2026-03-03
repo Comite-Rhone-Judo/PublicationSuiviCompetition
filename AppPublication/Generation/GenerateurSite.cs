@@ -175,7 +175,7 @@ namespace AppPublication.Generation
                 _extendedJudoData.SyncAll(_snapshot);
 
                 // Initialise les donnees partagees de generation (ces donnees sont statiques et communes a toutes les taches)
-                _currentContext = ExportSharedContext.Instance(_snapshot, _extendedJudoData, _cfgExport);
+                _currentContext = ExportSharedContext.Create(_snapshot, _extendedJudoData, _cfgExport);
 
                 // Charge le contenu du fichier de checksum
                 LoadChecksumFichiersGeneres();

@@ -159,7 +159,7 @@ namespace AppPublication.Generation
                 _snapshot = _judoDataManager.Snapshot;
 
                 // Initialise les donnees partagees de generation (ces donnees sont statiques et communes a toutes les taches)
-                _currentContext = ExportSharedContextInterne.Instance(_snapshot, _cfgExport);
+                _currentContext = ExportSharedContextInterne.Create(_snapshot, _cfgExport);
             }
             else
             {

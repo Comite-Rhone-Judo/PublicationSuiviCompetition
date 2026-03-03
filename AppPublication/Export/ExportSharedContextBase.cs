@@ -1,89 +1,99 @@
-﻿using AppPublication.ExtensionNoyau;
-using KernelImpl;
+﻿using KernelImpl;
 using KernelImpl.Noyau.Structures;
-using System.Collections.Generic;
-using System.Xml;
 using System.Xml.Linq;
+using Tools.Export;
+using Tools.Logging;
 
 namespace AppPublication.Export
 {
-    public class ExportSharedContextBase
+    public abstract class ExportSharedContextBase
     {
-        #region MEMBRES
-        // Collections en lecture seule pour garantir le thread-safety lors de la lecture
+        #region PROPERTIES
+        // Référentiels de base
         public XElement Clubs { get; private set; }
         public XElement Comites { get; private set; }
         public XElement Secteurs { get; private set; }
         public XElement Ligues { get; private set; }
         public XElement Pays { get; private set; }
-
         public XElement Ceintures { get; private set; }
+
+        // Configuration spécifique remontée pour factorisation
+        public XElement SiteConfiguration { get; protected set; }
+
+        // Document principal généré (Unifie DocCombats et DocEngagements)
+        public XDocument ExportDocument { get; protected set; }
         #endregion
 
-        #region CONSTRUCTEURS
+        protected ExportSharedContextBase() { }
+
+        #region METHODES PUBLIQUES D'ENRICHISSEMENT (API EXTERNE)
+
         /// <summary>
-        /// Juste pour empecher la creation d'une instance a la volee
+        /// Enrichit le document avec toutes les informations (Structure de base + Configuration du site)
         /// </summary>
-        protected ExportSharedContextBase()
+        public virtual void EnrichWithFullContext(XDocument doc)
         {
+            EnrichWithBaseStructure(doc);
+            EnrichWithConfiguration(doc);
         }
 
         /// <summary>
-        /// Factory pour creer une instance initialisee
+        /// Enrichit le document uniquement avec les référentiels de base (Clubs, Comités, Ligues...)
         /// </summary>
-        /// <param name="DC"></param>
-        /// <param name="EDC"></param>
-        /// <returns></returns>
-        public static ExportSharedContextBase Instance(IJudoData DC, ExtendedJudoData EDC)
-        {
-            var output =  new ExportSharedContextBase();
-            output.Initialize(DC);
-
-            return output;
-        }
-
-        #endregion
-
-        #region METHODES PUBLIQUES
-        /// <summary>
-        /// Ajoute les informations de structure se trouvant dans le contexte d'export au document XML
-        /// </summary>
-        /// <param name="doc"></param>
-        public virtual void AddFullXmlContext(XDocument doc)
+        public void EnrichWithBaseStructure(XDocument doc)
         {
             if (doc?.Root == null) return;
 
-            // On regroupe les éléments dans un tableau pour un traitement propre
-            XElement[] structures = { Clubs, Comites, Ligues, Secteurs, Pays, Ceintures };
+            XElement[] elementsToInject = { Clubs, Comites, Ligues, Secteurs, Pays, Ceintures };
 
-            foreach (XElement structure in structures)
+            foreach (XElement element in elementsToInject)
             {
-                // 1. On s'assure que la propriété du contexte n'est pas null
-                // 2. On vérifie qu'un élément du même nom n'existe pas déjà à la racine du document
-                if (structure != null && doc.Root?.Element(structure.Name) == null)
+                if (element != null && doc.Root.Element(element.Name) == null)
                 {
-                    doc.Root?.Add(structure);
+                    doc.Root.Add(element);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Enrichit le document uniquement avec la configuration spécifique du site
+        /// </summary>
+        public void EnrichWithConfiguration(XDocument doc)
+        {
+            if (doc?.Root == null || SiteConfiguration == null) return;
+
+            if (doc.Root.Element(SiteConfiguration.Name) == null)
+            {
+                doc.Root.Add(SiteConfiguration);
             }
         }
 
         #endregion
 
-        #region METHODES PRIVEES
+        #region PIPELINE D'INITIALISATION
         /// <summary>
-        /// Initialisation interne
+        /// Workflow centralisé garantissant l'ordre d'initialisation pour toutes les classes filles.
         /// </summary>
-        /// <param name="DC"></param>
-        /// <param name="EDC"></param>
-        protected virtual void Initialize(IJudoData DC)
+        protected void ExecuteExportPipeline(IJudoData DC, XElement configXml, XDocument generatedDoc)
         {
+            // 1. Chargement des référentiels
             Clubs = ExportXML.GetClubs(DC);
             Comites = ExportXML.GetComites(DC);
             Secteurs = ExportXML.GetSecteurs(DC);
             Ligues = ExportXML.GetLigues(DC);
             Pays = ExportXML.GetPays(DC);
             Ceintures = ExportXML.GetCeintures(DC);
-        }  
+
+            // 2. Assignation des spécificités transmises par l'enfant
+            SiteConfiguration = configXml;
+            ExportDocument = generatedDoc;
+
+            // 3. Enrichissement automatique du document généré
+            EnrichWithFullContext(ExportDocument);
+
+            // 4. Log
+            LogTools.DebugLogData(ExportDocument);
+        }
         #endregion
     }
 }
