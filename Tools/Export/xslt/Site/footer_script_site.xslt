@@ -9,10 +9,10 @@
 		<xsl:variable name="apos">'</xsl:variable>
 		<!-- TODO Les configurations sont passées dans une balise dediee desormais -->
 		<xsl:variable name="version">
-			<xsl:value-of select="/competitions/competition[1]/@AppVersion"/>
+			<xsl:value-of select="/SiteConfiguration/@AppVersion"/>
 		</xsl:variable>
 		<xsl:variable name="dateGeneration">
-			<xsl:value-of select="/competitions/competition[1]/@DateGeneration"/>
+			<xsl:value-of select="/SiteConfiguration/@DateGeneration"/>
 		</xsl:variable>
 		
 		<xsl:value-of select="concat('document.write(',$apos,'v',$version,' - Dernière actualisation: ', $dateGeneration,$apos,');')"/>

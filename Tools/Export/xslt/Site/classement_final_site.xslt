@@ -23,11 +23,11 @@
 		</html>
 	</xsl:template>
 	<!-- TODO Les configurations sont passées dans une balise dediee desormais -->
-	<xsl:variable select="/competition/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
-	<xsl:variable select="/competition/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
-	<xsl:variable select="/competition/@PublierEngagements = 'true'" name="affEngagements"/>
-	<xsl:variable select="/competition/@DelaiActualisationClientSec" name="delayActualisationClient"/>
-	<xsl:variable select="/competition/@Logo" name="logo"/>
+	<xsl:variable select="/SiteConfiguration/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
+	<xsl:variable select="/SiteConfiguration/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
+	<xsl:variable select="/SiteConfiguration/@PublierEngagements = 'true'" name="affEngagements"/>
+	<xsl:variable select="/SiteConfiguration/@DelaiActualisationClientSec" name="delayActualisationClient"/>
+	<xsl:variable select="/SiteConfiguration/@Logo" name="logo"/>
 	<xsl:variable name="typeCompetition" select="/competition/@type"/>
 
 	<xsl:template match="/*">

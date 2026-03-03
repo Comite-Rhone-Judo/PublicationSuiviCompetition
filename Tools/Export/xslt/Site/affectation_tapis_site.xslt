@@ -25,12 +25,11 @@
 	</xsl:template>
 
 	<!-- TODO Les configurations sont passées dans une balise dediee desormais -->
-	<xsl:variable select="count(/competitions/competition[@PublierProchainsCombats = 'true']) > 0" name="affProchainCombats"/>
-	<xsl:variable select="count(/competitions/competition[@PublierAffectationTapis = 'true']) > 0" name="affAffectationTapis"/>
-	<xsl:variable select="count(/competitions/competition[@PublierEngagements = 'true']) > 0" name="affEngagements"/>
-	<xsl:variable select="sum(/competitions/competition/@DelaiActualisationClientSec) div count(/competitions/competition)" name="delayActualisationClient"/>
-	<xsl:variable select="/competitions/competition[1]/@Logo" name="logo"/>
-
+	<xsl:variable select="/SiteConfiguration/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
+	<xsl:variable select="/SiteConfiguration/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
+	<xsl:variable select="/SiteConfiguration/@PublierEngagements = 'true'" name="affEngagements"/>
+	<xsl:variable select="/SiteConfiguration/@DelaiActualisationClientSec" name="delayActualisationClient"/>
+	<xsl:variable select="/SiteConfiguration/@Logo" name="logo"/>
 	<xsl:template match="/*">
 		<!-- ENTETE HTML -->
 		<head>

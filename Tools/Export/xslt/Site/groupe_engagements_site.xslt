@@ -40,16 +40,18 @@
 	<xsl:variable name="selectedCompetition" select="/competitions/competition[@ID = $idcompetition]"/>
 
 	<!-- TODO Les configurations sont passées dans une balise dediee desormais -->
-	<xsl:variable select="$selectedCompetition/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
-	<xsl:variable select="$selectedCompetition/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
-	<xsl:variable select="$selectedCompetition/@EngagementsAbsents = 'true'" name="affEngagementsAbsents"/>
-	<xsl:variable select="$selectedCompetition/@EngagementsTousCombats = 'true'" name="affTousCombats"/>
-	<xsl:variable select="$selectedCompetition/@EngagementsScoreGP = 'true'" name="affscoreGP"/>
-	<xsl:variable select="$selectedCompetition/@EngagementsPositionCombat = 'true'" name="affPositionCombat"/>
-	<xsl:variable select="$selectedCompetition/@DelaiActualisationClientSec" name="delayActualisationClient"/>
-	<xsl:variable select="$selectedCompetition/@kinzas = 'Oui'" name="affKinzas"/>
+	<xsl:variable select="/SiteConfiguration/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
+	<xsl:variable select="/SiteConfiguration/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
+	<xsl:variable select="/SiteConfiguration/@EngagementsAbsents = 'true'" name="affEngagementsAbsents"/>
+	<xsl:variable select="/SiteConfiguration/@EngagementsTousCombats = 'true'" name="affTousCombats"/>
+	<xsl:variable select="/SiteConfiguration/@EngagementsScoreGP = 'true'" name="affscoreGP"/>
+	<xsl:variable select="/SiteConfiguration/@EngagementsPositionCombat = 'true'" name="affPositionCombat"/>
+	<xsl:variable select="/SiteConfiguration/@DelaiActualisationClientSec" name="delayActualisationClient"/>
+	<xsl:variable select="/SiteConfiguration/@kinzas = 'Oui'" name="affKinzas"/>
+	
 	<xsl:variable select="$selectedCompetition/@type" name="typeCompetition"/>
-	<xsl:variable select="/competitions/competition[1]/@Logo" name="logo"/>
+	
+	<xsl:variable select="/SiteConfiguration/@Logo" name="logo"/>
 
 	<!-- En jujitsu, on affiche la discpline -->
 	<xsl:variable select="$selectedCompetition/@discipline != 'C_COMPETITION'" name="affDiscipline"/>
