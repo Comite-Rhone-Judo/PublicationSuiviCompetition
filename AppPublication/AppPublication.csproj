@@ -135,6 +135,7 @@
     </Compile>
     <Compile Include="Config\Generation\EcransAppelConfigElementCollection.cs" />
     <Compile Include="Config\Generation\EcransAppelConfigElement.cs" />
+    <Compile Include="Config\Generation\GenerateurSiteInterneConfigElement.cs" />
     <Compile Include="Config\Generation\GenerateurSiteConfigElement.cs" />
     <Compile Include="Config\Publication\GeneralConfigElement.cs" />
     <Compile Include="Config\Publication\SchedulerConfigElement.cs" />

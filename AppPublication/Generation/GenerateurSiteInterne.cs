@@ -27,7 +27,6 @@ namespace AppPublication.Generation
         // Les gestionnaires
         private IJudoDataManager _judoDataManager;                  // Le gestionnaire de données interne
         private IJudoData _snapshot;                                // Le snapshot des données 
-        private IProgress<OperationProgress> _progressHandler;      // Utilise pour le suivi de progression
 
         EcranCollectionManager _ecransAppel;                        // La configuration des ecrans d'appel (pour les combats)
 
@@ -83,10 +82,10 @@ namespace AppPublication.Generation
 
         #region CONSTRUCTEURS
 
-        public GenerateurSiteInterne(IJudoDataManager dataManager, IProgress<OperationProgress> progressHandler)
+        public GenerateurSiteInterne(IJudoDataManager dataManager, EcranCollectionManager ecransAppel, IProgress<OperationProgress> progressHandler)
         {
             _judoDataManager = dataManager ?? throw new ArgumentNullException(nameof(dataManager));
-            _progressHandler = progressHandler;
+            _ecransAppel = ecransAppel;
 
             try
             {
@@ -191,20 +190,26 @@ namespace AppPublication.Generation
             }
 
             // Si pas de donnees, pas la peine de continuer
-            if (_snapshot.Organisation.Competitions.Count > 0)
+            if (_snapshot.Organisation.Competitions.Count > 0 && _ecransAppel != null)
             {
                 try
                 {
                     // Ok, a partir d'ici on peut lancer les tasks dans le batcher
-                    ExportSite<ExportSharedContextInterne> exporter = new ExportSite<ExportSharedContextInterne>(_currentContext);     // L'exporteur
+                    ExportSiteInterne<ExportSharedContextInterne> exporter = new ExportSiteInterne<ExportSharedContextInterne>(_currentContext);     // L'exporteur
 
-                    /*
+                    foreach (var ecran in _ecransAppel.Ecrans)
+                    {
+                        _taskBatcher.AddWork(p =>
+                        {
+                            return exporter.GenereEcranAppel(_snapshot, _currentContext, _structureRepertoiresSiteInterne, ecran, p);
+                        });
+                    }
+
+                    // et on ajoute le traitement par default
                     _taskBatcher.AddWork(p =>
                     {
-                        return exporter.GenereWebSiteIndex(_snapshot, _cfgExport, _structureRepertoiresSite, p);
+                        return exporter.GenereEcranAppel(_snapshot, _currentContext, _structureRepertoiresSiteInterne, _ecransAppel.Default, p);
                     });
-                    */
-
 
                     // Attend la fin de tous les batchs
                     output = _taskBatcher.WaitAllAndGetResults();
@@ -216,7 +221,7 @@ namespace AppPublication.Generation
             }
             else
             {
-                LogTools.Logger.Debug("Aucune competition presente dans le snapshot, generation avortee");
+                LogTools.Logger.Debug("Aucune competition presente dans le snapshot ou aucun ecrans d'appel configures, generation avortee");
             }
 
             _checksumGenere = output;

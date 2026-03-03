@@ -81,8 +81,6 @@ namespace AppPublication.Export
             }
         }
 
-
-
         #endregion
 
         #region METHODES PRIVEES

@@ -13,11 +13,6 @@ namespace AppPublication.Models.EcransAppel
             set { _compteurGlobal = value; }
         }
 
-        public static int GetNextId()
-        {
-            return _compteurGlobal++;
-        }
-
         public int Id { get; set; }
         public string Description { get; set; }
         public string Hostname { get; set; }
@@ -26,14 +21,14 @@ namespace AppPublication.Models.EcransAppel
 
         public int Groupement { get; set; }
 
-        public EcranAppelModel()
+        public EcranAppelModel(int id = 0, string description = "Nouvel Écran", string hostname = "", IPAddress adresseIP = null, List<int> tapisIds = null, int groupement = 1)
         {
-            Id = GetNextId();
-            TapisIds = new List<int>();
-            Description = "Nouvel Écran";
-            Hostname = string.Empty;
-            AdresseIP = IPAddress.None;
-            Groupement = 1;
+            Id = id;
+            Description = description;
+            Hostname = hostname;
+            AdresseIP = adresseIP ?? IPAddress.None;
+            TapisIds = tapisIds ?? new List<int>();
+            Groupement = groupement;
         }
     }
 }

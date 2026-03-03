@@ -255,16 +255,31 @@
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"/>
-                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="41.135"/>
-                            <ColumnDefinition Width="394.764"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
                             <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Text="Écrans d'appel" Style="{StaticResource Header1TextStyle}" Margin="5,5,0,5" Grid.ColumnSpan="2"/>
-                        <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Left" Margin="326,5,0,5">
+                        <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Text="Écrans d'appel" Style="{StaticResource Header1TextStyle}" Margin="5 5 0 5"/>
+                        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="0 0 0 0">
+                            <StackPanel Orientation="Horizontal" Margin="0 0 0 0">
+                                <Label  HorizontalAlignment="Right" Content="Déroulement:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
+                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en sec. de déroulement des informations."/>
+                                <telerik:RadNumericUpDown  Value="{Binding GestionnaireSiteInterne.DelaiDeroulementSec}" Width="100" Height="20" Minimum="1" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="10 0 0 0"/>
+                                <Label HorizontalAlignment="Right" Content="Sec." Style="{StaticResource LabelStyle}" />
+                            </StackPanel>
+                            <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
+                            <StackPanel Orientation="Horizontal" Margin="0 0 0 0">
+                                <Label  HorizontalAlignment="Right" Content="Profondeur:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
+                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Nb de combats a afficher dans la chambre d'appel"/>
+                                <telerik:RadNumericUpDown  Value="{Binding GestionnaireSiteInterne.NbProchainsCombats}" Width="100" Height="20" Minimum="1" Maximum="10" SmallChange="1" HideTrailingZeros="True" Margin="10 0 0 0"/>
+
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,5">
                             <telerik:RadButton Command="{Binding GestionnaireSiteInterne.ConfigurationEcransViewModel.CmdAjouterEcran}" 
                                    Style="{StaticResource RadButtonStyle1}"
                                    telerik:StyleManager.Theme="Expression_Dark"

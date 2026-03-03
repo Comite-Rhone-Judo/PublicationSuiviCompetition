@@ -148,7 +148,7 @@
     <Compile Include="Enum\TypeExportSiteEnum.cs" />
     <Compile Include="Enum\QualifieEnum.cs" />
     <Compile Include="Enum\TypeCSAEnum.cs" />
-    <Compile Include="Export\ConfigurationExportSite_.cs" />
+    <Compile Include="Export\ConfigurationExportSite.cs" />
     <Compile Include="Export\ConfigurationExportSiteInterne.cs" />
     <Compile Include="Export\ExportHTML.cs" />
     <Compile Include="Export\ExportSiteInterneStructure.cs" />

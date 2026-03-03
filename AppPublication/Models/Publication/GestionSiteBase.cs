@@ -47,7 +47,7 @@ namespace AppPublication.Models.Publication
             {
                 if (value != _repertoireRacine)
                 {
-                    PublicationConfigSection.Instance.General.RepertoireRacine = (_repertoireRacine = value);
+                    _repertoireRacine = value;
                     NotifyPropertyChanged();
                     OnRepertoireRacineChanged(value); // Hook pour propager aux structures enfants
                 }
@@ -67,7 +67,6 @@ namespace AppPublication.Models.Publication
                 {
                     _selectedLogo = value;
                     string logoName = (value != null) ? value.Name : string.Empty;
-                    PublicationConfigSection.Instance.General.Logo = logoName;
                     OnSelectedLogoChanged(logoName); // Hook pour propager au générateur
                     NotifyPropertyChanged();
                 }

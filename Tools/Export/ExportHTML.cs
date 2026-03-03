@@ -17,7 +17,7 @@ namespace Tools.Export
         // Dictionnaire pour mettre en cache les XSLT compilés
         private static readonly ConcurrentDictionary<string, Lazy<XslCompiledTransform>> _xsltCache = new ConcurrentDictionary<string, Lazy<XslCompiledTransform>>();
 
-        public static void ToHTMLSite(XDocument xml, ExportEnum export_type, string fileSave, XsltArgumentList argsList, string fileExtension = "html", bool useCache = false)
+        public static void ToHTMLSite(XDocument xml, ExportEnum export_type, string fileSave, XsltArgumentList argsList, string fileExtension = "html", bool useCache = true)
         {
             string xslt = ExportTools.GetXsltSite(export_type);
             ExportHTML.ToHTML(xml, fileSave, argsList, xslt, fileExtension, useCache);

@@ -10,6 +10,8 @@ namespace AppPublication.Models.EcransAppel
         // Cache interne pour la valeur de l'ID le plus élevé
         private int _lastId;
 
+        private EcranAppelModel _default;
+
         // La collection observable pour le binding UI
         public ObservableCollection<EcranAppelModel> Ecrans { get; private set; }
 
@@ -19,10 +21,36 @@ namespace AppPublication.Models.EcransAppel
         // Calcul du prochain ID disponible
         public int NextId => _lastId + 1;
 
+        // Le nombre de tapis de la competition, utilisé pour la validation des écrans d'appel
+        private int _nbTapis = 0;
+        public int NbTapis { get
+            {
+                return _nbTapis;
+            }
+            set {
+                if (_nbTapis != value)
+                {
+                    _nbTapis = value;
+                    // Actualise les tapis par défaut pour l'écran d'appel par défaut
+                    if (_default != null)
+                    {
+                        _default.TapisIds = Enumerable.Range(1, _nbTapis).ToList();
+                    }
+                }
+            }
+        }
+
         public EcranCollectionManager()
         {
             Ecrans = new ObservableCollection<EcranAppelModel>();
             _lastId = 0;
+            _default = new EcranAppelModel
+            {
+                Id = -1,
+                Description = "Ecran par défaut",
+                Groupement = 1,
+                TapisIds = Enumerable.Range(1, NbTapis).ToList()
+            };
         }
 
         /// <summary>
@@ -42,6 +70,14 @@ namespace AppPublication.Models.EcransAppel
             _lastId = nouvelEcran.Id;
 
             return nouvelEcran;
+        }
+
+        public EcranAppelModel Default
+        {
+            get
+            {
+                return _default;
+            }
         }
 
         /// <summary>

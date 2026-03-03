@@ -28,7 +28,6 @@ namespace AppPublication.Generation
         private IJudoData _snapshot;                                // Le snapshot des données 
         private ExtendedJudoData _extendedJudoData;
         private MiniSite _site = null;                              // Le site a utilise pour le upload a distance
-        private IProgress<OperationProgress> _progressHandler;      // Utilise pour le suivi de progression
         private ExportSharedContext _currentContext = null;         // Le contexte de generation courant (a passer aux taches de generation)
 
         // La structure du site
@@ -93,8 +92,7 @@ namespace AppPublication.Generation
         {
             _judoDataManager = dataManager ?? throw new ArgumentNullException(nameof(dataManager));
             _extendedJudoData = new ExtendedJudoData() ?? throw new NullReferenceException(nameof(_extendedJudoData));
-            _progressHandler = progressHandler;
-            _site = siteDistant;
+            SiteProvider = siteDistant;
 
             try
             {

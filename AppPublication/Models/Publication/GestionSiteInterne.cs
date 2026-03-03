@@ -28,7 +28,7 @@ namespace AppPublication.Models.Publication
         #endregion
 
         #region MEMBRES
-        private GenerateurSiteInterne _generateurSiteInterne = null;                // Le generateur Site
+        private GenerateurSiteInterne _generateurSite = null;                // Le generateur Site
         private ExportSiteInterneStructure _structureRepertoiresSiteInterne;        // La structure de repertoire d'export du site prive
         private ExportSiteInterneUrls _structureSiteInterne;                        // la structure d'export du site interne
         private EcranCollectionManager _ecransAppel = new EcranCollectionManager(); // La configuration des écrans d'appels
@@ -52,10 +52,10 @@ namespace AppPublication.Models.Publication
                 _siteLocal.RegisterContext(_ecransAppel);
 
                 // Le generateur de site interne
-                _generateurSiteInterne = new GenerateurSiteInterne(_judoDataManager, _progressHandler);
+                _generateurSite = new GenerateurSiteInterne(_judoDataManager, _ecransAppel, _progressHandler);
 
                 // Initialise le scheduler de generation de site interne
-                _schedulerSite = new GenerationScheduler(_statMgr.GenerationSiteInterne, null, _generateurSiteInterne);
+                _schedulerSite = new GenerationScheduler(_statMgr.GenerationSiteInterne, null, _generateurSite);
                 _schedulerSite.StateChanged += OnSchedulerSiteStateChanged;
             }
             catch (Exception ex)
@@ -112,10 +112,49 @@ namespace AppPublication.Models.Publication
                     _nbTapis = value;
                     // RAZ le viewModel des ecrans d'appel, cela forcera la recreation avec le nouveau nombre de tapis en cas de nouvelle configuration
                     _cfgEcransAppelViewModel = null;
+                    _ecransAppel.NbTapis = _nbTapis;    // Propage la valeur au gestionnaire des ecrans d'appel
                     NotifyPropertyChanged();
                 }
             }
         }
+
+        private int _delaiDeroulementSec = 10;
+        /// <summary>
+        /// Delai de deroulement des ecrans d'appel en secondes
+        /// </summary>
+        public int DelaiDeroulementSec
+        {
+            get { return _delaiDeroulementSec; }
+            set
+            {
+                if (_delaiDeroulementSec != value)
+                {
+                    _generateurSite.ConfigurationGeneration.DelaiDeroulementSec = (_delaiDeroulementSec = value);
+                    GenerationConfigSection.Instance.GenerateurSiteInterne.DelaiDeroulementSec = _delaiDeroulementSec;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private int _nbProchainsCombats = 6;
+        /// <summary>
+        /// Nb de prochains combats a publier pour la chambre d'appel
+        /// </summary>
+        public int NbProchainsCombats
+        {
+            get { return _nbProchainsCombats; }
+            set
+            {
+                if (_nbProchainsCombats != value)
+                {
+                    // Propage la valeur au generateur de site
+                    _generateurSite.ConfigurationGeneration.NbProchainsCombats = (_nbProchainsCombats = value);
+                    GenerationConfigSection.Instance.GenerateurSiteInterne.NbProchainsCombats = _nbProchainsCombats;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         #endregion
 
         #region IMPLEMENTATION DES HOOKS (Classe de Base)
@@ -153,8 +192,8 @@ namespace AppPublication.Models.Publication
             _structureSiteInterne = new ExportSiteInterneUrls(_structureRepertoiresSiteInterne);
 
             // Propage la valeur au generateur de site
-            if (_generateurSiteInterne != null)
-                _generateurSiteInterne.StructureRepertoire = _structureRepertoiresSiteInterne;
+            if (_generateurSite != null)
+                _generateurSite.StructureRepertoire = _structureRepertoiresSiteInterne;
 
             // Met a jour les repertoires de l'application (Interne)
             if (_structureRepertoiresSiteInterne != null)
@@ -170,8 +209,8 @@ namespace AppPublication.Models.Publication
         protected override void OnSelectedLogoChanged(string logoName)
         {
             // Propage la valeur au generateur de site interne
-            if (_generateurSiteInterne != null)
-                _generateurSiteInterne.ConfigurationGeneration.Logo = logoName;
+            if (_generateurSite != null)
+                _generateurSite.ConfigurationGeneration.Logo = logoName;
         }
 
         protected override void OnInterfaceLocalPublicationChanged()
@@ -210,7 +249,8 @@ namespace AppPublication.Models.Publication
             try
             {
                 // Chargement des Ecrans depuis la Config vers le Modèle Runtime
-                _ecransAppel = new EcranCollectionManager();
+                if (_ecransAppel == null) throw new ArgumentNullException("La liste des ecrans d'appel est null");
+
                 if (GenerationConfigSection.Instance?.Ecrans != null)
                 {
                     foreach (EcransAppelConfigElement cfg in GenerationConfigSection.Instance.Ecrans)
