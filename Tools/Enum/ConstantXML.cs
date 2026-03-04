@@ -9,6 +9,8 @@
         public const string Command = "command";
         public const string Valeur = "valeur";
         public const string Tapis = "tapis";
+
+        public const string DocRoot = "docroot";
         public const string Competitions = "competitions";
         public const string Transmis = "transmis";
         public const string NonTransmis = "nontransmis";

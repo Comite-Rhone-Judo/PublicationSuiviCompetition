@@ -211,14 +211,14 @@ namespace AppPublication.Export
         {
             // On construit l'arbre entier, la racine et les enfants en une seule passe
             return new XDocument(
-                new XElement(ConstantXML.Competitions,
-
-                    // On stream directement depuis la base vers les éléments XML
-                    DC.Organisation.Competitions
-                      .AsEnumerable()
-                      .Select(competition => competition.ToXmlInformations())
+                new XElement(ConstantXML.DocRoot,
+                   new XElement(ConstantXML.Competitions,
+                        // On stream directement depuis la base vers les éléments XML
+                        DC.Organisation.Competitions
+                          .AsEnumerable()
+                          .Select(competition => competition.ToXmlInformations())
                 )
-            );
+            ));
         }
 
         /// <summary>
@@ -233,68 +233,69 @@ namespace AppPublication.Export
 
             // 2. Construction fonctionnelle globale de l'arbre
             return new XDocument(
-                new XElement(ConstantXML.Competitions,
+                new XElement(ConstantXML.DocRoot,
+                    new XElement(ConstantXML.Competitions,
 
-                    // Boucle principale transformée en projection LINQ
-                    DC.Organisation.Competitions.ToList().Select(competition =>
-                    {
-                        // On récupère l'élément racine de la compétition
-                        XElement xcompetition = competition.ToXmlInformations();
-
-                        // --- A. Ajout des Tapis ---
-                        // Enumerable.Range permet de remplacer une boucle "for" de manière élégante
-                        xcompetition.Add(
-                            Enumerable.Range(0, competition.nbTapis + 1)
-                                      .Select(i => new XElement(ConstantXML.Tapis,
-                                                       new XAttribute(ConstantXML.Tapis, i)))
-                        );
-
-                        // --- B. Ajout des Epreuves ---
-                        IEnumerable<i_vue_epreuve_interface> epreuves_compet = competition.IsEquipe()
-                            ? DC.Organisation.VueEpreuveEquipes.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>()
-                            : DC.Organisation.VueEpreuves.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>();
-
-                        xcompetition.Add(
-                            epreuves_compet
-                                // On filtre en utilisant la liste en MÉMOIRE (phasesInMem)
-                                .Where(ep => phasesInMem.Any(o => o.epreuve == ep.id && o.etat > (int)EtatPhaseEnum.Cree))
-                                .Select(ep =>
-                                {
-                                    XElement xepreuve = ep.ToXml(DC);
-                                    xepreuve.SetAttributeValue(ConstantXML.Directory, siteStructure.RepertoireEpreuve(ep.id.ToString(), ep.nom, true));
-
-                                    // Ajout de la balise Phases avec les données EN MÉMOIRE
-                                    xepreuve.Add(new XElement(ConstantXML.Phases,
-                                        phasesInMem.Where(o => o.epreuve == ep.id)
-                                                   .Select(phase => phase.ToXml())
-                                    ));
-
-                                    return xepreuve;
-                                })
-                        );
-
-                        // --- C. Ajout des Groupes d'engagements ---
-                        // Sécurité : On vérifie que la compétition existe dans le dictionnaire avant d'y accéder
-                        if (EDC.Engagement.TypesGroupes.TryGetValue(competition.id, out var typesGroupes))
+                        // Boucle principale transformée en projection LINQ
+                        DC.Organisation.Competitions.ToList().Select(competition =>
                         {
+                            // On récupère l'élément racine de la compétition
+                            XElement xcompetition = competition.ToXmlInformations();
+
+                            // --- A. Ajout des Tapis ---
+                            // Enumerable.Range permet de remplacer une boucle "for" de manière élégante
                             xcompetition.Add(
-                                typesGroupes.Select(typeGroupe =>
-                                    new XElement(ConstantXML.GroupeEngagements_groupes,
-                                        new XAttribute(ConstantXML.GroupeEngagements_type, (int)typeGroupe),
-
-                                        // On injecte les groupes directement à l'intérieur
-                                        EDC.Engagement.GroupesEngages
-                                            .Where(g => g.Competition == competition.id && g.Type == (int)typeGroupe)
-                                            .Select(grp => grp.ToXml())
-                                    )
-                                )
+                                Enumerable.Range(0, competition.nbTapis + 1)
+                                          .Select(i => new XElement(ConstantXML.Tapis,
+                                                           new XAttribute(ConstantXML.Tapis, i)))
                             );
-                        }
 
-                        return xcompetition;
-                    })
-                )
-            );
+                            // --- B. Ajout des Epreuves ---
+                            IEnumerable<i_vue_epreuve_interface> epreuves_compet = competition.IsEquipe()
+                                ? DC.Organisation.VueEpreuveEquipes.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>()
+                                : DC.Organisation.VueEpreuves.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>();
+
+                            xcompetition.Add(
+                                epreuves_compet
+                                    // On filtre en utilisant la liste en MÉMOIRE (phasesInMem)
+                                    .Where(ep => phasesInMem.Any(o => o.epreuve == ep.id && o.etat > (int)EtatPhaseEnum.Cree))
+                                    .Select(ep =>
+                                    {
+                                        XElement xepreuve = ep.ToXml(DC);
+                                        xepreuve.SetAttributeValue(ConstantXML.Directory, siteStructure.RepertoireEpreuve(ep.id.ToString(), ep.nom, true));
+
+                                        // Ajout de la balise Phases avec les données EN MÉMOIRE
+                                        xepreuve.Add(new XElement(ConstantXML.Phases,
+                                            phasesInMem.Where(o => o.epreuve == ep.id)
+                                                       .Select(phase => phase.ToXml())
+                                        ));
+
+                                        return xepreuve;
+                                    })
+                            );
+
+                            // --- C. Ajout des Groupes d'engagements ---
+                            // Sécurité : On vérifie que la compétition existe dans le dictionnaire avant d'y accéder
+                            if (EDC.Engagement.TypesGroupes.TryGetValue(competition.id, out var typesGroupes))
+                            {
+                                xcompetition.Add(
+                                    typesGroupes.Select(typeGroupe =>
+                                        new XElement(ConstantXML.GroupeEngagements_groupes,
+                                            new XAttribute(ConstantXML.GroupeEngagements_type, (int)typeGroupe),
+
+                                            // On injecte les groupes directement à l'intérieur
+                                            EDC.Engagement.GroupesEngages
+                                                .Where(g => g.Competition == competition.id && g.Type == (int)typeGroupe)
+                                                .Select(grp => grp.ToXml())
+                                        )
+                                    )
+                                );
+                            }
+
+                            return xcompetition;
+                        })
+                    )
+            ));
         }
 
 
@@ -307,82 +308,83 @@ namespace AppPublication.Export
         public static XDocument CreateDocumentEngagements(IJudoData DC, ExtendedJudoData EDC)
         {
             return new XDocument(
-                new XElement(ConstantXML.Competitions,
+                new XElement(ConstantXML.DocRoot,
+                    new XElement(ConstantXML.Competitions,
 
-                    // 1. On filtre DÈS LE DÉPART (on ne génère le XML que pour les compétitions valides)
-                    DC.Organisation.Competitions
-                      .Where(c => c.IsShiai() || c.IsIndividuelle())
-                      .Select(competition =>
-                      {
-                          // On récupère la base de la compétition
-                          XElement xcompetition = competition.ToXmlInformations();
-
-                          // --- A. Ajout des Groupes ---
-                          // TryGetValue protège contre une exception si la compétition n'a pas de types de groupes définis
-                          if (EDC.Engagement.TypesGroupes.TryGetValue(competition.id, out var typesGroupes))
+                        // 1. On filtre DÈS LE DÉPART (on ne génère le XML que pour les compétitions valides)
+                        DC.Organisation.Competitions
+                          .Where(c => c.IsShiai() || c.IsIndividuelle())
+                          .Select(competition =>
                           {
-                              xcompetition.Add(
-                                  typesGroupes.Select(typeGroupe =>
-                                      new XElement(ConstantXML.GroupeEngagements_groupes,
-                                          new XAttribute(ConstantXML.GroupeEngagements_type, (int)typeGroupe),
+                              // On récupère la base de la compétition
+                              XElement xcompetition = competition.ToXmlInformations();
 
-                                          EDC.Engagement.GroupesEngages
-                                              .Where(g => g.Competition == competition.id && g.Type == (int)typeGroupe)
-                                              .Select(groupe => groupe.ToXml())
+                              // --- A. Ajout des Groupes ---
+                              // TryGetValue protège contre une exception si la compétition n'a pas de types de groupes définis
+                              if (EDC.Engagement.TypesGroupes.TryGetValue(competition.id, out var typesGroupes))
+                              {
+                                  xcompetition.Add(
+                                      typesGroupes.Select(typeGroupe =>
+                                          new XElement(ConstantXML.GroupeEngagements_groupes,
+                                              new XAttribute(ConstantXML.GroupeEngagements_type, (int)typeGroupe),
+
+                                              EDC.Engagement.GroupesEngages
+                                                  .Where(g => g.Competition == competition.id && g.Type == (int)typeGroupe)
+                                                  .Select(groupe => groupe.ToXml())
+                                          )
                                       )
+                                  );
+                              }
+
+                              // --- B. Ajout des Judokas ---
+                              xcompetition.Add(
+                                  new XElement(ConstantXML.GroupeEngagements_judokas,
+                                      DC.Participants.Vuejudokas
+                                          .Where(vj => vj.idcompet == competition.id)
+                                          .Select(vj => vj.ToXml())
                                   )
                               );
-                          }
 
-                          // --- B. Ajout des Judokas ---
-                          xcompetition.Add(
-                              new XElement(ConstantXML.GroupeEngagements_judokas,
-                                  DC.Participants.Vuejudokas
-                                      .Where(vj => vj.idcompet == competition.id)
-                                      .Select(vj => vj.ToXml())
-                              )
-                          );
+                              // --- C. Ajout des Epreuves ---
+                              // On matérialise la liste (ToList) car on va la réutiliser juste en dessous pour la jointure
+                              var epreuves = DC.Organisation.Epreuves
+                                               .Where(ep => ep.competition == competition.id)
+                                               .ToList();
 
-                          // --- C. Ajout des Epreuves ---
-                          // On matérialise la liste (ToList) car on va la réutiliser juste en dessous pour la jointure
-                          var epreuves = DC.Organisation.Epreuves
-                                           .Where(ep => ep.competition == competition.id)
-                                           .ToList();
+                              xcompetition.Add(
+                                  new XElement(ConstantXML.GroupeEngagements_epreuves,
+                                      epreuves.Select(ep => ep.ToXml(DC))
+                                  )
+                              );
 
-                          xcompetition.Add(
-                              new XElement(ConstantXML.GroupeEngagements_epreuves,
-                                  epreuves.Select(ep => ep.ToXml(DC))
-                              )
-                          );
+                              // --- D. Ajout des Phases ---
+                              // On matérialise la liste des phases car on va la réutiliser pour la jointure des combats
+                              var phases = DC.Deroulement.Phases
+                                             .Join(epreuves, p => p.epreuve, e => e.id, (p, e) => p)
+                                             .ToList();
 
-                          // --- D. Ajout des Phases ---
-                          // On matérialise la liste des phases car on va la réutiliser pour la jointure des combats
-                          var phases = DC.Deroulement.Phases
-                                         .Join(epreuves, p => p.epreuve, e => e.id, (p, e) => p)
-                                         .ToList();
+                              xcompetition.Add(
+                                  new XElement(ConstantXML.Phases,
+                                      phases.Select(ph => ph.ToXml())
+                                  )
+                              );
 
-                          xcompetition.Add(
-                              new XElement(ConstantXML.Phases,
-                                  phases.Select(ph => ph.ToXml())
-                              )
-                          );
+                              // --- E. Ajout des Combats ---
+                              // On fait la jointure avec la liste en mémoire (phases), on dédoublonne, et on injecte.
+                              var combats = DC.Deroulement.Combats
+                                              .Join(phases, c => c.phase, p => p.id, (c, p) => c)
+                                              .Distinct(new CombatEqualityComparer());
 
-                          // --- E. Ajout des Combats ---
-                          // On fait la jointure avec la liste en mémoire (phases), on dédoublonne, et on injecte.
-                          var combats = DC.Deroulement.Combats
-                                          .Join(phases, c => c.phase, p => p.id, (c, p) => c)
-                                          .Distinct(new CombatEqualityComparer());
+                              xcompetition.Add(
+                                  new XElement(ConstantXML.GroupeEngagements_combats,
+                                      combats.Select(c => c.ToXml(DC))
+                                  )
+                              );
 
-                          xcompetition.Add(
-                              new XElement(ConstantXML.GroupeEngagements_combats,
-                                  combats.Select(c => c.ToXml(DC))
-                              )
-                          );
-
-                          return xcompetition;
-                      })
-                )
-            );
+                              return xcompetition;
+                          })
+                    )
+            ));
         }
 
         /// Document XML contenant les informations pour les generations des affectations de tapis
@@ -396,71 +398,71 @@ namespace AppPublication.Export
 
             // 2. Construction fonctionnelle globale
             return new XDocument(
-                new XElement(ConstantXML.Competitions,
+                new XElement(ConstantXML.DocRoot,
+                    new XElement(ConstantXML.Competitions,
+                        DC.Organisation.Competitions.ToList().Select(competition =>
+                        {
+                            XElement xcompetition = competition.ToXmlInformations();
 
-                    DC.Organisation.Competitions.ToList().Select(competition =>
-                    {
-                        XElement xcompetition = competition.ToXmlInformations();
+                            // --- A. Sélection des épreuves ---
+                            IEnumerable<i_vue_epreuve_interface> epreuves_compet = competition.IsEquipe()
+                                ? DC.Organisation.VueEpreuveEquipes.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>()
+                                : DC.Organisation.VueEpreuves.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>();
 
-                        // --- A. Sélection des épreuves ---
-                        IEnumerable<i_vue_epreuve_interface> epreuves_compet = competition.IsEquipe()
-                            ? DC.Organisation.VueEpreuveEquipes.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>()
-                            : DC.Organisation.VueEpreuves.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>();
-
-                        // --- B. Ajout des épreuves et de leurs enfants ---
-                        xcompetition.Add(
-                            epreuves_compet
-                                // Remplacement du .Count() == 0 par un .Any() inversé (beaucoup plus rapide)
-                                // Et on utilise phasesInMem au lieu de retourner taper la base !
-                                .Where(ep => phasesInMem.Any(o => o.epreuve == ep.id && o.etat > (int)EtatPhaseEnum.Cree))
-                                .Select(ep =>
-                                {
-                                    XElement xepreuve = ep.ToXml(DC);
-
-                                    // Ajout des Phases (depuis la mémoire)
-                                    xepreuve.Add(
-                                        new XElement(ConstantXML.Phases,
-                                            phasesInMem.Where(o => o.epreuve == ep.id)
-                                                       .Select(phase => phase.ToXml())
-                                        )
-                                    );
-
-                                    // Ajout des Tapis (uniquement pour les compétitions individuelles)
-                                    if (competition.IsIndividuelle())
+                            // --- B. Ajout des épreuves et de leurs enfants ---
+                            xcompetition.Add(
+                                epreuves_compet
+                                    // Remplacement du .Count() == 0 par un .Any() inversé (beaucoup plus rapide)
+                                    // Et on utilise phasesInMem au lieu de retourner taper la base !
+                                    .Where(ep => phasesInMem.Any(o => o.epreuve == ep.id && o.etat > (int)EtatPhaseEnum.Cree))
+                                    .Select(ep =>
                                     {
-                                        // On interroge la vue des combats pour déduire les tapis actifs
-                                        var tapisEpreuve = DC.Deroulement.VueCombats
-                                            .Where(o => o.epreuve_id == ep.id
-                                                     && o.combat_tapis > 0
-                                                     && o.phase_etat == (int)EtatPhaseEnum.TirageValide
-                                                     && o.combat_vaiqueur == null)
-                                            .Select(o => o.combat_tapis)
-                                            .Distinct()
-                                            .ToList();
+                                        XElement xepreuve = ep.ToXml(DC);
 
-                                        // S'il y a des tapis, on crée la balise et on les injecte
-                                        if (tapisEpreuve.Any())
+                                        // Ajout des Phases (depuis la mémoire)
+                                        xepreuve.Add(
+                                            new XElement(ConstantXML.Phases,
+                                                phasesInMem.Where(o => o.epreuve == ep.id)
+                                                           .Select(phase => phase.ToXml())
+                                            )
+                                        );
+
+                                        // Ajout des Tapis (uniquement pour les compétitions individuelles)
+                                        if (competition.IsIndividuelle())
                                         {
-                                            xepreuve.Add(
-                                                new XElement(ConstantXML.TapisEpreuve,
-                                                    tapisEpreuve.Select(noTapis =>
-                                                        new XElement(ConstantXML.Tapis,
-                                                            new XAttribute(ConstantXML.Tapis_No, noTapis)
+                                            // On interroge la vue des combats pour déduire les tapis actifs
+                                            var tapisEpreuve = DC.Deroulement.VueCombats
+                                                .Where(o => o.epreuve_id == ep.id
+                                                         && o.combat_tapis > 0
+                                                         && o.phase_etat == (int)EtatPhaseEnum.TirageValide
+                                                         && o.combat_vaiqueur == null)
+                                                .Select(o => o.combat_tapis)
+                                                .Distinct()
+                                                .ToList();
+
+                                            // S'il y a des tapis, on crée la balise et on les injecte
+                                            if (tapisEpreuve.Any())
+                                            {
+                                                xepreuve.Add(
+                                                    new XElement(ConstantXML.TapisEpreuve,
+                                                        tapisEpreuve.Select(noTapis =>
+                                                            new XElement(ConstantXML.Tapis,
+                                                                new XAttribute(ConstantXML.Tapis_No, noTapis)
+                                                            )
                                                         )
                                                     )
-                                                )
-                                            );
+                                                );
+                                            }
                                         }
-                                    }
 
-                                    return xepreuve;
-                                })
-                        );
+                                        return xepreuve;
+                                    })
+                            );
 
-                        return xcompetition;
-                    })
-                )
-            );
+                            return xcompetition;
+                        })
+                    )
+                ));
         }
 
         /// <summary>
@@ -480,7 +482,7 @@ namespace AppPublication.Export
             XElement xcompetition = competition.ToXmlInformations();
             xcompetition.Add(ExportEpreuve(DC, epreuve));
 
-            return new XDocument(xcompetition);
+            return new XDocument(new XElement(ConstantXML.DocRoot, xcompetition));
         }
 
         /// <summary>
@@ -501,7 +503,7 @@ namespace AppPublication.Export
             xepreuve.Add(ExportPhase(DC, phase)); // On délègue au sous-boss optimisé
             xcompetition.Add(xepreuve);
 
-            return new XDocument(xcompetition);
+            return new XDocument(new XElement(ConstantXML.DocRoot, xcompetition));
         }
 
         /// <summary>
@@ -701,7 +703,7 @@ namespace AppPublication.Export
             XElement xRoot = competition.ToXmlInformations();
             xRoot.Add(xTapisElements);
 
-            return new XDocument(xRoot);
+            return new XDocument(new XElement(ConstantXML.DocRoot, xRoot));
         }
 
         #region METHODES PRIVEES

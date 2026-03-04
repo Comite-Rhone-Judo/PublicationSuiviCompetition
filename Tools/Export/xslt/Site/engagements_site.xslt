@@ -17,97 +17,91 @@
 
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
-	<xsl:template match="/">
+	
+	<xsl:variable select="/docroot/SiteConfiguration/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@Logo" name="logo"/>
+	
+	<xsl:template match="docroot">
+		<xsl:variable name="apos">'</xsl:variable>
 		<xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
 		<html>
-			<xsl:apply-templates/>
-		</html>
-	</xsl:template>
+			<head>
+				<META http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+				<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+				<meta name="viewport" content="width=device-width,initial-scale=1"/>
+				<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+				<meta http-equiv="Pragma" content="no-cache"/>
+				<meta http-equiv="Expires" content="0"/>
 
-	<!-- TODO Les configurations sont passées dans une balise dediee desormais -->
-	<xsl:variable select="/SiteConfiguration/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
-	<xsl:variable select="/SiteConfiguration/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
-	<xsl:variable select="/SiteConfiguration/@Logo" name="logo"/>
+				<!-- Feuille de style W3.CSS -->
+				<link type="text/css" rel="stylesheet">
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($cssPath, 'w3.css')"/>
+					</xsl:attribute>
+				</link>
+				<link type="text/css" rel="stylesheet">
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($cssPath, 'style-common.css')"/>
+					</xsl:attribute>
+				</link>
 
-	<xsl:template match="/*">
-		<xsl:variable name="apos">'</xsl:variable>
+				<!-- Script de navigation par defaut -->
+				<script>
+					<xsl:attribute name="src">
+						<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
+					</xsl:attribute>
+				</script>
 
-		<!-- ENTETE HTML -->
-		<head>
-			<META http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-			<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-			<meta name="viewport" content="width=device-width,initial-scale=1"/>
-			<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-			<meta http-equiv="Pragma" content="no-cache"/>
-			<meta http-equiv="Expires" content="0"/>
+				<!-- Script ajoute en parametre -->
+				<script type="text/javascript">
+					<xsl:value-of select="$js"/>
+					gUseAutoReload = false;
+				</script>
+				<title>
+					Suivi Compétition - Engagements
+				</title>
+			</head>
+			<body>
+				<!-- ENTETE -->
+				<xsl:call-template name="entete">
+					<xsl:with-param name="logo" select="$logo"/>
+					<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
+					<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
+					<xsl:with-param name="affEngagements" select="true()"/>
+					<xsl:with-param name="affActualiser" select="false()"/>
+					<xsl:with-param name="selectedItem" select="'engagements'"/>
+					<xsl:with-param name="pathToImg" select="$imgPath"/>
+					<xsl:with-param name="pathToCommon" select="$commonPath"/>
+				</xsl:call-template>
 
-			<!-- Feuille de style W3.CSS -->
-			<link type="text/css" rel="stylesheet">
-				<xsl:attribute name="href">
-					<xsl:value-of select="concat($cssPath, 'w3.css')"/>
-				</xsl:attribute>
-			</link>
-			<link type="text/css" rel="stylesheet">
-				<xsl:attribute name="href">
-					<xsl:value-of select="concat($cssPath, 'style-common.css')"/>
-				</xsl:attribute>
-			</link>
-
-			<!-- Script de navigation par defaut -->
-			<script>
-				<xsl:attribute name="src">
-					<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
-				</xsl:attribute>
-			</script>
-
-			<!-- Script ajoute en parametre -->
-			<script type="text/javascript">
-				<xsl:value-of select="$js"/>
-				gUseAutoReload = false;
-			</script>
-			<title>
-				Suivi Compétition - Engagements
-			</title>
-		</head>
-		<body>
-			<!-- ENTETE -->
-			<xsl:call-template name="entete">
-				<xsl:with-param name="logo" select="$logo"/>
-				<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
-				<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
-				<xsl:with-param name="affEngagements" select="true()"/>
-				<xsl:with-param name="affActualiser" select="false()"/>
-				<xsl:with-param name="selectedItem" select="'engagements'"/>
-				<xsl:with-param name="pathToImg" select="$imgPath"/>
-				<xsl:with-param name="pathToCommon" select="$commonPath"/>
-			</xsl:call-template>
-
-			<!-- CONTENU -->
-			<xsl:if test="count(/competitions/competition)=0 or count(//groupeEngagements)=0">
-				<div class="w3-container w3-border">
-					<div class="w3-panel w3-pale-green w3-bottombar w3-border-green w3-border w3-center w3-large"> Veuillez patienter le tirage des épreuves </div>
-				</div>
-			</xsl:if>
-
-			<!-- Boucle global sur les competitions en cours -->
-			<xsl:for-each select="/competitions/competition">
-				<xsl:if test="count(./groupesEngagements/groupeEngagements) > 0">
-					<xsl:call-template name="competition"/>
+				<!-- CONTENU -->
+				<xsl:if test="count(competitions/competition)=0 or count(//groupeEngagements)=0">
+					<div class="w3-container w3-border">
+						<div class="w3-panel w3-pale-green w3-bottombar w3-border-green w3-border w3-center w3-large"> Veuillez patienter le tirage des épreuves </div>
+					</div>
 				</xsl:if>
-			</xsl:for-each>
 
-			<xsl:if test="count(/competitions/competition)>0">
-				<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
-					<script>
-						<xsl:attribute name="src">
-							<xsl:value-of select="concat($jsPath, 'footer_script.js')"/>
-						</xsl:attribute>
-					</script>
-				</div>
-			</xsl:if>
+				<!-- Boucle global sur les competitions en cours -->
+				<xsl:for-each select="competitions/competition">
+					<xsl:if test="count(./groupesEngagements/groupeEngagements) > 0">
+						<xsl:call-template name="competition"/>
+					</xsl:if>
+				</xsl:for-each>
+
+				<xsl:if test="count(competitions/competition)>0">
+					<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
+						<script>
+							<xsl:attribute name="src">
+								<xsl:value-of select="concat($jsPath, 'footer_script.js')"/>
+							</xsl:attribute>
+						</script>
+					</div>
+				</xsl:if>
 
 
-		</body>
+			</body>
+		</html>
 	</xsl:template>
 
 	<!-- TEMPLATES -->

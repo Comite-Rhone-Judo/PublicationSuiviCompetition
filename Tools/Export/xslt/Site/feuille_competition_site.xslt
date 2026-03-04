@@ -17,201 +17,196 @@
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 
-	<xsl:template match="/">
+	<xsl:variable select="/docroot/SiteConfiguration/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@PublierEngagements = 'true'" name="affEngagements"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@DelaiActualisationClientSec" name="delayActualisationClient"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@kinzas" name="affKinzas"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@Logo" name="logo"/>
+
+	<xsl:variable name="typeCompetition" select="/docroot/competition/@type"/>
+
+	<xsl:template match="docroot">
 		<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
 		<html>
-			<xsl:apply-templates/>
-		</html>
-	</xsl:template>
-	<!-- TODO Les configurations sont passées dans une balise dediee desormais -->
-	<xsl:variable select="/SiteConfiguration/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
-	<xsl:variable select="/SiteConfiguration/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
-	<xsl:variable select="/SiteConfiguration/@PublierEngagements = 'true'" name="affEngagements"/>
-	<xsl:variable select="/SiteConfiguration/@DelaiActualisationClientSec" name="delayActualisationClient"/>
-	<xsl:variable select="/SiteConfiguration/@kinzas" name="affKinzas"/>
-	<xsl:variable select="/SiteConfiguration/@Logo" name="logo"/>
-	
-	<xsl:variable name="typeCompetition" select="/competition[1]/@type"/>
+			<head>
+				<META http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+				<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+				<meta name="viewport" content="width=device-width,initial-scale=1"/>
+				<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+				<meta http-equiv="Pragma" content="no-cache"/>
+				<meta http-equiv="Expires" content="0"/>
 
-	<xsl:template match="/*">
-		<!-- ENTETE HTML -->
-		<head>
-			<META http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-			<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-			<meta name="viewport" content="width=device-width,initial-scale=1"/>
-			<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-			<meta http-equiv="Pragma" content="no-cache"/>
-			<meta http-equiv="Expires" content="0"/>
+				<!-- Feuille de style W3.CSS -->
+				<link type="text/css" rel="stylesheet">
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($cssPath, 'w3.css')"/>
+					</xsl:attribute>
+				</link>
+				<link type="text/css" rel="stylesheet">
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($cssPath, 'style-common.css')"/>
+					</xsl:attribute>
+				</link>
+				<link type="text/css" rel="stylesheet">
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($cssPath, 'style-tableau.css')"/>
+					</xsl:attribute>
+				</link>
 
-			<!-- Feuille de style W3.CSS -->
-			<link type="text/css" rel="stylesheet">
-				<xsl:attribute name="href">
-					<xsl:value-of select="concat($cssPath, 'w3.css')"/>
-				</xsl:attribute>
-			</link>
-			<link type="text/css" rel="stylesheet">
-				<xsl:attribute name="href">
-					<xsl:value-of select="concat($cssPath, 'style-common.css')"/>
-				</xsl:attribute>
-			</link>
-			<link type="text/css" rel="stylesheet">
-				<xsl:attribute name="href">
-					<xsl:value-of select="concat($cssPath, 'style-tableau.css')"/>
-				</xsl:attribute>
-			</link>
+				<!-- Script de navigation par defaut -->
+				<script>
+					<xsl:attribute name="src">
+						<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
+					</xsl:attribute>
+				</script>
 
-			<!-- Script de navigation par defaut -->
-			<script>
-				<xsl:attribute name="src">
-					<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
-				</xsl:attribute>
-			</script>
+				<!-- Script ajoute en parametre -->
+				<script type="text/javascript">
+					<xsl:value-of select="$js"/>
+					gDelayAutoReloadSec = <xsl:value-of select="$delayActualisationClient"/>;
+				</script>
+				<title>
+					Suivi Compétition - Avancement
+				</title>
+			</head>
+			<body>
+				<!-- ENTETE -->
+				<xsl:call-template name="entete">
+					<xsl:with-param name="logo" select="$logo"/>
+					<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
+					<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
+					<xsl:with-param name="affEngagements" select="$affEngagements"/>
+					<xsl:with-param name="affActualiser" select="true()"/>
+					<xsl:with-param name="selectedItem" select="'avancement'"/>
+					<xsl:with-param name="pathToImg" select="$imgPath"/>
+					<xsl:with-param name="pathToCommon" select="$commonPath"/>
+				</xsl:call-template>
 
-			<!-- Script ajoute en parametre -->
-			<script type="text/javascript">
-				<xsl:value-of select="$js"/>
-				gDelayAutoReloadSec = <xsl:value-of select="$delayActualisationClient"/>;
-			</script>
-			<title>
-				Suivi Compétition - Avancement
-			</title>
-		</head>
-		<body>
-			<!-- ENTETE -->
-			<xsl:call-template name="entete">
-				<xsl:with-param name="logo" select="$logo"/>
-				<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
-				<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
-				<xsl:with-param name="affEngagements" select="$affEngagements"/>
-				<xsl:with-param name="affActualiser" select="true()"/>
-				<xsl:with-param name="selectedItem" select="'avancement'"/>
-				<xsl:with-param name="pathToImg" select="$imgPath"/>
-				<xsl:with-param name="pathToCommon" select="$commonPath"/>
-			</xsl:call-template>
+				<!-- CONTENU -->
+				<!-- Nom de la competition + Catégorie -->
+				<div class="w3-container w3-blue w3-center tas-competition-bandeau">
+					<div>
+						<h4>
+							<xsl:value-of select="competition/titre"/>
+						</h4>
+					</div>
+					<div class="w3-card w3-indigo">
+						<h5>
 
-			<!-- CONTENU -->
-			<!-- Nom de la competition + Catégorie -->
-			<div class="w3-container w3-blue w3-center tas-competition-bandeau">
-				<div>
-					<h4>
-						<xsl:value-of select="./titre"/>
-					</h4>
+							<xsl:if test="//epreuve[1]/@sexe='F'">
+								Féminines&nbsp;
+
+							</xsl:if>
+							<xsl:if test="//epreuve[1]/@sexe='M'">
+								Masculins&nbsp;
+
+							</xsl:if>
+							<xsl:if test="//epreuve[1]/@sexe='X'">
+								Mixte&nbsp;
+							</xsl:if>
+							<xsl:value-of select="//epreuve[1]/@nom"/>
+						</h5>
+					</div>
 				</div>
-				<div class="w3-card w3-indigo">
-					<h5>
 
-						<xsl:if test="//epreuve[1]/@sexe='F'">
-							Féminines&nbsp;
-
-						</xsl:if>
-						<xsl:if test="//epreuve[1]/@sexe='M'">
-							Masculins&nbsp;
-
-						</xsl:if>
-						<xsl:if test="//epreuve[1]/@sexe='X'">
-							Mixte&nbsp;
-						</xsl:if>
-						<xsl:value-of select="//epreuve[1]/@nom"/>
-					</h5>
-				</div>
-			</div>
-
-			<!-- Controle si le tirage du tableau est bien disponible -->
-			<xsl:choose>
-				<!-- Pas de tirage disponible -->
-				<xsl:when test="//phase[1]/@etat = 0">
-					<div class="w3-container w3-border">
-						<div class="w3-panel w3-pale-green w3-bottombar w3-border-green w3-border w3-center w3-large"> Veuillez patienter le tirage de la phase</div>
-					</div>
-				</xsl:when>
-				<!-- Cas standard avec un tirage -->
-				<xsl:otherwise>
-					<!-- Le tableau principal -->
-					<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-						<button class="w3-bar-item w3-light-blue" onclick="togglePanel('tableauPrincipal')">
-							<img class="img" id="tableauPrincipalCollapse" width="25">
-								<xsl:attribute name="src">
-									<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
-								</xsl:attribute>
-							</img>
-							<img class="img" id="tableauPrincipalExpand" width="25" style="display: none;">
-								<xsl:attribute name="src">
-									<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
-								</xsl:attribute>
-							</img>
-							Tableau principal
-						</button>
-					</div>
-					<div class="tasOpenedPanelType w3-container tas-panel-tableau-combat" id="tableauPrincipal">
-						<xsl:variable name="repechage">
-							<xsl:text>false</xsl:text>
-						</xsl:variable>
-
-						<xsl:call-template name="tableau">
-							<xsl:with-param name="repechage" select="$repechage"/>
-						</xsl:call-template>
-					</div>
-
-					<!-- Le tableau repechage s'il existe -->
-					<xsl:if test="count(//combat[@repechage = 'true']) &gt; 0">
+				<!-- Controle si le tirage du tableau est bien disponible -->
+				<xsl:choose>
+					<!-- Pas de tirage disponible -->
+					<xsl:when test="//phase[1]/@etat = 0">
+						<div class="w3-container w3-border">
+							<div class="w3-panel w3-pale-green w3-bottombar w3-border-green w3-border w3-center w3-large"> Veuillez patienter le tirage de la phase</div>
+						</div>
+					</xsl:when>
+					<!-- Cas standard avec un tirage -->
+					<xsl:otherwise>
+						<!-- Le tableau principal -->
 						<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-							<button class="w3-bar-item w3-light-blue" onclick="togglePanel('tableauRepechages')">
-								<img class="img" id="tableauRepechagesCollapse" width="25">
+							<button class="w3-bar-item w3-light-blue" onclick="togglePanel('tableauPrincipal')">
+								<img class="img" id="tableauPrincipalCollapse" width="25">
 									<xsl:attribute name="src">
 										<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
 									</xsl:attribute>
 								</img>
-								<img class="img" id="tableauRepechagesExpand" width="25" style="display: none;">
+								<img class="img" id="tableauPrincipalExpand" width="25" style="display: none;">
 									<xsl:attribute name="src">
 										<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
 									</xsl:attribute>
 								</img>
-								Tableaux de repêchage
+								Tableau principal
 							</button>
 						</div>
-						<div class="tasOpenedPanelType w3-container tas-panel-tableau-combat" id="tableauRepechages">
-							<xsl:variable name="repechage1">
-								<xsl:text>true</xsl:text>
+						<div class="tasOpenedPanelType w3-container tas-panel-tableau-combat" id="tableauPrincipal">
+							<xsl:variable name="repechage">
+								<xsl:text>false</xsl:text>
 							</xsl:variable>
+
 							<xsl:call-template name="tableau">
-								<xsl:with-param name="repechage" select="$repechage1"/>
+								<xsl:with-param name="repechage" select="$repechage"/>
 							</xsl:call-template>
 						</div>
-					</xsl:if>
 
-					<!-- Les barrages -->
-					<xsl:if test="count(//phase[@barrage5 = 'true' or @barrage3 = 'true' or @barrage7 = 'true']) &gt; 0">
-						<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-							<button class="w3-bar-item w3-light-blue" onclick="togglePanel('tableauBarrages')">
-								<img class="img" id="tableauBarragesCollapse" width="25">
-									<xsl:attribute name="src">
-										<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
-									</xsl:attribute>
-								</img>
-								<img class="img" id="tableauBarragesExpand" width="25" style="display: none;">
-									<xsl:attribute name="src">
-										<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
-									</xsl:attribute>
-								</img>
-								Tableaux de barrage
-							</button>
-						</div>
-						<div class="tasOpenedPanelType w3-container tas-panel-tableau-combat" id="tableauBarrages">
-							<xsl:call-template name="tableauBarrage"/>
-						</div>
-					</xsl:if>
+						<!-- Le tableau repechage s'il existe -->
+						<xsl:if test="count(//combat[@repechage = 'true']) &gt; 0">
+							<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
+								<button class="w3-bar-item w3-light-blue" onclick="togglePanel('tableauRepechages')">
+									<img class="img" id="tableauRepechagesCollapse" width="25">
+										<xsl:attribute name="src">
+											<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
+										</xsl:attribute>
+									</img>
+									<img class="img" id="tableauRepechagesExpand" width="25" style="display: none;">
+										<xsl:attribute name="src">
+											<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
+										</xsl:attribute>
+									</img>
+									Tableaux de repêchage
+								</button>
+							</div>
+							<div class="tasOpenedPanelType w3-container tas-panel-tableau-combat" id="tableauRepechages">
+								<xsl:variable name="repechage1">
+									<xsl:text>true</xsl:text>
+								</xsl:variable>
+								<xsl:call-template name="tableau">
+									<xsl:with-param name="repechage" select="$repechage1"/>
+								</xsl:call-template>
+							</div>
+						</xsl:if>
 
-					<!-- Pied de page -->
-					<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
-						<script>
-							<xsl:attribute name="src">
-								<xsl:value-of select="concat($jsPath, 'footer_script.js')"/>
-							</xsl:attribute>
-						</script>
-					</div>
-				</xsl:otherwise>
-			</xsl:choose>
-		</body>
+						<!-- Les barrages -->
+						<xsl:if test="count(//phase[@barrage5 = 'true' or @barrage3 = 'true' or @barrage7 = 'true']) &gt; 0">
+							<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
+								<button class="w3-bar-item w3-light-blue" onclick="togglePanel('tableauBarrages')">
+									<img class="img" id="tableauBarragesCollapse" width="25">
+										<xsl:attribute name="src">
+											<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
+										</xsl:attribute>
+									</img>
+									<img class="img" id="tableauBarragesExpand" width="25" style="display: none;">
+										<xsl:attribute name="src">
+											<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
+										</xsl:attribute>
+									</img>
+									Tableaux de barrage
+								</button>
+							</div>
+							<div class="tasOpenedPanelType w3-container tas-panel-tableau-combat" id="tableauBarrages">
+								<xsl:call-template name="tableauBarrage"/>
+							</div>
+						</xsl:if>
+
+						<!-- Pied de page -->
+						<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
+							<script>
+								<xsl:attribute name="src">
+									<xsl:value-of select="concat($jsPath, 'footer_script.js')"/>
+								</xsl:attribute>
+							</script>
+						</div>
+					</xsl:otherwise>
+				</xsl:choose>
+			</body>
+		</html>
 	</xsl:template>
 
 	<!-- TEMPLATES -->

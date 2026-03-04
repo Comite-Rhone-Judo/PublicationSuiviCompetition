@@ -3,29 +3,82 @@
 
 	<xsl:output method="html" indent="yes" encoding="utf-8"/>
 
-	<xsl:param name="imgPath" select="'img/site/'"/>
-	<xsl:param name="jsPath" select="'js/'"/>
-	<xsl:param name="cssPath" select="'style/site/'"/>
-	<!-- TODO A revoir completement, notamment la partie entete et la configuration -->
-	<xsl:param name="LayoutMode" select="'4'"/>
-	<xsl:param name="DureeRotation" select="'15'"/>
-	<xsl:param name="NbCombatsParPage" select="'6'"/>
-	<xsl:param name="TitreCompetition" select="/Competition/@Nom"/>
+	<xsl:param name="js"/>
+	<xsl:param name="imgPath"/>
+	<xsl:param name="jsPath"/>
+	<xsl:param name="cssPath"/>
+	<xsl:param name="tailleGroupe"/>
+	<xsl:param name="idEcran"/>
+	<xsl:param name="tapisAffiches"/>
+	
+	<xsl:variable select="/SiteConfiguration/@delaiDeroulementSec" name="delaiDeroulementSec"/>
+	<xsl:variable select="number(SiteConfiguration/@NbProchainsCombats)" name="nbProchainsCombats"/>
+	<xsl:variable select="/SiteConfiguration/@Logo" name="logo"/>
+	
+	
+	<xsl:variable name="TitreCompetition" select="/competitions[1]/titre"/>
+				
+	<!--
+	2. Le code XSLT : Boucler sur le paramètre
+Il y a une subtilité très importante ici : quand vous bouclez sur votre paramètre (qui est un document externe), vous "sortez" de votre document XML principal.
+Il faut donc sauvegarder la racine de votre XML principal dans une variable avant la boucle, pour pouvoir y faire vos select à l'intérieur.
 
+XML
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    
+    <xsl:param name="listeTapis" />
+
+    <xsl:variable name="docPrincipal" select="/" />
+
+    <xsl:template match="/">
+        <html>
+            <body>
+                <h1>Programme par Tapis</h1>
+                
+                <xsl:for-each select="$listeTapis/mesTapis/tapis">
+                    
+                    <xsl:variable name="numTapis" select="." />
+                    
+                    <div class="groupe-tapis">
+                        <h2>Tapis n°<xsl:value-of select="$numTapis" /></h2>
+                        
+                        <ul>
+                            <xsl:for-each select="$docPrincipal//combat[@tapis = $numTapis]">
+                                <li>
+                                    Combat n°<xsl:value-of select="@id" /> : <xsl:value-of select="." />
+                                </li>
+                            </xsl:for-each>
+                        </ul>
+                        
+                        <xsl:if test="count($docPrincipal//combat[@tapis = $numTapis]) = 0">
+                            <p>Aucun combat prévu sur ce tapis.</p>
+                        </xsl:if>
+                    </div>
+                    
+                </xsl:for-each>
+                
+            </body>
+        </html>
+    </xsl:template>
+
+</xsl:stylesheet>
+	-->
+		
 	<xsl:variable name="widthStyle">
 		<xsl:choose>
-			<xsl:when test="$LayoutMode = '1'">100%</xsl:when>
-			<xsl:when test="$LayoutMode = '2'">50%</xsl:when>
-			<xsl:when test="$LayoutMode = '4'">50%</xsl:when>
+			<xsl:when test="$tailleGroupe = '1'">100%</xsl:when>
+			<xsl:when test="$tailleGroupe = '2'">50%</xsl:when>
+			<xsl:when test="$tailleGroupe = '4'">50%</xsl:when>
 			<xsl:otherwise>50%</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
 
 	<xsl:variable name="heightStyle">
 		<xsl:choose>
-			<xsl:when test="$LayoutMode = '1'">100%</xsl:when>
-			<xsl:when test="$LayoutMode = '2'">100%</xsl:when>
-			<xsl:when test="$LayoutMode = '4'">50%</xsl:when>
+			<xsl:when test="$tailleGroupe = '1'">100%</xsl:when>
+			<xsl:when test="$tailleGroupe = '2'">100%</xsl:when>
+			<xsl:when test="$tailleGroupe = '4'">50%</xsl:when>
 			<xsl:otherwise>50%</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
@@ -34,34 +87,52 @@
 		<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
 		<html>
 			<head>
-				<title>
-					Ecran Appel - <xsl:value-of select="$TitreCompetition"/>
-				</title>
-				<meta name="viewport" content="width=device-width, initial-scale=1"/>
+				<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+				<meta name="viewport" content="width=device-width,initial-scale=1"/>
+				<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+				<meta http-equiv="Pragma" content="no-cache"/>
+				<meta http-equiv="Expires" content="0"/>
 
-				<link rel="stylesheet" type="text/css">
+				<!-- Feuille de style W3.CSS -->
+				<link type="text/css" rel="stylesheet">
 					<xsl:attribute name="href">
 						<xsl:value-of select="concat($cssPath, 'w3.css')"/>
 					</xsl:attribute>
 				</link>
-				<link rel="stylesheet" type="text/css">
+				<link type="text/css" rel="stylesheet">
 					<xsl:attribute name="href">
 						<xsl:value-of select="concat($cssPath, 'style-common.css')"/>
 					</xsl:attribute>
 				</link>
-				<link rel="stylesheet" type="text/css">
+				<link type="text/css" rel="stylesheet">
 					<xsl:attribute name="href">
-						<xsl:value-of select="concat($cssPath, 'style-ecransappel.css')"/>
+						<xsl:value-of select="concat($cssPath, 'style-classement.css')"/>
 					</xsl:attribute>
 				</link>
+
+				<!-- Script de navigation par defaut -->
+				<script>
+					<xsl:attribute name="src">
+						<xsl:value-of select="concat($jsPath, 'site-animation.js')"/>
+					</xsl:attribute>
+				</script>
+
+				<!-- Script ajoute en parametre -->
+				<script type="text/javascript">
+					<xsl:value-of select="$js"/>
+				</script>
+				<title>
+					Ecran Appel - <xsl:value-of select="$TitreCompetition"/>
+				</title>
 			</head>
 
 			<body class="w3-black w3-sans-serif">
 
+				<!-- ENTETE -->
 				<div class="tv-header w3-white w3-card">
 					<img alt="Logo" class="tv-logo" onerror="this.style.display='none'">
 						<xsl:attribute name="src">
-							<xsl:value-of select="concat($imgPath, 'logo-France-Judo.png')"/>
+							<xsl:value-of select="concat($imgPath, $logo)"/>
 						</xsl:attribute>
 					</img>
 					<div class="tv-title w3-text-black">
@@ -69,10 +140,11 @@
 					</div>
 				</div>
 
+				<!-- CONTENEUR PRINCIPAL -->
 				<div id="main-container"
-					 data-layout-mode="{$LayoutMode}"
-					 data-duree-rotation="{$DureeRotation}"
-					 data-combats-par-page="{$NbCombatsParPage}">
+					 data-layout-mode="{$tailleGroupe}"
+					 data-duree-rotation="{$delaiDeroulementSec}"
+					 data-combats-par-page="{$nbProchainsCombats}">
 
 					<xsl:apply-templates select="//Tapis">
 						<xsl:sort select="@Numero" data-type="number"/>
@@ -80,13 +152,14 @@
 
 				</div>
 
+				<!-- PROGRESS BAR -->
 				<div id="progress-container" class="w3-dark-grey">
 					<div id="progress-bar" class="w3-blue"></div>
 				</div>
 
 				<script type="text/javascript">
 					<xsl:attribute name="src">
-						<xsl:value-of select="concat($jsPath, 'animation.js')"/>
+						<xsl:value-of select="concat($jsPath, 'site-animation.js')"/>
 					</xsl:attribute>
 				</script>
 
@@ -94,11 +167,12 @@
 		</html>
 	</xsl:template>
 
-
+<!-- TEMPLATES -->
+	<!-- Un Tapis -->
 	<xsl:template match="Tapis">
 
 		<xsl:variable name="Position" select="position()"/>
-		<xsl:variable name="pageIndex" select="floor(($Position - 1) div $LayoutMode) + 1" />
+		<xsl:variable name="pageIndex" select="floor(($Position - 1) div $tailleGroupe) + 1" />
 
 		<div id="tapis_{@ID}"
 			 class="tapis-card w3-animate-opacity"
@@ -130,7 +204,7 @@
 							</tr>
 						</thead>
 						<tbody id="liste_combats_tapis_{@ID}">
-
+							<!-- TODO ici il faut prendre les combats du tapis -->
 							<xsl:apply-templates select="Combat">
 								<xsl:sort select="@Numero" data-type="number"/>
 							</xsl:apply-templates>

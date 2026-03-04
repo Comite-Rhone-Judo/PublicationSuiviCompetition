@@ -374,11 +374,11 @@ namespace AppPublication.Export
             ctx.EnrichWithConfiguration(docMenu);
             LogTools.DebugLogData(docMenu);
 
-            // 3. Génération des menus de base (toujours présents)
-            output.Add(GenerateMenuFile(ExportEnum.Site_MenuAvancement, targetDirectory, siteStructure, docMenu));
+            output.Add(GenerateMenuFile(ExportEnum.Site_MenuClassement, targetDirectory, siteStructure, docMenu));
             progress?.Report(BatchProgressInfo.Step(++currentStep));
 
-            output.Add(GenerateMenuFile(ExportEnum.Site_MenuClassement, targetDirectory, siteStructure, docMenu));
+            // 3. Génération des menus de base (toujours présents)
+            output.Add(GenerateMenuFile(ExportEnum.Site_MenuAvancement, targetDirectory, siteStructure, docMenu));
             progress?.Report(BatchProgressInfo.Step(++currentStep));
 
             // 4. Génération du menu des prochains combats

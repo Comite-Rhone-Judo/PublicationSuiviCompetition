@@ -20,26 +20,19 @@
 
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
-	<xsl:variable name="couleur1" select="//competition/@couleur1"> </xsl:variable>
-	<xsl:variable name="couleur2" select="//competition/@couleur2"> </xsl:variable>
-	<xsl:variable name="idCompetition" select="//competition/@ID"> </xsl:variable>
-	<xsl:variable name="typeCompetition" select="/competition/@type"> </xsl:variable>
+	
+	<xsl:variable name="couleur1" select="/docroot/competition/@couleur1"> </xsl:variable>
+	<xsl:variable name="couleur2" select="/docroot/competition/@couleur2"> </xsl:variable>
+	<xsl:variable name="idCompetition" select="/docroot/competition/@ID"> </xsl:variable>
+	<xsl:variable name="typeCompetition" select="/docroot/competition/@type"> </xsl:variable>
 
-	<xsl:template match="/">
-		<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
-		<html>
-			<xsl:apply-templates/>
-		</html>
-	</xsl:template>
-
-	<!-- TODO Les configurations sont passées dans une balise dediee desormais -->
-	<xsl:variable select="/SiteConfiguration/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
-	<xsl:variable select="/SiteConfiguration/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
-	<xsl:variable select="/SiteConfiguration/@PublierEngagements = 'true'" name="affEngagements"/>
-	<xsl:variable select="/SiteConfiguration/@DelaiActualisationClientSec" name="delayActualisationClient"/>
-	<xsl:variable select="number(SiteConfiguration/@NbProchainsCombats)" name="nbProchainsCombats"/>
-	<xsl:variable select="/SiteConfiguration/@Logo" name="logo"/>
-
+	<xsl:variable select="/docroot/SiteConfiguration/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@PublierEngagements = 'true'" name="affEngagements"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@DelaiActualisationClientSec" name="delayActualisationClient"/>
+	<xsl:variable select="number(/docroot/SiteConfiguration/@NbProchainsCombats)" name="nbProchainsCombats"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@Logo" name="logo"/>
+	
 	<xsl:variable name="nbProchainsCombatsEff">
 		<xsl:choose>
 			<xsl:when test="$nbProchainsCombats > 0">
@@ -50,10 +43,10 @@
 	</xsl:variable>
 
 	<!-- Affiche les details de la competition si on est en judo avec plus d'une competition -->
-	<xsl:variable select="count(//epreuve[@competition!=$idCompetition])!=0 and /competition/@disciplineId = 1" name="affDetailCompetition"/>
+	<xsl:variable select="count(//epreuve[@competition!=$idCompetition])!=0 and /docroot/competition/@disciplineId = 1" name="affDetailCompetition"/>
 	
 	<!-- En jujitsu, on affiche la discpline -->
-	<xsl:variable select="/competition/@discipline != 'C_COMPETITION'" name="affDiscipline"/>
+	<xsl:variable select="/docroot/competition/@discipline != 'C_COMPETITION'" name="affDiscipline"/>
 
 	<xsl:variable name="selectedItemName">
 		<xsl:choose>
@@ -62,140 +55,141 @@
 		</xsl:choose>
 	</xsl:variable>
 
-	<xsl:template match="/*">
-		<!-- ENTETE HTML -->
-		<head>
-			<META http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-			<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-			<meta name="viewport" content="width=device-width,initial-scale=1"/>
-			<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-			<meta http-equiv="Pragma" content="no-cache"/>
-			<meta http-equiv="Expires" content="0"/>
+	<xsl:template match="docroot">
+		<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
+		<html>
+			<head>
+				<META http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+				<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+				<meta name="viewport" content="width=device-width,initial-scale=1"/>
+				<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+				<meta http-equiv="Pragma" content="no-cache"/>
+				<meta http-equiv="Expires" content="0"/>
 
-			<!-- Feuille de style W3.CSS -->
-			<link type="text/css" rel="stylesheet">
-				<xsl:attribute name="href">
-					<xsl:value-of select="concat($cssPath, 'w3.css')"/>
-				</xsl:attribute>
-			</link>
-			<link type="text/css" rel="stylesheet">
-				<xsl:attribute name="href">
-					<xsl:value-of select="concat($cssPath, 'style-common.css')"/>
-				</xsl:attribute>
-			</link>
-			<link type="text/css" rel="stylesheet">
-				<xsl:attribute name="href">
-					<xsl:value-of select="concat($cssPath, 'style-tableau.css')"/>
-				</xsl:attribute>
-			</link>
+				<!-- Feuille de style W3.CSS -->
+				<link type="text/css" rel="stylesheet">
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($cssPath, 'w3.css')"/>
+					</xsl:attribute>
+				</link>
+				<link type="text/css" rel="stylesheet">
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($cssPath, 'style-common.css')"/>
+					</xsl:attribute>
+				</link>
+				<link type="text/css" rel="stylesheet">
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($cssPath, 'style-tableau.css')"/>
+					</xsl:attribute>
+				</link>
 
-			<!-- Script de navigation par defaut -->
-			<script>
-				<xsl:attribute name="src">
-					<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
-				</xsl:attribute>
-			</script>
-
-			<!-- Script ajoute en parametre -->
-			<script type="text/javascript">
-				<xsl:value-of select="$js"/>
-				gDelayAutoReloadSec = <xsl:value-of select="$delayActualisationClient"/>;
-			</script>
-			<title>
-				Suivi Compétition - Avancement
-			</title>
-		</head>
-		<body>
-			<!-- ENTETE -->
-			<xsl:call-template name="entete">
-				<xsl:with-param name="logo" select="$logo"/>
-				<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
-				<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
-				<xsl:with-param name="affEngagements" select="$affEngagements"/>
-				<xsl:with-param name="affActualiser" select="true()"/>
-				<xsl:with-param name="selectedItem" select="$selectedItemName"/>
-				<xsl:with-param name="pathToImg" select="$imgPath"/>
-				<xsl:with-param name="pathToCommon" select="$commonPath"/>
-			</xsl:call-template>
-
-			<!-- CONTENU -->
-
-			<xsl:variable name="titreCompetition">
-				<xsl:choose>
-					<xsl:when test="$useIntituleCommun = 'true'">
-						<xsl:value-of select="/competition/@IntituleCommun"/>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:value-of select="./titre"/>
-					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:variable> 
-			
-			
-			<!-- Nom de la competition + Catégorie si on affiche une epreuve particuliere -->
-			<div class="w3-container w3-blue w3-center tas-competition-bandeau">
-				<div>
-					<h4>
-						<xsl:value-of select="$titreCompetition"/>
-					</h4>
-				</div>
-				<xsl:if test="$istapis = 'epreuve'">
-					<div class="w3-card w3-indigo">
-						<h5>
-
-							<xsl:if test="//epreuve[1]/@sexe='F'">
-								Féminines&nbsp;
-							</xsl:if>
-							<xsl:if test="//epreuve[1]/@sexe='M'">
-								Masculins&nbsp;
-							</xsl:if>
-							<xsl:if test="//epreuve[1]/@sexe='X'">
-								Mixte&nbsp;
-							</xsl:if>
-							<xsl:value-of select="//epreuve[1]/@nom"/>
-						</h5>
-					</div>
-				</xsl:if>
-			</div>
-
-			<xsl:if test="not(/competition/@MsgProchainsCombats = '')">
-				<div class="w3-panel w3-khaki w3-display-container w3-card tas-msg-panel w3-cell-row">
-					<div class="w3-cell">
-						<span onclick="this.parentElement.parentElement.style.display='none'" class="w3-button w3-large w3-display-topright w3-cell-top">&times;</span>
-					</div>
-					<div class="w3-cell w3-cell-middle">
-						<xsl:value-of select="/competition/@MsgProchainsCombats"/>
-					</div>
-				</div>
-			</xsl:if>
-
-			<!-- Parcours tous les tapis trouves -->
-			<xsl:for-each select="//tapis">
-				<xsl:sort select="@tapis" data-type="number" order="ascending"/>
-
-				<!-- On ne prend en compte que les tapis avec des combats -->
-				<xsl:if test="@tapis != 0 and ($istapis != 'epreuve' or count(./combats/combat) &gt; 0)">
-					<xsl:variable name="tapis" select="@tapis"/>
-
-					<xsl:call-template name="UnTapis">
-						<xsl:with-param name="notapis" select="$tapis"/>
-					</xsl:call-template>
-				</xsl:if>
-			</xsl:for-each>
-
-			<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
+				<!-- Script de navigation par defaut -->
 				<script>
 					<xsl:attribute name="src">
-						<xsl:value-of select="concat($jsPath, 'footer_script.js')"/>
+						<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
 					</xsl:attribute>
 				</script>
-			</div>
-		</body>
+
+				<!-- Script ajoute en parametre -->
+				<script type="text/javascript">
+					<xsl:value-of select="$js"/>
+					gDelayAutoReloadSec = <xsl:value-of select="$delayActualisationClient"/>;
+				</script>
+				<title>
+					Suivi Compétition - Avancement
+				</title>
+			</head>
+			<body>
+				<!-- ENTETE -->
+				<xsl:call-template name="entete">
+					<xsl:with-param name="logo" select="$logo"/>
+					<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
+					<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
+					<xsl:with-param name="affEngagements" select="$affEngagements"/>
+					<xsl:with-param name="affActualiser" select="true()"/>
+					<xsl:with-param name="selectedItem" select="$selectedItemName"/>
+					<xsl:with-param name="pathToImg" select="$imgPath"/>
+					<xsl:with-param name="pathToCommon" select="$commonPath"/>
+				</xsl:call-template>
+
+				<!-- CONTENU -->
+
+				<xsl:variable name="titreCompetition">
+					<xsl:choose>
+						<xsl:when test="$useIntituleCommun = 'true'">
+							<xsl:value-of select="SiteConfiguration/@IntituleCommun"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="competition/titre"/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:variable>
+
+
+				<!-- Nom de la competition + Catégorie si on affiche une epreuve particuliere -->
+				<div class="w3-container w3-blue w3-center tas-competition-bandeau">
+					<div>
+						<h4>
+							<xsl:value-of select="$titreCompetition"/>
+						</h4>
+					</div>
+					<xsl:if test="$istapis = 'epreuve'">
+						<div class="w3-card w3-indigo">
+							<h5>
+
+								<xsl:if test="//epreuve[1]/@sexe='F'">
+									Féminines&nbsp;
+								</xsl:if>
+								<xsl:if test="//epreuve[1]/@sexe='M'">
+									Masculins&nbsp;
+								</xsl:if>
+								<xsl:if test="//epreuve[1]/@sexe='X'">
+									Mixte&nbsp;
+								</xsl:if>
+								<xsl:value-of select="//epreuve[1]/@nom"/>
+							</h5>
+						</div>
+					</xsl:if>
+				</div>
+
+				<xsl:if test="not(competition/@MsgProchainsCombats = '')">
+					<div class="w3-panel w3-khaki w3-display-container w3-card tas-msg-panel w3-cell-row">
+						<div class="w3-cell">
+							<span onclick="this.parentElement.parentElement.style.display='none'" class="w3-button w3-large w3-display-topright w3-cell-top">&times;</span>
+						</div>
+						<div class="w3-cell w3-cell-middle">
+							<xsl:value-of select="competition/@MsgProchainsCombats"/>
+						</div>
+					</div>
+				</xsl:if>
+
+				<!-- Parcours tous les tapis trouves -->
+				<xsl:for-each select="//tapis">
+					<xsl:sort select="@tapis" data-type="number" order="ascending"/>
+
+					<!-- On ne prend en compte que les tapis avec des combats -->
+					<xsl:if test="@tapis != 0 and ($istapis != 'epreuve' or count(./combats/combat) &gt; 0)">
+						<xsl:variable name="tapis" select="@tapis"/>
+
+						<xsl:call-template name="UnTapis">
+							<xsl:with-param name="notapis" select="$tapis"/>
+						</xsl:call-template>
+					</xsl:if>
+				</xsl:for-each>
+
+				<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
+					<script>
+						<xsl:attribute name="src">
+							<xsl:value-of select="concat($jsPath, 'footer_script.js')"/>
+						</xsl:attribute>
+					</script>
+				</div>
+			</body>
+		</html>
 	</xsl:template>
 
 	<!-- TEMPLATES -->
-
-
+	
 	<!-- TEMPLATE UN TAPIS -->
 	<xsl:template name="UnTapis">
 		<xsl:param name="notapis"/>

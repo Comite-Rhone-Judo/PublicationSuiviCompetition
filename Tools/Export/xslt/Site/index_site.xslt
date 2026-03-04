@@ -16,11 +16,11 @@
 	
 	<xsl:template match="/">
     <html>
-      <xsl:apply-templates/>
+		<xsl:apply-templates select="docroot"/>
     </html>
   </xsl:template>
 
-  <xsl:template match="/*">
+  <xsl:template match="docroot">
     <head>
       <meta charset="utf-8"/>
       <title>Suivi Compétition</title>

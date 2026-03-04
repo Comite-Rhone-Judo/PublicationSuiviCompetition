@@ -22,169 +22,166 @@
 	<xsl:key name="participants" match="participant" use="@poule"/>
 	
 	<xsl:variable name="typeCompetition" select="/competition/@type"/>
-	<xsl:template match="/">
+
+	<xsl:variable select="/docroot/SiteConfiguration/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@PublierEngagements = 'true'" name="affEngagements"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@DelaiActualisationClientSec" name="delayActualisationClient"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@kinzas" name="affKinzas"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@Logo" name="logo"/>
+	
+	<xsl:template match="docroot">
 		<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
 		<html>
-			<xsl:apply-templates/>
-		</html>
-	</xsl:template>
+			<head>
+				<META http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+				<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+				<meta name="viewport" content="width=device-width,initial-scale=1"/>
+				<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+				<meta http-equiv="Pragma" content="no-cache"/>
+				<meta http-equiv="Expires" content="0"/>
 
-	<xsl:variable select="/SiteConfiguration/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
-	<xsl:variable select="/SiteConfiguration/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
-	<xsl:variable select="/SiteConfiguration/@PublierEngagements = 'true'" name="affEngagements"/>
-	<xsl:variable select="/SiteConfiguration/@DelaiActualisationClientSec" name="delayActualisationClient"/>
-	<xsl:variable select="/SiteConfiguration/@kinzas" name="affKinzas"/>
-	<xsl:variable select="/SiteConfiguration/@Logo" name="logo"/>
+				<!-- Feuille de style W3.CSS -->
+				<link type="text/css" rel="stylesheet">
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($cssPath, 'w3.css')"/>
+					</xsl:attribute>
+				</link>
+				<link type="text/css" rel="stylesheet">
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($cssPath, 'style-common.css')"/>
+					</xsl:attribute>
+				</link>
+				<link type="text/css" rel="stylesheet">
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($cssPath, 'style-poule.css')"/>
+					</xsl:attribute>
+				</link>
 
-
-	<xsl:template match="/*">
-		<!-- ENTETE HTML -->
-		<head>
-			<META http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-			<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-			<meta name="viewport" content="width=device-width,initial-scale=1"/>
-			<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-			<meta http-equiv="Pragma" content="no-cache"/>
-			<meta http-equiv="Expires" content="0"/>
-
-			<!-- Feuille de style W3.CSS -->
-			<link type="text/css" rel="stylesheet">
-				<xsl:attribute name="href">
-					<xsl:value-of select="concat($cssPath, 'w3.css')"/>
-				</xsl:attribute>
-			</link>
-			<link type="text/css" rel="stylesheet">
-				<xsl:attribute name="href">
-					<xsl:value-of select="concat($cssPath, 'style-common.css')"/>
-				</xsl:attribute>
-			</link>
-			<link type="text/css" rel="stylesheet">
-				<xsl:attribute name="href">
-					<xsl:value-of select="concat($cssPath, 'style-poule.css')"/>
-				</xsl:attribute>
-			</link>
-
-			<!-- Script de navigation par defaut -->
-			<script>
-				<xsl:attribute name="src">
-					<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
-				</xsl:attribute>
-			</script>
-
-			<!-- Script ajoute en parametre -->
-			<script type="text/javascript">
-				<xsl:value-of select="$js"/>
-				gDelayAutoReloadSec = <xsl:value-of select="$delayActualisationClient"/>;
-			</script>
-			<title>
-				Suivi Compétition - Avancement
-			</title>
-		</head>
-		<body>
-			<!-- ENTETE -->
-			<xsl:call-template name="entete">
-				<xsl:with-param name="logo" select="$logo"/>
-				<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
-				<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
-				<xsl:with-param name="affEngagements" select="$affEngagements"/>
-				<xsl:with-param name="affActualiser" select="true()"/>
-				<xsl:with-param name="selectedItem" select="'avancement'"/>
-				<xsl:with-param name="pathToImg" select="$imgPath"/>
-				<xsl:with-param name="pathToCommon" select="$commonPath"/>
-			</xsl:call-template>
-			
-			<!-- Div vide pour aligner le contenu avec le bandeau de titre de taille fixe -->
-			<div class="w3-container tas-filler-div">&nbsp;</div>
-
-			<!-- CONTENU -->
-			<!-- Nom de la competition + Catégorie -->
-			<div class="w3-container w3-blue w3-center tas-competition-bandeau">
-				<div>
-					<h4>
-						<xsl:value-of select="./titre"/>
-					</h4>
-				</div>
-				<div class="w3-card w3-indigo">
-					<h5>
-
-						<xsl:if test="//epreuve[1]/@sexe='F'">
-							Féminines&nbsp;
-						</xsl:if>
-						<xsl:if test="//epreuve[1]/@sexe='M'">
-							Masculins&nbsp;
-						</xsl:if>
-						<xsl:if test="//epreuve[1]/@sexe='X'">
-							Mixte&nbsp;
-						</xsl:if>
-						<xsl:value-of select="//epreuve[1]/@nom"/>						
-					</h5>
-				</div>
-			</div>
-
-			<!-- Les poules -->
-			<div class="w3-card">
-				<xsl:for-each select="//phase/poules/poule">
-					<xsl:variable name="noPoule" ><xsl:value-of select="./@numero"/></xsl:variable>
-					<xsl:variable name="phasePoule" select="./@phase"/>
-					<xsl:variable name="nbParticipantsPoule" select="count(//participant[@poule = $noPoule and @phase = $phasePoule])"/>
-
-					<!-- Determine la disposition de la poule en fonction du type et de la taille de la poule -->
-					<xsl:variable name="dispositionPoule">
-						<xsl:choose>
-							<!-- Calcul en fonction de la taille de la poule -->
-							<xsl:when test="$typePoule = 3">
-								<xsl:choose>
-									<!-- Diagonal si > max -->
-									<xsl:when test="$nbParticipantsPoule > $tailleMaxPouleColonne">1</xsl:when>
-									<!-- Colonne si <= max -->
-									<xsl:otherwise>2</xsl:otherwise>
-								</xsl:choose>
-							</xsl:when>
-							<!-- Choix force -->
-							<xsl:otherwise>
-								<xsl:value-of select="$typePoule"/>
-							</xsl:otherwise>
-						</xsl:choose>
-					</xsl:variable>
-
-					<!-- En fonction de la presence de combats de niveau 2, on affiche ou pas la poule complementaire -->
-					<xsl:choose>
-						<xsl:when test="count(//combats/combat[@niveau = '2' and @phase = $phasePoule and @reference  = $noPoule]) > 0">
-							<xsl:call-template name="templatePoule">
-								<xsl:with-param name="niveau" select="1"/>
-								<xsl:with-param name="numeroPoule" select="$noPoule"/>
-								<xsl:with-param name="phase" select="$phasePoule"/>
-								<xsl:with-param name="dispositionPoule" select="$dispositionPoule"/>
-							</xsl:call-template>
-							<xsl:call-template name="templatePoule">
-								<xsl:with-param name="niveau" select="2"/> 
-								<xsl:with-param name="numeroPoule" select="$noPoule"/>
-								<xsl:with-param name="phase" select="$phasePoule"/>
-								<xsl:with-param name="dispositionPoule" select="$dispositionPoule"/>
-							</xsl:call-template>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:call-template name="templatePoule">
-								<xsl:with-param name="niveau" select="0"/>
-								<xsl:with-param name="numeroPoule" select="$noPoule"/>
-								<xsl:with-param name="phase" select="$phasePoule"/>
-								<xsl:with-param name="dispositionPoule" select="$dispositionPoule"/>
-							</xsl:call-template>
-						</xsl:otherwise>
-					</xsl:choose>
-					
-				</xsl:for-each>
-			</div>
-
-			<!-- Info d'actualisation -->
-			<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
+				<!-- Script de navigation par defaut -->
 				<script>
 					<xsl:attribute name="src">
-						<xsl:value-of select="concat($jsPath, 'footer_script.js')"/>
+						<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
 					</xsl:attribute>
 				</script>
-			</div>
-		</body>
+
+				<!-- Script ajoute en parametre -->
+				<script type="text/javascript">
+					<xsl:value-of select="$js"/>
+					gDelayAutoReloadSec = <xsl:value-of select="$delayActualisationClient"/>;
+				</script>
+				<title>
+					Suivi Compétition - Avancement
+				</title>
+			</head>
+			<body>
+				<!-- ENTETE -->
+				<xsl:call-template name="entete">
+					<xsl:with-param name="logo" select="$logo"/>
+					<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
+					<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
+					<xsl:with-param name="affEngagements" select="$affEngagements"/>
+					<xsl:with-param name="affActualiser" select="true()"/>
+					<xsl:with-param name="selectedItem" select="'avancement'"/>
+					<xsl:with-param name="pathToImg" select="$imgPath"/>
+					<xsl:with-param name="pathToCommon" select="$commonPath"/>
+				</xsl:call-template>
+
+				<!-- Div vide pour aligner le contenu avec le bandeau de titre de taille fixe -->
+				<div class="w3-container tas-filler-div">&nbsp;</div>
+
+				<!-- CONTENU -->
+				<!-- Nom de la competition + Catégorie -->
+				<div class="w3-container w3-blue w3-center tas-competition-bandeau">
+					<div>
+						<h4>
+							<xsl:value-of select="competition/titre"/>
+						</h4>
+					</div>
+					<div class="w3-card w3-indigo">
+						<h5>
+
+							<xsl:if test="//epreuve[1]/@sexe='F'">
+								Féminines&nbsp;
+							</xsl:if>
+							<xsl:if test="//epreuve[1]/@sexe='M'">
+								Masculins&nbsp;
+							</xsl:if>
+							<xsl:if test="//epreuve[1]/@sexe='X'">
+								Mixte&nbsp;
+							</xsl:if>
+							<xsl:value-of select="//epreuve[1]/@nom"/>
+						</h5>
+					</div>
+				</div>
+
+				<!-- Les poules -->
+				<div class="w3-card">
+					<xsl:for-each select="//phase/poules/poule">
+						<xsl:variable name="noPoule" >
+							<xsl:value-of select="./@numero"/>
+						</xsl:variable>
+						<xsl:variable name="phasePoule" select="./@phase"/>
+						<xsl:variable name="nbParticipantsPoule" select="count(//participant[@poule = $noPoule and @phase = $phasePoule])"/>
+
+						<!-- Determine la disposition de la poule en fonction du type et de la taille de la poule -->
+						<xsl:variable name="dispositionPoule">
+							<xsl:choose>
+								<!-- Calcul en fonction de la taille de la poule -->
+								<xsl:when test="$typePoule = 3">
+									<xsl:choose>
+										<!-- Diagonal si > max -->
+										<xsl:when test="$nbParticipantsPoule > $tailleMaxPouleColonne">1</xsl:when>
+										<!-- Colonne si <= max -->
+										<xsl:otherwise>2</xsl:otherwise>
+									</xsl:choose>
+								</xsl:when>
+								<!-- Choix force -->
+								<xsl:otherwise>
+									<xsl:value-of select="$typePoule"/>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:variable>
+
+						<!-- En fonction de la presence de combats de niveau 2, on affiche ou pas la poule complementaire -->
+						<xsl:choose>
+							<xsl:when test="count(//combats/combat[@niveau = '2' and @phase = $phasePoule and @reference  = $noPoule]) > 0">
+								<xsl:call-template name="templatePoule">
+									<xsl:with-param name="niveau" select="1"/>
+									<xsl:with-param name="numeroPoule" select="$noPoule"/>
+									<xsl:with-param name="phase" select="$phasePoule"/>
+									<xsl:with-param name="dispositionPoule" select="$dispositionPoule"/>
+								</xsl:call-template>
+								<xsl:call-template name="templatePoule">
+									<xsl:with-param name="niveau" select="2"/>
+									<xsl:with-param name="numeroPoule" select="$noPoule"/>
+									<xsl:with-param name="phase" select="$phasePoule"/>
+									<xsl:with-param name="dispositionPoule" select="$dispositionPoule"/>
+								</xsl:call-template>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:call-template name="templatePoule">
+									<xsl:with-param name="niveau" select="0"/>
+									<xsl:with-param name="numeroPoule" select="$noPoule"/>
+									<xsl:with-param name="phase" select="$phasePoule"/>
+									<xsl:with-param name="dispositionPoule" select="$dispositionPoule"/>
+								</xsl:call-template>
+							</xsl:otherwise>
+						</xsl:choose>
+
+					</xsl:for-each>
+				</div>
+
+				<!-- Info d'actualisation -->
+				<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
+					<script>
+						<xsl:attribute name="src">
+							<xsl:value-of select="concat($jsPath, 'footer_script.js')"/>
+						</xsl:attribute>
+					</script>
+				</div>
+			</body>
+		</html>
 	</xsl:template>
 
 	<!-- TEMPLATES -->
