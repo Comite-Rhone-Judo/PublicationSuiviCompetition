@@ -791,7 +791,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal != null ? Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif && Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsLocal : false;
+                                return Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal != null ? Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif && Instance.SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsLocal && !String.IsNullOrEmpty(Instance.SiteCoordinator.GestionnaireSitePublique.IdCompetition) : false;
                             });
                 }
                 return _cmdAfficherSiteLocal;
@@ -830,6 +830,41 @@ namespace AppPublication.Controles
                 return _cmdAfficherSiteDistant;
             }
         }
+
+        private ICommand _cmdAfficherSiteInterne = null;
+        /// <summary>
+        /// Commande d'affichage du site interne
+        /// </summary>
+        public ICommand CmdAfficherSiteInterne
+        {
+            get
+            {
+                if (_cmdAfficherSiteInterne == null)
+                {
+                    _cmdAfficherSiteInterne = new RelayCommand(
+                            o =>
+                            {
+                                if (Instance.SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null && Instance.SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsLocal && Instance.SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif)
+                                {
+                                    string url = Instance.SiteCoordinator.GestionnaireSiteInterne.URLLocalPublication;
+
+                                    if (Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
+                                    {
+                                        System.Diagnostics.Process.Start(url);
+                                    }
+                                }
+                            },
+                            o =>
+                            {
+                                // on ne peut pas ouvrir l'URL si on n'est pas connecte a une competition
+                                return Instance.SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null ? Instance.SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif && Instance.SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsLocal && !String.IsNullOrEmpty(Instance.SiteCoordinator.GestionnaireSiteInterne.IdCompetition) : false;
+                            });
+                }
+                return _cmdAfficherSiteInterne;
+            }
+        }
+
+        
 
         private ICommand _cmdAfficherInformations = null;
         public ICommand CmdAfficherInformations

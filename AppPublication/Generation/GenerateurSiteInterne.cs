@@ -197,6 +197,12 @@ namespace AppPublication.Generation
                     // Ok, a partir d'ici on peut lancer les tasks dans le batcher
                     ExportSiteInterne<ExportSharedContextInterne> exporter = new ExportSiteInterne<ExportSharedContextInterne>(_currentContext);     // L'exporteur
 
+                    // La racine du site
+                    _taskBatcher.AddWork(p =>
+                    {
+                        return exporter.GenereWebSiteIndex(_snapshot, _currentContext, _structureRepertoiresSiteInterne, p);
+                    });
+
                     foreach (var ecran in _ecransAppel.Ecrans)
                     {
                         _taskBatcher.AddWork(p =>

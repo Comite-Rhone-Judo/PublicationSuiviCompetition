@@ -268,7 +268,7 @@
                             <StackPanel Orientation="Horizontal" Margin="0 0 0 0">
                                 <Label  HorizontalAlignment="Right" Content="Déroulement:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
                                 <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en sec. de déroulement des informations."/>
-                                <telerik:RadNumericUpDown  Value="{Binding GestionnaireSiteInterne.DelaiDeroulementSec}" Width="100" Height="20" Minimum="1" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="10 0 0 0"/>
+                                <telerik:RadNumericUpDown  Value="{Binding GestionnaireSiteInterne.DelaiDeroulementSec}" Width="100" Height="20" Minimum="1" Maximum="600" SmallChange="1" CustomUnit="sec." HideTrailingZeros="True" Margin="10 0 0 0"/>
                                 <Label HorizontalAlignment="Right" Content="Sec." Style="{StaticResource LabelStyle}" />
                             </StackPanel>
                             <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
@@ -368,7 +368,7 @@
                                     </telerik:GridViewColumn.CellEditTemplate>
                                 </telerik:GridViewDataColumn>
 
-                                <telerik:GridViewColumn Header="Tapis" IsResizable="False" Width="140" ToolTip="Liste des tapis à afficher sur l'écean (max. 4)">
+                                <telerik:GridViewColumn Header="Tapis" IsResizable="False" Width="140" ToolTip="Liste des tapis à afficher sur l'écran">
                                     <telerik:GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding ListeTapisSelectionnesAffiche, FallbackValue='Aucun tapis'}" VerticalAlignment="Center" Margin="5"/>

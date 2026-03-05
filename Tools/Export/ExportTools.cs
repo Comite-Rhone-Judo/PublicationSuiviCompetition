@@ -178,7 +178,7 @@ namespace Tools.Export
         /// </summary>
         /// <param name="regenere"></param>
         /// <returns></returns>
-        public static List<string> ExportEmbeddedImg(bool regenere, bool addCustom, ExportSiteStructure structSite)
+        public static List<string> ExportEmbeddedImg(bool regenere, bool addCustom, ExportStructureBase structSite)
         {
             List<string> result = new List<string>();
             string dir = structSite.RepertoireImg();
@@ -259,7 +259,7 @@ namespace Tools.Export
         /// </summary>
         /// <param name="regenere"></param>
         /// <returns></returns>
-        public static List<string> ExportEmbeddedStyleAndJS(bool regenere, ExportSiteStructure structSite)
+        public static List<string> ExportEmbeddedStyleAndJS(bool regenere, ExportStructureBase structSite)
         {
             List<string> result = new List<string>();
             string dirJs = structSite.RepertoireJs();

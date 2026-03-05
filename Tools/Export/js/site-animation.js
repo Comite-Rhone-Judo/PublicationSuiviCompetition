@@ -66,7 +66,19 @@
 
             // Fin du décompte
             if (timeLeft >= totalSteps) {
-                nextStep();
+                // On retarde le changement de 100ms pour laisser la transition CSS toucher le bord
+                setTimeout(function () {
+                    nextStep();
+
+                    // Remise à zéro instantanée de la barre (sans animation de recul)
+                    if (state.progressBar) {
+                        state.progressBar.style.transition = 'none';
+                        state.progressBar.style.width = '0%';
+                        void state.progressBar.offsetWidth; // Force l'application immédiate du 0%
+                        state.progressBar.style.transition = 'width 0.1s linear';
+                    }
+                }, intervalStep);
+
                 timeLeft = 0;
             }
         }, intervalStep);
@@ -98,6 +110,7 @@
     }
 
     // --- Mise à jour de l'affichage (DOM) ---
+    // --- Mise à jour de l'affichage (DOM) ---
     function updateView() {
         // 1. Gestion des Tapis (Masquer/Afficher les blocs Tapis entiers)
         var allTapis = document.querySelectorAll('.tapis-card');
@@ -108,12 +121,13 @@
             var page = parseInt(div.getAttribute('data-tapis-page'));
 
             if (page === state.currentTapisGroupIndex) {
-                div.style.display = 'block';
-                // Petit effet de fade-in si w3.css animate est présent
-                div.classList.remove('w3-animate-opacity'); 
-                void div.offsetWidth; // Trigger reflow
-                div.classList.add('w3-animate-opacity');
-                
+                if (div.style.display === 'none') {
+                    // On utilise flex pour forcer l'alignement côte à côte du parent
+                    div.style.display = 'flex';
+                    div.classList.remove('w3-animate-opacity');
+                    void div.offsetWidth;
+                    div.classList.add('w3-animate-opacity');
+                }
                 visibleTapis.push(div);
             } else {
                 div.style.display = 'none';
@@ -121,17 +135,11 @@
         }
 
         // 2. Calcul du nombre max de pages de combats pour ce groupe visible
-        // (Ex: Tapis 1 a 2 pages, Tapis 2 a 5 pages -> On doit attendre 5 cycles)
         var maxPagesLocal = 1;
-
         for (var i = 0; i < visibleTapis.length; i++) {
             var tapisDiv = visibleTapis[i];
             var rows = tapisDiv.querySelectorAll('.combat-row');
-            var totalCombats = rows.length;
-            
-            var nbPagesCeTapis = Math.ceil(totalCombats / config.combatsParPage);
-            if (nbPagesCeTapis === 0) nbPagesCeTapis = 1; // Toujours au moins 1 page (vide ou non)
-
+            var nbPagesCeTapis = Math.ceil(rows.length / config.combatsParPage) || 1;
             if (nbPagesCeTapis > maxPagesLocal) {
                 maxPagesLocal = nbPagesCeTapis;
             }
@@ -142,40 +150,32 @@
         for (var i = 0; i < visibleTapis.length; i++) {
             var tapisDiv = visibleTapis[i];
             var rows = tapisDiv.querySelectorAll('.combat-row');
-            var totalCombats = rows.length;
-            var localMaxPage = Math.ceil(totalCombats / config.combatsParPage) || 1;
+            var localMaxPage = Math.ceil(rows.length / config.combatsParPage) || 1;
 
-            // Logique de cycle infini pour les tapis ayant moins de combats :
-            // Si on est à la page globale 3 mais que le tapis n'a que 2 pages, on affiche la page 1.
-            // Formule : (PageGlobale - 1) MODULO MaxPagesLocal + 1
-            var pageIndex0 = state.currentCombatPage - 1; 
-            var targetLocalPage0 = pageIndex0 % localMaxPage; 
-            var targetLocalPage = targetLocalPage0 + 1; 
+            // Calcul de la page locale (gestion du cycle si un tapis a moins de pages que les autres)
+            var targetLocalPage = ((state.currentCombatPage - 1) % localMaxPage) + 1;
 
-            // Calcul des index de lignes (1-based)
+            // Calcul des index de lignes
             var minIndex = (targetLocalPage - 1) * config.combatsParPage + 1;
             var maxIndex = targetLocalPage * config.combatsParPage;
 
-            // Mise à jour de l'indicateur visuel (ex: "Page 1/3")
-            // On cherche un élément dont l'ID commence par paging_indicator dans ce tapis
+            // Mise à jour de l'indicateur "Page X sur Y"
             var indicator = tapisDiv.querySelector("[id^='paging_indicator']");
             if (indicator) {
-                indicator.innerText = targetLocalPage + "/" + localMaxPage;
+                if (localMaxPage > 1) {
+                    indicator.innerText = "Page " + targetLocalPage + " sur " + localMaxPage;
+                    indicator.style.display = '';
+                } else {
+                    indicator.style.display = 'none'; // Cache si 1/1
+                }
             }
 
             // Masquer / Afficher les lignes <tr>
             for (var r = 0; r < rows.length; r++) {
                 var row = rows[r];
-                // On utilise l'attribut calculé par XSLT pour la position
-                // Note: on utilise querySelector ou l'attribut direct si disponible
-                // Ici on suppose que le XSLT a généré data-row-index="{position()}"
                 var rowIdx = parseInt(row.getAttribute('data-row-index'));
-
-                if (rowIdx >= minIndex && rowIdx <= maxIndex) {
-                    row.style.display = ''; // Affiche (valeur par défaut du navigateur pour table-row)
-                } else {
-                    row.style.display = 'none';
-                }
+                // Utilisation de la condition ternaire pour l'affichage
+                row.style.display = (rowIdx >= minIndex && rowIdx <= maxIndex) ? '' : 'none';
             }
         }
     }

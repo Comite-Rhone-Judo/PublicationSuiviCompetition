@@ -49,7 +49,7 @@ namespace AppPublication.Export
         /// <param name="savePath"></param>
         /// <param name="extraParams"></param>
         /// <returns></returns>
-        protected virtual XsltArgumentList CreateAllXsltArgs(ExportSiteStructure siteStruct, string savePath, params (string name, object value)[] extraParams)
+        protected virtual XsltArgumentList CreateAllXsltArgs(ExportStructureBase siteStruct, string savePath, params (string name, object value)[] extraParams)
         {
             XsltArgumentList args = new XsltArgumentList();
 

@@ -111,14 +111,14 @@
 
                             <telerik:RadButton Name="BoutonFindServer" Click="BoutonFindServer_Click_1" 
                                    Tag="pack://application:,,,/Tools;component/data/images/icons/black/notebook-32.png" 
-                                   Margin="10 0 0 0" Style="{StaticResource RadButtonStyle1}" ToolTip="Trouver le server">
+                                   Margin="5 0 0 0" Style="{StaticResource RadButtonStyle1}" ToolTip="Trouver le server">
                                 <Button.RenderTransform>
                                     <ScaleTransform ScaleX="1.0" ScaleY="1.0"></ScaleTransform>
                                 </Button.RenderTransform>
                             </telerik:RadButton>
 
                             <telerik:RadButton Name="ButSite" ToolTip="Avancement compétition sur le site local" Style="{StaticResource RadButtonStyle1}"
-                                   Focusable="False" Tag="pack://application:,,,/Tools;component/data/images/icons/black/home-32.png" Margin="25 0 0 0"
+                                   Focusable="False" Tag="pack://application:,,,/Tools;component/data/images/icons/black/home-32.png" Margin="35 0 0 0"
                                        Command="{Binding Path=CmdAfficherSiteLocal}">
                                 <Button.RenderTransform>
                                     <ScaleTransform ScaleX="1.0" ScaleY="1.0"></ScaleTransform>
@@ -133,11 +133,17 @@
                                 </Button.RenderTransform>
                             </telerik:RadButton>
 
-
+                            <telerik:RadButton Name="ButSiteInterne" ToolTip="Site Interne Live" Style="{StaticResource RadButtonStyle1}"
+                                   Focusable="False" Tag="pack://application:,,,/Tools;component/data/images/icons/black/channel_mosaic-32.png" Margin="10 0 0 0"
+                                       Command="{Binding Path=CmdAfficherSiteInterne}">
+                                <Button.RenderTransform>
+                                    <ScaleTransform ScaleX="1.0" ScaleY="1.0"></ScaleTransform>
+                                </Button.RenderTransform>
+                            </telerik:RadButton>
 
 
                             <telerik:RadButton ToolTip="Statistiques de fonctionnement" Style="{StaticResource RadButtonStyle1}"
-                                   Focusable="False" Tag="pack://application:,,,/Tools;component/data/images/icons/black/statistics-32.png" Margin="25 0 0 0"
+                                   Focusable="False" Tag="pack://application:,,,/Tools;component/data/images/icons/black/statistics-32.png" Margin="35 0 0 0"
                                        Command="{Binding Path=CmdAfficherStatistiques}">
                                 <Button.RenderTransform>
                                     <ScaleTransform ScaleX="1.0" ScaleY="1.0"></ScaleTransform>

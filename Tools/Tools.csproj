@@ -160,7 +160,9 @@
     <Compile Include="Export\ExportTools.cs" />
     <Compile Include="Export\InAssemblyUrlResolver.cs" />
     <Compile Include="Core\ClassFactory.cs" />
-    <Content Include="Export\xslt\Site\ecrans_appel_site.xslt" />
+    <EmbeddedResource Include="Export\xslt\Site\ecrans_appel_site.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <Content Include="Export\style\site\style-ecransappel.css" />
     <Compile Include="Framework\RelayCommand.cs" />
     <Compile Include="Framework\WindowLoadBehavior.cs" />
@@ -1972,7 +1974,7 @@
     <EmbeddedResource Include="Export\xslt\Site\niveau_tour_combat.xslt" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Export\js\site-animation.js" />
+    <EmbeddedResource Include="Export\js\site-animation.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

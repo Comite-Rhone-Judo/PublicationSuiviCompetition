@@ -26,7 +26,7 @@ namespace AppPublication.ViewModels.Configuration
         }
 
         #region CONSTANTES
-        private const int kMaxTapisSelection = 4; // Constante pour la limite
+        private const int kMaxTapisSelection = 8; // Constante pour la limite
         #endregion
 
         #region MEMBERS
