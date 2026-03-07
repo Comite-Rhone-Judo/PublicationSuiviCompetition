@@ -36,7 +36,7 @@ namespace Tools.Export
         }
 
         /// <summary>
-        /// Le chemin URL de Common de la competition configuree
+        /// Le chemin URL des ecrans d'appel pour les groupes de tapis
         /// </summary>
         public string UrlPathEcransAppel
         {

@@ -163,7 +163,7 @@
     <EmbeddedResource Include="Export\xslt\Site\ecrans_appel_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Content Include="Export\style\site\style-ecransappel.css" />
+    <Content Include="Export\style\site\style-ecran-appel.css" />
     <Compile Include="Framework\RelayCommand.cs" />
     <Compile Include="Framework\WindowLoadBehavior.cs" />
     <Compile Include="HttpServerModule\Authentication\AuthenticationModule.cs" />

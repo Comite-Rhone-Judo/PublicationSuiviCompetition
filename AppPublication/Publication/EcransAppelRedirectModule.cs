@@ -6,6 +6,7 @@ using HttpServer.Sessions;
 using NLog;
 using System;
 using System.ComponentModel.Design;
+using System.Linq;
 using Tools.Export;
 using Tools.Logging;
 using Tools.Net;
@@ -19,6 +20,7 @@ namespace AppPublication.Publication
         // La configuration des ecrans d'appel
         private EcranCollectionManager _manager = null;
         private IContextProvider _provider = null;
+        private ExportSiteInterneUrls _structInterne = null;
 
         /// <summary>
         /// Injection du contexte de l'application
@@ -31,17 +33,23 @@ namespace AppPublication.Publication
         }
 
         // Le path de reference pour la redirection
-        private string _path = string.Empty;
-        public string Path
+        private string _referencePath = string.Empty;
+        public string ReferencePath
         {
-            get { return _path; }
-            set { _path = value; }
+            get { return _referencePath; }
+            set
+            {
+                // On vérifie que le path est une URL valide
+                var tmp = new Uri(value);
+
+
+                _referencePath = value;
+            }
         }
 
         /// <summary>
         /// Constructeur
         /// </summary>
-        /// <param name="path"></param>
         /// <exception cref="ArgumentNullException"></exception>
         public EcransAppelRedirectModule() { }
 
@@ -57,13 +65,13 @@ namespace AppPublication.Publication
             }
 
             // Recupere la configuration de l'export de la structure interne pour connaitre le path
-            ExportSiteInterneUrls structInterne = _provider.GetContext<ExportSiteInterneUrls>();
-            if (structInterne == null)
+            ExportSiteInterneUrls _structInterne = _provider.GetContext<ExportSiteInterneUrls>();
+            if (_structInterne == null)
             {
                 LogTools.Logger.Error("EcransAppelRedirectModule: Le contexte n'a pas ete initialise. ExportSiteInterneUrls manquant");
                 throw new InternalServerException();
             }
-            Path = structInterne.UrlPathEcransAppel;
+            ReferencePath = _structInterne.UrlPathEcransAppelRedirecteur;
 
             // Récupère la configuration des écrans d'appel
             if (_manager == null)
@@ -80,7 +88,7 @@ namespace AppPublication.Publication
         public override bool Process(IHttpRequest request, IHttpResponse response, IHttpSession session)
         {
             // Vérifie que le chemin est défini
-            if (string.IsNullOrEmpty(this.Path))
+            if (string.IsNullOrEmpty(this.ReferencePath))
             {
                 LogTools.Logger.Error("EcransAppelRedirectModule: Le Path n'est pas defini.");
                 throw new InternalServerException("EcransAppelRedirectModule: Le Path n'est pas defini.");
@@ -94,7 +102,7 @@ namespace AppPublication.Publication
             }
 
             // Vérifie si l'URL commence par le chemin défini pour ce module
-            if (!request.Uri.AbsolutePath.StartsWith(this.Path, StringComparison.InvariantCultureIgnoreCase))
+            if (!request.Uri.AbsolutePath.StartsWith(this.ReferencePath, StringComparison.InvariantCultureIgnoreCase))
             {
                 return false; // Ce module ne gère pas cette requête, on passe au suivant
             }
@@ -106,18 +114,28 @@ namespace AppPublication.Publication
                 string clientIp = request.RemoteEndPoint.Address.ToString();
 
                 // 2. Déterminer la cible en fonction de l'IP
-                // Tu peux ici appeler ta logique métier ou ta configuration existante
-                // string targetFile = DetermineTargetForClient(clientIp);
-                string targetFile = string.Empty; // TODO Remplace par ta logique
+                var ecranToRedirect = _manager.Ecrans.FirstOrDefault(e => e.AdresseIP.Equals(clientIp));
 
-                if (string.IsNullOrEmpty(targetFile))
-                {
-                    return false; // Pas de redirection définie pour ce client
+                // 3. Rediriger vers la page correspondante ou une page par défaut
+                if (ecranToRedirect == null) {
+                    ecranToRedirect = _manager.Default;
                 }
+
+                if (ecranToRedirect == null) {
+                    LogTools.Logger.Error("EcransAppelRedirectModule: Aucun écran d'appel trouvé pour l'IP {0} et aucun écran par défaut défini.", clientIp);
+                    throw new InternalServerException("EcransAppelRedirectModule: Aucun écran d'appel trouvé pour l'IP et aucun écran par défaut défini.");
+                }
+
+                // Construire l'URL de redirection
+                // output = (new Uri(new Uri(urlBase), _structureSiteInterne.UrlPathEcransAppelRedirecteur)).ToString();
+
+                string targetRedirect = _structInterne.UrlPathEcransAppel;
+
+                
 
                 // 3. Effectuer la redirection
                 // Assure-toi que l'URL cible est relative à la racine du serveur web ou absolue
-                response.Redirect(targetFile);
+                response.Redirect(targetRedirect);
 
                 return true; // La requête a été traitée
             }

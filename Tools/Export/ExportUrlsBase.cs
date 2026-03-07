@@ -5,6 +5,7 @@ namespace Tools.Export
 {
     public abstract class ExportUrlsBase
     {
+        // TODO il va falloir reprendre ExportURl afin de retourner des vrais URLs (avec des / et pas des \) mais attention aux effets de bord
         #region MEMBRES
 
         protected ExportStructureBase _parentStructure = null;
@@ -109,6 +110,10 @@ namespace Tools.Export
             }
         }
 
+        /// <summary>
+        /// Verifie si la structure de site est completement configuree avant d'acceder a une URL, sinon leve une exception
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
         protected virtual void IsConfiguredGuardRail()
         {
             if (_parentStructure == null || !_parentStructure.IsFullyConfigured)

@@ -1,0 +1,166 @@
+﻿/* --- Global --- */
+.tv-header {
+    height: 80px;
+    display: flex;
+    align-items: center;
+}
+
+.tv-logo-cell {
+    width: 15%;
+    text-align: center;
+}
+
+.tv-logo {
+    max-height: 65px;
+}
+
+.tv-title {
+    width: 70%;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* --- Structure Tapis --- */
+.tapis-card {
+    box-sizing: border-box;
+}
+
+.tapis-inner {
+    height: 100%;
+    display: flex;
+    overflow: hidden;
+}
+
+.dispo-ligne {
+    flex-direction: row;
+}
+
+.dispo-colonne {
+    flex-direction: column;
+}
+
+/* --- Headers Tapis --- */
+.tapis-header-vertical {
+    width: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+    .tapis-header-vertical b {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        white-space: nowrap;
+        margin: auto;
+    }
+
+.paging-v-container {
+    width: 100%;
+    padding-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.paging-v-span {
+    font-size: 0.9em;
+    line-height: 1.2;
+    text-align: center;
+    width: 65px;
+    display: inline-block;
+}
+
+.tapis-content {
+    flex: 1;
+    overflow: hidden;
+}
+
+/* --- Lignes de Combat --- */
+.badge-cell {
+    width: 5%;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.pos-badge {
+    height: 48px;
+    width: 48px;
+    line-height: 48px;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: auto;
+    display: inline-block;
+}
+
+/* --- Judoka Blocks --- */
+.judoka-cell {
+    padding: 6px;
+    vertical-align: middle;
+}
+
+.judoka-box {
+    overflow: hidden;
+}
+
+.judoka-container {
+    padding: 6px 10px;
+    display: flex;
+}
+
+.jc-column {
+    flex-direction: column;
+    align-items: flex-end;
+}
+/* Par défaut aligné à droite pour Judoka 1 */
+.jc-column-left {
+    flex-direction: column;
+    align-items: flex-start;
+}
+/* Aligné à gauche pour Judoka 2 */
+.jc-row {
+    align-items: baseline;
+}
+
+.jc-center {
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.jc-center-row {
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.club-info {
+    font-weight: bold;
+    margin-top: 2px;
+    height: 1.5em;
+}
+
+/* --- Catégorie --- */
+.cat-cell {
+    padding: 6px;
+    height: 1px;
+    vertical-align: middle;
+}
+
+.cat-box {
+    height: 100%;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-weight: bold;
+}
+
+/* --- Images & Badges --- */
+.colorized-img-white {
+    filter: brightness(0) invert(1);
+}
+
+.colorized-img-black {
+    filter: brightness(0);
+}

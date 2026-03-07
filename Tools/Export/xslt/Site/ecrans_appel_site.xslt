@@ -6,6 +6,8 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:import href="Tools/Export/xslt/Site/niveau_tour_combat.xslt"/>
 	
+	<!-- TODO Faire faire une simplification via Css personalisé -->
+	
 	<xsl:output method="html" indent="yes" encoding="utf-8"/>
 
 	<xsl:param name="style"/>
@@ -20,6 +22,8 @@
 	<xsl:param name="idEcran"/>
 	<xsl:param name="tapisAffiches"/>
 	<xsl:param name="dispositionAffichage" select="'colonne'"/>
+	<xsl:param name="combatsParPageEff"/>
+	<xsl:param name="isAffichageCombatLigne" select="'false'"/>
 	
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 
@@ -63,14 +67,6 @@
 		</xsl:choose>
 	</xsl:variable>
 
-	<xsl:variable name="combatsParPageEff">
-		<xsl:choose>
-			<xsl:when test="$tailleGroupe = '1' or $tailleGroupe = '2'">12</xsl:when>
-			<xsl:when test="$tailleGroupe = '4'">6</xsl:when>
-			<xsl:otherwise>12</xsl:otherwise>
-		</xsl:choose>
-	</xsl:variable>
-
 	<xsl:template match="docroot">
 		<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
 		<html>
@@ -93,7 +89,7 @@
 				</link>
 				<link type="text/css" rel="stylesheet">
 					<xsl:attribute name="href">
-						<xsl:value-of select="concat($cssPath, 'style-tableau.css')"/>
+						<xsl:value-of select="concat($cssPath, 'style-ecran-appel.css')"/>
 					</xsl:attribute>
 				</link>
 
@@ -186,12 +182,12 @@
 
 					<!-- HEADER TAPIS CONDITIONNEL -->
 					<xsl:choose>
+						<!-- DISPOSITION EN LIGNE : HEADER SUR LE CÔTÉ GAUCHE -->
 						<xsl:when test="$dispositionAffichage = 'ligne'">
-							<!-- DISPOSITION EN LIGNE : HEADER SUR LE CÔTÉ GAUCHE -->
 							<div class="tapis-header w3-indigo w3-display-container" style="width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0;">
 								<!-- L'indicateur de page en haut de la barre verticale -->
-								<div class="w3-display-topmiddle w3-center" style="width: 100%; padding-top: 10px;">
-									<span id="paging_indicator_tapis_{$notapis}" style="font-size: 0.85em; line-height: 1.1; display: inline-block;"></span>
+								<div class="w3-display-topmiddle w3-center" style="width: 100%; padding-top: 10px; display: flex; justify-content: center;">
+									<span id="paging_indicator_tapis_{$notapis}" style="font-size: 0.9em; line-height: 1.2; text-align: center; width: 65px; display: inline-block;"></span>
 								</div>
 								<!-- Le texte orienté à 90° (du bas vers le haut) -->
 								<b class="w3-xxlarge" style="writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; margin: auto;">
@@ -280,7 +276,7 @@
 
 			<!-- Le badge de position de combat -->
 			<td class="w3-center" style="width: 5%; vertical-align: middle;">
-				<div class="w3-indigo w3-circle" style="height: 38px; width: 38px; line-height: 38px; font-size: 1.2em; margin: auto; display: inline-block;">
+				<div class="w3-indigo w3-circle" style="height: 48px; width: 48px; line-height: 48px; font-size: 1.5em; font-weight: bold; margin: auto; display: inline-block;">
 					<xsl:value-of select="$indexCombat"/>
 				</div>
 			</td>
@@ -300,82 +296,116 @@
 							</xsl:otherwise>
 						</xsl:choose>
 					</xsl:attribute>
-
 					<xsl:choose>
 						<xsl:when test="$participant1 = 'null'">
-							<div class="w3-padding-large w3-large">
-								<img class="img" width="25">
-									<xsl:attribute name="src">
-										<xsl:value-of select="concat($imgPath, 'sablier.png')"/>
+							<div class="w3-container">
+								<xsl:attribute name="style">
+									<xsl:choose>
+										<xsl:when test="$isAffichageCombatLigne = 'true'">padding: 8px 10px; display: flex; align-items: center; justify-content: center;</xsl:when>
+										<xsl:otherwise>padding: 6px 10px; display: flex; flex-direction: column; align-items: center;</xsl:otherwise>
+									</xsl:choose>
+								</xsl:attribute>
+								<div class="w3-xlarge" style="font-weight: bold;">
+									<img class="img" width="28" style="vertical-align: middle; margin-right: 8px; margin-bottom: 4px;">
+										<xsl:attribute name="src">
+											<xsl:value-of select="concat($imgPath, 'sablier.png')"/>
+										</xsl:attribute>
+									</img>
+									<span style="vertical-align: middle;">En Attente</span>
+								</div>
+								<div class="w3-medium">
+									<xsl:attribute name="style">
+										<xsl:choose>
+											<xsl:when test="$isAffichageCombatLigne = 'true'">display: none;</xsl:when>
+											<xsl:otherwise>margin-top: 2px; height: 1.5em;</xsl:otherwise>
+										</xsl:choose>
 									</xsl:attribute>
-								</img>
-								<xsl:text disable-output-escaping="yes">&#032;En Attente</xsl:text>
+									<xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text>
+								</div>
 							</div>
 						</xsl:when>
 						<xsl:otherwise>
-							<div class="w3-container w3-large" style="padding: 6px 10px;">
-								<b>
-									<xsl:value-of select="$judoka1/@nom"/>
-								</b>
-								<xsl:if test="$typeCompetition != 1">
-									<xsl:text disable-output-escaping="yes">&#032;</xsl:text>
-									<xsl:value-of select="$judoka1/@prenom"/>
-								</xsl:if>
-							</div>
-							<div class="w3-container w3-tiny w3-opacity-min" style="padding: 2px 10px 6px;">
-								<xsl:variable name="ecartement1" select="$docPrincipal//phase[@id = $phase]/@ecartement"/>
-								<xsl:choose>
-									<xsl:when test="$ecartement1 = '3'">
-										<xsl:if test="$typeCompetition != '1'">
-											<xsl:value-of select="$docPrincipal//club[@ID = $club1]/nomCourt"/>
-											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="$comite1"/>
-										</xsl:if>
-										<xsl:if test="$typeCompetition = '1'">
-											<xsl:value-of select="$comite1"/>
-										</xsl:if>
-									</xsl:when>
+							<xsl:variable name="ecartement1" select="$docPrincipal//phase[@id = $phase]/@ecartement"/>
+							<div class="w3-container">
+								<xsl:attribute name="style">
+									<xsl:choose>
+										<xsl:when test="$isAffichageCombatLigne = 'true'">padding: 8px 10px; display: flex; align-items: baseline; justify-content: flex-end;</xsl:when>
+										<xsl:otherwise>padding: 6px 10px; display: flex; flex-direction: column; align-items: flex-end;</xsl:otherwise>
+									</xsl:choose>
+								</xsl:attribute>
 
-									<xsl:when test="$ecartement1 = '4'">
-										<xsl:if test="$typeCompetition != '1'">
-											<xsl:value-of select="$docPrincipal//club[@ID = $club1]/nomCourt"/>
-											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="$docPrincipal//ligue[@ID = $ligue1]/nomCourt"/>
-										</xsl:if>
-										<xsl:if test="$typeCompetition = '1'">
-											<xsl:value-of select="$docPrincipal//ligue[@ID = $ligue1]/nomCourt"/>
-										</xsl:if>
-									</xsl:when>
+								<div class="w3-xlarge">
+									<xsl:attribute name="style">
+										<xsl:choose>
+											<xsl:when test="$isAffichageCombatLigne = 'true'">order: 2;</xsl:when>
+											<xsl:otherwise>order: 1;</xsl:otherwise>
+										</xsl:choose>
+									</xsl:attribute>
+									<b>
+										<xsl:value-of select="$judoka1/@nom"/>
+									</b>
+									<xsl:if test="$typeCompetition != 1">
+										<xsl:text disable-output-escaping="yes">&#032;</xsl:text>
+										<xsl:value-of select="$judoka1/@prenom"/>
+									</xsl:if>
+								</div>
 
-									<xsl:otherwise>
-										<xsl:if test="$typeCompetition != '1'">
-											<xsl:value-of select="$docPrincipal//club[@ID = $club1]/nomCourt"/>
-											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="$comite1"/>
-										</xsl:if>
-										<xsl:if test="$typeCompetition = '1'">
-											<xsl:value-of select="$comite1"/>
-										</xsl:if>
-									</xsl:otherwise>
-								</xsl:choose>
+								<div class="w3-medium w3-opacity-min" style="font-weight: bold;">
+									<xsl:attribute name="style">
+										<xsl:choose>
+											<xsl:when test="$isAffichageCombatLigne = 'true'">order: 1; margin-right: 15px;</xsl:when>
+											<xsl:otherwise>order: 2; margin-top: 2px; height: 1.5em;</xsl:otherwise>
+										</xsl:choose>
+									</xsl:attribute>
+									<xsl:choose>
+										<xsl:when test="$ecartement1 = '3'">
+											<xsl:if test="$typeCompetition != '1'">
+												<xsl:value-of select="$docPrincipal//club[@ID = $club1]/nomCourt"/>
+												<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+												<xsl:value-of select="$comite1"/>
+											</xsl:if>
+											<xsl:if test="$typeCompetition = '1'">
+												<xsl:value-of select="$comite1"/>
+											</xsl:if>
+										</xsl:when>
+										<xsl:when test="$ecartement1 = '4'">
+											<xsl:if test="$typeCompetition != '1'">
+												<xsl:value-of select="$docPrincipal//club[@ID = $club1]/nomCourt"/>
+												<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+												<xsl:value-of select="$docPrincipal//ligue[@ID = $ligue1]/nomCourt"/>
+											</xsl:if>
+											<xsl:if test="$typeCompetition = '1'">
+												<xsl:value-of select="$docPrincipal//ligue[@ID = $ligue1]/nomCourt"/>
+											</xsl:if>
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:if test="$typeCompetition != '1'">
+												<xsl:value-of select="$docPrincipal//club[@ID = $club1]/nomCourt"/>
+												<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+												<xsl:value-of select="$comite1"/>
+											</xsl:if>
+											<xsl:if test="$typeCompetition = '1'">
+												<xsl:value-of select="$comite1"/>
+											</xsl:if>
+										</xsl:otherwise>
+									</xsl:choose>
+								</div>
 							</div>
 						</xsl:otherwise>
-					</xsl:choose>
+					</xsl:choose>		
 				</div>
 			</td>
 
 			<!-- Catégorie -->
 			<td class="w3-center" style="padding: 6px; height: 1px; vertical-align: middle;">
-				<div class="w3-card w3-pale-yellow w3-round-small w3-medium" style="height: 100%; padding: 4px; display: flex; flex-direction: column; justify-content: center;">
+				<div class="w3-card w3-pale-yellow w3-round-small w3-large" style="height: 100%; padding: 4px; display: flex; flex-direction: column; justify-content: center; font-weight: bold;">
 					<div>
-						<b>
-							<xsl:value-of select="$docPrincipal//epreuve[@ID = $epreuve]/@sexe"/>
-							<xsl:text>&#32;</xsl:text>
-							<xsl:value-of select="$docPrincipal//epreuve[@ID = $epreuve]/@nom"/>
-						</b>
+						<xsl:value-of select="$docPrincipal//epreuve[@ID = $epreuve]/@sexe"/>
+						<xsl:text>&#32;</xsl:text>
+						<xsl:value-of select="$docPrincipal//epreuve[@ID = $epreuve]/@nom"/>
 					</div>
 
-					<div class="w3-opacity" style="font-size: 0.85em; margin-top: 4px;">
+					<div class="w3-opacity w3-medium" style="margin-top: 2px;">
 						(<xsl:call-template name="NiveauTourCombat">
 							<xsl:with-param name="combat" select="$combat"/>
 							<xsl:with-param name="typePhase" select="$typePhase"/>
@@ -418,61 +448,95 @@
 
 					<xsl:choose>
 						<xsl:when test="$participant2 = 'null'">
-							<div class="w3-padding-large w3-large">
-								<img class="img" width="25">
-									<xsl:attribute name="src">
-										<xsl:value-of select="concat($imgPath, 'sablier.png')"/>
+							<div class="w3-container">
+								<xsl:attribute name="style">
+									<xsl:choose>
+										<xsl:when test="$isAffichageCombatLigne = 'true'">padding: 8px 10px; display: flex; align-items: center; justify-content: center;</xsl:when>
+										<xsl:otherwise>padding: 6px 10px; display: flex; flex-direction: column; align-items: center;</xsl:otherwise>
+									</xsl:choose>
+								</xsl:attribute>
+								<div class="w3-xlarge" style="font-weight: bold;">
+									<img class="img" width="28" style="vertical-align: middle; margin-right: 8px; margin-bottom: 4px;">
+										<xsl:attribute name="src">
+											<xsl:value-of select="concat($imgPath, 'sablier.png')"/>
+										</xsl:attribute>
+									</img>
+									<span style="vertical-align: middle;">En Attente</span>
+								</div>
+								<div class="w3-medium">
+									<xsl:attribute name="style">
+										<xsl:choose>
+											<xsl:when test="$isAffichageCombatLigne = 'true'">display: none;</xsl:when>
+											<xsl:otherwise>margin-top: 2px; height: 1.5em;</xsl:otherwise>
+										</xsl:choose>
 									</xsl:attribute>
-								</img>
-								<xsl:text disable-output-escaping="yes">&#032;En Attente</xsl:text>
+									<xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text>
+								</div>
 							</div>
 						</xsl:when>
 						<xsl:otherwise>
-							<div class="w3-container w3-large" style="padding: 6px 10px;">
-								<b>
-									<xsl:value-of select="$judoka2/@nom"/>
-								</b>
-								<xsl:if test="$typeCompetition != 1">
-									<xsl:text disable-output-escaping="yes">&#032;</xsl:text>
-									<xsl:value-of select="$judoka2/@prenom"/>
-								</xsl:if>
-							</div>
-							<div class="w3-container w3-tiny w3-opacity-min" style="padding: 2px 10px 6px;">
-								<xsl:variable name="ecartement2" select="$docPrincipal//phase[@id = $phase]/@ecartement"/>
-								<xsl:choose>
-									<xsl:when test="$ecartement2 = '3'">
-										<xsl:if test="$typeCompetition != '1'">
-											<xsl:value-of select="$docPrincipal//club[@ID = $club2]/nomCourt"/>
-											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="$comite2"/>
-										</xsl:if>
-										<xsl:if test="$typeCompetition = '1'">
-											<xsl:value-of select="$comite2"/>
-										</xsl:if>
-									</xsl:when>
+							<xsl:variable name="ecartement2" select="$docPrincipal//phase[@id = $phase]/@ecartement"/>
+							<div class="w3-container">
+								<xsl:attribute name="style">
+									<xsl:choose>
+										<xsl:when test="$isAffichageCombatLigne = 'true'">padding: 8px 10px; display: flex; align-items: baseline; justify-content: flex-start;</xsl:when>
+										<xsl:otherwise>padding: 6px 10px; display: flex; flex-direction: column; align-items: flex-start;</xsl:otherwise>
+									</xsl:choose>
+								</xsl:attribute>
 
-									<xsl:when test="$ecartement2 = '4'">
-										<xsl:if test="$typeCompetition != '1'">
-											<xsl:value-of select="$docPrincipal//club[@ID = $club2]/nomCourt"/>
-											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="$docPrincipal//ligue[@ID = $ligue2]/nomCourt"/>
-										</xsl:if>
-										<xsl:if test="$typeCompetition = '1'">
-											<xsl:value-of select="$docPrincipal//ligue[@ID = $ligue2]/nomCourt"/>
-										</xsl:if>
-									</xsl:when>
+								<div class="w3-xlarge">
+									<xsl:attribute name="style">
+										<xsl:text>order: 1;</xsl:text>
+									</xsl:attribute>
+									<b>
+										<xsl:value-of select="$judoka2/@nom"/>
+									</b>
+									<xsl:if test="$typeCompetition != 1">
+										<xsl:text disable-output-escaping="yes">&#032;</xsl:text>
+										<xsl:value-of select="$judoka2/@prenom"/>
+									</xsl:if>
+								</div>
 
-									<xsl:otherwise>
-										<xsl:if test="$typeCompetition != '1'">
-											<xsl:value-of select="$docPrincipal//club[@ID = $club2]/nomCourt"/>
-											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="$comite2"/>
-										</xsl:if>
-										<xsl:if test="$typeCompetition = '1'">
-											<xsl:value-of select="$comite2"/>
-										</xsl:if>
-									</xsl:otherwise>
-								</xsl:choose>
+								<div class="w3-medium w3-opacity-min" style="font-weight: bold;">
+									<xsl:attribute name="style">
+										<xsl:choose>
+											<xsl:when test="$isAffichageCombatLigne = 'true'">order: 2; margin-left: 15px;</xsl:when>
+											<xsl:otherwise>order: 2; margin-top: 2px; height: 1.5em;</xsl:otherwise>
+										</xsl:choose>
+									</xsl:attribute>
+									<xsl:choose>
+										<xsl:when test="$ecartement2 = '3'">
+											<xsl:if test="$typeCompetition != '1'">
+												<xsl:value-of select="$docPrincipal//club[@ID = $club2]/nomCourt"/>
+												<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+												<xsl:value-of select="$comite2"/>
+											</xsl:if>
+											<xsl:if test="$typeCompetition = '1'">
+												<xsl:value-of select="$comite2"/>
+											</xsl:if>
+										</xsl:when>
+										<xsl:when test="$ecartement2 = '4'">
+											<xsl:if test="$typeCompetition != '1'">
+												<xsl:value-of select="$docPrincipal//club[@ID = $club2]/nomCourt"/>
+												<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+												<xsl:value-of select="$docPrincipal//ligue[@ID = $ligue2]/nomCourt"/>
+											</xsl:if>
+											<xsl:if test="$typeCompetition = '1'">
+												<xsl:value-of select="$docPrincipal//ligue[@ID = $ligue2]/nomCourt"/>
+											</xsl:if>
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:if test="$typeCompetition != '1'">
+												<xsl:value-of select="$docPrincipal//club[@ID = $club2]/nomCourt"/>
+												<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
+												<xsl:value-of select="$comite2"/>
+											</xsl:if>
+											<xsl:if test="$typeCompetition = '1'">
+												<xsl:value-of select="$comite2"/>
+											</xsl:if>
+										</xsl:otherwise>
+									</xsl:choose>
+								</div>
 							</div>
 						</xsl:otherwise>
 					</xsl:choose>
