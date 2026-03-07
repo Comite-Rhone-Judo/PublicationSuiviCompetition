@@ -274,7 +274,8 @@ namespace AppPublication.Models.Publication
                             Hostname = cfg.Hostname,
                             AdresseIP = ipValid ? ip : IPAddress.None,
                             TapisIds = tapisIds,
-                            Groupement = cfg.Groupement
+                            Groupement = cfg.Groupement,
+                            Disposition = cfg.Disposition
                         };
 
                         // Ajuster le compteur statique pour éviter les doublons d'ID futurs

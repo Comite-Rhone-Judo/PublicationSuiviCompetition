@@ -5,6 +5,12 @@ namespace AppPublication.Models.EcransAppel
 {
     public class EcranAppelModel
     {
+        public enum DispositionAffichage
+        {
+            Ligne,
+            Colonne
+        }
+
         private static int _compteurGlobal = 1;
 
         public static int LastId
@@ -21,7 +27,9 @@ namespace AppPublication.Models.EcransAppel
 
         public int Groupement { get; set; }
 
-        public EcranAppelModel(int id = 0, string description = "Nouvel Écran", string hostname = "", IPAddress adresseIP = null, List<int> tapisIds = null, int groupement = 1)
+        public DispositionAffichage Disposition { get; set; }
+
+        public EcranAppelModel(int id = 0, string description = "Nouvel Écran", string hostname = "", IPAddress adresseIP = null, List<int> tapisIds = null, int groupement = 1, DispositionAffichage disposition = DispositionAffichage.Colonne)
         {
             Id = id;
             Description = description;
@@ -29,6 +37,7 @@ namespace AppPublication.Models.EcransAppel
             AdresseIP = adresseIP ?? IPAddress.None;
             TapisIds = tapisIds ?? new List<int>();
             Groupement = groupement;
+            Disposition = disposition; // Initialisation
         }
     }
 }

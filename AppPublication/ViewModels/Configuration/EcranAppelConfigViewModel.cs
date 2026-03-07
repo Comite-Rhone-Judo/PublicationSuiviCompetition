@@ -10,9 +10,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Tools.Framework;
 using Tools.Logging;
 using Tools.Windows;
-using Tools.Framework;
+using static AppPublication.Models.EcransAppel.EcranAppelModel;
 
 namespace AppPublication.ViewModels.Configuration
 {
@@ -80,6 +81,37 @@ namespace AppPublication.ViewModels.Configuration
         #endregion
 
         #region PROPRIETES
+
+        /// <summary>
+        /// Options pour la Dropdown de disposition (extraites dynamiquement de l'enum)
+        /// </summary>
+        public IEnumerable<DispositionAffichage> DispositionOptions => Enum.GetValues(typeof(DispositionAffichage)).Cast<DispositionAffichage>();
+
+        /// <summary>
+        /// Disposition de l'écran (Ligne ou Colonne)
+        /// </summary>
+        public DispositionAffichage Disposition
+        {
+            get
+            {
+                return _model.Disposition;
+            }
+            set
+            {
+                if (_model.Disposition != value)
+                {
+                    _model.Disposition = value;
+                    NotifyPropertyChanged();
+
+                    // SAUVEGARDE IMMEDIATE
+                    var cfg = GetConfigElement();
+                    if (cfg != null)
+                    {
+                        cfg.Disposition = value; 
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Les options de groupement des tapis (1, 2 ou 4)

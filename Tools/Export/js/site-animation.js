@@ -121,16 +121,15 @@
             var page = parseInt(div.getAttribute('data-tapis-page'));
 
             if (page === state.currentTapisGroupIndex) {
-                if (div.style.display === 'none') {
-                    // On utilise flex pour forcer l'alignement côte à côte du parent
-                    div.style.display = 'flex';
+                if (div.style.display !== 'block') {
+                    div.style.display = 'block'; // Un simple block suffit dans un parent Flexbox
                     div.classList.remove('w3-animate-opacity');
                     void div.offsetWidth;
                     div.classList.add('w3-animate-opacity');
                 }
                 visibleTapis.push(div);
             } else {
-                div.style.display = 'none';
+                div.style.display = 'none'; // CRUCIAL : Masquer les autres tapis pour libérer la place
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using Tools.Configuration;
+using static AppPublication.Models.EcransAppel.EcranAppelModel;
 
 namespace AppPublication.Config.Generation
 {
@@ -17,6 +18,7 @@ namespace AppPublication.Config.Generation
         private const string kTapisIds = "tapisIds";
         private const string kHostname = "hostname";
         private const string kGroupement = "groupement";
+        private const string kDisposition = "disposition";
 
         #region METHODES
         /// <summary>
@@ -76,6 +78,13 @@ namespace AppPublication.Config.Generation
         {
             get { return GetConfigValue<string>(kTapisIds, string.Empty); }
             set { SetValueAndMarkDirty(kTapisIds, value); }
+        }
+
+        [ConfigurationProperty(kDisposition, DefaultValue = DispositionAffichage.Colonne)]
+        public DispositionAffichage Disposition
+        {
+            get { return GetConfigValue<DispositionAffichage>(kDisposition, DispositionAffichage.Colonne); }
+            set { SetValueAndMarkDirty(kDisposition, value); }
         }
         #endregion
     }

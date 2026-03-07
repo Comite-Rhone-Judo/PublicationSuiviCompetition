@@ -19,7 +19,8 @@
 	<xsl:param name="tailleGroupe"/>
 	<xsl:param name="idEcran"/>
 	<xsl:param name="tapisAffiches"/>
-
+	<xsl:param name="dispositionAffichage" select="'colonne'"/>
+	
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 
 	<xsl:variable name="docPrincipal" select="/" />
@@ -39,32 +40,34 @@
 			<xsl:when test="$nbProchainsCombats > 0">
 				<xsl:value-of select="$nbProchainsCombats"/>
 			</xsl:when>
-			<xsl:otherwise>6</xsl:otherwise>
+			<xsl:otherwise>12</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
 
 	<xsl:variable name="widthStyle">
 		<xsl:choose>
 			<xsl:when test="$tailleGroupe = '1'">100%</xsl:when>
-			<xsl:when test="$tailleGroupe = '2'">50%</xsl:when>
-			<xsl:when test="$tailleGroupe = '4'">50%</xsl:when>
+			<!-- En mode "ligne" avec 2 tapis, on force 100% de large pour qu'ils s'empilent -->
+			<xsl:when test="$tailleGroupe = '2' and $dispositionAffichage = 'ligne'">100%</xsl:when>
 			<xsl:otherwise>50%</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
 
 	<xsl:variable name="heightStyle">
 		<xsl:choose>
-			<xsl:when test="$tailleGroupe = '1' or $tailleGroupe = '2'">100%</xsl:when>
-			<xsl:when test="$tailleGroupe = '4'">50%</xsl:when>
-			<xsl:otherwise>50%</xsl:otherwise>
+			<xsl:when test="$tailleGroupe = '1'">calc(100vh - 90px)</xsl:when>
+			<!-- En mode "ligne" avec 2 tapis, on coupe la hauteur en 2 -->
+			<xsl:when test="$tailleGroupe = '2' and $dispositionAffichage = 'ligne'">calc((100vh - 90px) / 2)</xsl:when>
+			<xsl:when test="$tailleGroupe = '2'">calc(100vh - 90px)</xsl:when>
+			<xsl:otherwise>calc((100vh - 90px) / 2)</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
 
 	<xsl:variable name="combatsParPageEff">
 		<xsl:choose>
-			<xsl:when test="$tailleGroupe = '1' or $tailleGroupe = '2'">8</xsl:when>
-			<xsl:when test="$tailleGroupe = '4'">4</xsl:when>
-			<xsl:otherwise>8</xsl:otherwise>
+			<xsl:when test="$tailleGroupe = '1' or $tailleGroupe = '2'">12</xsl:when>
+			<xsl:when test="$tailleGroupe = '4'">6</xsl:when>
+			<xsl:otherwise>12</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
 
@@ -126,12 +129,12 @@
 					<div class="w3-cell" style="width: 15%;"></div>
 				</div>
 
-				<!-- le conteneur principal -->
+				<!-- le conteneur principal (Flexbox strict) -->
 				<div id="main-container"
-						style="display: flex; flex-wrap: wrap; width: 100%; align-content: flex-start;"
-						data-layout-mode="{$tailleGroupe}"
-						data-duree-rotation="{$delaiDeroulementSec}"
-						data-combats-par-page="{$combatsParPageEff}">
+					 style="width: 100%; display: flex; flex-wrap: wrap; align-content: flex-start;"
+					 data-layout-mode="{$tailleGroupe}"
+					 data-duree-rotation="{$delaiDeroulementSec}"
+					 data-combats-par-page="{$combatsParPageEff}">
 					<xsl:for-each select="$tapisAffiches/tapisIds/tapis">
 						<xsl:variable name="numTapis" select="@id" />
 						<xsl:call-template name="UnTapis">
@@ -165,21 +168,50 @@
 		<xsl:variable name="pageIndex" select="floor(($Position - 1) div $tailleGroupe) + 1" />
 
 		<div id="tapis_{$notapis}"
-			 class="tapis-card w3-animate-opacity"
-			 data-tapis-page="{$pageIndex}"
-			 data-tapis-numero="{$notapis}"
-			 style="display:none; width: {$widthStyle}; height: {$heightStyle}; box-sizing: border-box;">
+					 class="tapis-card w3-animate-opacity"
+					 data-tapis-page="{$pageIndex}"
+					 data-tapis-numero="{$notapis}"
+					 style="display:none; width: {$widthStyle}; height: {$heightStyle}; box-sizing: border-box;">
 
 			<div class="w3-padding-small" style="height: 100%; width: 100%;">
-				<div class="tapis-inner w3-white w3-round-large w3-card-4" style="height: 100%; display: flex; flex-direction: column; overflow: hidden;">
+				<!-- On applique le style Flex conditionnel (row ou column) -->
+				<div class="tapis-inner w3-white w3-round-large w3-card-4">
+					<xsl:attribute name="style">
+						<xsl:text>height: 100%; display: flex; overflow: hidden; </xsl:text>
+						<xsl:choose>
+							<xsl:when test="$dispositionAffichage = 'ligne'">flex-direction: row;</xsl:when>
+							<xsl:otherwise>flex-direction: column;</xsl:otherwise>
+						</xsl:choose>
+					</xsl:attribute>
 
-					<div class="tapis-header w3-indigo w3-center w3-display-container w3-padding w3-xxlarge">
-						<span class="w3-display-topright w3-padding w3-large" id="paging_indicator_tapis_{$notapis}" style="margin-top: 10px;"></span>
-						<b>
-							Tapis <xsl:value-of select="$notapis"/>
-						</b>
-					</div>
+					<!-- HEADER TAPIS CONDITIONNEL -->
+					<xsl:choose>
+						<xsl:when test="$dispositionAffichage = 'ligne'">
+							<!-- DISPOSITION EN LIGNE : HEADER SUR LE CÔTÉ GAUCHE -->
+							<div class="tapis-header w3-indigo w3-display-container" style="width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0;">
+								<!-- L'indicateur de page en haut de la barre verticale -->
+								<div class="w3-display-topmiddle w3-center" style="width: 100%; padding-top: 10px;">
+									<span id="paging_indicator_tapis_{$notapis}" style="font-size: 0.85em; line-height: 1.1; display: inline-block;"></span>
+								</div>
+								<!-- Le texte orienté à 90° (du bas vers le haut) -->
+								<b class="w3-xxlarge" style="writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; margin: auto;">
+									Tapis <xsl:value-of select="$notapis"/>
+								</b>
+							</div>
+						</xsl:when>
 
+						<xsl:otherwise>
+							<!-- DISPOSITION EN COLONNE : HEADER EN HAUT (Classique) -->
+							<div class="tapis-header w3-indigo w3-center w3-display-container w3-padding w3-xxlarge" style="flex-shrink: 0;">
+								<span class="w3-display-topright w3-padding w3-large" id="paging_indicator_tapis_{$notapis}" style="margin-top: 10px;"></span>
+								<b>
+									Tapis <xsl:value-of select="$notapis"/>
+								</b>
+							</div>
+						</xsl:otherwise>
+					</xsl:choose>
+
+					<!-- CONTENU DES COMBATS -->
 					<div class="tapis-content" style="flex: 1; overflow: hidden;">
 						<table class="combat-list w3-table w3-striped" style="width:100%">
 							<tbody id="liste_combats_tapis_{$notapis}">

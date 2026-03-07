@@ -251,7 +251,7 @@
 
                     </Grid>
                 </telerik:RadTabItem>
-                <telerik:RadTabItem Header="Site Interne" IsSelected="False">
+                <telerik:RadTabItem Header="Site Interne" IsSelected="True">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"/>
@@ -306,12 +306,12 @@
 
                                 <telerik:GridViewDataColumn Header="N°" DataMemberBinding="{Binding Id}" IsReadOnly="True" Width="25" TextAlignment="Center" ToolTip="ID autogénéré de l'écran" />
 
-                                <telerik:GridViewDataColumn Header="Description" DataMemberBinding="{Binding Description}" Width="160" ToolTip="(Optionnel) Description de l'écran" />
+                                <telerik:GridViewDataColumn Header="Description" DataMemberBinding="{Binding Description}" Width="120" ToolTip="(Optionnel) Description de l'écran" />
 
-                                <telerik:GridViewDataColumn Header="Identifiant" DataMemberBinding="{Binding RawUserInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="100" ToolTip="Identifiant de l'écran sur le réseau, IP ou Hostname"/>
+                                <telerik:GridViewDataColumn Header="Identifiant" DataMemberBinding="{Binding RawUserInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="80" ToolTip="Identifiant de l'écran sur le réseau, IP ou Hostname"/>
 
 
-                                <telerik:GridViewDataColumn Header="Hostname" DataMemberBinding="{Binding Hostname}" IsReadOnly="True" Width="120" ToolTip="Hostname détecté pour l'identifiant de l'écran" >
+                                <telerik:GridViewDataColumn Header="Hostname" DataMemberBinding="{Binding Hostname}" IsReadOnly="True" Width="100" ToolTip="Hostname détecté pour l'identifiant de l'écran" >
                                     <telerik:GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <Grid>
@@ -330,7 +330,7 @@
                                         </DataTemplate>
                                     </telerik:GridViewColumn.CellTemplate>
                                 </telerik:GridViewDataColumn>
-                                <telerik:GridViewDataColumn Header="IP" DataMemberBinding="{Binding AdresseIP}" IsReadOnly="True" Width="120" ToolTip="Adresse IP détectée pour l'identifiant de l'écran" >
+                                <telerik:GridViewDataColumn Header="IP" DataMemberBinding="{Binding AdresseIP}" IsReadOnly="True" Width="100" ToolTip="Adresse IP détectée pour l'identifiant de l'écran" >
                                     <telerik:GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <Grid>
@@ -395,7 +395,28 @@
                                         </DataTemplate>
                                     </telerik:GridViewColumn.CellEditTemplate>
                                 </telerik:GridViewColumn>
+                                
+                                <telerik:GridViewDataColumn Header="Disposition" IsResizable="False" Width="90" ToolTip="Disposition de l'affichage sur l'écran (Ligne ou Colonne)">
 
+                                    <telerik:GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Disposition}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5"/>
+                                        </DataTemplate>
+                                    </telerik:GridViewColumn.CellTemplate>
+
+                                    <telerik:GridViewColumn.CellEditTemplate>
+                                        <DataTemplate>
+                                            <telerik:RadComboBox ItemsSource="{Binding DispositionOptions}" 
+                                 SelectedItem="{Binding Disposition, Mode=TwoWay}"
+                                 telerik:StyleManager.Theme="Expression_Dark"
+                                 VerticalAlignment="Center"
+                                 HorizontalAlignment="Stretch"
+                                 Margin="2"/>
+                                        </DataTemplate>
+                                    </telerik:GridViewColumn.CellEditTemplate>
+
+                                </telerik:GridViewDataColumn>
+                                
                                 <telerik:GridViewColumn IsResizable="False" Header="" Width="30">
                                     <telerik:GridViewColumn.CellTemplate>
                                         <DataTemplate>
