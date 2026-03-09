@@ -8,9 +8,10 @@ namespace Tools.Export
         // TODO il va falloir reprendre ExportURl afin de retourner des vrais URLs (avec des / et pas des \) mais attention aux effets de bord
         #region MEMBRES
 
-        protected ExportStructureBase _parentStructure = null;
+        protected ExportStructureBase_ _parentStructure = null;
         protected string _rootCompetUrlPath = String.Empty;
         protected string _idCompetitionLast = String.Empty;
+        protected Uri _fakeBaseUri = new Uri("http://localhost/");
         #endregion
 
         #region CONSTRUCTEURS
@@ -21,7 +22,7 @@ namespace Tools.Export
         /// <param name="idCompetition"></param>
         /// <param name="isoleCompet"></param>
         /// <param name="maxlen"></param>
-        public ExportUrlsBase(ExportStructureBase localStructure)
+        public ExportUrlsBase(ExportStructureBase_ localStructure)
         {
             if (localStructure == null)
             {
@@ -65,12 +66,13 @@ namespace Tools.Export
         /// <returns></returns>
         protected virtual string GetUrlPath(string repertoire)
         {
+            // TODO il va falloir reprendre ExportURl afin de retourner des vrais URLs (avec des / et pas des \) mais attention aux effets de bord
             string output = String.Empty;
             try
             {
                 if (_parentStructure != null && _parentStructure.IsFullyConfigured)
                 {
-                    return repertoire.Replace(_parentStructure.RepertoireRacine, "").Remove(0, 1);
+                    string tmpPath = repertoire.Replace(_parentStructure.RepertoireRacine, "").Remove(0, 1);
                 }
             }
             catch

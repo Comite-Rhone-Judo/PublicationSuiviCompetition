@@ -39,9 +39,9 @@ namespace AppPublication.Models.Publication
         #region MEMBRES
         private Task _taskNettoyage = null;                             // La tache de nettoyage
         private GenerateurSite _generateurSite = null;                  // Le generateur Site
-        private ExportSiteStructure _structureRepertoiresSite;          // La structure de repertoire d'export du site
-        private ExportSiteUrls _structureSiteLocal;                     // la structure d'export du site local
-        private ExportSiteUrls _structureSiteDistant;                   // la structure d'export du site distant
+        private SitePhysicalStructure _structureRepertoiresSite;          // La structure de repertoire d'export du site
+        private SiteUrlGenerator _siteLocalUrlGenerator;                     // la structure d'export du site local
+        private SiteUrlGenerator _siteDistantUrlGenerator;                   // la structure d'export du site distant
 
         private Dictionary<string, EntitePublicationFFJudo> _allEntitePublicationFFJudo = null;
         private Dictionary<string, ObservableCollection<EntitePublicationFFJudo>> _allEntitesPublicationFFJudo = null;
@@ -51,6 +51,9 @@ namespace AppPublication.Models.Publication
 
         private MiniSite _siteDistant = null;                           // Le site distant de base
         private MiniSite _siteFranceJudo = null;                        // Le site distant France Judo
+
+        private string _localServerBaseUri = string.Empty;
+        private string _distantServerBaseUri = string.Empty;
         #endregion
 
         #region CONSTRUCTEURS
@@ -387,9 +390,9 @@ namespace AppPublication.Models.Publication
             {
                 PublicationConfigSection.Instance.General.IsolerCompetition = (_isolerCompetition = value);
                 // Met a jour la structure d'export
-                if (_structureSiteDistant != null)
+                if (_siteDistantUrlGenerator != null)
                 {
-                    _structureSiteDistant.CompetitionIsolee = _isolerCompetition;
+                    _siteDistantUrlGenerator.CompetitionIsolee = _isolerCompetition;
                 }
                 NotifyPropertyChanged();
                 URLDistantPublication = CalculURLSiteDistant();
@@ -782,16 +785,16 @@ namespace AppPublication.Models.Publication
             string siteRoot = Path.Combine(tmp, kSiteRepertoire);
 
             // Initialise les structures d'export
-            _structureRepertoiresSite = new ExportSiteStructure(siteRoot, IdCompetition);
-            _structureSiteDistant = new ExportSiteUrls(_structureRepertoiresSite);
-            _structureSiteLocal = new ExportSiteUrls(_structureRepertoiresSite);
+            _structureRepertoiresSite = new SitePhysicalStructure(siteRoot, IdCompetition);
+            _siteDistantUrlGenerator = new SiteUrlGenerator(_structureRepertoiresSite, _localServerBaseUri);
+            _siteLocalUrlGenerator = new SiteUrlGenerator(_structureRepertoiresSite, _distantServerBaseUri);
 
             // Propage la valeur au generateur de site
             if (_generateurSite != null)
-                _generateurSite.StructureRepertoire = _structureRepertoiresSite;
+                _generateurSite.StructureSiteGenerator = _siteDistantUrlGenerator;
 
-            // Met a jour les repertoires de l'application (Public et Interne)
-            if (_structureRepertoiresSite != null)
+            // Met a jour les repertoires de l'application si on peut
+            if (_structureRepertoiresSite != null && _structureRepertoiresSite.IsFullyConfigured)
             {
                 FileAndDirectTools.CreateDirectorie(_structureRepertoiresSite.RepertoireRacine);
             }
@@ -987,10 +990,14 @@ namespace AppPublication.Models.Publication
             string output = "Indefinie";
             try
             {
-                if (!string.IsNullOrEmpty(IdCompetition) && SiteLocal.ServerHTTP?.ListeningIpAddress != null && SiteLocal.ServerHTTP.Port > 0 && _structureSiteLocal != null)
+                if (!string.IsNullOrEmpty(IdCompetition) && SiteLocal.ServerHTTP?.ListeningIpAddress != null && SiteLocal.ServerHTTP.Port > 0 && _siteLocalUrlGenerator != null)
                 {
-                    string urlBase = string.Format("http://{0}:{1}/", SiteLocal.ServerHTTP.ListeningIpAddress.ToString(), SiteLocal.ServerHTTP.Port);
-                    output = (new Uri(new Uri(urlBase), _structureSiteLocal.UrlPathIndex)).ToString();
+                    _localServerBaseUri = string.Format("http://{0}:{1}/", SiteLocal.ServerHTTP.ListeningIpAddress.ToString(), SiteLocal.ServerHTTP.Port);
+
+                    // On doit mettre a jour le gestionnaire d'URL
+                    _siteLocalUrlGenerator.RootDomain = _localServerBaseUri;
+
+                    output = _siteLocalUrlGenerator.UrlIndex.AbsoluteUri;
                 }
             }
             catch (Exception ex)
@@ -1034,14 +1041,10 @@ namespace AppPublication.Models.Publication
                     urlBase = URLDistant;
                 }
 
-                if (!string.IsNullOrEmpty(urlBase) && _structureSiteDistant != null && !string.IsNullOrEmpty(_structureSiteDistant.UrlPathIndex))
+                if (!string.IsNullOrEmpty(urlBase) && _siteDistantUrlGenerator != null)
                 {
-                    // On verifie que le dernier caractere est bien un "/" car sinon la concatenation va ignorer le dernier element du path
-                    if (urlBase.Last() != '/')
-                    {
-                        urlBase += '/';
-                    }
-                    output = (new Uri(new Uri(urlBase), _structureSiteDistant.UrlPathIndex)).ToString();
+                    _siteDistantUrlGenerator.RootDomain = urlBase;
+                    output = _siteDistantUrlGenerator.UrlIndex.AbsoluteUri;
                 }
             }
             catch (Exception ex)
@@ -1070,11 +1073,11 @@ namespace AppPublication.Models.Publication
                 repRoot = string.Empty;
             }
 
-            if (!string.IsNullOrEmpty(repRoot) && _structureSiteDistant != null)
+            if (!string.IsNullOrEmpty(repRoot) && _siteDistantUrlGenerator != null)
             {
                 try
                 {
-                    output = FileAndDirectTools.PathJoin(repRoot, _structureSiteDistant.UrlPathCompetition);
+                    output = FileAndDirectTools.PathJoin(repRoot, _siteDistantUrlGenerator.UrlPathCompetition);
                 }
                 catch (Exception ex)
                 {

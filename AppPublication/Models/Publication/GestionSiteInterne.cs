@@ -29,9 +29,10 @@ namespace AppPublication.Models.Publication
 
         #region MEMBRES
         private GenerateurSiteInterne _generateurSite = null;                // Le generateur Site
-        private ExportSiteInterneStructure _structureRepertoiresSiteInterne;        // La structure de repertoire d'export du site prive
-        private ExportSiteInterneUrls _structureSiteInterne;                        // la structure d'export du site interne
+        private SiteInternePhysicalStructure _structureRepertoiresSiteInterne;        // La structure de repertoire d'export du site prive
+        private SiteInterneUrlGenerator _siteInterneUrlGenerator;                        // la structure d'export du site interne
         private EcranCollectionManager _ecransAppel = new EcranCollectionManager(); // La configuration des écrans d'appels
+        private string _urlServerBase = string.Empty;
         #endregion
 
         #region CONSTRUCTEURS
@@ -188,12 +189,12 @@ namespace AppPublication.Models.Publication
             string siteRootInterne = Path.Combine(tmp, kSiteRepertoire);
 
             // Initialise les structures d'export
-            _structureRepertoiresSiteInterne = new ExportSiteInterneStructure(siteRootInterne);
-            _structureSiteInterne = new ExportSiteInterneUrls(_structureRepertoiresSiteInterne);
+            _structureRepertoiresSiteInterne = new SiteInternePhysicalStructure(siteRootInterne);
+            _siteInterneUrlGenerator = new SiteInterneUrlGenerator(_structureRepertoiresSiteInterne);
 
             // Propage la valeur au generateur de site
             if (_generateurSite != null)
-                _generateurSite.StructureRepertoire = _structureRepertoiresSiteInterne;
+                _generateurSite.StructureSiteGenerator = _siteInterneUrlGenerator;
 
             // Met a jour les repertoires de l'application (Interne)
             if (_structureRepertoiresSiteInterne != null)
@@ -203,7 +204,7 @@ namespace AppPublication.Models.Publication
 
             // Initialise la racine du serveur Web local et On met a jour les contextes pour les modules HTTP
             SiteLocal.ServerHTTP.LocalRootPath = siteRootInterne;
-            SiteLocal.RegisterContext(_structureSiteInterne);
+            SiteLocal.RegisterContext(_siteInterneUrlGenerator);
         }
 
         protected override void OnSelectedLogoChanged(string logoName)
@@ -301,10 +302,13 @@ namespace AppPublication.Models.Publication
             string output = "Indefinie";
             try
             {
-                if (!string.IsNullOrEmpty(IdCompetition) && SiteLocal.ServerHTTP?.ListeningIpAddress != null && SiteLocal.ServerHTTP.Port > 0 && _structureSiteInterne != null)
+                if (!string.IsNullOrEmpty(IdCompetition) && SiteLocal.ServerHTTP?.ListeningIpAddress != null && SiteLocal.ServerHTTP.Port > 0 && _siteInterneUrlGenerator != null)
                 {
-                    string urlBase = string.Format("http://{0}:{1}/", SiteLocal.ServerHTTP.ListeningIpAddress.ToString(), SiteLocal.ServerHTTP.Port);
-                    output = (new Uri(new Uri(urlBase), _structureSiteInterne.UrlPathEcransAppelRedirecteur)).ToString();
+                    _urlServerBase = string.Format("http://{0}:{1}/", SiteLocal.ServerHTTP.ListeningIpAddress.ToString(), SiteLocal.ServerHTTP.Port);
+
+                    _siteInterneUrlGenerator.RootDomain = _urlServerBase;
+
+                    output = _siteInterneUrlGenerator.UrlEcransAppelRedirecteur.AbsoluteUri;
                 }
             }
             catch (Exception ex)

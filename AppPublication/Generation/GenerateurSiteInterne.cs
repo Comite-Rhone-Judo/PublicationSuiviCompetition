@@ -3,6 +3,7 @@ using AppPublication.Export;
 using AppPublication.ExtensionNoyau;
 using AppPublication.ExtensionNoyau.Engagement;
 using AppPublication.Models.EcransAppel;
+using AppPublication.Publication;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
 using KernelImpl.Noyau.Organisation;
@@ -31,7 +32,7 @@ namespace AppPublication.Generation
         EcranCollectionManager _ecransAppel;                        // La configuration des ecrans d'appel (pour les combats)
 
         // La structure du site
-        private ExportSiteInterneStructure _structureRepertoiresSiteInterne;      // La structure de repertoire d'export du site
+        private SiteInterneUrlGenerator _siteInterneUrlGenerator;      // La structure de repertoire d'export du site
         private ExportSharedContextInterne _currentContext;             // Le contexte de generation partage (donnees statiques communes a toutes les taches)
 
         // Suivi des taches de generation
@@ -45,10 +46,10 @@ namespace AppPublication.Generation
         /// <summary>
         /// La structure de repertoire utilisee pour l'export du site
         /// </summary>
-        public ExportSiteInterneStructure StructureRepertoire
+        public SiteInterneUrlGenerator StructureSiteGenerator
         {
-            get { return _structureRepertoiresSiteInterne; }
-            set { _structureRepertoiresSiteInterne = value; }
+            get { return _siteInterneUrlGenerator; }
+            set { _siteInterneUrlGenerator = value; }
         }
 
         private ConfigurationExportSiteInterne _cfgExport = new ConfigurationExportSiteInterne();     // Init par defaut
@@ -200,21 +201,21 @@ namespace AppPublication.Generation
                     // La racine du site
                     _taskBatcher.AddWork(p =>
                     {
-                        return exporter.GenereWebSiteIndex(_snapshot, _currentContext, _structureRepertoiresSiteInterne, p);
+                        return exporter.GenereWebSiteIndex(_snapshot, _currentContext, _siteInterneUrlGenerator, p);
                     });
 
                     foreach (var ecran in _ecransAppel.Ecrans)
                     {
                         _taskBatcher.AddWork(p =>
                         {
-                            return exporter.GenereEcranAppel(_snapshot, _currentContext, _structureRepertoiresSiteInterne, ecran, p);
+                            return exporter.GenereEcranAppel(_snapshot, _currentContext, _siteInterneUrlGenerator, ecran, p);
                         });
                     }
 
                     // et on ajoute le traitement par default
                     _taskBatcher.AddWork(p =>
                     {
-                        return exporter.GenereEcranAppel(_snapshot, _currentContext, _structureRepertoiresSiteInterne, _ecransAppel.Default, p);
+                        return exporter.GenereEcranAppel(_snapshot, _currentContext, _siteInterneUrlGenerator, _ecransAppel.Default, p);
                     });
 
                     // Attend la fin de tous les batchs
@@ -255,12 +256,12 @@ namespace AppPublication.Generation
         /// </summary>
         private void ClearRepertoireCompetition()
         {
-            if (_structureRepertoiresSiteInterne != null)
+            if (_siteInterneUrlGenerator != null)
             {
                 // Efface le contenu du repertoire de la competition
-                if (!FileAndDirectTools.DeleteDirectory(_structureRepertoiresSiteInterne.RepertoireCompetition(), true))
+                if (!FileAndDirectTools.DeleteDirectory(_siteInterneUrlGenerator.PhysicalStructure.RepertoireCompetition, true))
                 {
-                    LogTools.Logger.Error("Erreur lors de l'effacement du contenu de  '{0}'", _structureRepertoiresSiteInterne.RepertoireCompetition());
+                    LogTools.Logger.Error("Erreur lors de l'effacement du contenu de  '{0}'", _siteInterneUrlGenerator.PhysicalStructure.RepertoireCompetition);
                 }
             }
         }

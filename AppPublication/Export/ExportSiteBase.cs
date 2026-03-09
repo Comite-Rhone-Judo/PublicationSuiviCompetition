@@ -31,25 +31,13 @@ namespace AppPublication.Export
         }
 
         /// <summary>
-        /// Nettoie le path specifie pour passer de Repertoire Windows à URL
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        protected string PathForUrl(string path)
-        {
-            string output = path.Replace('\\', '/');
-
-            return output;
-        }
-
-        /// <summary>
         /// Crée une XsltArgumentList pré-remplie avec la structure du site et des paramètres optionnels.
         /// </summary>
         /// <param name="siteStruct"></param>
         /// <param name="savePath"></param>
         /// <param name="extraParams"></param>
         /// <returns></returns>
-        protected virtual XsltArgumentList CreateAllXsltArgs(ExportStructureBase siteStruct, string savePath, params (string name, object value)[] extraParams)
+        protected virtual XsltArgumentList CreateAllXsltArgs<T>(UrlGeneratorBase<T> siteStruct, string savePath, params (string name, object value)[] extraParams) where T : PhysicalStructureBase
         {
             XsltArgumentList args = new XsltArgumentList();
 
@@ -87,15 +75,13 @@ namespace AppPublication.Export
         /// <param name="argsList">La liste d'argument a actualiser</param>
         /// <param name="siteStruct">La structure du site</param>
         /// <param name="targetFile">Le fichier HTML cible</param>
-        protected virtual void AddStructureArgument(XsltArgumentList argsList, ExportStructureBase siteStruct, string targetFile)
+        protected virtual void AddStructureArgument<T>(XsltArgumentList argsList, UrlGeneratorBase<T> urlGen, string targetFile) where T : PhysicalStructureBase
         {
-            siteStruct.TargetPath = targetFile;
-
-            // Ajoute les parametres en relatif par rapport a la position du fichier
-            argsList.AddParam("imgPath", "", PathForUrl(siteStruct.RepertoireImg(relatif: true)));
-            argsList.AddParam("jsPath", "", PathForUrl(siteStruct.RepertoireJs(relatif: true)));
-            argsList.AddParam("cssPath", "", PathForUrl(siteStruct.RepertoireCss(relatif: true)));
-            argsList.AddParam("competitionPath", "", PathForUrl(siteStruct.RepertoireCompetition(relatif: true)));
+            // Ajoute les parametres en relatif par rapport a   la position du fichier
+            argsList.AddParam("imgPath", "", urlGen.GetRelativeUrlImg(targetFile));
+            argsList.AddParam("jsPath", "", urlGen.GetRelativeUrlJs(targetFile));
+            argsList.AddParam("cssPath", "", urlGen.GetRelativeUrlCss(targetFile));
+            argsList.AddParam("competitionPath", "", urlGen.GetRelativeUrlCompetition(targetFile));
         }
     }
 }

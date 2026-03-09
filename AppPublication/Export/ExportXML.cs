@@ -17,6 +17,7 @@ using Tools.Files;
 using AppPublication.ExtensionNoyau.Engagement;
 using Tools.XML;
 using Tools.Logging;
+using AppPublication.Publication;
 
 namespace AppPublication.Export
 {
@@ -226,7 +227,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static XDocument CreateDocumentMenu(IJudoData DC, ExtendedJudoData EDC, ExportSiteStructure siteStructure)
+        public static XDocument CreateDocumentMenu(IJudoData DC, ExtendedJudoData EDC, SiteUrlGenerator siteStructure)
         {
             // 1. On charge UNIQUEMENT ce qui est nécessaire en mémoire pour éviter le N+1
             var phasesInMem = DC.Deroulement.Phases.ToList();
@@ -261,8 +262,9 @@ namespace AppPublication.Export
                                     .Where(ep => phasesInMem.Any(o => o.epreuve == ep.id && o.etat > (int)EtatPhaseEnum.Cree))
                                     .Select(ep =>
                                     {
+                                        string webPathEpreuve = siteStructure.GetRelativeUrlEpreuveFromCompetition(ep.id.ToString(), ep.nom);
                                         XElement xepreuve = ep.ToXml(DC);
-                                        xepreuve.SetAttributeValue(ConstantXML.Directory, siteStructure.RepertoireEpreuve(ep.id.ToString(), ep.nom, true));
+                                        xepreuve.SetAttributeValue(ConstantXML.Directory, webPathEpreuve);
 
                                         // Ajout de la balise Phases avec les données EN MÉMOIRE
                                         xepreuve.Add(new XElement(ConstantXML.Phases,

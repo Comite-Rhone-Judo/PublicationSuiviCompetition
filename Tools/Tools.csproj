@@ -77,10 +77,12 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
@@ -151,12 +153,6 @@
     <Compile Include="Export\ConfigurationExportSite.cs" />
     <Compile Include="Export\ConfigurationExportSiteInterne.cs" />
     <Compile Include="Export\ExportHTML.cs" />
-    <Compile Include="Export\ExportSiteInterneStructure.cs" />
-    <Compile Include="Export\ExportSiteInterneUrls.cs" />
-    <Compile Include="Export\ExportUrlsBase.cs" />
-    <Compile Include="Export\ExportStructureBase.cs" />
-    <Compile Include="Export\ExportSiteUrls.cs" />
-    <Compile Include="Export\ExportSiteStructure.cs" />
     <Compile Include="Export\ExportTools.cs" />
     <Compile Include="Export\InAssemblyUrlResolver.cs" />
     <Compile Include="Core\ClassFactory.cs" />
@@ -164,6 +160,8 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Content Include="Export\style\site\style-ecran-appel.css" />
+    <Compile Include="Export\PhysicalStructureBase.cs" />
+    <Compile Include="Export\UrlGeneratorBase.cs" />
     <Compile Include="Framework\RelayCommand.cs" />
     <Compile Include="Framework\WindowLoadBehavior.cs" />
     <Compile Include="HttpServerModule\Authentication\AuthenticationModule.cs" />

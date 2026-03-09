@@ -20,7 +20,7 @@ namespace AppPublication.Publication
         // La configuration des ecrans d'appel
         private EcranCollectionManager _manager = null;
         private IContextProvider _provider = null;
-        private ExportSiteInterneUrls _structInterne = null;
+        private SiteInterneUrlGenerator _structInterne = null;
 
         /// <summary>
         /// Injection du contexte de l'application
@@ -39,10 +39,6 @@ namespace AppPublication.Publication
             get { return _referencePath; }
             set
             {
-                // On vérifie que le path est une URL valide
-                var tmp = new Uri(value);
-
-
                 _referencePath = value;
             }
         }
@@ -65,13 +61,13 @@ namespace AppPublication.Publication
             }
 
             // Recupere la configuration de l'export de la structure interne pour connaitre le path
-            ExportSiteInterneUrls _structInterne = _provider.GetContext<ExportSiteInterneUrls>();
+            _structInterne = _provider.GetContext<SiteInterneUrlGenerator>();
             if (_structInterne == null)
             {
                 LogTools.Logger.Error("EcransAppelRedirectModule: Le contexte n'a pas ete initialise. ExportSiteInterneUrls manquant");
                 throw new InternalServerException();
             }
-            ReferencePath = _structInterne.UrlPathEcransAppelRedirecteur;
+            ReferencePath = _structInterne.UrlEcransAppelRedirecteur.AbsolutePath;
 
             // Récupère la configuration des écrans d'appel
             if (_manager == null)
@@ -129,9 +125,7 @@ namespace AppPublication.Publication
                 // Construire l'URL de redirection
                 // output = (new Uri(new Uri(urlBase), _structureSiteInterne.UrlPathEcransAppelRedirecteur)).ToString();
 
-                string targetRedirect = _structInterne.UrlPathEcransAppel;
-
-                
+                string targetRedirect = _structInterne.GetUrlUnEcranAppel(ecranToRedirect.Id).AbsoluteUri;
 
                 // 3. Effectuer la redirection
                 // Assure-toi que l'URL cible est relative à la racine du serveur web ou absolue

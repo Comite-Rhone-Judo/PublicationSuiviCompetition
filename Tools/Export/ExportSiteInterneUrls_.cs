@@ -3,7 +3,7 @@ using Tools.Logging;
 
 namespace Tools.Export
 {
-    public class ExportSiteInterneUrls : ExportUrlsBase
+    public class ExportSiteInterneUrls_ : ExportUrlsBase
     {
         #region MEMBRES
         #endregion
@@ -16,7 +16,7 @@ namespace Tools.Export
         /// <param name="idCompetition"></param>
         /// <param name="isoleCompet"></param>
         /// <param name="maxlen"></param>
-        public ExportSiteInterneUrls(ExportSiteInterneStructure localStructure) : base(localStructure)
+        public ExportSiteInterneUrls_(ExportSiteInterneStructure_ localStructure) : base(localStructure)
         {
         }
         #endregion
@@ -31,7 +31,7 @@ namespace Tools.Export
             get
             {
                 IsConfiguredGuardRail();
-                return FileAndDirectTools.PathJoin(UrlPathEcransAppel, ExportSiteInterneStructure.kRedirectorTag);
+                return FileAndDirectTools.PathJoin(UrlPathEcransAppel, ExportSiteInterneStructure_.kRedirectorTag);
             }
         }
 
@@ -43,7 +43,7 @@ namespace Tools.Export
             get
             {
                 IsConfiguredGuardRail();
-                return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportSiteInterneStructure.kEcransAppel);
+                return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportSiteInterneStructure_.kEcransAppel);
             }
         }
 
@@ -55,7 +55,7 @@ namespace Tools.Export
             get
             {
                 IsConfiguredGuardRail();
-                return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportSiteInterneStructure.kImg);
+                return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportSiteInterneStructure_.kImg);
             }
         }
 
@@ -67,7 +67,7 @@ namespace Tools.Export
             get
             {
                 IsConfiguredGuardRail();
-                return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportSiteInterneStructure.kJs);
+                return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportSiteInterneStructure_.kJs);
             }
         }
 
@@ -79,7 +79,7 @@ namespace Tools.Export
             get
             {
                 IsConfiguredGuardRail();
-                return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportSiteInterneStructure.kCss);
+                return FileAndDirectTools.PathJoin(UrlPathCompetition, ExportSiteInterneStructure_.kCss);
             }
         }
 

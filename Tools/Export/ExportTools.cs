@@ -178,10 +178,10 @@ namespace Tools.Export
         /// </summary>
         /// <param name="regenere"></param>
         /// <returns></returns>
-        public static List<string> ExportEmbeddedImg(bool regenere, bool addCustom, ExportStructureBase structSite)
+        public static List<string> ExportEmbeddedImg<T>(bool regenere, bool addCustom, UrlGeneratorBase<T> structSite) where T : PhysicalStructureBase
         {
             List<string> result = new List<string>();
-            string dir = structSite.RepertoireImg();
+            string dir = structSite.PhysicalStructure.RepertoireImg();
 
             // string directory = ExportTools.getDirectory(true, null, null).Replace("common", "");
 
@@ -259,11 +259,11 @@ namespace Tools.Export
         /// </summary>
         /// <param name="regenere"></param>
         /// <returns></returns>
-        public static List<string> ExportEmbeddedStyleAndJS(bool regenere, ExportStructureBase structSite)
+        public static List<string> ExportEmbeddedStyleAndJS<T>(bool regenere, UrlGeneratorBase<T> structSite) where T : PhysicalStructureBase
         {
             List<string> result = new List<string>();
-            string dirJs = structSite.RepertoireJs();
-            string dirStyle = structSite.RepertoireCss();
+            string dirJs = structSite.PhysicalStructure.RepertoireJs();
+            string dirStyle = structSite.PhysicalStructure.RepertoireCss();
 
             // string directory = ExportTools.getDirectory(true, null, null).Replace("common", "");
 

@@ -5,7 +5,7 @@ using System.IO;
 
 namespace Tools.Export
 {
-    public class ExportSiteStructure : ExportStructureBase
+    public class ExportSiteStructure_ : ExportStructureBase_
     {
         #region MEMBRES
         public const string kCourante = "courante";
@@ -21,7 +21,7 @@ namespace Tools.Export
         /// <param name="racine">Racine dans laquelle on va creer la structure "site"</param>
         /// <param name="idCompetition">ID de la competition</param>
         /// <param name="maxlen">Taille max pour les noms de répertoire</param>
-        public ExportSiteStructure(string racine, string idCompetition, int maxlen = 30) : base(racine, idCompetition, maxlen) { }
+        public ExportSiteStructure_(string racine, string idCompetition, int maxlen = 30) : base(racine, idCompetition, maxlen) { }
 
         #endregion
 

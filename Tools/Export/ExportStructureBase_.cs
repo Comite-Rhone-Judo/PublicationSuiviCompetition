@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Tools.Export
 {
-    public abstract class ExportStructureBase
+    public abstract class ExportStructureBase_
     {
         #region CONSTANTES
         public const string kImg = "img";
@@ -35,7 +35,7 @@ namespace Tools.Export
         /// <param name="idCompetition"></param>
         /// <param name="maxlen"></param>
 
-        public ExportStructureBase(string racine, string idCompetition, int maxlen = 30)
+        public ExportStructureBase_(string racine, string idCompetition, int maxlen = 30)
         {
             _rootDir = racine;
             IdCompetition = idCompetition;  // L'assignation va automatiquement calculer si la configuration est correcte (full & root)
@@ -194,11 +194,11 @@ namespace Tools.Export
         /// Clone l'instance de la structure de repertoire (utile dans un contexte de multi-threading)
         /// </summary>
         /// <returns></returns>
-        public ExportStructureBase Clone()
+        public ExportStructureBase_ Clone()
         {
             // 1. Création de la copie superficielle (Shallow Copy)
             // Le runtime crée bien une instance du type enfant réel.
-            ExportStructureBase clone = (ExportStructureBase)this.MemberwiseClone();
+            ExportStructureBase_ clone = (ExportStructureBase_)this.MemberwiseClone();
 
             // 2. Appel de la méthode virtuelle pour personnaliser la copie
             this.SetupClone(clone);
@@ -225,7 +225,7 @@ namespace Tools.Export
         /// "Hook" virtuel pour permettre aux enfants d'ajouter leur logique
         /// </summary>
         /// <param name="clone"></param>
-        protected virtual void SetupClone(ExportStructureBase clone) { }
+        protected virtual void SetupClone(ExportStructureBase_ clone) { }
 
         /// <summary>
         /// Verifie le nom du repertoire et assure la creation de ce dernier sur le disque (avec le nom filtre)

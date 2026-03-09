@@ -1,6 +1,7 @@
 ﻿using AppPublication.ExtensionNoyau;
 using AppPublication.ExtensionNoyau.Engagement;
 using AppPublication.Models.EcransAppel;
+using AppPublication.Publication;
 using AppPublication.Tools.Enum;
 using KernelImpl;
 using KernelImpl.Noyau.Deroulement;
@@ -39,18 +40,17 @@ namespace AppPublication.Export
         /// <param name="argsList">La liste d'argument a actualiser</param>
         /// <param name="siteStruct">La structure du site</param>
         /// <param name="targetFile">Le fichier HTML cible</param>
-        protected override void AddStructureArgument(XsltArgumentList argsList, ExportStructureBase siteStruct, string targetFile)
+        protected override void AddStructureArgument<T>(XsltArgumentList argsList, UrlGeneratorBase<T> siteStruct, string targetFile)
         {
-            ExportSiteStructure theSiteStruct = siteStruct as ExportSiteStructure;
+            SiteUrlGenerator theStruct = siteStruct as SiteUrlGenerator;
 
             // Ajoute les repertoires de base de la structure
-            theSiteStruct.TargetPath = targetFile;
-            base.AddStructureArgument(argsList, theSiteStruct, targetFile);
+            base.AddStructureArgument(argsList, siteStruct, targetFile);
 
             // Ajoute le repertoire common
-            argsList.AddParam("commonPath", "", PathForUrl(theSiteStruct.RepertoireCommon(relatif: true)));
+            var commonPath = siteStruct.GetUrlFromPhysicalPath(theStruct.PhysicalStructure.RepertoireCommon());
+            argsList.AddParam("commonPath", "", commonPath.AbsoluteUri);
         }
-
 
         /// <summary>
         /// Génère un fichier de menu spécifique et retourne ses informations de checksum.
@@ -60,7 +60,7 @@ namespace AppPublication.Export
         /// <param name="siteStructure"></param>
         /// <param name="docMenu"></param>
         /// <returns></returns>
-        private FileWithChecksum GenerateMenuFile(ExportEnum exportType, string targetDirectory, ExportSiteStructure siteStructure, XDocument docMenu)
+        private FileWithChecksum GenerateMenuFile(ExportEnum exportType, string targetDirectory, SiteUrlGenerator siteStructure, XDocument docMenu)
         {
             // Utilisation de notre utilitaire universel
             string savePath = GetFileSavePath(targetDirectory, exportType);
@@ -85,12 +85,11 @@ namespace AppPublication.Export
         /// Génère les fichiers HTML pour une phase spécifique (Poule ou Tableau) et optionnellement les prochains combats.
         /// Retourne la liste des fichiers générés avec leur checksum pour le suivi.
         /// </summary>
-        public List<FileWithChecksum> GenereWebSitePhase(IJudoData DC, Phase phase, ExportSharedContext ctx, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSitePhase(IJudoData DC, Phase phase, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
             LogTools.Logger.Debug("Phase ({1}) '{0}'", phase?.libelle, phase?.id);
 
             ConfigurationExportSite config = ctx.Config;
-            ExportSiteStructure siteStructure = (ExportSiteStructure)structRep.Clone();
 
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
@@ -106,7 +105,7 @@ namespace AppPublication.Export
                 if (vueEpreuve == null) return output;
 
                 // Détermination du répertoire cible UNE SEULE FOIS pour cette épreuve
-                string targetDirectory = siteStructure.RepertoireEpreuve(vueEpreuve.id.ToString(), vueEpreuve.nom);
+                string targetDirectory = siteStructure.PhysicalStructure.RepertoireEpreuve(vueEpreuve.id.ToString(), vueEpreuve.nom);
 
                 // --- 1. TRAITEMENTS POULE / TABLEAU ---
                 if (phase.typePhase == (int)TypePhaseEnum.Poule || phase.typePhase == (int)TypePhaseEnum.Tableau)
@@ -173,21 +172,18 @@ namespace AppPublication.Export
         /// <param name="structRep"></param>
         /// <param name="progress"></param>
         /// <returns></returns>
-        public List<FileWithChecksum> GenereWebSiteClassement(IJudoData DC, i_vue_epreuve_interface epreuve, ExportSharedContext ctx, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteClassement(IJudoData DC, i_vue_epreuve_interface epreuve, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
             LogTools.Logger.Debug("Epreuve ({1}) '{0}'", epreuve?.nom, epreuve?.id);
 
             List<FileWithChecksum> output = new List<FileWithChecksum>();
-
-            // Clone la structure de répertoires pour le contexte multi-thread
-            ExportSiteStructure siteStructure = (ExportSiteStructure)structRep.Clone();
 
             progress?.Report(BatchProgressInfo.Init(1));
 
             if (DC != null && epreuve != null && ctx != null && siteStructure != null)
             {
                 // Détermination du répertoire cible pour cette épreuve
-                string targetDirectory = siteStructure.RepertoireEpreuve(epreuve.id.ToString(), epreuve.nom);
+                string targetDirectory = siteStructure.PhysicalStructure.RepertoireEpreuve(epreuve.id.ToString(), epreuve.nom);
                 ExportEnum exportType = ExportEnum.Site_ClassementFinal;
 
                 // Utilisation de la méthode mutualisée pour le chemin
@@ -223,11 +219,8 @@ namespace AppPublication.Export
         /// <param name="structRep"></param>
         /// <param name="progress"></param>
         /// <returns></returns>
-        public List<FileWithChecksum> GenereWebSiteAllTapis(IJudoData DC, ExportSharedContext ctx, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteAllTapis(IJudoData DC, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
-            // Clone la structure de répertoires pour le contexte multi-thread
-            ExportSiteStructure siteStructure = (ExportSiteStructure)structRep.Clone();
-
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             // Report the start of the task
@@ -235,7 +228,7 @@ namespace AppPublication.Export
 
             if (DC != null && ctx != null && siteStructure != null)
             {
-                string targetDirectory = siteStructure.RepertoireCommon();
+                string targetDirectory = siteStructure.PhysicalStructure.RepertoireCommon();
                 ExportEnum exportType = ExportEnum.Site_FeuilleCombatTapis;
 
                 // Construction du chemin pour le répertoire commun
@@ -277,10 +270,8 @@ namespace AppPublication.Export
         /// <summary>
         /// Génère la page d'index du site, les scripts de mise à jour et exporte les ressources statiques.
         /// </summary>
-        public List<FileWithChecksum> GenereWebSiteIndex(IJudoData DC, ExportSharedContext ctx, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteIndex(IJudoData DC, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
-            // Clone la structure de répertoires pour le contexte multi-thread
-            ExportSiteStructure siteStructure = (ExportSiteStructure)structRep.Clone();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             progress?.Report(BatchProgressInfo.Init(2));
@@ -299,7 +290,7 @@ namespace AppPublication.Export
                 // --- 3. GÉNÉRATION DE L'INDEX HTML ---
                 ExportEnum indexType = ExportEnum.Site_Index;
                 string indexFilename = ExportTools.getFileName(indexType).Replace("/", "_");
-                string indexSavePath = Path.Combine(siteStructure.RepertoireCommon(), indexFilename);
+                string indexSavePath = Path.Combine(siteStructure.PhysicalStructure.RepertoireCommon(), indexFilename);
 
                 var indexArgs = CreateAllXsltArgs(siteStructure, indexSavePath);
 
@@ -322,7 +313,7 @@ namespace AppPublication.Export
                 // --- 5. GÉNÉRATION DU SCRIPT DE MISE À JOUR (FOOTER) ---
                 ExportEnum footerType = ExportEnum.Site_FooterScript;
                 string footerFilename = ExportTools.getFileName(footerType).Replace("/", "_");
-                string footerSavePath = Path.Combine(siteStructure.RepertoireJs(), footerFilename);
+                string footerSavePath = Path.Combine(siteStructure.PhysicalStructure.RepertoireJs(), footerFilename);
 
                 var footerArgs = CreateAllXsltArgs(siteStructure, footerSavePath);
 
@@ -347,10 +338,8 @@ namespace AppPublication.Export
         /// <param name="structRep"></param>
         /// <param name="progress"></param>
         /// <returns></returns>
-        public List<FileWithChecksum> GenereWebSiteMenu(IJudoData DC, ExtendedJudoData EDC, ExportSharedContext ctx, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteMenu(IJudoData DC, ExtendedJudoData EDC, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
-            // Clone la structure de répertoires pour le contexte multi-thread
-            ExportSiteStructure siteStructure = (ExportSiteStructure)structRep.Clone();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             if (DC == null || EDC == null || ctx == null || siteStructure == null)
@@ -365,7 +354,7 @@ namespace AppPublication.Export
             int currentStep = 0;
 
             // Le répertoire cible est défini une seule fois pour tous les menus (racine du site)
-            string targetDirectory = siteStructure.RepertoireCommon();
+            string targetDirectory = siteStructure.PhysicalStructure.RepertoireCommon();
 
             // 1. Création du document XML de base
             XDocument docMenu = ExportXML.CreateDocumentMenu(DC, EDC, siteStructure);
@@ -413,16 +402,15 @@ namespace AppPublication.Export
         /// <param name="structRep"></param>
         /// <param name="progress"></param>
         /// <returns></returns>
-        public List<FileWithChecksum> GenereWebSiteAffectation(IJudoData DC, ExportSharedContext ctx, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteAffectation(IJudoData DC, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
-            ExportSiteStructure siteStructure = (ExportSiteStructure)structRep.Clone();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             progress?.Report(BatchProgressInfo.Init(1));
 
             if (DC != null && ctx != null && siteStructure != null)
             {
-                string targetDirectory = siteStructure.RepertoireCommon();
+                string targetDirectory = siteStructure.PhysicalStructure.RepertoireCommon();
                 ExportEnum exportType = ExportEnum.Site_AffectationTapis;
 
                 // Appel unifié avec notre méthode utilitaire
@@ -453,9 +441,8 @@ namespace AppPublication.Export
         /// <param name="DC"></param>
         /// <returns></returns>
         /// <summary>
-        public List<FileWithChecksum> GenereWebSiteEngagements(IJudoData DC, ExtendedJudoData EDC, List<GroupeEngagements> grps, ExportSharedContext ctx, ExportSiteStructure structRep, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteEngagements(IJudoData DC, ExtendedJudoData EDC, List<GroupeEngagements> grps, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
-            ExportSiteStructure siteStructure = (ExportSiteStructure)structRep.Clone();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             if (DC != null && EDC != null && grps != null && ctx != null && siteStructure != null)
@@ -475,7 +462,7 @@ namespace AppPublication.Export
                 foreach (GroupeEngagements grp in grps)
                 {
                     // Détermination du répertoire cible dynamique pour ce groupe
-                    string targetDirectory = siteStructure.RepertoireGroupeEngagements(grp.Id);
+                    string targetDirectory = siteStructure.PhysicalStructure.RepertoireGroupeEngagements(grp.Id);
                     string savePath = GetFileSavePath(targetDirectory, exportType);
 
                     var xsltArgs = CreateAllXsltArgs(siteStructure, savePath,

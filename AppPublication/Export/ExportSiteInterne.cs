@@ -1,6 +1,7 @@
 ﻿using AppPublication.ExtensionNoyau;
 using AppPublication.Generation;
 using AppPublication.Models.EcransAppel;
+using AppPublication.Publication;
 using KernelImpl;
 using System;
 using System.Collections.Generic;
@@ -29,10 +30,9 @@ namespace AppPublication.Export
         /// <summary>
         /// Génère la page d'index du site, les scripts de mise à jour et exporte les ressources statiques.
         /// </summary>
-        public List<FileWithChecksum> GenereWebSiteIndex(IJudoData DC, ExportSharedContextInterne ctx, ExportSiteInterneStructure structRep, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteIndex(IJudoData DC, ExportSharedContextInterne ctx, SiteInterneUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
             // Clone la structure de répertoires pour le contexte multi-thread
-            ExportSiteInterneStructure siteStructure = (ExportSiteInterneStructure)structRep.Clone();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             progress?.Report(BatchProgressInfo.Init(2));
@@ -62,7 +62,7 @@ namespace AppPublication.Export
                 // --- 5. GÉNÉRATION DU SCRIPT DE MISE À JOUR (FOOTER) ---
                 ExportEnum footerType = ExportEnum.Site_FooterScript;
                 string footerFilename = ExportTools.getFileName(footerType).Replace("/", "_");
-                string footerSavePath = Path.Combine(siteStructure.RepertoireJs(), footerFilename);
+                string footerSavePath = Path.Combine(siteStructure.PhysicalStructure.RepertoireJs(), footerFilename);
 
                 var footerArgs = CreateAllXsltArgs(siteStructure, footerSavePath);
 
@@ -87,13 +87,12 @@ namespace AppPublication.Export
         /// <param name="ecran"></param>
         /// <param name="progress"></param>
         /// <returns></returns>
-        public List<FileWithChecksum> GenereEcranAppel(IJudoData DC, ExportSharedContextInterne ctx, ExportSiteInterneStructure structRep, EcranAppelModel ecran, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereEcranAppel(IJudoData DC, ExportSharedContextInterne ctx, SiteInterneUrlGenerator siteStructure, EcranAppelModel ecran, IProgress<BatchProgressInfo> progress)
         {
-            ExportSiteInterneStructure siteStructure = (ExportSiteInterneStructure)structRep.Clone();
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             var exportType = ExportEnum.Site_Interne_EcranAppel;
-            var targetDirectory = structRep.RepertoireEcransAppel();
+            var targetDirectory = siteStructure.PhysicalStructure.RepertoireEcransAppel();
 
             // Le fichier de destination
             string savePath = GetFileSavePath(targetDirectory, exportType, (ecran.Id >= 0) ? $"{ecran.Id:00}" : "default");
@@ -151,13 +150,12 @@ namespace AppPublication.Export
         /// <param name="argsList">La liste d'argument a actualiser</param>
         /// <param name="siteStruct">La structure du site</param>
         /// <param name="targetFile">Le fichier HTML cible</param>
-        protected override void AddStructureArgument(XsltArgumentList argsList, ExportStructureBase siteStruct, string targetFile)
+        protected override void AddStructureArgument<T>(XsltArgumentList argsList, UrlGeneratorBase<T> siteStruct, string targetFile)
         {
-            ExportSiteInterneStructure theSiteStruct = siteStruct as ExportSiteInterneStructure;
+            SiteInterneUrlGenerator urlGen = siteStruct as SiteInterneUrlGenerator;
 
             // Ajoute les repertoires de base de la structure
-            theSiteStruct.TargetPath = targetFile;
-            base.AddStructureArgument(argsList, theSiteStruct, targetFile);
+            base.AddStructureArgument(argsList, urlGen, targetFile);
         }
     }
 }

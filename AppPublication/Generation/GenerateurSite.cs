@@ -16,6 +16,7 @@ using Tools.Logging;
 using Tools.Threading;
 using Tools.Files;
 using Tools.Net;
+using AppPublication.Publication;
 
 
 namespace AppPublication.Generation
@@ -31,7 +32,7 @@ namespace AppPublication.Generation
         private ExportSharedContext _currentContext = null;         // Le contexte de generation courant (a passer aux taches de generation)
 
         // La structure du site
-        private ExportSiteStructure _structureRepertoiresSite;      // La structure de repertoire d'export du site
+        private SiteUrlGenerator _structureRepertoiresSite;      // La structure de repertoire d'export du site
 
         // Suivi des taches de generation
         private EtapeGenerateurSiteEnum _etapeCourante = EtapeGenerateurSiteEnum.None;
@@ -45,7 +46,7 @@ namespace AppPublication.Generation
         /// <summary>
         /// La structure de repertoire utilisee pour l'export du site
         /// </summary>
-        public ExportSiteStructure StructureRepertoire
+        public SiteUrlGenerator StructureSiteGenerator
         {
             get { return _structureRepertoiresSite; }
             set { _structureRepertoiresSite = value; }
@@ -317,7 +318,7 @@ namespace AppPublication.Generation
             {
                 try
                 {
-                    string localRoot = _structureRepertoiresSite.RepertoireCompetition();
+                    string localRoot = _structureRepertoiresSite.PhysicalStructure.RepertoireCompetition;
 
                     // Calcul les fichiers a prendre en compte
                     List<FileInfo> filesToSync = null;
@@ -401,7 +402,7 @@ namespace AppPublication.Generation
                 // Normalement on ne devrait pas avoir de probleme d'exception ici avec la structure de repertoire
                 try
                 {
-                    output = Path.Combine(_structureRepertoiresSite.RepertoireRacine, ExportTools.getFileName(ExportEnum.Site_Checksum) + ConstantFile.ExtensionXML);
+                    output = Path.Combine(_structureRepertoiresSite.PhysicalStructure.RepertoireRacine, ExportTools.getFileName(ExportEnum.Site_Checksum) + ConstantFile.ExtensionXML);
                 }
                 catch (Exception ex)
                 {
@@ -420,17 +421,17 @@ namespace AppPublication.Generation
         {
             if (_structureRepertoiresSite != null)
             {
-                // Efface le contenu du repertoire de la competition
-                if (!FileAndDirectTools.DeleteDirectory(_structureRepertoiresSite.RepertoireCompetition(), true))
+                // On délègue totalement le nettoyage (disque + cache) à la structure physique
+                if (!_structureRepertoiresSite.PhysicalStructure.EffacerRepertoireCompetition())
                 {
-                    LogTools.Logger.Error("Erreur lors de l'effacement du contenu de  '{0}'", _structureRepertoiresSite.RepertoireCompetition());
+                    LogTools.Logger.Error("Erreur lors de l'effacement du contenu de '{0}'", _structureRepertoiresSite.PhysicalStructure.RepertoireCompetition);
                 }
 
                 // Charge le contenu du fichier de checksum
                 LoadChecksumFichiersGeneres();
 
                 // Elimine tous les fichiers commençant par le répertoire de la competition (ils ont été supprimés)
-                _checksumCache.RemoveAll(f => f.File.FullName.StartsWith(_structureRepertoiresSite.RepertoireCompetition()));
+                _checksumCache.RemoveAll(f => f.File.FullName.StartsWith(_structureRepertoiresSite.PhysicalStructure.RepertoireCompetition));
                 SaveChecksumFichiersGeneres();
             }
         }
