@@ -258,10 +258,10 @@ namespace AppPublication.Generation
         {
             if (_siteInterneUrlGenerator != null)
             {
-                // Efface le contenu du repertoire de la competition
-                if (!FileAndDirectTools.DeleteDirectory(_siteInterneUrlGenerator.PhysicalStructure.RepertoireCompetition, true))
+                // On délègue totalement le nettoyage (disque + cache) à la structure physique
+                if (!_siteInterneUrlGenerator.PhysicalStructure.EffacerRepertoireCompetition())
                 {
-                    LogTools.Logger.Error("Erreur lors de l'effacement du contenu de  '{0}'", _siteInterneUrlGenerator.PhysicalStructure.RepertoireCompetition);
+                    LogTools.Logger.Error("Erreur lors de l'effacement du contenu de '{0}'", _siteInterneUrlGenerator.PhysicalStructure.RepertoireCompetition);
                 }
             }
         }

@@ -48,8 +48,7 @@ namespace AppPublication.Export
             base.AddStructureArgument(argsList, siteStruct, targetFile);
 
             // Ajoute le repertoire common
-            var commonPath = siteStruct.GetUrlFromPhysicalPath(theStruct.PhysicalStructure.RepertoireCommon());
-            argsList.AddParam("commonPath", "", commonPath.AbsoluteUri);
+            argsList.AddParam("commonPath", "", theStruct.GetRelativeUrlCommon(targetFile));
         }
 
         /// <summary>

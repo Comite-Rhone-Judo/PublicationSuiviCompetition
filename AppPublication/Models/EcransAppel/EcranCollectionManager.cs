@@ -30,6 +30,8 @@ namespace AppPublication.Models.EcransAppel
             set {
                 if (_nbTapis != value)
                 {
+                    // TODO : Ajouter un calcul intelligent des valeurs par defaut des tapis (par ex. si on a 2 tapis, on va afficher par groupe de 2)
+
                     _nbTapis = value;
                     // Actualise les tapis par défaut pour l'écran d'appel par défaut
                     if (_default != null)

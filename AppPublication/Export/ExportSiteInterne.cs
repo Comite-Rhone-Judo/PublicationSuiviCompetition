@@ -114,14 +114,14 @@ namespace AppPublication.Export
             if (ecran.Disposition == DispositionAffichage.Ligne)
             {
                 // Mode Ligne : 12 combats pour le groupe 1, sinon 6 combats
-                combatsParPageEff = (ecran.Groupement == 1) ? 12 : 6;
+                combatsParPageEff = (ecran.Groupement == 1) ? 10 : 5;
                 // En ligne : Groupes 1 et 2 -> nouvelle disposition, Groupe 4 -> normal
                 isAffichageCombatLigne = (ecran.Groupement == 1 || ecran.Groupement == 2);
             }
             else
             {
                 // Mode Colonne (comportement d'origine conservé)
-                combatsParPageEff = (ecran.Groupement == 4) ? 6 : 12;
+                combatsParPageEff = (ecran.Groupement == 4) ? 5 : 12;
                 // En colonne : Groupe 1 -> nouvelle disposition, Groupes 2 et 4 -> normal
                 isAffichageCombatLigne = (ecran.Groupement == 1);
             }

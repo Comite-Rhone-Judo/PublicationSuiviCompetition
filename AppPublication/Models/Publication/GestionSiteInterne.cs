@@ -102,7 +102,7 @@ namespace AppPublication.Models.Publication
             }
         }
 
-        private int _nbTapis = 6;
+        private int _nbTapis = 0;
         public int NbTapis
         {
             get { return _nbTapis; }
@@ -169,6 +169,7 @@ namespace AppPublication.Models.Publication
                 // Lecture des donnees specifiques de l'instance
                 SchedulerConfigElement cfgPriv = PublicationConfigSection.GetInstanceConfigElement(kCfgSiteLocalInstanceName);
                 DelaiGenerationSec = cfgPriv.DelaiGenerationSec;
+                DelaiDeroulementSec = GenerationConfigSection.Instance.GenerateurSiteInterne.DelaiDeroulementSec;
 
                 // L'interface local de publication a ete chargee via la configuration du minisite, il faut juste s'assurer du bon calcul des URLs
                 URLLocalPublication = CalculURLSiteLocal();

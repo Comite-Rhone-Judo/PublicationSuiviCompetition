@@ -1,4 +1,4 @@
-﻿(function () {
+﻿(function() {
     // --- Configuration et Etat ---
     var config = {
         dureeRotation: 10,      // Valeur par défaut
@@ -20,11 +20,11 @@
         var html = '';
         for (var i = 1; i <= totalPages; i++) {
             if (i === currentPage) {
-                // Puce active gérée par les classes CSS (w3-dot-active pour l'animation breathe)
-                html += '<span class="w3-text-orange page-dot page-dot-active w3-dot-active">&#9679;</span>';
+                // CORRECTION : Puce active avec notre classe d'animation "w3-dot-active"
+                html += '<span class="w3-text-orange w3-dot-active" style="font-size: 1.2em;">&#9679;</span>';
             } else {
-                // Puce inactive gérée par les classes CSS
-                html += '<span class="w3-text-white page-dot page-dot-inactive">&#9679;</span>';
+                // Puce inactive (Blanche, semi-transparente, statique)
+                html += '<span class="w3-text-white" style="font-size: 1.2em; opacity: 0.3; transition: opacity 0.3s;">&#9679;</span>';
             }
         }
         return html;
@@ -51,9 +51,9 @@
         }
         state.maxTapisGroups = maxPage;
 
-        console.log("Animation Init: Groupes Tapis=" + state.maxTapisGroups +
-            ", Durée=" + config.dureeRotation + "s" +
-            ", Combats/Page=" + config.combatsParPage);
+        console.log("Animation Init: Groupes Tapis=" + state.maxTapisGroups + 
+                    ", Durée=" + config.dureeRotation + "s" + 
+                    ", Combats/Page=" + config.combatsParPage);
 
         // Lancer le premier affichage
         updateView();
@@ -70,9 +70,9 @@
 
         if (state.timer) clearInterval(state.timer);
 
-        state.timer = setInterval(function () {
+        state.timer = setInterval(function() {
             timeLeft++;
-
+            
             // Mise à jour de la barre visuelle
             if (state.progressBar) {
                 var percent = (timeLeft / totalSteps) * 100;
@@ -106,7 +106,7 @@
 
         // 2. Si on dépasse le max de pages pour la vue actuelle (le tapis le plus chargé)
         if (state.currentCombatPage > state.maxCombatPagesCurrentView) {
-
+            
             // On a fini le tour des combats pour ce groupe de tapis
             state.currentCombatPage = 1;
             state.currentTapisGroupIndex++;
@@ -115,7 +115,7 @@
             if (state.currentTapisGroupIndex > state.maxTapisGroups) {
                 console.log("Cycle terminé. Rechargement de la page...");
                 // Force le rechargement depuis le serveur pour avoir les nouvelles données XML
-                window.location.reload(true);
+                window.location.reload(true); 
                 return;
             }
         }
@@ -165,17 +165,34 @@
             var rows = tapisDiv.querySelectorAll('.combat-row');
             var localMaxPage = Math.ceil(rows.length / config.combatsParPage) || 1;
 
-            // Fige le tapis sur sa dernière page en attendant que le tapis voisin termine
+            // CORRECTION : Au lieu de repartir à 1 (modulo), on fige le tapis sur sa dernière page 
+            // (ex: Page 2 sur 2) en attendant que le tapis voisin termine son propre cycle.
             var targetLocalPage = Math.min(state.currentCombatPage, localMaxPage);
 
             // Calcul des index de lignes
             var minIndex = (targetLocalPage - 1) * config.combatsParPage + 1;
+
             var maxIndex = targetLocalPage * config.combatsParPage;
 
+
+            // Mise à jour de l'indicateur "Page X sur Y"
+            /*
+            var indicator = tapisDiv.querySelector("[id^='paging_indicator']");
+            if (indicator) {
+                if (localMaxPage > 1) {
+                    // CORRECTION : Utilisation de innerHTML avec un <br/> pour forcer les 2 blocs symétriques
+                    indicator.innerHTML = "Page<br/>" + targetLocalPage + " sur " + localMaxPage;
+                    indicator.style.display = '';
+                } else {
+                    indicator.style.display = 'none'; // Cache si 1/1
+                }
+            }
+            */
             // Mise à jour de l'indicateur de pages (Puces visuelles)
             var indicator = tapisDiv.querySelector("[id^='paging_indicator']");
             if (indicator) {
                 if (localMaxPage > 1) {
+                    // CORRECTION : On appelle notre générateur de puces
                     indicator.innerHTML = generatePaginationDots(targetLocalPage, localMaxPage);
                     indicator.style.display = 'flex'; // On force Flexbox pour un alignement parfait
                 } else {
@@ -187,6 +204,7 @@
             for (var r = 0; r < rows.length; r++) {
                 var row = rows[r];
                 var rowIdx = parseInt(row.getAttribute('data-row-index'));
+                // Utilisation de la condition ternaire pour l'affichage
                 row.style.display = (rowIdx >= minIndex && rowIdx <= maxIndex) ? '' : 'none';
             }
         }

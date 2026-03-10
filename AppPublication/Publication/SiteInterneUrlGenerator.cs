@@ -80,7 +80,7 @@ namespace AppPublication.Publication
         /// Idéal pour les liens <a> dans le XSLT depuis un autre fichier généré.
         /// </summary>
         public string GetRelativeUrlUnEcranAppel(string targetFile, int idEcran)
-            => GetRelativeWebPath(targetFile, PhysicalStructure.FichierEcranAppel(idEcran));
+            => GetRelativeWebPath(targetFile, PhysicalStructure.FichierEcranAppel(idEcran), false);
 
         #endregion
     }

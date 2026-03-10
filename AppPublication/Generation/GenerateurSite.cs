@@ -32,7 +32,7 @@ namespace AppPublication.Generation
         private ExportSharedContext _currentContext = null;         // Le contexte de generation courant (a passer aux taches de generation)
 
         // La structure du site
-        private SiteUrlGenerator _structureRepertoiresSite;      // La structure de repertoire d'export du site
+        private SiteUrlGenerator _siteUrlGenerator;      // La structure de repertoire d'export du site
 
         // Suivi des taches de generation
         private EtapeGenerateurSiteEnum _etapeCourante = EtapeGenerateurSiteEnum.None;
@@ -48,8 +48,8 @@ namespace AppPublication.Generation
         /// </summary>
         public SiteUrlGenerator StructureSiteGenerator
         {
-            get { return _structureRepertoiresSite; }
-            set { _structureRepertoiresSite = value; }
+            get { return _siteUrlGenerator; }
+            set { _siteUrlGenerator = value; }
         }
 
         private ConfigurationExportSite _cfgExport = new ConfigurationExportSite();     // Init par defaut
@@ -219,19 +219,19 @@ namespace AppPublication.Generation
 
                     _taskBatcher.AddWork(p =>
                     {
-                        return exporter.GenereWebSiteIndex(_snapshot, _currentContext, _structureRepertoiresSite, p);
+                        return exporter.GenereWebSiteIndex(_snapshot, _currentContext, _siteUrlGenerator, p);
                     });
 
                     _taskBatcher.AddWork(p =>
                     {
-                        return exporter.GenereWebSiteMenu(_snapshot, _extendedJudoData, _currentContext, _structureRepertoiresSite, p);
+                        return exporter.GenereWebSiteMenu(_snapshot, _extendedJudoData, _currentContext, _siteUrlGenerator, p);
                     });
 
                     if (_cfgExport.PublierAffectationTapis)
                     {
                         _taskBatcher.AddWork(p =>
                         {
-                            return exporter.GenereWebSiteAffectation(_snapshot, _currentContext, _structureRepertoiresSite, p);
+                            return exporter.GenereWebSiteAffectation(_snapshot, _currentContext, _siteUrlGenerator, p);
                         });
                     }
 
@@ -240,7 +240,7 @@ namespace AppPublication.Generation
                     {
                         _taskBatcher.AddWork(p =>
                         {
-                            return exporter.GenereWebSiteAllTapis(_snapshot, _currentContext, _structureRepertoiresSite, p);
+                            return exporter.GenereWebSiteAllTapis(_snapshot, _currentContext, _siteUrlGenerator, p);
                         });
                     }
 
@@ -260,7 +260,7 @@ namespace AppPublication.Generation
                                 // sans doute car le lancement de nombreuses Task est couteux mais il provoque une latence a la fin de la generation
                                 _taskBatcher.AddWork(p =>
                                 {
-                                    return exporter.GenereWebSiteEngagements(_snapshot, _extendedJudoData, groupesP, _currentContext, _structureRepertoiresSite, p);
+                                    return exporter.GenereWebSiteEngagements(_snapshot, _extendedJudoData, groupesP, _currentContext, _siteUrlGenerator, p);
                                 });
 
                                 // foreach (GroupeEngagements g in groupesP)
@@ -276,11 +276,11 @@ namespace AppPublication.Generation
                     {
                         _taskBatcher.AddWork(p =>
                         {
-                            return exporter.GenereWebSitePhase(_snapshot, phase, _currentContext, _structureRepertoiresSite, p);
+                            return exporter.GenereWebSitePhase(_snapshot, phase, _currentContext, _siteUrlGenerator, p);
                         });
                         _taskBatcher.AddWork(p =>
                         {
-                            return exporter.GenereWebSiteClassement(_snapshot, phase.GetVueEpreuve(_snapshot), _currentContext, _structureRepertoiresSite, p);
+                            return exporter.GenereWebSiteClassement(_snapshot, phase.GetVueEpreuve(_snapshot), _currentContext, _siteUrlGenerator, p);
                         });
                     }
 
@@ -318,7 +318,7 @@ namespace AppPublication.Generation
             {
                 try
                 {
-                    string localRoot = _structureRepertoiresSite.PhysicalStructure.RepertoireCompetition;
+                    string localRoot = _siteUrlGenerator.PhysicalStructure.RepertoireCompetition;
 
                     // Calcul les fichiers a prendre en compte
                     List<FileInfo> filesToSync = null;
@@ -402,7 +402,7 @@ namespace AppPublication.Generation
                 // Normalement on ne devrait pas avoir de probleme d'exception ici avec la structure de repertoire
                 try
                 {
-                    output = Path.Combine(_structureRepertoiresSite.PhysicalStructure.RepertoireRacine, ExportTools.getFileName(ExportEnum.Site_Checksum) + ConstantFile.ExtensionXML);
+                    output = Path.Combine(_siteUrlGenerator.PhysicalStructure.RepertoireRacine, ExportTools.getFileName(ExportEnum.Site_Checksum) + ConstantFile.ExtensionXML);
                 }
                 catch (Exception ex)
                 {
@@ -419,19 +419,19 @@ namespace AppPublication.Generation
         /// </summary>
         private void ClearRepertoireCompetition()
         {
-            if (_structureRepertoiresSite != null)
+            if (_siteUrlGenerator != null)
             {
                 // On délègue totalement le nettoyage (disque + cache) à la structure physique
-                if (!_structureRepertoiresSite.PhysicalStructure.EffacerRepertoireCompetition())
+                if (!_siteUrlGenerator.PhysicalStructure.EffacerRepertoireCompetition())
                 {
-                    LogTools.Logger.Error("Erreur lors de l'effacement du contenu de '{0}'", _structureRepertoiresSite.PhysicalStructure.RepertoireCompetition);
+                    LogTools.Logger.Error("Erreur lors de l'effacement du contenu de '{0}'", _siteUrlGenerator.PhysicalStructure.RepertoireCompetition);
                 }
 
                 // Charge le contenu du fichier de checksum
                 LoadChecksumFichiersGeneres();
 
                 // Elimine tous les fichiers commençant par le répertoire de la competition (ils ont été supprimés)
-                _checksumCache.RemoveAll(f => f.File.FullName.StartsWith(_structureRepertoiresSite.PhysicalStructure.RepertoireCompetition));
+                _checksumCache.RemoveAll(f => f.File.FullName.StartsWith(_siteUrlGenerator.PhysicalStructure.RepertoireCompetition));
                 SaveChecksumFichiersGeneres();
             }
         }

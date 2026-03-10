@@ -254,21 +254,22 @@ namespace Tools.Export
         }
 
         /// <summary>
-        /// Calcule le chemin web relatif (ex: ../../css/) entre un fichier et un dossier. 
-        /// REMPLACE TOTALEMENT L'ANCIEN RELATIF=TRUE DE FAÇON THREAD-SAFE
+        /// Calcule le chemin web relatif (ex: ../../css/ ou ../../common/index.html)
         /// </summary>
-        public string GetRelativeWebPath(string sourcePhysicalFile, string targetPhysicalFolder)
+        /// <param name="isTargetDirectory">True (défaut) si la cible est un dossier pour forcer le '/' final pour le XSLT.</param>
+        public string GetRelativeWebPath(string sourcePhysicalFile, string targetPhysicalPath, bool isTargetDirectory = true)
         {
-            if (string.IsNullOrWhiteSpace(sourcePhysicalFile) || string.IsNullOrWhiteSpace(targetPhysicalFolder)) return string.Empty;
+            if (string.IsNullOrWhiteSpace(sourcePhysicalFile) || string.IsNullOrWhiteSpace(targetPhysicalPath)) return string.Empty;
 
             EnsureCacheSynchronization();
 
-            // Utilisation du tuple (Item1, Item2) comme clé pour zéro allocation mémoire
-            return _relativePathsCache.GetOrAdd((sourcePhysicalFile, targetPhysicalFolder), key =>
+            return _relativePathsCache.GetOrAdd((sourcePhysicalFile, targetPhysicalPath), key =>
             {
                 Uri fromUri = new Uri(key.Item1);
-                string destDir = EnsureTrailingSeparator(key.Item2);
-                Uri toUri = new Uri(destDir);
+
+                // 🚨 CORRECTION : On ne force le slash final que si c'est un dossier !
+                string destPath = isTargetDirectory ? EnsureTrailingSeparator(key.Item2) : key.Item2;
+                Uri toUri = new Uri(destPath);
 
                 Uri relativeUri = fromUri.MakeRelativeUri(toUri);
                 return Uri.UnescapeDataString(relativeUri.ToString());

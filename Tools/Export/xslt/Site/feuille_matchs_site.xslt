@@ -31,6 +31,7 @@
 	<xsl:variable select="/docroot/SiteConfiguration/@PublierEngagements = 'true'" name="affEngagements"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@DelaiActualisationClientSec" name="delayActualisationClient"/>
 	<xsl:variable select="number(/docroot/SiteConfiguration/@NbProchainsCombats)" name="nbProchainsCombats"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@MsgProchainsCombats" name="msgProchainsCombats"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@Logo" name="logo"/>
 	
 	<xsl:variable name="nbProchainsCombatsEff">
@@ -152,13 +153,13 @@
 					</xsl:if>
 				</div>
 
-				<xsl:if test="not(competition/@MsgProchainsCombats = '')">
+				<xsl:if test="not($msgProchainsCombats = '')">
 					<div class="w3-panel w3-khaki w3-display-container w3-card tas-msg-panel w3-cell-row">
 						<div class="w3-cell">
 							<span onclick="this.parentElement.parentElement.style.display='none'" class="w3-button w3-large w3-display-topright w3-cell-top">&times;</span>
 						</div>
 						<div class="w3-cell w3-cell-middle">
-							<xsl:value-of select="competition/@MsgProchainsCombats"/>
+							<xsl:value-of select="$msgProchainsCombats"/>
 						</div>
 					</div>
 				</xsl:if>

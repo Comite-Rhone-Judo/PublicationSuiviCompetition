@@ -1,4 +1,10 @@
 ﻿/* --- Global --- */
+.tv-body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
 .tv-header {
     height: 80px;
     display: flex;
@@ -20,9 +26,36 @@
     text-align: center;
 }
 
+.main-container-flex {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+}
+
+.progress-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    z-index: 9999;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    transition: width 0.1s linear;
+}
+
 /* --- Structure Tapis --- */
 .tapis-card {
     box-sizing: border-box;
+}
+
+.tapis-card-inner-wrapper {
+    height: 100%;
+    width: 100%;
 }
 
 .tapis-inner {
@@ -40,7 +73,7 @@
 }
 
 /* --- Headers Tapis --- */
-.tapis-header-vertical {
+.tapis-header-ligne {
     width: 80px;
     display: flex;
     flex-direction: column;
@@ -49,26 +82,43 @@
     flex-shrink: 0;
 }
 
-    .tapis-header-vertical b {
+    .tapis-header-ligne b {
         writing-mode: vertical-rl;
         transform: rotate(180deg);
         white-space: nowrap;
         margin: auto;
     }
 
-.paging-v-container {
+.tapis-header-colonne {
+    flex-shrink: 0;
+}
+
+.paging-ligne-container {
     width: 100%;
-    padding-top: 10px;
+    padding-top: 15px;
     display: flex;
     justify-content: center;
 }
 
-.paging-v-span {
-    font-size: 0.9em;
-    line-height: 1.2;
-    text-align: center;
-    width: 65px;
-    display: inline-block;
+.paging-ligne-dots {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 3px;
+    padding: 0 4px;
+}
+
+.paging-colonne-container {
+    margin-top: 12px;
+    margin-right: 10px;
+}
+
+.paging-colonne-dots {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
 }
 
 .tapis-content {
@@ -77,17 +127,33 @@
 }
 
 /* --- Lignes de Combat --- */
+.combat-table {
+    width: 100%;
+    height: 100%;
+}
+
+.ghost-row {
+    height: 100%;
+    background-color: transparent !important;
+}
+
+.ghost-cell {
+    padding: 0;
+    border: none !important;
+}
+
 .badge-cell {
     width: 5%;
-    vertical-align: middle;
+    padding: 2px;
+    vertical-align: middle !important; /* CORRECTION : !important ajouté */
     text-align: center;
 }
 
 .pos-badge {
-    height: 48px;
-    width: 48px;
-    line-height: 48px;
-    font-size: 1.5em;
+    height: 38px;
+    width: 38px;
+    line-height: 38px;
+    font-size: 1.2em;
     font-weight: bold;
     margin: auto;
     display: inline-block;
@@ -95,56 +161,111 @@
 
 /* --- Judoka Blocks --- */
 .judoka-cell {
-    padding: 6px;
-    vertical-align: middle;
+    width: 35%;
+    padding: 2px 4px;
+    height: 1px;
+    vertical-align: middle !important; /* CORRECTION : !important ajouté */
 }
 
 .judoka-box {
     overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-.judoka-container {
+.jc-attente-ligne {
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.jc-attente-colonne {
     padding: 6px 10px;
     display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.jc-column {
+.jc-normal-ligne-right {
+    padding: 8px 10px;
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+}
+
+.jc-normal-ligne-left {
+    padding: 8px 10px;
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-start;
+}
+
+.jc-normal-colonne-right {
+    padding: 6px 10px;
+    display: flex;
     flex-direction: column;
     align-items: flex-end;
 }
-/* Par défaut aligné à droite pour Judoka 1 */
-.jc-column-left {
+
+.jc-normal-colonne-left {
+    padding: 6px 10px;
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
-/* Aligné à gauche pour Judoka 2 */
-.jc-row {
-    align-items: baseline;
+
+.order-1 {
+    order: 1;
 }
 
-.jc-center {
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
+.order-2 {
+    order: 2;
 }
 
-.jc-center-row {
-    align-items: center;
-    justify-content: center;
-    flex-direction: row;
-}
-
-.club-info {
+.club-base {
     font-weight: bold;
+}
+
+.club-ligne-right {
+    margin-right: 15px;
+}
+
+.club-ligne-left {
+    margin-left: 15px;
+}
+
+.club-colonne {
     margin-top: 2px;
     height: 1.5em;
 }
 
+.hide-ligne {
+    display: none;
+}
+
+.img-attente {
+    vertical-align: middle;
+    margin-right: 8px;
+    margin-bottom: 4px;
+}
+
+.txt-attente {
+    vertical-align: middle;
+}
+
+.txt-bold {
+    font-weight: bold;
+}
+
 /* --- Catégorie --- */
 .cat-cell {
-    padding: 6px;
+    width: 25%;
+    padding: 2px 4px;
     height: 1px;
-    vertical-align: middle;
+    vertical-align: middle !important; /* CORRECTION : !important ajouté */
 }
 
 .cat-box {
@@ -156,6 +277,10 @@
     font-weight: bold;
 }
 
+.cat-subtitle {
+    margin-top: 2px;
+}
+
 /* --- Images & Badges --- */
 .colorized-img-white {
     filter: brightness(0) invert(1);
@@ -163,4 +288,38 @@
 
 .colorized-img-black {
     filter: brightness(0);
+}
+
+/* --- Pagination --- */
+.page-dot {
+    font-size: 1.2em;
+    transition: opacity 0.3s;
+}
+
+.page-dot-active {
+    opacity: 1;
+}
+
+.page-dot-inactive {
+    opacity: 0.3;
+}
+
+/* CORRECTION : Animation simplifiée (Clignotement pur) */
+@keyframes dot-blink {
+    0% {
+        opacity: 1.0;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+
+    100% {
+        opacity: 1.0;
+    }
+}
+
+.w3-dot-active {
+    animation: dot-blink 1.5s infinite ease-in-out; /* Accéléré légèrement à 1.5s pour plus de dynamisme */
+    display: inline-block;
 }

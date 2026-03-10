@@ -158,7 +158,7 @@
 		<xsl:if test="count(./phases/phase[number(@typePhase) = 1 and number(@etat) > 0 and number(@etat) != 5]) > 0">
 			<a class="w3-button w3-panel w3-card w3-block w3-pale-yellow w3-large w3-round-large w3-padding-small">
 				<xsl:attribute name="href">
-					<xsl:value-of select="concat($competitionPath, @directory, '/feuille_combats.html')"/>
+					<xsl:value-of select="concat($competitionPath, @directory, 'feuille_combats.html')"/>
 				</xsl:attribute>
 				<xsl:value-of select="./@libelle"/>	
 				<xsl:value-of select="./@nom"/>
@@ -168,7 +168,7 @@
 		<xsl:if test="count(./phases/phase[number(@typePhase) = 2 and number(@etat) > 0 and number(@etat) != 5]) > 0">
 			<a class="w3-button w3-panel w3-card w3-block w3-pale-yellow w3-large w3-round-large w3-padding-small">
 				<xsl:attribute name="href">
-					<xsl:value-of select="concat($competitionPath, @directory, '/feuille_combats.html')"/>
+					<xsl:value-of select="concat($competitionPath, @directory, 'feuille_combats.html')"/>
 				</xsl:attribute>
 				<xsl:value-of select="./@libelle"/>
 				<xsl:value-of select="./@nom"/>

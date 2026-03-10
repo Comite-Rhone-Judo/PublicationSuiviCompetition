@@ -5,7 +5,9 @@
 ]>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:import href="Tools/Export/xslt/Site/niveau_tour_combat.xslt"/>
-
+	
+	<!-- TODO Faire faire une simplification via Css personalisé -->
+	
 	<xsl:output method="html" indent="yes" encoding="utf-8"/>
 
 	<xsl:param name="style"/>
@@ -22,7 +24,7 @@
 	<xsl:param name="dispositionAffichage" select="'colonne'"/>
 	<xsl:param name="combatsParPageEff"/>
 	<xsl:param name="isAffichageCombatLigne" select="'false'"/>
-
+	
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 
 	<xsl:variable name="docPrincipal" select="/" />
@@ -49,6 +51,7 @@
 	<xsl:variable name="widthStyle">
 		<xsl:choose>
 			<xsl:when test="$tailleGroupe = '1'">100%</xsl:when>
+			<!-- En mode "ligne" avec 2 tapis, on force 100% de large pour qu'ils s'empilent -->
 			<xsl:when test="$tailleGroupe = '2' and $dispositionAffichage = 'ligne'">100%</xsl:when>
 			<xsl:otherwise>50%</xsl:otherwise>
 		</xsl:choose>
@@ -56,10 +59,10 @@
 
 	<xsl:variable name="heightStyle">
 		<xsl:choose>
-			<xsl:when test="$tailleGroupe = '1'">calc(100vh - 80px)</xsl:when>
-			<xsl:when test="$tailleGroupe = '2' and $dispositionAffichage = 'ligne'">calc((100vh - 80px) / 2)</xsl:when>
-			<xsl:when test="$tailleGroupe = '2'">calc(100vh - 80px)</xsl:when>
-			<xsl:otherwise>calc((100vh - 80px) / 2)</xsl:otherwise>
+			<xsl:when test="$tailleGroupe = '1'">calc(100vh - 90px)</xsl:when>
+			<xsl:when test="$tailleGroupe = '2' and $dispositionAffichage = 'ligne'">calc((100vh - 90px) / 2)</xsl:when>
+			<xsl:when test="$tailleGroupe = '2'">calc(100vh - 90px)</xsl:when>
+			<xsl:otherwise>calc((100vh - 90px) / 2)</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
 
@@ -103,24 +106,27 @@
 				</title>
 			</head>
 
-			<body class="w3-black w3-sans-serif tv-body">
-				<div class="tv-header w3-white w3-card w3-cell-row">
-					<div class="w3-cell w3-cell-middle tv-logo-cell">
-						<img alt="Logo" class="tv-logo" onerror="this.style.display='none'">
+			<body class="w3-black w3-sans-serif" style="margin: 0; padding: 0; overflow: hidden;">
+				<!-- Le bandeau d'entete -->
+				<div class="tv-header w3-white w3-card w3-cell-row" style="height: 80px;">
+					<div class="w3-cell w3-cell-middle w3-center" style="width: 15%;">
+						<img alt="Logo" class="tv-logo" style="max-height: 65px;" onerror="this.style.display='none'">
 							<xsl:attribute name="src">
 								<xsl:value-of select="concat($imgPath, $logo)"/>
 							</xsl:attribute>
 						</img>
 					</div>
 
-					<div class="tv-title w3-cell w3-cell-middle w3-xxlarge w3-text-indigo">
+					<div class="tv-title w3-cell w3-cell-middle w3-center w3-xxlarge w3-text-indigo" style="font-weight: bold; width: 70%;">
 						<xsl:value-of select="$TitreCompetition"/>
 					</div>
 
-					<div class="w3-cell tv-logo-cell"></div>
+					<div class="w3-cell" style="width: 15%;"></div>
 				</div>
 
-				<div id="main-container" class="main-container-flex"
+				<!-- le conteneur principal (Flexbox strict) -->
+				<div id="main-container"
+					 style="width: 100%; display: flex; flex-wrap: wrap; align-content: flex-start;"
 					 data-layout-mode="{$tailleGroupe}"
 					 data-duree-rotation="{$delaiDeroulementSec}"
 					 data-combats-par-page="{$combatsParPageEff}">
@@ -133,8 +139,9 @@
 					</xsl:for-each>
 				</div>
 
-				<div id="progress-container" class="w3-light-grey progress-container">
-					<div id="progress-bar" class="w3-olive progress-bar"></div>
+				<!-- Le conteneur de progression -->
+				<div id="progress-container" class="w3-light-grey" style="position: fixed; bottom: 0; left: 0; width: 100%; height: 10px; z-index: 9999;">
+					<div id="progress-bar" class="w3-olive" style="height: 100%; width: 0%; transition: width 0.1s linear;"></div>
 				</div>
 
 				<script type="text/javascript">
@@ -147,6 +154,8 @@
 		</html>
 	</xsl:template>
 
+	<!-- Les Templates -->
+
 	<xsl:template name="UnTapis">
 		<xsl:param name="notapis"/>
 		<xsl:param name="Position"/>
@@ -157,34 +166,39 @@
 					 class="tapis-card w3-animate-opacity"
 					 data-tapis-page="{$pageIndex}"
 					 data-tapis-numero="{$notapis}"
-					 style="display:none; width: {$widthStyle}; height: {$heightStyle};">
+					 style="display:none; width: {$widthStyle}; height: {$heightStyle}; box-sizing: border-box;">
 
-			<div class="w3-padding-small tapis-card-inner-wrapper">
-				<div>
-					<xsl:attribute name="class">
-						<xsl:text>tapis-inner w3-white w3-round-large w3-card-4 </xsl:text>
+			<div class="w3-padding-small" style="height: 100%; width: 100%;">
+				<!-- On applique le style Flex conditionnel (row ou column) -->
+				<div class="tapis-inner w3-white w3-round-large w3-card-4">
+					<xsl:attribute name="style">
+						<xsl:text>height: 100%; display: flex; overflow: hidden; </xsl:text>
 						<xsl:choose>
-							<xsl:when test="$dispositionAffichage = 'ligne'">dispo-ligne</xsl:when>
-							<xsl:otherwise>dispo-colonne</xsl:otherwise>
+							<xsl:when test="$dispositionAffichage = 'ligne'">flex-direction: row;</xsl:when>
+							<xsl:otherwise>flex-direction: column;</xsl:otherwise>
 						</xsl:choose>
 					</xsl:attribute>
 
+					<!-- HEADER TAPIS CONDITIONNEL -->
 					<xsl:choose>
+						<!-- DISPOSITION EN LIGNE : HEADER SUR LE CÔTÉ GAUCHE -->
 						<xsl:when test="$dispositionAffichage = 'ligne'">
-							<div class="tapis-header w3-indigo w3-display-container tapis-header-ligne">
-								<div class="w3-display-topmiddle w3-center paging-ligne-container">
-									<div id="paging_indicator_tapis_{$notapis}" class="paging-ligne-dots"></div>
+							<div class="tapis-header w3-indigo w3-display-container" style="width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0;">
+								<!-- L'indicateur de page en haut de la barre verticale -->
+								<div class="w3-display-topmiddle w3-center" style="width: 100%; padding-top: 15px; display: flex; justify-content: center;">
+									<div id="paging_indicator_tapis_{$notapis}" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 3px; padding: 0 4px;"></div>
 								</div>
-								<b class="w3-xxlarge">
+								<!-- Le texte orienté à 90° (du bas vers le haut) -->
+								<b class="w3-xxlarge" style="writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; margin: auto;">
 									Tapis <xsl:value-of select="$notapis"/>
 								</b>
 							</div>
 						</xsl:when>
 
 						<xsl:otherwise>
-							<div class="tapis-header w3-indigo w3-center w3-display-container w3-padding w3-xxlarge tapis-header-colonne">
-								<div class="w3-display-topright w3-padding w3-large paging-colonne-container">
-									<div id="paging_indicator_tapis_{$notapis}" class="paging-colonne-dots"></div>
+							<div class="tapis-header w3-indigo w3-center w3-display-container w3-padding w3-xxlarge" style="flex-shrink: 0;">
+								<div class="w3-display-topright w3-padding w3-large" style="margin-top: 12px; margin-right: 10px;">
+									<div id="paging_indicator_tapis_{$notapis}" style="display: flex; flex-direction: row; gap: 8px; align-items: center;"></div>
 								</div>
 								<b>
 									Tapis <xsl:value-of select="$notapis"/>
@@ -193,8 +207,9 @@
 						</xsl:otherwise>
 					</xsl:choose>
 
-					<div class="tapis-content">
-						<table class="combat-list w3-table w3-striped combat-table">
+					<!-- CONTENU DES COMBATS -->
+					<div class="tapis-content" style="flex: 1; overflow: hidden;">
+						<table class="combat-list w3-table w3-striped" style="width: 100%; height: 100%;">
 							<tbody id="liste_combats_tapis_{$notapis}">
 								<xsl:for-each select="$docPrincipal//tapis/combats/combat[ancestor::tapis/@tapis = $notapis and count(score[@judoka = 0]) = 0]">
 									<xsl:sort select="@time_programmation" data-type="number" order="ascending"/>
@@ -210,8 +225,8 @@
 										</td>
 									</tr>
 								</xsl:if>
-								<tr class="ghost-row">
-									<td colspan="4" class="ghost-cell"></td>
+								<tr style="height: 100%; background-color: transparent !important;">
+									<td colspan="4" style="padding: 0; border: none !important;"></td>
 								</tr>
 							</tbody>
 						</table>
@@ -265,16 +280,14 @@
 				<xsl:text>%;</xsl:text>
 			</xsl:attribute>
 
-			<td class="w3-center w3-cell-middle badge-cell">
-				<div class="w3-indigo w3-circle pos-badge">
+			<td class="w3-center" style="width: 5%; padding: 2px; vertical-align: middle;">
+				<div class="w3-indigo w3-circle" style="height: 38px; width: 38px; line-height: 38px; font-size: 1.2em; font-weight: bold; margin: auto; display: inline-block;">
 					<xsl:value-of select="$indexCombat"/>
 				</div>
 			</td>
-
-			<td class="w3-cell-middle judoka-cell">
-				<div>
+			<td style="width: 35%; padding: 2px 4px; height: 1px;" class="w3-cell-middle">
+				<div style="overflow:hidden; height: 100%; display: flex; flex-direction: column; justify-content: center;">
 					<xsl:attribute name="class">
-						<xsl:text>judoka-box </xsl:text>
 						<xsl:choose>
 							<xsl:when test="$participant1 = 'null'">w3-sand w3-card w3-round-small w3-center</xsl:when>
 							<xsl:otherwise>
@@ -286,31 +299,28 @@
 							</xsl:otherwise>
 						</xsl:choose>
 					</xsl:attribute>
-
 					<xsl:choose>
 						<xsl:when test="$participant1 = 'null'">
-							<div>
-								<xsl:attribute name="class">
-									<xsl:text>w3-container </xsl:text>
+							<div class="w3-container">
+								<xsl:attribute name="style">
 									<xsl:choose>
-										<xsl:when test="$isAffichageCombatLigne = 'true'">jc-attente-ligne</xsl:when>
-										<xsl:otherwise>jc-attente-colonne</xsl:otherwise>
+										<xsl:when test="$isAffichageCombatLigne = 'true'">padding: 8px 10px; display: flex; align-items: center; justify-content: center;</xsl:when>
+										<xsl:otherwise>padding: 6px 10px; display: flex; flex-direction: column; align-items: center;</xsl:otherwise>
 									</xsl:choose>
 								</xsl:attribute>
-								<div class="w3-xlarge txt-bold">
-									<img class="img img-attente" width="28">
+								<div class="w3-xlarge" style="font-weight: bold;">
+									<img class="img" width="28" style="vertical-align: middle; margin-right: 8px; margin-bottom: 4px;">
 										<xsl:attribute name="src">
 											<xsl:value-of select="concat($imgPath, 'sablier.png')"/>
 										</xsl:attribute>
 									</img>
-									<span class="txt-attente">En Attente</span>
+									<span style="vertical-align: middle;">En Attente</span>
 								</div>
-								<div>
-									<xsl:attribute name="class">
-										<xsl:text>w3-medium </xsl:text>
+								<div class="w3-medium">
+									<xsl:attribute name="style">
 										<xsl:choose>
-											<xsl:when test="$isAffichageCombatLigne = 'true'">hide-ligne</xsl:when>
-											<xsl:otherwise>club-colonne</xsl:otherwise>
+											<xsl:when test="$isAffichageCombatLigne = 'true'">display: none;</xsl:when>
+											<xsl:otherwise>margin-top: 2px; height: 1.5em;</xsl:otherwise>
 										</xsl:choose>
 									</xsl:attribute>
 									<xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text>
@@ -319,21 +329,19 @@
 						</xsl:when>
 						<xsl:otherwise>
 							<xsl:variable name="ecartement1" select="$docPrincipal//phase[@id = $phase]/@ecartement"/>
-							<div>
-								<xsl:attribute name="class">
-									<xsl:text>w3-container </xsl:text>
+							<div class="w3-container">
+								<xsl:attribute name="style">
 									<xsl:choose>
-										<xsl:when test="$isAffichageCombatLigne = 'true'">jc-normal-ligne-right</xsl:when>
-										<xsl:otherwise>jc-normal-colonne-right</xsl:otherwise>
+										<xsl:when test="$isAffichageCombatLigne = 'true'">padding: 8px 10px; display: flex; align-items: baseline; justify-content: flex-end;</xsl:when>
+										<xsl:otherwise>padding: 6px 10px; display: flex; flex-direction: column; align-items: flex-end;</xsl:otherwise>
 									</xsl:choose>
 								</xsl:attribute>
 
-								<div>
-									<xsl:attribute name="class">
-										<xsl:text>w3-xlarge </xsl:text>
+								<div class="w3-xlarge">
+									<xsl:attribute name="style">
 										<xsl:choose>
-											<xsl:when test="$isAffichageCombatLigne = 'true'">order-2</xsl:when>
-											<xsl:otherwise>order-1</xsl:otherwise>
+											<xsl:when test="$isAffichageCombatLigne = 'true'">order: 2;</xsl:when>
+											<xsl:otherwise>order: 1;</xsl:otherwise>
 										</xsl:choose>
 									</xsl:attribute>
 									<b>
@@ -345,12 +353,11 @@
 									</xsl:if>
 								</div>
 
-								<div>
-									<xsl:attribute name="class">
-										<xsl:text>w3-medium w3-opacity-min club-base </xsl:text>
+								<div class="w3-medium w3-opacity-min" style="font-weight: bold;">
+									<xsl:attribute name="style">
 										<xsl:choose>
-											<xsl:when test="$isAffichageCombatLigne = 'true'">order-1 club-ligne-right</xsl:when>
-											<xsl:otherwise>order-2 club-colonne</xsl:otherwise>
+											<xsl:when test="$isAffichageCombatLigne = 'true'">order: 1; margin-right: 15px;</xsl:when>
+											<xsl:otherwise>order: 2; margin-top: 2px; height: 1.5em;</xsl:otherwise>
 										</xsl:choose>
 									</xsl:attribute>
 									<xsl:choose>
@@ -388,19 +395,20 @@
 								</div>
 							</div>
 						</xsl:otherwise>
-					</xsl:choose>
+					</xsl:choose>		
 				</div>
 			</td>
 
-			<td class="w3-center cat-cell">
-				<div class="w3-card w3-pale-yellow w3-round-small w3-large cat-box">
+			<!-- Catégorie -->
+			<td class="w3-center" style="width: 25%; padding: 2px 4px; height: 1px; vertical-align: middle;">
+				<div class="w3-card w3-pale-yellow w3-round-small w3-large" style="height: 100%; padding: 4px; display: flex; flex-direction: column; justify-content: center; font-weight: bold;">
 					<div>
 						<xsl:value-of select="$docPrincipal//epreuve[@ID = $epreuve]/@sexe"/>
 						<xsl:text>&#32;</xsl:text>
 						<xsl:value-of select="$docPrincipal//epreuve[@ID = $epreuve]/@nom"/>
 					</div>
 
-					<div class="w3-opacity w3-medium cat-subtitle">
+					<div class="w3-opacity w3-medium" style="margin-top: 2px;">
 						(<xsl:call-template name="NiveauTourCombat">
 							<xsl:with-param name="combat" select="$combat"/>
 							<xsl:with-param name="typePhase" select="$typePhase"/>
@@ -425,10 +433,10 @@
 				</div>
 			</td>
 
-			<td class="w3-cell-middle judoka-cell">
-				<div>
+			<!-- 2nd judoka -->
+			<td style="width: 35%; padding: 2px 4px; height: 1px;" class="w3-cell-middle">
+				<div style="overflow:hidden; height: 100%; display: flex; flex-direction: column; justify-content: center;">
 					<xsl:attribute name="class">
-						<xsl:text>judoka-box </xsl:text>
 						<xsl:choose>
 							<xsl:when test="$participant2 = 'null'">w3-sand w3-card w3-round-small w3-center</xsl:when>
 							<xsl:otherwise>
@@ -443,28 +451,26 @@
 
 					<xsl:choose>
 						<xsl:when test="$participant2 = 'null'">
-							<div>
-								<xsl:attribute name="class">
-									<xsl:text>w3-container </xsl:text>
+							<div class="w3-container">
+								<xsl:attribute name="style">
 									<xsl:choose>
-										<xsl:when test="$isAffichageCombatLigne = 'true'">jc-attente-ligne</xsl:when>
-										<xsl:otherwise>jc-attente-colonne</xsl:otherwise>
+										<xsl:when test="$isAffichageCombatLigne = 'true'">padding: 8px 10px; display: flex; align-items: center; justify-content: center;</xsl:when>
+										<xsl:otherwise>padding: 6px 10px; display: flex; flex-direction: column; align-items: center;</xsl:otherwise>
 									</xsl:choose>
 								</xsl:attribute>
-								<div class="w3-xlarge txt-bold">
-									<img class="img img-attente" width="28">
+								<div class="w3-xlarge" style="font-weight: bold;">
+									<img class="img" width="28" style="vertical-align: middle; margin-right: 8px; margin-bottom: 4px;">
 										<xsl:attribute name="src">
 											<xsl:value-of select="concat($imgPath, 'sablier.png')"/>
 										</xsl:attribute>
 									</img>
-									<span class="txt-attente">En Attente</span>
+									<span style="vertical-align: middle;">En Attente</span>
 								</div>
-								<div>
-									<xsl:attribute name="class">
-										<xsl:text>w3-medium </xsl:text>
+								<div class="w3-medium">
+									<xsl:attribute name="style">
 										<xsl:choose>
-											<xsl:when test="$isAffichageCombatLigne = 'true'">hide-ligne</xsl:when>
-											<xsl:otherwise>club-colonne</xsl:otherwise>
+											<xsl:when test="$isAffichageCombatLigne = 'true'">display: none;</xsl:when>
+											<xsl:otherwise>margin-top: 2px; height: 1.5em;</xsl:otherwise>
 										</xsl:choose>
 									</xsl:attribute>
 									<xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text>
@@ -473,18 +479,17 @@
 						</xsl:when>
 						<xsl:otherwise>
 							<xsl:variable name="ecartement2" select="$docPrincipal//phase[@id = $phase]/@ecartement"/>
-							<div>
-								<xsl:attribute name="class">
-									<xsl:text>w3-container </xsl:text>
+							<div class="w3-container">
+								<xsl:attribute name="style">
 									<xsl:choose>
-										<xsl:when test="$isAffichageCombatLigne = 'true'">jc-normal-ligne-left</xsl:when>
-										<xsl:otherwise>jc-normal-colonne-left</xsl:otherwise>
+										<xsl:when test="$isAffichageCombatLigne = 'true'">padding: 8px 10px; display: flex; align-items: baseline; justify-content: flex-start;</xsl:when>
+										<xsl:otherwise>padding: 6px 10px; display: flex; flex-direction: column; align-items: flex-start;</xsl:otherwise>
 									</xsl:choose>
 								</xsl:attribute>
 
-								<div>
-									<xsl:attribute name="class">
-										<xsl:text>w3-xlarge order-1</xsl:text>
+								<div class="w3-xlarge">
+									<xsl:attribute name="style">
+										<xsl:text>order: 1;</xsl:text>
 									</xsl:attribute>
 									<b>
 										<xsl:value-of select="$judoka2/@nom"/>
@@ -495,12 +500,11 @@
 									</xsl:if>
 								</div>
 
-								<div>
-									<xsl:attribute name="class">
-										<xsl:text>w3-medium w3-opacity-min club-base </xsl:text>
+								<div class="w3-medium w3-opacity-min" style="font-weight: bold;">
+									<xsl:attribute name="style">
 										<xsl:choose>
-											<xsl:when test="$isAffichageCombatLigne = 'true'">order-2 club-ligne-left</xsl:when>
-											<xsl:otherwise>order-2 club-colonne</xsl:otherwise>
+											<xsl:when test="$isAffichageCombatLigne = 'true'">order: 2; margin-left: 15px;</xsl:when>
+											<xsl:otherwise>order: 2; margin-top: 2px; height: 1.5em;</xsl:otherwise>
 										</xsl:choose>
 									</xsl:attribute>
 									<xsl:choose>
