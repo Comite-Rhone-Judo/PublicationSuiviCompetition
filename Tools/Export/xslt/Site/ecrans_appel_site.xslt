@@ -30,6 +30,9 @@
 	<xsl:variable select="/docroot/SiteConfiguration/@DelaiDeroulementSec" name="delaiDeroulementSec"/>
 	<xsl:variable select="number(/docroot/SiteConfiguration/@NbProchainsCombats)" name="nbProchainsCombats"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@Logo" name="logo"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@urlRedirecteur" name="urlRedirecteur"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@DateGeneration" name="dateGeneration"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@AppVersion" name="appVersion"/>
 
 	<xsl:variable name="couleur1" select="/docroot/competition/@couleur1" />
 	<xsl:variable name="couleur2" select="/docroot/competition/@couleur2" />
@@ -56,10 +59,10 @@
 
 	<xsl:variable name="heightStyle">
 		<xsl:choose>
-			<xsl:when test="$tailleGroupe = '1'">calc(100vh - 80px)</xsl:when>
-			<xsl:when test="$tailleGroupe = '2' and $dispositionAffichage = 'ligne'">calc((100vh - 80px) / 2)</xsl:when>
-			<xsl:when test="$tailleGroupe = '2'">calc(100vh - 80px)</xsl:when>
-			<xsl:otherwise>calc((100vh - 80px) / 2)</xsl:otherwise>
+			<xsl:when test="$tailleGroupe = '1'">calc(100vh - 10.5vh)</xsl:when>
+			<xsl:when test="$tailleGroupe = '2' and $dispositionAffichage = 'ligne'">calc((100vh - 10.5vh) / 2)</xsl:when>
+			<xsl:when test="$tailleGroupe = '2'">calc(100vh - 10.5vh)</xsl:when>
+			<xsl:otherwise>calc((100vh - 10.5vh) / 2)</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
 
@@ -104,7 +107,9 @@
 			</head>
 
 			<body class="w3-black w3-sans-serif tv-body">
+				<!-- La ligne d'entete -->
 				<div class="tv-header w3-white w3-card w3-cell-row">
+					<!-- Logo de la compétition	-->
 					<div class="w3-cell w3-cell-middle tv-logo-cell">
 						<img alt="Logo" class="tv-logo" onerror="this.style.display='none'">
 							<xsl:attribute name="src">
@@ -112,18 +117,24 @@
 							</xsl:attribute>
 						</img>
 					</div>
-
+					
+					<!-- Titre de la compétition -->
 					<div class="tv-title w3-cell w3-cell-middle w3-xxlarge w3-text-indigo">
 						<xsl:value-of select="$TitreCompetition"/>
 					</div>
-
-					<div class="w3-cell tv-logo-cell"></div>
+					
+					<!-- La version -->
+					<div class="w3-cell w3-cell-middle w3-right-align w3-opacity w3-padding-small" style="width: 15%; font-size: 1.5vh;">
+						v<xsl:value-of select="$appVersion"/>
+					</div>
 				</div>
 
+				<!-- Le contenu de la page -->
 				<div id="main-container" class="main-container-flex"
 					 data-layout-mode="{$tailleGroupe}"
 					 data-duree-rotation="{$delaiDeroulementSec}"
-					 data-combats-par-page="{$combatsParPageEff}">
+					 data-combats-par-page="{$combatsParPageEff}"
+					 data-url-redirecteur="{$urlRedirecteur}">
 					<xsl:for-each select="$tapisAffiches/tapisIds/tapis">
 						<xsl:variable name="numTapis" select="@id" />
 						<xsl:call-template name="UnTapis">
@@ -133,8 +144,12 @@
 					</xsl:for-each>
 				</div>
 
-				<div id="progress-container" class="w3-light-grey progress-container">
-					<div id="progress-bar" class="w3-olive progress-bar"></div>
+				<!-- La barre de progression -->
+				<div id="progress-container" class="progress-container">
+					<div id="progress-bar" class="progress-bar w3-olive"></div>
+					<div class="progress-text">
+						Mise à jour : <xsl:value-of select="$dateGeneration"/>
+					</div>
 				</div>
 
 				<script type="text/javascript">

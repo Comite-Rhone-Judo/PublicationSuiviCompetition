@@ -69,6 +69,7 @@
         public const string DateGeneration = "DateGeneration";
         public const string AppVersion = "AppVersion";
         public const string Logo = "Logo";
+        public const string urlRedirecteur = "urlRedirecteur";
 
         public const string checksums = "Checksums";
         public const string checksumFile = "ChecksumFile";

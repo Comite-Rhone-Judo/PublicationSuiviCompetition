@@ -17,6 +17,7 @@ namespace Tools.Export
         public string Logo = ConstantResource.Export_DefaultLogo;
         public long DelaiDeroulementSec = 10;
         public int NbProchainsCombats = 6;
+        public string UrlRedirecteur = string.Empty;
 
         public XElement ToXml()
         {
@@ -29,7 +30,8 @@ namespace Tools.Export
                 // --- Chaînes et Dates ---
                 new XAttribute(ConstantXML.DateGeneration, DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")),
                 new XAttribute(ConstantXML.AppVersion, AppInformation.Instance.AppVersion ?? string.Empty),
-                new XAttribute(ConstantXML.Logo, Logo ?? string.Empty)
+                new XAttribute(ConstantXML.Logo, Logo ?? string.Empty),
+                new XAttribute(ConstantXML.urlRedirecteur, UrlRedirecteur ?? string.Empty)
             );
         }
     }

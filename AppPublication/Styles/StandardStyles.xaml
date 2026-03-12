@@ -325,58 +325,85 @@
             </EventTrigger>
         </Style.Triggers>
     </Style>
-    
-    <Style x:Key="RadButtonStyle1" TargetType="telerik:RadButton">
+
+    <Style x:Key="RadButtonStyleToolbar" TargetType="telerik:RadButton">
         <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Width" Value="40" />
+        <Setter Property="Height" Value="40" />
+
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <ScaleTransform ScaleX="1" ScaleY="1" />
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate>
-                    <Grid>
-                        <Rectangle RadiusX="5" RadiusY="5" Grid.RowSpan="4" Fill="#FF1E93ED" Margin="0">
+                <ControlTemplate TargetType="telerik:RadButton">
+                    <Grid x:Name="RootGrid" Background="Transparent">
+
+                        <Rectangle x:Name="HaloRectangle" 
+                               RadiusX="5" RadiusY="5" 
+                               Fill="White" 
+                               Opacity="0"
+                               Margin="-1">
                             <Rectangle.Effect>
-                                <DropShadowEffect BlurRadius="7" ShadowDepth="0" Color="white" Opacity="1"/>
+                                <DropShadowEffect BlurRadius="25" 
+                          ShadowDepth="0" 
+                          Color="White" 
+                          Opacity="1" 
+                          RenderingBias="Quality"/>
                             </Rectangle.Effect>
                         </Rectangle>
-                        <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Image Source="{Binding Tag, RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type Button}}}" Height="25" Margin="5" ToolTip="{TemplateBinding ToolTip}"/>
-                        </WrapPanel>
+
+                        <Rectangle x:Name="BackgroundRectangle" 
+                               RadiusX="5" RadiusY="5" 
+                               Fill="#FF1E93ED" />
+
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <ContentPresenter.Content>
+                                <Image Source="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" 
+                                   Height="25" Margin="5" 
+                                   ToolTip="{TemplateBinding ToolTip}"/>
+                            </ContentPresenter.Content>
+                        </ContentPresenter>
                     </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="HaloRectangle" Property="Opacity" Value="1" />
+                            <Setter Property="Cursor" Value="Hand" />
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="BackgroundRectangle" Property="Fill" Value="#4682B4" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+
         <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Cursor" Value="Hand" />
-            </Trigger>
-            <EventTrigger RoutedEvent="Mouse.MouseEnter">
+            <EventTrigger RoutedEvent="MouseEnter">
                 <BeginStoryboard>
-                    <Storyboard TargetProperty="RenderTransform.ScaleX">
-                        <DoubleAnimation To="0.9" Duration="0:0:0.1" />
-                    </Storyboard>
-                </BeginStoryboard>
-                <BeginStoryboard>
-                    <Storyboard TargetProperty="RenderTransform.ScaleY">
-                        <DoubleAnimation To="0.9" Duration="0:0:0.1" />
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" To="0.97" Duration="0:0:0.1" />
+                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" To="0.97" Duration="0:0:0.1" />
                     </Storyboard>
                 </BeginStoryboard>
             </EventTrigger>
-
-            <EventTrigger RoutedEvent="Mouse.MouseLeave">
+            <EventTrigger RoutedEvent="MouseLeave">
                 <BeginStoryboard>
-                    <Storyboard TargetProperty="RenderTransform.ScaleX">
-                        <DoubleAnimation To="1.0" Duration="0:0:0.1" />
-                    </Storyboard>
-                </BeginStoryboard>
-                <BeginStoryboard>
-                    <Storyboard TargetProperty="RenderTransform.ScaleY">
-                        <DoubleAnimation To="1.0" Duration="0:0:0.1" />
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" To="1.0" Duration="0:0:0.1" />
+                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" To="1.0" Duration="0:0:0.1" />
                     </Storyboard>
                 </BeginStoryboard>
             </EventTrigger>
-
         </Style.Triggers>
     </Style>
-
 
     <Style x:Key="Header2TextStyle" TargetType="{x:Type TextBlock}">
         <Setter Property="FontFamily" Value="{telerik:Windows8Resource ResourceKey=FontFamily}" />

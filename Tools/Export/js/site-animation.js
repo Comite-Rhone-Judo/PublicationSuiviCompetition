@@ -4,6 +4,7 @@
         dureeRotation: 10,      // Valeur par défaut
         combatsParPage: 5,      // Valeur par défaut
         layoutMode: 4           // Valeur par défaut
+        urlRedirecteur: ''      // Valeur par defaut
     };
 
     var state = {
@@ -40,6 +41,7 @@
             config.dureeRotation = parseInt(container.getAttribute('data-duree-rotation')) || 10;
             config.combatsParPage = parseInt(container.getAttribute('data-combats-par-page')) || 8;
             config.layoutMode = parseInt(container.getAttribute('data-layout-mode')) || 4;
+            config.urlRedirecteur = container.getAttribute('data-url-redirecteur') || '';
         }
 
         // Calculer le nombre total de groupes de tapis
@@ -113,9 +115,14 @@
 
             // 3. Si on a fait tous les groupes de tapis
             if (state.currentTapisGroupIndex > state.maxTapisGroups) {
-                console.log("Cycle terminé. Rechargement de la page...");
-                // Force le rechargement depuis le serveur pour avoir les nouvelles données XML
-                window.location.reload(true);
+                console.log("Cycle terminé. Redirection...");
+                
+                // Redirection vers la page source pour réévaluer la configuration
+                if (config.urlRedirecteur && config.urlRedirecteur.trim() !== '') {
+                    window.location.href = config.urlRedirecteur;
+                } else {
+                    window.location.reload(true); // Fallback
+                }
                 return;
             }
         }

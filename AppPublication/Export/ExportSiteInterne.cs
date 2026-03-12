@@ -108,26 +108,47 @@ namespace AppPublication.Export
             ecransParams.Add(("tapisAffiches", docParams.CreateNavigator().Select("/")));
 
             // Calcul du nombre de combats par page directement en C#
-            int combatsParPageEff = 12;
-            bool isAffichageCombatLigne = false; // NOUVEAU
+            // Dans GenereEcranAppel, remplacez le bloc de calcul par celui-ci
+            int baseHeightCombats;
+            if (ecran.Eloigne)
+            {
+                switch (ecran.Resolution)
+                {
+                    case ScreenResolution.FullHd_1080p: baseHeightCombats = 8; break;
+                    case ScreenResolution.UltraHd_4K: baseHeightCombats = 12; break;
+                    case ScreenResolution.UltraHd_8K: baseHeightCombats = 16; break;
+                    default: baseHeightCombats = 8; break;
+                }
+            }
+            else
+            {
+                switch (ecran.Resolution)
+                {
+                    case ScreenResolution.FullHd_1080p: baseHeightCombats = 12; break;
+                    case ScreenResolution.UltraHd_4K: baseHeightCombats = 20; break;
+                    case ScreenResolution.UltraHd_8K: baseHeightCombats = 28; break;
+                    default: baseHeightCombats = 12; break;
+                }
+            }
+
+            int combatsParPageEff;
+            bool isAffichageCombatLigne = false;
 
             if (ecran.Disposition == DispositionAffichage.Ligne)
             {
-                // Mode Ligne : 12 combats pour le groupe 1, sinon 6 combats
-                combatsParPageEff = (ecran.Groupement == 1) ? 10 : 5;
-                // En ligne : Groupes 1 et 2 -> nouvelle disposition, Groupe 4 -> normal
+                combatsParPageEff = (ecran.Groupement == 1) ? baseHeightCombats : (baseHeightCombats / 2);
                 isAffichageCombatLigne = (ecran.Groupement == 1 || ecran.Groupement == 2);
             }
             else
             {
-                // Mode Colonne (comportement d'origine conservé)
-                combatsParPageEff = (ecran.Groupement == 4) ? 5 : 12;
-                // En colonne : Groupe 1 -> nouvelle disposition, Groupes 2 et 4 -> normal
+                combatsParPageEff = (ecran.Groupement >= 4) ? (baseHeightCombats / 2) : baseHeightCombats;
                 isAffichageCombatLigne = (ecran.Groupement == 1);
             }
 
+            if (combatsParPageEff < 1) combatsParPageEff = 1;
+
             ecransParams.Add(("combatsParPageEff", combatsParPageEff));
-            ecransParams.Add(("isAffichageCombatLigne", isAffichageCombatLigne ? "true" : "false")); // NOUVEAU
+            ecransParams.Add(("isAffichageCombatLigne", isAffichageCombatLigne ? "true" : "false"));
 
 
             // Les arguments XSLT (inclut la structure du site et le chemin cible)

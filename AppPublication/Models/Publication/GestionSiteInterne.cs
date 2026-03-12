@@ -277,7 +277,9 @@ namespace AppPublication.Models.Publication
                             AdresseIP = ipValid ? ip : IPAddress.None,
                             TapisIds = tapisIds,
                             Groupement = cfg.Groupement,
-                            Disposition = cfg.Disposition
+                            Disposition = cfg.Disposition,
+                            Resolution = cfg.Resolution,
+                            Eloigne = cfg.Eloigne
                         };
 
                         // Ajuster le compteur statique pour éviter les doublons d'ID futurs
@@ -310,6 +312,12 @@ namespace AppPublication.Models.Publication
                     _siteInterneUrlGenerator.RootDomain = _urlServerBase;
 
                     output = _siteInterneUrlGenerator.UrlEcransAppelRedirecteur.AbsoluteUri;
+
+                    // Met a jour le contexte pour la generation
+                    if (_generateurSite != null && _generateurSite.ConfigurationGeneration != null)
+                    {
+                        _generateurSite.ConfigurationGeneration.UrlRedirecteur = output;
+                    }
                 }
             }
             catch (Exception ex)

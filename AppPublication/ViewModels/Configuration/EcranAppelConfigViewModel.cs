@@ -38,7 +38,7 @@ namespace AppPublication.ViewModels.Configuration
         private bool _isRechercheIpEnCours;
         private bool _isRechercheHostnameEnCours;
         private CancellationTokenSource _searchCts;
-        private static List<int> _groupementOptionsStatic { get; } = new List<int> { 1, 2, 4 };
+        public IEnumerable<ScreenResolution> ResolutionOptions => Enum.GetValues(typeof(ScreenResolution)).Cast<ScreenResolution>();
 
         #endregion
 
@@ -83,6 +83,44 @@ namespace AppPublication.ViewModels.Configuration
         #region PROPRIETES
 
         /// <summary>
+        /// la resolution de l'ecran d'appel, qui peut influencer le nombre de tapis maximum sélectionnable (4 max en 1080p, 8 max en 4K/8K)
+        /// </summary>
+        public ScreenResolution Resolution
+        {
+            get => _model.Resolution;
+            set
+            {
+                if (_model.Resolution != value)
+                {
+                    _model.Resolution = value;
+                    NotifyPropertyChanged();
+                    NotifyPropertyChanged(nameof(GroupementOptions));
+                    if (value == ScreenResolution.FullHd_1080p && Groupement > 4) Groupement = 4;
+                    var cfg = GetConfigElement();
+                    if (cfg != null) cfg.Resolution = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Indique si l'ecran d'appel est éloigné du public (ex: backroom), ce qui peut influencer le design de l'écran (ex: plus d'informations techniques affichées)
+        /// </summary>
+        public bool Eloigne
+        {
+            get => _model.Eloigne;
+            set
+            {
+                if (_model.Eloigne != value)
+                {
+                    _model.Eloigne = value;
+                    NotifyPropertyChanged();
+                    var cfg = GetConfigElement();
+                    if (cfg != null) cfg.Eloigne = value;
+                }
+            }
+        }
+
+        /// <summary>
         /// Options pour la Dropdown de disposition (extraites dynamiquement de l'enum)
         /// </summary>
         public IEnumerable<DispositionAffichage> DispositionOptions => Enum.GetValues(typeof(DispositionAffichage)).Cast<DispositionAffichage>();
@@ -114,9 +152,9 @@ namespace AppPublication.ViewModels.Configuration
         }
 
         /// <summary>
-        /// Les options de groupement des tapis (1, 2 ou 4)
+        /// Les options de groupement des tapis (1, 2, 4 ou 8)
         /// </summary>
-        public List<int> GroupementOptions => _groupementOptionsStatic;
+        public List<int> GroupementOptions => (Resolution == ScreenResolution.FullHd_1080p) ? new List<int> { 1, 2, 4 } : new List<int> { 1, 2, 4, 8 };
 
         /// <summary>
         /// Nombre de tapis par groupe (1, 2 ou 4)
@@ -442,12 +480,14 @@ namespace AppPublication.ViewModels.Configuration
                     {
                         if (isIp)
                         {
-                            var e = await Dns.GetHostEntryAsync(IPAddress.Parse(saisie));
+                            // var e = await Dns.GetHostEntryAsync(IPAddress.Parse(saisie));
+                            var e = Dns.GetHostEntry(IPAddress.Parse(saisie));
                             res = e.HostName;
                         }
                         else
                         {
-                            var e = await Dns.GetHostEntryAsync(saisie);
+                            // var e = await Dns.GetHostEntryAsync(saisie);
+                            var e = Dns.GetHostEntry(saisie);
                             var i = e.AddressList.FirstOrDefault(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
                             if (i != null)
                             {
@@ -473,7 +513,11 @@ namespace AppPublication.ViewModels.Configuration
                     }
                 }
             }
-            catch { }
+            catch (OperationCanceledException) { /* Ignoré lors de l'annulation */ }
+            catch (Exception ex)
+            {
+                LogTools.Logger.Warn(ex, $"Erreur DNS : {ex.Message}");
+            }
             finally
             {
                 if (!token.IsCancellationRequested)

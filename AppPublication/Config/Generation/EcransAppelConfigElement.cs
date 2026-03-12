@@ -19,6 +19,8 @@ namespace AppPublication.Config.Generation
         private const string kHostname = "hostname";
         private const string kGroupement = "groupement";
         private const string kDisposition = "disposition";
+        private const string kResolution = "resolution";
+        private const string kEloigne = "eloigne";
 
         #region METHODES
         /// <summary>
@@ -85,6 +87,20 @@ namespace AppPublication.Config.Generation
         {
             get { return GetConfigValue<DispositionAffichage>(kDisposition, DispositionAffichage.Colonne); }
             set { SetValueAndMarkDirty(kDisposition, value); }
+        }
+
+        [ConfigurationProperty(kResolution, DefaultValue = ScreenResolution.FullHd_1080p)]
+        public ScreenResolution Resolution
+        {
+            get { return GetConfigValue<ScreenResolution>(kResolution, ScreenResolution.FullHd_1080p); }
+            set { SetValueAndMarkDirty(kResolution, value); }
+        }
+
+        [ConfigurationProperty(kEloigne, DefaultValue = false)]
+        public bool Eloigne
+        {
+            get { return GetConfigValue<bool>(kEloigne, false); }
+            set { SetValueAndMarkDirty(kEloigne, value); }
         }
         #endregion
     }

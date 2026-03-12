@@ -26,7 +26,6 @@
     <Converter:BoolOperationConverter x:Key="BoolOperationConverter" />
     <Converter:PassthroughConverter x:Key="PassthroughConverter" />
     <Converter:ValueToBoolConverter x:Key="ValueToBoolConverter"/>
+    <Converter:ResolutionToDisplayConverter x:Key="ResolutionConverter" />
 
-
-    
 </ResourceDictionary>

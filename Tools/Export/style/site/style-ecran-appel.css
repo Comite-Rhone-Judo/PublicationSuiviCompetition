@@ -1,30 +1,21 @@
-﻿/* --- Global --- */
-.tv-body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-}
+﻿/* --- Surcharge W3.CSS pour polices 100% relatives à l'écran --- */
+.tv-body { font-size: 1.5vh; margin: 0; padding: 0; overflow: hidden; }
+.tv-body .w3-small   { font-size: 1.2vh !important; }
+.tv-body .w3-medium  { font-size: 1.5vh !important; }
+.tv-body .w3-large   { font-size: 1.8vh !important; }
+.tv-body .w3-xlarge  { font-size: 2.2vh !important; }
+.tv-body .w3-xxlarge { font-size: 3vh !important; }
 
+/* --- Global --- */
 .tv-header {
-    height: 80px;
+    height: 8vh;
     display: flex;
     align-items: center;
 }
 
-.tv-logo-cell {
-    width: 15%;
-    text-align: center;
-}
-
-.tv-logo {
-    max-height: 65px;
-}
-
-.tv-title {
-    width: 70%;
-    font-weight: bold;
-    text-align: center;
-}
+.tv-logo-cell { width: 15%; text-align: center; }
+.tv-logo { max-height: 6vh; }
+.tv-title { width: 70%; font-weight: bold; text-align: center; }
 
 .main-container-flex {
     width: 100%;
@@ -38,43 +29,22 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 10px;
+    height: 1vh;
     z-index: 9999;
 }
 
-.progress-bar {
-    height: 100%;
-    width: 0%;
-    transition: width 0.1s linear;
-}
+.progress-bar { height: 100%; width: 0%; transition: width 0.1s linear; }
 
 /* --- Structure Tapis --- */
-.tapis-card {
-    box-sizing: border-box;
-}
-
-.tapis-card-inner-wrapper {
-    height: 100%;
-    width: 100%;
-}
-
-.tapis-inner {
-    height: 100%;
-    display: flex;
-    overflow: hidden;
-}
-
-.dispo-ligne {
-    flex-direction: row;
-}
-
-.dispo-colonne {
-    flex-direction: column;
-}
+.tapis-card { box-sizing: border-box; }
+.tapis-card-inner-wrapper { height: 100%; width: 100%; }
+.tapis-inner { height: 100%; display: flex; overflow: hidden; }
+.dispo-ligne { flex-direction: row; }
+.dispo-colonne { flex-direction: column; }
 
 /* --- Headers Tapis --- */
 .tapis-header-ligne {
-    width: 80px;
+    width: 6vw;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -82,78 +52,37 @@
     flex-shrink: 0;
 }
 
-    .tapis-header-ligne b {
-        writing-mode: vertical-rl;
-        transform: rotate(180deg);
-        white-space: nowrap;
-        margin: auto;
-    }
-
-.tapis-header-colonne {
-    flex-shrink: 0;
+.tapis-header-ligne b {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+    margin: auto;
 }
 
-.paging-ligne-container {
-    width: 100%;
-    padding-top: 15px;
-    display: flex;
-    justify-content: center;
-}
-
-.paging-ligne-dots {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 3px;
-    padding: 0 4px;
-}
-
-.paging-colonne-container {
-    margin-top: 12px;
-    margin-right: 10px;
-}
-
-.paging-colonne-dots {
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
-    align-items: center;
-}
-
-.tapis-content {
-    flex: 1;
-    overflow: hidden;
-}
+.tapis-header-colonne { flex-shrink: 0; }
+.paging-ligne-container { width: 100%; padding-top: 1.5vh; display: flex; justify-content: center; }
+.paging-ligne-dots { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 0.3vh; padding: 0 0.4vw; }
+.paging-colonne-container { margin-top: 1vh; margin-right: 1vw; }
+.paging-colonne-dots { display: flex; flex-direction: row; gap: 0.8vw; align-items: center; }
+.tapis-content { flex: 1; overflow: hidden; }
 
 /* --- Lignes de Combat --- */
-.combat-table {
-    width: 100%;
-    height: 100%;
-}
-
-.ghost-row {
-    height: 100%;
-    background-color: transparent !important;
-}
-
-.ghost-cell {
-    padding: 0;
-    border: none !important;
-}
+.combat-table { width: 100%; height: 100%; }
+.ghost-row { height: 100%; background-color: transparent !important; }
+.ghost-cell { padding: 0; border: none !important; }
 
 .badge-cell {
     width: 5%;
-    padding: 2px;
-    vertical-align: middle !important; /* CORRECTION : !important ajouté */
+    padding: 0.2vh;
+    vertical-align: middle !important;
     text-align: center;
 }
 
 .pos-badge {
-    height: 38px;
-    width: 38px;
-    line-height: 38px;
-    font-size: 1.2em;
+    height: 4vh;
+    width: 4vh;
+    line-height: 4vh;
+    font-size: 1.8vh;
     font-weight: bold;
     margin: auto;
     display: inline-block;
@@ -162,9 +91,9 @@
 /* --- Judoka Blocks --- */
 .judoka-cell {
     width: 35%;
-    padding: 2px 4px;
+    padding: 0.2vh 0.4vw;
     height: 1px;
-    vertical-align: middle !important; /* CORRECTION : !important ajouté */
+    vertical-align: middle !important;
 }
 
 .judoka-box {
@@ -175,151 +104,70 @@
     justify-content: center;
 }
 
-.jc-attente-ligne {
-    padding: 8px 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+.jc-attente-ligne { padding: 0.8vh 1vw; display: flex; align-items: center; justify-content: center; }
+.jc-attente-colonne { padding: 0.6vh 1vw; display: flex; flex-direction: column; align-items: center; }
+.jc-normal-ligne-right { padding: 0.8vh 1vw; display: flex; align-items: baseline; justify-content: flex-end; }
+.jc-normal-ligne-left { padding: 0.8vh 1vw; display: flex; align-items: baseline; justify-content: flex-start; }
+.jc-normal-colonne-right { padding: 0.6vh 1vw; display: flex; flex-direction: column; align-items: flex-end; }
+.jc-normal-colonne-left { padding: 0.6vh 1vw; display: flex; flex-direction: column; align-items: flex-start; }
 
-.jc-attente-colonne {
-    padding: 6px 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+.order-1 { order: 1; }
+.order-2 { order: 2; }
 
-.jc-normal-ligne-right {
-    padding: 8px 10px;
-    display: flex;
-    align-items: baseline;
-    justify-content: flex-end;
-}
+.club-base { font-weight: bold; }
+.club-ligne-right { margin-right: 1.5vw; }
+.club-ligne-left { margin-left: 1.5vw; }
+.club-colonne { margin-top: 0.2vh; height: 1.5em; }
 
-.jc-normal-ligne-left {
-    padding: 8px 10px;
-    display: flex;
-    align-items: baseline;
-    justify-content: flex-start;
-}
-
-.jc-normal-colonne-right {
-    padding: 6px 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
-.jc-normal-colonne-left {
-    padding: 6px 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.order-1 {
-    order: 1;
-}
-
-.order-2 {
-    order: 2;
-}
-
-.club-base {
-    font-weight: bold;
-}
-
-.club-ligne-right {
-    margin-right: 15px;
-}
-
-.club-ligne-left {
-    margin-left: 15px;
-}
-
-.club-colonne {
-    margin-top: 2px;
-    height: 1.5em;
-}
-
-.hide-ligne {
-    display: none;
-}
+.hide-ligne { display: none; }
 
 .img-attente {
+    height: 2.5vh;
+    width: auto;
     vertical-align: middle;
-    margin-right: 8px;
-    margin-bottom: 4px;
+    margin-right: 0.8vw;
+    margin-bottom: 0.4vh;
 }
 
-.txt-attente {
-    vertical-align: middle;
-}
-
-.txt-bold {
-    font-weight: bold;
-}
+.txt-attente { vertical-align: middle; }
+.txt-bold { font-weight: bold; }
 
 /* --- Catégorie --- */
 .cat-cell {
     width: 25%;
-    padding: 2px 4px;
+    padding: 0.2vh 0.4vw;
     height: 1px;
-    vertical-align: middle !important; /* CORRECTION : !important ajouté */
+    vertical-align: middle !important;
 }
 
 .cat-box {
     height: 100%;
-    padding: 4px;
+    padding: 0.4vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     font-weight: bold;
 }
 
-.cat-subtitle {
-    margin-top: 2px;
-}
+.cat-subtitle { margin-top: 0.2vh; }
+.cat-box img { height: 1.5vh; width: auto; }
 
 /* --- Images & Badges --- */
-.colorized-img-white {
-    filter: brightness(0) invert(1);
-}
-
-.colorized-img-black {
-    filter: brightness(0);
-}
+.colorized-img-white { filter: brightness(0) invert(1); }
+.colorized-img-black { filter: brightness(0); }
 
 /* --- Pagination --- */
-.page-dot {
-    font-size: 1.2em;
-    transition: opacity 0.3s;
-}
+.page-dot { font-size: 1.5vh; transition: opacity 0.3s; }
+.page-dot-active { opacity: 1; }
+.page-dot-inactive { opacity: 0.3; }
 
-.page-dot-active {
-    opacity: 1;
-}
-
-.page-dot-inactive {
-    opacity: 0.3;
-}
-
-/* CORRECTION : Animation simplifiée (Clignotement pur) */
 @keyframes dot-blink {
-    0% {
-        opacity: 1.0;
-    }
-
-    50% {
-        opacity: 0.3;
-    }
-
-    100% {
-        opacity: 1.0;
-    }
+    0%   { opacity: 1.0; }
+    50%  { opacity: 0.3; }
+    100% { opacity: 1.0; }
 }
 
 .w3-dot-active {
-    animation: dot-blink 1.5s infinite ease-in-out; /* Accéléré légèrement à 1.5s pour plus de dynamisme */
+    animation: dot-blink 1.5s infinite ease-in-out;
     display: inline-block;
 }
