@@ -34,14 +34,18 @@ namespace AppPublication.Models.EcransAppel
             set {
                 if (_nbTapis != value)
                 {
-                    // TODO : Ajouter un calcul intelligent des valeurs par defaut des tapis (par ex. si on a 2 tapis, on va afficher par groupe de 2)
-
-                    // TODO Faire un test pour s'assurer du comportement en cas de n° de tapis non configuré (ex: on a 4 tapis mais un écran d'appel avec tapis 5 et 6)
-                    _nbTapis = value;
-                    // Actualise les tapis par défaut pour l'écran d'appel par défaut
-                    if (_default != null)
+                    if (_nbTapis >= 0)
                     {
-                        _default.TapisIds = Enumerable.Range(1, _nbTapis).ToList();
+                        // TODO Faire un test pour s'assurer du comportement en cas de n° de tapis non configuré (ex: on a 4 tapis mais un écran d'appel avec tapis 5 et 6)
+                        _nbTapis = value;
+                        // Actualise les tapis par défaut pour l'écran d'appel par défaut
+                        if (_default != null)
+                        {
+                            // Optimise le groupement en fonction du nombre de tapis
+                            _default.Groupement = (_nbTapis == 1) ? 1 : (_nbTapis == 2) ? 2 : 4;
+                            // Par defaut, on affiche tous les tapis
+                            _default.TapisIds = Enumerable.Range(1, _nbTapis).ToList();
+                        }
                     }
                 }
             }
@@ -55,8 +59,12 @@ namespace AppPublication.Models.EcransAppel
             {
                 Id = -1,
                 Description = "Ecran par défaut",
-                Groupement = 1
+                Groupement = 1,
+                Resolution = EcranAppelModel.ScreenResolution.FullHd_1080p,
+                Eloigne = false,
+                Disposition = EcranAppelModel.DispositionAffichage.Colonne
             };
+
 
             NbTapis = 6;    // par defaut 6 tapis, valeur assez commune. Cela va initialiser le tapis par default
         }

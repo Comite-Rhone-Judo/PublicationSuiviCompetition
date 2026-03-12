@@ -45,7 +45,17 @@
 			<xsl:when test="$nbProchainsCombats > 0">
 				<xsl:value-of select="$nbProchainsCombats"/>
 			</xsl:when>
-			<xsl:otherwise>12</xsl:otherwise>
+			<xsl:otherwise>10</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
+
+	<xsl:variable name="maxCombatsPage">
+		<xsl:choose>
+			<xsl:when test="number($combatsParPageEff) > 10">10</xsl:when>
+			<xsl:when test="number($combatsParPageEff) > 0">
+				<xsl:value-of select="$combatsParPageEff"/>
+			</xsl:when>
+			<xsl:otherwise>8</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
 
@@ -133,7 +143,7 @@
 				<div id="main-container" class="main-container-flex"
 					 data-layout-mode="{$tailleGroupe}"
 					 data-duree-rotation="{$delaiDeroulementSec}"
-					 data-combats-par-page="{$combatsParPageEff}"
+					 data-combats-par-page="{$maxCombatsPage}"
 					 data-url-redirecteur="{$urlRedirecteur}">
 					<xsl:for-each select="$tapisAffiches/tapisIds/tapis">
 						<xsl:variable name="numTapis" select="@id" />
@@ -271,7 +281,7 @@
 			</xsl:choose>
 		</xsl:variable>
 
-		<xsl:variable name="rowHeightPct" select="100 div $combatsParPageEff" />
+		<xsl:variable name="rowHeightPct" select="100 div $maxCombatsPage" />
 
 		<tr id="combat_{$combat/@id}" data-row-index="{$indexCombat}" class="{$rowClass}">
 			<xsl:attribute name="style">

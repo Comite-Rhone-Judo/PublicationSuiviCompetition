@@ -29,11 +29,30 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 1vh;
+    height: 2vh; /* On passe à 2vh pour avoir la place d'écrire */
     z-index: 9999;
+    background-color: rgba(0,0,0,0.6); /* Un fond sombre pour que le texte se détache */
 }
 
-.progress-bar { height: 100%; width: 0%; transition: width 0.1s linear; }
+.progress-bar {
+    position: absolute; /* Place la barre en arrière-plan */
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    transition: width 0.1s linear;
+}
+
+/* La classe manquante pour afficher le texte */
+.progress-text {
+    position: relative; /* Place le texte par-dessus la barre */
+    z-index: 10000;
+    color: white; /* Force le texte en blanc */
+    text-align: center;
+    font-size: 1.3vh;
+    line-height: 2vh; /* Centre le texte verticalement */
+    font-weight: bold;
+}
 
 /* --- Structure Tapis --- */
 .tapis-card { box-sizing: border-box; }
@@ -79,10 +98,10 @@
 }
 
 .pos-badge {
-    height: 4vh;
-    width: 4vh;
-    line-height: 4vh;
-    font-size: 1.8vh;
+    height: 3.6vh;
+    width: 3.6vh;
+    line-height: 3.6vh;
+    font-size: 1.7vh; /* Police légèrement agrandie */
     font-weight: bold;
     margin: auto;
     display: inline-block;
@@ -104,12 +123,47 @@
     justify-content: center;
 }
 
-.jc-attente-ligne { padding: 0.8vh 1vw; display: flex; align-items: center; justify-content: center; }
-.jc-attente-colonne { padding: 0.6vh 1vw; display: flex; flex-direction: column; align-items: center; }
-.jc-normal-ligne-right { padding: 0.8vh 1vw; display: flex; align-items: baseline; justify-content: flex-end; }
-.jc-normal-ligne-left { padding: 0.8vh 1vw; display: flex; align-items: baseline; justify-content: flex-start; }
-.jc-normal-colonne-right { padding: 0.6vh 1vw; display: flex; flex-direction: column; align-items: flex-end; }
-.jc-normal-colonne-left { padding: 0.6vh 1vw; display: flex; flex-direction: column; align-items: flex-start; }
+.jc-attente-ligne {
+    padding: 0.6vh 1vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.jc-attente-colonne {
+    padding: 0.5vh 1vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.jc-normal-ligne-right {
+    padding: 0.6vh 1vw;
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+}
+
+.jc-normal-ligne-left {
+    padding: 0.6vh 1vw;
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-start;
+}
+
+.jc-normal-colonne-right {
+    padding: 0.5vh 1vw;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.jc-normal-colonne-left {
+    padding: 0.5vh 1vw;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
 
 .order-1 { order: 1; }
 .order-2 { order: 2; }
@@ -122,15 +176,22 @@
 .hide-ligne { display: none; }
 
 .img-attente {
-    height: 2.5vh;
+    height: 2.2vh; /* Toujours calé sur la taille de w3-xlarge */
     width: auto;
-    vertical-align: middle;
     margin-right: 0.8vw;
-    margin-bottom: 0.4vh;
+    display: block; /* Annule le comportement inline et ses marges fantômes */
 }
 
-.txt-attente { vertical-align: middle; }
-.txt-bold { font-weight: bold; }
+.txt-attente {
+    /* Plus besoin de vertical-align, la classe parent .txt-bold gère tout ! */
+}
+.txt-bold {
+    font-weight: bold;
+    display: flex; /* Flexbox prend le relais pour l'alignement */
+    align-items: center; /* Aligne l'image et le texte parfaitement au centre */
+    justify-content: center;
+    line-height: 1.2; /* Force une hauteur de ligne standardisée */
+}
 
 /* --- Catégorie --- */
 .cat-cell {
@@ -142,7 +203,7 @@
 
 .cat-box {
     height: 100%;
-    padding: 0.4vh;
+    padding: 0.3vh;
     display: flex;
     flex-direction: column;
     justify-content: center;

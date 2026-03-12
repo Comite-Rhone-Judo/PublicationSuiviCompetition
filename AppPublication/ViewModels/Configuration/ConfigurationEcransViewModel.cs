@@ -16,6 +16,8 @@ namespace AppPublication.ViewModels.Configuration
 {
     public class ConfigurationEcransViewModel : NotificationBase
     {
+        // TODO Verifier le comportement si on charge la config sans connexion a une compétition
+
         #region MEMBERS
         // Collection source (référence vers celle de GestionSite)
         private readonly EcranCollectionManager _ecranManager;

@@ -108,6 +108,7 @@ namespace AppPublication.Export
             ecransParams.Add(("tapisAffiches", docParams.CreateNavigator().Select("/")));
 
             // Calcul du nombre de combats par page directement en C#
+            // TODO Revoir la logique de calcul pour affiner les valeurs
             // Dans GenereEcranAppel, remplacez le bloc de calcul par celui-ci
             int baseHeightCombats;
             if (ecran.Eloigne)
@@ -124,25 +125,25 @@ namespace AppPublication.Export
             {
                 switch (ecran.Resolution)
                 {
-                    case ScreenResolution.FullHd_1080p: baseHeightCombats = 12; break;
+                    case ScreenResolution.FullHd_1080p: baseHeightCombats = 10; break;
                     case ScreenResolution.UltraHd_4K: baseHeightCombats = 20; break;
-                    case ScreenResolution.UltraHd_8K: baseHeightCombats = 28; break;
+                    case ScreenResolution.UltraHd_8K: baseHeightCombats = 24; break;
                     default: baseHeightCombats = 12; break;
                 }
             }
 
             int combatsParPageEff;
-            bool isAffichageCombatLigne = false;
+            // 2. L'option "En Ligne" dépend UNIQUEMENT de la disposition choisie
+            bool isAffichageCombatLigne = (ecran.Disposition == DispositionAffichage.Ligne);
 
-            if (ecran.Disposition == DispositionAffichage.Ligne)
+            // 3. Calcul mathématique de la répartition selon le groupement
+            if (isAffichageCombatLigne)
             {
                 combatsParPageEff = (ecran.Groupement == 1) ? baseHeightCombats : (baseHeightCombats / 2);
-                isAffichageCombatLigne = (ecran.Groupement == 1 || ecran.Groupement == 2);
             }
             else
             {
                 combatsParPageEff = (ecran.Groupement >= 4) ? (baseHeightCombats / 2) : baseHeightCombats;
-                isAffichageCombatLigne = (ecran.Groupement == 1);
             }
 
             if (combatsParPageEff < 1) combatsParPageEff = 1;

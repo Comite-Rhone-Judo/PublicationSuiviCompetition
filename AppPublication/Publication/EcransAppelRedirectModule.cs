@@ -107,10 +107,10 @@ namespace AppPublication.Publication
             {
                 // 1. Récupérer l'identité du client (IP)
                 // Note: request.RemoteEndPoint peut nécessiter un cast selon ton implémentation de IHttpRequest
-                string clientIp = request.RemoteEndPoint.Address.ToString();
+                var clientIp = request.RemoteEndPoint.Address;
 
                 // 2. Déterminer la cible en fonction de l'IP
-                var ecranToRedirect = _manager.Ecrans.FirstOrDefault(e => e.AdresseIP.Equals(clientIp));
+                var ecranToRedirect = _manager.Ecrans.FirstOrDefault(e => e.AdresseIP.MapToIPv4().Equals(clientIp.MapToIPv4()));
 
                 // 3. Rediriger vers la page correspondante ou une page par défaut
                 if (ecranToRedirect == null) {

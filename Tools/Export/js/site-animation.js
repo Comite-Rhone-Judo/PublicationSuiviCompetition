@@ -3,7 +3,7 @@
     var config = {
         dureeRotation: 10,      // Valeur par défaut
         combatsParPage: 5,      // Valeur par défaut
-        layoutMode: 4           // Valeur par défaut
+        layoutMode: 4,           // Valeur par défaut
         urlRedirecteur: ''      // Valeur par defaut
     };
 
