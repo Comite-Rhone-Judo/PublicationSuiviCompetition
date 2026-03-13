@@ -1,4 +1,5 @@
 ﻿using FluentFTP;
+using FluentFTP.Model.Functions;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -6,10 +7,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.ServiceModel.Channels;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Interop;
 using System.Windows.Markup;
 using Tools.Framework;
@@ -91,6 +94,34 @@ namespace Tools.Net
         #endregion
 
         #region PROPRIETES
+
+        /// <summary>
+        /// Le profil FTP Courant
+        /// </summary>
+        public FtpProfile CurrentFtpProfile
+        {
+            get
+            {
+                return _ftp_profile;
+            }
+        }
+
+        private bool _isFTPConfigPropertiesValid = false;
+        /// <summary>
+        /// Retourne true si la configuration du site distant est suffisante pour tenter une connexion FTP
+        /// </summary>
+        public bool IsFTPConfigPropertiesValid
+        {
+            get
+            {
+                return _isFTPConfigPropertiesValid;
+            }
+            private set
+            { 
+                _isFTPConfigPropertiesValid = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         /// <summary>
         /// Le nombre max d'essai pour charger un fichier
@@ -221,6 +252,7 @@ namespace Tools.Net
                 _ftpDistant = value;
                 NotifyPropertyChanged();
                 IsChanged = true;
+                IsFTPConfigPropertiesValid = CheckConfigurationProperties();
             }
         }
 
@@ -257,6 +289,7 @@ namespace Tools.Net
                 _ftpLoginDistant = value;
                 NotifyPropertyChanged();
                 IsChanged = true;
+                IsFTPConfigPropertiesValid = CheckConfigurationProperties();
             }
         }
 
@@ -294,6 +327,7 @@ namespace Tools.Net
                 _ftpPasswordDistant = value;
                 NotifyPropertyChanged();
                 IsChanged = true;
+                IsFTPConfigPropertiesValid = CheckConfigurationProperties();
             }
         }  
 
@@ -379,9 +413,66 @@ namespace Tools.Net
             }
         }
 
+
+        /// <summary>
+        /// Valide la configuration du site distant et initialise le FtpProfile en utilisant le client FTP pour tester la connection et detecter le mode de connexion (actif ou passif)
+        /// Attention, ne release pas le client a la fin !!
+        /// </summary>
+        /// <returns></returns>
+        public bool CheckConfigurationSiteDistant(FtpClient ftpClient)
+        {
+            bool output = false;
+            if (IsFTPConfigPropertiesValid && !string.IsNullOrEmpty(PasswordSiteFTPDistant))
+            {
+                // Test les parametres de connection
+                // FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
+                // FtpClient ftpClient = GetAndConfigureFtpClient();
+
+                try
+                {
+                    var cfg = new FtpAutoDetectConfig()
+                    {
+                        FirstOnly = true,
+                        CloneConnection = true,
+                    };
+
+                    List<FtpProfile> profiles = ftpClient.AutoDetect(cfg);
+
+                    if (profiles.Count > 0)
+                    {
+                        _ftp_profile = profiles.First();
+                        _ftp_profile.DataConnection = (ModeActifFTPDistant) ? FtpDataConnectionType.PORT : FtpDataConnectionType.PASV;
+                        output = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LogTools.Error(ex);
+                    throw ex;
+                }
+            }
+
+            return output;
+        }
+
+        /// <summary>
+        /// Retourne une instance de client FTP initialisee
+        /// </summary>
+        /// <returns></returns>
+        public FtpClient GetAndConfigureFtpClient()
+        {
+            // Le client FTP pour la connection
+            FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
+            // Autorise l'utilisation de n'importe quel certificat
+            ftpClient.Config.EncryptionMode = FtpEncryptionMode.Auto;
+            ftpClient.Config.ValidateAnyCertificate = true;
+
+            return ftpClient;
+        }
+
         #endregion
 
-        #region METHODES
+        #region METHODE
 
         /// <summary>
         /// Permet d'ajouter un contexte
@@ -481,10 +572,15 @@ namespace Tools.Net
                 }
                 else
                 {
+                    FtpClient ftpClient = null;
+
                     // Serveur distant
                     try
                     {
-                        if (CheckConfigurationSiteDistant())
+                        // Recupere un client FTP pour tester la configuration et detecter le mode de connexion (actif ou passif)
+                        ftpClient = GetAndConfigureFtpClient();
+
+                        if (CheckConfigurationSiteDistant(ftpClient))
                         {
                             // Active le site
                             lStatus = StateMiniSiteEnum.Idle;
@@ -501,6 +597,10 @@ namespace Tools.Net
                     {
                         lStatusMsg = "Configuration incorrecte";
                         lStatusDetail = ex.Message;
+                    }
+                    finally
+                    {
+                        ftpClient?.Dispose();
                     }
                 }
             }
@@ -545,6 +645,7 @@ namespace Tools.Net
         {
             UploadStatus output = new UploadStatus();
             StatusMiniSite cStatus = Status;  // Recupere le status courant pour le restaurer apres les operations
+            FtpClient ftpClient = null;
 
             if (IsLocal || IsActif)
             {
@@ -560,7 +661,10 @@ namespace Tools.Net
 
             try
             {
-                if (!CheckConfigurationSiteDistant())
+                // Le client FTP pour la connection
+                ftpClient = GetAndConfigureFtpClient();
+
+                if (!CheckConfigurationSiteDistant(ftpClient))
                 {
                     Status = new StatusMiniSite(StateMiniSiteEnum.Idle, "Configuration incorrecte");
                     return output;
@@ -571,10 +675,6 @@ namespace Tools.Net
                 Status = new StatusMiniSite(StateMiniSiteEnum.Idle, "Configuration incorrecte", ex.Message);
                 return output;
             }
-
-            // Le client FTP pour la connection
-            // FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
-            FtpClient ftpClient = GetAndConfigureFtpClient();
 
             try
             {
@@ -614,10 +714,13 @@ namespace Tools.Net
             }
             finally
             {
-                // disconnect et forcer le dispose pour s'assurer que la connection est bien coupe (cf. pb de 2 cnx max surt Free)
-                if (ftpClient.IsConnected)
+                if (ftpClient != null)
                 {
-                    ftpClient.Disconnect();
+                    // disconnect et forcer le dispose pour s'assurer que la connection est bien coupe (cf. pb de 2 cnx max surt Free)
+                    if (ftpClient.IsConnected)
+                    {
+                        ftpClient.Disconnect();
+                    }
                 }
 
                 // Detruit le client
@@ -809,41 +912,12 @@ namespace Tools.Net
         #region METHODES PRIVEES
 
         /// <summary>
-        /// Valide la configuration du site distant et initialise le FtpProfile
+        /// Calcul si les propriétés de configuration du site distant sont renseignées pour activer le bouton de synchronisation
         /// </summary>
         /// <returns></returns>
-        private bool CheckConfigurationSiteDistant()
+        private bool CheckConfigurationProperties()
         {
-            bool output = false;
-            if (!String.IsNullOrEmpty(SiteFTPDistant) && !String.IsNullOrEmpty(LoginSiteFTPDistant) && !string.IsNullOrEmpty(PasswordSiteFTPDistant))
-            {
-                // Test les parametres de connection
-                // FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
-                FtpClient ftpClient = GetAndConfigureFtpClient();
-
-                try
-                {
-                    List<FtpProfile> profiles = ftpClient.AutoDetect(true);
-
-                    if (profiles.Count > 0)
-                    {
-                        _ftp_profile = profiles.First();
-                        _ftp_profile.DataConnection = (ModeActifFTPDistant) ? FtpDataConnectionType.PORT : FtpDataConnectionType.PASV;
-                        output = true;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    LogTools.Error(ex);
-                    throw ex;
-                }
-                finally
-                {
-                    ftpClient?.Dispose();
-                }
-            }
-
-            return output;
+            return !String.IsNullOrEmpty(SiteFTPDistant) && !String.IsNullOrEmpty(LoginSiteFTPDistant);
         }
 
         /// <summary>
@@ -892,16 +966,7 @@ namespace Tools.Net
             }
         }
 
-        private FtpClient GetAndConfigureFtpClient()
-        {
-            // Le client FTP pour la connection
-            FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
-            // Autorise l'utilisation de n'importe quel certificat
-            ftpClient.Config.EncryptionMode = FtpEncryptionMode.Auto;
-            ftpClient.Config.ValidateAnyCertificate = true;
 
-            return ftpClient;
-        }
 
         /// <summary>
         /// Supprime de maniere recursive tous les fichiers et repertoires dans un repertoire FTP

@@ -547,9 +547,16 @@
                                         </StackPanel>
                                     </StackPanel>
                                     <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="1" Stretch="Fill"/>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Label HorizontalAlignment="Left" Content="Parametres:" Style="{StaticResource HeaderStyle}" />
-                                        <CheckBox Content="Configuration avancée" IsChecked="{Binding Path=SiteCoordinator.GestionnaireSitePublique.AdvancedConfig}" Style="{StaticResource CheckboxStyle}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Label Grid.Column="0" HorizontalAlignment="Left" Content="Parametres:" Style="{StaticResource HeaderStyle}" />
+
+                                        <CheckBox Grid.Column="1" Margin="5 5 0 0" Content="Configuration avancée" IsChecked="{Binding Path=SiteCoordinator.GestionnaireSitePublique.AdvancedConfig}" Style="{StaticResource CheckboxStyle}">
                                             <CheckBox.IsEnabled>
                                                 <MultiBinding Converter="{StaticResource BoolOperationConverter}" ConverterParameter="a_and_not_b"  Mode="OneWay">
                                                     <Binding Path="SiteCoordinator.GestionnaireSitePublique.EasyConfigDisponible" Mode="OneWay"/>
@@ -557,7 +564,18 @@
                                                 </MultiBinding>
                                             </CheckBox.IsEnabled>
                                         </CheckBox>
-                                    </StackPanel>
+
+                                        <telerik:RadButton Grid.Column="2" HorizontalAlignment="Right" telerik:StyleManager.Theme="Expression_Dark" Margin="0 0 10 0" Width="32" Height="32"
+                                                           Command="{Binding Path=CmdAfficherTestFtp}">
+                                            <Button.CommandParameter>
+                                                <MultiBinding Converter="{StaticResource PassthroughConverter}" Mode="OneWay">
+                                                    <Binding ElementName="EasyConfigPwd"/>
+                                                    <Binding ElementName="AdvancedPwd"/>
+                                                </MultiBinding>
+                                            </Button.CommandParameter>
+                                            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/check_book-32.png" Height="26" Width="26" ToolTip="Tester la connexion FTP"/>
+                                        </telerik:RadButton>
+                                    </Grid>
                                     <CheckBox Content="Isoler les compétitions" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=SiteCoordinator.GestionnaireSitePublique.IsolerCompetition}" IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif, Converter={StaticResource BoolNotConverter}}" Margin="10 0 0 0"/>
                                     <!-- ZONE EASY CONFIG -->
                                     <StackPanel Visibility="{Binding Path=SiteCoordinator.GestionnaireSitePublique.EasyConfig, Converter={StaticResource BoolToVisibilityConverter}}">
