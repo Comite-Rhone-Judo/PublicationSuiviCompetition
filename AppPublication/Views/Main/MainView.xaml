@@ -565,7 +565,14 @@
                                             </CheckBox.IsEnabled>
                                         </CheckBox>
 
-                                        <telerik:RadButton Grid.Column="2" HorizontalAlignment="Right" telerik:StyleManager.Theme="Expression_Dark" Margin="0 0 10 0" Width="32" Height="32" Command="{Binding Path=CmdAfficherTestFtp}">
+                                        <telerik:RadButton Grid.Column="2" HorizontalAlignment="Right" telerik:StyleManager.Theme="Expression_Dark" Margin="0 0 10 0" Width="32" Height="32"
+                                                           Command="{Binding Path=CmdAfficherTestFtp}">
+                                            <Button.CommandParameter>
+                                                <MultiBinding Converter="{StaticResource PassthroughConverter}" Mode="OneWay">
+                                                    <Binding ElementName="EasyConfigPwd"/>
+                                                    <Binding ElementName="AdvancedPwd"/>
+                                                </MultiBinding>
+                                            </Button.CommandParameter>
                                             <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/check_book-32.png" Height="26" Width="26" ToolTip="Tester la connexion FTP"/>
                                         </telerik:RadButton>
                                     </Grid>

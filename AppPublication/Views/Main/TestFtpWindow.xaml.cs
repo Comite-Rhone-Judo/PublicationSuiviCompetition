@@ -1,9 +1,10 @@
 ﻿using System.Windows;
 using AppPublication.ViewModels.Configuration;
+using Telerik.Windows.Controls;
 
 namespace AppPublication.Views.Configuration
 {
-    public partial class TestFtpWindow : Window
+    public partial class TestFtpWindow : RadWindow
     {
         public TestFtpWindow(TestFtpViewModel viewModel)
         {
@@ -11,17 +12,14 @@ namespace AppPublication.Views.Configuration
             this.DataContext = viewModel;
         }
 
-        private void BtnClose_Click(object sender, RoutedEventArgs e)
+        private void RadWindow_Closed(object sender, WindowClosedEventArgs e)
         {
-            this.Close();
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            // Sécurité pour stopper un test s'il tourne pendant la fermeture de la fenêtre
             if (this.DataContext as TestFtpViewModel is TestFtpViewModel vm)
             {
-                vm.ExecuteCancelTest();
+                if (vm.CmdCancelTest.CanExecute(null))
+                {
+                    vm.CmdCancelTest.Execute(null);
+                }
             }
         }
     }

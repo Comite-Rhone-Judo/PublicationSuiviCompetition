@@ -37,7 +37,6 @@ namespace AppPublication.Models.Publication
         #endregion
 
         #region MEMBRES
-        private Task _taskNettoyage = null;                             // La tache de nettoyage
         private GenerateurSite _generateurSite = null;                  // Le generateur Site
         private SitePhysicalStructure _structureRepertoiresSite;          // La structure de repertoire d'export du site
         private SiteUrlGenerator _siteLocalUrlGenerator;                     // la structure d'export du site local
@@ -1099,33 +1098,14 @@ namespace AppPublication.Models.Publication
         }
 
         /// <summary>
-        /// Demarre un thread pour traiter le nettoyage du site
+        /// Execute le nettoyage du site (synchrone)
         /// </summary>
         public void StartNettoyage()
         {
-            if (_taskNettoyage == null || _taskNettoyage.IsCompleted)
+            if (SiteDistantSelectionne != null)
             {
-                try
-                {
-                    _taskNettoyage = Task.Factory.StartNew(() =>
-                    {
-                        if (SiteDistantSelectionne != null)
-                        {
-                            // Nettoyer le site distant
-                            SiteDistantSelectionne.NettoyerSite();
-                        }
-                    });
-                }
-                catch (Exception ex)
-                {
-                    LogTools.Logger.Error(ex, "Erreur lors du lancement du nettoyage du site");
-                    throw new Exception("Erreur lors du lancement du nettoyage du site", ex);
-                }
-            }
-            else
-            {
-                LogTools.Logger.Error("Une tache de nettoyage est deja en cours d'execution");
-                throw new Exception("Une tache de nettoyage est deja en cours d'execution");
+                // Nettoyer le site distant
+                SiteDistantSelectionne.NettoyerSite();
             }
         }
         #endregion

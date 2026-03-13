@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Tools.Net;
 
-namespace AppPublication.Models.Publication.FtpTests
+namespace Tools.Net.Ftp
 {
     public enum FtpTestSequence
     {

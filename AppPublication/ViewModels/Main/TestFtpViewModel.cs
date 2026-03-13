@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
-using AppPublication.Models.Publication.FtpTests;
+using Tools.Net.Ftp;
 using Tools.Framework;
 using Tools.Net;
 
@@ -74,7 +74,7 @@ namespace AppPublication.ViewModels.Configuration
                         },
                         o =>
                         {
-                            return true;
+                            return IsTestRunning;
                         }
                     );
                 }

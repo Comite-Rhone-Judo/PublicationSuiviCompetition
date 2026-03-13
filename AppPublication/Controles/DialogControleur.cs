@@ -37,7 +37,8 @@ namespace AppPublication.Controles
         private PdfViewer _manuelViewer = null;
         private AppPublication.Views.Configuration.ConfigurationPublicationView _cfgWindow = null;
         private readonly JudoData _serverData;
-        private bool _isDemarrageEnCours = false;
+        private bool _startSiteDistantEnCours = false;
+        private bool _nettoyageEnCours = false;
         #endregion
 
         #region CONSTRUCTEUR
@@ -296,6 +297,9 @@ namespace AppPublication.Controles
                     _cmdAfficherTestFtp = new RelayCommand(
                         o =>
                         {
+                            // Extrait le mode de passe des controles passes en parametres (1er = FranceJudo, 2nd = Advanced)
+                            ExtractPasswordFromParameters(o);
+                            
                             // Lecture directe de la propriété courante du ViewModel
                             MiniSite siteToTest = SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne;
 
@@ -312,7 +316,9 @@ namespace AppPublication.Controles
                         o =>
                         {
                             // Actif uniquement si on a un site sélectionné
-                            return SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsFTPConfigPropertiesValid;
+                            return SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null
+                                        && SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsFTPConfigPropertiesValid
+                                        && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif;
                         });
                 }
                 return _cmdAfficherTestFtp;
@@ -566,26 +572,13 @@ namespace AppPublication.Controles
                                 if (Instance.SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && !Instance.SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif)
                                 {
                                     // 2. On verrouille le bouton et on force WPF à mettre à jour l'IHM
-                                    _isDemarrageEnCours = true;
+                                    _startSiteDistantEnCours = true;
                                     CommandManager.InvalidateRequerySuggested();
 
                                     try
                                     {
                                         // 3. LECTURE DES DONNÉES UI (Doit obligatoirement rester ici, hors du Task.Run)
-                                        // Extrait le mode de passe des controles passes en parametres (1er = FranceJudo, 2nd = Advanced)
-                                        if (o != null && o.GetType() == typeof(Tuple<object, object>))
-                                        {
-                                            Tuple<object, object> tuple = (Tuple<object, object>)o;
-
-                                            if (tuple.Item1 != null && tuple.Item1.GetType() == typeof(RadPasswordBox))
-                                            {
-                                                Instance.SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.PasswordSiteFTPDistant = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item1).SecurePassword);
-                                            }
-                                            if (tuple.Item2 != null && tuple.Item2.GetType() == typeof(RadPasswordBox))
-                                            {
-                                                Instance.SiteCoordinator.GestionnaireSitePublique.SiteDistant.PasswordSiteFTPDistant = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item2).SecurePassword);
-                                            }
-                                        }
+                                        ExtractPasswordFromParameters(o);
 
                                         // 4. TRAITEMENT LONG EN ARRIÈRE-PLAN
                                         // Demarre le site distant selectione sans figer l'interface
@@ -594,10 +587,21 @@ namespace AppPublication.Controles
                                             Instance.SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.StartSite();
                                         });
                                     }
+                                    catch (Exception ex)
+                                    {
+                                        // Gérer l'erreur (Log + notification utilisateur)
+                                        LogTools.Logger.Error(ex, "Erreur lors du démarrage du site distant.");
+                                        Application.Current.Dispatcher.Invoke(() =>
+                                        {
+                                            AlertWindow win = new AlertWindow("Erreur", "Impossible de démarrer le site distant. Vérifiez les paramètres de connexion.");
+                                            win.Owner = App.Current.MainWindow;
+                                            win.ShowDialog();
+                                        });
+                                    }
                                     finally
                                     {
                                         // 5. On déverrouille le bouton quoi qu'il arrive (même en cas d'erreur de StartSite)
-                                        _isDemarrageEnCours = false;
+                                        _startSiteDistantEnCours = false;
                                         CommandManager.InvalidateRequerySuggested();
                                     }
                                 }
@@ -605,7 +609,7 @@ namespace AppPublication.Controles
                             o =>
                             {
                                 // 6. Si on est en cours de démarrage, le bouton est inactif (CanExecute = false)
-                                if (_isDemarrageEnCours)
+                                if (_startSiteDistantEnCours)
                                     return false;
 
                                 // Votre logique d'origine
@@ -655,7 +659,7 @@ namespace AppPublication.Controles
                 if (_cmdNettoyerSiteDistant == null)
                 {
                     _cmdNettoyerSiteDistant = new RelayCommand(
-                            o =>
+                            async o =>
                             {
                                 if ( Instance.SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && !Instance.SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif)
                                 {
@@ -671,13 +675,29 @@ namespace AppPublication.Controles
                                     if (win.DialogResult.HasValue && (bool)win.DialogResult)
                                     {
                                         // Nettoyer le site distant
-                                        // Instance.GestionSite.SiteDistant.NettoyerSite();
-                                        Instance.SiteCoordinator.GestionnaireSitePublique.StartNettoyage();
+                                        try
+                                        {
+                                            // Monte le flag de nettoyage en cours
+                                            _nettoyageEnCours = true;
+
+                                            // 2. Lance l'arrêt en arrière-plan et libère le thread UI pendant l'attente
+                                            await Task.Run(() =>
+                                            {
+                                                Instance.SiteCoordinator.GestionnaireSitePublique.StartNettoyage();
+                                            });
+                                        }
+                                        finally
+                                        {
+                                            // Nettoyage terminé
+                                            _nettoyageEnCours = false;
+                                        }
                                     }
                                 }
                             },
                             o =>
                             {
+                                // Bloque le bouton si le nettoyage est en cours
+                                if(_nettoyageEnCours) { return false; }
                                 return (Instance.SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne == null) ? false : !Instance.SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif && !Instance.SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsCleaning;
                             });
                 }
@@ -722,32 +742,28 @@ namespace AppPublication.Controles
                 if (_cmdArreterGeneration == null)
                 {
                     _cmdArreterGeneration = new RelayCommand(
-                            o =>
+                            async o =>
                             {
-                                // Active le statut d'attente
-                                DialogControleur.Instance.BusyStatus = BusyStatusEnum.AttenteFinGeneration;
-                                DialogControleur.Instance.IsBusy = true;
-
-                                // Lance l'arret dans une tache pour liberer le thread courant (UI)
-                                Task<int> stopTask = Task.Factory.StartNew( () =>
+                                try
                                 {
-                                    Instance.SiteCoordinator.GestionnaireSitePublique.StopGeneration();
-                                    return 1;
-                                });
+                                    // 1. Active le statut d'attente (sur le thread UI)
+                                    DialogControleur.Instance.BusyStatus = BusyStatusEnum.AttenteFinGeneration;
+                                    DialogControleur.Instance.IsBusy = true;
 
-                                // Indique de remettre le status en place a la fin de l'arret pour liberer l'IHM
-                                stopTask.ContinueWith(
-                                 (task) =>
-                                 {
-                                     // On remet l'etat d'occupation a None
-                                     System.Windows.Application.Current.ExecOnUiThread(new Action(() =>
-                                     {
-                                         DialogControleur.Instance.BusyStatus = BusyStatusEnum.None;
-                                         DialogControleur.Instance.IsBusy = false;
-                                     }));
-                                 });
-
-                                },
+                                    // 2. Lance l'arrêt en arrière-plan et libère le thread UI pendant l'attente
+                                    await Task.Run(() =>
+                                    {
+                                        Instance.SiteCoordinator.GestionnaireSitePublique.StopGeneration();
+                                    });
+                                }
+                                finally
+                                {
+                                    // 3. On remet l'état d'occupation à None
+                                    // Ceci s'exécute GARANTIE et AUTOMATIQUEMENT de retour sur le thread UI
+                                    DialogControleur.Instance.BusyStatus = BusyStatusEnum.None;
+                                    DialogControleur.Instance.IsBusy = false;
+                                }
+                            },
                             o =>
                             {
                                 return Instance.SiteCoordinator.GestionnaireSitePublique.IsGenerationActive;
@@ -795,31 +811,27 @@ namespace AppPublication.Controles
                 if (_cmdArreterGenerationInterne == null)
                 {
                     _cmdArreterGenerationInterne = new RelayCommand(
-                            o =>
+                            async o =>
                             {
-                                // Active le statut d'attente
-                                DialogControleur.Instance.BusyStatus = BusyStatusEnum.AttenteFinGeneration;
-                                DialogControleur.Instance.IsBusy = true;
-
-                                // Lance l'arret dans une tache pour liberer le thread courant (UI)
-                                Task<int> stopTask = Task.Factory.StartNew(() =>
+                                try
                                 {
-                                    Instance.SiteCoordinator.GestionnaireSiteInterne.StopGeneration();
-                                    return 1;
-                                });
+                                    // 1. Active le statut d'attente (sur le thread UI)
+                                    DialogControleur.Instance.BusyStatus = BusyStatusEnum.AttenteFinGeneration;
+                                    DialogControleur.Instance.IsBusy = true;
 
-                                // Indique de remettre le status en place a la fin de l'arret pour liberer l'IHM
-                                stopTask.ContinueWith(
-                                 (task) =>
-                                 {
-                                     // On remet l'etat d'occupation a None
-                                     System.Windows.Application.Current.ExecOnUiThread(new Action(() =>
-                                     {
-                                         DialogControleur.Instance.BusyStatus = BusyStatusEnum.None;
-                                         DialogControleur.Instance.IsBusy = false;
-                                     }));
-                                 });
-
+                                    // 2. Lance l'arrêt en arrière-plan et libère le thread UI pendant l'attente
+                                    await Task.Run(() =>
+                                    {
+                                        Instance.SiteCoordinator.GestionnaireSiteInterne.StopGeneration();
+                                    });
+                                }
+                                finally
+                                {
+                                    // 3. On remet l'état d'occupation à None
+                                    // Ceci s'exécute GARANTIE et AUTOMATIQUEMENT de retour sur le thread UI
+                                    DialogControleur.Instance.BusyStatus = BusyStatusEnum.None;
+                                    DialogControleur.Instance.IsBusy = false;
+                                }
                             },
                             o =>
                             {
@@ -1175,6 +1187,30 @@ namespace AppPublication.Controles
                 this.BusyStatus = BusyStatusEnum.None;
             });
         }
+        #endregion
+
+        #region METHODES PRIVEES
+
+        /// <summary>
+        /// Extrait le mode de passe des controles passes en parametres (1er = FranceJudo, 2nd = Advanced)
+        /// </summary>
+        /// <param name="o"></param>
+        private void ExtractPasswordFromParameters(object o)
+        {
+            if (o != null && o.GetType() == typeof(Tuple<object, object>))
+            {
+                Tuple<object, object> tuple = (Tuple<object, object>)o;
+                if (tuple.Item1 != null && tuple.Item1.GetType() == typeof(RadPasswordBox))
+                {
+                    Instance.SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.PasswordSiteFTPDistant = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item1).SecurePassword);
+                }
+                if (tuple.Item2 != null && tuple.Item2.GetType() == typeof(RadPasswordBox))
+                {
+                    Instance.SiteCoordinator.GestionnaireSitePublique.SiteDistant.PasswordSiteFTPDistant = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item2).SecurePassword);
+                }
+            }
+        }
+
         #endregion
     }
 }

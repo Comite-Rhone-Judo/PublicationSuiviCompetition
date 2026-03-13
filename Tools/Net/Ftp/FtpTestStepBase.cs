@@ -3,7 +3,7 @@ using FluentFTP;
 using Tools.Framework;
 using Tools.Net;
 
-namespace AppPublication.Models.Publication.FtpTests
+namespace Tools.Net.Ftp
 {
     public enum TestStatus
     {

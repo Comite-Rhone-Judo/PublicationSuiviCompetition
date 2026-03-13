@@ -422,7 +422,7 @@ namespace Tools.Net
         public bool CheckConfigurationSiteDistant(FtpClient ftpClient)
         {
             bool output = false;
-            if (IsFTPConfigPropertiesValid)
+            if (IsFTPConfigPropertiesValid && !string.IsNullOrEmpty(PasswordSiteFTPDistant))
             {
                 // Test les parametres de connection
                 // FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
@@ -917,7 +917,7 @@ namespace Tools.Net
         /// <returns></returns>
         private bool CheckConfigurationProperties()
         {
-            return !String.IsNullOrEmpty(SiteFTPDistant) && !String.IsNullOrEmpty(LoginSiteFTPDistant) && !string.IsNullOrEmpty(PasswordSiteFTPDistant);
+            return !String.IsNullOrEmpty(SiteFTPDistant) && !String.IsNullOrEmpty(LoginSiteFTPDistant);
         }
 
         /// <summary>

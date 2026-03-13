@@ -2,9 +2,8 @@
 using System.Net;
 using System.Threading;
 using FluentFTP;
-using Tools.Net;
 
-namespace AppPublication.Models.Publication.FtpTests
+namespace Tools.Net.Ftp
 {
     public class DnsResolutionTest : FtpTestStepBase
     {
