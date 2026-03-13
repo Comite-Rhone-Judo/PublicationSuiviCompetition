@@ -33,6 +33,7 @@
                             </Grid.RowDefinitions>
 
                             <Ellipse x:Name="StatusDot" Width="24" Height="24" Fill="LightGray" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <Control x:Name="StatusSpinner" Style="{StaticResource TrailSpinnerStyle}" Width="24" Height="24" Foreground="White" Margin="5,0" Visibility="Hidden"/>
                             <Label Margin="0 0 0 0" Grid.Column="1" Content="{Binding Name}" VerticalAlignment="Center" FontSize="13" Style="{StaticResource LabelStyle}"/>
 
                             <TextBlock x:Name="ErrorText" Grid.Row="1" Grid.Column="1" 
@@ -43,14 +44,20 @@
 
                         <DataTemplate.Triggers>
                             <DataTrigger Binding="{Binding Status}" Value="{x:Static models:TestStatus.Running}">
-                                <Setter TargetName="StatusDot" Property="Fill" Value="DodgerBlue"/>
+                                <Setter TargetName="StatusDot" Property="Visibility" Value="Hidden"/>
+                                <Setter TargetName="StatusSpinner" Property="Visibility" Value="Visible"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Status}" Value="{x:Static models:TestStatus.Success}">
                                 <Setter TargetName="StatusDot" Property="Fill" Value="LimeGreen"/>
+                                <Setter TargetName="StatusDot" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="StatusSpinner" Property="Visibility" Value="Hidden"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Status}" Value="{x:Static models:TestStatus.Failed}">
                                 <Setter TargetName="StatusDot" Property="Fill" Value="Crimson"/>
+                                <Setter TargetName="StatusDot" Property="Visibility" Value="Visible"/>
                                 <Setter TargetName="ErrorText" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="StatusSpinner" Property="Visibility" Value="Hidden"/>
+
                             </DataTrigger>
                         </DataTemplate.Triggers>
                     </DataTemplate>
