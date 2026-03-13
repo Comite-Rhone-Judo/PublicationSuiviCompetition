@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+	<LangVersion>latest</LangVersion>
     <TargetFrameworkProfile />
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>C:\Users\dgarr\Documents\Sport\Judo\MDJ\Publish_Publication_Suivi_Competition\</PublishUrl>
@@ -182,6 +183,7 @@
     <Compile Include="Controles\SitePublicationCoordinator.cs" />
     <Compile Include="ViewModels\Configuration\EcranAppelConfigViewModel.cs" />
     <Compile Include="ViewModels\Configuration\EcranAppelTapisSelectionViewModel.cs" />
+    <Compile Include="ViewModels\Main\TestFtpViewModel.cs" />
     <Compile Include="Views\Configuration\ConfigurationPublicationView.xaml.cs">
       <DependentUpon>ConfigurationPublicationView.xaml</DependentUpon>
     </Compile>
@@ -236,6 +238,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Main\TestFtpWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Server\RechercheServer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -251,6 +257,9 @@
     <Compile Include="Export\ExportXML.cs" />
     <Compile Include="Views\Main\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Main\TestFtpWindow.xaml.cs">
+      <DependentUpon>TestFtpWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Server\RechercheServer.xaml.cs">
       <DependentUpon>RechercheServer.xaml</DependentUpon>
@@ -330,9 +339,7 @@
   <ItemGroup>
     <Resource Include="Logo_AppPublication.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModels\Main\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

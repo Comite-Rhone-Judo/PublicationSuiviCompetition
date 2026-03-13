@@ -37,6 +37,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -244,6 +245,9 @@
     <Compile Include="HttpServerModule\Templates\TemplateEngine.cs" />
     <Compile Include="Configuration\AppSettings.cs" />
     <Compile Include="Net\ContextProvider.cs" />
+    <Compile Include="Net\Ftp\FtpTestImplementations.cs" />
+    <Compile Include="Net\Ftp\FtpTestScheduler.cs" />
+    <Compile Include="Net\Ftp\FtpTestStepBase.cs" />
     <Compile Include="Net\IContextAware.cs" />
     <Compile Include="Net\IContextProvider.cs" />
     <Compile Include="Net\IServeurHttp.cs" />

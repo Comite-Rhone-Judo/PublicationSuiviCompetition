@@ -1,5 +1,11 @@
-﻿using AppPublication.Tools;
+﻿using AppPublication.Data;
+using AppPublication.Models.Publication;
+using AppPublication.Models.Statistiques;
+using AppPublication.Tools;
 using AppPublication.Tools.Enum;
+using AppPublication.Tools.Streams;
+using AppPublication.ViewModels.Configuration;
+using AppPublication.Views.Configuration;
 using KernelImpl;
 using KernelImpl.Noyau.Organisation;
 using System;
@@ -8,17 +14,14 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Telerik.Windows.Controls;
-using Tools.Logging;
-using Tools.Security;
-using Tools.Windows;
-using Tools.Framework;
-using Tools.Files;
 using Tools.Core;
-using AppPublication.Tools.Streams;
+using Tools.Files;
+using Tools.Framework;
+using Tools.Logging;
+using Tools.Net;
+using Tools.Security;
 using Tools.Threading;
-using AppPublication.Models.Statistiques;
-using AppPublication.Data;
-using AppPublication.Models.Publication;
+using Tools.Windows;
 
 namespace AppPublication.Controles
 {
@@ -34,6 +37,7 @@ namespace AppPublication.Controles
         private PdfViewer _manuelViewer = null;
         private AppPublication.Views.Configuration.ConfigurationPublicationView _cfgWindow = null;
         private readonly JudoData _serverData;
+        private bool _isDemarrageEnCours = false;
         #endregion
 
         #region CONSTRUCTEUR
@@ -277,6 +281,44 @@ namespace AppPublication.Controles
 
         #region COMMANDES
 
+
+        private ICommand _cmdAfficherTestFtp = null;
+
+        /// <summary>
+        /// Commande permettant d'afficher la fenetre de test de connexion FTP pour le site selectionne
+        /// </summary>
+        public ICommand CmdAfficherTestFtp
+        {
+            get
+            {
+                if (_cmdAfficherTestFtp == null)
+                {
+                    _cmdAfficherTestFtp = new RelayCommand(
+                        o =>
+                        {
+                            // Lecture directe de la propriété courante du ViewModel
+                            MiniSite siteToTest = SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne;
+
+                            if (siteToTest != null)
+                            {
+                                var testViewModel = new TestFtpViewModel(siteToTest);
+                                var testWindow = new TestFtpWindow(testViewModel)
+                                {
+                                    Owner = App.Current.MainWindow
+                                };
+                                testWindow.ShowDialog();
+                            }
+                        },
+                        o =>
+                        {
+                            // Actif uniquement si on a un site sélectionné
+                            return SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsFTPConfigPropertiesValid;
+                        });
+                }
+                return _cmdAfficherTestFtp;
+            }
+        }
+
         private ICommand _cmdAcquitterErreurCommunication = null;
 
         /// <summary>
@@ -519,31 +561,54 @@ namespace AppPublication.Controles
                 if (_cmdDemarrerSiteDistant == null)
                 {
                     _cmdDemarrerSiteDistant = new RelayCommand(
-                            o =>
+                            async o =>
                             {
                                 if (Instance.SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && !Instance.SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif)
                                 {
-                                    // Extrait le mode de passe des controles passes en parametres (1er = FranceJudo, 2nd = Advanced)
-                                    if (o.GetType() == typeof(Tuple<object, object>))
+                                    // 2. On verrouille le bouton et on force WPF à mettre à jour l'IHM
+                                    _isDemarrageEnCours = true;
+                                    CommandManager.InvalidateRequerySuggested();
+
+                                    try
                                     {
-                                        Tuple<object, object> tuple = (Tuple<object, object>)o;
+                                        // 3. LECTURE DES DONNÉES UI (Doit obligatoirement rester ici, hors du Task.Run)
+                                        // Extrait le mode de passe des controles passes en parametres (1er = FranceJudo, 2nd = Advanced)
+                                        if (o != null && o.GetType() == typeof(Tuple<object, object>))
+                                        {
+                                            Tuple<object, object> tuple = (Tuple<object, object>)o;
 
-                                        if(tuple.Item1 != null && tuple.Item1.GetType() == typeof(RadPasswordBox))
-                                        {
-                                            Instance.SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.PasswordSiteFTPDistant = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item1).SecurePassword);
+                                            if (tuple.Item1 != null && tuple.Item1.GetType() == typeof(RadPasswordBox))
+                                            {
+                                                Instance.SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.PasswordSiteFTPDistant = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item1).SecurePassword);
+                                            }
+                                            if (tuple.Item2 != null && tuple.Item2.GetType() == typeof(RadPasswordBox))
+                                            {
+                                                Instance.SiteCoordinator.GestionnaireSitePublique.SiteDistant.PasswordSiteFTPDistant = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item2).SecurePassword);
+                                            }
                                         }
-                                        if (tuple.Item2 != null && tuple.Item2.GetType() == typeof(RadPasswordBox))
+
+                                        // 4. TRAITEMENT LONG EN ARRIÈRE-PLAN
+                                        // Demarre le site distant selectione sans figer l'interface
+                                        await Task.Run(() =>
                                         {
-                                            Instance.SiteCoordinator.GestionnaireSitePublique.SiteDistant.PasswordSiteFTPDistant = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item2).SecurePassword);
-                                        }
+                                            Instance.SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.StartSite();
+                                        });
                                     }
-
-                                    // Demarre le site distant selectione
-                                    Instance.SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.StartSite();
+                                    finally
+                                    {
+                                        // 5. On déverrouille le bouton quoi qu'il arrive (même en cas d'erreur de StartSite)
+                                        _isDemarrageEnCours = false;
+                                        CommandManager.InvalidateRequerySuggested();
+                                    }
                                 }
                             },
                             o =>
                             {
+                                // 6. Si on est en cours de démarrage, le bouton est inactif (CanExecute = false)
+                                if (_isDemarrageEnCours)
+                                    return false;
+
+                                // Votre logique d'origine
                                 return (Instance.SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne == null) ? false : !Instance.SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif && !String.IsNullOrEmpty(Instance.SiteCoordinator.GestionnaireSitePublique.IdCompetition);
                             });
                 }
