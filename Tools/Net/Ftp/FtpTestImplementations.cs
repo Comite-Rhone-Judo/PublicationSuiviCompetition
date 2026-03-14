@@ -17,6 +17,8 @@ namespace Tools.Net.Ftp
                 var addresses = Dns.GetHostAddresses(site.SiteFTPDistant);
                 if (addresses == null || addresses.Length == 0)
                     throw new Exception("Résolution DNS impossible.");
+
+                SuccessMessage = $"'{site.SiteFTPDistant}' trouvée";
                 return true;
             }
             catch (Exception ex)
@@ -37,6 +39,7 @@ namespace Tools.Net.Ftp
             {
                 // Appel direct à votre méthode synchrone d'origine !
                 site.CheckConfigurationSiteDistant(client);
+                SuccessMessage = $"profil de '{client.Host}' trouvée";
                 return true;
             }
             catch (Exception ex)
@@ -59,6 +62,7 @@ namespace Tools.Net.Ftp
                 {
                     client.Connect(); // Synchrone
                 }
+                SuccessMessage = $"Login '{client.Credentials.UserName}' connecté";
                 return true;
             }
             catch (Exception ex)
@@ -85,6 +89,7 @@ namespace Tools.Net.Ftp
                 if (listing == null)
                     throw new Exception("Le serveur refuse de lister le contenu (droits insuffisants).");
 
+                SuccessMessage = $"Répertoire '/{site.RepertoireSiteFTPDistant}' trouvé";
                 return true;
             }
             catch (Exception ex)
@@ -111,6 +116,8 @@ namespace Tools.Net.Ftp
                     throw new Exception("Le serveur a refusé l'écriture du fichier.");
 
                 client.DeleteFile(testFileName);
+
+                SuccessMessage = $"Transfert vers '/{site.RepertoireSiteFTPDistant}' réalisé";
                 return true;
             }
             catch (Exception ex)
@@ -133,6 +140,8 @@ namespace Tools.Net.Ftp
                 {
                     client.Disconnect();
                 }
+
+                SuccessMessage = $"'{client.Host}' déconnecté";
                 return true;
             }
             catch (Exception ex)

@@ -21,14 +21,21 @@ namespace Tools.Net.Ftp
         public TestStatus Status
         {
             get { return _status; }
-            set { _status = value; NotifyPropertyChanged("Status"); }
+            set { _status = value; NotifyPropertyChanged(); }
         }
 
         private string _errorMessage;
         public string ErrorMessage
         {
             get { return _errorMessage; }
-            set { _errorMessage = value; NotifyPropertyChanged("ErrorMessage"); }
+            set { _errorMessage = value; NotifyPropertyChanged(); }
+        }
+
+        private string _successMessage;
+        public string SuccessMessage
+        {
+            get { return _successMessage; }
+            set { _successMessage = value; NotifyPropertyChanged(); }
         }
 
         // Signature purement synchrone avec FtpClient classique
