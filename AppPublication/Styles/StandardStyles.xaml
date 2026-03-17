@@ -78,17 +78,22 @@
                     </Grid>
 
                     <ControlTemplate.Triggers>
-                        <EventTrigger RoutedEvent="Loaded">
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation Storyboard.TargetName="SpinnerRotate"
-                                                 Storyboard.TargetProperty="Angle"
-                                                 From="360" To="0" 
-                                                 Duration="0:0:1.0" 
-                                                 RepeatBehavior="Forever" />
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger>
+                        <Trigger Property="IsVisible" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard x:Name="TrailSpinStoryboard">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="SpinnerRotate"
+                                                         Storyboard.TargetProperty="Angle"
+                                                         From="360" To="0" 
+                                                         Duration="0:0:1.0" 
+                                                         RepeatBehavior="Forever" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <RemoveStoryboard BeginStoryboardName="TrailSpinStoryboard"/>
+                            </Trigger.ExitActions>
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

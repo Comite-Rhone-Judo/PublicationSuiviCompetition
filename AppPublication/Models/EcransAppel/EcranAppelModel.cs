@@ -5,20 +5,19 @@ namespace AppPublication.Models.EcransAppel
 {
     public class EcranAppelModel
     {
+        #region MEMBRES
+        private static int _compteurGlobal = 1;
+        #endregion
+
+        #region PROPERTIES
+        /// <summary>
+        ///  Type de disposition d'affichage
+        /// </summary>
         public enum DispositionAffichage
         {
             Ligne,
             Colonne
         }
-
-        public enum ScreenResolution
-        {
-            FullHd_1080p,   // 1920 x 1080
-            UltraHd_4K,     // 3840 x 2160
-            UltraHd_8K      // 7680 x 4320
-        }
-
-        private static int _compteurGlobal = 1;
 
         public static int LastId
         {
@@ -32,13 +31,18 @@ namespace AppPublication.Models.EcransAppel
         public IPAddress AdresseIP { get; set; }
         public List<int> TapisIds { get; set; }
 
+        public bool AjusteTailleTexte { get; set; }
+        public int NbCombatsPage { get; set; }
+
         public int Groupement { get; set; }
 
         public DispositionAffichage Disposition { get; set; }
-        public ScreenResolution Resolution { get; set; }
-        public bool Eloigne { get; set; }
 
-        public EcranAppelModel(int id = 0, string description = "Nouvel Écran", string hostname = "", IPAddress adresseIP = null, List<int> tapisIds = null, int groupement = 1, DispositionAffichage disposition = DispositionAffichage.Colonne, ScreenResolution res =ScreenResolution.FullHd_1080p, bool elg = false)
+        public DispositionAffichage DispositionCombat { get; set; }
+        #endregion
+
+        #region CONSTRUCTEUR
+        public EcranAppelModel(int id = 0, string description = "Nouvel Écran", string hostname = "", IPAddress adresseIP = null, List<int> tapisIds = null, int groupement = 1, DispositionAffichage disposition = DispositionAffichage.Colonne, DispositionAffichage dispositionCombat = DispositionAffichage.Colonne, bool ajusteTexte = false)
         {
             Id = id;
             Description = description;
@@ -47,8 +51,9 @@ namespace AppPublication.Models.EcransAppel
             TapisIds = tapisIds ?? new List<int>();
             Groupement = groupement;
             Disposition = disposition; // Initialisation
-            Resolution = res;
-            Eloigne = elg;
+            DispositionCombat = dispositionCombat; // Initialisation
+            AjusteTailleTexte = ajusteTexte; 
         }
+        #endregion
     }
 }

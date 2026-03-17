@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Web.UI;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Xml.Xsl;
@@ -101,56 +102,23 @@ namespace AppPublication.Export
             ecransParams.Add(("idEcran", ecran.Id));                 // Le numero de l'ecran d'appel
             ecransParams.Add(("tailleGroupe", ecran.Groupement));     // La taille du groupe
             ecransParams.Add(("dispositionAffichage", ecran.Disposition.ToString().ToLower()));
+
+            // Ici on ne prend que les numeros de tapis qui sont dans la limite de la competition (cas ou on a plus de tapis configures que de tapis declarés)
+            // On cherche le plus grand nombre de tapis si on a plusieurs competitions.
+            int nbTapisMax = DC.Organisation.Competitions.Max(c => c.nbTapis);
+
             XDocument docParams = new XDocument(
                                         new XElement("tapisIds",
-                                        ecran.TapisIds.Select(num => new XElement("tapis",
+                                        ecran.TapisIds.Where(num => (num <= nbTapisMax)).Select(num => new XElement("tapis",
                                                                             new XAttribute("id",num)))));    // La liste des tapis doit etre passee sous forme d'un NodeSet
             ecransParams.Add(("tapisAffiches", docParams.CreateNavigator().Select("/")));
+                    
+            ecransParams.Add(("combatsParPageEff", ecran.NbCombatsPage));
+            // On le garde au cas ou pour la suite, mais normalement, la disposition des combats est gere via la disposition d'affichage
+            ecransParams.Add(("isAffichageCombatLigne", ecran.DispositionCombat == DispositionAffichage.Ligne ? "true" : "false"));
 
-            // Calcul du nombre de combats par page directement en C#
-            // TODO Revoir la logique de calcul pour affiner les valeurs
-            // Dans GenereEcranAppel, remplacez le bloc de calcul par celui-ci
-            int baseHeightCombats;
-            if (ecran.Eloigne)
-            {
-                switch (ecran.Resolution)
-                {
-                    case ScreenResolution.FullHd_1080p: baseHeightCombats = 8; break;
-                    case ScreenResolution.UltraHd_4K: baseHeightCombats = 12; break;
-                    case ScreenResolution.UltraHd_8K: baseHeightCombats = 16; break;
-                    default: baseHeightCombats = 8; break;
-                }
-            }
-            else
-            {
-                switch (ecran.Resolution)
-                {
-                    case ScreenResolution.FullHd_1080p: baseHeightCombats = 10; break;
-                    case ScreenResolution.UltraHd_4K: baseHeightCombats = 20; break;
-                    case ScreenResolution.UltraHd_8K: baseHeightCombats = 24; break;
-                    default: baseHeightCombats = 12; break;
-                }
-            }
-
-            int combatsParPageEff;
-            // 2. L'option "En Ligne" dépend UNIQUEMENT de la disposition choisie
-            bool isAffichageCombatLigne = (ecran.Disposition == DispositionAffichage.Ligne);
-
-            // 3. Calcul mathématique de la répartition selon le groupement
-            if (isAffichageCombatLigne)
-            {
-                combatsParPageEff = (ecran.Groupement == 1) ? baseHeightCombats : (baseHeightCombats / 2);
-            }
-            else
-            {
-                combatsParPageEff = (ecran.Groupement >= 4) ? (baseHeightCombats / 2) : baseHeightCombats;
-            }
-
-            if (combatsParPageEff < 1) combatsParPageEff = 1;
-
-            ecransParams.Add(("combatsParPageEff", combatsParPageEff));
-            ecransParams.Add(("isAffichageCombatLigne", isAffichageCombatLigne ? "true" : "false"));
-
+            // Option d'auto ajustement du texte en fonction de la taille du groupe
+            ecransParams.Add(("ajusteTexteAuto", ecran.AjusteTailleTexte ? "true" : "false"));
 
             // Les arguments XSLT (inclut la structure du site et le chemin cible)
             var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, ecransParams.ToArray());

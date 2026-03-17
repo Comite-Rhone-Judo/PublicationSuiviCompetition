@@ -21,6 +21,7 @@ namespace AppPublication.Views.Configuration
 
         private void ButOk_Click(object sender, RoutedEventArgs e)
         {
+            EcransAppelGrid?.CommitEdit();
             DialogResult = true;
         }
     }

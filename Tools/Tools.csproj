@@ -1986,4 +1986,31 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="GenerateLoggerResource" BeforeTargets="BeforeBuild">
+    <MakeDir Directories="$(IntermediateOutputPath)JsDist" />
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+      <LoggerJsContent>
+        window.Logger = {
+            log: function() { if (typeof console !== 'undefined') console.log.apply(console, arguments); },
+            warn: function() { if (typeof console !== 'undefined') console.warn.apply(console, arguments); },
+            error: function() { if (typeof console !== 'undefined') console.error.apply(console, arguments); }
+        };
+      </LoggerJsContent>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+      <LoggerJsContent>
+        window.Logger = {
+            log: function() {},
+            warn: function() {},
+            error: function() { if (typeof console !== 'undefined') console.error.apply(console, arguments); }
+        };
+      </LoggerJsContent>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(IntermediateOutputPath)JsDist\logger.js" Lines="$(LoggerJsContent)" Overwrite="true" />
+    <ItemGroup>
+      <EmbeddedResource Include="$(IntermediateOutputPath)JsDist\logger.js">
+        <LogicalName>Tools.Export.js.site-logger.js</LogicalName>
+      </EmbeddedResource>
+    </ItemGroup>
+  </Target>
 </Project>

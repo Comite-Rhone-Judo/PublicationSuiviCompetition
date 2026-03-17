@@ -170,7 +170,8 @@ namespace AppPublication.Models.Publication
                 SchedulerConfigElement cfgPriv = PublicationConfigSection.GetInstanceConfigElement(kCfgSiteLocalInstanceName);
                 DelaiGenerationSec = cfgPriv.DelaiGenerationSec;
                 DelaiDeroulementSec = GenerationConfigSection.Instance.GenerateurSiteInterne.DelaiDeroulementSec;
-
+                NbProchainsCombats = GenerationConfigSection.Instance.GenerateurSiteInterne.NbProchainsCombats;
+                    
                 // L'interface local de publication a ete chargee via la configuration du minisite, il faut juste s'assurer du bon calcul des URLs
                 URLLocalPublication = CalculURLSiteLocal();
 
@@ -234,6 +235,7 @@ namespace AppPublication.Models.Publication
             var DC = _judoDataManager.Data;
             if (DC != null && DC.Organisation != null && DC.Organisation.Competition != null)
             {
+                // Question: ici on peut avoir plusiers competitions se deroulant avec un nombre de tapis différents ...
                 // Le nombre de tapis peut avoir changé selon la compétition
                 NbTapis = DC.Organisation.Competition.nbTapis;
             }
@@ -278,8 +280,9 @@ namespace AppPublication.Models.Publication
                             TapisIds = tapisIds,
                             Groupement = cfg.Groupement,
                             Disposition = cfg.Disposition,
-                            Resolution = cfg.Resolution,
-                            Eloigne = cfg.Eloigne
+                            DispositionCombat = cfg.DispositionCombat,
+                            AjusteTailleTexte = cfg.AjusteTexteAuto,
+                            NbCombatsPage = cfg.NbCombatsPage
                         };
 
                         // Ajuster le compteur statique pour éviter les doublons d'ID futurs

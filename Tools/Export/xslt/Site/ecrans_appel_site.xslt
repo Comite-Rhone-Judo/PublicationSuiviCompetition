@@ -22,7 +22,8 @@
 	<xsl:param name="dispositionAffichage" select="'colonne'"/>
 	<xsl:param name="combatsParPageEff"/>
 	<xsl:param name="isAffichageCombatLigne" select="'false'"/>
-
+	<xsl:param name="ajusteTexteAuto" select="'false'"/>
+	
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 
 	<xsl:variable name="docPrincipal" select="/" />
@@ -45,7 +46,7 @@
 			<xsl:when test="$nbProchainsCombats > 0">
 				<xsl:value-of select="$nbProchainsCombats"/>
 			</xsl:when>
-			<xsl:otherwise>10</xsl:otherwise>
+			<xsl:otherwise>6</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
 
@@ -62,20 +63,45 @@
 	<xsl:variable name="widthStyle">
 		<xsl:choose>
 			<xsl:when test="$tailleGroupe = '1'">100%</xsl:when>
+
 			<xsl:when test="$tailleGroupe = '2' and $dispositionAffichage = 'ligne'">100%</xsl:when>
-			<xsl:otherwise>50%</xsl:otherwise>
+			<xsl:when test="$tailleGroupe = '2' and $dispositionAffichage = 'colonne'">50%</xsl:when>
+			<xsl:when test="$tailleGroupe = '4'">50%</xsl:when>
+			<xsl:when test="$tailleGroupe = '6' and $dispositionAffichage = 'ligne'">50%</xsl:when>
+			<xsl:when test="$tailleGroupe = '6' and $dispositionAffichage = 'colonne'">33.333%</xsl:when>
+			<xsl:when test="$tailleGroupe = '8' and $dispositionAffichage = 'ligne'">50%</xsl:when>
+			<xsl:when test="$tailleGroupe = '8' and $dispositionAffichage = 'colonne'">25%</xsl:when>
+			<xsl:otherwise>100%</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
+
+	<xsl:variable name="nbLignesTapis">
+		<xsl:choose>
+			<!-- 2x4 ou 4x2 on ajuste la moitie de la hauteur et quart largeur (Ligne) ou moitie de la largeur et quart de la hauteur (colonne) -->
+			<xsl:when test="$tailleGroupe = '8' and $dispositionAffichage = 'ligne'">4</xsl:when>
+			<!-- 2x3 ou 3x2 on ajuste la moitie de la hauteur et tiers largeur (Ligne) ou moitie de la largeur et tiers de la hauteur (colonne) -->
+			<xsl:when test="$tailleGroupe = '6' and $dispositionAffichage = 'ligne'">3</xsl:when>
+			<!-- 1x2 ou 2x1 on ajuste la moitie de la hauteur (Ligne) ou de la largeur (colonne) -->
+			<!-- 2x2 on ajuste 1/2 hauteur et largeur -->
+			<xsl:when test="$tailleGroupe = '4' 
+                     or ($tailleGroupe = '2' and $dispositionAffichage = 'ligne') 
+                     or ($tailleGroupe = '6' and $dispositionAffichage = 'colonne') 
+                     or ($tailleGroupe = '8' and $dispositionAffichage = 'colonne')">2</xsl:when>
+			<!-- 1x1 Ligne ou Colonne, on prend toute la place disponible -->
+			<xsl:otherwise>1</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
 
 	<xsl:variable name="heightStyle">
 		<xsl:choose>
-			<xsl:when test="$tailleGroupe = '1'">calc(100vh - 10.5vh)</xsl:when>
-			<xsl:when test="$tailleGroupe = '2' and $dispositionAffichage = 'ligne'">calc((100vh - 10.5vh) / 2)</xsl:when>
-			<xsl:when test="$tailleGroupe = '2'">calc(100vh - 10.5vh)</xsl:when>
-			<xsl:otherwise>calc((100vh - 10.5vh) / 2)</xsl:otherwise>
+			<xsl:when test="$nbLignesTapis = '1'">calc(100vh - 10.5vh)</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="concat('calc((100vh - 10.5vh) / ', $nbLignesTapis, ')')"/>
+			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
-
+	
+	
 	<xsl:template match="docroot">
 		<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
 		<html>
@@ -98,16 +124,16 @@
 				</link>
 				<link type="text/css" rel="stylesheet">
 					<xsl:attribute name="href">
-						<xsl:value-of select="concat($cssPath, 'style-ecran-appel.css')"/>
+						<xsl:value-of select="concat($cssPath, 'style-ecran-appel.css?v=', $dateGeneration)"/>
 					</xsl:attribute>
 				</link>
 
 				<script>
 					<xsl:attribute name="src">
-						<xsl:value-of select="concat($jsPath, 'site-animation.js')"/>
+						<xsl:value-of select="concat($jsPath, 'site-logger.js')"/>
 					</xsl:attribute>
 				</script>
-
+				
 				<script type="text/javascript">
 					<xsl:value-of select="$js"/>
 				</script>
@@ -144,7 +170,11 @@
 					 data-layout-mode="{$tailleGroupe}"
 					 data-duree-rotation="{$delaiDeroulementSec}"
 					 data-combats-par-page="{$maxCombatsPage}"
-					 data-url-redirecteur="{$urlRedirecteur}">
+					 data-url-redirecteur="{$urlRedirecteur}"
+					 data-auto-ajustement="{$ajusteTexteAuto}">
+					<xsl:attribute name="style">
+						<xsl:value-of select="concat('--nb-combats: ', $maxCombatsPage, '; --lignes-tapis: ', $nbLignesTapis, ';')"/>
+					</xsl:attribute>
 					<xsl:for-each select="$tapisAffiches/tapisIds/tapis">
 						<xsl:variable name="numTapis" select="@id" />
 						<xsl:call-template name="UnTapis">
@@ -162,6 +192,7 @@
 					</div>
 				</div>
 
+				<!-- Charge le script d'animation a la fin pour etre sur que le DOM est bien charge -->
 				<script type="text/javascript">
 					<xsl:attribute name="src">
 						<xsl:value-of select="concat($jsPath, 'site-animation.js')"/>
@@ -223,10 +254,12 @@
 							<tbody id="liste_combats_tapis_{$notapis}">
 								<xsl:for-each select="$docPrincipal//tapis/combats/combat[ancestor::tapis/@tapis = $notapis and count(score[@judoka = 0]) = 0]">
 									<xsl:sort select="@time_programmation" data-type="number" order="ascending"/>
-									<xsl:call-template name="UnCombat">
-										<xsl:with-param name="combat" select="."/>
-										<xsl:with-param name="indexCombat" select="position()"/>
-									</xsl:call-template>
+									<xsl:if test="position() &lt;= number($nbProchainsCombatsEff)">
+										<xsl:call-template name="UnCombat">
+											<xsl:with-param name="combat" select="."/>
+											<xsl:with-param name="indexCombat" select="position()"/>
+										</xsl:call-template>
+									</xsl:if>
 								</xsl:for-each>
 								<xsl:if test="count($docPrincipal//tapis/combats/combat[ancestor::tapis/@tapis = $notapis and count(score[@judoka = 0]) = 0]) = 0">
 									<tr>
@@ -287,15 +320,19 @@
 			<xsl:attribute name="style">
 				<xsl:text>height: </xsl:text>
 				<xsl:value-of select="$rowHeightPct"/>
-				<xsl:text>%;</xsl:text>
+				<xsl:text>%; max-height: </xsl:text>
+				<xsl:value-of select="$rowHeightPct"/>
+				<xsl:text>%; overflow: hidden;</xsl:text>
 			</xsl:attribute>
 
+			<!-- Le badge de position -->
 			<td class="w3-center w3-cell-middle badge-cell">
-				<div class="w3-indigo w3-circle pos-badge">
+				<div class="w3-indigo pos-badge">
 					<xsl:value-of select="$indexCombat"/>
 				</div>
 			</td>
 
+			<!-- Judoka 1 -->
 			<td class="w3-cell-middle judoka-cell">
 				<div>
 					<xsl:attribute name="class">
@@ -322,17 +359,18 @@
 										<xsl:otherwise>jc-attente-colonne</xsl:otherwise>
 									</xsl:choose>
 								</xsl:attribute>
-								<div class="w3-xlarge txt-bold">
-									<img class="img img-attente" width="28">
+								<div class="dyn-txt-nom txt-bold">
+									<img class="img-attente">
 										<xsl:attribute name="src">
 											<xsl:value-of select="concat($imgPath, 'sablier.png')"/>
 										</xsl:attribute>
 									</img>
 									<span class="txt-attente">En Attente</span>
 								</div>
+								<!--
 								<div>
 									<xsl:attribute name="class">
-										<xsl:text>w3-medium </xsl:text>
+										<xsl:text>dyn-txt-club </xsl:text>
 										<xsl:choose>
 											<xsl:when test="$isAffichageCombatLigne = 'true'">hide-ligne</xsl:when>
 											<xsl:otherwise>club-colonne</xsl:otherwise>
@@ -340,6 +378,7 @@
 									</xsl:attribute>
 									<xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text>
 								</div>
+								-->
 							</div>
 						</xsl:when>
 						<xsl:otherwise>
@@ -355,7 +394,7 @@
 
 								<div>
 									<xsl:attribute name="class">
-										<xsl:text>w3-xlarge </xsl:text>
+										<xsl:text>dyn-txt-nom </xsl:text>
 										<xsl:choose>
 											<xsl:when test="$isAffichageCombatLigne = 'true'">order-2</xsl:when>
 											<xsl:otherwise>order-1</xsl:otherwise>
@@ -372,7 +411,7 @@
 
 								<div>
 									<xsl:attribute name="class">
-										<xsl:text>w3-medium w3-opacity-min club-base </xsl:text>
+										<xsl:text>dyn-txt-club </xsl:text>
 										<xsl:choose>
 											<xsl:when test="$isAffichageCombatLigne = 'true'">order-1 club-ligne-right</xsl:when>
 											<xsl:otherwise>order-2 club-colonne</xsl:otherwise>
@@ -417,15 +456,16 @@
 				</div>
 			</td>
 
+			<!-- Catégorie et rang du combat -->
 			<td class="w3-center cat-cell">
-				<div class="w3-card w3-pale-yellow w3-round-small w3-large cat-box">
-					<div>
+				<div class="w3-card w3-pale-yellow w3-round-small cat-box">
+					<div class="dyn-txt-cat-titre">
 						<xsl:value-of select="$docPrincipal//epreuve[@ID = $epreuve]/@sexe"/>
 						<xsl:text>&#32;</xsl:text>
 						<xsl:value-of select="$docPrincipal//epreuve[@ID = $epreuve]/@nom"/>
 					</div>
 
-					<div class="w3-opacity w3-medium cat-subtitle">
+					<div class="dyn-txt-cat-sub cat-subtitle">
 						(<xsl:call-template name="NiveauTourCombat">
 							<xsl:with-param name="combat" select="$combat"/>
 							<xsl:with-param name="typePhase" select="$typePhase"/>
@@ -450,6 +490,7 @@
 				</div>
 			</td>
 
+			<!-- Judoka 2 -->
 			<td class="w3-cell-middle judoka-cell">
 				<div>
 					<xsl:attribute name="class">
@@ -476,17 +517,18 @@
 										<xsl:otherwise>jc-attente-colonne</xsl:otherwise>
 									</xsl:choose>
 								</xsl:attribute>
-								<div class="w3-xlarge txt-bold">
-									<img class="img img-attente" width="28">
+								<div class="dyn-txt-nom txt-bold">
+									<img class="img-attente">
 										<xsl:attribute name="src">
 											<xsl:value-of select="concat($imgPath, 'sablier.png')"/>
-										</xsl:attribute>
+										</xsl:attribute>	
 									</img>
 									<span class="txt-attente">En Attente</span>
 								</div>
+								<!--
 								<div>
 									<xsl:attribute name="class">
-										<xsl:text>w3-medium </xsl:text>
+										<xsl:text>dyn-txt-club </xsl:text>
 										<xsl:choose>
 											<xsl:when test="$isAffichageCombatLigne = 'true'">hide-ligne</xsl:when>
 											<xsl:otherwise>club-colonne</xsl:otherwise>
@@ -494,6 +536,7 @@
 									</xsl:attribute>
 									<xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text>
 								</div>
+								-->
 							</div>
 						</xsl:when>
 						<xsl:otherwise>
@@ -509,7 +552,7 @@
 
 								<div>
 									<xsl:attribute name="class">
-										<xsl:text>w3-xlarge order-1</xsl:text>
+										<xsl:text>dyn-txt-nom order-1</xsl:text>
 									</xsl:attribute>
 									<b>
 										<xsl:value-of select="$judoka2/@nom"/>
@@ -522,7 +565,7 @@
 
 								<div>
 									<xsl:attribute name="class">
-										<xsl:text>w3-medium w3-opacity-min club-base </xsl:text>
+										<xsl:text>dyn-txt-club </xsl:text>
 										<xsl:choose>
 											<xsl:when test="$isAffichageCombatLigne = 'true'">order-2 club-ligne-left</xsl:when>
 											<xsl:otherwise>order-2 club-colonne</xsl:otherwise>

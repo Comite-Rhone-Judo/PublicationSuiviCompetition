@@ -7,7 +7,6 @@
 	<xsl:output method="html" indent="yes"/>
 	<xsl:template match="docroot">
 		<xsl:variable name="apos">'</xsl:variable>
-		<!-- TODO Les configurations sont passées dans une balise dediee desormais -->
 		<xsl:variable name="version">
 			<xsl:value-of select="SiteConfiguration/@AppVersion"/>
 		</xsl:variable>

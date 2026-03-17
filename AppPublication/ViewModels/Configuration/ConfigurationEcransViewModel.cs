@@ -16,7 +16,9 @@ namespace AppPublication.ViewModels.Configuration
 {
     public class ConfigurationEcransViewModel : NotificationBase
     {
-        // TODO Verifier le comportement si on charge la config sans connexion a une compétition
+        #region CONSTANTES
+        public const int kNbTapisDefault = 8;
+        #endregion
 
         #region MEMBERS
         // Collection source (référence vers celle de GestionSite)
@@ -66,8 +68,11 @@ namespace AppPublication.ViewModels.Configuration
         /// </summary>
         public ConfigurationEcransViewModel(EcranCollectionManager manager, int nbMaxTapis)
         {
+            // Si on n'est pas connecte, on prend par defaut 8 tapis.
+            int nbTapisToShow = (nbMaxTapis == 0) ? kNbTapisDefault : nbMaxTapis;
+
             _ecranManager = manager;
-            _tapisDisponibles = Enumerable.Range(1, nbMaxTapis).ToList();
+            _tapisDisponibles = Enumerable.Range(1, nbTapisToShow).ToList();
 
             EcransViewModels = new ObservableCollection<EcranAppelConfigViewModel>();
 

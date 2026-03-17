@@ -4,7 +4,8 @@
         dureeRotation: 10,      // Valeur par défaut
         combatsParPage: 5,      // Valeur par défaut
         layoutMode: 4,           // Valeur par défaut
-        urlRedirecteur: ''      // Valeur par defaut
+        urlRedirecteur: '',     // Valeur par defaut
+        autoAjustementTexte: true // Par défaut activé
     };
 
     var state = {
@@ -42,6 +43,8 @@
             config.combatsParPage = parseInt(container.getAttribute('data-combats-par-page')) || 8;
             config.layoutMode = parseInt(container.getAttribute('data-layout-mode')) || 4;
             config.urlRedirecteur = container.getAttribute('data-url-redirecteur') || '';
+            var autoAjustAttr = container.getAttribute('data-auto-ajustement');
+            config.autoAjustementTexte = (autoAjustAttr !== 'false');
         }
 
         // Calculer le nombre total de groupes de tapis
@@ -53,15 +56,77 @@
         }
         state.maxTapisGroups = maxPage;
 
-        console.log("Animation Init: Groupes Tapis=" + state.maxTapisGroups +
-            ", Durée=" + config.dureeRotation + "s" +
-            ", Combats/Page=" + config.combatsParPage);
+        // Exécution conditionnelle de l'harmonisation
+        if (config.autoAjustementTexte) {
+            // Affichage temporaire indispensable UNIQUEMENT pour mesurer les tailles
+            allTapis.forEach(function (t) { t.style.display = 'block'; });
+
+            harmoniserGroupe('.dyn-txt-nom', 4.5);
+            harmoniserGroupe('.dyn-txt-club', 2.5);
+        }
 
         // Lancer le premier affichage
         updateView();
 
         // Démarrer le timer
+        // TODO A Remettre apres debug
         startTimer();
+    }
+
+
+    // --- Fonctions d'Harmonisation ---
+
+    function harmoniserGroupe(selector, defaultSizeVh) {
+        var elements = document.querySelectorAll(selector);
+        if (!elements.length) {
+            Logger.warn("Harmonisation : Aucun élément trouvé pour", selector);
+            return;
+        }
+
+        var baseSizePx = Math.floor(window.innerHeight * (defaultSizeVh / 100));
+
+        // C'est cette variable qui va servir de "plafond" pour les éléments suivants
+        var tailleMinOptimale = baseSizePx;
+
+        Logger.log(">> Analyse de", elements.length, "éléments pour", selector, "(Cible : " + baseSizePx + "px)");
+
+        elements.forEach(function (el, index) {
+            // OPTIMISATION MAJEURE : On part directement du plus petit record actuel !
+            el.style.fontSize = tailleMinOptimale + "px";
+
+            var espaceDispo = el.clientWidth || (el.parentElement ? el.parentElement.clientWidth : 0);
+
+            // Si le texte rentre déjà avec le record actuel, on passe directement au suivant ! (ZÉRO itération)
+            if (el.scrollWidth <= espaceDispo) {
+                return; // Sortie précoce de la boucle forEach pour cet élément
+            }
+
+            Logger.log("   [NOUVEAU DÉPASSEMENT] Elément", index, "('", el.innerText.substring(0, 15), "...')");
+            Logger.log("     -> Ne rentre pas à", tailleMinOptimale, "px. scrollWidth:", el.scrollWidth, " Espace:", espaceDispo);
+
+            // S'il ne rentre pas, on réduit à partir du record actuel
+            var fontSizeTemp = tailleMinOptimale;
+            var tentatives = 0;
+
+            while (el.scrollWidth > espaceDispo && fontSizeTemp > 8 && tentatives < 15) {
+                fontSizeTemp -= 1;
+                el.style.fontSize = fontSizeTemp + "px";
+                tentatives++;
+            }
+
+            // On met à jour le nouveau record absolu pour les prochains éléments
+            if (fontSizeTemp < tailleMinOptimale) {
+                tailleMinOptimale = fontSizeTemp;
+                Logger.log("     -> Nouveau record global établi :", tailleMinOptimale, "px");
+            }
+        });
+
+        Logger.log(">> Taille globale finale appliquée pour", selector, ":", tailleMinOptimale, "px");
+
+        // On applique la taille minimale finale (le plus petit record) à tout le monde
+        elements.forEach(function (el) {
+            el.style.fontSize = tailleMinOptimale + "px";
+        });
     }
 
     // --- Gestion du Timer et Barre de progression ---
@@ -85,10 +150,11 @@
             if (timeLeft >= totalSteps) {
                 // On retarde le changement de 100ms pour laisser la transition CSS toucher le bord
                 setTimeout(function () {
-                    nextStep();
+                    var isCycleFinished = nextStep();
 
                     // Remise à zéro instantanée de la barre (sans animation de recul)
-                    if (state.progressBar) {
+                    // On ne remet la barre à zéro QUE si on continue à tourner
+                    if (!isCycleFinished && state.progressBar) {
                         state.progressBar.style.transition = 'none';
                         state.progressBar.style.width = '0%';
                         void state.progressBar.offsetWidth; // Force l'application immédiate du 0%
@@ -115,20 +181,23 @@
 
             // 3. Si on a fait tous les groupes de tapis
             if (state.currentTapisGroupIndex > state.maxTapisGroups) {
-                console.log("Cycle terminé. Redirection...");
-                
+
+                // 1. Coupe le moteur
+                if (state.timer) clearInterval(state.timer);
+
                 // Redirection vers la page source pour réévaluer la configuration
                 if (config.urlRedirecteur && config.urlRedirecteur.trim() !== '') {
                     window.location.href = config.urlRedirecteur;
                 } else {
                     window.location.reload(true); // Fallback
                 }
-                return;
+                return true; // Cycle terminé
             }
         }
 
         // Mise à jour de l'affichage
         updateView();
+        return false; // Cycle en cours
     }
 
     // --- Mise à jour de l'affichage (DOM) ---

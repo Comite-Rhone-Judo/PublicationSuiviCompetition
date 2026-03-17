@@ -28,6 +28,7 @@ namespace AppPublication.ViewModels.Configuration
 
         #region CONSTANTES
         private const int kMaxTapisSelection = 8; // Constante pour la limite
+        private const int kMaxCombatsPage = 12; // Constante pour le nombre max de combats par page 
         #endregion
 
         #region MEMBERS
@@ -38,7 +39,6 @@ namespace AppPublication.ViewModels.Configuration
         private bool _isRechercheIpEnCours;
         private bool _isRechercheHostnameEnCours;
         private CancellationTokenSource _searchCts;
-        public IEnumerable<ScreenResolution> ResolutionOptions => Enum.GetValues(typeof(ScreenResolution)).Cast<ScreenResolution>();
 
         #endregion
 
@@ -60,6 +60,10 @@ namespace AppPublication.ViewModels.Configuration
             // Initialisation visuelle
             Hostname = string.IsNullOrEmpty(model.Hostname) ? string.Empty : model.Hostname;
             AdresseIP = (model.AdresseIP == null || model.AdresseIP.Equals(IPAddress.None))  ? string.Empty : model.AdresseIP.ToString();
+
+            // On pré-remplit la saisie avec le Hostname ou l'IP existant
+            _rawUserInput = (model.AdresseIP != null && !model.AdresseIP.Equals(IPAddress.None) ? model.AdresseIP.ToString()
+                                : !string.IsNullOrEmpty(model.Hostname) ? model.Hostname : string.Empty);
 
             // Création des CheckBoxes pour les tapis
             var _tmpList = new ObservableCollection<EcranAppelTapisSelectionViewModel>();
@@ -83,42 +87,58 @@ namespace AppPublication.ViewModels.Configuration
         #region PROPRIETES
 
         /// <summary>
-        /// la resolution de l'ecran d'appel, qui peut influencer le nombre de tapis maximum sélectionnable (4 max en 1080p, 8 max en 4K/8K)
+        /// Indique le nb de combat par page a afficher (de 1 à 12)
         /// </summary>
-        public ScreenResolution Resolution
+        public int NbCombatsPage
         {
-            get => _model.Resolution;
+            get => _model.NbCombatsPage;
             set
             {
-                if (_model.Resolution != value)
+                if (_model.NbCombatsPage != value)
                 {
-                    _model.Resolution = value;
-                    NotifyPropertyChanged();
-                    NotifyPropertyChanged(nameof(GroupementOptions));
-                    if (value == ScreenResolution.FullHd_1080p && Groupement > 4) Groupement = 4;
-                    var cfg = GetConfigElement();
-                    if (cfg != null) cfg.Resolution = value;
+                    // Controle la valeur pour éviter les erreurs de configuration*
+                    if (value >= 1 && value <= kMaxCombatsPage)
+                    {
+                        // On ne tient pas compte d'une valeur hors range
+                        _model.NbCombatsPage = value;
+                        NotifyPropertyChanged();
+                        var cfg = GetConfigElement();
+                        if (cfg != null) cfg.NbCombatsPage = value;
+                    }
                 }
             }
         }
 
         /// <summary>
-        /// Indique si l'ecran d'appel est éloigné du public (ex: backroom), ce qui peut influencer le design de l'écran (ex: plus d'informations techniques affichées)
+        /// Les options de nb de combats par page
         /// </summary>
-        public bool Eloigne
+        public List<int> NbCombatsPageOptions
         {
-            get => _model.Eloigne;
+            get
+            {
+                // Options de base toujours disponibles
+                var options = Enumerable.Range(1, kMaxCombatsPage).ToList();
+                return options;
+            }
+        }
+
+        /// <summary>
+        /// Indique si on doit ajuster automatiquement la taille du texte
+        /// </summary>
+        public bool AjusteTailleTexte
+        {             get => _model.AjusteTailleTexte;
             set
             {
-                if (_model.Eloigne != value)
+                if (_model.AjusteTailleTexte != value)
                 {
-                    _model.Eloigne = value;
+                    _model.AjusteTailleTexte = value;
                     NotifyPropertyChanged();
                     var cfg = GetConfigElement();
-                    if (cfg != null) cfg.Eloigne = value;
+                    if (cfg != null) cfg.AjusteTexteAuto = value;
                 }
             }
         }
+
 
         /// <summary>
         /// Options pour la Dropdown de disposition (extraites dynamiquement de l'enum)
@@ -145,7 +165,33 @@ namespace AppPublication.ViewModels.Configuration
                     var cfg = GetConfigElement();
                     if (cfg != null)
                     {
-                        cfg.Disposition = value; 
+                        cfg.Disposition = value;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Disposition de l'écran (Ligne ou Colonne)
+        /// </summary>
+        public DispositionAffichage DispositionCombat
+        {
+            get
+            {
+                return _model.DispositionCombat;
+            }
+            set
+            {
+                if (_model.DispositionCombat != value)
+                {
+                    _model.DispositionCombat = value;
+                    NotifyPropertyChanged();
+
+                    // SAUVEGARDE IMMEDIATE
+                    var cfg = GetConfigElement();
+                    if (cfg != null)
+                    {
+                        cfg.DispositionCombat = value;
                     }
                 }
             }
@@ -154,10 +200,10 @@ namespace AppPublication.ViewModels.Configuration
         /// <summary>
         /// Les options de groupement des tapis (1, 2, 4 ou 8)
         /// </summary>
-        public List<int> GroupementOptions => (Resolution == ScreenResolution.FullHd_1080p) ? new List<int> { 1, 2, 4 } : new List<int> { 1, 2, 4, 8 };
+        public List<int> GroupementOptions => new List<int> { 1, 2, 4, 6, 8 };
 
         /// <summary>
-        /// Nombre de tapis par groupe (1, 2 ou 4)
+        /// Nombre de tapis par groupe (1, 2, 4, 6 ou 8)
         /// </summary>
         public int Groupement
         {
@@ -244,15 +290,19 @@ namespace AppPublication.ViewModels.Configuration
                     _ipAdresse = value;
                     NotifyPropertyChanged();
 
-                    IPAddress ip = IPAddress.None;
-                    bool ipValid = IPAddress.TryParse(value, out ip);
+                    // 2. Tentative de parsing
+                    if (IPAddress.TryParse(value, out IPAddress ip))
+                    {
+                        // On ne met à jour le modèle QUE si l'IP est valide et n'est pas "None"
+                        if (!ip.Equals(IPAddress.None))
+                        {
+                            _model.AdresseIP = ip;
 
-                    // Mise à jour Modèle Runtime
-                    _model.AdresseIP = ipValid ? ip : IPAddress.None;
-
-                    // SAUVEGARDE IMMEDIATE
-                    var cfg = GetConfigElement();
-                    if (cfg != null) cfg.AdresseIp = ipValid ? value : string.Empty;
+                            // SAUVEGARDE IMMEDIATE
+                            var cfg = GetConfigElement();
+                            if (cfg != null) cfg.AdresseIp = value;
+                        }
+                    }
                 }
             }
         }
@@ -415,7 +465,7 @@ namespace AppPublication.ViewModels.Configuration
         {
             if (string.IsNullOrWhiteSpace(saisie))
             {
-                Hostname = ""; AdresseIP = ""; return TypeSaisieEnum.Inconnu;
+                return TypeSaisieEnum.Inconnu;
             }
 
             if (IPAddress.TryParse(saisie, out _))

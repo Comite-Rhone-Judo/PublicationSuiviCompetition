@@ -1,19 +1,25 @@
-﻿using System;
+﻿using AppPublication.Models; // Assurez-vous que ce namespace correspond à l'emplacement de EcranAppelModel
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
-using AppPublication.Models; // Assurez-vous que ce namespace correspond à l'emplacement de EcranAppelModel
 
 namespace AppPublication.Models.EcransAppel
 {
     public class EcranCollectionManager
     {
-
+        #region MEMBRES
 
         // Cache interne pour la valeur de l'ID le plus élevé
         private int _lastId;
 
         private EcranAppelModel _default;
 
+        #endregion
+
+        #region PROPRIETES
         // La collection observable pour le binding UI
         public ObservableCollection<EcranAppelModel> Ecrans { get; private set; }
 
@@ -24,7 +30,6 @@ namespace AppPublication.Models.EcransAppel
         public int NextId => _lastId + 1;
 
         // Le nombre de tapis de la competition, utilisé pour la validation des écrans d'appel
-        // TODO Revoir le comportement de la valeur par defaut, j'avais un bug la dessus
         private int _nbTapis = 0;
         public int NbTapis {
             get
@@ -36,13 +41,14 @@ namespace AppPublication.Models.EcransAppel
                 {
                     if (_nbTapis >= 0)
                     {
-                        // TODO Faire un test pour s'assurer du comportement en cas de n° de tapis non configuré (ex: on a 4 tapis mais un écran d'appel avec tapis 5 et 6)
+                        // TODO Bug du comportement: en cas de n° de tapis non configuré (ex: on a 4 tapis sur la competition mais un écran d'appel avec tapis 5 et 6): on affiche les tapis 7 et 8
                         _nbTapis = value;
                         // Actualise les tapis par défaut pour l'écran d'appel par défaut
                         if (_default != null)
                         {
-                            // Optimise le groupement en fonction du nombre de tapis
-                            _default.Groupement = (_nbTapis == 1) ? 1 : (_nbTapis == 2) ? 2 : 4;
+                            // Sur l'ecran par defaut, on est prudent: 1 tapis par page, et on affiche tous les tapis disponibles
+                            _default.Groupement = 1;
+                            _default.NbCombatsPage = 8;
                             // Par defaut, on affiche tous les tapis
                             _default.TapisIds = Enumerable.Range(1, _nbTapis).ToList();
                         }
@@ -51,23 +57,30 @@ namespace AppPublication.Models.EcransAppel
             }
         }
 
+        #endregion
+
+        #region CONSTRUCTEUR
         public EcranCollectionManager()
         {
             Ecrans = new ObservableCollection<EcranAppelModel>();
+
             _lastId = 0;
             _default = new EcranAppelModel
             {
                 Id = -1,
                 Description = "Ecran par défaut",
                 Groupement = 1,
-                Resolution = EcranAppelModel.ScreenResolution.FullHd_1080p,
-                Eloigne = false,
+                NbCombatsPage = 8,
                 Disposition = EcranAppelModel.DispositionAffichage.Colonne
             };
 
 
             NbTapis = 6;    // par defaut 6 tapis, valeur assez commune. Cela va initialiser le tapis par default
         }
+
+        #endregion
+
+        #region METHODES PUBLIQUES
 
         /// <summary>
         /// Crée un nouvel écran, l'ajoute à la liste et met à jour le cache ID.
@@ -137,6 +150,9 @@ namespace AppPublication.Models.EcransAppel
                 Remove(ecran);
             }
         }
+        #endregion
+
+        #region METHODES PRIVEES
 
         /// <summary>
         /// Recalcule le _lastId en parcourant la liste.
@@ -154,5 +170,7 @@ namespace AppPublication.Models.EcransAppel
                 _lastId = Ecrans.Max(e => e.Id);
             }
         }
+
+        #endregion
     }
 }

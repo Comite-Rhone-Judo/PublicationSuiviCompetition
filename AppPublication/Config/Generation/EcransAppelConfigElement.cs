@@ -19,8 +19,9 @@ namespace AppPublication.Config.Generation
         private const string kHostname = "hostname";
         private const string kGroupement = "groupement";
         private const string kDisposition = "disposition";
-        private const string kResolution = "resolution";
-        private const string kEloigne = "eloigne";
+        private const string kDispositionCombat = "dispositionCombat";
+        private const string kAjusteTexteAuto = "ajusteTexteAuto";
+        private const string kNbCombatsParPage = "nbCombatsPage";
 
         #region METHODES
         /// <summary>
@@ -89,18 +90,25 @@ namespace AppPublication.Config.Generation
             set { SetValueAndMarkDirty(kDisposition, value); }
         }
 
-        [ConfigurationProperty(kResolution, DefaultValue = ScreenResolution.FullHd_1080p)]
-        public ScreenResolution Resolution
+        [ConfigurationProperty(kDispositionCombat, DefaultValue = DispositionAffichage.Colonne)]
+        public DispositionAffichage DispositionCombat
         {
-            get { return GetConfigValue<ScreenResolution>(kResolution, ScreenResolution.FullHd_1080p); }
-            set { SetValueAndMarkDirty(kResolution, value); }
+            get { return GetConfigValue<DispositionAffichage>(kDispositionCombat, DispositionAffichage.Colonne); }
+            set { SetValueAndMarkDirty(kDispositionCombat, value); }
         }
 
-        [ConfigurationProperty(kEloigne, DefaultValue = false)]
-        public bool Eloigne
+        [ConfigurationProperty(kAjusteTexteAuto, DefaultValue = false)]
+        public bool AjusteTexteAuto
         {
-            get { return GetConfigValue<bool>(kEloigne, false); }
-            set { SetValueAndMarkDirty(kEloigne, value); }
+            get { return GetConfigValue<bool>(kAjusteTexteAuto, false); }
+            set { SetValueAndMarkDirty(kAjusteTexteAuto, value); }
+        }
+
+        [ConfigurationProperty(kNbCombatsParPage, DefaultValue = 5)]
+        public int NbCombatsPage
+        {
+            get { return GetConfigValue<int>(kNbCombatsParPage, 5); }
+            set { SetValueAndMarkDirty(kNbCombatsParPage, value); }
         }
         #endregion
     }

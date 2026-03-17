@@ -1,4 +1,52 @@
-﻿/* --- Surcharge W3.CSS pour polices 100% relatives à l'écran --- */
+﻿
+/* --- VARIABLES DE STRUCTURE --- */
+:root {
+    --hauteur-dispo: 82vh; /* Espace réel du tableau (100vh - header - footer - paddings) */
+}
+
+/* 1. Hauteur brute du tapis selon le nombre de lignes à l'écran */
+.tapis-inner {
+    height: 100%; /* Conservé ! */
+    display: flex; /* Conservé ! */
+    overflow: hidden; /* Conservé ! */
+    --hauteur-brute: calc(var(--hauteur-ecran-utile) / var(--lignes-tapis));
+}
+
+/* Mode Ligne : Textes plus grands car ils ont de l'espace horizontal */
+.dispo-ligne {
+    flex-direction: row;
+}
+
+/* Mode Colonne : Textes plus prudents car ils sont empilés */
+.dispo-colonne {
+    flex-direction: column;
+}
+
+/* --- TEXTES DYNAMIQUES (Le calcul s'adapte à la disposition) --- */
+
+.dyn-txt-nom {
+    font-size: calc(var(--hauteur-un-combat) * 0.40);
+    line-height: 1.1;
+    font-weight: bold;
+}
+
+.dyn-txt-club {
+    font-size: calc(var(--hauteur-un-combat) * 0.25);
+    line-height: 1.1;
+    opacity: 0.85;
+}
+
+.dyn-txt-cat-titre {
+    font-size: calc(var(--hauteur-un-combat) * 0.30);
+    line-height: 1.1;
+}
+
+.dyn-txt-cat-sub {
+    font-size: calc(var(--hauteur-un-combat) * 0.20);
+    opacity: 0.7;
+}
+
+/* --- Surcharge W3.CSS pour polices 100% relatives à l'écran --- */
 .tv-body { font-size: 1.5vh; margin: 0; padding: 0; overflow: hidden; }
 .tv-body .w3-small   { font-size: 1.2vh !important; }
 .tv-body .w3-medium  { font-size: 1.5vh !important; }
@@ -22,6 +70,8 @@
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
+    /* 82vh (écran) divisé par le nb de lignes de tapis, moins 6vh pour l'entête, le tout divisé par le nb de combats */
+    --hauteur-un-combat: calc(((82vh / var(--lignes-tapis)) - 6vh) / var(--nb-combats));
 }
 
 .progress-container {
@@ -57,9 +107,6 @@
 /* --- Structure Tapis --- */
 .tapis-card { box-sizing: border-box; }
 .tapis-card-inner-wrapper { height: 100%; width: 100%; }
-.tapis-inner { height: 100%; display: flex; overflow: hidden; }
-.dispo-ligne { flex-direction: row; }
-.dispo-colonne { flex-direction: column; }
 
 /* --- Headers Tapis --- */
 .tapis-header-ligne {
@@ -80,47 +127,95 @@
 
 .tapis-header-colonne { flex-shrink: 0; }
 .paging-ligne-container { width: 100%; padding-top: 1.5vh; display: flex; justify-content: center; }
-.paging-ligne-dots { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 0.3vh; padding: 0 0.4vw; }
-.paging-colonne-container { margin-top: 1vh; margin-right: 1vw; }
-.paging-colonne-dots { display: flex; flex-direction: row; gap: 0.8vw; align-items: center; }
-.tapis-content { flex: 1; overflow: hidden; }
+.paging-ligne-dots {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.2vw; /* Espacement réduit */
+    padding: 0 0.4vw;
+}
+
+.paging-colonne-dots {
+    display: flex;
+    flex-direction: row;
+    gap: 0.3vw; /* Divisé par presque 3 (était à 0.8vw) */
+    align-items: center;
+}
+.paging-colonne-container { /* margin-top: 1vh; */ margin-right: 1vw; }
+
+/* 1. On transforme le conteneur du tableau en boîte Flex */
+.tapis-content {
+    flex: 1;
+    overflow: hidden;
+    display: flex; /* Indispensable pour que le tableau respecte la limite */
+    flex-direction: column; /* Assure que le tableau s'empile bien verticalement */
+    /* padding-bottom: 0.8vh; /* Le fameux 'coussin' qui va absorber le rognage de la TV */
+}
+
 
 /* --- Lignes de Combat --- */
-.combat-table { width: 100%; height: 100%; }
+.combat-table {
+    height: 100%;
+    width: 100%;
+    table-layout: fixed; /* Force le respect des hauteurs de cellules */
+    border-collapse: collapse;
+    margin: 0;
+    --hauteur-combats: calc(var(--hauteur-brute) - var(--offset-entete));
+}
+
+    .combat-table tbody {
+        height: 100%;
+    }
+
+.combat-row {
+    box-sizing: border-box; /* Inclut le padding dans le calcul de la hauteur */
+}
+
+
 .ghost-row { height: 100%; background-color: transparent !important; }
 .ghost-cell { padding: 0; border: none !important; }
 
 .badge-cell {
-    width: 5%;
-    padding: 0.2vh;
+    width: var(--hauteur-un-combat);
+    min-width: var(--hauteur-un-combat);
+    padding: 0;
     vertical-align: middle !important;
     text-align: center;
 }
 
 .pos-badge {
-    height: 3.6vh;
-    width: 3.6vh;
-    line-height: 3.6vh;
-    font-size: 1.7vh; /* Police légèrement agrandie */
-    font-weight: bold;
+    /* On force explicitement la hauteur ET la largeur avec la même valeur */
+    height: calc(var(--hauteur-un-combat) * 0.75);
+    width: calc(var(--hauteur-un-combat) * 0.75);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin: auto;
-    display: inline-block;
+    font-weight: bold;
+    /* La police fait environ la moitié du rond */
+    font-size: calc(var(--hauteur-un-combat) * 0.30);
+    flex-shrink: 0;
 }
 
 /* --- Judoka Blocks --- */
 .judoka-cell {
-    width: 35%;
-    padding: 0.2vh 0.4vw;
-    height: 1px;
-    vertical-align: middle !important;
+    width: 42%;
+    /* 0.4vh en haut/bas recrée la marge entre les lignes de combat */
+    /* 1vw maintient la symétrie parfaite à gauche et à droite */ 
+    padding: 0.4vh 1vw !important;
+    vertical-align: middle;
 }
 
 .judoka-box {
     overflow: hidden;
     height: 100%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: stretch; /* Force le contenu à prendre toute la largeur */
 }
 
 .jc-attente-ligne {
@@ -128,13 +223,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.jc-attente-colonne {
-    padding: 0.5vh 1vw;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    /* Ajouts stricts pour forcer le centrage parfait dans la cellule : */
+    width: 100%;
+    height: 100%;
 }
 
 .jc-normal-ligne-right {
@@ -151,6 +242,29 @@
     justify-content: flex-start;
 }
 
+    /* Textes agrandis (UNIQUEMENT quand Nom et Club sont côte-à-côte) */
+    .jc-normal-ligne-left .dyn-txt-nom,
+    .jc-normal-ligne-right .dyn-txt-nom,
+    .jc-attente-ligne .dyn-txt-nom {
+        font-size: calc(var(--hauteur-un-combat) * 0.45); /* Beaucoup plus gros */
+    }
+
+    .jc-normal-ligne-left .dyn-txt-club,
+    .jc-normal-ligne-right .dyn-txt-club {
+        font-size: calc(var(--hauteur-un-combat) * 0.25);
+    }
+
+.jc-attente-colonne {
+    padding: 0.5vh 1vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Ajouts stricts pour forcer le centrage parfait dans la cellule : */
+    justify-content: center; /* Manquant dans votre code d'origine pour le centrage vertical */
+    width: 100%;
+    height: 100%;
+}
+
 .jc-normal-colonne-right {
     padding: 0.5vh 1vw;
     display: flex;
@@ -165,21 +279,36 @@
     align-items: flex-start;
 }
 
+    .jc-normal-colonne-left .dyn-txt-nom,
+    .jc-normal-colonne-right .dyn-txt-nom,
+    .jc-attente-colonne .dyn-txt-nom {
+        font-size: calc(var(--hauteur-un-combat) * 0.25);
+    }
+
+    .jc-normal-colonne-left .dyn-txt-club,
+    .jc-normal-colonne-right .dyn-txt-club {
+        font-size: calc(var(--hauteur-un-combat) * 0.15);
+    }
+
 .order-1 { order: 1; }
 .order-2 { order: 2; }
 
-.club-base { font-weight: bold; }
 .club-ligne-right { margin-right: 1.5vw; }
 .club-ligne-left { margin-left: 1.5vw; }
-.club-colonne { margin-top: 0.2vh; height: 1.5em; }
+.club-colonne {
+    margin-top: 0.1vh;
+    height: 1.2em; /* Au lieu de 1.5em */
+    line-height: 1.2;
+}
 
 .hide-ligne { display: none; }
 
 .img-attente {
-    height: 2.2vh; /* Toujours calé sur la taille de w3-xlarge */
+    height: 0.8em; /* S'adapte au texte parent */
     width: auto;
-    margin-right: 0.8vw;
-    display: block; /* Annule le comportement inline et ses marges fantômes */
+    margin-right: 0.5vw;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .txt-attente {
@@ -187,15 +316,16 @@
 }
 .txt-bold {
     font-weight: bold;
-    display: flex; /* Flexbox prend le relais pour l'alignement */
-    align-items: center; /* Aligne l'image et le texte parfaitement au centre */
+    display: flex !important;
+    align-items: center;
     justify-content: center;
-    line-height: 1.2; /* Force une hauteur de ligne standardisée */
+    width: 100%;
+   line-height: 1.2; /* Force une hauteur de ligne standardisée */
 }
 
 /* --- Catégorie --- */
 .cat-cell {
-    width: 25%;
+    width: 16%;
     padding: 0.2vh 0.4vw;
     height: 1px;
     vertical-align: middle !important;
@@ -218,7 +348,7 @@
 .colorized-img-black { filter: brightness(0); }
 
 /* --- Pagination --- */
-.page-dot { font-size: 1.5vh; transition: opacity 0.3s; }
+.page-dot { font-size: 2.5vh; transition: opacity 0.3s; }
 .page-dot-active { opacity: 1; }
 .page-dot-inactive { opacity: 0.3; }
 
@@ -231,4 +361,29 @@
 .w3-dot-active {
     animation: dot-blink 1.5s infinite ease-in-out;
     display: inline-block;
+}
+
+/* --- Anti-Débordement (Noms et Clubs longs) --- */
+
+/* On s'assure que le conteneur principal ne s'élargit pas */
+.judoka-box .w3-container,
+.cat-box {
+    width: 100%;
+    min-width: 0; /* Vital pour que Flexbox autorise le texte à rétrécir */
+    overflow: hidden;
+}
+
+    /* On force les textes (Noms, Clubs, Catégories) sur une seule ligne avec des points de suspension */
+    .judoka-box .w3-container:not([class*="jc-attente"]) > div,
+    .cat-box > div {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+        display: block;
+    }
+
+/* Exception pour le bloc "En Attente" pour garder l'alignement de l'icône */
+.txt-bold {
+    display: flex !important;
 }

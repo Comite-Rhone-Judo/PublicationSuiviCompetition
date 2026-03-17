@@ -74,7 +74,7 @@ namespace Tools.Export
                 new XAttribute(ConstantXML.msgProchainsCombats, MsgProchainsCombats ?? string.Empty),
                 new XAttribute(ConstantXML.Logo, Logo ?? string.Empty),
                 new XAttribute(ConstantXML.intituleCommun, IntituleCommun ?? string.Empty)
-            );
+                );
         }
     }
 }

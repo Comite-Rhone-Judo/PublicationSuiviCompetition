@@ -32,7 +32,6 @@
 
 	<xsl:variable name="selectedCompetition" select="/docroot/competitions/competition[@ID = $idcompetition]"/>
 
-	<!-- TODO Les configurations sont passées dans une balise dediee desormais -->
 	<xsl:variable select="/docroot/SiteConfiguration/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@EngagementsAbsents = 'true'" name="affEngagementsAbsents"/>

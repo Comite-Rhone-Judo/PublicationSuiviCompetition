@@ -5,8 +5,10 @@ using HttpServer.HttpModules;
 using HttpServer.Sessions;
 using NLog;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
+using Telerik.Windows.Controls.DataVisualization.Map.BingRest;
 using Tools.Export;
 using Tools.Logging;
 using Tools.Net;
@@ -15,13 +17,16 @@ namespace AppPublication.Publication
 {
     public class EcransAppelRedirectModule : HttpModule, IContextAware
     {
+        #region CONSTANTES
         private const string kDefaultPath = "/live/ecransAppel/go";
+        #endregion
 
+        #region MEMBRES
         // La configuration des ecrans d'appel
         private EcranCollectionManager _manager = null;
         private IContextProvider _provider = null;
         private SiteInterneUrlGenerator _structInterne = null;
-
+        #endregion
         /// <summary>
         /// Injection du contexte de l'application
         /// </summary>
@@ -98,7 +103,7 @@ namespace AppPublication.Publication
             }
 
             // Vérifie si l'URL commence par le chemin défini pour ce module
-            if (!request.Uri.AbsolutePath.StartsWith(this.ReferencePath, StringComparison.InvariantCultureIgnoreCase))
+            if (!request.Uri.AbsolutePath.StartsWith(this.ReferencePath, StringComparison.OrdinalIgnoreCase))
             {
                 return false; // Ce module ne gère pas cette requête, on passe au suivant
             }
@@ -113,10 +118,10 @@ namespace AppPublication.Publication
                 var ecranToRedirect = _manager.Ecrans.FirstOrDefault(e => e.AdresseIP.MapToIPv4().Equals(clientIp.MapToIPv4()));
 
                 // 3. Rediriger vers la page correspondante ou une page par défaut
-                if (ecranToRedirect == null) {
+                if (ecranToRedirect == null)
+                {
                     ecranToRedirect = _manager.Default;
                 }
-
                 if (ecranToRedirect == null) {
                     LogTools.Logger.Error("EcransAppelRedirectModule: Aucun écran d'appel trouvé pour l'IP {0} et aucun écran par défaut défini.", clientIp);
                     throw new InternalServerException("EcransAppelRedirectModule: Aucun écran d'appel trouvé pour l'IP et aucun écran par défaut défini.");
@@ -127,15 +132,22 @@ namespace AppPublication.Publication
 
                 string targetRedirect = _structInterne.GetUrlUnEcranAppel(ecranToRedirect.Id).AbsoluteUri;
 
+                // On ajoute un timestamp fictif pour forcer le by-pass du cache INDISPENDABLE SUR LES SMARTS TV    
+                string timestamp = DateTime.Now.Ticks.ToString();
+                var targetRedirectStamped = $"{targetRedirect}?v={timestamp}";
+
                 // 3. Effectuer la redirection
-                // Assure-toi que l'URL cible est relative à la racine du serveur web ou absolue
-                response.Redirect(targetRedirect);
+                response.AddHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+                response.AddHeader("Pragma", "no-cache");
+                response.AddHeader("Expires", "-1");
+
+                response.Redirect(targetRedirectStamped);
 
                 return true; // La requête a été traitée
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors de la redirection EcransAppel");
+                LogTools.Logger.Error(ex, "Erreur lors d e la redirection EcransAppel");
                 // Log l'erreur ici via ton ILogWriter si disponible
                 throw new InternalServerException();
             }

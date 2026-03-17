@@ -25,7 +25,7 @@ namespace Tools.Export
             return new XElement(ConstantXML.SiteConfiguration,
 
                 new XAttribute(ConstantXML.delaiDeroulementSec, DelaiDeroulementSec.ToString()),
-                new XAttribute(ConstantXML.nbProchainsCombats, DelaiDeroulementSec.ToString()),
+                new XAttribute(ConstantXML.nbProchainsCombats, NbProchainsCombats.ToString()),
 
                 // --- Chaînes et Dates ---
                 new XAttribute(ConstantXML.DateGeneration, DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")),
