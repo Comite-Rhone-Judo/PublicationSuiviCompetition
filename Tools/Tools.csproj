@@ -160,7 +160,7 @@
     <EmbeddedResource Include="Export\xslt\Site\ecrans_appel_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Export\style\site\style-ecran-appel.css" />
+    <EmbeddedResource Include="Export\style\site\style-ecran-appel-old.css" />
     <Compile Include="Export\PhysicalStructureBase.cs" />
     <Compile Include="Export\UrlGeneratorBase.cs" />
     <Compile Include="Framework\RelayCommand.cs" />
@@ -1977,6 +1977,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Export\js\site-animation.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Export\style\site\style-ecran-appel.css" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

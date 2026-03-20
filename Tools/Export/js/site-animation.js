@@ -5,7 +5,13 @@
         combatsParPage: 5,      // Valeur par défaut
         layoutMode: 4,           // Valeur par défaut
         urlRedirecteur: '',     // Valeur par defaut
-        autoAjustementTexte: true // Par défaut activé
+        autoAjustementTexte: true, // Par défaut activé
+
+        // Constantes pour la taille minimum des textes (en pixels)
+        minFontSizeNom: 14,
+        minFontSizeClub: 12,
+        minFontSizeCatTitre: 12, // Limite basse pour le nom de la catégorie
+        minFontSizeCatSub: 10    // Limite basse pour le niveau/tour
     };
 
     var state = {
@@ -38,7 +44,6 @@
         state.progressBar = document.getElementById('progress-bar');
 
         if (container) {
-            // Lecture des paramètres depuis les attributs data- du XSLT
             config.dureeRotation = parseInt(container.getAttribute('data-duree-rotation')) || 10;
             config.combatsParPage = parseInt(container.getAttribute('data-combats-par-page')) || 8;
             config.layoutMode = parseInt(container.getAttribute('data-layout-mode')) || 4;
@@ -47,7 +52,6 @@
             config.autoAjustementTexte = (autoAjustAttr !== 'false');
         }
 
-        // Calculer le nombre total de groupes de tapis
         var allTapis = document.querySelectorAll('.tapis-card');
         var maxPage = 0;
         for (var i = 0; i < allTapis.length; i++) {
@@ -56,78 +60,172 @@
         }
         state.maxTapisGroups = maxPage;
 
-        // Exécution conditionnelle de l'harmonisation
+        // --- LOGIQUE D'OPTIMISATION AUTO ---
         if (config.autoAjustementTexte) {
-            // Affichage temporaire indispensable UNIQUEMENT pour mesurer les tailles
+            Logger.log("--- DÉBUT DE L'OPTIMISATION AUTO (Disposition & Taille) ---");
             allTapis.forEach(function (t) { t.style.display = 'block'; });
 
-            harmoniserGroupe('.dyn-txt-nom', 4.5);
-            harmoniserGroupe('.dyn-txt-club', 2.5);
+            // 1. Test LIGNE
+            Logger.log(">> Test de la disposition : LIGNE");
+            setLayoutMode('ligne');
+            var sizeNomLigne = measureOptimalSize('.dyn-txt-nom', config.minFontSizeNom);
+            var sizeClubLigne = measureOptimalSize('.dyn-txt-club', config.minFontSizeClub);
+
+            // 2. Test COLONNE
+            Logger.log(">> Test de la disposition : COLONNE");
+            setLayoutMode('colonne');
+            var sizeNomColonne = measureOptimalSize('.dyn-txt-nom', config.minFontSizeNom);
+            var sizeClubColonne = measureOptimalSize('.dyn-txt-club', config.minFontSizeClub);
+
+            // 3. Choix final
+            var finalMode = (sizeNomLigne >= sizeNomColonne) ? 'ligne' : 'colonne';
+            Logger.log(">> Disposition finale choisie : " + finalMode.toUpperCase() + " (Critère: taille du nom max)");
+            setLayoutMode(finalMode);
+
+            // 4. Appliquer les tailles gagnantes aux Judokas
+            var finalSizeNom = (finalMode === 'ligne') ? sizeNomLigne : sizeNomColonne;
+            var finalSizeClub = (finalMode === 'ligne') ? sizeClubLigne : sizeClubColonne;
+
+            document.querySelectorAll('.dyn-txt-nom').forEach(function (el) { el.style.fontSize = finalSizeNom + 'px'; });
+            document.querySelectorAll('.dyn-txt-club').forEach(function (el) { el.style.fontSize = finalSizeClub + 'px'; });
+
+            // 5. Ajustement indépendant de la Catégorie (Ne rentre pas dans le choix Ligne/Colonne)
+            Logger.log(">> Ajustement de la boîte de Catégorie");
+            var finalSizeCatTitre = measureOptimalSize('.dyn-txt-cat-titre', config.minFontSizeCatTitre);
+            var finalSizeCatSub = measureOptimalSize('.dyn-txt-cat-sub', config.minFontSizeCatSub);
+
+            document.querySelectorAll('.dyn-txt-cat-titre').forEach(function (el) { el.style.fontSize = finalSizeCatTitre + 'px'; });
+            document.querySelectorAll('.dyn-txt-cat-sub').forEach(function (el) { el.style.fontSize = finalSizeCatSub + 'px'; });
+
+            Logger.log("--- FIN DE L'OPTIMISATION AUTO ---");
+        } else {
+            Logger.log("--- OPTIMISATION AUTO DÉSACTIVÉE (Mode forcé par paramètre) ---");
         }
 
-        // Lancer le premier affichage
         updateView();
-
-        // Démarrer le timer
-        // TODO A Remettre apres debug
         startTimer();
     }
 
+    // --- Fonctions d'Harmonisation et de Disposition ---
 
-    // --- Fonctions d'Harmonisation ---
+    // Permet de basculer instantanément tout l'affichage entre Ligne et Colonne
+    function setLayoutMode(mode) {
+        var containers = document.querySelectorAll('.w3-container');
 
-    function harmoniserGroupe(selector, defaultSizeVh) {
-        var elements = document.querySelectorAll(selector);
-        if (!elements.length) {
-            Logger.warn("Harmonisation : Aucun élément trouvé pour", selector);
-            return;
-        }
+        containers.forEach(function (el) {
+            var nom = el.querySelector('.dyn-txt-nom');
+            var club = el.querySelector('.dyn-txt-club');
 
-        var baseSizePx = Math.floor(window.innerHeight * (defaultSizeVh / 100));
-
-        // C'est cette variable qui va servir de "plafond" pour les éléments suivants
-        var tailleMinOptimale = baseSizePx;
-
-        Logger.log(">> Analyse de", elements.length, "éléments pour", selector, "(Cible : " + baseSizePx + "px)");
-
-        elements.forEach(function (el, index) {
-            // OPTIMISATION MAJEURE : On part directement du plus petit record actuel !
-            el.style.fontSize = tailleMinOptimale + "px";
-
-            var espaceDispo = el.clientWidth || (el.parentElement ? el.parentElement.clientWidth : 0);
-
-            // Si le texte rentre déjà avec le record actuel, on passe directement au suivant ! (ZÉRO itération)
-            if (el.scrollWidth <= espaceDispo) {
-                return; // Sortie précoce de la boucle forEach pour cet élément
+            // --- Judoka 1 (Droite) ---
+            if (el.classList.contains('jc-normal-ligne-right') || el.classList.contains('jc-normal-colonne-right')) {
+                if (mode === 'ligne') {
+                    el.classList.remove('jc-normal-colonne-right'); el.classList.add('jc-normal-ligne-right');
+                    if (nom) { nom.classList.remove('order-1'); nom.classList.add('order-2'); }
+                    if (club) { club.classList.remove('order-2', 'club-colonne'); club.classList.add('order-1', 'club-ligne-right'); }
+                } else {
+                    el.classList.remove('jc-normal-ligne-right'); el.classList.add('jc-normal-colonne-right');
+                    if (nom) { nom.classList.remove('order-2'); nom.classList.add('order-1'); }
+                    if (club) { club.classList.remove('order-1', 'club-ligne-right'); club.classList.add('order-2', 'club-colonne'); }
+                }
             }
-
-            Logger.log("   [NOUVEAU DÉPASSEMENT] Elément", index, "('", el.innerText.substring(0, 15), "...')");
-            Logger.log("     -> Ne rentre pas à", tailleMinOptimale, "px. scrollWidth:", el.scrollWidth, " Espace:", espaceDispo);
-
-            // S'il ne rentre pas, on réduit à partir du record actuel
-            var fontSizeTemp = tailleMinOptimale;
-            var tentatives = 0;
-
-            while (el.scrollWidth > espaceDispo && fontSizeTemp > 8 && tentatives < 15) {
-                fontSizeTemp -= 1;
-                el.style.fontSize = fontSizeTemp + "px";
-                tentatives++;
+            // --- Judoka 2 (Gauche) ---
+            else if (el.classList.contains('jc-normal-ligne-left') || el.classList.contains('jc-normal-colonne-left')) {
+                if (mode === 'ligne') {
+                    el.classList.remove('jc-normal-colonne-left'); el.classList.add('jc-normal-ligne-left');
+                    if (nom) { nom.classList.remove('order-2'); nom.classList.add('order-1'); }
+                    if (club) { club.classList.remove('order-2', 'club-colonne'); club.classList.add('order-2', 'club-ligne-left'); }
+                } else {
+                    el.classList.remove('jc-normal-ligne-left'); el.classList.add('jc-normal-colonne-left');
+                    if (nom) { nom.classList.remove('order-2'); nom.classList.add('order-1'); }
+                    if (club) { club.classList.remove('order-2', 'club-ligne-left'); club.classList.add('order-2', 'club-colonne'); }
+                }
             }
-
-            // On met à jour le nouveau record absolu pour les prochains éléments
-            if (fontSizeTemp < tailleMinOptimale) {
-                tailleMinOptimale = fontSizeTemp;
-                Logger.log("     -> Nouveau record global établi :", tailleMinOptimale, "px");
+            // --- En Attente ---
+            else if (el.classList.contains('jc-attente-ligne') || el.classList.contains('jc-attente-colonne')) {
+                if (mode === 'ligne') {
+                    el.classList.remove('jc-attente-colonne'); el.classList.add('jc-attente-ligne');
+                } else {
+                    el.classList.remove('jc-attente-ligne'); el.classList.add('jc-attente-colonne');
+                }
             }
-        });
-
-        Logger.log(">> Taille globale finale appliquée pour", selector, ":", tailleMinOptimale, "px");
-
-        // On applique la taille minimale finale (le plus petit record) à tout le monde
-        elements.forEach(function (el) {
-            el.style.fontSize = tailleMinOptimale + "px";
         });
     }
+
+    // Calcule la plus grande taille possible où aucun texte ne déborde
+    function measureOptimalSize(selector, minSizePx) {
+        var elements = document.querySelectorAll(selector);
+        if (!elements.length) {
+            Logger.warn("Mesure (" + selector + ") : Aucun élément trouvé.");
+            return minSizePx;
+        }
+
+        // Reset pour s'assurer qu'aucun style inline résiduel ne fausse la mesure initiale
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].style.fontSize = '';
+        }
+
+        // On détermine la taille de départ (Max théorique du CSS) sur le 1er élément
+        var computedStyle = window.getComputedStyle(elements[0]);
+        var baseSizePx = parseFloat(computedStyle.fontSize);
+        if (isNaN(baseSizePx)) baseSizePx = 30; // Fallback de sécurité
+
+        var tailleMinOptimale = baseSizePx;
+        var hasElements = false;
+
+        Logger.log(">> Début mesure pour " + selector + " | Max théorique (CSS): " + baseSizePx + "px | Min autorisé: " + minSizePx + "px");
+
+        // Utilisation d'une boucle for classique pour pouvoir utiliser 'break'
+        for (var i = 0; i < elements.length; i++) {
+            var el = elements[i];
+
+            // OPTIMISATION ULTIME : Si on a déjà touché le fond lors d'un test précédent, on arrête tout !
+            if (tailleMinOptimale <= minSizePx) {
+                Logger.log("   [STOP] Taille minimum absolue (" + minSizePx + "px) atteinte. Inutile de tester le reste.");
+                tailleMinOptimale = minSizePx;
+                break;
+            }
+
+            // On teste avec le record actuel
+            el.style.fontSize = tailleMinOptimale + "px";
+            var espaceDispo = el.clientWidth || (el.parentElement ? el.parentElement.clientWidth : 0);
+
+            // Si ça rentre, on passe directement au judoka suivant
+            if (el.scrollWidth <= espaceDispo) {
+                hasElements = true;
+                continue;
+            }
+
+            // S'il y a dépassement, on trace
+            var texteExtrait = el.innerText.replace(/\n/g, ' ').trim().substring(0, 15);
+            Logger.log("   [DÉPASSEMENT] Élément '" + texteExtrait + "...'");
+            Logger.log("     -> Ne rentre pas à " + tailleMinOptimale + "px (scrollWidth: " + el.scrollWidth + "px > espace: " + espaceDispo + "px)");
+
+            var fontSizeTemp = tailleMinOptimale;
+
+            // Boucle de réduction pixel par pixel
+            while (el.scrollWidth > espaceDispo && fontSizeTemp > minSizePx) {
+                fontSizeTemp -= 1;
+                el.style.fontSize = fontSizeTemp + "px";
+            }
+
+            // Mise à jour du nouveau plafond
+            if (fontSizeTemp < tailleMinOptimale) {
+                tailleMinOptimale = fontSizeTemp;
+                Logger.log("     -> [AJUSTEMENT] Nouvelle taille retenue : " + tailleMinOptimale + "px");
+            }
+            hasElements = true;
+        }
+
+        // Nettoyage post-mesure pour laisser un DOM propre pour le prochain test
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].style.fontSize = '';
+        }
+
+        if (!hasElements) return minSizePx;
+        Logger.log(">> Fin mesure pour " + selector + " | Taille finale retenue : " + tailleMinOptimale + "px");
+        return tailleMinOptimale;
+    }
+    
 
     // --- Gestion du Timer et Barre de progression ---
     function startTimer() {
@@ -200,7 +298,8 @@
         return false; // Cycle en cours
     }
 
-    // --- Mise à jour de l'affichage (DOM) ---
+    // --- Mise à jour de l'affichage (DOM) --
+
     function updateView() {
         // 1. Gestion des Tapis (Masquer/Afficher les blocs Tapis entiers)
         var allTapis = document.querySelectorAll('.tapis-card');
@@ -227,7 +326,7 @@
         var maxPagesLocal = 1;
         for (var i = 0; i < visibleTapis.length; i++) {
             var tapisDiv = visibleTapis[i];
-            var rows = tapisDiv.querySelectorAll('.combat-row');
+            var rows = tapisDiv.querySelectorAll('.grid-combat-row');
             var nbPagesCeTapis = Math.ceil(rows.length / config.combatsParPage) || 1;
             if (nbPagesCeTapis > maxPagesLocal) {
                 maxPagesLocal = nbPagesCeTapis;
@@ -238,7 +337,7 @@
         // 3. Affichage des lignes de combats pour chaque tapis visible
         for (var i = 0; i < visibleTapis.length; i++) {
             var tapisDiv = visibleTapis[i];
-            var rows = tapisDiv.querySelectorAll('.combat-row');
+            var rows = tapisDiv.querySelectorAll('.grid-combat-row');
             var localMaxPage = Math.ceil(rows.length / config.combatsParPage) || 1;
 
             // Fige le tapis sur sa dernière page en attendant que le tapis voisin termine
