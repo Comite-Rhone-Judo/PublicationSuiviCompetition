@@ -161,6 +161,9 @@ namespace AppPublication.ViewModels.Configuration
                     _model.Disposition = value;
                     NotifyPropertyChanged();
 
+                    // On doit notifier pour assurer le changement
+                    NotifyPropertyChanged(nameof(Groupement));
+
                     // SAUVEGARDE IMMEDIATE
                     var cfg = GetConfigElement();
                     if (cfg != null)

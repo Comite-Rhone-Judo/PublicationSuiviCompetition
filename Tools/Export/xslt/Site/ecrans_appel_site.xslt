@@ -162,6 +162,15 @@
 					<!-- La version -->
 					<div class="w3-cell w3-cell-middle w3-right-align w3-opacity w3-padding-small" style="width: 15%; font-size: 1.5vh;">
 						v<xsl:value-of select="$appVersion"/>
+						<br/>
+						<span>
+							<xsl:choose>
+								<xsl:when test="$idEcran = '-1'">(Ecran par défaut)</xsl:when>
+								<xsl:otherwise>
+									(Ecran n° <xsl:value-of select="$idEcran"/>)
+								</xsl:otherwise>
+							</xsl:choose>
+						</span>
 					</div>
 				</div>
 

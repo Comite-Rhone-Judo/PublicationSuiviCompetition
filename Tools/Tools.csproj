@@ -160,7 +160,6 @@
     <EmbeddedResource Include="Export\xslt\Site\ecrans_appel_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Export\style\site\style-ecran-appel-old.css" />
     <Compile Include="Export\PhysicalStructureBase.cs" />
     <Compile Include="Export\UrlGeneratorBase.cs" />
     <Compile Include="Framework\RelayCommand.cs" />
