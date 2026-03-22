@@ -41,7 +41,6 @@ namespace AppPublication.Models.EcransAppel
                 {
                     if (_nbTapis >= 0)
                     {
-                        // TODO Bug du comportement: en cas de n° de tapis non configuré (ex: on a 4 tapis sur la competition mais un écran d'appel avec tapis 5 et 6): on affiche les tapis 7 et 8
                         _nbTapis = value;
                         // Actualise les tapis par défaut pour l'écran d'appel par défaut
                         if (_default != null)

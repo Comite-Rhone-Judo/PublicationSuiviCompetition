@@ -310,7 +310,7 @@
 
                                 <telerik:GridViewDataColumn Header="N°" DataMemberBinding="{Binding Id}" IsReadOnly="True" Width="25" TextAlignment="Center" ToolTip="ID autogénéré de l'écran" />
 
-                                <telerik:GridViewDataColumn Header="Description" DataMemberBinding="{Binding Description}" Width="145">
+                                <telerik:GridViewDataColumn Header="Description" DataMemberBinding="{Binding Description}" Width="90">
                                     <telerik:GridViewDataColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding Description}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="5"/>
@@ -339,7 +339,12 @@
                                     </telerik:GridViewColumn.CellTemplate>
                                 </telerik:GridViewDataColumn>
 
-                                <telerik:GridViewDataColumn Header="Page" Width="50" ToolTip="Indique le nombre de combats a afficher par page. Attention, si trop de combats sont spécifiés, la liste peut être tronquée par manque de place su l'écran">
+                                <telerik:GridViewDataColumn Header="# Combats" Width="72">
+                                    <telerik:GridViewDataColumn.HeaderCellStyle>
+                                        <Style TargetType="telerik:GridViewHeaderCell" BasedOn="{StaticResource {x:Type telerik:GridViewHeaderCell}}">
+                                            <Setter Property="ToolTip" Value="Indique le nombre de combats a afficher sur un tapis. Attention, si trop de combats sont spécifiés, la liste peut être tronquée par manque de place sur l'écran" />
+                                        </Style>
+                                    </telerik:GridViewDataColumn.HeaderCellStyle>
                                     <telerik:GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding NbCombatsPage}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5"/>
@@ -358,10 +363,27 @@
 
                                 </telerik:GridViewDataColumn>
 
-                                <telerik:GridViewDataColumn Header="Groupe" IsResizable="False" Width="55" ToolTip="Nombre de tapis par groupe (1, 2 ou 4)">
+                                <!-- TODO Revoir la gestion de la dispostion pour afficher 2x4 ou 4x2 etc. et en déduire les parametres
+                                    Converter pour traduire Disposition/Nb <> LxC
+                                    et/ou créer dans le Viex Model la génération des dispositions possible selon orientation
+                                -->
+                                <telerik:GridViewDataColumn Header="Disposition" IsResizable="False" Width="85">
+                                    <telerik:GridViewDataColumn.HeaderCellStyle>
+                                        <Style TargetType="telerik:GridViewHeaderCell" BasedOn="{StaticResource {x:Type telerik:GridViewHeaderCell}}">
+                                            <Setter Property="ToolTip" Value="Nombre de tapis a grouper sur un seul écran (1, 2, 4, 6 ou 8). Attention, si on groupe trop de tapis sur un écran trop petit, les textes peuvent être tronqués"/>
+                                        </Style>
+                                    </telerik:GridViewDataColumn.HeaderCellStyle>
+
                                     <telerik:GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Groupement}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5"/>
+                                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
+                                                <TextBlock.Text>
+                                                    <MultiBinding Converter="{StaticResource GroupementConverter}">
+                                                        <Binding Path="Groupement" />
+                                                        <Binding Path="Disposition" />
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
                                         </DataTemplate>
                                     </telerik:GridViewColumn.CellTemplate>
                                     <telerik:GridViewColumn.CellEditTemplate>
@@ -371,13 +393,30 @@
                                                          telerik:StyleManager.Theme="Expression_Dark"
                                                          VerticalAlignment="Center"
                                                          HorizontalAlignment="Stretch"
-                                                         Margin="2"/>
+                                                         Margin="2">
+                                                <telerik:RadComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock>
+                                                            <TextBlock.Text>
+                                                                <MultiBinding Converter="{StaticResource GroupementConverter}">
+                                                                    <Binding />
+                                                                    <Binding Path="DataContext.Disposition" RelativeSource="{RelativeSource AncestorType=telerik:RadComboBox}" />
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
+                                                    </DataTemplate>
+                                                </telerik:RadComboBox.ItemTemplate>
+                                            </telerik:RadComboBox>
                                         </DataTemplate>
                                     </telerik:GridViewColumn.CellEditTemplate>
                                 </telerik:GridViewDataColumn>
 
-                                <telerik:GridViewDataColumn Header="Disposition" IsResizable="False" Width="80" ToolTip="Disposition de l'affichage sur l'écran (Ligne ou Colonne)">
-
+                                <telerik:GridViewDataColumn Header="Tapis en" IsResizable="False" Width="65">
+                                    <telerik:GridViewDataColumn.HeaderCellStyle>
+                                        <Style TargetType="telerik:GridViewHeaderCell" BasedOn="{StaticResource {x:Type telerik:GridViewHeaderCell}}">
+                                            <Setter Property="ToolTip" Value="Disposition des tapis à l'affichage sur l'écran (Ligne ou Colonne)"/>
+                                        </Style>
+                                    </telerik:GridViewDataColumn.HeaderCellStyle>
                                     <telerik:GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding Disposition}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5"/>
@@ -397,29 +436,62 @@
                                     
                                   </telerik:GridViewDataColumn>
 
-                                <telerik:GridViewDataColumn Header="Combat" IsResizable="False" Width="80" ToolTip="Disposition de l'affichage des combats">
+                                <telerik:GridViewDataColumn Header="Combats en"
+                                                            IsResizable="False"
+                                                            Width="80"
+                                                            IsReadOnlyBinding="{Binding AjusteTailleTexte}">
+                                    <telerik:GridViewDataColumn.HeaderCellStyle>
+                                        <Style TargetType="telerik:GridViewHeaderCell" BasedOn="{StaticResource {x:Type telerik:GridViewHeaderCell}}">
+                                            <Setter Property="ToolTip" Value="Disposition de l'affichage des combats, soit en ligne (écartement/Nom sur la même ligne) ou colonne (écartement/Nom empilé"/>
+                                        </Style>
+                                    </telerik:GridViewDataColumn.HeaderCellStyle>
+                                    <telerik:GridViewDataColumn.CellStyle>
+                                        <Style TargetType="telerik:GridViewCell" BasedOn="{StaticResource {x:Type telerik:GridViewCell}}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding AjusteTailleTexte}" Value="True">
+                                                    <Setter Property="Foreground" Value="LightSlateGray" />
+                                                    <Setter Property="Opacity" Value="1.0" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </telerik:GridViewDataColumn.CellStyle>
 
                                     <telerik:GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding DispositionCombat}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5"/>
+                                            <TextBlock x:Name="TxtDispositionCombat" Text="{Binding DispositionCombat}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5"/>
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding AjusteTailleTexte}" Value="True">
+                                                    <Setter TargetName="TxtDispositionCombat" Property="Foreground" Value="DimGray" />
+                                                    <Setter TargetName="TxtDispositionCombat" Property="Opacity" Value="0.6" />
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
                                         </DataTemplate>
                                     </telerik:GridViewColumn.CellTemplate>
 
                                     <telerik:GridViewColumn.CellEditTemplate>
                                         <DataTemplate>
-                                            <telerik:RadComboBox ItemsSource="{Binding DispositionOptions}" 
+                                            <telerik:RadComboBox x:Name="ComboDispositionCombat" ItemsSource="{Binding DispositionOptions}" 
                                      SelectedItem="{Binding DispositionCombat, Mode=TwoWay}"
                                      telerik:StyleManager.Theme="Expression_Dark"
                                      VerticalAlignment="Center"
                                      HorizontalAlignment="Stretch"
                                      Margin="2"/>
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding AjusteTailleTexte}" Value="True">
+                                                    <Setter TargetName="ComboDispositionCombat" Property="IsEnabled" Value="False" />
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
                                         </DataTemplate>
                                     </telerik:GridViewColumn.CellEditTemplate>
 
                                 </telerik:GridViewDataColumn>
 
-                                <telerik:GridViewDataColumn Header="Ajustement" IsResizable="False" Width="70" ToolTip="Calcul la taille des textes automatiquement pour ajuster à la place disponibe. Peut ne pas fonctionner sur certains navigateurs, notamment SmartTV">
-
+                                <telerik:GridViewDataColumn Header="Ajustement" IsResizable="False" Width="75">
+                                    <telerik:GridViewDataColumn.HeaderCellStyle>
+                                        <Style TargetType="telerik:GridViewHeaderCell" BasedOn="{StaticResource {x:Type telerik:GridViewHeaderCell}}">
+                                            <Setter Property="ToolTip" Value="Calcul la taille des textes automatiquement pour ajuster à la place disponibe. Peut ne pas fonctionner sur certains navigateurs, notamment SmartTV"/>
+                                        </Style>
+                                    </telerik:GridViewDataColumn.HeaderCellStyle>
                                     <telerik:GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
@@ -449,7 +521,12 @@
                                     </telerik:GridViewColumn.CellEditTemplate>
                                 </telerik:GridViewDataColumn>
 
-                                <telerik:GridViewColumn Header="Tapis" IsResizable="False" Width="140" ToolTip="Liste des tapis à afficher sur l'écran">
+                                <telerik:GridViewColumn Header="Tapis affichés" IsResizable="False" Width="150">
+                                    <telerik:GridViewColumn.HeaderCellStyle>
+                                        <Style TargetType="telerik:GridViewHeaderCell" BasedOn="{StaticResource {x:Type telerik:GridViewHeaderCell}}">
+                                            <Setter Property="ToolTip" Value="Liste des tapis à afficher sur l'écran"/>
+                                        </Style>
+                                    </telerik:GridViewColumn.HeaderCellStyle>
                                     <telerik:GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding ListeTapisSelectionnesAffiche, FallbackValue='Aucun tapis'}" VerticalAlignment="Center" Margin="5"/>

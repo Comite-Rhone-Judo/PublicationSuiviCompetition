@@ -176,6 +176,7 @@
     <Compile Include="Statistiques\StatMgrGeneration.cs" />
     <Compile Include="Statistiques\StatMgrSynchronisation.cs" />
     <Compile Include="Tools\ActionWatcher.cs" />
+    <Compile Include="Tools\Converter\GroupementToLayoutConverter.cs" />
     <Compile Include="Tools\Converter\ValueToBoolConverter.cs" />
     <Compile Include="Publication\EcransAppelRedirectModule.cs" />
     <Compile Include="ViewModels\Configuration\ConfigurationEcransViewModel.cs" />

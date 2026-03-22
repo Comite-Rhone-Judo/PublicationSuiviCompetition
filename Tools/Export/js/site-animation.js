@@ -5,7 +5,14 @@
         combatsParPage: 5,      // Valeur par défaut
         layoutMode: 4,           // Valeur par défaut
         urlRedirecteur: '',     // Valeur par defaut
-        autoAjustementTexte: true // Par défaut activé
+        autoAjustementTexte: true, // Par défaut activé
+
+        // Constantes pour la taille minimum des textes (en pixels)
+        minFontSizeNom: 14,
+        minFontSizeClub: 12,
+        minFontSizeCatTitre: 12, // Limite basse pour le nom de la catégorie
+        minFontSizeCatSub: 10,    // Limite basse pour le niveau/tour
+        boostRatioTexte: 1.25    // Multiplicateur pour tenter d'agrandir la police CSS par défaut (1.25 = +25%)
     };
 
     var state = {
@@ -38,7 +45,6 @@
         state.progressBar = document.getElementById('progress-bar');
 
         if (container) {
-            // Lecture des paramètres depuis les attributs data- du XSLT
             config.dureeRotation = parseInt(container.getAttribute('data-duree-rotation')) || 10;
             config.combatsParPage = parseInt(container.getAttribute('data-combats-par-page')) || 8;
             config.layoutMode = parseInt(container.getAttribute('data-layout-mode')) || 4;
@@ -47,7 +53,6 @@
             config.autoAjustementTexte = (autoAjustAttr !== 'false');
         }
 
-        // Calculer le nombre total de groupes de tapis
         var allTapis = document.querySelectorAll('.tapis-card');
         var maxPage = 0;
         for (var i = 0; i < allTapis.length; i++) {
@@ -56,77 +61,356 @@
         }
         state.maxTapisGroups = maxPage;
 
-        // Exécution conditionnelle de l'harmonisation
+        // --- LOGIQUE D'OPTIMISATION AUTO (Proportionnelle) ---
         if (config.autoAjustementTexte) {
-            // Affichage temporaire indispensable UNIQUEMENT pour mesurer les tailles
+            Logger.log("--- DÉBUT DE L'OPTIMISATION AUTO ---");
             allTapis.forEach(function (t) { t.style.display = 'block'; });
 
-            harmoniserGroupe('.dyn-txt-nom', 4.5);
-            harmoniserGroupe('.dyn-txt-club', 2.5);
+            var containersGrid = document.querySelectorAll('.combat-grid-container');
+            containersGrid.forEach(function (c) { c.style.height = 'auto'; }); // Empêche l'écrasement vertical
+
+            // 1. Simulation LIGNE
+            var resultLigne = testLayoutMode('ligne');
+            Logger.log(">> LIGNE   -> Score Idéal: " + resultLigne.idealNomSize.toFixed(1) + "px | Taille Appliquée: " + resultLigne.nomSize.toFixed(1) + "px");
+
+            // 2. Simulation COLONNE
+            var resultColonne = testLayoutMode('colonne');
+            Logger.log(">> COLONNE -> Score Idéal: " + resultColonne.idealNomSize.toFixed(1) + "px | Taille Appliquée: " + resultColonne.nomSize.toFixed(1) + "px");
+
+            // 3. Choix : On compare la taille IDÉALE (mathématique) pour savoir qui a vraiment le plus de place
+            var bestMode = (resultLigne.idealNomSize >= resultColonne.idealNomSize) ? 'ligne' : 'colonne';
+            var bestResult = (bestMode === 'ligne') ? resultLigne : resultColonne;
+
+            Logger.log(">> Disposition finale choisie : " + bestMode.toUpperCase());
+            setLayoutMode(bestMode);
+
+            // 4. Application
+            document.querySelectorAll('.dyn-txt-nom').forEach(function (el) { el.style.fontSize = bestResult.nomSize + 'px'; });
+            document.querySelectorAll('.dyn-txt-club').forEach(function (el) { el.style.fontSize = bestResult.clubSize + 'px'; });
+
+            // 5. Ajustement Catégorie
+            adjustCategorySizes();
+
+            containersGrid.forEach(function (c) { c.style.height = ''; }); // Restauration visuelle
+            Logger.log("--- FIN DE L'OPTIMISATION AUTO ---");
+        } else {
+            Logger.log("--- OPTIMISATION AUTO DÉSACTIVÉE ---");
         }
 
-        // Lancer le premier affichage
         updateView();
-
-        // Démarrer le timer
-        // TODO A Remettre apres debug
         startTimer();
     }
 
+    // --- Fonctions d'Harmonisation et de Disposition ---
 
-    // --- Fonctions d'Harmonisation ---
+    // Permet de basculer instantanément tout l'affichage entre Ligne et Colonne
+    function setLayoutMode(mode) {
+        var containers = document.querySelectorAll('.w3-container');
 
-    function harmoniserGroupe(selector, defaultSizeVh) {
-        var elements = document.querySelectorAll(selector);
-        if (!elements.length) {
-            Logger.warn("Harmonisation : Aucun élément trouvé pour", selector);
-            return;
+        containers.forEach(function (el) {
+            var nom = el.querySelector('.dyn-txt-nom');
+            var club = el.querySelector('.dyn-txt-club');
+
+            // --- Judoka 1 (Droite) ---
+            if (el.classList.contains('jc-normal-ligne-right') || el.classList.contains('jc-normal-colonne-right')) {
+                if (mode === 'ligne') {
+                    el.classList.remove('jc-normal-colonne-right'); el.classList.add('jc-normal-ligne-right');
+                    if (nom) { nom.classList.remove('order-1'); nom.classList.add('order-2'); }
+                    if (club) { club.classList.remove('order-2', 'club-colonne'); club.classList.add('order-1', 'club-ligne-right'); }
+                } else {
+                    el.classList.remove('jc-normal-ligne-right'); el.classList.add('jc-normal-colonne-right');
+                    if (nom) { nom.classList.remove('order-2'); nom.classList.add('order-1'); }
+                    if (club) { club.classList.remove('order-1', 'club-ligne-right'); club.classList.add('order-2', 'club-colonne'); }
+                }
+            }
+            // --- Judoka 2 (Gauche) ---
+            else if (el.classList.contains('jc-normal-ligne-left') || el.classList.contains('jc-normal-colonne-left')) {
+                if (mode === 'ligne') {
+                    el.classList.remove('jc-normal-colonne-left'); el.classList.add('jc-normal-ligne-left');
+                    if (nom) { nom.classList.remove('order-2'); nom.classList.add('order-1'); }
+                    if (club) { club.classList.remove('order-2', 'club-colonne'); club.classList.add('order-2', 'club-ligne-left'); }
+                } else {
+                    el.classList.remove('jc-normal-ligne-left'); el.classList.add('jc-normal-colonne-left');
+                    if (nom) { nom.classList.remove('order-2'); nom.classList.add('order-1'); }
+                    if (club) { club.classList.remove('order-2', 'club-ligne-left'); club.classList.add('order-2', 'club-colonne'); }
+                }
+            }
+            // --- En Attente ---
+            else if (el.classList.contains('jc-attente-ligne') || el.classList.contains('jc-attente-colonne')) {
+                if (mode === 'ligne') {
+                    el.classList.remove('jc-attente-colonne'); el.classList.add('jc-attente-ligne');
+                } else {
+                    el.classList.remove('jc-attente-ligne'); el.classList.add('jc-attente-colonne');
+                }
+            }
+        });
+    }
+
+    // Teste une disposition avec l'algorithme HYBRIDE (+ Boost de taille initiale)
+    function testLayoutMode(mode) {
+        setLayoutMode(mode);
+        document.body.offsetHeight; // Force le rendu visuel
+
+        var containers = document.querySelectorAll('.judoka-box .w3-container');
+        var nomEls = document.querySelectorAll('.dyn-txt-nom');
+        var clubEls = document.querySelectorAll('.dyn-txt-club');
+
+        var baseNom = nomEls.length ? parseFloat(window.getComputedStyle(nomEls[0]).fontSize) || 30 : 30;
+        var baseClub = clubEls.length ? parseFloat(window.getComputedStyle(clubEls[0]).fontSize) || 15 : 15;
+        var ratioClub = baseClub / baseNom;
+
+        var minNom = config.minFontSizeNom;
+        var minClub = config.minFontSizeClub;
+
+        // Appel depuis la configuration
+        var currentNom = Math.floor(baseNom * config.boostRatioTexte);
+        var currentClub = Math.floor(baseClub * config.boostRatioTexte);
+
+        Logger.log("==================================================");
+        Logger.log(">> DÉMARRAGE HYBRIDE [" + mode.toUpperCase() + "] | Départ Nom=" + currentNom + "px (Boost x" + config.boostRatioTexte + ")");
+        Logger.log("==================================================");
+
+        var oldStyles = [];
+        for (var i = 0; i < containers.length; i++) {
+            var p = containers[i];
+            if (p.clientWidth === 0) continue;
+
+            p.setAttribute('data-dispo', p.clientWidth - 4);
+
+            var n = p.querySelector('.dyn-txt-nom');
+            var c = p.querySelector('.dyn-txt-club');
+
+            oldStyles.push({
+                p: p, n: n, c: c,
+                oO: p.style.overflow, oD: p.style.display, oW: p.style.width, oA: p.style.alignSelf,
+                nW: n ? n.style.width : '', nS: n ? n.style.flexShrink : '', nT: n ? n.style.textOverflow : '', nA: n ? n.style.alignSelf : '',
+                cW: c ? c.style.width : '', cS: c ? c.style.flexShrink : '', cT: c ? c.style.textOverflow : '', cA: c ? c.style.alignSelf : ''
+            });
+
+            p.style.display = 'inline-flex';
+            p.style.width = 'max-content';
+            p.style.alignSelf = 'flex-start';
+            p.style.overflow = 'visible';
+
+            if (n) { n.style.width = 'max-content'; n.style.flexShrink = '0'; n.style.textOverflow = 'clip'; n.style.alignSelf = 'flex-start'; }
+            if (c) { c.style.width = 'max-content'; c.style.flexShrink = '0'; c.style.textOverflow = 'clip'; c.style.alignSelf = 'flex-start'; }
         }
 
-        var baseSizePx = Math.floor(window.innerHeight * (defaultSizeVh / 100));
-
-        // C'est cette variable qui va servir de "plafond" pour les éléments suivants
-        var tailleMinOptimale = baseSizePx;
-
-        Logger.log(">> Analyse de", elements.length, "éléments pour", selector, "(Cible : " + baseSizePx + "px)");
-
-        elements.forEach(function (el, index) {
-            // OPTIMISATION MAJEURE : On part directement du plus petit record actuel !
-            el.style.fontSize = tailleMinOptimale + "px";
-
-            var espaceDispo = el.clientWidth || (el.parentElement ? el.parentElement.clientWidth : 0);
-
-            // Si le texte rentre déjà avec le record actuel, on passe directement au suivant ! (ZÉRO itération)
-            if (el.scrollWidth <= espaceDispo) {
-                return; // Sortie précoce de la boucle forEach pour cet élément
+        for (var i = 0; i < containers.length; i++) {
+            if (currentNom <= minNom) {
+                Logger.log("   [STOP] Plancher (" + minNom + "px) atteint.");
+                currentNom = minNom;
+                break;
             }
 
-            Logger.log("   [NOUVEAU DÉPASSEMENT] Elément", index, "('", el.innerText.substring(0, 15), "...')");
-            Logger.log("     -> Ne rentre pas à", tailleMinOptimale, "px. scrollWidth:", el.scrollWidth, " Espace:", espaceDispo);
+            var p = containers[i];
+            if (!p.hasAttribute('data-dispo')) continue;
 
-            // S'il ne rentre pas, on réduit à partir du record actuel
-            var fontSizeTemp = tailleMinOptimale;
-            var tentatives = 0;
+            var n = p.querySelector('.dyn-txt-nom');
+            var c = p.querySelector('.dyn-txt-club');
 
-            while (el.scrollWidth > espaceDispo && fontSizeTemp > 8 && tentatives < 15) {
-                fontSizeTemp -= 1;
-                el.style.fontSize = fontSizeTemp + "px";
-                tentatives++;
+            if (n) n.style.fontSize = currentNom + 'px';
+            if (c) c.style.fontSize = currentClub + 'px';
+
+            var espaceDispo = parseFloat(p.getAttribute('data-dispo'));
+            var required = p.scrollWidth;
+
+            var txt = n ? n.innerText.replace(/\n/g, ' ').trim().substring(0, 15) : 'N/A';
+
+            if (required <= espaceDispo) {
+                continue; // Le Boost passe sans problème pour ce judoka !
             }
 
-            // On met à jour le nouveau record absolu pour les prochains éléments
-            if (fontSizeTemp < tailleMinOptimale) {
-                tailleMinOptimale = fontSizeTemp;
-                Logger.log("     -> Nouveau record global établi :", tailleMinOptimale, "px");
+            Logger.log("   [DÉBORDEMENT] '" + txt + "...' -> Requis: " + required + "px > Dispo: " + espaceDispo + "px");
+
+            var scale = espaceDispo / required;
+            currentNom = Math.floor(currentNom * scale);
+            currentClub = Math.max(Math.floor(currentNom * ratioClub), minClub);
+
+            if (n) n.style.fontSize = currentNom + 'px';
+            if (c) c.style.fontSize = currentClub + 'px';
+
+            required = p.scrollWidth;
+
+            var loopCount = 0;
+            Logger.log("      -> [ÉTAPE B] Post-ratio: Requis " + required + "px | Dispo " + espaceDispo + "px");
+
+            while (required > espaceDispo && currentNom > minNom) {
+                loopCount++;
+                currentNom--;
+                currentClub = Math.max(Math.floor(currentNom * ratioClub), minClub);
+
+                if (n) n.style.fontSize = currentNom + 'px';
+                if (c) c.style.fontSize = currentClub + 'px';
+
+                required = p.scrollWidth;
+                Logger.log("         - Baisse à " + currentNom + "px (Nouvel encombrement: " + required + "px)");
             }
-        });
 
-        Logger.log(">> Taille globale finale appliquée pour", selector, ":", tailleMinOptimale, "px");
+            Logger.log("      -> [RÉSOLU] Plafond verrouillé à : " + currentNom + "px");
+        }
 
-        // On applique la taille minimale finale (le plus petit record) à tout le monde
-        elements.forEach(function (el) {
-            el.style.fontSize = tailleMinOptimale + "px";
-        });
+        for (var i = 0; i < oldStyles.length; i++) {
+            var s = oldStyles[i];
+            s.p.style.display = s.oD;
+            s.p.style.width = s.oW;
+            s.p.style.alignSelf = s.oA;
+            s.p.style.overflow = s.oO;
+            if (s.n) { s.n.style.width = s.nW; s.n.style.flexShrink = s.nS; s.n.style.textOverflow = s.nT; s.n.style.alignSelf = s.nA; s.n.style.fontSize = ''; }
+            if (s.c) { s.c.style.width = s.cW; s.c.style.flexShrink = s.cS; s.c.style.textOverflow = s.cT; s.c.style.alignSelf = s.cA; s.c.style.fontSize = ''; }
+        }
+
+        return {
+            mode: mode,
+            nomSize: Math.max(currentNom, minNom),
+            clubSize: Math.max(currentClub, minClub),
+            idealNomSize: currentNom
+        };
+    }
+
+    // Ajustement des catégories (Calcul INDÉPENDANT avec lecture directe de l'Espace Interne)
+    function adjustCategorySizes() {
+        var boxes = document.querySelectorAll('.cat-box');
+        var titres = document.querySelectorAll('.dyn-txt-cat-titre');
+        var subs = document.querySelectorAll('.dyn-txt-cat-sub');
+
+        if (!titres.length) return;
+
+        var baseTitre = parseFloat(window.getComputedStyle(titres[0]).fontSize) || 20;
+        var baseSub = subs.length ? parseFloat(window.getComputedStyle(subs[0]).fontSize) || 15 : 15;
+
+        var minTitre = config.minFontSizeCatTitre || 12;
+        var minSub = config.minFontSizeCatSub || 10;
+        var boostRatio = config.boostRatioTexte || 1.25;
+
+        var currentTitre = Math.floor(baseTitre * boostRatio);
+        var currentSub = Math.floor(baseSub * boostRatio);
+
+        Logger.log("==================================================");
+        Logger.log(">> DÉMARRAGE HYBRIDE [CATÉGORIE] (Moteur Padding Interne)");
+        Logger.log(">> Départ Titre=" + currentTitre + "px, Sub=" + currentSub + "px");
+        Logger.log("==================================================");
+
+        // 1. PRÉPARATION : Mesure de l'espace interne et libération des enfants
+        var oldStyles = [];
+        for (var i = 0; i < boxes.length; i++) {
+            var box = boxes[i];
+            if (box.clientWidth === 0) continue;
+
+            // Calcul EXACT de la place disponible pour le texte : ClientWidth - Padding Left - Padding Right
+            var compStyle = window.getComputedStyle(box);
+            var paddingX = parseFloat(compStyle.paddingLeft) + parseFloat(compStyle.paddingRight);
+            var espaceInterne = box.clientWidth - paddingX - 2; // -2px de marge de sécurité absolue
+
+            box.setAttribute('data-dispo', espaceInterne);
+
+            var divs = box.querySelectorAll('div');
+            var divStyles = [];
+            for (var d = 0; d < divs.length; d++) {
+                divStyles.push({
+                    d: divs[d].style.display,
+                    w: divs[d].style.width,
+                    f: divs[d].style.flexShrink,
+                    t: divs[d].style.textOverflow
+                });
+
+                // On transforme le texte en bloc autonome mesurable
+                divs[d].style.display = 'inline-block';
+                divs[d].style.width = 'max-content';
+                divs[d].style.flexShrink = '0';
+                divs[d].style.textOverflow = 'clip';
+            }
+            oldStyles.push({ box: box, divs: divs, divStyles: divStyles });
+        }
+
+        // 2. BOUCLE DE MESURE
+        for (var i = 0; i < boxes.length; i++) {
+            if (currentTitre <= minTitre && currentSub <= minSub) {
+                Logger.log("   [STOP GLOBAL] Planchers Titre et Sub atteints.");
+                break;
+            }
+
+            var box = boxes[i];
+            if (!box.hasAttribute('data-dispo')) continue;
+
+            var tEl = box.querySelector('.dyn-txt-cat-titre');
+            var sEl = box.querySelector('.dyn-txt-cat-sub');
+            var espaceDispo = parseFloat(box.getAttribute('data-dispo')); // L'espace SANS le padding !
+
+            var titreTexte = tEl ? tEl.innerText.replace(/\n/g, ' ').trim() : '';
+            var subTexte = sEl ? sEl.innerText.replace(/\n/g, ' ').trim() : '';
+
+            // --- A. Ajustement du TITRE ---
+            if (tEl && currentTitre > minTitre) {
+                tEl.style.fontSize = currentTitre + 'px';
+                var reqT = tEl.scrollWidth; // On mesure directement le texte
+
+                if (reqT > espaceDispo) {
+                    Logger.log("   [DÉBORDEMENT TITRE] '" + titreTexte + "' -> Requis: " + reqT + "px > Dispo: " + espaceDispo + "px");
+
+                    var scaleT = espaceDispo / reqT;
+                    currentTitre = Math.max(Math.floor(currentTitre * scaleT), minTitre);
+                    tEl.style.fontSize = currentTitre + 'px';
+                    reqT = tEl.scrollWidth;
+
+                    var loops = 0;
+                    while (reqT > espaceDispo && currentTitre > minTitre) {
+                        loops++;
+                        currentTitre--;
+                        tEl.style.fontSize = currentTitre + 'px';
+                        reqT = tEl.scrollWidth;
+                        Logger.log("         - Titre iter " + loops + ": Baisse à " + currentTitre + "px (Texte pur: " + reqT + "px)");
+                    }
+                    Logger.log("      -> [TITRE RÉSOLU] Plafond Titre fixé à : " + currentTitre + "px");
+                } else {
+                    Logger.log("   [OK TITRE] '" + titreTexte + "' passe à " + currentTitre + "px (Requis: " + reqT + " <= " + espaceDispo + ")");
+                }
+            }
+
+            // --- B. Ajustement du SOUS-TITRE ---
+            if (sEl && currentSub > minSub) {
+                sEl.style.fontSize = currentSub + 'px';
+                var reqS = sEl.scrollWidth; // On mesure directement le texte
+
+                if (reqS > espaceDispo) {
+                    Logger.log("   [DÉBORDEMENT SUB] '" + subTexte + "' -> Requis: " + reqS + "px > Dispo: " + espaceDispo + "px");
+
+                    var scaleS = espaceDispo / reqS;
+                    currentSub = Math.max(Math.floor(currentSub * scaleS), minSub);
+                    sEl.style.fontSize = currentSub + 'px';
+                    reqS = sEl.scrollWidth;
+
+                    var loops = 0;
+                    while (reqS > espaceDispo && currentSub > minSub) {
+                        loops++;
+                        currentSub--;
+                        sEl.style.fontSize = currentSub + 'px';
+                        reqS = sEl.scrollWidth;
+                        Logger.log("         - Sub iter " + loops + ": Baisse à " + currentSub + "px (Texte pur: " + reqS + "px)");
+                    }
+                    Logger.log("      -> [SUB RÉSOLU] Plafond Sub fixé à : " + currentSub + "px");
+                } else {
+                    Logger.log("   [OK SUB] '" + subTexte + "' passe à " + currentSub + "px (Requis: " + reqS + " <= " + espaceDispo + ")");
+                }
+            }
+        }
+
+        // 3. RESTAURATION
+        for (var i = 0; i < oldStyles.length; i++) {
+            var s = oldStyles[i];
+            for (var d = 0; d < s.divs.length; d++) {
+                s.divs[d].style.display = s.divStyles[d].d;
+                s.divs[d].style.width = s.divStyles[d].w;
+                s.divs[d].style.flexShrink = s.divStyles[d].f;
+                s.divs[d].style.textOverflow = s.divStyles[d].t;
+                s.divs[d].style.fontSize = '';
+            }
+        }
+
+        titres.forEach(function (t) { t.style.fontSize = currentTitre + 'px'; });
+        subs.forEach(function (s) { s.style.fontSize = currentSub + 'px'; });
+
+        Logger.log(">> BILAN FINAL [CATÉGORIE] -> Titre : " + currentTitre + "px | Sub : " + currentSub + "px");
     }
 
     // --- Gestion du Timer et Barre de progression ---
@@ -200,7 +484,7 @@
         return false; // Cycle en cours
     }
 
-    // --- Mise à jour de l'affichage (DOM) ---
+    // --- Mise à jour de l'affichage (DOM) --
     function updateView() {
         // 1. Gestion des Tapis (Masquer/Afficher les blocs Tapis entiers)
         var allTapis = document.querySelectorAll('.tapis-card');
@@ -227,7 +511,7 @@
         var maxPagesLocal = 1;
         for (var i = 0; i < visibleTapis.length; i++) {
             var tapisDiv = visibleTapis[i];
-            var rows = tapisDiv.querySelectorAll('.combat-row');
+            var rows = tapisDiv.querySelectorAll('.grid-combat-row');
             var nbPagesCeTapis = Math.ceil(rows.length / config.combatsParPage) || 1;
             if (nbPagesCeTapis > maxPagesLocal) {
                 maxPagesLocal = nbPagesCeTapis;
@@ -238,7 +522,7 @@
         // 3. Affichage des lignes de combats pour chaque tapis visible
         for (var i = 0; i < visibleTapis.length; i++) {
             var tapisDiv = visibleTapis[i];
-            var rows = tapisDiv.querySelectorAll('.combat-row');
+            var rows = tapisDiv.querySelectorAll('.grid-combat-row');
             var localMaxPage = Math.ceil(rows.length / config.combatsParPage) || 1;
 
             // Fige le tapis sur sa dernière page en attendant que le tapis voisin termine
