@@ -44,7 +44,7 @@
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
                         <Label HorizontalAlignment="Right" Content="Actualisation site public:" Style="{StaticResource LabelStyle}" />
-                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en sec. entre 2 générations du site pour le grand public."/>
+                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en secondes entre 2 générations du site pour le grand public."/>
                     </StackPanel>
                     <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
                         <telerik:RadNumericUpDown Value="{Binding GestionnaireSitePublique.DelaiGenerationSec}" Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="0 0 0 0"/>
@@ -53,7 +53,7 @@
 
                     <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal">
                         <Label HorizontalAlignment="Right" Content="Actualisation site interne:" Style="{StaticResource LabelStyle}" />
-                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en sec. entre 2 générations du site interne."/>
+                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en secondes entre 2 générations du site interne."/>
                     </StackPanel>
                     <StackPanel Grid.Row="0" Grid.Column="4" Orientation="Horizontal">
                         <telerik:RadNumericUpDown  Value="{Binding GestionnaireSiteInterne.DelaiGenerationSec}" Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="0 0 0 0"/>
@@ -67,11 +67,11 @@
 
                     <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Margin="0 10 0 0">
                         <Label  HorizontalAlignment="Right" Content="Sélection du logo:" Style="{StaticResource LabelStyle}" />
-                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Logo a afficher dans le bandeau d'entête du site"/>
+                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Logo à afficher dans le bandeau d'entête du site"/>
                     </StackPanel>
                     <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal">
                         <telerik:RadComboBox ItemsSource="{Binding FichiersLogo}" Height="20" Width="130" DisplayMemberPath="Name" Name="LogoList" Margin="10 0 0 0" IsSynchronizedWithCurrentItem="True" SelectedItem="{Binding SelectedLogo}"/>
-                        <telerik:RadButton ToolTip="Ajouter un logo: Format: png, taille max.: 200x200. le fichier contenir 'logo' dans son nom" telerik:StyleManager.Theme="Expression_Dark" Height="32" Width="32"
+                        <telerik:RadButton ToolTip="Ajouter un logo: Format: png, taille max.: 200x200. le fichier doit contenir 'logo' dans son nom" telerik:StyleManager.Theme="Expression_Dark" Height="32" Width="32"
                             Focusable="False" Tag="pack://application:,,,/Tools;component/data/images/icons/black/add_image-32.png" Margin="5 0 0 0"
                             Command="{Binding Path=CmdAjouterLogo}">
                             <WrapPanel Orientation="Horizontal">
@@ -85,7 +85,7 @@
 
                     <StackPanel Grid.Row="2" Grid.Column="3" Orientation="Horizontal" Margin="0 10 0 0">
                         <Label HorizontalAlignment="Right" Content="Répertoire d'export:" Style="{StaticResource LabelStyle}" />
-                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Répertoire racine dans lequel les données du site sont générées et publiés"/>
+                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Répertoire racine dans lequel les données du site sont générées et publiées"/>
                     </StackPanel>
                     <TextBox Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2" Height="20" Margin="5 -10 5 5" Text = "{Binding Path=RepertoireRacine}" IsEnabled="False"/>
                     <telerik:RadButton Grid.Row="4" Grid.Column="3" Width="95" Height="30" telerik:StyleManager.Theme="Expression_Dark" Command="{Binding CmdGetRepertoireRacine}" Margin="-70 0 0 0">
@@ -100,7 +100,7 @@
                             Margin="0 0 0 0">
                         </CheckBox>
                         <Label HorizontalAlignment="Right" Content="Effacer au démarage" Style="{StaticResource LabelStyle}"/>
-                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, Supprimer tout le contenu préalable du répertoire au démarrage. Le site distant sera également effacé."/>
+                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, supprime tout le contenu préalable du répertoire au démarrage. Le site distant sera également effacé."/>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -130,7 +130,7 @@
 
                         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="0 0 0 0">
                             <Label  HorizontalAlignment="Right" Content="Actualisation client:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
-                            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en sec. d'actualisation automatique du site coté client si l'utilisateur coche la case 'Actualiser'."/>
+                            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en secondes d'actualisation automatique du site coté client si l'utilisateur coche la case 'Actualiser'."/>
                             <telerik:RadNumericUpDown  Value="{Binding GestionnaireSitePublique.DelaiActualisationClientSec}" Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="10 0 0 0"/>
                             <Label HorizontalAlignment="Right" Content="Sec." Style="{StaticResource LabelStyle}" />
                         </StackPanel>
@@ -163,7 +163,7 @@
                                 <StackPanel Orientation="Vertical" Margin="30 0 0 -5">
                                     <StackPanel Orientation="Horizontal" >
                                         <Label HorizontalAlignment="Right" Content="Message d'avertissement:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
-                                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Message d'avertissement affiché au début des pages prochains combats et se prépare."/>
+                                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Message d'avertissement affiché au début des pages 'Prochains combats' et 'Se prépare'."/>
                                     </StackPanel>
                                     <TextBox  TextWrapping="Wrap" Height="24" VerticalScrollBarVisibility="Auto" Margin="5 5 5 5" MinWidth="300" Text = "{Binding Path=GestionnaireSitePublique.MsgProchainsCombats}"/>
                                 </StackPanel>
@@ -176,7 +176,7 @@
                         <StackPanel Grid.Row="2" Grid.Column="2"  Orientation="Vertical" Visibility="{Binding Path=GestionnaireSitePublique.CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}">
                             <StackPanel  Orientation="Horizontal">
                                 <CheckBox   Content="Publier 'Engagements'" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionnaireSitePublique.PublierEngagements}"/>
-                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, provoque l'ajout du menu 'Engagements' qui liste les engages, leurs statuts et leurs combats à venir. Disponible uniquement en compétition Individuelle ou Shiai.&#x0a;ATTENTION, cette option augmente sensiblement le temps de génération et le nombre de fichiers a transférer."/>
+                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, provoque l'ajout du menu 'Engagements' qui liste les engagés, leurs statuts et leurs combats à venir. Disponible uniquement en compétition Individuelle ou Shiai.&#x0a;ATTENTION, cette option augmente sensiblement le temps de génération et le nombre de fichiers a transférer."/>
                             </StackPanel>
 
                             <StackPanel Orientation="Vertical" Margin="25 0 0 0">
@@ -193,7 +193,7 @@
                                                 IsChecked="{Binding Path=GestionnaireSitePublique.EngagementsTousCombats}"
                                                 IsEnabled="{Binding Path=GestionnaireSitePublique.PublierEngagements, Mode=OneWay}"
                                                 Content="Inclure tous les combats"/>
-                                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affichera tous les combats des engages, y compris ceux terminés."/>
+                                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affichera tous les combats des engagés, y compris ceux terminés."/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0 0 0 -5">
                                         <CheckBox Style="{StaticResource CheckboxStyle}"
@@ -218,7 +218,9 @@
                                                             IsChecked="{Binding Path=GestionnaireSitePublique.PublierAffectationTapis}"
                                                             Visibility="{Binding Path=GestionnaireSitePublique.CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}">
                             </CheckBox>
-                            <Image Visibility="{Binding Path=GestionnaireSitePublique.CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}" Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0" ToolTip="Si cochée, provoque l'ajout du menu 'Affectations' qui liste les tapis assignées pour chaque catégories. Disponible uniquement en compétition Individuelle ou Shiai."/>
+                            <Image Visibility="{Binding Path=GestionnaireSitePublique.CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}"
+                                   Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0"
+                                   ToolTip="Si cochée, provoque l'ajout du menu 'Affectations' qui liste les tapis assignés pour chaque catégorie. Disponible uniquement en compétition Individuelle ou Shiai."/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="4" Grid.Column="2"  Orientation="Vertical">
@@ -235,7 +237,8 @@
                                     Margin="0 0 0 0"
                                     Content="taille max. poule en colonne:">
                                 </CheckBox>
-                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Taille minimale de la poule au dessus de laquelle la disposition est en diagonale."/>
+                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0"
+                                       ToolTip="Taille minimale de la poule au dessus de laquelle la disposition est en diagonale."/>
                                 <telerik:RadNumericUpDown  Grid.Row="2" Grid.Column="3" Value="{Binding GestionnaireSitePublique.TailleMaxPouleColonnes}" Width="80" Height="20" Minimum="2" Maximum="999" SmallChange="1" HideTrailingZeros="True" Margin="5 0 5 0">
                                     <telerik:RadNumericUpDown.IsEnabled>
                                         <MultiBinding Converter="{StaticResource BoolOperationConverter}" ConverterParameter="not_a_and_b"  Mode="OneWay">
@@ -267,14 +270,16 @@
                         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="0 0 0 0">
                             <StackPanel Orientation="Horizontal" Margin="0 0 0 0">
                                 <Label  HorizontalAlignment="Right" Content="Déroulement:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
-                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en sec. de déroulement des informations."/>
+                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0"
+                                       ToolTip="Délai en secondes de déroulement des informations."/>
                                 <telerik:RadNumericUpDown  Value="{Binding GestionnaireSiteInterne.DelaiDeroulementSec}" Width="100" Height="20" Minimum="1" Maximum="600" SmallChange="1" CustomUnit="sec." HideTrailingZeros="True" Margin="10 0 0 0"/>
                                 <Label HorizontalAlignment="Right" Content="Sec." Style="{StaticResource LabelStyle}" />
                             </StackPanel>
                             <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                             <StackPanel Orientation="Horizontal" Margin="0 0 0 0">
                                 <Label  HorizontalAlignment="Right" Content="Profondeur:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
-                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Nb de combats a afficher dans la chambre d'appel"/>
+                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0"
+                                       ToolTip="Nombre de combats à prendre en compte dans la chambre d'appel"/>
                                 <telerik:RadNumericUpDown  Value="{Binding GestionnaireSiteInterne.NbProchainsCombats}" Width="100" Height="20" Minimum="1" Maximum="99" SmallChange="1" HideTrailingZeros="True" Margin="10 0 0 0"/>
 
                             </StackPanel>
@@ -342,7 +347,7 @@
                                 <telerik:GridViewDataColumn Header="# Combats" Width="72">
                                     <telerik:GridViewDataColumn.HeaderCellStyle>
                                         <Style TargetType="telerik:GridViewHeaderCell" BasedOn="{StaticResource {x:Type telerik:GridViewHeaderCell}}">
-                                            <Setter Property="ToolTip" Value="Indique le nombre de combats a afficher sur un tapis. Attention, si trop de combats sont spécifiés, la liste peut être tronquée par manque de place sur l'écran" />
+                                            <Setter Property="ToolTip" Value="Indique le nombre de combats à afficher sur un tapis. Attention, si trop de combats sont spécifiés, la liste peut être tronquée par manque de place sur l'écran" />
                                         </Style>
                                     </telerik:GridViewDataColumn.HeaderCellStyle>
                                     <telerik:GridViewColumn.CellTemplate>
@@ -370,7 +375,7 @@
                                 <telerik:GridViewDataColumn Header="Disposition" IsResizable="False" Width="85">
                                     <telerik:GridViewDataColumn.HeaderCellStyle>
                                         <Style TargetType="telerik:GridViewHeaderCell" BasedOn="{StaticResource {x:Type telerik:GridViewHeaderCell}}">
-                                            <Setter Property="ToolTip" Value="Nombre de tapis a grouper sur un seul écran (1, 2, 4, 6 ou 8). Attention, si on groupe trop de tapis sur un écran trop petit, les textes peuvent être tronqués"/>
+                                            <Setter Property="ToolTip" Value="Nombre de tapis à grouper sur un seul écran (1, 2, 4, 6 ou 8). Attention, si on groupe trop de tapis sur un écran trop petit, les textes peuvent être tronqués"/>
                                         </Style>
                                     </telerik:GridViewDataColumn.HeaderCellStyle>
 
@@ -442,7 +447,7 @@
                                                             IsReadOnlyBinding="{Binding AjusteTailleTexte}">
                                     <telerik:GridViewDataColumn.HeaderCellStyle>
                                         <Style TargetType="telerik:GridViewHeaderCell" BasedOn="{StaticResource {x:Type telerik:GridViewHeaderCell}}">
-                                            <Setter Property="ToolTip" Value="Disposition de l'affichage des combats, soit en ligne (écartement/Nom sur la même ligne) ou colonne (écartement/Nom empilé"/>
+                                            <Setter Property="ToolTip" Value="Disposition de l'affichage des combats, soit en ligne (écartement/Nom sur la même ligne) ou colonne (écartement/Nom empilés"/>
                                         </Style>
                                     </telerik:GridViewDataColumn.HeaderCellStyle>
                                     <telerik:GridViewDataColumn.CellStyle>
@@ -489,7 +494,7 @@
                                 <telerik:GridViewDataColumn Header="Ajustement" IsResizable="False" Width="75">
                                     <telerik:GridViewDataColumn.HeaderCellStyle>
                                         <Style TargetType="telerik:GridViewHeaderCell" BasedOn="{StaticResource {x:Type telerik:GridViewHeaderCell}}">
-                                            <Setter Property="ToolTip" Value="Calcul la taille des textes automatiquement pour ajuster à la place disponibe. Peut ne pas fonctionner sur certains navigateurs, notamment SmartTV"/>
+                                            <Setter Property="ToolTip" Value="Calcul la taille des textes et la disposition des combats automatiquement pour maximiser l'affichage en fonction de la place disponibe. Peut ne pas fonctionner sur certains navigateurs, notamment SmartTV"/>
                                         </Style>
                                     </telerik:GridViewDataColumn.HeaderCellStyle>
                                     <telerik:GridViewColumn.CellTemplate>

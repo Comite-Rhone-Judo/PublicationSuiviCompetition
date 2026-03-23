@@ -70,7 +70,8 @@ namespace AppPublication.Models.EcransAppel
                 Description = "Ecran par défaut",
                 Groupement = 1,
                 NbCombatsPage = 8,
-                Disposition = EcranAppelModel.DispositionAffichage.Colonne
+                Disposition = EcranAppelModel.DispositionAffichage.Colonne,
+                DispositionCombat = EcranAppelModel.DispositionAffichage.Colonne
             };
 
 
