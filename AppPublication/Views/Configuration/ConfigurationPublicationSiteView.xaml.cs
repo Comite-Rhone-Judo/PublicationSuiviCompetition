@@ -7,9 +7,9 @@ namespace AppPublication.Views.Configuration
     /// <summary>
     /// Logique d'interaction pour ConfigurationPublication.xaml
     /// </summary>
-    public partial class ConfigurationPublicationView : Window
+    public partial class ConfigurationPublicationSiteView : Window
     {
-        public ConfigurationPublicationView(SitePublicationCoordinator dataCtx)
+        public ConfigurationPublicationSiteView(SitePublicationCoordinator dataCtx)
         {
             if (dataCtx != null)
             {
@@ -21,7 +21,6 @@ namespace AppPublication.Views.Configuration
 
         private void ButOk_Click(object sender, RoutedEventArgs e)
         {
-            EcransAppelGrid?.CommitEdit();
             DialogResult = true;
         }
     }

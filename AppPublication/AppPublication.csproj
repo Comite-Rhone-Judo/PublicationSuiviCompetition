@@ -176,6 +176,7 @@
     <Compile Include="Statistiques\StatMgrGeneration.cs" />
     <Compile Include="Statistiques\StatMgrSynchronisation.cs" />
     <Compile Include="Tools\ActionWatcher.cs" />
+    <Compile Include="Tools\Converter\DeviceTypeConverter.cs" />
     <Compile Include="Tools\Converter\GroupementToLayoutConverter.cs" />
     <Compile Include="Tools\Converter\ValueToBoolConverter.cs" />
     <Compile Include="Publication\EcransAppelRedirectModule.cs" />
@@ -183,9 +184,20 @@
     <Compile Include="Controles\SitePublicationCoordinator.cs" />
     <Compile Include="ViewModels\Configuration\EcranAppelConfigViewModel.cs" />
     <Compile Include="ViewModels\Configuration\EcranAppelTapisSelectionViewModel.cs" />
+    <Compile Include="ViewModels\Configuration\NetworkScannerContext.cs" />
+    <Compile Include="ViewModels\Configuration\NetworkScannerViewModel.cs" />
     <Compile Include="ViewModels\Main\TestFtpViewModel.cs" />
-    <Compile Include="Views\Configuration\ConfigurationPublicationView.xaml.cs">
-      <DependentUpon>ConfigurationPublicationView.xaml</DependentUpon>
+    <Compile Include="Views\Configuration\ConfigurationPublicationSiteInterneView.xaml.cs">
+      <DependentUpon>ConfigurationPublicationSiteInterneView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Configuration\ConfigurationGeneraleView.xaml.cs">
+      <DependentUpon>ConfigurationGeneraleView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Configuration\ConfigurationPublicationSiteView.xaml.cs">
+      <DependentUpon>ConfigurationPublicationSiteView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Configuration\NetworkScannerView.xaml.cs">
+      <DependentUpon>NetworkScannerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Infos\InformationsView.xaml.cs">
       <DependentUpon>InformationsView.xaml</DependentUpon>
@@ -222,9 +234,21 @@
     <Compile Include="Generation\StatusGenerationSite.cs" />
     <Compile Include="Tools\Streams\StreamTool.cs" />
     <Compile Include="Tools\Struct\ExportStruct.cs" />
-    <Page Include="Views\Configuration\ConfigurationPublicationView.xaml">
+    <Page Include="Views\Configuration\ConfigurationPublicationSiteInterneView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Configuration\ConfigurationGeneraleView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Configuration\ConfigurationPublicationSiteView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Configuration\NetworkScannerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Main\MainView.xaml">
       <Generator>MSBuild:Compile</Generator>

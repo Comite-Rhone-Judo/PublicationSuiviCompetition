@@ -35,7 +35,9 @@ namespace AppPublication.Controles
         private AppPublication.Views.Infos.StatistiquesView _statWindow = null;
         private AppPublication.Views.Infos.InformationsView _infoWindow = null;
         private PdfViewer _manuelViewer = null;
-        private AppPublication.Views.Configuration.ConfigurationPublicationView _cfgWindow = null;
+        private AppPublication.Views.Configuration.ConfigurationPublicationSiteView _cfgWindowSite = null;
+        private AppPublication.Views.Configuration.ConfigurationPublicationSiteInterneView _cfgWindowSiteInterne = null;
+        private AppPublication.Views.Configuration.ConfigurationGeneraleView _cfgWindowGenerale  = null;
         private readonly JudoData _serverData;
         private bool _startSiteDistantEnCours = false;
         private bool _nettoyageEnCours = false;
@@ -1040,27 +1042,27 @@ namespace AppPublication.Controles
             }
         }
 
-        private ICommand _cmdAfficherConfiguration = null;
+        private ICommand _cmdAfficherConfigurationGenerale = null;
         /// <summary>
         /// Commande d'affichage de la configuration
         /// </summary>
-        public ICommand CmdAfficherConfiguration
+        public ICommand CmdAfficherConfigurationGenerale
         {
             get
             {
-                if (_cmdAfficherConfiguration == null)
+                if (_cmdAfficherConfigurationGenerale == null)
                 {
-                    _cmdAfficherConfiguration = new RelayCommand(
+                    _cmdAfficherConfigurationGenerale = new RelayCommand(
                             o =>
                             {
-                                if (_cfgWindow == null)
+                                if (_cfgWindowGenerale == null)
                                 {
-                                    _cfgWindow = new AppPublication.Views.Configuration.ConfigurationPublicationView(SiteCoordinator);
+                                    _cfgWindowGenerale = new AppPublication.Views.Configuration.ConfigurationGeneraleView(SiteCoordinator);
                                 }
-                                if (_cfgWindow != null)
+                                if (_cfgWindowGenerale != null)
                                 {
-                                    _cfgWindow.ShowDialog();
-                                    _cfgWindow = null;
+                                    _cfgWindowGenerale.ShowDialog();
+                                    _cfgWindowGenerale = null;
                                 }
                             },
                             o =>
@@ -1068,7 +1070,74 @@ namespace AppPublication.Controles
                                 return !Instance.SiteCoordinator.IsGenerationActiveOne;
                             });
                 }
-                return _cmdAfficherConfiguration;
+                return _cmdAfficherConfigurationGenerale;
+            }
+        }
+
+        private ICommand _cmdAfficherConfigurationSite = null;
+        /// <summary>
+        /// Commande d'affichage de la configuration
+        /// </summary>
+        public ICommand CmdAfficherConfigurationSite
+        {
+            get
+            {
+                if (_cmdAfficherConfigurationSite == null)
+                {
+                    _cmdAfficherConfigurationSite = new RelayCommand(
+                            o =>
+                            {
+                                if (_cfgWindowSite == null)
+                                {
+                                    // TODO Change View here
+
+                                    _cfgWindowSite = new AppPublication.Views.Configuration.ConfigurationPublicationSiteView(SiteCoordinator);
+                                }
+                                if (_cfgWindowSite != null)
+                                {
+                                    _cfgWindowSite.ShowDialog();
+                                    _cfgWindowSite = null;
+                                }
+                            },
+                            o =>
+                            {
+                                return !Instance.SiteCoordinator.GestionnaireSitePublique.IsGenerationActive;
+                            });
+                }
+                return _cmdAfficherConfigurationSite;
+            }
+        }
+
+        private ICommand _cmdAfficherConfigurationSiteInterne = null;
+        /// <summary>
+        /// Commande d'affichage de la configuration
+        /// </summary>
+        public ICommand CmdAfficherConfigurationSiteInterne
+        {
+            get
+            {
+                if (_cmdAfficherConfigurationSiteInterne == null)
+                {
+                    _cmdAfficherConfigurationSiteInterne = new RelayCommand(
+                            o =>
+                            {
+                                if (_cfgWindowSiteInterne == null)
+                                {
+                                    // TODO Change View here
+                                    _cfgWindowSiteInterne = new AppPublication.Views.Configuration.ConfigurationPublicationSiteInterneView(SiteCoordinator);
+                                }
+                                if (_cfgWindowSiteInterne != null)
+                                {
+                                    _cfgWindowSiteInterne.ShowDialog();
+                                    _cfgWindowSiteInterne = null;
+                                }
+                            },
+                            o =>
+                            {
+                                return !Instance.SiteCoordinator.GestionnaireSiteInterne.IsGenerationActive;
+                            });
+                }
+                return _cmdAfficherConfigurationSiteInterne;
             }
         }
 

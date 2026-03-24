@@ -137,6 +137,10 @@
                         </WrapPanel>
 
                         <WrapPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" Margin="20 10 10 10" HorizontalAlignment="Right">
+                            <telerik:RadButton ToolTip="Configuration des paramètres générauyx" Style="{StaticResource RadButtonStyleToolbar}"
+                                Focusable="False" Tag="pack://application:,,,/Tools;component/data/images/icons/black/settings2-32.png" Margin="25 0 0 0"
+                                Command="{Binding Path=CmdAfficherConfigurationGenerale}">
+                            </telerik:RadButton>
                             <telerik:RadButton ToolTip="Information sur le logiciel" Style="{StaticResource RadButtonStyleToolbar}"
                                 Focusable="False" Tag="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Margin="25 0 0 0"
                                 Command="{Binding Path=CmdAfficherInformations}">
@@ -276,6 +280,13 @@
                                             <Label Content="Arrêter" Style="{StaticResource ButtonLabelStyle}" />
                                         </WrapPanel>
                                     </telerik:RadButton>
+                                    <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="10 0 10 0"
+                                                        Command="{Binding Path=CmdAfficherConfigurationSite}" Height="35">
+                                        <WrapPanel Orientation="Horizontal">
+                                            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/settings2-32.png" Height="25" Margin="5 0"/>
+                                            <Label Content="Configurer ..." Style="{StaticResource ButtonLabelStyle}"/>
+                                        </WrapPanel>
+                                    </telerik:RadButton>
                                 </StackPanel>
                                 <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10 5 10 5">
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 15 0"
@@ -292,13 +303,11 @@
                                             <Label Content="Arrêter" Style="{StaticResource ButtonLabelStyle}" />
                                         </WrapPanel>
                                     </telerik:RadButton>
-                                </StackPanel>
-                                <StackPanel Grid.Row="0" Grid.Column="3" Grid.RowSpan="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10 10 10 10">
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="10 0 10 0"
-                                        Command="{Binding Path=CmdAfficherConfiguration}" Height="35">
+     Command="{Binding Path=CmdAfficherConfigurationSiteInterne}" Height="35">
                                         <WrapPanel Orientation="Horizontal">
                                             <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/settings2-32.png" Height="25" Margin="5 0"/>
-                                            <Label Content="Configuration ..." Style="{StaticResource ButtonLabelStyle}"/>
+                                            <Label Content="Configurer ..." Style="{StaticResource ButtonLabelStyle}"/>
                                         </WrapPanel>
                                     </telerik:RadButton>
                                 </StackPanel>

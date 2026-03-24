@@ -250,6 +250,10 @@
     <Compile Include="Net\IContextAware.cs" />
     <Compile Include="Net\IContextProvider.cs" />
     <Compile Include="Net\IServeurHttp.cs" />
+    <Compile Include="Net\Scanner\DeviceType.cs" />
+    <Compile Include="Net\Scanner\NetworkCalculator.cs" />
+    <Compile Include="Net\Scanner\NetworkDevice.cs" />
+    <Compile Include="Net\Scanner\NetworkScanner.cs" />
     <Compile Include="Net\ServeurHttpBase.cs" />
     <Compile Include="Outils\AppInformation.cs" />
     <Compile Include="Threading\BatchProgressInfo.cs" />
@@ -1980,6 +1984,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Export\style\site\style-ecran-appel.css" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

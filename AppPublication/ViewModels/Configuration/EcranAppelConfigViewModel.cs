@@ -13,6 +13,7 @@ using System.Windows.Input;
 using Tools.Framework;
 using Tools.Logging;
 using Tools.Windows;
+using Tools.Net.Scanner;
 using static AppPublication.Models.EcransAppel.EcranAppelModel;
 
 namespace AppPublication.ViewModels.Configuration
@@ -39,10 +40,24 @@ namespace AppPublication.ViewModels.Configuration
         private bool _isRechercheIpEnCours;
         private bool _isRechercheHostnameEnCours;
         private CancellationTokenSource _searchCts;
-
+        private readonly NetworkScannerContext _scannerContext;
         #endregion
 
         #region COMMANDES
+
+        private ICommand _cmdOuvrirScanner;
+        public ICommand CmdOuvrirScanner
+        {
+            get
+            {
+                if (_cmdOuvrirScanner == null)
+                {
+                    _cmdOuvrirScanner = new RelayCommand(OuvrirScannerAction);
+                }
+                return _cmdOuvrirScanner;
+            }
+        }
+
         public ICommand DeleteCommand { get; set; }
 
         #endregion
@@ -53,9 +68,10 @@ namespace AppPublication.ViewModels.Configuration
         /// </summary>
         /// <param name="model"></param>
         /// <param name="tousLesTapis"></param>
-        public EcranAppelConfigViewModel(EcranAppelModel model, List<int> tousLesTapis)
+        public EcranAppelConfigViewModel(EcranAppelModel model, List<int> tousLesTapis, NetworkScannerContext scannerContext)
         {
             _model = model;
+            _scannerContext = scannerContext; // Sauvegarde du contexte
 
             // Initialisation visuelle
             Hostname = string.IsNullOrEmpty(model.Hostname) ? string.Empty : model.Hostname;
@@ -401,6 +417,34 @@ namespace AppPublication.ViewModels.Configuration
         #endregion
 
         #region METHODES PRIVEES
+
+        /// <summary>
+        /// Ouvre la fenetre de scanner reseau
+        /// </summary>
+        /// <param name="obj"></param>
+        private void OuvrirScannerAction(object obj)
+        {
+            // On passe le contexte au ViewModel du scanner
+            var vm = new NetworkScannerViewModel(_scannerContext);
+            var win = new AppPublication.Views.Configuration.NetworkScannerView { DataContext = vm };
+
+            // CORRECTION DU BUG DE LA FENÊTRE QUI DISPARAÎT :
+            // On attache la fenêtre modale à la fenêtre actuellement active (votre fenêtre de config),
+            // et non à Application.Current.MainWindow qui pourrait être cachée en arrière-plan.
+            var activeWindow = System.Windows.Application.Current.Windows.OfType<Window>().SingleOrDefault(x => x.IsActive);
+            if (activeWindow != null)
+            {
+                win.Owner = activeWindow;
+            }
+
+            if (win.ShowDialog() == true && vm.SelectedDevice != null)
+            {
+                if (!string.IsNullOrWhiteSpace(vm.SelectedDevice.IpAddress))
+                {
+                    RawUserInput = vm.SelectedDevice.IpAddress; // Déclenche la recherche Hostname
+                }
+            }
+        }
 
         // --- Helpers Configuration ---
         private EcransAppelConfigElement GetConfigElement()

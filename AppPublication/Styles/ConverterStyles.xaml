@@ -27,5 +27,6 @@
     <Converter:PassthroughConverter x:Key="PassthroughConverter" />
     <Converter:ValueToBoolConverter x:Key="ValueToBoolConverter"/>
     <Converter:GroupementToLayoutConverter x:Key="GroupementConverter" />
+    <Converter:DeviceTypeConverter x:Key="DeviceTypeConverter" />
 
 </ResourceDictionary>

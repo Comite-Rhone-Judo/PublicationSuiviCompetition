@@ -24,6 +24,7 @@ namespace AppPublication.ViewModels.Configuration
         // Collection source (référence vers celle de GestionSite)
         private readonly EcranCollectionManager _ecranManager;
         private readonly List<int> _tapisDisponibles;
+        private readonly NetworkScannerContext _scannerContext = new NetworkScannerContext();
         #endregion
 
         #region PROPERTIES
@@ -91,7 +92,7 @@ namespace AppPublication.ViewModels.Configuration
             {
                 foreach (var model in _ecranManager.Ecrans)
                 {
-                    var vm = new EcranAppelConfigViewModel(model, _tapisDisponibles);
+                    var vm = new EcranAppelConfigViewModel(model, _tapisDisponibles, _scannerContext);
                     vm.DeleteCommand = new RelayCommand(SupprimerLigne);
                     EcransViewModels.Add(vm);
                 }
@@ -111,7 +112,7 @@ namespace AppPublication.ViewModels.Configuration
                         foreach (var model in _ecranManager.Ecrans)
                         {
                             // La création lourde des sous-VM se fait ici
-                            var vm = new EcranAppelConfigViewModel(model, _tapisDisponibles);
+                            var vm = new EcranAppelConfigViewModel(model, _tapisDisponibles, _scannerContext);
                             vm.DeleteCommand = new RelayCommand(SupprimerLigne);
                             resultList.Add(vm);
                         }
@@ -149,7 +150,7 @@ namespace AppPublication.ViewModels.Configuration
             }
 
             // 4. Création du ViewModel et ajout à l'interface
-            var vm = new EcranAppelConfigViewModel(nouveauModel, _tapisDisponibles);
+            var vm = new EcranAppelConfigViewModel(nouveauModel, _tapisDisponibles, _scannerContext);
             vm.DeleteCommand = new RelayCommand(SupprimerLigne);
 
             EcransViewModels.Add(vm);
