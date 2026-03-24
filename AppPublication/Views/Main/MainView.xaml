@@ -184,7 +184,10 @@
                                     <RowDefinition Height="5"/>
                                     <RowDefinition Height="auto"/>
                                 </Grid.RowDefinitions>
-                                <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Content="Site Public" Style="{StaticResource HeaderStyle}" />
+                                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+                                    <Line StrokeThickness="2" Stroke="LawnGreen" Margin="2 2 2 2" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
+                                    <Label HorizontalAlignment="Left" Content="Site Coachs &amp; Public" Style="{StaticResource HeaderStyle}" Margin="0"/>
+                                </StackPanel>
                                 <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
                                     <StackPanel Orientation="Horizontal" >
                                         <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
@@ -219,7 +222,11 @@
                                     </StackPanel>
                                 </StackPanel>
                                 <Line Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Center" StrokeThickness="1" Stroke="White" Margin="10 0 10 0" X1="0" X2="1" Y1="0" Y2="0" Stretch="Fill"/>
-                                <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" Content="Site Interne" Style="{StaticResource HeaderStyle}" />
+                                <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
+                                    <Line StrokeThickness="2" Stroke="DeepSkyBlue" Margin="2 2 2 2" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
+                                    <Label  HorizontalAlignment="Left" Content="Chambre d'appel" Style="{StaticResource HeaderStyle}" Margin="0"/>
+                                </StackPanel>
+                                
                                 <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
                                     <StackPanel Orientation="Horizontal" >
                                         <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
@@ -313,12 +320,17 @@
                             <!-- SERVEUR LOCAL PUBLIC -->
                             <Border BorderThickness="1" Grid.Row="0" BorderBrush="White" Margin="10 0 5 5">
                                 <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto"/>
                                         <RowDefinition Height="auto"/>
                                     </Grid.RowDefinitions>
-                                    <StackPanel Orientation="Vertical" Grid.Row="0">
-                                        <Label HorizontalAlignment="Left" Content="QRCode et adresse du site public:" Style="{StaticResource HeaderStyle}" />
+                                    <Line Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" StrokeThickness="2" Stroke="LawnGreen" Margin="2 2 2 2" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
+                                    <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="1">
+                                        <Label HorizontalAlignment="Left" Content="QRCode et adresse du site Coachs &amp; Public:" Style="{StaticResource HeaderStyle}" />
                                         <WrapPanel>
                                             <WrapPanel Background="White" Margin="50 0 0 0">
                                                 <telerik:RadBarcodeQR Background="White"  Height="100" Mode="Byte" ErrorCorrectionLevel="L" x:Name="QRCodeLocal">
@@ -372,7 +384,7 @@
                                             </StackPanel>
                                         </StackPanel>
                                     </StackPanel>
-                                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
                                         <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 20 0" Command="{Binding Path=CmdDemarrerSiteLocal}">
                                             <WrapPanel Orientation="Horizontal">
                                                 <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/play-32.png" Height="25" Margin="5 0"/>
@@ -392,12 +404,17 @@
                             <!-- SERVEUR LOCAL ECRANS APPEL -->
                             <Border BorderThickness="1" Grid.Row="4" BorderBrush="White" Margin="10 0 5 0">
                                 <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto"/>
                                         <RowDefinition Height="auto"/>
                                     </Grid.RowDefinitions>
-                                    <StackPanel Orientation="Vertical" Grid.Row="0">
-                                        <Label HorizontalAlignment="Left" Content="QRCode et adresse du site interne" Style="{StaticResource HeaderStyle}" />
+                                    <Line Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" StrokeThickness="2" Stroke="DeepSkyBlue" Margin="2 2 2 2" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
+                                    <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="1">
+                                        <Label HorizontalAlignment="Left" Content="QRCode et adresse de la chambre d'appel" Style="{StaticResource HeaderStyle}" />
                                         <WrapPanel>
                                             <WrapPanel Background="White" Margin="50 0 0 0">
                                                 <telerik:RadBarcodeQR Background="White"  Height="100" Mode="Byte" ErrorCorrectionLevel="L" x:Name="QRCodeEcransAppel">
@@ -451,7 +468,7 @@
                                             </StackPanel>
                                         </StackPanel>
                                     </StackPanel>
-                                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
                                         <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 20 0" Command="{Binding Path=CmdDemarrerSiteInterne}">
                                             <WrapPanel Orientation="Horizontal">
                                                 <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/play-32.png" Height="25" Margin="5 0"/>
@@ -472,17 +489,22 @@
                         <!-- BLOC SERVEUR DISTANT -->
                         <!-- Entete -->
                         <StackPanel Grid.Row="2" Grid.Column="1" Style="{StaticResource Header1Style}" Margin="5 5 10 5" Visibility="Visible" >
-                            <TextBlock Text="Publication sur site distant" Style="{StaticResource Header1TextStyle}"/>
+                            <TextBlock Text="Publication sur site distant (Internet)" Style="{StaticResource Header1TextStyle}"/>
                         </StackPanel>
                         <!-- Contenu -->
                         <Border BorderThickness="1" Grid.Row="3" Grid.Column="1" BorderBrush="White" Margin="5 0 10 0">
                             <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="auto"/>
                                 </Grid.RowDefinitions>
-                                <StackPanel Orientation="Vertical" Grid.Row="0" >
-                                    <Label HorizontalAlignment="Left" Content="QRCode et adresse du site:" Style="{StaticResource HeaderStyle}" />
+                                <Line Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" StrokeThickness="2" Stroke="LawnGreen" Margin="2 2 2 2" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
+                                <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="1" >
+                                    <Label HorizontalAlignment="Left" Content="QRCode et adresse du site Coachs &amp; Public:" Style="{StaticResource HeaderStyle}" />
                                     <WrapPanel>
                                         <WrapPanel Background="White" Margin="50 0 0 0">
                                             <telerik:RadBarcodeQR Background="White"  Height="100" Mode="Byte" ErrorCorrectionLevel="L" x:Name="QRCodeDistant">
@@ -655,7 +677,7 @@
                                         </Grid>
                                     </StackPanel>
                                                                     </StackPanel>
-                                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="0 0 20 0"
                                                        Command="{Binding Path=CmdDemarrerSiteDistant}">
                                         <Button.CommandParameter>

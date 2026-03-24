@@ -327,7 +327,7 @@ namespace AppPublication.Publication
 
                 // Les ranges de recherche des ports du serveur HTTP
                 ServerHTTP.PortMin = cfg.PortMin;
-                ServerHTTP.portMax = cfg.PortMax;
+                ServerHTTP.PortMax = cfg.PortMax;
 
                 // On se charge maintenant des modules HTTP
                 // On cherche les modules HTTP à ajouter
