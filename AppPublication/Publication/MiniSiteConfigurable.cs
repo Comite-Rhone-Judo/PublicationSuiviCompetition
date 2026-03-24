@@ -325,6 +325,10 @@ namespace AppPublication.Publication
                     SelectInterfaceOrDefault(cfg.InterfaceLocalPublication);
                 }
 
+                // Les ranges de recherche des ports du serveur HTTP
+                ServerHTTP.PortMin = cfg.PortMin;
+                ServerHTTP.portMax = cfg.PortMax;
+
                 // On se charge maintenant des modules HTTP
                 // On cherche les modules HTTP à ajouter
                 List<string> moduleList = cfg.HttpModules.Split(';').ToList();

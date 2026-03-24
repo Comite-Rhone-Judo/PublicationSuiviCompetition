@@ -17,6 +17,8 @@ namespace AppPublication.Config.Publication
         private const string kHttpModules = "httpModules";
         private const string kHttpServer = "httpServer";
         private const string kInterfaceLocalPublication = "interface";
+        private const string kPortMin = "portMin";
+        private const string kPortMax = "portMax";
         private const string kSynchroniseDifferences = "syncDiff";
         private const string kFtpLogin = "ftpLogin";
         private const string kFtpPassword = "ftpPassword";
@@ -74,6 +76,27 @@ namespace AppPublication.Config.Publication
             get { return GetConfigValue<string>(kInterfaceLocalPublication, string.Empty); }
             set { SetValueAndMarkDirty(kInterfaceLocalPublication, value); }
         }
+
+        /// <summary>
+        /// Port Min pour le range de recherche au demarrage.
+        /// </summary>
+        [ConfigurationProperty(kPortMin, DefaultValue = 8080)]
+        public int PortMin
+        {
+            get { return GetConfigValue<int>(kPortMin, 8080); }
+            set { SetValueAndMarkDirty(kPortMin, value); }
+        }
+
+        /// <summary>
+        /// Port Max pour le range de recherche au demarrage.
+        /// </summary>
+        [ConfigurationProperty(kPortMax, DefaultValue = 8085)]
+        public int PortMax
+        {
+            get { return GetConfigValue<int>(kPortMax, 8085); }
+            set { SetValueAndMarkDirty(kPortMax, value); }
+        }
+
 
         /// <summary>
         /// Option technique spécifique à ce site : n'envoyer que les fichiers modifiés.

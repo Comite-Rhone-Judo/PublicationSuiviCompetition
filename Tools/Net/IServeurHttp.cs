@@ -18,6 +18,10 @@ namespace Tools.Net
         /// </summary>
         IPAddress ListeningIpAddress { get; set; }
 
+        int PortMin { get; set; }
+
+        int PortMax { get; set; }   
+
         /// <summary>
         /// Port d'ecoute automatiqiement assigne
         /// </summary>

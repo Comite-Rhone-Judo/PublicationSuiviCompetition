@@ -35,6 +35,10 @@ namespace Tools.Net
             }
         }
 
+        public int PortMin { get; set;  }
+
+        public int PortMax { get; set; }
+
         public int Port
         {
             get
@@ -129,7 +133,7 @@ namespace Tools.Net
                     _isStart = true;
 
                     // Cherche si un port d'ecoute est disponible (exception si Nok)
-                    FindAvailablePort();
+                    FindAvailablePort(PortMin, PortMax);
 
                     // Ecoute sur l'adresse specifiee, sur toutes sinon
                     IPAddress adr = (ListeningIpAddress != null) ? ListeningIpAddress : IPAddress.Any;
@@ -200,12 +204,12 @@ namespace Tools.Net
         #endregion
 
         #region METHODES PRIVEES
-        protected virtual void FindAvailablePort()
+        protected virtual void FindAvailablePort(int portMin, int portMax)
         {
-            int port = NetworkTools.PortSiteMin;
+            int port = portMin;
             bool freePort = false;
 
-            while (!freePort && port <= NetworkTools.PortSiteMax)
+            while (!freePort && port <= portMax)
             {
                 try
                 {
