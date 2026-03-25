@@ -102,42 +102,116 @@ namespace Tools.Net.Scanner
             }
         }
 
+        /// <summary>
+        /// Analyse Async d'une adresse IP pour determiner son type, etc.
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <param name="upnpDevices"></param>
+        /// <param name="progress"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         private static async Task AnalyzeSingleIpAsync(string ip, HashSet<string> upnpDevices, IProgress<NetworkDevice> progress, CancellationToken cancellationToken)
         {
             try
             {
-                using Ping ping = new Ping();
                 if (cancellationToken.IsCancellationRequested) return;
 
-                PingReply reply = await ping.SendPingAsync(ip, 800);
+                bool isOnline = false;
+                DeviceType type = DeviceType.GenericNetworkDevice;
 
-                if (cancellationToken.IsCancellationRequested) return;
-
-                if (reply.Status == IPStatus.Success)
+                // 1. COURT-CIRCUIT UPNP : Si déjà détecté, pas besoin de ping ni de scan de ports !
+                if (upnpDevices.Contains(ip))
                 {
-                    LogTools.Logger.Debug($"Reponse au ping recue pour l'IP : {ip}");
+                    isOnline = true;
+                    type = DeviceType.SmartTvOrStreaming;
+                    LogTools.Logger.Debug($"Appareil identifie via UPnP (sans Ping) pour l'IP : {ip}");
+                }
+                else
+                {
+                    // 2. SINON : On tente un Ping classique
+                    using Ping ping = new Ping();
+                    PingReply reply = await ping.SendPingAsync(ip, 800);
 
+                    if (cancellationToken.IsCancellationRequested) return;
+
+                    if (reply.Status == IPStatus.Success)
+                    {
+                        isOnline = true;
+                        LogTools.Logger.Debug($"Reponse au ping recue pour l'IP : {ip}");
+
+                        // On détermine le type en scannant les ports
+                        type = await DetermineDeviceCategoryAsync(ip, cancellationToken);
+                    }
+                }
+
+                // 3. Si l'appareil est en ligne (via UPnP OU Ping), on finalise
+                if (isOnline)
+                {
                     string mac = GetMacAddress(ip);
-                    DeviceType type = await DetermineDeviceCategoryAsync(ip, upnpDevices, cancellationToken);
+
+                    string hostname = "N/A";
+                    if (type == DeviceType.WindowsPc || type == DeviceType.Mac || type == DeviceType.LinuxOrServer)
+                    {
+                        hostname = await ResolveHostnameAsync(ip, cancellationToken);
+                    }
 
                     var device = new NetworkDevice
                     {
                         IpAddress = ip,
+                        Hostname = hostname,
                         MacAddress = mac,
                         Category = type
                     };
 
-                    LogTools.Logger.Debug($"Nouvel appareil detecte et classifie - IP: {ip} | MAC: {mac} | Type: {type}");
+                    LogTools.Logger.Debug($"Nouvel appareil detecte - IP: {ip} | Hostname: {hostname} | Type: {type}");
 
                     progress?.Report(device);
                 }
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Debug($"Aucune reponse ou timeout lors de l'analyse de l'IP {ip} : {ex.Message}");
+                LogTools.Logger.Debug($"Aucune reponse ou erreur lors de l'analyse de l'IP {ip} : {ex.Message}");
             }
         }
 
+        // --- NOUVELLE MÉTHODE ---
+        /// <summary>
+        /// Efectue une résolution DNS Async avec Timeout
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <param name="cancellationToken"></param>
+        /// <param name="timeoutMs"></param>
+        /// <returns></returns>
+        private static async Task<string> ResolveHostnameAsync(string ip, CancellationToken cancellationToken, int timeoutMs = 1500)
+        {
+            if (cancellationToken.IsCancellationRequested) return "Annulé";
+
+            try
+            {
+                // La résolution DNS peut bloquer, on l'isole donc dans un Task.Run avec un Timeout
+                var resolveTask = Task.Run(() => Dns.GetHostEntry(ip).HostName, cancellationToken);
+
+                if (await Task.WhenAny(resolveTask, Task.Delay(timeoutMs, cancellationToken)) == resolveTask)
+                {
+                    return await resolveTask;
+                }
+
+                LogTools.Logger.Debug($"Timeout DNS inverse pour l'IP {ip}");
+                return "Inconnu";
+            }
+            catch (Exception)
+            {
+                // Échec normal si l'appareil n'a pas de nom enregistré dans le routeur/DNS local
+                return "Inconnu";
+            }
+        }
+
+        /// <summary>
+        /// Execute une recherche UPNP Async pour trouver les devices multimedia
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <param name="timeoutMs"></param>
+        /// <returns></returns>
         private static async Task<HashSet<string>> DiscoverUpnpDevicesAsync(CancellationToken cancellationToken, int timeoutMs = 2000)
         {
             var discoveredIps = new HashSet<string>();
@@ -183,9 +257,14 @@ namespace Tools.Net.Scanner
             return discoveredIps;
         }
 
-        private static async Task<DeviceType> DetermineDeviceCategoryAsync(string ip, HashSet<string> upnpDevices, CancellationToken cancellationToken)
+        /// <summary>
+        /// Determine la classificatio  d'un device
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        private static async Task<DeviceType> DetermineDeviceCategoryAsync(string ip, CancellationToken cancellationToken)
         {
-            if (upnpDevices.Contains(ip)) return DeviceType.SmartTvOrStreaming;
             if (await IsPortOpenAsync(ip, 445, cancellationToken) || await IsPortOpenAsync(ip, 135, cancellationToken)) return DeviceType.WindowsPc;
             if (await IsPortOpenAsync(ip, 548, cancellationToken) || await IsPortOpenAsync(ip, 5900, cancellationToken)) return DeviceType.Mac;
             if (await IsPortOpenAsync(ip, 22, cancellationToken)) return DeviceType.LinuxOrServer;
@@ -194,6 +273,14 @@ namespace Tools.Net.Scanner
             return DeviceType.GenericNetworkDevice;
         }
 
+        /// <summary>
+        /// Verifie si un port est ouvert
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <param name="port"></param>
+        /// <param name="cancellationToken"></param>
+        /// <param name="timeoutMs"></param>
+        /// <returns></returns>
         private static async Task<bool> IsPortOpenAsync(string ip, int port, CancellationToken cancellationToken, int timeoutMs = 400)
         {
             if (cancellationToken.IsCancellationRequested) return false;
@@ -212,6 +299,11 @@ namespace Tools.Net.Scanner
             catch { return false; }
         }
 
+        /// <summary>
+        /// REcherche l'adresse MAC d'une adresse IP
+        /// </summary>
+        /// <param name="ipAddress"></param>
+        /// <returns></returns>
         private static string GetMacAddress(string ipAddress)
         {
             try

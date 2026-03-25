@@ -2,60 +2,112 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
-        Title="Découverte des écrans sur le réseau" Height="500" Width="650"
-        Background="Black" Foreground="White"
+        Title="Découverte des équipements sur le réseau" Height="540" Width="780"
+        Background="Black"
         WindowStartupLocation="CenterOwner"
         Closing="Window_Closing">
 
-    <Grid Margin="15">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
-            <TextBlock Text="Interface réseau de recherche:" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="White" FontWeight="SemiBold"/>
-            <telerik:RadComboBox ItemsSource="{Binding Interfaces}" 
-                                 SelectedItem="{Binding SelectedInterface, Mode=TwoWay}"
-                                 IsEnabled="{Binding IsScanning, Converter={StaticResource BoolNotConverter}}"
-                                 Width="400" telerik:StyleManager.Theme="Expression_Dark">
-                <telerik:RadComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal" Margin="2">
-                            <TextBlock Text="{Binding DisplayName}" FontWeight="Bold" Margin="0,0,10,0" Foreground="White"/>
-                            <TextBlock Text="{Binding IpAddress}" Foreground="DarkGray" FontStyle="Italic"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </telerik:RadComboBox.ItemTemplate>
-            </telerik:RadComboBox>
+        <StackPanel Grid.Row="0" Style="{StaticResource Header1Style}" Margin="10 10 10 5" Visibility="Visible">
+            <TextBlock Text="Scanner réseau local" Style="{StaticResource Header1TextStyle}"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,15">
-            <telerik:RadButton Content="Lancer la recherche" Command="{Binding CmdLancerRecherche}" Width="150" Height="30" Margin="0,0,10,0" telerik:StyleManager.Theme="Expression_Dark"/>
-            <telerik:RadButton Content="Annuler la recherche" Command="{Binding CmdAnnulerRecherche}" Width="150" Height="30" telerik:StyleManager.Theme="Expression_Dark"/>
+        <Border BorderThickness="1" Grid.Row="1" BorderBrush="White" Margin="10,0,10,10">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Margin="0,0,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-            <Control Width="20" Height="20" Margin="20,0,0,0" Visibility="{Binding IsScanning, Converter={StaticResource BoolToVisibilityConverter}}" Style="{StaticResource TrailSpinnerStyle}" Foreground="White" />
-            <TextBlock Text="Recherche en cours..." VerticalAlignment="Center" Margin="10,0,0,0" Visibility="{Binding IsScanning, Converter={StaticResource BoolToVisibilityConverter}}" Foreground="LightGray"/>
-        </StackPanel>
+                    <Label Grid.Row="0" Grid.Column="0" Content="Interface :" Style="{StaticResource LabelStyle}" VerticalAlignment="Center" Margin="0,0,10,0"/>
 
-        <telerik:RadGridView Grid.Row="2" ItemsSource="{Binding Devices}" SelectedItem="{Binding SelectedDevice, Mode=TwoWay}"
-                             AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single"
-                             telerik:StyleManager.Theme="Expression_Dark" ShowGroupPanel="False" RowIndicatorVisibility="Collapsed">
-            <telerik:RadGridView.Columns>
-                <telerik:GridViewSelectColumn />
-                <telerik:GridViewDataColumn Header="Adresse IP" DataMemberBinding="{Binding IpAddress}" Width="120" />
-                <telerik:GridViewDataColumn Header="Type d'appareil" 
-                            DataMemberBinding="{Binding Category, Converter={StaticResource DeviceTypeConverter}}" 
-                            Width="180" />
-                <telerik:GridViewDataColumn Header="Adresse MAC" DataMemberBinding="{Binding MacAddress}" Width="*" />
-            </telerik:RadGridView.Columns>
-        </telerik:RadGridView>
+                    <telerik:RadComboBox Grid.Row="0" Grid.Column="1" 
+                                         ItemsSource="{Binding Interfaces}" 
+                                         SelectedItem="{Binding SelectedInterface, Mode=TwoWay}"
+                                         IsEnabled="{Binding IsScanning, Converter={StaticResource BoolNotConverter}}"
+                                         Width="480" telerik:StyleManager.Theme="Expression_Dark">
+                        <telerik:RadComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="2">
+                                    <TextBlock Text="{Binding Interface.Description}" Foreground="White" Margin="0,0,8,0"/>
+                                    <TextBlock Text="{Binding IpAddress, StringFormat='({0})'}" Foreground="DarkGray" FontStyle="Italic"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </telerik:RadComboBox.ItemTemplate>
+                    </telerik:RadComboBox>
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
-            <telerik:RadButton Content="Valider" Click="BtnValider_Click" Width="100" Height="30" Margin="0,0,10,0" telerik:StyleManager.Theme="Expression_Dark"/>
-            <telerik:RadButton Content="Fermer" Click="BtnFermer_Click" Width="100" Height="30" telerik:StyleManager.Theme="Expression_Dark"/>
-        </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="2,5,0,0">
+                        <TextBlock Text="Informations réseau : " Foreground="SlateGray" FontSize="11" />
+                        <TextBlock Text="{Binding SelectedInterface.NetworkInfo}" Foreground="LightGray" FontSize="11" FontStyle="Italic"/>
+                    </StackPanel>
+                </Grid>
+                <Line Grid.Row="0" StrokeThickness="1" Stroke="White" Margin="0,35,0,0" X1="0" X2="700" Y1="0" Y2="0" Stretch="Fill" VerticalAlignment="Bottom"/>
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,15">
+
+                    <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" IsDefault="True" Margin="0 0 15 0" Command="{Binding CmdLancerRecherche}" Height="35">
+                        <WrapPanel Orientation="Horizontal">
+                            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/wizard-32.png" Height="25" Margin="5 0"/>
+                            <Label Content="Rechercher" Style="{StaticResource ButtonLabelStyle}" />
+                        </WrapPanel>
+                    </telerik:RadButton>
+
+                    <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="0 0 15 0" Command="{Binding CmdAnnulerRecherche}" Height="35">
+                        <WrapPanel Orientation="Horizontal">
+                            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/whole_hand-32.png" Height="25" Margin="5 0"/>
+                            <Label Content="Arrêter" Style="{StaticResource ButtonLabelStyle}" />
+                        </WrapPanel>
+                    </telerik:RadButton>
+
+                    <Control Width="18" Height="18" Margin="10,0,0,0" Visibility="{Binding IsScanning, Converter={StaticResource BoolToVisibilityConverter}}" Style="{StaticResource TrailSpinnerStyle}" Foreground="White" />
+                    <Label Content="Recherche et analyse en cours..." VerticalAlignment="Center" Margin="5,0,0,0" Visibility="{Binding IsScanning, Converter={StaticResource BoolToVisibilityConverter}}" Style="{StaticResource LabelStyle}" Foreground="LightGray"/>
+                </StackPanel>
+
+                <telerik:RadGridView Grid.Row="2" ItemsSource="{Binding Devices}" SelectedItem="{Binding SelectedDevice, Mode=TwoWay}"
+                                     AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single"
+                                     telerik:StyleManager.Theme="Expression_Dark" ShowGroupPanel="False" RowIndicatorVisibility="Collapsed"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <telerik:RadGridView.Columns>
+                        <telerik:GridViewSelectColumn />
+                        <telerik:GridViewDataColumn Header="Adresse IP" DataMemberBinding="{Binding IpAddress}" Width="110" />
+                        <telerik:GridViewDataColumn Header="Hostname" DataMemberBinding="{Binding Hostname}" Width="150" />
+                        <telerik:GridViewDataColumn Header="Type d'appareil" DataMemberBinding="{Binding Category, Converter={StaticResource DeviceTypeConverter}}" Width="160" />
+                        <telerik:GridViewDataColumn Header="Adresse MAC" DataMemberBinding="{Binding MacAddress}" Width="*" />
+                    </telerik:RadGridView.Columns>
+                </telerik:RadGridView>
+            </Grid>
+        </Border>
+
+        <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Grid.Row="2" Margin="0 0 0 10">
+
+            <telerik:RadButton x:Name="ButOk" Height="35" MinWidth="90" telerik:StyleManager.Theme="Expression_Dark" Click="BtnValider_Click" Margin="0,0,15,0"
+                               IsEnabled="{Binding SelectedDevice, Converter={StaticResource ValueToBoolConverter}}">
+                <WrapPanel Orientation="Horizontal">
+                    <Label Content="Valider" Style="{StaticResource ButtonLabelStyle}" />
+                </WrapPanel>
+            </telerik:RadButton>
+
+            <telerik:RadButton x:Name="ButCancel" Height="35" MinWidth="90" telerik:StyleManager.Theme="Expression_Dark" Click="BtnFermer_Click">
+                <WrapPanel Orientation="Horizontal">
+                    <Label Content="Fermer" Style="{StaticResource ButtonLabelStyle}" />
+                </WrapPanel>
+            </telerik:RadButton>
+        </WrapPanel>
     </Grid>
 </Window>

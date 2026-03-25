@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
@@ -18,11 +19,17 @@ namespace AppPublication.ViewModels.Configuration
         public NetworkInterface Interface { get; set; }
         public string DisplayName { get; set; }
         public string IpAddress { get; set; }
+        public string NetworkInfo { get; set; } // NOUVEAU : Propriété pour les infos réseau
     }
 
     public class NetworkScannerViewModel : NotificationBase
     {
-        private readonly NetworkScannerContext _context;
+        #region MEMBRES
+        private CancellationTokenSource _cts;                   // Pour l'arret de la recherche Async
+        private readonly NetworkScannerContext _context;        // Le contexte de recherche pour le scanner
+        #endregion
+
+        #region PROPRIETES
 
         // La liste pointe directement sur celle du contexte partagé
         public ObservableCollection<NetworkDevice> Devices => _context.Devices;
@@ -63,12 +70,16 @@ namespace AppPublication.ViewModels.Configuration
                 }
             }
         }
+        #endregion
 
-        private CancellationTokenSource _cts;
 
+        #region COMMANDES
         public ICommand CmdLancerRecherche { get; }
         public ICommand CmdAnnulerRecherche { get; }
 
+        #endregion
+
+        #region CONSTRUCTEURS
         public NetworkScannerViewModel(NetworkScannerContext context)
         {
             _context = context;
@@ -78,7 +89,25 @@ namespace AppPublication.ViewModels.Configuration
 
             ChargerInterfacesReseau();
         }
+        #endregion
 
+        #region METHODES PUBLIQUES
+
+        public void AnnulerRecherche()
+        {
+            if (_cts != null && !_cts.IsCancellationRequested)
+            {
+                _cts.Cancel();
+            }
+        }
+
+        #endregion
+
+        #region METHODES PRIVEES
+
+        /// <summary>
+        /// Charge les interfaces reseau de la machine
+        /// </summary>
         private void ChargerInterfacesReseau()
         {
             try
@@ -90,13 +119,21 @@ namespace AppPublication.ViewModels.Configuration
                 foreach (var ni in netInterfaces)
                 {
                     var ipInfo = ni.GetIPProperties()?.UnicastAddresses?.FirstOrDefault(a => a.Address.AddressFamily == AddressFamily.InterNetwork);
-                    if (ipInfo != null)
+
+                    // MODIFICATION : On vérifie aussi que le masque n'est pas null
+                    if (ipInfo != null && ipInfo.IPv4Mask != null)
                     {
+                        // NOUVEAU : Calcul du réseau, du masque CIDR et du nombre d'appareils
+                        string networkAddress = GetNetworkAddress(ipInfo.Address, ipInfo.IPv4Mask);
+                        int prefixLength = GetPrefixLength(ipInfo.IPv4Mask);
+                        int maxDevices = GetUsableHostCount(prefixLength);
+
                         Interfaces.Add(new NetworkInterfaceDisplay
                         {
                             Interface = ni,
-                            DisplayName = $"{ni.Name} ({ni.Description})",
-                            IpAddress = ipInfo.Address.ToString()
+                            DisplayName = $"{ni.Description}",
+                            IpAddress = ipInfo.Address.ToString(),
+                            NetworkInfo = $"{networkAddress}/{prefixLength} ({maxDevices} appareils max)" // NOUVEAU
                         });
                     }
                 }
@@ -117,6 +154,10 @@ namespace AppPublication.ViewModels.Configuration
             }
         }
 
+        /// <summary>
+        /// Execute en Async la tache de scan du reseau via le Network Scanner
+        /// </summary>
+        /// <returns></returns>
         private async Task LancerRechercheAsync()
         {
             if (IsScanning || SelectedInterface == null) return;
@@ -158,12 +199,51 @@ namespace AppPublication.ViewModels.Configuration
             }
         }
 
-        public void AnnulerRecherche()
+
+
+        /// <summary>
+        /// Calcul les informations du réseau en fonction de son adresse et de son masque
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <param name="mask"></param>
+        /// <returns></returns>
+        private string GetNetworkAddress(IPAddress ip, IPAddress mask)
         {
-            if (_cts != null && !_cts.IsCancellationRequested)
+            byte[] ipBytes = ip.GetAddressBytes();
+            byte[] maskBytes = mask.GetAddressBytes();
+            byte[] networkBytes = new byte[ipBytes.Length];
+
+            for (int i = 0; i < ipBytes.Length; i++)
             {
-                _cts.Cancel();
+                networkBytes[i] = (byte)(ipBytes[i] & maskBytes[i]);
             }
+
+            return new IPAddress(networkBytes).ToString();
         }
+
+        private int GetPrefixLength(IPAddress mask)
+        {
+            byte[] maskBytes = mask.GetAddressBytes();
+            int prefixLength = 0;
+
+            foreach (byte b in maskBytes)
+            {
+                int v = b;
+                while (v > 0)
+                {
+                    prefixLength += (v & 1);
+                    v >>= 1;
+                }
+            }
+            return prefixLength;
+        }
+
+        private int GetUsableHostCount(int prefixLength)
+        {
+            if (prefixLength >= 31) return 0;
+            return (int)Math.Pow(2, 32 - prefixLength) - 2;
+        }
+
+        #endregion
     }
 }
