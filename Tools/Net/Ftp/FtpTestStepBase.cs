@@ -1,10 +1,10 @@
 ﻿using System.Threading;
 using FluentFTP;
 using Tools.Framework;
-using Tools.Net;
+
 
 namespace Tools.Net.Ftp
-{
+{ 
     public enum TestStatus
     {
         Pending,

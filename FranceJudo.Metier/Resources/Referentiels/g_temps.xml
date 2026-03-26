@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<liste>
+  <gestionsTemps date1="01092014" date2="31122100">
+    <gestionTemps cateAge="1" sexe="0" tempsCombats="120" tempsRecup="240" tempsHippon="20" tempsWaza="10" tempsYuko="90" tempsGolden="-1"></gestionTemps>
+    <gestionTemps cateAge="1" sexe="1" tempsCombats="120" tempsRecup="240" tempsHippon="20" tempsWaza="10" tempsYuko="90" tempsGolden="-1"></gestionTemps>
+    <gestionTemps cateAge="2" sexe="0" tempsCombats="120" tempsRecup="240" tempsHippon="20" tempsWaza="10" tempsYuko="90" tempsGolden="-1"></gestionTemps>
+    <gestionTemps cateAge="2" sexe="1" tempsCombats="120" tempsRecup="240" tempsHippon="20" tempsWaza="10" tempsYuko="90" tempsGolden="-1"></gestionTemps>
+    <gestionTemps cateAge="3" sexe="0" tempsCombats="180" tempsRecup="360" tempsHippon="20" tempsWaza="10" tempsYuko="90" tempsGolden="-1"></gestionTemps>
+    <gestionTemps cateAge="3" sexe="1" tempsCombats="180" tempsRecup="360" tempsHippon="20" tempsWaza="10" tempsYuko="90" tempsGolden="-1"></gestionTemps>
+    <gestionTemps cateAge="4" sexe="0" tempsCombats="240" tempsRecup="600" tempsHippon="20" tempsWaza="10" tempsYuko="90" tempsGolden="-1"></gestionTemps>
+    <gestionTemps cateAge="4" sexe="1" tempsCombats="240" tempsRecup="600" tempsHippon="20" tempsWaza="10" tempsYuko="90" tempsGolden="-1"></gestionTemps>
+
+    <gestionTemps cateAge="5" sexe="0" tempsCombats="240" tempsRecup="600" tempsHippon="20" tempsWaza="10" tempsYuko="90" tempsGolden="-1"></gestionTemps>
+    <gestionTemps cateAge="5" sexe="1" tempsCombats="240" tempsRecup="600" tempsHippon="20" tempsWaza="10" tempsYuko="90" tempsGolden="-1"></gestionTemps>
+    <gestionTemps cateAge="6" sexe="0" tempsCombats="240" tempsRecup="600" tempsHippon="20" tempsWaza="10" tempsYuko="90" tempsGolden="-1"></gestionTemps>
+    <gestionTemps cateAge="6" sexe="1" tempsCombats="240" tempsRecup="600" tempsHippon="20" tempsWaza="10" tempsYuko="90" tempsGolden="-1"></gestionTemps>
+    <gestionTemps cateAge="7" sexe="0" tempsCombats="180" tempsRecup="600" tempsHippon="20" tempsWaza="10" tempsYuko="90" tempsGolden="-1"></gestionTemps>
+    <gestionTemps cateAge="7" sexe="1" tempsCombats="180" tempsRecup="600" tempsHippon="20" tempsWaza="10" tempsYuko="90" tempsGolden="-1"></gestionTemps>
+
+    <gestionTemps cateAge="9" sexe="0" tempsCombats="90" tempsRecup="240" tempsHippon="20" tempsWaza="10" tempsYuko="90" tempsGolden="-1"></gestionTemps>
+    <gestionTemps cateAge="9" sexe="1" tempsCombats="90" tempsRecup="240" tempsHippon="20" tempsWaza="10" tempsYuko="90" tempsGolden="-1"></gestionTemps>
+    <gestionTemps cateAge="10" sexe="0" tempsCombats="90" tempsRecup="240" tempsHippon="20" tempsWaza="10" tempsYuko="90" tempsGolden="-1"></gestionTemps>
+    <gestionTemps cateAge="10" sexe="1" tempsCombats="90" tempsRecup="240" tempsHippon="20" tempsWaza="10" tempsYuko="90" tempsGolden="-1"></gestionTemps>
+
+    <gestionTemps cateAge="11" sexe="0" tempsCombats="240" tempsRecup="600" tempsHippon="20" tempsWaza="10" tempsYuko="90" tempsGolden="-1"></gestionTemps>
+    <gestionTemps cateAge="11" sexe="1" tempsCombats="240" tempsRecup="600" tempsHippon="20" tempsWaza="10" tempsYuko="90" tempsGolden="-1"></gestionTemps>
+    
+  </gestionsTemps>
+</liste>
+
+
+

@@ -1,0 +1,257 @@
+﻿div.tas-panel-tableau-combat {
+    overflow-x: scroll;
+    white-space: nowrap;
+}
+
+table.tas-tableau-combat {
+    border: 0px;
+    border-collapse: collapse;
+    border-spacing: 0px;
+}
+
+    table.tas-tableau-combat td {
+        padding: 0px;
+    }
+
+table.tas-tableau-repechage-combat {
+    border: 0px;
+    border-collapse: collapse;
+    border-spacing: 0px;
+}
+
+    table.tas-tableau-repechage-combat td {
+        padding: 0px;
+        vertical-align: top;
+    }
+
+table.tas-tableau-prochain-combat {
+    border: 0px;
+    border-collapse: collapse;
+    border-spacing: 0px;
+    width: 100%
+}
+
+    table.tas-tableau-prochain-combat tr {
+        border-bottom: 6px solid white;
+    }
+
+    table.tas-tableau-prochain-combat div.tas-info-combat {
+        position: relative;
+        display: inline-block;
+    }
+
+        table.tas-tableau-prochain-combat div.tas-info-combat footer {
+            display: flex;
+            justify-content: center;
+        }
+
+div.tas-combat-niveau {
+    width: 100%;
+    /* Taille ajuster dans le XSLT rowspan * 100px + 6px */
+    /*height: 106px;*/
+}
+
+    div.tas-combat-niveau table {
+        border: 0px;
+        border-collapse: collapse;
+        border-spacing: 0px;
+        width: 100%;
+        height: 100%;
+    }
+
+        div.tas-combat-niveau table td {
+            padding: 0px;
+            vertical-align: middle;
+        }
+
+        div.tas-combat-niveau table tr {
+            /* Tailler ajustee dans le XSLT rowspan * 25px */
+            /*height: 25px;*/
+        }
+
+            div.tas-combat-niveau table tr.tas-combat-spacer {
+                height: 6px;
+            }
+
+            div.tas-combat-niveau table tr div.tas-combattant {
+                width: 100%;
+                margin-top: 25px;
+                min-width: 100px;
+            }
+
+            div.tas-combat-niveau table tr div.tas-participant {
+                width: 100%;
+                min-width: 100px;
+            }
+
+div.tas-combat-repechage-niveau {
+    width: 100%;
+}
+
+    div.tas-combat-repechage-niveau table {
+        border: 0px;
+        border-collapse: collapse;
+        border-spacing: 0px;
+        width: 100%;
+        height: 100%;
+    }
+
+        div.tas-combat-repechage-niveau table td {
+            padding: 0px;
+            vertical-align: middle;
+        }
+
+        div.tas-combat-repechage-niveau table tr {
+            height: 35px;
+        }
+
+        div.tas-combat-repechage-niveau table tr.tas-combat-repechage {
+            height: 25px;
+        }
+
+            div.tas-combat-repechage-niveau table tr div.tas-combattant {
+                width: 100%;
+                margin-top: 25px;
+                min-width: 100px;
+            }
+
+            div.tas-combat-repechage-niveau table tr div.tas-participant {
+                width: 100%;
+                min-width: 100px;
+            }
+
+
+div.tas-combat-final-niveau {
+    width: 100%;
+    /* Taille ajuster dans le XSLT rowspan * 100px + 6px */
+    /*height: 106px;*/
+}
+
+    div.tas-combat-final-niveau table {
+        border: 0px;
+        border-collapse: collapse;
+        border-spacing: 0px;
+        width: 100%;
+        height: 100%;
+    }
+
+        div.tas-combat-final-niveau table td {
+            padding: 0px;
+            vertical-align: middle;
+        }
+
+        div.tas-combat-final-niveau table tr div.tas-combattant {
+            width: 100%;
+            margin-top: 25px;
+            min-width: 100px;
+        }
+
+        div.tas-combat-final-niveau table tr div.tas-participant {
+            width: 100%;
+            min-width: 100px;
+        }
+
+div.tas-combat-repechage-final-niveau {
+    width: 100%;
+}
+
+    div.tas-combat-repechage-final-niveau table {
+        border: 0px;
+        border-collapse: collapse;
+        border-spacing: 0px;
+        width: 100%;
+        height: 100%;
+    }
+
+        div.tas-combat-repechage-final-niveau table td {
+            padding: 0px;
+            vertical-align: middle;
+        }
+
+        div.tas-combat-repechage-final-niveau table tr div.tas-combattant {
+            width: 100%;
+            margin-top: 25px;
+            min-width: 100px;
+        }
+
+        div.tas-combat-repechage-final-niveau table tr div.tas-participant {
+            width: 100%;
+            min-width: 100px;
+        }
+
+td.tas-combat-vertical {
+    height: 50%;
+    width: 6px;
+}
+
+    td.tas-combat-vertical div {
+        border-radius: 0 50% 50% 0;
+        height: 100%;
+        width: 100%;
+    }
+
+td.tas-combat-repechage-vertical {
+    width: 6px;
+}
+
+    td.tas-combat-repechage-vertical div {
+        border-radius: 0 50% 50% 0;
+        width: 100%;
+    }
+
+table.tas-tableau-combat-participant {
+    border: 0px;
+    border-collapse: collapse;
+    border-spacing: 0px;
+    width: 100%;
+    padding-bottom: 4px;
+    padding-left: 4px;
+    padding-right: 4px;
+    padding-top: 4px;
+}
+
+    table.tas-tableau-combat-participant tr {
+        border-bottom: 6px solid white;
+    }
+
+        table.tas-tableau-combat-participant tr table {
+            padding-bottom: 0px;
+            padding-left: 0px;
+            padding-right: 0px;
+            padding-top: 0px
+        }
+
+        table.tas-tableau-combat-participant tr table td {
+            padding-bottom: 0px;
+            padding-left: 0px;
+            padding-right: 0px;
+            padding-top: 0px
+        }
+            table.tas-tableau-combat-participant tr table td.tas-winner {
+                padding-bottom: 0px;
+                padding-left: 0px;
+                padding-right: 0px;
+                padding-top: 0px;
+                width: 20px;
+            }
+
+            table.tas-tableau-combat-participant tr table td div.tas-resultat {
+                padding-bottom: 0px;
+                padding-left: 2px;
+                padding-right: 2px;
+                padding-top: 0px;
+            }
+            
+            div.tas-combat-premiere-categorie {
+    transform: translateY(-10px);
+    width: 72px;
+}
+
+div.tas-participant-premiere-categorie {
+    transform: translateY(-8px);
+    width: 72px;
+}
+
+div.tas-prochain-combat-premiere-categorie {
+    width: 72px;
+}

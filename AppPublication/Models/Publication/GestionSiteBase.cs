@@ -7,7 +7,7 @@ using KernelImpl;
 using System;
 using System.Net;
 using Tools.Framework;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 using Tools.Net;
 using Tools.Threading;
 

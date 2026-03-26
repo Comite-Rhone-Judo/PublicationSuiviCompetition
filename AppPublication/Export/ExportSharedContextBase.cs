@@ -2,7 +2,7 @@
 using KernelImpl.Noyau.Structures;
 using System.Xml.Linq;
 using Tools.Export;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 
 namespace AppPublication.Export
 {

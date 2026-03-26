@@ -14,7 +14,7 @@ using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Tools.Enum;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 using Tools.Outils;
 using Tools.XML;
 

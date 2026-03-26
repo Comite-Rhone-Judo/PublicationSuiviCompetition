@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Tools.Enum;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 
 namespace AppPublication.ExtensionNoyau.Engagement
 {

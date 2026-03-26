@@ -7,7 +7,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Telerik.Windows.Controls;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 using Tools.Export;
 using Tools.Windows;
 

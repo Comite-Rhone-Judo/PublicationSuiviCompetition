@@ -13,7 +13,7 @@ using System.Linq;
 using System.Net;
 using Tools.Export;
 using Tools.Files;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 using Tools.Outils;
 using Tools.Windows;
 

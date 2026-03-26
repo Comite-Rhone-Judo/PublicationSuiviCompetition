@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Telerik.Windows.Controls;
 using Tools.Framework;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 using Tools.Windows;
 
 namespace AppPublication.ViewModels.Configuration

@@ -19,3 +19,4 @@ namespace Tools.Enum
         public static string HTTP_SUIVI_URL = "http://tas.ejudo.fr/suivi/";
     }
 }
+    

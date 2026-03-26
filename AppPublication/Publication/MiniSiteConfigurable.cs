@@ -7,7 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using Tools.Core;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 using Tools.Net;
 
 namespace AppPublication.Publication

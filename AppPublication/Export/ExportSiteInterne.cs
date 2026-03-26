@@ -14,7 +14,7 @@ using System.Xml.Xsl;
 using Tools.Enum;
 using Tools.Export;
 using Tools.Files;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 using Tools.Threading;
 using static AppPublication.Models.EcransAppel.EcranAppelModel;
 

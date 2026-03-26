@@ -18,7 +18,7 @@ using Tools.Core;
 using Tools.Enum;
 using Tools.Export;
 using Tools.Files;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 using Tools.Net;
 using Tools.Outils;
 using Tools.Windows;

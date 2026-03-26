@@ -7,7 +7,7 @@ namespace Tools.Outils
     {
         private static AppInformation _instance = null;
 
-        AppInformation()
+        private AppInformation()
         {
             AppVersion = OutilsTools.GetVersionInformation();
             AppCompany = OutilsTools.GetCompanyInformation();

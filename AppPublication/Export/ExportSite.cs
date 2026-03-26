@@ -18,7 +18,7 @@ using System.Xml.Xsl;
 using Tools.Enum;
 using Tools.Export;
 using Tools.Files;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 using Tools.Outils;
 using Tools.Threading;
 

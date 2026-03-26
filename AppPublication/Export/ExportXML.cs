@@ -16,7 +16,7 @@ using Tools.Export;
 using Tools.Files;
 using AppPublication.ExtensionNoyau.Engagement;
 using Tools.XML;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 using AppPublication.Publication;
 
 namespace AppPublication.Export

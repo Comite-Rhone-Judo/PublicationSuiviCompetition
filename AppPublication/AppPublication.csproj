@@ -145,6 +145,8 @@
     <Compile Include="Config\Publication\MiniSiteCollection.cs" />
     <Compile Include="Config\Publication\MiniSiteConfigElement.cs" />
     <Compile Include="Config\Publication\PublicationConfigSection.cs" />
+    <Compile Include="Export\ConfigurationExportSite.cs" />
+    <Compile Include="Export\ConfigurationExportSiteInterne.cs" />
     <Compile Include="Export\ExportSharedContextInterne.cs" />
     <Compile Include="Export\ExportSharedContext.cs" />
     <Compile Include="Export\ExportSharedContextBase.cs" />
@@ -175,10 +177,8 @@
     <Compile Include="Statistiques\StatMgrDonnees.cs" />
     <Compile Include="Statistiques\StatMgrGeneration.cs" />
     <Compile Include="Statistiques\StatMgrSynchronisation.cs" />
-    <Compile Include="Tools\ActionWatcher.cs" />
     <Compile Include="Tools\Converter\DeviceTypeConverter.cs" />
     <Compile Include="Tools\Converter\GroupementToLayoutConverter.cs" />
-    <Compile Include="Tools\Converter\ValueToBoolConverter.cs" />
     <Compile Include="Publication\EcransAppelRedirectModule.cs" />
     <Compile Include="ViewModels\Configuration\ConfigurationEcransViewModel.cs" />
     <Compile Include="Controles\SitePublicationCoordinator.cs" />
@@ -209,31 +209,19 @@
     <Compile Include="Statistiques\StatistiqueItem.cs" />
     <Compile Include="Statistiques\StatistiqueItemCompteur.cs" />
     <Compile Include="Statistiques\StatistiqueItemMoyenneur.cs" />
-    <Compile Include="Tools\AppInformation.cs" />
     <Compile Include="Tools\Converter\AppStatusTypeConverter.cs" />
     <Compile Include="Tools\Converter\AppStatusProgressConverter.cs" />
     <Compile Include="Tools\Converter\AppStatusConverter.cs" />
-    <Compile Include="Tools\Converter\ListIntToStringConverter.cs" />
-    <Compile Include="Tools\Converter\PassthroughConverter.cs" />
-    <Compile Include="Tools\Converter\BoolOperationConverter.cs" />
-    <Compile Include="Tools\Converter\BoolToVisibilityConverter.cs" />
     <Compile Include="Tools\Converter\DisplayURLStatusConverter.cs" />
     <Compile Include="Tools\Converter\StatGenerationConverter.cs" />
     <Compile Include="Tools\Converter\RunningStatusConverter.cs" />
-    <Compile Include="Tools\Converter\BoolNotConverter.cs" />
     <Compile Include="Tools\Converter\ClientConverter.cs" />
     <Compile Include="Tools\EchangeMarkup.cs" />
-    <Compile Include="Tools\FranceJudo\EntitePublicationFFJudo.cs" />
     <Compile Include="Tools\Enum\BusyStatusEnum.cs" />
     <Compile Include="Tools\Enum\TypePouleEnum.cs" />
-    <Compile Include="Tools\Files\FileTools.cs" />
-    <Compile Include="Tools\Files\FilteredFileInfo.cs" />
     <Compile Include="Generation\GenerationProgressInfo.cs" />
-    <Compile Include="Tools\FranceJudo\LectureStructures.cs" />
     <Compile Include="Statistiques\TaskExecutionInformation.cs" />
     <Compile Include="Generation\StatusGenerationSite.cs" />
-    <Compile Include="Tools\Streams\StreamTool.cs" />
-    <Compile Include="Tools\Struct\ExportStruct.cs" />
     <Page Include="Views\Configuration\ConfigurationPublicationSiteInterneView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -357,7 +345,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NLog">
-      <Version>6.0.7</Version>
+      <Version>6.1.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

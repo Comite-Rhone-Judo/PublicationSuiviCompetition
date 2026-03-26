@@ -12,7 +12,7 @@
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
-	<LangVersion>latest</LangVersion>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -38,7 +38,7 @@
       <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.6.0.7\lib\net46\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.6.1.1\lib\net46\NLog.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
@@ -53,7 +53,7 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
-    <Compile Include="Enum\CategorieDonneesEnum.cs" />
+    <Compile Include="Noyau\CategorieDonneesEnum.cs" />
     <Compile Include="IJudoDataManager.cs" />
     <Compile Include="IJudoData.cs" />
     <Compile Include="Internal\AtomicCachedBased.cs" />
@@ -76,18 +76,34 @@
     <Compile Include="Internal\IEntityWithKey.cs" />
     <Compile Include="Noyau\Deroulement\DataDeroulementExtension.cs" />
     <Compile Include="Noyau\Deroulement\DeroulementSnapshot.cs" />
+    <Compile Include="Noyau\Deroulement\EtatCombatEnum.cs" />
+    <Compile Include="Noyau\Deroulement\EtatCombattantEnum.cs" />
     <Compile Include="Noyau\Deroulement\IDeroulementData.cs" />
+    <Compile Include="Noyau\Deroulement\TypePhaseEnum.cs" />
     <Compile Include="Noyau\Logos\DataLogos.cs" />
     <Compile Include="Noyau\Logos\IlogosData.cs" />
     <Compile Include="Noyau\Logos\LogosSnapshot.cs" />
+    <Compile Include="Noyau\Organisation\CompetitionDisciplineEnum.cs" />
+    <Compile Include="Noyau\Organisation\CompetitionTypeEnum.cs" />
+    <Compile Include="Noyau\Organisation\ConstantCouleur.cs" />
     <Compile Include="Noyau\Organisation\DataOrganisation.cs" />
+    <Compile Include="Noyau\Organisation\DiplomeTypeEnum.cs" />
+    <Compile Include="Noyau\Organisation\EchelonEnum.cs" />
+    <Compile Include="Noyau\Organisation\EpreuveEquipeTypeEnum.cs" />
+    <Compile Include="Noyau\Organisation\EpreuveSexeEnum.cs" />
+    <Compile Include="Noyau\Organisation\EtatEpreuveEnum.cs" />
+    <Compile Include="Noyau\Deroulement\EtatPhaseEnum.cs" />
     <Compile Include="Noyau\Organisation\IOrganisationData.cs" />
     <Compile Include="Noyau\Organisation\i_vue_epreuve_interface.cs" />
     <Compile Include="Noyau\Organisation\OrganisationSnapshot.cs" />
+    <Compile Include="Noyau\Organisation\ReglementEquipeEnum.cs" />
+    <Compile Include="Noyau\Organisation\TypeCSAEnum.cs" />
     <Compile Include="Noyau\Participants\DataParticipants.cs" />
     <Compile Include="Noyau\Participants\DataParticipantsExtension.cs" />
+    <Compile Include="Noyau\Participants\EtatJudokaEnum.cs" />
     <Compile Include="Noyau\Participants\IParticipantsData.cs" />
     <Compile Include="Noyau\Participants\ParticipantsSnapshot.cs" />
+    <Compile Include="Noyau\Participants\QualifieEnum.cs" />
     <Compile Include="Noyau\Structures\Club.cs" />
     <Compile Include="Noyau\Structures\DataStructures.cs" />
     <Compile Include="Noyau\Deroulement\Combat.cs" />

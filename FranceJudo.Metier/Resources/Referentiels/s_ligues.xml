@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<structures>
+  <ligues>
+    <ligue ID="01" remoteID="XX01" nom="GUADELOUPE" nomCourt="GUA"></ligue>
+    <ligue ID="02" remoteID="XX02" nom="MARTINIQUE" nomCourt="MAR"></ligue>
+    <ligue ID="03" remoteID="XX03" nom="GUYANE" nomCourt="GUY"></ligue>
+    <ligue ID="04" remoteID="XX04" nom="REUNION" nomCourt="REU"></ligue>
+    <ligue ID="06" remoteID="XX06" nom="MAYOTTE" nomCourt="MAY"></ligue>
+    <ligue ID="08" remoteID="XX08" nom="NOUVELLE CALEDONIE" nomCourt="CAL"></ligue>
+    <ligue ID="09" remoteID="XX09" nom="FEDERATION FRANCAISE - AUTRES" nomCourt=""></ligue>
+    <ligue ID="11" remoteID="XX11" nom="ILE-DE-FRANCE" nomCourt="IDF"></ligue>
+    <ligue ID="24" remoteID="XX24" nom="CENTRE-VAL-DE-LOIRE" nomCourt="CVL"></ligue>
+    <ligue ID="27" remoteID="XX27" nom="BOURGOGNE-FRANCHE-COMTE" nomCourt="BFC"></ligue>
+    <ligue ID="28" remoteID="XX28" nom="NORMANDIE" nomCourt="NOR"></ligue>
+    <ligue ID="32" remoteID="XX32" nom="HAUTS-DE-FRANCE" nomCourt="HDF"></ligue>
+    <ligue ID="44" remoteID="XX44" nom="GRAND-EST" nomCourt="GRE"></ligue>
+    <ligue ID="52" remoteID="XX52" nom="PAYS-DE-LA-LOIRE" nomCourt="PDL"></ligue>
+    <ligue ID="53" remoteID="XX53" nom="BRETAGNE" nomCourt="BRE"></ligue>
+    <ligue ID="75" remoteID="XX75" nom="NOUVELLE AQUITAINE" nomCourt="NAQ"></ligue>
+    <ligue ID="76" remoteID="XX76" nom="OCCITANIE" nomCourt="OCC"></ligue>
+    <ligue ID="84" remoteID="XX84" nom="AUVERGNE-RHONE-ALPES" nomCourt="AURA"></ligue>
+    <ligue ID="93" remoteID="XX93" nom="PROVENCE-ALPES-COTE-D AZUR" nomCourt="PACA"></ligue>
+    <ligue ID="94" remoteID="XX94" nom="CORSE" nomCourt="COR"></ligue>
+
+    <ligue ID="ET" remoteID="" nom="ETRANGER" nomCourt="ETR"></ligue>
+    <ligue ID="FFJ" remoteID="" nom="FFJudo" nomCourt="FFJ"></ligue>
+
+
+
+  </ligues>
+</structures>
+

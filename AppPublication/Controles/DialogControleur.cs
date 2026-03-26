@@ -18,7 +18,7 @@ using Telerik.Windows.Controls;
 using Tools.Core;
 using Tools.Files;
 using Tools.Framework;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 using Tools.Net;
 using Tools.Security;
 using Tools.Threading;

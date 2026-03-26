@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<liste>
+  <categorieAges date1="01092014" date2="31122014">
+    <categorieAge id="10" nom="Baby" ordre="1" remoteId="BA" anneeMin="2008" anneeMax="2009" ></categorieAge>
+    <categorieAge id="9" nom="Mini-Poussin" ordre="2" remoteId="N" anneeMin="2006" anneeMax="2007" ></categorieAge>
+    <categorieAge id="1" nom="Poussin" ordre="3" remoteId="P" anneeMin="2004" anneeMax="2005" ></categorieAge>
+    <categorieAge id="2" nom="Benjamin" ordre="4" remoteId="B" anneeMin="2002" anneeMax="2003" ></categorieAge>
+    <categorieAge id="3" nom="Minime" ordre="5" remoteId="M" anneeMin="2000" anneeMax="2001" ></categorieAge>
+    <categorieAge id="4" nom="Cadet" ordre="6" remoteId="C" anneeMin="1997" anneeMax="1999" ></categorieAge>
+    <categorieAge id="5" nom="Junior" ordre="7" remoteId="J" anneeMin="1994" anneeMax="1997" ></categorieAge>
+    <categorieAge id="6" nom="Senior" ordre="8" remoteId="S" anneeMin="1900" anneeMax="1996" ></categorieAge>
+    <categorieAge id="7" nom="Veteran" ordre="9" remoteId="V" anneeMin="1900" anneeMax="1983" ></categorieAge>
+  </categorieAges>
+  <categorieAges date1="01012015" date2="31122015">
+    <categorieAge id="9" nom="Mini-Poussin" ordre="2" remoteId="N" anneeMin="2007" anneeMax="2008" ></categorieAge>
+    <categorieAge id="10" nom="Baby" ordre="1" remoteId="BA" anneeMin="2009" anneeMax="2010" ></categorieAge>
+    <categorieAge id="1" nom="Poussin" ordre="3" remoteId="P" anneeMin="2005" anneeMax="2006" ></categorieAge>
+    <categorieAge id="2" nom="Benjamin" ordre="4" remoteId="B" anneeMin="2003" anneeMax="2004" ></categorieAge>
+    <categorieAge id="3" nom="Minime" ordre="5" remoteId="M" anneeMin="2001" anneeMax="2002" ></categorieAge>
+    <categorieAge id="4" nom="Cadet" ordre="6" remoteId="C" anneeMin="1998" anneeMax="2000" ></categorieAge>
+    <categorieAge id="5" nom="Junior" ordre="7" remoteId="J" anneeMin="1995" anneeMax="1998" ></categorieAge>
+    <categorieAge id="6" nom="Senior" ordre="8" remoteId="S" anneeMin="1900" anneeMax="1997" ></categorieAge>
+    <categorieAge id="7" nom="Veteran" ordre="9" remoteId="V" anneeMin="1900" anneeMax="1984" ></categorieAge>
+  </categorieAges>
+  <categorieAges date1="01012016" date2="31122016">
+    <categorieAge id="10" nom="Baby" ordre="1" remoteId="BA" anneeMin="2010" anneeMax="2011" ></categorieAge>
+    <categorieAge id="9" nom="Mini-Poussin" ordre="2" remoteId="N" anneeMin="2008" anneeMax="2009" ></categorieAge>
+    <categorieAge id="1" nom="Poussin" ordre="3" remoteId="P" anneeMin="2006" anneeMax="2007" ></categorieAge>
+    <categorieAge id="2" nom="Benjamin" ordre="4" remoteId="B" anneeMin="2004" anneeMax="2005" ></categorieAge>
+    <categorieAge id="3" nom="Minime" ordre="5" remoteId="M" anneeMin="2002" anneeMax="2003" ></categorieAge>
+    <categorieAge id="4" nom="Cadet" ordre="6" remoteId="C" anneeMin="1999" anneeMax="2001" ></categorieAge>
+    <categorieAge id="5" nom="Junior" ordre="7" remoteId="J" anneeMin="1996" anneeMax="1999" ></categorieAge>
+    <categorieAge id="6" nom="Senior" ordre="8" remoteId="S" anneeMin="1900" anneeMax="1998" ></categorieAge>
+    <categorieAge id="7" nom="Veteran" ordre="9" remoteId="V" anneeMin="1900" anneeMax="1985" ></categorieAge>
+  </categorieAges>
+  <categorieAges date1="01012017" date2="31122017">
+    <categorieAge id="10" nom="Eveil JUDO" ordre="1" remoteId="EV" anneeMin="2011" anneeMax="2012" ></categorieAge>
+    <categorieAge id="9" nom="Mini-Poussin" ordre="2" remoteId="MP" anneeMin="2009" anneeMax="2010" ></categorieAge>
+    <categorieAge id="1" nom="Poussin" ordre="3" remoteId="P" anneeMin="2007" anneeMax="2008" ></categorieAge>
+    <categorieAge id="2" nom="Benjamin" ordre="4" remoteId="B" anneeMin="2005" anneeMax="2006" ></categorieAge>
+    <categorieAge id="3" nom="Minime" ordre="5" remoteId="M" anneeMin="2003" anneeMax="2004" ></categorieAge>
+    <categorieAge id="4" nom="Cadet" ordre="6" remoteId="C" anneeMin="2000" anneeMax="2002" ></categorieAge>
+    <categorieAge id="5" nom="Junior" ordre="7" remoteId="J" anneeMin="1997" anneeMax="2000" ></categorieAge>
+    <categorieAge id="6" nom="Senior" ordre="8" remoteId="S" anneeMin="1900" anneeMax="1999" ></categorieAge>
+    <categorieAge id="7" nom="Veteran" ordre="9" remoteId="V" anneeMin="1900" anneeMax="1986" ></categorieAge>
+
+    <categorieAge id="11" nom="Hors catégorie" ordre="10" remoteId="H" anneeMin="1900" anneeMax="2017" ></categorieAge>
+  </categorieAges>
+
+  <categorieAges date1="01012018" date2="31122018">
+    <categorieAge id="10" nom="Eveil JUDO" ordre="1" remoteId="EV" anneeMin="2012" anneeMax="2013"></categorieAge>
+    <categorieAge id="9" nom="Mini-Poussin" ordre="2" remoteId="MP" anneeMin="2010" anneeMax="2011"></categorieAge>
+    <categorieAge id="1" nom="Poussin" ordre="3" remoteId="P" anneeMin="2008" anneeMax="2009"></categorieAge>
+    <categorieAge id="2" nom="Benjamin" ordre="4" remoteId="B" anneeMin="2006" anneeMax="2007"></categorieAge>
+    <categorieAge id="3" nom="Minime" ordre="5" remoteId="M" anneeMin="2004" anneeMax="2005"></categorieAge>
+    <categorieAge id="4" nom="Cadet" ordre="6" remoteId="C" anneeMin="2001" anneeMax="2003"></categorieAge>
+    <categorieAge id="5" nom="Junior" ordre="7" remoteId="J" anneeMin="1998" anneeMax="2001"></categorieAge>
+    <categorieAge id="6" nom="Senior" ordre="8" remoteId="S" anneeMin="1900" anneeMax="2000"></categorieAge>
+    <categorieAge id="7" nom="Veteran" ordre="9" remoteId="V" anneeMin="1900" anneeMax="1987"></categorieAge>
+
+    <categorieAge id="11" nom="Hors catégorie" ordre="10" remoteId="H" anneeMin="1900" anneeMax="2018"></categorieAge>
+  </categorieAges>
+
+  <categorieAges date1="01012019" date2="31122019">
+    <categorieAge id="10" nom="Eveil JUDO" ordre="1" remoteId="EV" anneeMin="2013" anneeMax="2014"></categorieAge>
+    <categorieAge id="9" nom="Mini-Poussin" ordre="2" remoteId="MP" anneeMin="2011" anneeMax="2012"></categorieAge>
+    <categorieAge id="1" nom="Poussin" ordre="3" remoteId="P" anneeMin="2009" anneeMax="2010"></categorieAge>
+    <categorieAge id="2" nom="Benjamin" ordre="4" remoteId="B" anneeMin="2007" anneeMax="2008"></categorieAge>
+    <categorieAge id="3" nom="Minime" ordre="5" remoteId="M" anneeMin="2005" anneeMax="2006"></categorieAge>
+    <categorieAge id="4" nom="Cadet" ordre="6" remoteId="C" anneeMin="2002" anneeMax="2004"></categorieAge>
+    <categorieAge id="5" nom="Junior" ordre="7" remoteId="J" anneeMin="1999" anneeMax="2002"></categorieAge>
+    <categorieAge id="6" nom="Senior" ordre="8" remoteId="S" anneeMin="1900" anneeMax="2001"></categorieAge>
+    <categorieAge id="7" nom="Veteran" ordre="9" remoteId="V" anneeMin="1900" anneeMax="1988"></categorieAge>
+
+    <categorieAge id="11" nom="Hors catégorie" ordre="10" remoteId="H" anneeMin="1900" anneeMax="2019"></categorieAge>
+  </categorieAges>
+
+  <categorieAges date1="01012020" date2="31122020">
+    <categorieAge id="10" nom="Eveil JUDO" ordre="1" remoteId="EV" anneeMin="2014" anneeMax="2015"></categorieAge>
+    <categorieAge id="9" nom="Mini-Poussin" ordre="2" remoteId="MP" anneeMin="2012" anneeMax="2013"></categorieAge>
+    <categorieAge id="1" nom="Poussin" ordre="3" remoteId="P" anneeMin="2010" anneeMax="2011"></categorieAge>
+    <categorieAge id="2" nom="Benjamin" ordre="4" remoteId="B" anneeMin="2008" anneeMax="2009"></categorieAge>
+    <categorieAge id="3" nom="Minime" ordre="5" remoteId="M" anneeMin="2006" anneeMax="2007"></categorieAge>
+    <categorieAge id="4" nom="Cadet" ordre="6" remoteId="C" anneeMin="2003" anneeMax="2005"></categorieAge>
+    <categorieAge id="5" nom="Junior" ordre="7" remoteId="J" anneeMin="2000" anneeMax="2003"></categorieAge>
+    <categorieAge id="6" nom="Senior" ordre="8" remoteId="S" anneeMin="1900" anneeMax="2002"></categorieAge>
+    <categorieAge id="7" nom="Veteran" ordre="9" remoteId="V" anneeMin="1900" anneeMax="1989"></categorieAge>
+
+    <categorieAge id="11" nom="Hors catégorie" ordre="10" remoteId="H" anneeMin="1900" anneeMax="2020"></categorieAge>
+  </categorieAges>
+	<categorieAges date1="01092020" date2="31082021">
+		<categorieAge id="10" nom="Eveil JUDO" ordre="1" remoteId="EV" anneeMin="2015" anneeMax="2016"></categorieAge>
+		<categorieAge id="9" nom="Mini-Poussin" ordre="2" remoteId="MP" anneeMin="2013" anneeMax="2014"></categorieAge>
+		<categorieAge id="1" nom="Poussin" ordre="3" remoteId="P" anneeMin="2011" anneeMax="2012"></categorieAge>
+		<categorieAge id="2" nom="Benjamin" ordre="4" remoteId="B" anneeMin="2009" anneeMax="2010"></categorieAge>
+		<categorieAge id="3" nom="Minime" ordre="5" remoteId="M" anneeMin="2007" anneeMax="2008"></categorieAge>
+		<categorieAge id="4" nom="Cadet" ordre="6" remoteId="C" anneeMin="2004" anneeMax="2006"></categorieAge>
+		<categorieAge id="5" nom="Junior" ordre="7" remoteId="J" anneeMin="2001" anneeMax="2004"></categorieAge>
+		<categorieAge id="6" nom="Senior" ordre="8" remoteId="S" anneeMin="1900" anneeMax="2003"></categorieAge>
+		<categorieAge id="7" nom="Veteran" ordre="9" remoteId="V" anneeMin="1900" anneeMax="1989"></categorieAge>
+
+		<categorieAge id="11" nom="Hors catégorie" ordre="10" remoteId="H" anneeMin="1900" anneeMax="2020"></categorieAge>
+	</categorieAges>
+	<categorieAges date1="01092021" date2="31082022">
+		<categorieAge id="10" nom="Eveil JUDO" ordre="1" remoteId="EV" anneeMin="2016" anneeMax="2017"></categorieAge>
+		<categorieAge id="9" nom="Mini-Poussin" ordre="2" remoteId="MP" anneeMin="2014" anneeMax="2015"></categorieAge>
+		<categorieAge id="1" nom="Poussin" ordre="3" remoteId="P" anneeMin="2012" anneeMax="2013"></categorieAge>
+		<categorieAge id="2" nom="Benjamin" ordre="4" remoteId="B" anneeMin="2010" anneeMax="2011"></categorieAge>
+		<categorieAge id="3" nom="Minime" ordre="5" remoteId="M" anneeMin="2008" anneeMax="2009"></categorieAge>
+		<categorieAge id="4" nom="Cadet" ordre="6" remoteId="C" anneeMin="2005" anneeMax="2007"></categorieAge>
+		<categorieAge id="5" nom="Junior" ordre="7" remoteId="J" anneeMin="2002" anneeMax="2005"></categorieAge>
+		<categorieAge id="6" nom="Senior" ordre="8" remoteId="S" anneeMin="1900" anneeMax="2004"></categorieAge>
+		<categorieAge id="7" nom="Veteran" ordre="9" remoteId="V" anneeMin="1900" anneeMax="1989"></categorieAge>
+
+		<categorieAge id="11" nom="Hors catégorie" ordre="10" remoteId="H" anneeMin="1900" anneeMax="2020"></categorieAge>
+	</categorieAges>
+	<categorieAges date1="01092022" date2="31082023">
+		<categorieAge id="10" nom="Eveil JUDO" ordre="1" remoteId="EV" anneeMin="2017" anneeMax="2018"></categorieAge>
+		<categorieAge id="9" nom="Mini-Poussin" ordre="2" remoteId="MP" anneeMin="2015" anneeMax="2016"></categorieAge>
+		<categorieAge id="1" nom="Poussin" ordre="3" remoteId="P" anneeMin="2013" anneeMax="2014"></categorieAge>
+		<categorieAge id="2" nom="Benjamin" ordre="4" remoteId="B" anneeMin="2011" anneeMax="2012"></categorieAge>
+		<categorieAge id="3" nom="Minime" ordre="5" remoteId="M" anneeMin="2009" anneeMax="2010"></categorieAge>
+		<categorieAge id="4" nom="Cadet" ordre="6" remoteId="C" anneeMin="2006" anneeMax="2008"></categorieAge>
+		<categorieAge id="5" nom="Junior" ordre="7" remoteId="J" anneeMin="2003" anneeMax="2006"></categorieAge>
+		<categorieAge id="6" nom="Senior" ordre="8" remoteId="S" anneeMin="1900" anneeMax="2005"></categorieAge>
+		<categorieAge id="7" nom="Veteran" ordre="9" remoteId="V" anneeMin="1900" anneeMax="1989"></categorieAge>
+
+		<categorieAge id="11" nom="Hors catégorie" ordre="10" remoteId="H" anneeMin="1900" anneeMax="2020"></categorieAge>
+	</categorieAges>
+	<categorieAges date1="01092023" date2="31082024">
+		<categorieAge id="10" nom="Eveil JUDO" ordre="1" remoteId="EV" anneeMin="2018" anneeMax="2019"></categorieAge>
+		<categorieAge id="9" nom="Mini-Poussin" ordre="2" remoteId="MP" anneeMin="2016" anneeMax="2017"></categorieAge>
+		<categorieAge id="1" nom="Poussin" ordre="3" remoteId="P" anneeMin="2014" anneeMax="2015"></categorieAge>
+		<categorieAge id="2" nom="Benjamin" ordre="4" remoteId="B" anneeMin="2012" anneeMax="2013"></categorieAge>
+		<categorieAge id="3" nom="Minime" ordre="5" remoteId="M" anneeMin="2010" anneeMax="2011"></categorieAge>
+		<categorieAge id="4" nom="Cadet" ordre="6" remoteId="C" anneeMin="2007" anneeMax="2009"></categorieAge>
+		<categorieAge id="5" nom="Junior" ordre="7" remoteId="J" anneeMin="2004" anneeMax="2007"></categorieAge>
+		<categorieAge id="6" nom="Senior" ordre="8" remoteId="S" anneeMin="1900" anneeMax="2006"></categorieAge>
+		<categorieAge id="7" nom="Veteran" ordre="9" remoteId="V" anneeMin="1900" anneeMax="1989"></categorieAge>
+
+		<categorieAge id="11" nom="Hors catégorie" ordre="10" remoteId="H" anneeMin="1900" anneeMax="2020"></categorieAge>
+	</categorieAges>
+</liste>
+
+
+

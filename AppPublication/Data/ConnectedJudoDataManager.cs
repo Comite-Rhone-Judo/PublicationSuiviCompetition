@@ -10,7 +10,7 @@ using System.Threading;
 using System.Xml.Linq;
 using Tools.Enum;
 using Tools.Threading;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 using AppPublication.Statistiques;
 using AppPublication.Controles;
 
@@ -1000,6 +1000,7 @@ namespace AppPublication.Data
             // Affiche un message d'erreur a l'utilisateur
             if (withMessage)
             {
+                // TODO Penser a creer le event Handler pour afficher le message
                 LogTools.Alert("Une erreur est survenue lors du chargement initiale des données. Les données peuvent être incorrecte. Veuillez essayer de vous reconnecter au serveur", "Initialisation");
             }
         }

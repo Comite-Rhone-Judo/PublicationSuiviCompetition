@@ -10,7 +10,7 @@ using System.ComponentModel.Design;
 using System.Linq;
 using Telerik.Windows.Controls.DataVisualization.Map.BingRest;
 using Tools.Export;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 using Tools.Net;
 
 namespace AppPublication.Publication

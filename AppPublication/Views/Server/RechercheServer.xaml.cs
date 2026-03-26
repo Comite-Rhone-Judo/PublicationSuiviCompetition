@@ -7,7 +7,7 @@ using System.Windows.Input;
 using System.Xml.Linq;
 using Telerik.Windows.Controls;
 using Tools.Enum;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 using Tools.Struct;
 using Tools.Outils;
 
@@ -80,6 +80,7 @@ namespace AppPublication.Views.Server
                     message += "   - Le réseau WIFI, sur lequel sont les machines, est paramétré en réseau PUBLIC alors qu'il doit être en réseau PRIVE.\n";
                     string header = "Recherche Serveur";
 
+                    // TODO Penser a creer le event Handler pour afficher le message
                     LogTools.Alert(message, header);
                 }
             }));

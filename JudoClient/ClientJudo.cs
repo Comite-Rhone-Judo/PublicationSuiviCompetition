@@ -2,7 +2,7 @@
 using System;
 using System.Xml.Linq;
 using Tools.Enum;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 using Tools.TCP_Tools.Client;
 
 namespace JudoClient
@@ -12,6 +12,7 @@ namespace JudoClient
 
     public class ClientJudo
     {
+        // TODO Il faut passer au constructeur le Tag de fin de message
         ClientGenerique _client = null;
 
         public event OnEndConnectionHandler OnEndConnection;

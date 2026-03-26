@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Tools.Framework;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 using Tools.Windows;
 using Tools.Net.Scanner;
 using static AppPublication.Models.EcransAppel.EcranAppelModel;

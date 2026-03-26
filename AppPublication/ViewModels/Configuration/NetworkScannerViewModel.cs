@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Tools.Framework;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 using Tools.Net.Scanner;
 
 namespace AppPublication.ViewModels.Configuration

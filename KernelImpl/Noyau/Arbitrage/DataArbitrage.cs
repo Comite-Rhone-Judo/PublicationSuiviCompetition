@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 using KernelImpl.Internal;
 
 namespace KernelImpl.Noyau.Arbitrage

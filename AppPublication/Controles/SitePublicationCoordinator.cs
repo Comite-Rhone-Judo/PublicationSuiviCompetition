@@ -15,7 +15,7 @@ using System.Windows.Media.Imaging;
 using Tools.Enum;
 using Tools.Export;
 using Tools.Framework;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 using Tools.Outils;
 using Tools.Windows;
 using AppPublication.Models.Publication;

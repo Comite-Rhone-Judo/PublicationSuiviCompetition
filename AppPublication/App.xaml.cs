@@ -4,7 +4,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using Telerik.Windows.Controls;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 using Tools.Configuration;
 using KernelImpl;
 using AppPublication.Controles;
@@ -26,8 +26,6 @@ namespace AppPublication
         /// </summary>
         public App()
         {
-            LogTools.LogStartup();
-
             CultureInfo culture = new CultureInfo("fr");
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
@@ -38,6 +36,10 @@ namespace AppPublication
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            LogTools.LogStartup();
+            // TODO AJouter l'abonnement du logger
+            // LogTools.OnCriticalErrorLogged += LogTools_OnCriticalErrorLogged;
 
             // Démarrage du Service de Configuration (le worker commence ici)
             _configSvc = ConfigurationService.CreateInstance();
@@ -107,6 +109,11 @@ namespace AppPublication
             LogTools.LogStop();
             NLog.LogManager.Shutdown();
 
+            // TODO A ajouter pour le logger
+            // DÉSABONNEMENT (Bonne pratique pour éviter les fuites de mémoire)
+            // LogTools.OnCriticalErrorLogged -= LogTools_OnCriticalErrorLogged;
+
+
             base.OnExit(e);
         }
 
@@ -129,6 +136,25 @@ namespace AppPublication
             e.Handled = true;
         }
 
+        // TODO A Ajouter pour le logger
+        /*
+         /// <summary>
+        /// Cette méthode est appelée automatiquement quand LogTools.LogFatal() est exécuté avec notifyUser = true
+        /// </summary>
+        private void LogTools_OnCriticalErrorLogged(object sender, ExceptionEventArgs e)
+        {
+            // Sécurité : On s'assure d'être sur le thread de l'interface graphique (UI Thread)
+            // C'est indispensable car l'erreur peut provenir d'un processus en arrière-plan (TCP, FTP, etc.)
+            Application.Current.Dispatcher.Invoke(() => 
+            {
+                // C'est SEULEMENT ici que l'on utilise WPF et vos fenêtres personnalisées
+                AlertWindow alert = new AlertWindow(
+                    titre: "Une erreur critique est survenue", 
+                    message: $"{e.Message}\n\nDétails techniques : {e.Exception?.Message}"
+                );
+                alert.ShowDialog();
+            });
+        }*/
 
     }
 }

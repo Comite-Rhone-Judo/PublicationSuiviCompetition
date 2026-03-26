@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<structures>
+  <comites>
+
+    <comite ID="00" nom="00" ligue="09" remoteID="" secteur="" ></comite>
+    <comite ID="01" nom="AIN" ligue="84" remoteID="XX8401" secteur="RA" ></comite>
+    <comite ID="02" nom="AISNE" ligue="32" remoteID="XX3202" secteur="24" ></comite>
+    <comite ID="03" nom="ALLIER" ligue="84" remoteID="XX8403" secteur="11" ></comite>
+    <comite ID="04" nom="ALPES HTE PRVCE" ligue="93" remoteID="XX9304" secteur="PA" ></comite>
+    <comite ID="05" nom="HAUTES ALPES" ligue="93" remoteID="XX9305" secteur="PA" ></comite>
+    <comite ID="06" nom="ALPES MARITIMES" ligue="93" remoteID="XX9306" secteur="PA" ></comite>
+    <comite ID="08" nom="ARDENNES" ligue="44" remoteID="XX4408" secteur="04" ></comite>
+    <comite ID="09" nom="ARIEGE" ligue="76" remoteID="XX7609" secteur="15" ></comite>
+    <comite ID="10" nom="AUBE" ligue="44" remoteID="XX4410" secteur="04" ></comite>
+    <comite ID="11" nom="AUDE" ligue="76" remoteID="XX7611" secteur="16" ></comite>
+    <comite ID="12" nom="AVEYRON" ligue="76" remoteID="XX7612" secteur="15" ></comite>
+    <comite ID="13" nom="BOUCHES DU RHONE" ligue="93" remoteID="XX9313" secteur="PA" ></comite>
+    <comite ID="14" nom="CALVADOS" ligue="28" remoteID="XX2814" secteur="02" ></comite>
+    <comite ID="15" nom="CANTAL" ligue="84" remoteID="XX8415" secteur="11" ></comite>
+    <comite ID="16" nom="CHARENTE" ligue="75" remoteID="XX7516" secteur="10" ></comite>
+    <comite ID="17" nom="CHARENTE MARITIME" ligue="75" remoteID="XX7517" secteur="10" ></comite>
+    <comite ID="18" nom="CHER" ligue="24" remoteID="XX2418" secteur="07" ></comite>
+    <comite ID="19" nom="CORREZE" ligue="75" remoteID="XX7519" secteur="19" ></comite>
+    <comite ID="20" nom="CORSE" ligue="94" remoteID="XX9420" secteur="30" ></comite>
+    <comite ID="21" nom="COTE D OR" ligue="27" remoteID="XX2721" secteur="08" ></comite>
+    <comite ID="22" nom="COTES D ARMOR" ligue="53" remoteID="XX5322" secteur="06" ></comite>
+    <comite ID="23" nom="CREUSE" ligue="75" remoteID="XX7523" secteur="19" ></comite>
+    <comite ID="24" nom="DORDOGNE" ligue="75" remoteID="XX7524" secteur="14" ></comite>
+    <comite ID="25" nom="DOUBS" ligue="27" remoteID="XX2725" secteur="09" ></comite>
+    <comite ID="27" nom="EURE" ligue="28" remoteID="XX2827" secteur="02" ></comite>
+    <comite ID="28" nom="EURE ET LOIR" ligue="24" remoteID="XX2428" secteur="07" ></comite>
+    <comite ID="29" nom="FINISTERE" ligue="53" remoteID="XX5329" secteur="06" ></comite>
+    <comite ID="30" nom="GARD" ligue="76" remoteID="XX7630" secteur="16" ></comite>
+    <comite ID="31" nom="HTE GARONNE" ligue="76" remoteID="XX7631" secteur="15" ></comite>
+    <comite ID="32" nom="GERS" ligue="76" remoteID="XX7632" secteur="15" ></comite>
+    <comite ID="33" nom="GIRONDE" ligue="75" remoteID="XX7533" secteur="14" ></comite>
+    <comite ID="34" nom="HERAULT" ligue="76" remoteID="XX7634" secteur="16" ></comite>
+    <comite ID="35" nom="ILLE ET VILAINE" ligue="53" remoteID="XX5335" secteur="06" ></comite>
+    <comite ID="36" nom="INDRE" ligue="24" remoteID="XX2436" secteur="07" ></comite>
+    <comite ID="37" nom="INDRE ET LOIRE" ligue="24" remoteID="XX2437" secteur="07" ></comite>
+    <comite ID="38" nom="ISERE" ligue="84" remoteID="XX8438" secteur="RA" ></comite>
+    <comite ID="39" nom="JURA" ligue="27" remoteID="XX2739" secteur="09" ></comite>
+    <comite ID="40" nom="LANDES" ligue="75" remoteID="XX7540" secteur="14" ></comite>
+    <comite ID="41" nom="LOIR ET CHER" ligue="24" remoteID="XX2441" secteur="07" ></comite>
+    <comite ID="42" nom="LOIRE" ligue="84" remoteID="XX8442" secteur="RA" ></comite>
+    <comite ID="43" nom="HAUTE LOIRE" ligue="84" remoteID="XX8443" secteur="11" ></comite>
+    <comite ID="44" nom="LOIRE ATLANTIQUE" ligue="52" remoteID="XX5244" secteur="18" ></comite>
+    <comite ID="45" nom="LOIRET" ligue="24" remoteID="XX2445" secteur="07" ></comite>
+    <comite ID="46" nom="LOT" ligue="76" remoteID="XX7646" secteur="15" ></comite>
+    <comite ID="47" nom="LOT ET GARONNE" ligue="75" remoteID="XX7547" secteur="14" ></comite>
+    <comite ID="48" nom="LOZERE" ligue="76" remoteID="XX7648" secteur="16" ></comite>
+    <comite ID="49" nom="MAINE ET LOIRE" ligue="52" remoteID="XX5249" secteur="18" ></comite>
+    <comite ID="50" nom="MANCHE" ligue="28" remoteID="XX2850" secteur="02" ></comite>
+    <comite ID="51" nom="MARNE" ligue="44" remoteID="XX4451" secteur="04" ></comite>
+    <comite ID="52" nom="HAUTE MARNE" ligue="44" remoteID="XX4452" secteur="04" ></comite>
+    <comite ID="53" nom="MAYENNE" ligue="52" remoteID="XX5253" secteur="18" ></comite>
+    <comite ID="54" nom="MEURTHE MOSELLE" ligue="44" remoteID="XX4454" secteur="25" ></comite>
+    <comite ID="55" nom="MEUSE" ligue="44" remoteID="XX4455" secteur="25" ></comite>
+    <comite ID="56" nom="MORBIHAN" ligue="53" remoteID="XX5356" secteur="06" ></comite>
+    <comite ID="57" nom="MOSELLE" ligue="44" remoteID="XX4457" secteur="25" ></comite>
+    <comite ID="58" nom="NIEVRE" ligue="27" remoteID="XX2758" secteur="08" ></comite>
+    <comite ID="59" nom="NORD" ligue="32" remoteID="XX3259" secteur="01" ></comite>
+    <comite ID="60" nom="OISE" ligue="32" remoteID="XX3260" secteur="24" ></comite>
+    <comite ID="61" nom="ORNE" ligue="28" remoteID="XX2861" secteur="02" ></comite>
+    <comite ID="62" nom="PAS DE CALAIS" ligue="32" remoteID="XX3262" secteur="01" ></comite>
+    <comite ID="63" nom="PUY DE DOME" ligue="84" remoteID="XX8463" secteur="11" ></comite>
+    <comite ID="64" nom="PYRENEES ATLANT." ligue="75" remoteID="XX7564" secteur="14" ></comite>
+    <comite ID="65" nom="HTES PYRENEES" ligue="76" remoteID="XX7665" secteur="15" ></comite>
+    <comite ID="66" nom="PYRENEES ORIENTALES" ligue="76" remoteID="XX7666" secteur="16" ></comite>
+    <comite ID="67" nom="BAS RHIN" ligue="44" remoteID="XX4467" secteur="05" ></comite>
+    <comite ID="68" nom="HAUT RHIN" ligue="44" remoteID="XX4468" secteur="05" ></comite>
+    <comite ID="69" nom="RHONE" ligue="84" remoteID="XX8469" secteur="RA" ></comite>
+    <comite ID="70" nom="HTE SAONE" ligue="27" remoteID="XX2770" secteur="09" ></comite>
+    <comite ID="71" nom="SAONE ET LOIRE" ligue="27" remoteID="XX2771" secteur="08" ></comite>
+    <comite ID="72" nom="SARTHE" ligue="52" remoteID="XX5272" secteur="18" ></comite>
+    <comite ID="73" nom="SAVOIE" ligue="84" remoteID="XX8473" secteur="RA" ></comite>
+    <comite ID="74" nom="HTE SAVOIE" ligue="84" remoteID="XX8474" secteur="RA" ></comite>
+    <comite ID="75" nom="DE PARIS" ligue="11" remoteID="XX1175" secteur="75" ></comite>
+    <comite ID="76" nom="SEINE MARITIME" ligue="28" remoteID="XX2876" secteur="02" ></comite>
+    <comite ID="77" nom="SEINE ET MARNE" ligue="11" remoteID="XX1177" secteur="77" ></comite>
+    <comite ID="78" nom="YVELINES" ligue="11" remoteID="XX1178" secteur="78" ></comite>
+    <comite ID="79" nom="DEUX SEVRES" ligue="75" remoteID="XX7579" secteur="10" ></comite>
+    <comite ID="80" nom="SOMME" ligue="32" remoteID="XX3280" secteur="24" ></comite>
+    <comite ID="81" nom="TARN" ligue="76" remoteID="XX7681" secteur="15" ></comite>
+    <comite ID="82" nom="TARN ET GARONNE" ligue="76" remoteID="XX7682" secteur="15" ></comite>
+    <comite ID="83" nom="VAR" ligue="93" remoteID="XX9383" secteur="PA" ></comite>
+    <comite ID="84" nom="VAUCLUSE" ligue="93" remoteID="XX9384" secteur="PA" ></comite>
+    <comite ID="85" nom="VENDEE" ligue="52" remoteID="XX5285" secteur="18" ></comite>
+    <comite ID="86" nom="VIENNE" ligue="75" remoteID="XX7586" secteur="10" ></comite>
+    <comite ID="87" nom="HTE VIENNE" ligue="75" remoteID="XX7587" secteur="19" ></comite>
+    <comite ID="88" nom="VOSGES" ligue="44" remoteID="XX4488" secteur="25" ></comite>
+    <comite ID="89" nom="YONNE" ligue="27" remoteID="XX2789" secteur="08" ></comite>
+    <comite ID="90" nom="TERRITOIRE BELFORT" ligue="27" remoteID="XX2790" secteur="09" ></comite>
+    <comite ID="91" nom="ESSONNE" ligue="11" remoteID="XX1191" secteur="91" ></comite>
+    <comite ID="92" nom="HAUTS DE SEINE" ligue="11" remoteID="XX1192" secteur="92" ></comite>
+    <comite ID="93" nom="SEINE SAINT DENIS" ligue="11" remoteID="XX1193" secteur="93" ></comite>
+    <comite ID="94" nom="VAL DE MARNE" ligue="11" remoteID="XX1194" secteur="94" ></comite>
+    <comite ID="95" nom="VAL D OISE" ligue="11" remoteID="XX1195" secteur="95" ></comite>
+    <comite ID="97" nom="GUADELOUPE" ligue="01" remoteID="XX0197" secteur="20" ></comite>
+    <comite ID="97" nom="MARTINIQUE" ligue="02" remoteID="XX0297" secteur="26" ></comite>
+    <comite ID="97" nom="GUYANE" ligue="03" remoteID="XX0397" secteur="27" ></comite>
+    <comite ID="97" nom="REUNION" ligue="04" remoteID="XX0497" secteur="23" ></comite>
+    <comite ID="97" nom="MAYOTTE" ligue="06" remoteID="XX0697" secteur="23" ></comite>
+    <comite ID="98" nom="NOUVELLE CALEDONIE" ligue="08" remoteID="XX0898" secteur="21" ></comite>
+    <comite ID="99" nom="99" ligue="09" remoteID="" secteur="" ></comite>
+    <comite ID="DA" nom="DROME-ARDECHE" ligue="84" remoteID="XX84DA" secteur="RA" ></comite>
+
+    <comite ID="ET" nom="ETRANGER" ligue="ET" remoteID="" secteur="ET" ></comite>
+    <comite ID="FFJ" nom="FFJudo" ligue="FFJ" remoteID="XX84DA" secteur="FFJ" ></comite>
+
+
+  </comites>
+</structures>
+

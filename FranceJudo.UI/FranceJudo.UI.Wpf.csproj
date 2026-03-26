@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BFFDEEFA-CCDC-4DC2-8AF5-D6509D2F7619}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FranceJudo.UI</RootNamespace>
+    <AssemblyName>FranceJudo.UI</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.DataVisualization.Design" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\VersionInfo.cs">
+      <Link>VersionInfo.cs</Link>
+    </Compile>
+    <Compile Include="Behaviors\WindowHelper.cs" />
+    <Compile Include="Converters\BoolNotConverter.cs" />
+    <Compile Include="Converters\BoolOperationConverter.cs" />
+    <Compile Include="Converters\BoolToVisibilityConverter.cs" />
+    <Compile Include="Converters\ListIntToStringConverter.cs" />
+    <Compile Include="Converters\PassthroughConverter.cs" />
+    <Compile Include="Converters\ValueToBoolConverter.cs" />
+    <Compile Include="Foundation\ThreadingHelper.cs" />
+    <Compile Include="PDF\PdfHelper.cs" />
+    <Compile Include="ViewModels\Environment\AppInformation.cs" />
+    <Compile Include="ViewModels\Network\Ftp\FtpTestStepBase.cs" />
+    <Compile Include="Foundation\NotificationBase.cs" />
+    <Compile Include="Foundation\RelayCommand.cs" />
+    <Compile Include="Behaviors\WindowLoadBehavior.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\Network\MiniSite\MiniSite.cs" />
+    <Compile Include="ViewModels\Network\MiniSite\StatusMiniSite.cs" />
+    <Compile Include="Dialogs\AlertWindow.xaml.cs">
+      <DependentUpon>AlertWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ChangeLogWindow.xaml.cs">
+      <DependentUpon>ChangeLogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ConfirmWindow.xaml.cs">
+      <DependentUpon>ConfirmWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\PdfViewer.xaml.cs">
+      <DependentUpon>PdfViewer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\UpdateWindow1.xaml.cs">
+      <DependentUpon>UpdateWindow1.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FranceJudo.Core\FranceJudo.Core.csproj">
+      <Project>{13cad1c5-1448-4b69-b2c9-de15aecce84b}</Project>
+      <Name>FranceJudo.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\batman_forever\batmfa__.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\batman_forever\batmfo__.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Cabin\Cabin-Bold.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Cabin\Cabin-BoldItalic.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Cabin\Cabin-Italic.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Cabin\Cabin-Medium.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Cabin\Cabin-MediumItalic.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Cabin\Cabin-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Cabin\Cabin-SemiBold.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Cabin\Cabin-SemiBoldItalic.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Cabin\OFL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\COOPBL.TTF" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\dejavu-sans-mono\DejaVuSansMono-Bold.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\dejavu-sans-mono\DejaVuSansMono-BoldOblique.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\dejavu-sans-mono\DejaVuSansMono-Oblique.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\dejavu-sans-mono\DejaVuSansMono.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Droid_Sans\DroidSans-Bold.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Droid_Sans\DroidSans.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Droid_Sans\LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Fjalla_One\FjallaOne-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Fjalla_One\OFL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Fredoka_One\FredokaOne-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Fredoka_One\OFL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\good-times.regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Montserrat\Montserrat-Bold.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Montserrat\Montserrat-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Montserrat\OFL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Oswald\OFL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Oswald\Oswald-Bold.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Oswald\Oswald-Light.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Oswald\Oswald-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Play\OFL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Play\Play-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\PT_Sans_Narrow\OFL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\PT_Sans_Narrow\PT_Sans-Narrow-Web-Bold.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\PT_Sans_Narrow\PT_Sans-Narrow-Web-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\QUARTZMS.TTF" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Ubuntu_Condensed\UbuntuCondensed-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\Ubuntu_Condensed\UFL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\unispace\unispace bd it.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\unispace\unispace bd.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\unispace\unispace it.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Polices\unispace\unispace rg.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Dialogs\AlertWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\ChangeLogWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\ConfirmWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\PdfViewer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\UpdateWindow1.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

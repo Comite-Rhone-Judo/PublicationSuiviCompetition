@@ -8,7 +8,7 @@ using System.Xml.Linq;
 using System.Drawing;
 using Tools.Enum;
 using Tools.Files;
-using Tools.Logging;
+using FranceJudo.Core.Logging;
 using Tools.Outils;
 
 namespace KernelImpl.Noyau.Logos
