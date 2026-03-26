@@ -828,14 +828,8 @@ namespace AppPublication.Models.Publication
                 _structureRepertoiresSite.IdCompetition = newValue;
             }
 
-            // Recalcul les valeurs des URLs et répertoires distants
-            if (SiteDistantSelectionne != null)
-            {
-                SiteDistantSelectionne.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
-            }
-
-            URLDistantPublication = CalculURLSiteDistant();
-            URLLocalPublication = CalculURLSiteLocal();
+            // Appel de la méthode centralisée
+            ForceRefreshUrls();
 
             // Note: ici on devrait dans l'absolu utiliser le snapshot mais le traitement est rapide et a peu de chance de changer
             var DC = _judoDataManager.Data;
@@ -848,6 +842,21 @@ namespace AppPublication.Models.Publication
                 PouleEnColonnes = true;
                 PouleToujoursEnColonnes = true;
             }
+        }
+
+        /// <summary>
+        /// Force le recalcul explicite des URLs (Remplace le hack de réassignation d'ID)
+        /// </summary>
+        public override void ForceRefreshUrls()
+        {
+            // Recalcul les valeurs des URLs et répertoires distants
+            if (SiteDistantSelectionne != null)
+            {
+                SiteDistantSelectionne.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
+            }
+
+            URLDistantPublication = CalculURLSiteDistant();
+            URLLocalPublication = CalculURLSiteLocal();
         }
 
         protected override void OnSchedulerSiteStateChanged(object sender, SchedulerStateEventArgs evt)
@@ -865,6 +874,7 @@ namespace AppPublication.Models.Publication
                 }
             });
         }
+
         #endregion
 
         #region METHODES SPECIFIQUES

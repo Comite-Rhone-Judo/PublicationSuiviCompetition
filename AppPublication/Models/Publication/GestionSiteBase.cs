@@ -265,6 +265,8 @@ namespace AppPublication.Models.Publication
         protected abstract void OnIdCompetitionChanged(string newValue);
         #endregion
 
+        /// <summary>Force le recalcul et le rafraîchissement des URLs de publication pour l'interface</summary>
+        public abstract void ForceRefreshUrls();
         #region METHODES COMMUNES
 
         /// <summary>

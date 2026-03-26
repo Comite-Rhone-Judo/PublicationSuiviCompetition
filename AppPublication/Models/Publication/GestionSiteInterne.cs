@@ -229,7 +229,8 @@ namespace AppPublication.Models.Publication
 
         protected override void OnIdCompetitionChanged(string newValue)
         {
-            URLLocalPublication = CalculURLSiteLocal();
+            // Appel de la méthode centralisée
+            ForceRefreshUrls();
 
             // Note: ici on devrait dans l'absolu utiliser le snapshot mais le traitement est rapide et a peu de chance de changer
             var DC = _judoDataManager.Data;
@@ -239,6 +240,14 @@ namespace AppPublication.Models.Publication
                 // Le nombre de tapis peut avoir changé selon la compétition
                 NbTapis = DC.Organisation.Competition.nbTapis;
             }
+        }
+
+        /// <summary>
+        /// Force le recalcul explicite des URLs (Remplace le hack de réassignation d'ID)
+        /// </summary>
+        public override void ForceRefreshUrls()
+        {
+            URLLocalPublication = CalculURLSiteLocal();
         }
 
         #endregion
