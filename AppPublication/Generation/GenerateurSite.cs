@@ -445,9 +445,9 @@ namespace AppPublication.Generation
             // Enregistre les checksums des fichiers generes
             XDocument doc = ExportXML.ExportChecksumFichiers(_checksumGenere);
 
-            if (doc != null && !File.Exists(ChecksumFileName) || !FileAndDirectTools.IsFileLocked(ChecksumFileName))
+            if (doc != null && !File.Exists(ChecksumFileName) || !FileSystemHelper.IsFileLocked(ChecksumFileName))
             {
-                FileAndDirectTools.NeedAccessFile(ChecksumFileName);
+                FileSystemHelper.NeedAccessFile(ChecksumFileName);
                 try
                 {
                     using (FileStream fs = new FileStream(ChecksumFileName, FileMode.Create))
@@ -461,7 +461,7 @@ namespace AppPublication.Generation
                 }
                 finally
                 {
-                    FileAndDirectTools.ReleaseFile(ChecksumFileName);
+                    FileSystemHelper.ReleaseFile(ChecksumFileName);
                 }
             }
         }   

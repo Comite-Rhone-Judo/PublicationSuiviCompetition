@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tools.Windows;
+﻿using System.Diagnostics;
+using FranceJudo.UI.Wpf.Dialogs;
+using System.IO;
 
-namespace FranceJudo.UI.PDF
+namespace FranceJudo.UI.Wpf.PDF
 {
     public static class PdfHelper
     {
@@ -16,9 +12,11 @@ namespace FranceJudo.UI.PDF
             {
                 try
                 {
-                    ProcessStartInfo info = new ProcessStartInfo();
-                    info.FileName = file;
-                    info.Verb = "Open";
+                    ProcessStartInfo info = new ProcessStartInfo
+                    {
+                        FileName = file,
+                        Verb = "Open"
+                    };
 
                     Process process = Process.Start(info);
                 }
@@ -41,11 +39,12 @@ namespace FranceJudo.UI.PDF
             {
                 try
                 {
-                    ProcessStartInfo info = new ProcessStartInfo();
-                    info.FileName = file;
-                    info.Verb = "Print";
-
-                    info.CreateNoWindow = true;
+                    ProcessStartInfo info = new ProcessStartInfo
+                    {
+                        FileName = file,
+                        Verb = "Print",
+                        CreateNoWindow = true
+                    };
 
                     Process process = Process.Start(info);
                 }

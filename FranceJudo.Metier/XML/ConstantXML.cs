@@ -1,4 +1,4 @@
-﻿namespace FranceJudo.Metier.Resources
+﻿namespace FranceJudo.Metier.XML
 {
     /// <summary>
     /// Enumération des constants pour la construction des fichiers XML
@@ -70,11 +70,6 @@
         public const string AppVersion = "AppVersion";
         public const string Logo = "Logo";
         public const string urlRedirecteur = "urlRedirecteur";
-
-        public const string checksums = "Checksums";
-        public const string checksumFile = "ChecksumFile";
-        public const string checksumFile_fichier = "fichier";
-        public const string checksumFile_checksum = "checksum";
 
         public const string TapisEpreuve = "TapisEpreuve";
         public const string Tapis_No = "no_tapis";

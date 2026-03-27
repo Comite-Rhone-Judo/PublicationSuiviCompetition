@@ -1,5 +1,5 @@
-using HttpServer.Exceptions;
-using HttpServer.Parser;
+using FranceJudo.Core.Network.Http.HttpServer.Exceptions;
+using FranceJudo.Core.Network.Http.HttpServer.Parser;
 using System;
 
 namespace FranceJudo.Core.Network.Http.HttpServer

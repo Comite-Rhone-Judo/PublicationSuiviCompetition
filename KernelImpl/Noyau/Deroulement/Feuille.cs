@@ -4,9 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.XML;
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Regles;
+using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.XML;
 
 
 namespace KernelImpl.Noyau.Deroulement
@@ -14,7 +15,7 @@ namespace KernelImpl.Noyau.Deroulement
     /// <summary>
     /// Description des Feuilles (construction d'un tableau)
     /// </summary>
-    public class Feuille : IEntityWithKey<int>
+    public class Feuille : IFeuille, IXMLSerializable, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -94,7 +95,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// <param name="MI">fonction d'info</param>
         /// <returns>Feuilles</returns>
 
-        public static ICollection<Feuille> LectureFeuilles(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Feuille> LectureFeuilles(XElement xelement)
         {
             ICollection<Feuille> feuilles = new List<Feuille>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.Feuille))

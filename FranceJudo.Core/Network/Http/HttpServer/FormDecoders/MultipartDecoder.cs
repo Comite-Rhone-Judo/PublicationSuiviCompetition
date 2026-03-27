@@ -73,7 +73,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.FormDecoders
 
                     // Generate a filename
                     string filename = element.Filename;
-                    string internetCache = Environment.GetFolderPath(Environment.SpecialFolder.InternetCache);
+                    string internetCache = System.Environment.GetFolderPath(System.Environment.SpecialFolder.InternetCache);
                     // if the internet path doesn't exist, assume mono and /var/tmp
                     string path = string.IsNullOrEmpty(internetCache)
                                ? Path.Combine("var", "tmp")

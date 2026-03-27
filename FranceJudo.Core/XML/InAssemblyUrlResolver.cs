@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
-using FranceJudo.Core.Resources;
+using FranceJudo.Core.Reflection;
 
 
 namespace FranceJudo.Core.XML
@@ -22,12 +22,12 @@ namespace FranceJudo.Core.XML
 
             // Cherche la resource contenant le nom dans l'URI
             // Stream res = ResourcesTools.SearchAssemblyResource(absoluteUri.OriginalString);
-            Stream res = ResourcesTools.GetAssembyResource(resName);
+            Stream res = AssemblyResourceHelper.GetAssembyResource(resName);
 
             if (res == null)
             {
                 // Essaye une recherche complete
-                res = ResourcesTools.SearchAssemblyResource(absoluteUri.OriginalString);
+                res = AssemblyResourceHelper.SearchAssemblyResource(absoluteUri.OriginalString);
                 if (res == null)
                 {
                     throw new ArgumentOutOfRangeException(nameof(absoluteUri));

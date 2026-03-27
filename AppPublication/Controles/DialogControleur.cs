@@ -48,7 +48,7 @@ namespace AppPublication.Controles
         {
             _serverData = data ?? throw new ArgumentNullException(nameof(data));
 
-            FileAndDirectTools.InitDataDirectories();
+            FileSystemHelper.InitDataDirectories();
             InitControleur();
             AppInformation = AppInformation.Instance;
         }

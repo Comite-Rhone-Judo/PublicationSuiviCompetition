@@ -1,9 +1,9 @@
-using HttpServer.Authentication;
-using HttpServer.Exceptions;
-using HttpServer.FormDecoders;
-using HttpServer.HttpModules;
-using HttpServer.Rules;
-using HttpServer.Sessions;
+using FranceJudo.Core.Network.Http.HttpServer.Authentication;
+using FranceJudo.Core.Network.Http.HttpServer.Exceptions;
+using FranceJudo.Core.Network.Http.HttpServer.FormDecoders;
+using FranceJudo.Core.Network.Http.HttpServer.HttpModules;
+using FranceJudo.Core.Network.Http.HttpServer.Rules;
+using FranceJudo.Core.Network.Http.HttpServer.Sessions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -484,7 +484,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer
                                                                                     _components.Get<IRequestParserFactory>()));
 
             // the special folder does not exist on mono
-            string tempPath = Environment.GetFolderPath(Environment.SpecialFolder.InternetCache);
+            string tempPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.InternetCache);
             if (string.IsNullOrEmpty(tempPath))
                 tempPath = "/var/tmp/";
             if (!Directory.Exists(tempPath))

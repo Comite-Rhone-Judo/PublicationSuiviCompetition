@@ -1,9 +1,10 @@
 ﻿using JudoClient.Communication;
 using System;
 using System.Xml.Linq;
-using Tools.Enum;
 using FranceJudo.Core.Logging;
-using Tools.TCP_Tools.Client;
+using FranceJudo.Core.Network.Tcp.Client;
+using FranceJudo.Metier.Resources;
+using FranceJudo.Metier.Network;
 
 namespace JudoClient
 {
@@ -75,7 +76,9 @@ namespace JudoClient
             _traitement_part = new TraitementParticipants(this);
             _traitement_struc = new TraitementStructure(this);
 
-            _client = new ClientGenerique(ip, port);
+            string endTag = "</" + ConstantXML.ServerJudo + ">";
+
+            _client = new ClientGenerique(ip, port, endTag);
 
             _client.OnConnection += client_OnConnection;
             _client.OnDataRecieve += client_OnDataRecieve;

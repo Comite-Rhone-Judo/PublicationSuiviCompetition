@@ -10,6 +10,7 @@
     <RootNamespace>FranceJudo.Metier</RootNamespace>
     <AssemblyName>FranceJudo.Metier</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <LangVersion>latest</LangVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
@@ -48,9 +49,35 @@
     <Compile Include="Exceptions\JudoServerException.cs" />
     <Compile Include="Exceptions\ParametrageBalanceException.cs" />
     <Compile Include="Export\ExportEnum.cs" />
+    <Compile Include="Export\ExportSiteManager.cs" />
     <Compile Include="Export\ExportTools.cs" />
-    <Compile Include="IO\DirectoryHelper.cs" />
+    <Compile Include="IO\AppDirectoryManager.cs" />
     <Compile Include="IO\FileTools.cs" />
+    <Compile Include="Noyau\Arbitrage\IArbitre.cs" />
+    <Compile Include="Noyau\Arbitrage\ICommissaire.cs" />
+    <Compile Include="Noyau\Arbitrage\IDelegue.cs" />
+    <Compile Include="Noyau\Arbitrage\IArbitrageData.cs" />
+    <Compile Include="Noyau\Categories\ICategorieAge.cs" />
+    <Compile Include="Noyau\Categories\ICategoriePoids.cs" />
+    <Compile Include="Noyau\Categories\ICeintures.cs" />
+    <Compile Include="Noyau\Categories\ICategoriesData.cs" />
+    <Compile Include="Noyau\Deroulement\ICombat.cs" />
+    <Compile Include="Noyau\Deroulement\EtatCombatEnum.cs" />
+    <Compile Include="Noyau\Deroulement\EtatCombattantEnum.cs" />
+    <Compile Include="Noyau\Deroulement\EtatPhaseEnum.cs" />
+    <Compile Include="Noyau\Deroulement\IFeuille.cs" />
+    <Compile Include="Noyau\Deroulement\IGroupe_Combats.cs" />
+    <Compile Include="Noyau\Deroulement\IDeroulementData.cs" />
+    <Compile Include="Noyau\Deroulement\IParticipant.cs" />
+    <Compile Include="Noyau\Deroulement\IPhase.cs" />
+    <Compile Include="Noyau\Deroulement\IPhase_Decoupage.cs" />
+    <Compile Include="Noyau\Deroulement\IPoule.cs" />
+    <Compile Include="Noyau\Deroulement\IRencontre.cs" />
+    <Compile Include="Noyau\Deroulement\TypePhaseEnum.cs" />
+    <Compile Include="Noyau\Deroulement\Ivue_combat.cs" />
+    <Compile Include="Noyau\Deroulement\Ivue_epreuve_phase.cs" />
+    <Compile Include="Noyau\Deroulement\Ivue_groupe.cs" />
+    <Compile Include="Noyau\Organisation\EpreuveSexeEnum.cs" />
     <Compile Include="Regles\ScoresProLeague.cs" />
     <Compile Include="Site\PhysicalStructureBase.cs" />
     <Compile Include="Site\UrlGeneratorBase.cs" />
@@ -59,12 +86,9 @@
     <Compile Include="Network\ConstantNetwork.cs" />
     <Compile Include="Network\ServerCommandEnum.cs" />
     <Compile Include="Network\ServerResponseEnum.cs" />
-    <Compile Include="Network\WebServicesTools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources\ConstantFile.cs" />
     <Compile Include="Resources\ConstantResource.cs" />
-    <Compile Include="Resources\ConstantXML.cs" />
-    <Compile Include="Structures\EntitePublicationFFJudo.cs" />
+    <Compile Include="XML\ConstantXML.cs" />
     <Compile Include="Structures\LectureStructures.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -361,5 +385,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Site\Assets\xslt\qrcode.xslt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

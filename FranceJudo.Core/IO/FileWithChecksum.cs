@@ -2,13 +2,19 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.XML;
+using FranceJudo.Core.XML;
 
 namespace FranceJudo.Core.IO
 {
     public class FileWithChecksum
     {
+        #region CONSTANTES
+        public const string checksums = "Checksums";
+        public const string checksumFile = "ChecksumFile";
+        public const string checksumFile_fichier = "fichier";
+        public const string checksumFile_checksum = "checksum";
+        #endregion
+
         #region CONSTRUCTEUR
         public FileWithChecksum(string fn)
         {
@@ -54,7 +60,7 @@ namespace FranceJudo.Core.IO
 
         public static string ComputeHash(FileInfo fileInfo, HashAlgorithm hashAlgorithm = null)
         {
-            HashAlgorithm algo = (hashAlgorithm == null) ? MD5.Create() : hashAlgorithm;
+            HashAlgorithm algo = hashAlgorithm ?? MD5.Create();
 
             using (var fs = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
@@ -65,15 +71,15 @@ namespace FranceJudo.Core.IO
         }
         public void LoadXml(XElement xinfo)
         {
-            this.File = new FileInfo(XMLTools.LectureString(xinfo.Attribute(ConstantXML.checksumFile_fichier)));
-            this.Checksum = XMLTools.LectureString(xinfo.Attribute(ConstantXML.checksumFile_checksum));
+            this.File = new FileInfo(XMLTools.LectureString(xinfo.Attribute(checksumFile_fichier)));
+            this.Checksum = XMLTools.LectureString(xinfo.Attribute(checksumFile_checksum));
         }
 
         public XElement ToXml()
         {
-            XElement xelem = new XElement(ConstantXML.checksumFile);
-            xelem.SetAttributeValue(ConstantXML.checksumFile_fichier, File.FullName);
-            xelem.SetAttributeValue(ConstantXML.checksumFile_checksum, Checksum);
+            XElement xelem = new XElement(checksumFile);
+            xelem.SetAttributeValue(checksumFile_fichier, File.FullName);
+            xelem.SetAttributeValue(checksumFile_checksum, Checksum);
 
             return xelem;
         }

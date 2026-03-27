@@ -1,5 +1,5 @@
-using HttpServer.Exceptions;
-using HttpServer.Parser;
+using FranceJudo.Core.Network.Http.HttpServer.Exceptions;
+using FranceJudo.Core.Network.Http.HttpServer.Parser;
 using System;
 using System.IO;
 using System.Net;
@@ -76,9 +76,11 @@ namespace FranceJudo.Core.Network.Http.HttpServer
             _parser.BodyBytesReceived += OnBodyBytesReceived;
             _localEndPoint = (IPEndPoint)socket.LocalEndPoint;
 
-            HttpRequest request = new HttpRequest();
-            request._remoteEndPoint = remoteEndPoint;
-            request.Secure = secured;
+            HttpRequest request = new HttpRequest
+            {
+                _remoteEndPoint = remoteEndPoint,
+                Secure = secured
+            };
             _currentRequest = request;
 
             IsSecured = secured;
@@ -363,10 +365,14 @@ namespace FranceJudo.Core.Network.Http.HttpServer
             catch (IOException err)
             {
                 LogWriter.Write(this, LogPrio.Debug, "Failed to end receive: " + err.Message);
-                if (err.InnerException is SocketException)
-                    Disconnect((SocketError)((SocketException)err.InnerException).ErrorCode);
+                if (err.InnerException is SocketException exception)
+                {
+                    Disconnect((SocketError)exception.ErrorCode);
+                }
                 else
+                {
                     Disconnect(SocketError.ConnectionReset);
+                }
             }
             catch (ObjectDisposedException err)
             {

@@ -1,13 +1,9 @@
 
 using KernelImpl.Internal;
-using KernelImpl.Noyau.Arbitrage;
-using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Outils;
-using Tools.XML;
+using FranceJudo.Metier.Noyau.Categories;
 
 namespace KernelImpl.Noyau.Categories
 {
@@ -24,6 +20,12 @@ namespace KernelImpl.Noyau.Categories
 
         public IReadOnlyList<Ceintures> Grades { get { return _gradesCache.Cache; } }
 
+        IReadOnlyList<ICategorieAge> ICategoriesData.CAges => CAges;
+
+        IReadOnlyList<ICategoriePoids> ICategoriesData.CPoids => CPoids;
+         
+        IReadOnlyList<ICeintures> ICategoriesData.Grades => Grades;
+
 
         /// <summary>
         /// lecture des participants
@@ -32,7 +34,7 @@ namespace KernelImpl.Noyau.Categories
         /// <param name="DC"></param>
         public void lecture_cateages(XElement element)
         {
-            ICollection<CategorieAge> cateages = CategorieAge.LectureCategorieAge(element, null);
+            ICollection<CategorieAge> cateages = CategorieAge.LectureCategorieAge(element);
             _cAgesCache.UpdateFullSnapshot(cateages);
         }
 
@@ -44,7 +46,7 @@ namespace KernelImpl.Noyau.Categories
         /// <param name="DC"></param>
         public void lecture_catepoids(XElement element)
         {
-            ICollection<CategoriePoids> catepoids = CategoriePoids.LectureCategoriePoids(element, null);
+            ICollection<CategoriePoids> catepoids = CategoriePoids.LectureCategoriePoids(element);
             _cPoidsCache.UpdateFullSnapshot(catepoids);
         }
 
@@ -56,9 +58,10 @@ namespace KernelImpl.Noyau.Categories
         /// <param name="DC"></param>
         public void lecture_ceintures(XElement element)
         {
-            ICollection<Ceintures> ceintures = Ceintures.LectureCeintures(element, null);
+            ICollection<Ceintures> ceintures = Ceintures.LectureCeintures(element);
             _gradesCache.UpdateFullSnapshot(ceintures);
 
+            /*
             Ceintures grade = Grades.FirstOrDefault(o => o.nom == "1D");
             if (grade != null)
             {
@@ -70,6 +73,7 @@ namespace KernelImpl.Noyau.Categories
             {
                 OutilsTools.Grade7D_ID = grade.id;
             }
+            */
         }
     }
 }

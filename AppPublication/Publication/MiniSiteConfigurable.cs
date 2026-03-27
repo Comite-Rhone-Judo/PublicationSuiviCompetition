@@ -1,5 +1,5 @@
 ﻿using AppPublication.Config.Publication;
-using HttpServer.HttpModules;
+using FranceJudo.Core.Network.Http.HttpServer.HttpModules;
 using KernelImpl.Noyau.Structures;
 using System;
 using System.Collections.Generic;

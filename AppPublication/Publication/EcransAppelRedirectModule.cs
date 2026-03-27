@@ -1,8 +1,8 @@
 ﻿using AppPublication.Models.EcransAppel;
 using HttpServer;
-using HttpServer.Exceptions;
-using HttpServer.HttpModules;
-using HttpServer.Sessions;
+using FranceJudo.Core.Network.Http.HttpServer.Exceptions;
+using FranceJudo.Core.Network.Http.HttpServer.HttpModules;
+using FranceJudo.Core.Network.Http.HttpServer.Sessions;
 using NLog;
 using System;
 using System.Collections.Generic;

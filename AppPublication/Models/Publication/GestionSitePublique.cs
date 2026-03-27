@@ -795,7 +795,7 @@ namespace AppPublication.Models.Publication
             // Met a jour les repertoires de l'application si on peut
             if (_structureRepertoiresSite != null && _structureRepertoiresSite.IsFullyConfigured)
             {
-                FileAndDirectTools.CreateDirectorie(_structureRepertoiresSite.RepertoireRacine);
+                FileSystemHelper.CreateDirectorie(_structureRepertoiresSite.RepertoireRacine);
             }
 
             // Initialise la racine du serveur Web local
@@ -1086,7 +1086,7 @@ namespace AppPublication.Models.Publication
             {
                 try
                 {
-                    output = FileAndDirectTools.PathJoin(repRoot, _siteDistantUrlGenerator.UrlPathCompetition);
+                    output = FileSystemHelper.PathJoin(repRoot, _siteDistantUrlGenerator.UrlPathCompetition);
                 }
                 catch (Exception ex)
                 {

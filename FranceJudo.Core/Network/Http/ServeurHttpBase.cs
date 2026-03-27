@@ -1,6 +1,5 @@
-﻿using HttpServer.HttpModules;
-using Tools.Enum;
-using HttpListener = HttpServer.HttpListener;
+﻿using FranceJudo.Core.Network.Http.HttpServer.HttpModules;
+using HttpListener = FranceJudo.Core.Network.Http.HttpServer.HttpListener;
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -13,7 +12,8 @@ namespace FranceJudo.Core.Network.Http
     {
         #region MEMBER
         protected IPAddress _ipAddress = null;
-        protected int _port = NetworkTools.PortSiteMin;
+        // protected int _port = NetworkTools.PortSiteMin;
+        protected int _port = 80;   // Default Standard Port
         protected HttpServer.HttpServer _server = null;
         protected bool _isStart = false;
         protected string _localRoolPath = string.Empty;

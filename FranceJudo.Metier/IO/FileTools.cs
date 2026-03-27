@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.Files;
+using FranceJudo.Core.Threading;
+using FranceJudo.Core.IO;
 
-namespace AppPublication.Tools.Files
+
+namespace FranceJudo.Metier.IO
 {
     public static class FileTools
     {
@@ -29,10 +29,11 @@ namespace AppPublication.Tools.Files
                 {
                     XDocument document = notSave[file];
 
+                    // TODO Replace with AppDirectoryManager
                     string filename = Path.Combine(ConstantFile.SaveCOMDirectory, file + ConstantFile.ExtensionXML);
-                    if (!File.Exists(filename) || !FileAndDirectTools.IsFileLocked(filename))
+                    if (!File.Exists(filename) || !FileSystemHelper.IsFileLocked(filename))
                     {
-                        FileAndDirectTools.NeedAccessFile(filename);
+                        FileSystemHelper.NeedAccessFile(filename);
                         try
                         {
                             using (FileStream fs = new FileStream(filename, FileMode.Create))
@@ -44,7 +45,7 @@ namespace AppPublication.Tools.Files
                         catch { }
                         finally
                         {
-                            FileAndDirectTools.ReleaseFile(filename);
+                            FileSystemHelper.ReleaseFile(filename);
                         }
                     }
                 }

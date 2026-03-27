@@ -9,7 +9,7 @@ using Tools.XML;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public partial class vue_combat : IEntityWithKey<int>
+    public class vue_combat : IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => combat_id;
 

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FranceJudo.Core.Logging;
+using FranceJudo.Metier.Noyau.Deroulement;
 
 namespace KernelImpl.Noyau.Deroulement
 {

@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace AppPublication.Tools.Streams
+namespace FranceJudo.Core.IO
 {
     public static class StreamExtension
     {

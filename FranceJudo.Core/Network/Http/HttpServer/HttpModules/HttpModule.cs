@@ -1,6 +1,6 @@
-using HttpServer.Authentication;
-using HttpServer.Exceptions;
-using HttpServer.Sessions;
+using FranceJudo.Core.Network.Http.HttpServer.Authentication;
+using FranceJudo.Core.Network.Http.HttpServer.Exceptions;
+using FranceJudo.Core.Network.Http.HttpServer.Sessions;
 
 namespace FranceJudo.Core.Network.Http.HttpServer.HttpModules
 {

@@ -1,8 +1,9 @@
-using HttpServer.Helpers.Implementations;
+using FranceJudo.Core.Network.Http.HttpServer.Helpers.Implementations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Text;
 
 namespace FranceJudo.Core.Network.Http.HttpServer.Helpers
@@ -206,9 +207,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Helpers
 
             foreach (object o in collection)
             {
-                object value;
-                string title;
-                getIdTitle(o, out value, out title);
+                getIdTitle(o, out object value, out string title);
                 sb.Append("<option value=\"");
                 if (value != null)
                     sb.Append(value);
@@ -247,7 +246,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Helpers
             sb.Append("<ul class=\"");
             sb.Append(className);
             sb.AppendLine("\">");
-            foreach (string error in theList)
+            foreach (string error in theList.Cast<string>())
             {
                 sb.Append("<li>");
                 sb.Append(error);

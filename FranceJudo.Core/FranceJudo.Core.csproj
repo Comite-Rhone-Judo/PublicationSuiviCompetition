@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,6 +40,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -73,9 +75,6 @@
     <Compile Include="Logging\ExceptionEventArgs.cs" />
     <Compile Include="Logging\LogTools.cs" />
     <Compile Include="Media\Images\ImageHelper.cs" />
-    <Compile Include="Network\Ftp\FtpTestImplementations.cs" />
-    <Compile Include="Network\Ftp\FtpTestScheduler.cs" />
-    <Compile Include="Network\Ftp\FtpTestStepBase.cs" />
     <Compile Include="Network\Ftp\FTPTools.cs" />
     <Compile Include="Network\Http\Context\ContextProvider.cs" />
     <Compile Include="Network\Http\Context\IContextAware.cs" />
@@ -188,9 +187,10 @@
     <Compile Include="Threading\SingleShotTimer.cs" />
     <Compile Include="Threading\TimedLock.cs" />
     <Compile Include="Utils\ClassFactory.cs" />
-    <Compile Include="Environment\AssemblyResourceHelper.cs" />
+    <Compile Include="Reflection\AssemblyResourceHelper.cs" />
     <Compile Include="Utils\StringExtension.cs" />
     <Compile Include="XML\InAssemblyUrlResolver.cs" />
+    <Compile Include="XML\IXMLSerializable.cs" />
     <Compile Include="XML\XMLTools.cs" />
   </ItemGroup>
   <ItemGroup>

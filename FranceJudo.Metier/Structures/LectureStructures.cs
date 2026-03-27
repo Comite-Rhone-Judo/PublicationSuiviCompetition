@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Xml;
-using Tools.Enum;
-using Tools.Core;
+using FranceJudo.Core.Reflection;
+using FranceJudo.Metier.Resources;
+using FranceJudo.Metier.XML;
 
-namespace AppPublication.Tools.FranceJudo
+namespace FranceJudo.Metier.Structures
 {
     public static class LectureStructures
     {
@@ -11,7 +12,7 @@ namespace AppPublication.Tools.FranceJudo
         {
             IList<Structure> result = new List<Structure>();
 
-            XmlReader structureReader = XmlReader.Create(ResourcesTools.GetAssembyResource(ConstantResource.Structures));
+            XmlReader structureReader = XmlReader.Create(AssemblyResourceHelper.GetAssembyResource(ConstantResource.Structures));
 
             XmlDocument doc = new XmlDocument();
             doc.Load(structureReader);

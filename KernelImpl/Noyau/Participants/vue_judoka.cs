@@ -1,4 +1,5 @@
-﻿using KernelImpl.Internal;
+﻿using FranceJudo.Core.IO;
+using KernelImpl.Internal;
 using KernelImpl.Noyau.Categories;
 using KernelImpl.Noyau.Organisation;
 using KernelImpl.Noyau.Structures;
@@ -6,7 +7,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Enum;
+using FranceJudo.Metier.Resources;
 
 namespace KernelImpl.Noyau.Participants
 {

@@ -1,4 +1,4 @@
-﻿using HttpServer.Parser;
+﻿using FranceJudo.Core.Network.Http.HttpServer.Parser;
 
 namespace FranceJudo.Core.Network.Http.HttpServer
 {

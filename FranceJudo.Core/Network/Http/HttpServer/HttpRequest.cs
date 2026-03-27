@@ -1,5 +1,5 @@
-using HttpServer.Exceptions;
-using HttpServer.FormDecoders;
+using FranceJudo.Core.Network.Http.HttpServer.Exceptions;
+using FranceJudo.Core.Network.Http.HttpServer.FormDecoders;
 using System;
 using System.Collections.Specialized;
 using System.IO;

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-using Telerik.Windows.Controls.Calculator;
 
-namespace AppPublication.Tools.Converter
+namespace FranceJudo.UI.Wpf.Converters
 {
     public class BoolToVisibilityConverter : IValueConverter
     {

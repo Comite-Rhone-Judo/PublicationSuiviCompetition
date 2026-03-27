@@ -55,10 +55,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Helpers
         {
             if (string.IsNullOrEmpty(action))
                 throw new ArgumentNullException("action");
-            if (obj == null)
-                throw new ArgumentNullException("obj");
-
-            _object = obj;
+            _object = obj ?? throw new ArgumentNullException("obj");
             _action = action;
         }
 
@@ -166,8 +163,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Helpers
                 isChecked = "checked=\"checked\"";
             else
             {
-                int i;
-                int.TryParse(o.ToString(), out i);
+                int.TryParse(o.ToString(), out int i);
                 if (i != 0)
                     isChecked = "checked=\"checked\"";
             }
@@ -203,14 +199,14 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Helpers
             //object o = _object.GetType().GetProperty(propertyName).GetValue(_object, null);
 
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("<select name=\"{0}[{1}]\">{2}", _name, propertyName, Environment.NewLine);
+            sb.AppendFormat("<select name=\"{0}[{1}]\">{2}", _name, propertyName, System.Environment.NewLine);
 
             if (items != null)
                 foreach (object o1 in items)
                 {
                     sb.AppendFormat("<option value=\"{0}\">{1}</option>{2}",
                                     o1.GetType().GetProperty(idColumn).GetValue(o1, null),
-                                    o1.GetType().GetProperty(titleColumn).GetValue(o1, null), Environment.NewLine);
+                                    o1.GetType().GetProperty(titleColumn).GetValue(o1, null), System.Environment.NewLine);
 
                 }
             sb.AppendLine("</select>");

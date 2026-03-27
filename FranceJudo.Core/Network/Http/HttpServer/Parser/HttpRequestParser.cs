@@ -1,4 +1,4 @@
-using HttpServer.Exceptions;
+using FranceJudo.Core.Network.Http.HttpServer.Exceptions;
 using System;
 using System.Text;
 
@@ -226,7 +226,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Parser
                         {
                             int size = GetLineBreakSize(buffer, currentPos);
                             OnFirstLine(Encoding.UTF8.GetString(buffer, startPos, currentPos - startPos));
-                            CurrentState = CurrentState + 1;
+                            CurrentState++;
                             currentPos += size - 1;
                             handledBytes = currentPos + size - 1;
                             startPos = -1;
@@ -265,9 +265,9 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Parser
                             _curHeaderName = Encoding.UTF8.GetString(buffer, startPos, currentPos - startPos);
                             handledBytes = currentPos + 1;
                             startPos = -1;
-                            CurrentState = CurrentState + 1;
+                            CurrentState++;
                             if (ch == ':')
-                                CurrentState = CurrentState + 1;
+                                CurrentState++;
                         }
                         else if (startPos == -1)
                             startPos = currentPos;
@@ -286,7 +286,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Parser
                         if (ch == ':')
                         {
                             handledBytes = currentPos + 1;
-                            CurrentState = CurrentState + 1;
+                            CurrentState++;
                         }
                         break;
                     case RequestParserState.Between:
@@ -301,7 +301,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Parser
                                 continue;
                             }
                             startPos = currentPos;
-                            CurrentState = CurrentState + 1;
+                            CurrentState++;
                             handledBytes = currentPos;
                             continue;
                         }

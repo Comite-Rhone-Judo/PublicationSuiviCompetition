@@ -3,7 +3,7 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace KernelImpl.Noyau.Organisation
+namespace FranceJudo.Metier.Noyau.Organisation
 {
     /// <summary>
     /// Enumération des type de sexe

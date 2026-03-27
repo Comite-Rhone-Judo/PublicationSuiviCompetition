@@ -259,7 +259,7 @@
     <Compile Include="Threading\BatchProgressInfo.cs" />
     <Compile Include="Outils\BlockingCounter.cs" />
     <Compile Include="Security\Encryption.cs" />
-    <Compile Include="Files\FileAndDirectTools.cs" />
+    <Compile Include="Files\FileSystemHelper.cs" />
     <Compile Include="Files\FileWithChecksum.cs" />
     <Compile Include="Files\FileWithChecksumComparer.cs" />
     <Compile Include="Net\FTPTools.cs" />

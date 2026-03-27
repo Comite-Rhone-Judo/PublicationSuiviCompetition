@@ -4,9 +4,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Tools.Net;
 
-namespace FranceJudo.Core.Network.Ftp
+
+namespace FranceJudo.UI.Wpf.ViewModels.Network.Ftp
 { 
     public enum FtpTestSequence
     {

@@ -70,18 +70,26 @@ namespace FranceJudo.Core.Network.Tcp.Server
         private List<SentData> sentData = new List<SentData>();
         //private string chaine = "";
         private int _port = 0;
+        private string _endMsgTag;
 
-
+        /// <summary>
+        /// Balise de fin de message
+        /// </summary>
+        public string EndMsgTag
+        {
+            get { return _endMsgTag; }
+        }
 
         /// <summary>
         /// Constructor for a new server using an IPAddress and Port
         /// </summary>
         /// <param name="localaddr">The Local IP Address for the server.</param>
         /// <param name="port">The port for the server.</param>
-        public ServerGenerique(IPAddress localaddr, int port)
+        public ServerGenerique(IPAddress localaddr, int port, string endMsgTag)
         {
             _port = port;
             tcpListener = new TcpListener(localaddr, port);
+            _endMsgTag = endMsgTag;
         }
 
 
@@ -186,7 +194,7 @@ namespace FranceJudo.Core.Network.Tcp.Server
 
             //Program.frmMainForm.delAddClient.Invoke(client);
 
-            ClientConnection objClientConnection = new ClientConnection(client);
+            ClientConnection objClientConnection = new ClientConnection(client, _endMsgTag);
             objClientConnection.OnMessageReceived += new ClientConnection.MessageReceive(OnReceive);
             objClientConnection.OnRemoteHostClosed += new ClientConnection.RemoteHostClose(OnRemoteHostClose);
         }

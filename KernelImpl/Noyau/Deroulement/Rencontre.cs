@@ -4,9 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.XML;
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Resources;
 
 namespace KernelImpl.Noyau.Deroulement
 {
@@ -632,7 +631,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// <param name="MI">fonction d'info</param>
         /// <returns>les Rencontres</returns>
 
-        public static ICollection<Rencontre> LectureRencontres(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Rencontre> LectureRencontres(XElement xelement)
         {
             ICollection<Rencontre> rencontres = new List<Rencontre>();
 

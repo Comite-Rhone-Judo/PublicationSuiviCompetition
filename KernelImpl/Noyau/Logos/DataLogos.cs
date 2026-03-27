@@ -6,10 +6,11 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using System.Drawing;
-using Tools.Enum;
-using Tools.Files;
 using FranceJudo.Core.Logging;
-using Tools.Outils;
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Media.Images;
+using FranceJudo.Metier.Resources;
+
 
 namespace KernelImpl.Noyau.Logos
 {
@@ -32,8 +33,9 @@ namespace KernelImpl.Noyau.Logos
         /// <param name="DC"></param>
         public void lecture_logos(XElement element)
         {
-            ICollection<string> allLogos = LectureLogosCommissaire(element, null);
+            ICollection<string> allLogos = LectureLogosCommissaire(element);
 
+            // TODO To be replaced by AppDirectoryManager
             ICollection<string> logos = allLogos.Where(o => o.Contains(ConstantFile.Logo3_dir)).ToList();
             ICollection<string> fede = allLogos.Where(o => o.Contains(ConstantFile.Logo1_dir)).ToList();
             ICollection<string> ligues = allLogos.Where(o => o.Contains(ConstantFile.Logo2_dir)).ToList();
@@ -51,20 +53,20 @@ namespace KernelImpl.Noyau.Logos
         /// <param name="MI">fonction d'info</param>
         /// <returns>Ligues</returns>
 
-        public static ICollection<string> LectureLogosCommissaire(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<string> LectureLogosCommissaire(XElement xelement)
         {
             ICollection<string> urls = new List<string>();
 
             try
             {
-                FileAndDirectTools.DeleteDirectory(ConstantFile.Logo1_dir);
-                FileAndDirectTools.CreateDirectorie(ConstantFile.Logo1_dir);
+                FileSystemHelper.DeleteDirectory(ConstantFile.Logo1_dir);
+                FileSystemHelper.CreateDirectorie(ConstantFile.Logo1_dir);
 
-                FileAndDirectTools.DeleteDirectory(ConstantFile.Logo2_dir);
-                FileAndDirectTools.CreateDirectorie(ConstantFile.Logo2_dir);
+                FileSystemHelper.DeleteDirectory(ConstantFile.Logo2_dir);
+                FileSystemHelper.CreateDirectorie(ConstantFile.Logo2_dir);
 
-                FileAndDirectTools.DeleteDirectory(ConstantFile.Logo3_dir);
-                FileAndDirectTools.CreateDirectorie(ConstantFile.Logo3_dir);
+                FileSystemHelper.DeleteDirectory(ConstantFile.Logo3_dir);
+                FileSystemHelper.CreateDirectorie(ConstantFile.Logo3_dir);
 
             }
             catch (Exception ex)
@@ -90,7 +92,7 @@ namespace KernelImpl.Noyau.Logos
                 string nom = xinfo.Element(ConstantXML.Logo_Nom) != null ? xinfo.Element(ConstantXML.Logo_Nom).Value : "";
                 if (!String.IsNullOrWhiteSpace(val))
                 {
-                    using (Image img = OutilsTools.StringToImage(val))
+                    using (Image img = ImageHelper.StringToImage(val))
                     {
                         int index = 0;
                         while (File.Exists(directory + nom))

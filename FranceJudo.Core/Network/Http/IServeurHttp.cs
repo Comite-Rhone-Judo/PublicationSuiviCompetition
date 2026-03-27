@@ -1,13 +1,4 @@
-﻿using HttpServer.HttpModules;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-using Tools.Enum;
-using FranceJudo.Core.Logging;
+﻿using System.Net;
 
 namespace FranceJudo.Core.Network.Http
 {

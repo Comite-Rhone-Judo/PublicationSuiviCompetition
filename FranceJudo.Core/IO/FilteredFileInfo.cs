@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tools.Enum;
+﻿using System.IO;
 
-namespace AppPublication.Tools.Files
+namespace FranceJudo.Core.IO
 {
     public class FilteredFileInfo
     {
-        private FileInfo _fileinfo;
+        private readonly FileInfo _fileinfo;
         private string _name = string.Empty;
+        private readonly string _baseSuffix = string.Empty;
+
         public string Name
         {
             get { return _name; }
@@ -26,12 +22,13 @@ namespace AppPublication.Tools.Files
             }
         }
 
-        public FilteredFileInfo(FileInfo fileInfo)
+        public FilteredFileInfo(FileInfo fileInfo, string baseSuffix)
         {
-            if(null != fileInfo)
+            _baseSuffix = baseSuffix;
+            if (null != fileInfo)
             {
                 _fileinfo = fileInfo;
-                Name = _fileinfo.Name.Replace(ConstantResource.Export_site_img, "");
+                Name = string.IsNullOrEmpty(_baseSuffix) ? _fileinfo.Name : _fileinfo.Name.Replace(_baseSuffix, "");
             }
         }
 

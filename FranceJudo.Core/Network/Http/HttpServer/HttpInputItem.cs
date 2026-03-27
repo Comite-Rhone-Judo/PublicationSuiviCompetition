@@ -209,7 +209,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer
                         temp += value + ", ";
                     temp = temp.Remove(temp.Length - 2, 2);
                 }
-                temp += Environment.NewLine;
+                temp += System.Environment.NewLine;
 
                 foreach (KeyValuePair<string, HttpInputItem> item in _items)
                     temp += item.Value.ToString(name, false);

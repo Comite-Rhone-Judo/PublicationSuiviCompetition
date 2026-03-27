@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 
-namespace FranceJudo.Core.Environment
+namespace FranceJudo.Core.Reflection
 
 {
     public static class AssemblyResourceHelper

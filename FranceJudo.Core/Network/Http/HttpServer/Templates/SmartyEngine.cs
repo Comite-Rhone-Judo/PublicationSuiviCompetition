@@ -312,8 +312,8 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Templates
 
                 foreach (CompilerError CompErr in results.Errors)
                 {
-                    errs += "Template: " + CompErr.FileName + Environment.NewLine +
-                        "Line number: " + CompErr.Line + Environment.NewLine +
+                    errs += "Template: " + CompErr.FileName + System.Environment.NewLine +
+                        "Line number: " + CompErr.Line + System.Environment.NewLine +
                         "Error: " + CompErr.ErrorNumber + " '" + CompErr.ErrorText + "'";
                 }
                 Console.WriteLine(errs);

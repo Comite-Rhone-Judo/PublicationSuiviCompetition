@@ -123,12 +123,12 @@ namespace FranceJudo.Metier.Site
             _fileCache.Clear();
 
             // 2. On efface physiquement sur le disque
-            bool isDeleted = FileAndDirectTools.DeleteDirectory(_rootCompetDir, true);
+            bool isDeleted = FileSystemHelper.DeleteDirectory(_rootCompetDir, true);
 
             // 3. On recrée immédiatement la racine vide pour être prêt pour la suite
             if (isDeleted)
             {
-                FileAndDirectTools.CreateDirectorie(_rootCompetDir);
+                FileSystemHelper.CreateDirectorie(_rootCompetDir);
             }
 
             return isDeleted;
@@ -194,7 +194,7 @@ namespace FranceJudo.Metier.Site
             if (!string.IsNullOrWhiteSpace(value) && _rootCompetDir != value)
             {
                 _rootCompetDir = value;
-                FileAndDirectTools.CreateDirectorie(_rootCompetDir);
+                FileSystemHelper.CreateDirectorie(_rootCompetDir);
             }
         }
 
@@ -215,7 +215,7 @@ namespace FranceJudo.Metier.Site
                 string path = isAbsolute ? folderName : Path.Combine(_rootCompetDir, folderName);
                 string sanitizedPath = OutilsTools.TraiteChaineURL(path);
 
-                FileAndDirectTools.CreateDirectorie(sanitizedPath);
+                FileSystemHelper.CreateDirectorie(sanitizedPath);
                 return sanitizedPath;
             });
         }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FranceJudo.Core.IO;
-using FranceJudo.Core.Resources;
+using FranceJudo.Core.Reflection;
 using FranceJudo.Metier.Site;
 using FranceJudo.Metier.Resources;
 // using NLog.LayoutRenderers;
@@ -195,12 +195,12 @@ namespace FranceJudo.Metier.Export
             {
                 FileSystemHelper.CreateDirectorie(dir);
 
-                foreach (string s1 in ResourcesTools.GetAssembyResourceName())
+                foreach (string s1 in AssemblyResourceHelper.GetAssembyResourceName())
                 {
                     if (s1.Contains(ConstantResource.Export_site_img))
                     {
                         string fileName = Path.Combine(dir, s1.Replace(ConstantResource.Export_site_img, ""));
-                        var resource = ResourcesTools.GetAssembyResource(s1);
+                        var resource = AssemblyResourceHelper.GetAssembyResource(s1);
 
                         FileSystemHelper.NeedAccessFile(fileName);
                         try
@@ -279,12 +279,12 @@ namespace FranceJudo.Metier.Export
             {
                 FileSystemHelper.CreateDirectorie(dirStyle);
 
-                foreach (string s1 in ResourcesTools.GetAssembyResourceName())
+                foreach (string s1 in AssemblyResourceHelper.GetAssembyResourceName())
                 {
                     if (s1.Contains(ConstantResource.Export_site_style))
                     {
                         string fileName = Path.Combine(dirStyle, s1.Replace(ConstantResource.Export_site_style, ""));
-                        var resource = ResourcesTools.GetAssembyResource(s1);
+                        var resource = AssemblyResourceHelper.GetAssembyResource(s1);
 
                         FileSystemHelper.NeedAccessFile(fileName);
                         try
@@ -311,13 +311,13 @@ namespace FranceJudo.Metier.Export
             {
                 FileSystemHelper.CreateDirectorie(dirJs);
 
-                foreach (string s1 in ResourcesTools.GetAssembyResourceName())
+                foreach (string s1 in AssemblyResourceHelper.GetAssembyResourceName())
                 {
                     if (s1.Contains(ConstantResource.Export_site_js))
                     {
                         string fileName = Path.Combine(dirJs, s1.Replace(ConstantResource.Export_site_js, ""));
 
-                        var resource = ResourcesTools.GetAssembyResource(s1);
+                        var resource = AssemblyResourceHelper.GetAssembyResource(s1);
 
                         FileSystemHelper.NeedAccessFile(fileName);
                         try
@@ -351,14 +351,14 @@ namespace FranceJudo.Metier.Export
         {
             string result = "";
 
-            foreach (string js in ResourcesTools.GetAssembyResourceName())
+            foreach (string js in AssemblyResourceHelper.GetAssembyResourceName())
             {
                 if (!js.Contains(ConstantResource.Export_site_js))
                 {
                     continue;
                 }
 
-                var resource = ResourcesTools.GetAssembyResource(js);
+                var resource = AssemblyResourceHelper.GetAssembyResource(js);
 
                 using (StreamReader reader = new StreamReader(resource, Encoding.UTF8))
                 {

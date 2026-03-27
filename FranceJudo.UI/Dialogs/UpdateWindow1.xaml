@@ -1,5 +1,5 @@
 ﻿<telerik:RadWindow
-    x:Class="Tools.Windows.UpdateWindow1"
+    x:Class="FranceJudo.UI.Wpf.Dialogs.UpdateWindow1"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 

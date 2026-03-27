@@ -1,4 +1,5 @@
-using HttpServer.Exceptions;
+using FranceJudo.Core.Network.Http.HttpServer.Exceptions;
+
 using System;
 
 namespace FranceJudo.Core.Network.Http.HttpServer.Authentication

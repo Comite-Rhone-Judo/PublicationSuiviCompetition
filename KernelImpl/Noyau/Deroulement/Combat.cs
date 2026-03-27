@@ -1,26 +1,22 @@
-using KernelImpl;
 using KernelImpl.Internal;
 using KernelImpl.Noyau.Categories;
-using KernelImpl.Noyau.Deroulement;
 using KernelImpl.Noyau.Organisation;
 using KernelImpl.Noyau.Participants;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Security.Permissions;
-using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using Tools.Enum;
 using FranceJudo.Core.Logging;
-using Tools.Outils;
-using Tools.XML;
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Regles;
+using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.XML;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class Combat : INotifyPropertyChanged, IEntityWithKey<int>
+    public class Combat : ICombat, IXMLSerializable, INotifyPropertyChanged, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -201,6 +197,8 @@ namespace KernelImpl.Noyau.Deroulement
 
             //this.epreuve = OutilsTools.LectureInt(xinfo.Parent.Parent.Element(ConstantXML.Epreuve).Attribute(ConstantXML.Epreuve_ID));
         }
+
+        public XElement ToXml() { throw new NotImplementedException(); }
 
         public XElement ToXml(IJudoData DC)
         {
@@ -517,7 +515,7 @@ namespace KernelImpl.Noyau.Deroulement
 
         public int CalculeScoreGRCH(IJudoData DC, int? participant)
         {
-            if (DC.Organisation.Competition.type == (int)CompetitionTypeEnum.Equipe)
+            if (DC.Organisation.Competition.type == (int) CompetitionTypeEnum.Equipe)
             {
                 return 0;
             }
@@ -1381,7 +1379,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// <param name="MI">fonction d'info</param>
         /// <returns>les Combats</returns>
 
-        public static ICollection<Combat> LectureCombats(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Combat> LectureCombats(XElement xelement)
         {
             ICollection<Combat> combats = new List<Combat>();
             foreach (XElement xcombat in xelement.Descendants(ConstantXML.Combat))

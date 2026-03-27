@@ -1,5 +1,5 @@
-using HttpServer.Exceptions;
-using HttpServer.Sessions;
+using FranceJudo.Core.Network.Http.HttpServer.Exceptions;
+using FranceJudo.Core.Network.Http.HttpServer.Sessions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -176,10 +176,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.HttpModules
             try
             {
                 string path = GetPath(request.Uri);
-                string extension = GetFileExtension(path);
-                if (extension == null)
-                    throw new InternalServerException("Failed to find file extension");
-
+                string extension = GetFileExtension(path) ?? throw new InternalServerException("Failed to find file extension");
                 if (MimeTypes.ContainsKey(extension))
                     response.ContentType = MimeTypes[extension];
                 else

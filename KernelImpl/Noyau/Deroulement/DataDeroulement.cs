@@ -3,8 +3,10 @@ using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Outils;
-using Tools.XML;
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Regles;
+using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.XML;
 
 namespace KernelImpl.Noyau.Deroulement
 {
@@ -34,6 +36,19 @@ namespace KernelImpl.Noyau.Deroulement
         public IReadOnlyList<Participant> Participants { get { return _participantsCache.Cache; } }
         public IReadOnlyList<vue_groupe> VueGroupes { get { return _vgroupesCache.Cache; } }
         public IReadOnlyList<vue_combat> VueCombats { get { return _vcombatsCache.Cache; } }
+
+
+        IReadOnlyList<ICombat> IDeroulementData.Combats => Combats;
+        IReadOnlyList<IRencontre> IDeroulementData.Rencontres => Rencontres;
+        IReadOnlyList<IFeuille> IDeroulementData.Feuilles => Feuilles;
+
+        IReadOnlyList<IPhase_Decoupage> IDeroulementData.Decoupages => Decoupages;
+         IReadOnlyList<IGroupe_Combats> IDeroulementData.Groupes { get { return _groupesCache.Cache; } }
+         IReadOnlyList<IPhase> IDeroulementData.Phases { get { return _phasesCache.Cache; } }
+         IReadOnlyList<IPoule> IDeroulementData.Poules { get { return _poulesCache.Cache; } }
+         IReadOnlyList<IParticipant> IDeroulementData.Participants { get { return _participantsCache.Cache; } }
+         IReadOnlyList<Ivue_groupe> IDeroulementData.VueGroupes { get { return _vgroupesCache.Cache; } }
+         IReadOnlyList<Ivue_combat> IDeroulementData.VueCombats { get { return _vcombatsCache.Cache; } }
 
         /// <summary>
         /// lecture des participants
@@ -113,7 +128,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// <param name="isFull">True si on traite le snapshot comme complet</param>
         public void lecture_combats(XElement element, IJudoData DC, bool isFull)
         {
-            ICollection<Combat> combats = Combat.LectureCombats(element, null);
+            ICollection<Combat> combats = Combat.LectureCombats(element);
             ICollection<vue_combat> vcombats = GenereVueCombat(combats, DC);
 
             if (isFull)
@@ -138,9 +153,9 @@ namespace KernelImpl.Noyau.Deroulement
             return combats.Select(o => new vue_combat(o, DC)).ToList();
         }
 
-        public ICollection<Combat> LectureCombats(XElement xelement/*, int? tapis*/, OutilsTools.MontreInformation1 MI)
+        public ICollection<Combat> LectureCombats(XElement xelement)
         {
-            return Combat.LectureCombats(xelement, MI);
+            return Combat.LectureCombats(xelement);
         }
 
         /// <summary>
@@ -150,7 +165,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// <param name="isFull">True si on traite le snapshot comme complet</param>
         public void lecture_rencontres(XElement element, bool isFull)
         {
-            ICollection<Rencontre> rencontres = Rencontre.LectureRencontres(element, null);
+            ICollection<Rencontre> rencontres = Rencontre.LectureRencontres(element);
             if (isFull)
             {
                 _rencontresCache.UpdateFullSnapshot(rencontres);
@@ -161,9 +176,9 @@ namespace KernelImpl.Noyau.Deroulement
             }
         }
 
-        public ICollection<Rencontre> LectureRencontres(XElement xelement, /*int? tapis,*/ OutilsTools.MontreInformation1 MI)
+        public ICollection<Rencontre> LectureRencontres(XElement xelement)
         {
-            return Rencontre.LectureRencontres(xelement, MI);
+            return Rencontre.LectureRencontres(xelement);
         }
 
         /// <summary>
@@ -173,7 +188,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// <param name="isFull">True si on traite le snapshot comme complet</param>
         public void lecture_feuilles(XElement element, bool isFull)
         {
-            ICollection<Feuille> feuilles = Feuille.LectureFeuilles(element, null);
+            ICollection<Feuille> feuilles = Feuille.LectureFeuilles(element);
             if (isFull)
             {
                 _feuillesCache.UpdateFullSnapshot(feuilles);
@@ -184,9 +199,9 @@ namespace KernelImpl.Noyau.Deroulement
             }
         }
 
-        public ICollection<Feuille> LectureFeuilles(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public ICollection<Feuille> LectureFeuilles(XElement xelement)
         {
-            return Feuille.LectureFeuilles(xelement, MI);
+            return Feuille.LectureFeuilles(xelement);
         }
     }
 }

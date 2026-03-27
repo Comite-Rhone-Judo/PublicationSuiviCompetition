@@ -5,19 +5,17 @@ using System.IO;
 using System.Xml;
 using System.Xml.Linq; // Indispensable pour l'usage de XDocument
 using System.Xml.Xsl;
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
+using FranceJudo.Core.Reflection;
+using FranceJudo.Core.XML;
 
 namespace FranceJudo.Core.Export
 {
-    public static class     
+    public static class ExportHTML     
     {
         // Dictionnaire pour mettre en cache les XSLT compilés
         private static readonly ConcurrentDictionary<string, Lazy<XslCompiledTransform>> _xsltCache = new ConcurrentDictionary<string, Lazy<XslCompiledTransform>>();
-
-        public static void ToHTMLSite(XDocument xml, ExportEnum export_type, string fileSave, XsltArgumentList argsList, string fileExtension = "html", bool useCache = true)
-        {
-            string xslt = ExportTools.GetXsltSite(export_type);
-            ExportHTML.ToHTML(xml, fileSave, argsList, xslt, fileExtension, useCache);
-        }
 
         /// <summary>
         /// Realise un export HTML
@@ -47,7 +45,7 @@ namespace FranceJudo.Core.Export
             // Create the FileStream.
             try
             {
-                FileAndDirectTools.NeedAccessFile(fileSaveWithExt);
+                FileSystemHelper.NeedAccessFile(fileSaveWithExt);
                 using (FileStream fs = new FileStream(fileSaveWithExt, FileMode.Create))
                 {
                     // Utilisation d'un XmlReader pour lire le XDocument à la volée sans allocation mémoire
@@ -64,7 +62,7 @@ namespace FranceJudo.Core.Export
             }
             finally
             {
-                FileAndDirectTools.ReleaseFile(fileSaveWithExt);
+                FileSystemHelper.ReleaseFile(fileSaveWithExt);
             }
         }
 
@@ -76,14 +74,18 @@ namespace FranceJudo.Core.Export
         private static XslCompiledTransform GetXsltFromResource(string xslt_st)
         {
             XslCompiledTransform xslt = null;
-            XmlReaderSettings readerSettings = new XmlReaderSettings();
-            readerSettings.DtdProcessing = DtdProcessing.Parse;
+            XmlReaderSettings readerSettings = new XmlReaderSettings
+            {
+                DtdProcessing = DtdProcessing.Parse
+            };
 
             // Charge le XSLT depuis les ressources de l'assembly pour la 1ere fois
-            XsltSettings settings = new XsltSettings();
-            settings.EnableDocumentFunction = true;
-            settings.EnableScript = true;
-            var resource = ResourcesTools.GetAssembyResource(xslt_st);
+            XsltSettings settings = new XsltSettings
+            {
+                EnableDocumentFunction = true,
+                EnableScript = true
+            };
+            var resource = AssemblyResourceHelper.GetAssembyResource(xslt_st);
 
             // L'ajout du bloc using garantit la bonne libération du flux de la ressource
             using (XmlReader xsltReader = XmlReader.Create(resource, readerSettings))

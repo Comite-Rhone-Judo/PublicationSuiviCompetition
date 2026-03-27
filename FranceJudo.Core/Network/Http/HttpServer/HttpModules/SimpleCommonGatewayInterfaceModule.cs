@@ -1,6 +1,6 @@
-﻿using HttpServer.Exceptions;
-using HttpServer.Helpers;
-using HttpServer.Sessions;
+﻿using FranceJudo.Core.Network.Http.HttpServer.Exceptions;
+using FranceJudo.Core.Network.Http.HttpServer.Helpers;
+using FranceJudo.Core.Network.Http.HttpServer.Sessions;
 using System;
 using System.Collections.Generic;
 using System.IO;

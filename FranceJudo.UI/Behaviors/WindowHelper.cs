@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Telerik.Windows.Controls;
 
-namespace FranceJudo.UI.Behaviors
+namespace FranceJudo.UI.Wpf.Behaviors
 {
     public class WindowHelper
     {

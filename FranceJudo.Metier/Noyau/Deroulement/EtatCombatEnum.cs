@@ -1,4 +1,4 @@
-﻿namespace KernelImpl.Noyau.Deroulement
+﻿namespace FranceJudo.Metier.Noyau.Deroulement
 {
 
     /// <summary>

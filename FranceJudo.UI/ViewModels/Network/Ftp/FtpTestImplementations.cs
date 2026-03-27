@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Net;
 using System.Threading;
+using FranceJudo.Core.Network.Ftp;
 using FluentFTP;
 
-namespace FranceJudo.Core.Network.Ftp
+
+namespace FranceJudo.UI.Wpf.ViewModels.Network.Ftp
 {
     public class DnsResolutionTest : FtpTestStepBase
     {
@@ -85,10 +87,7 @@ namespace FranceJudo.Core.Network.Ftp
                 if (!dirExists)
                     throw new Exception($"Le répertoire '{site.RepertoireSiteFTPDistant}' n'existe pas.");
 
-                var listing = client.GetListing(site.RepertoireSiteFTPDistant);
-                if (listing == null)
-                    throw new Exception("Le serveur refuse de lister le contenu (droits insuffisants).");
-
+                var listing = client.GetListing(site.RepertoireSiteFTPDistant) ?? throw new Exception("Le serveur refuse de lister le contenu (droits insuffisants).");
                 SuccessMessage = $"Répertoire '/{site.RepertoireSiteFTPDistant}' trouvé";
                 return true;
             }

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace AppPublication.Tools.Converter
+namespace FranceJudo.UI.Wpf.Converters
 {
     public class ValueToBoolConverter : IValueConverter
     {

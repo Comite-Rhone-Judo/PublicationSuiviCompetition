@@ -3,13 +3,15 @@ using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.XML;
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau.Arbitrage;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.XML;
+
 
 namespace KernelImpl.Noyau.Arbitrage
 {
-    public class Commissaire : IEntityWithKey<int>
+    public class Commissaire : ICommissaire, IXMLSerializable, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -112,7 +114,7 @@ namespace KernelImpl.Noyau.Arbitrage
         /// <param name="MI">fonction d'info</param>
         /// <returns>les Categories Age</returns>
 
-        public static ICollection<Commissaire> LectureCommissaire(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Commissaire> LectureCommissaire(XElement xelement)
         {
             ICollection<Commissaire> commissaires = new List<Commissaire>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.Commissaire))

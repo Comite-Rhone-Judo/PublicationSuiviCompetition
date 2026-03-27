@@ -1,4 +1,4 @@
-using HttpServer.Sessions;
+using FranceJudo.Core.Network.Http.HttpServer.Sessions;
 using System;
 using System.Collections.Generic;
 using System.Net;

@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Threading;
 using Telerik.Windows.Controls;
 using FranceJudo.Core.Logging;
-using Tools.Configuration;
+using FranceJudo.Core.Configuration;
 using KernelImpl;
 using AppPublication.Controles;
 

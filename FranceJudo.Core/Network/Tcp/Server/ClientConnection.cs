@@ -70,11 +70,12 @@ namespace FranceJudo.Core.Network.Tcp.Server
         /// Constructeur
         /// </summary>
         /// <param name="client">client</param>
-        public ClientConnection(TcpClient client)
+        public ClientConnection(TcpClient client, string endMsgTag)
         {
             try
             {
                 _Client = client;
+                _endMsgTag = endMsgTag;
 
                 client.GetStream().BeginRead(readBuffer, 0, READ_BUFFER_SIZE,
                     new AsyncCallback(StreamReceiver), client);

@@ -2,13 +2,14 @@
 using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.XML;
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau.Arbitrage;
+using FranceJudo.Metier.XML;
+
 
 namespace KernelImpl.Noyau.Arbitrage
 {
-    public class Delegue : IEntityWithKey<int>
+    public class Delegue : IDelegue, IXMLSerializable, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -55,7 +56,7 @@ namespace KernelImpl.Noyau.Arbitrage
         /// <param name="MI">fonction d'info</param>
         /// <returns>les Categories Age</returns>
 
-        public static ICollection<Delegue> LectureDelegue(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Delegue> LectureDelegue(XElement xelement)
         {
             ICollection<Delegue> delegues = new List<Delegue>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.Delegue))

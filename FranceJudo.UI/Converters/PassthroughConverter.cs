@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
 
-namespace AppPublication.Tools.Converter
+namespace FranceJudo.UI.Wpf.Converters
 {
     public class PassthroughConverter : IMultiValueConverter
     {

@@ -1,12 +1,7 @@
-﻿
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Xml.Linq;
-using FranceJudo.Core.Logging;
 using KernelImpl.Internal;
+using FranceJudo.Metier.Noyau.Arbitrage;
 
 namespace KernelImpl.Noyau.Arbitrage
 {
@@ -22,6 +17,11 @@ namespace KernelImpl.Noyau.Arbitrage
         public IReadOnlyList<Arbitre> Arbitres { get { return _arbitresCache.Cache; } }
         public IReadOnlyList<Delegue> Delegues { get { return _deleguesCache.Cache; } }
 
+        IReadOnlyList<ICommissaire> IArbitrageData.Commissaires => this.Commissaires;
+        IReadOnlyList<IArbitre> IArbitrageData.Arbitres => this.Arbitres;
+        IReadOnlyList<IDelegue> IArbitrageData.Delegues => this.Delegues;
+
+
         /// <summary>
         /// lecture des commissaires
         /// </summary>
@@ -29,7 +29,7 @@ namespace KernelImpl.Noyau.Arbitrage
         /// <param name="DC"></param>
         public void lecture_commissaires(XElement element)
         {
-            ICollection<Commissaire> commissaires = Commissaire.LectureCommissaire(element, null);
+            ICollection<Commissaire> commissaires = Commissaire.LectureCommissaire(element);
             _commissairesCache.UpdateFullSnapshot(commissaires);
         }
 
@@ -40,7 +40,7 @@ namespace KernelImpl.Noyau.Arbitrage
         /// <param name="DC"></param>
         public void lecture_arbitres(XElement element)
         {
-            ICollection<Arbitre> arbitres = Arbitre.LectureArbitre(element, null);
+            ICollection<Arbitre> arbitres = Arbitre.LectureArbitre(element);
             _arbitresCache.UpdateFullSnapshot(arbitres); 
         }
 
@@ -51,7 +51,7 @@ namespace KernelImpl.Noyau.Arbitrage
         /// <param name="DC"></param>
         public void lecture_delegues(XElement element)
         {
-            ICollection<Delegue> delegues = Delegue.LectureDelegue(element, null);
+            ICollection<Delegue> delegues = Delegue.LectureDelegue(element);
             _deleguesCache.UpdateFullSnapshot(delegues);
         }
     }

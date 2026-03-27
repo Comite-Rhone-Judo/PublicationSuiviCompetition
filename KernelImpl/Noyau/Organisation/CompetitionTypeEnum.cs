@@ -1,4 +1,4 @@
-﻿namespace TKernelImpl.Noyau.Organisation
+﻿namespace KernelImpl.Noyau.Organisation
 {
     /// <summary>
     /// Enumération des type de compétition

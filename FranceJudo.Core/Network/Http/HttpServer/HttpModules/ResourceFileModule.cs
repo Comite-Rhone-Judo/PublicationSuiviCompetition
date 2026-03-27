@@ -1,6 +1,6 @@
-using HttpServer.Exceptions;
-using HttpServer.Helpers;
-using HttpServer.Sessions;
+using FranceJudo.Core.Network.Http.HttpServer.Exceptions;
+using FranceJudo.Core.Network.Http.HttpServer.Helpers;
+using FranceJudo.Core.Network.Http.HttpServer.Sessions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -133,8 +133,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.HttpModules
                 return false;
 
             string path = request.Uri.AbsolutePath;
-            string contentType;
-            Stream resourceStream = GetResourceStream(path, out contentType);
+            Stream resourceStream = GetResourceStream(path, out string contentType);
             if (resourceStream == null)
                 return false;
 
@@ -170,10 +169,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.HttpModules
         private Stream GetResourceStream(string path, out string contentType)
         {
             int extensionPosition = path.LastIndexOf('.');
-            string extension = extensionPosition == -1 ? null : path.Substring(extensionPosition + 1);
-            if (extension == null)
-                throw new InternalServerException("Failed to find file extension");
-
+            string extension = (extensionPosition == -1 ? null : path.Substring(extensionPosition + 1)) ?? throw new InternalServerException("Failed to find file extension");
             if (MimeTypes.ContainsKey(extension))
                 contentType = MimeTypes[extension];
             else

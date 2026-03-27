@@ -1,7 +1,7 @@
-﻿using Tools.Outils;
-using Tools.Framework;
+﻿using FranceJudo.UI.Wpf.Foundation;
+using FranceJudo.Core.Environment;
 
-namespace AppPublication.Tools
+namespace FranceJudo.UI.Wpf.ViewModels.Environment
 {
     public class AppInformation : NotificationBase
     {
@@ -9,10 +9,10 @@ namespace AppPublication.Tools
 
         AppInformation()
         {
-            AppVersion = OutilsTools.GetVersionInformation();
-            AppCompany = OutilsTools.GetCompanyInformation();
-            AppCopyright = OutilsTools.GetCopyrightInformation();
-            AppTrademark = OutilsTools.GetTrademarkInformation();
+            AppVersion = AppEnvironment.GetVersionInformation();
+            AppCompany = AppEnvironment.GetCompanyInformation();
+            AppCopyright = AppEnvironment.GetCopyrightInformation();
+            AppTrademark = AppEnvironment.GetTrademarkInformation();
         }
 
         /// <summary>
