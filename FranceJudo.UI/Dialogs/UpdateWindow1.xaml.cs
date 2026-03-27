@@ -1,12 +1,13 @@
-﻿using System;
+﻿using FranceJudo.Core.Logging;
+using FranceJudo.Core.Exceptions;
+using FranceJudo.UI.Wpf.Behaviors;
+using System;
 using System.ComponentModel;
 using System.Deployment.Application;
 using System.Net;
 using System.Windows;
 using Telerik.Windows.Controls;
-using Tools.CustomException;
-using FranceJudo.Core.Logging;
-using Tools.Outils;
+
 
 namespace FranceJudo.UI.Wpf.Dialogs
 {
@@ -18,7 +19,7 @@ namespace FranceJudo.UI.Wpf.Dialogs
         public UpdateWindow1()
         {
             InitializeComponent();
-            OutilsTools.ShowInTaskbar(this);
+            WindowHelper.ShowInTaskbar(this);
             this.DialogResult = false;
 
             this.Header = "Mise à jour de l\'application    ";

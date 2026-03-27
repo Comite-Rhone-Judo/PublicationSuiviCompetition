@@ -1,23 +1,17 @@
 ﻿using FluentFTP;
 using FluentFTP.Model.Functions;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Mail;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.ServiceModel.Channels;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Interop;
-using System.Windows.Markup;
-using Tools.Framework;
 using FranceJudo.Core.Logging;
-using Tools.Threading;
+using FranceJudo.UI.Wpf.Foundation;
+using FranceJudo.Core.Network.Http.Context;
+using FranceJudo.Core.Network.Http;
 
 
 namespace FranceJudo.UI.Wpf.ViewModels.Network
@@ -1064,15 +1058,15 @@ namespace FranceJudo.UI.Wpf.ViewModels.Network
             if (!string.IsNullOrEmpty(localFileName) && !string.IsNullOrEmpty(localDirectoryName))
             {
                 // Aligne les noms des repertoires pour n'avoir que des '/' au lieu de '\'
-                string cleanLocalFileName = FluentFTP.Helpers.RemotePaths.GetFtpPath(localFileName);
-                string cleanLocalDirName = FluentFTP.Helpers.RemotePaths.GetFtpPath(localDirectoryName);
-                string cleanDistantDirName = FluentFTP.Helpers.RemotePaths.GetFtpPath(RepertoireSiteFTPDistant);
+                string cleanLocalFileName = FluentFTP.Helpers.PathSanitizer.SanitizeFtpPath(localFileName);
+                string cleanLocalDirName = FluentFTP.Helpers.PathSanitizer.SanitizeFtpPath(localDirectoryName);
+                string cleanDistantDirName = FluentFTP.Helpers.PathSanitizer.SanitizeFtpPath(RepertoireSiteFTPDistant);
 
                 // Remplace le repertoire racine local dans le nom du fichier local par le repertoire racine FTP
                 string ftpDestination = cleanLocalFileName.Replace(cleanLocalDirName, cleanDistantDirName);
 
                 // Nettoie  le chemin
-                output = FluentFTP.Helpers.RemotePaths.GetFtpPath(ftpDestination);
+                output = FluentFTP.Helpers.PathSanitizer.SanitizeFtpPath(ftpDestination);
             }
 
             return output;

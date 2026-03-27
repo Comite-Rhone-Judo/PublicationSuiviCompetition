@@ -3,7 +3,8 @@ using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Outils;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Participants;
 
 namespace KernelImpl.Noyau.Participants
 {
@@ -20,6 +21,12 @@ namespace KernelImpl.Noyau.Participants
         public IReadOnlyList<EpreuveJudoka> EpreuveJudokas { get { return _epreuvejudokasCache.Cache; } }
         public IReadOnlyList<vue_judoka> Vuejudokas { get { return _vue_judokasCache.Cache; } }
 
+        IReadOnlyList<IEquipe> IParticipantsData.Equipes => Equipes;
+        IReadOnlyList<IJudoka> IParticipantsData.Judokas => Judokas;
+        IReadOnlyList<IEpreuveJudoka> IParticipantsData.EpreuveJudokas => EpreuveJudokas;
+        IReadOnlyList<Ivue_judoka> IParticipantsData.Vuejudokas => Vuejudokas;
+
+
         // Expose le dictionnaire courant. Note: IDictionary est utilisé pour la compatibilité, 
         // mais l'objet sous-jacent ne doit pas être modifié par le consommateur.
         private readonly SimpleCachedData<Dictionary<int, IList<vue_judoka>>> _vjudokasEpreuveMap  = new SimpleCachedData<Dictionary<int, IList<vue_judoka>>>();
@@ -34,7 +41,7 @@ namespace KernelImpl.Noyau.Participants
         /// <param name="DC"></param>
         public void lecture_judokas(XElement element, IJudoData DC)
         {
-            ICollection<Judoka> judokasRecu = Judoka.LectureJudoka(element, null);
+            ICollection<Judoka> judokasRecu = Judoka.LectureJudoka(element);
             _judokasCache.UpdateFullSnapshot(judokasRecu);
 
             // Genere les vues et le dictionnaire associés
@@ -51,9 +58,9 @@ namespace KernelImpl.Noyau.Participants
         /// <param name="MI">fonction d'info</param>
         /// <returns>les Judoka</returns>
 
-        public ICollection<Judoka> LectureJudoka(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public ICollection<Judoka> LectureJudoka(XElement xelement)
         {
-            return Judoka.LectureJudoka(xelement, MI);
+            return Judoka.LectureJudoka(xelement);
         }
 
 
@@ -64,14 +71,14 @@ namespace KernelImpl.Noyau.Participants
         /// <param name="DC"></param>
         public void lecture_equipes(XElement element)
         {
-            ICollection<Equipe> equipes = Equipe.LectureEquipes(element, null);
+            ICollection<Equipe> equipes = Equipe.LectureEquipes(element);
             _equipesCache.UpdateFullSnapshot(equipes);
 
         }
 
-        public ICollection<Equipe> LectureEquipes(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public ICollection<Equipe> LectureEquipes(XElement xelement)
         {
-            return Equipe.LectureEquipes(xelement, MI);
+            return Equipe.LectureEquipes(xelement);
         }
 
         /// <summary>
@@ -81,7 +88,7 @@ namespace KernelImpl.Noyau.Participants
         /// <param name="DC"></param>
         public void lecture_epreuves_judokas(XElement element, IJudoData DC)
         {
-            ICollection<EpreuveJudoka> ejs = EpreuveJudoka.LectureEpreuveJudokas(element, null);
+            ICollection<EpreuveJudoka> ejs = EpreuveJudoka.LectureEpreuveJudokas(element);
             _epreuvejudokasCache.UpdateFullSnapshot(ejs);
 
             // 3. Propagation de l'état aux Judokas (Optimisation)
@@ -118,9 +125,9 @@ namespace KernelImpl.Noyau.Participants
         /// <param name="MI">fonction d'info</param>
         /// <returns>les Epreuve des Judoka</returns>
 
-        public ICollection<EpreuveJudoka> LectureEpreuveJudokas(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public ICollection<EpreuveJudoka> LectureEpreuveJudokas(XElement xelement)
         {
-            return EpreuveJudoka.LectureEpreuveJudokas(xelement, MI); ;
+            return EpreuveJudoka.LectureEpreuveJudokas(xelement); ;
         }
 
 

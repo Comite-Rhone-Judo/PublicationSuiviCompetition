@@ -9,7 +9,9 @@ using System.Drawing;
 using FranceJudo.Core.Logging;
 using FranceJudo.Core.IO;
 using FranceJudo.Core.Media.Images;
-using FranceJudo.Metier.Resources;
+using FranceJudo.Metier.Noyau.Logos;
+using FranceJudo.Metier.IO;
+using FranceJudo.Metier.XML;
 
 
 namespace KernelImpl.Noyau.Logos
@@ -36,9 +38,9 @@ namespace KernelImpl.Noyau.Logos
             ICollection<string> allLogos = LectureLogosCommissaire(element);
 
             // TODO To be replaced by AppDirectoryManager
-            ICollection<string> logos = allLogos.Where(o => o.Contains(ConstantFile.Logo3_dir)).ToList();
-            ICollection<string> fede = allLogos.Where(o => o.Contains(ConstantFile.Logo1_dir)).ToList();
-            ICollection<string> ligues = allLogos.Where(o => o.Contains(ConstantFile.Logo2_dir)).ToList();
+            ICollection<string> logos = allLogos.Where(o => o.Contains(AppDirectoryManager.Logo3_dir)).ToList();
+            ICollection<string> fede = allLogos.Where(o => o.Contains(AppDirectoryManager.Logo1_dir)).ToList();
+            ICollection<string> ligues = allLogos.Where(o => o.Contains(AppDirectoryManager.Logo2_dir)).ToList();
 
             _logosCache.UpdateFullSnapshot(logos, o => o);
             _fedeCache.UpdateFullSnapshot(logos, o => o);
@@ -59,14 +61,14 @@ namespace KernelImpl.Noyau.Logos
 
             try
             {
-                FileSystemHelper.DeleteDirectory(ConstantFile.Logo1_dir);
-                FileSystemHelper.CreateDirectorie(ConstantFile.Logo1_dir);
+                FileSystemHelper.DeleteDirectory(AppDirectoryManager.Logo1_dir);
+                FileSystemHelper.CreateDirectorie(AppDirectoryManager.Logo1_dir);
 
-                FileSystemHelper.DeleteDirectory(ConstantFile.Logo2_dir);
-                FileSystemHelper.CreateDirectorie(ConstantFile.Logo2_dir);
+                FileSystemHelper.DeleteDirectory(AppDirectoryManager.Logo2_dir);
+                FileSystemHelper.CreateDirectorie(AppDirectoryManager.Logo2_dir);
 
-                FileSystemHelper.DeleteDirectory(ConstantFile.Logo3_dir);
-                FileSystemHelper.CreateDirectorie(ConstantFile.Logo3_dir);
+                FileSystemHelper.DeleteDirectory(AppDirectoryManager.Logo3_dir);
+                FileSystemHelper.CreateDirectorie(AppDirectoryManager.Logo3_dir);
 
             }
             catch (Exception ex)
@@ -75,9 +77,9 @@ namespace KernelImpl.Noyau.Logos
             }
             finally
             {
-                urls = urls.Concat(LectureElement(xelement, ConstantXML.LogoFede, ConstantFile.Logo1_dir)).ToList();
-                urls = urls.Concat(LectureElement(xelement, ConstantXML.LogoLigue, ConstantFile.Logo2_dir)).ToList();
-                urls = urls.Concat(LectureElement(xelement, ConstantXML.LogoSponsor, ConstantFile.Logo3_dir)).ToList();
+                urls = urls.Concat(LectureElement(xelement, ConstantXML.LogoFede, AppDirectoryManager.Logo1_dir)).ToList();
+                urls = urls.Concat(LectureElement(xelement, ConstantXML.LogoLigue, AppDirectoryManager.Logo2_dir)).ToList();
+                urls = urls.Concat(LectureElement(xelement, ConstantXML.LogoSponsor, AppDirectoryManager.Logo3_dir)).ToList();
             }
 
             return urls;

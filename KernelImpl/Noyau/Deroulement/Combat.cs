@@ -12,11 +12,15 @@ using FranceJudo.Core.Logging;
 using FranceJudo.Core.XML;
 using FranceJudo.Metier.Regles;
 using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.Noyau.Categories;
+using FranceJudo.Metier.Noyau.Participants;
 using FranceJudo.Metier.XML;
+using FranceJudo.Metier.Noyau;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class Combat : ICombat, IXMLSerializable, INotifyPropertyChanged, IEntityWithKey<int>
+    public class Combat : ICombat, INotifyPropertyChanged, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -198,8 +202,6 @@ namespace KernelImpl.Noyau.Deroulement
             //this.epreuve = OutilsTools.LectureInt(xinfo.Parent.Parent.Element(ConstantXML.Epreuve).Attribute(ConstantXML.Epreuve_ID));
         }
 
-        public XElement ToXml() { throw new NotImplementedException(); }
-
         public XElement ToXml(IJudoData DC)
         {
             XElement xcombat = new XElement(ConstantXML.Combat);
@@ -209,7 +211,7 @@ namespace KernelImpl.Noyau.Deroulement
             xcombat.SetAttributeValue(ConstantXML.Combat_Reference, reference);
             xcombat.SetAttributeValue(ConstantXML.Combat_Groupe, groupe);
             xcombat.SetAttributeValue(ConstantXML.Combat_FirstRencontre, first_rencontre);
-                vue_epreuve ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == first_rencontre);
+                Ivue_epreuve ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == first_rencontre);
                 string lib = string.Empty;
                 if (ep != null) {
                     // Pour les epreuves mixte, on ajoute le sexe de l'epreuve qui commence, sinon, juste le nom de la cate de poids
@@ -270,7 +272,7 @@ namespace KernelImpl.Noyau.Deroulement
             xcombat.SetAttributeValue(ConstantXML.Combat_PointsGRCH1, pointsGRCH1);
             xcombat.SetAttributeValue(ConstantXML.Combat_PointsGRCH2, pointsGRCH2);
 
-            Feuille feuille = DC.Deroulement.Feuilles.FirstOrDefault(o => o.combat == this.id);
+            IFeuille feuille = DC.Deroulement.Feuilles.FirstOrDefault(o => o.combat == this.id);
             if (feuille != null)
             {
                 xcombat.SetAttributeValue(ConstantXML.Combat_Repechage, feuille.repechage);
@@ -312,10 +314,10 @@ namespace KernelImpl.Noyau.Deroulement
             return xcombat;
         }
 
-        public int CalculePointVainqueurJujitsu(IJudoData DC, Participant pVainqueur)
+        public int CalculePointVainqueurJujitsu(IJudoData DC, IParticipant pVainqueur)
         {
             int res = 0;
-            Feuille feuille = DC.Deroulement.Feuilles.FirstOrDefault(o => o.combat == this.id);
+            IFeuille feuille = DC.Deroulement.Feuilles.FirstOrDefault(o => o.combat == this.id);
             //Pas de feuille => on est dans un combat dans une poule
             if (feuille == null)
             {
@@ -342,10 +344,10 @@ namespace KernelImpl.Noyau.Deroulement
 
             return res;
         }
-        public int CalculePointPerdantJujitsu(IJudoData DC, Participant pPerdant)
+        public int CalculePointPerdantJujitsu(IJudoData DC, IParticipant pPerdant)
         {
             int res = 0;
-            Feuille feuille = DC.Deroulement.Feuilles.FirstOrDefault(o => o.combat == this.id);
+            IFeuille feuille = DC.Deroulement.Feuilles.FirstOrDefault(o => o.combat == this.id);
             //Pas de feuille => on est dans un combat dans une poule
             if (feuille == null)
             {
@@ -549,13 +551,13 @@ namespace KernelImpl.Noyau.Deroulement
 
                 // Recupere les donnees des judokas pour verifier les grades respectifs
                 // On ne peut pas marquer sur un grade inferieur ou si le grade est inferieur a Marron
-                Judoka j1 = null;
-                Judoka j2 = null;
+                IJudoka j1 = null;
+                IJudoka j2 = null;
 
                 j1 = DC.Participants.Judokas.FirstOrDefault(o => o.id == this.participant1);
                 j2 = DC.Participants.Judokas.FirstOrDefault(o => o.id == this.participant2);
 
-                Ceintures grademin = DC.Categories.Grades.FirstOrDefault(o => o.remoteId == "MA");
+                ICeintures grademin = DC.Categories.Grades.FirstOrDefault(o => o.remoteId == "MA");
                 if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.Judo)
                 {
                     zero = zero || ((j1?.ceinture ?? 0) < grademin.id || (j2?.ceinture ?? 0) < grademin.id);  //SI GRADE INFERIEUR A MARRON
@@ -612,7 +614,7 @@ namespace KernelImpl.Noyau.Deroulement
                 }
 
 
-                List<Combat> combats = new List<Combat>();
+                List<ICombat> combats = new List<ICombat>();
                 combats = DC.Deroulement.Combats.Where(o => o.participant1 == participant || o.participant2 == participant).ToList();
 
                 /********************************************************************************************************************
@@ -1038,10 +1040,10 @@ namespace KernelImpl.Noyau.Deroulement
 
 
                     int maxPenalites = 4;
-                    vue_epreuve ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == this.epreuve);
+                    Ivue_epreuve ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == this.epreuve);
                     if (!(ep is null))
                     {
-                        CategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == ep.categorieAge);
+                        ICategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == ep.categorieAge);
                         if (!(cateAge is null))
                         {
                             if (cateAge.remoteId == "B" || cateAge.remoteId == "M") //Benjamin ou minime
@@ -1110,10 +1112,10 @@ namespace KernelImpl.Noyau.Deroulement
             if (discipline == CompetitionDisciplineEnum.JujitsuNeWaza)
             {
                 maxPenalites = 4;
-                vue_epreuve ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == this.epreuve);
+                Ivue_epreuve ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == this.epreuve);
                 if (!(ep is null))
                 {
-                    CategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == ep.categorieAge);
+                    ICategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == ep.categorieAge);
                     if (!(cateAge is null))
                     {
                         if (cateAge.remoteId == "B" || cateAge.remoteId == "M") //Benjamin ou minime

@@ -1,8 +1,9 @@
+using FranceJudo.Metier.XML;
 using System;
 
 namespace FranceJudo.Metier.Noyau.Deroulement
 {
-    public interface ICombat
+    public interface ICombat : IXMLSerializable
     {
         public int id { get; set; }
         public bool IsPlayable { get; }

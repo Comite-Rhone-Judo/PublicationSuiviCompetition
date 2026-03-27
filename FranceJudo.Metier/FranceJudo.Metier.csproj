@@ -77,7 +77,39 @@
     <Compile Include="Noyau\Deroulement\Ivue_combat.cs" />
     <Compile Include="Noyau\Deroulement\Ivue_epreuve_phase.cs" />
     <Compile Include="Noyau\Deroulement\Ivue_groupe.cs" />
+    <Compile Include="Noyau\IJudoData.cs" />
+    <Compile Include="Noyau\IJudoDataManager.cs" />
+    <Compile Include="Noyau\Logos\IlogosData.cs" />
+    <Compile Include="Noyau\Organisation\ICompetition.cs" />
+    <Compile Include="Noyau\Organisation\CompetitionDisciplineEnum.cs" />
+    <Compile Include="Noyau\Organisation\CompetitionTypeEnum.cs" />
+    <Compile Include="Noyau\Organisation\ConstantCouleur.cs" />
+    <Compile Include="Noyau\Organisation\DiplomeTypeEnum.cs" />
+    <Compile Include="Noyau\Organisation\EchelonEnum.cs" />
+    <Compile Include="Noyau\Organisation\IEpreuve.cs" />
+    <Compile Include="Noyau\Organisation\EpreuveEquipeTypeEnum.cs" />
     <Compile Include="Noyau\Organisation\EpreuveSexeEnum.cs" />
+    <Compile Include="Noyau\Organisation\IEpreuve_Equipe.cs" />
+    <Compile Include="Noyau\Organisation\EtatEpreuveEnum.cs" />
+    <Compile Include="Noyau\Organisation\IOrganisationData.cs" />
+    <Compile Include="Noyau\Organisation\i_vue_epreuve_interface.cs" />
+    <Compile Include="Noyau\Organisation\ReglementEquipeEnum.cs" />
+    <Compile Include="Noyau\Organisation\TypeCSAEnum.cs" />
+    <Compile Include="Noyau\Organisation\Ivue_epreuve.cs" />
+    <Compile Include="Noyau\Organisation\Ivue_epreuve_equipe.cs" />
+    <Compile Include="Noyau\Participants\IEpreuveJudoka.cs" />
+    <Compile Include="Noyau\Participants\IEquipe.cs" />
+    <Compile Include="Noyau\Participants\EtatJudokaEnum.cs" />
+    <Compile Include="Noyau\Participants\IParticipantsData.cs" />
+    <Compile Include="Noyau\Participants\IJudoka.cs" />
+    <Compile Include="Noyau\Participants\QualifieEnum.cs" />
+    <Compile Include="Noyau\Participants\Ivue_judoka.cs" />
+    <Compile Include="Noyau\Structures\IClub.cs" />
+    <Compile Include="Noyau\Structures\IComite.cs" />
+    <Compile Include="Noyau\Structures\IStructuresData.cs" />
+    <Compile Include="Noyau\Structures\ILigue.cs" />
+    <Compile Include="Noyau\Structures\IPays.cs" />
+    <Compile Include="Noyau\Structures\ISecteur.cs" />
     <Compile Include="Regles\ScoresProLeague.cs" />
     <Compile Include="Site\PhysicalStructureBase.cs" />
     <Compile Include="Site\UrlGeneratorBase.cs" />
@@ -90,6 +122,7 @@
     <Compile Include="Resources\ConstantResource.cs" />
     <Compile Include="XML\ConstantXML.cs" />
     <Compile Include="Structures\LectureStructures.cs" />
+    <Compile Include="XML\IXMLSerializable.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Referentiels\c_ages.xml">
@@ -385,6 +418,13 @@
   <ItemGroup>
     <EmbeddedResource Include="Site\Assets\xslt\qrcode.xslt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.4</Version>
+    </PackageReference>
+    <PackageReference Include="NLog">
+      <Version>6.1.1</Version>
+    </PackageReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

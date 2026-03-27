@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Tools.Enum;
+﻿using FranceJudo.Metier.XML;
+using System;
 
-namespace KernelImpl.Noyau.Organisation
+
+namespace FranceJudo.Metier.Noyau.Organisation
 {
-    public interface i_vue_epreuve_interface
+    public interface i_vue_epreuve_interface : IXMLSerializable
     {
         int id { get; set; }
         string remoteID { get; set; }
@@ -32,6 +30,5 @@ namespace KernelImpl.Noyau.Organisation
         Nullable<int> phase1 { get; set; }
         Nullable<int> phase2 { get; set; }
 
-        System.Xml.Linq.XElement ToXml(IJudoData DC);
     }
 }

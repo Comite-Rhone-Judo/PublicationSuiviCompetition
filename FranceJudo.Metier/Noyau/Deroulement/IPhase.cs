@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
+using FranceJudo.Metier.XML;
 
 namespace FranceJudo.Metier.Noyau.Deroulement
 {
     /// <summary>
     /// Description des Phases
     /// </summary>
-    public interface IPhase
+    public interface IPhase : IXMLSerializable
     {
         public int id { get; set; }
         public string libelle { get; set; }

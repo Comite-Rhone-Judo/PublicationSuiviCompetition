@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Xml.Linq;
+﻿using FranceJudo.Metier.XML;
 
 namespace FranceJudo.Metier.Noyau.Deroulement
 {
-    public interface IPoule
+    public interface IPoule : IXMLSerializable
     {
         public int numero { get; set; }
         public int phase { get; set; }

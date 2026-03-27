@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.XML;
+using FranceJudo.Metier.Noyau.Structures;
+
 
 namespace KernelImpl.Noyau.Structures
 {
     public class StructuresSnapshot : IStructuresData
     {
-        public IReadOnlyList<Club> Clubs { get; private set; }
-        public IReadOnlyList<Comite> Comites { get; private set; }
-        public IReadOnlyList<Ligue> Ligues { get; private set; }
-        public IReadOnlyList<Secteur> Secteurs { get;   private set;     }
-        public IReadOnlyList<Pays> LesPays { get; private set; }
+        public IReadOnlyList<IClub> Clubs { get; private set; }
+        public IReadOnlyList<IComite> Comites { get; private set; }
+        public IReadOnlyList<ILigue> Ligues { get; private set; }
+        public IReadOnlyList<ISecteur> Secteurs { get;   private set;     }
+        public IReadOnlyList<IPays> LesPays { get; private set; }
 
         public StructuresSnapshot(DataStructures source)
         {

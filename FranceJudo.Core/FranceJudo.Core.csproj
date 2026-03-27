@@ -190,7 +190,6 @@
     <Compile Include="Reflection\AssemblyResourceHelper.cs" />
     <Compile Include="Utils\StringExtension.cs" />
     <Compile Include="XML\InAssemblyUrlResolver.cs" />
-    <Compile Include="XML\IXMLSerializable.cs" />
     <Compile Include="XML\XMLTools.cs" />
   </ItemGroup>
   <ItemGroup>

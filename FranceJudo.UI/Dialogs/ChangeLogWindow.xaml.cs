@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using Telerik.Windows.Controls;
-using Tools.Outils;
+using FranceJudo.UI.Wpf.Behaviors;
 
 
 namespace FranceJudo.UI.Wpf.Dialogs
@@ -17,7 +17,7 @@ namespace FranceJudo.UI.Wpf.Dialogs
         public ChangeLogWindow(string header, string message)
         {
             InitializeComponent();
-            OutilsTools.ShowInTaskbar(this);
+            WindowHelper.ShowInTaskbar(this);
 
             this.Header = header;
             LabelMessage.Text = message;

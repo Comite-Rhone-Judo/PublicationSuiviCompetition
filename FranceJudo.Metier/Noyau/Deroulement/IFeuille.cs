@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
-using FranceJudo.Core.XML;
+using FranceJudo.Metier.XML;
 
 
 namespace FranceJudo.Metier.Noyau.Deroulement
@@ -10,7 +7,7 @@ namespace FranceJudo.Metier.Noyau.Deroulement
     /// <summary>
     /// Description des Feuilles (construction d'un tableau)
     /// </summary>
-    public interface IFeuille
+    public interface IFeuille : IXMLSerializable
     {
         public int id { get; set; }
         public bool repechage { get; set; }

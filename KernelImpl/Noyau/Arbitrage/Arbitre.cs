@@ -1,17 +1,18 @@
-﻿using KernelImpl.Internal;
-using System;
-using System.Collections.Generic;
-using System.Xml.Linq;
+﻿using FranceJudo.Core.Utils;
 using FranceJudo.Core.XML;
-using FranceJudo.Core.Utils;
+using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Arbitrage;
 using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.XML;
+using KernelImpl.Internal;
+using System;
+using System.Collections.Generic;
+using System.Xml.Linq;
 
 
 namespace KernelImpl.Noyau.Arbitrage
 {
-    public class Arbitre : IArbitre, IEntityWithKey<int>, IXMLSerializable
+    public class Arbitre : IArbitre, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -89,7 +90,7 @@ namespace KernelImpl.Noyau.Arbitrage
         }
 
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xarbitre = new XElement(ConstantXML.Arbitre);
             xarbitre.SetAttributeValue(ConstantXML.Arbitre_ID, id);

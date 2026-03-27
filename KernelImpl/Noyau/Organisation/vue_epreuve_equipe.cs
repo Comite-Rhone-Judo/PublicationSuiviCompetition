@@ -1,14 +1,18 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau.Organisation;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Enum;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.XML;
+using FranceJudo.Metier.Noyau.Categories;
 
 namespace KernelImpl.Noyau.Organisation
 {
-    public class vue_epreuve_equipe : i_vue_epreuve_interface, IEntityWithKey<int>
+    public class vue_epreuve_equipe : Ivue_epreuve_equipe, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -76,7 +80,7 @@ namespace KernelImpl.Noyau.Organisation
             anneeMax = epreuve.anneeMax;
             categorieAge = epreuve.categorieAge;
 
-            Categories.CategorieAge c_age = DC.Categories.CAges.FirstOrDefault(o => o.id == epreuve.categorieAge);
+            ICategorieAge c_age = DC.Categories.CAges.FirstOrDefault(o => o.id == epreuve.categorieAge);
 
             nom_cateage = c_age != null ? c_age.nom : "";
             ordre = c_age != null ? c_age.ordre : "0";
@@ -85,13 +89,13 @@ namespace KernelImpl.Noyau.Organisation
             //phase1 = ;
             //phase2 = ;
 
-            Competition compet = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
+            ICompetition compet = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
 
             nom_compet = compet != null ? compet.nom : "";
             discipline_competition = compet != null ? compet.disciplineId : CompetitionDisciplineEnum.Judo;
         }
 
-
+        public void LoadXml(XElement node) { throw  new NotImplementedException(); }
 
         public XElement ToXml(IJudoData DC)
         {
@@ -109,7 +113,7 @@ namespace KernelImpl.Noyau.Organisation
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_AnneeMax, anneeMax);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_CateAge_RemoteId, remoteId_cateage);
 
-            List<Epreuve> epreuves = DC.Organisation.Epreuves.Where(o => o.epreuve_equipe == this.id).ToList();
+            List<IEpreuve> epreuves = DC.Organisation.Epreuves.Where(o => o.epreuve_equipe == this.id).ToList();
             EpreuveSexe sexe = new EpreuveSexe(EpreuveSexeEnum.Feminine);
             
             if (epreuves.Count(o => o.sexe == 1) > 0 && epreuves.Count(o => o.sexe == 0) > 0)

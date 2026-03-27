@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace KernelImpl.Noyau.Organisation
+namespace FranceJudo.Metier.Noyau.Organisation
 {
     /// <summary>
     /// Enumération des type de compétition
@@ -73,7 +73,7 @@ namespace KernelImpl.Noyau.Organisation
                 case nameof(CompetitionDisciplineEnum.JujitsuNeWaza):
                     return CompetitionDisciplineEnum.JujitsuNeWaza;
             }
-            return Enum.CompetitionDisciplineEnum.Judo;
+            return CompetitionDisciplineEnum.Judo;
         }
 
         public static string ToShort(this CompetitionDisciplineEnum e)
@@ -126,7 +126,7 @@ namespace KernelImpl.Noyau.Organisation
                 case "Jujitsu Ne-Waza":
                     return CompetitionDisciplineEnum.JujitsuNeWaza;
             }
-            return Enum.CompetitionDisciplineEnum.Judo;
+            return CompetitionDisciplineEnum.Judo;
         }
 
     }

@@ -1,4 +1,4 @@
-﻿namespace KernelImpl.Noyau.Organisation
+﻿namespace FranceJudo.Metier.Noyau.Organisation
 {
     /// <summary>
     /// Enumération des constants pour la gestion des fichier

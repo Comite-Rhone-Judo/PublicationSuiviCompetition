@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Xml.Linq;
-using FranceJudo.Core.XML;
+using FranceJudo.Metier.XML;
 
 namespace FranceJudo.Metier.Noyau.Deroulement
 {
     /// <summary>
     /// Description des Rencontres
     /// </summary>
-    public interface IRencontre
+    public interface IRencontre : IXMLSerializable
     {
         public int id { get; set; }
         public Nullable<int> judoka1 { get; set; }

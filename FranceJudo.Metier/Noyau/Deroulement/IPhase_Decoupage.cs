@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Xml.Linq;
+﻿using FranceJudo.Metier.XML;
 
 namespace FranceJudo.Metier.Noyau.Deroulement
 {
-    public class IPhase_Decoupage
+    public interface IPhase_Decoupage : IXMLSerializable
     {
         public int id { get; set; }
         public int phase { get; set; }

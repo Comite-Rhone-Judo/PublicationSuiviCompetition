@@ -6,8 +6,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"   WindowStartupLocation="CenterScreen"     
         Header="Visualisation PDF" mc:Ignorable="d"   d:DesignWidth="1024" telerik:StyleManager.Theme="Expression_Dark">
-
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

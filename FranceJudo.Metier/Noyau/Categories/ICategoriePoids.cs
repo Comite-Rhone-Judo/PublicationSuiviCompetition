@@ -1,4 +1,5 @@
 
+using FranceJudo.Metier.XML;
 using FranceJudo.Metier.Noyau.Organisation;
 
 namespace FranceJudo.Metier.Noyau.Categories
@@ -6,7 +7,7 @@ namespace FranceJudo.Metier.Noyau.Categories
     /// <summary>
     /// Description des Categorie Poids
     /// </summary>
-    public interface ICategoriePoids
+    public interface ICategoriePoids : IXMLSerializable
     {
         public int id { get; set; }
         public string nom { get; set; }

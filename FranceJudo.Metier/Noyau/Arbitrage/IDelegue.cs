@@ -1,7 +1,8 @@
-﻿
+﻿using FranceJudo.Metier.XML;
+
 namespace FranceJudo.Metier.Noyau.Arbitrage
 {
-    public interface IDelegue
+    public interface IDelegue : IXMLSerializable
     {
         public int id { get; set; }
         public string nom { get; set; }

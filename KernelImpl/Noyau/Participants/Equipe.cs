@@ -1,19 +1,20 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.XML;
+using FranceJudo.Metier.Noyau.Participants;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.XML;
 
 namespace KernelImpl.Noyau.Participants
 {
     /// <summary>
     /// Description des Equipes
     /// </summary>
-    public class Equipe : INotifyPropertyChanged, IEntityWithKey<int>
+    public class Equipe : IEquipe, INotifyPropertyChanged, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -134,7 +135,7 @@ namespace KernelImpl.Noyau.Participants
             this.remoteId = XMLTools.LectureString(xequipe.Attribute(ConstantXML.Equipe_RemoteId));
         }
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xequipe = new XElement(ConstantXML.Equipe);
 
@@ -193,7 +194,7 @@ namespace KernelImpl.Noyau.Participants
         /// <param name="MI">fonction d'info</param>
         /// <returns>Equipes</returns>
 
-        public static ICollection<Equipe> LectureEquipes(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Equipe> LectureEquipes(XElement xelement)
         {
             ICollection<Equipe> equipes = new List<Equipe>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.Equipe))

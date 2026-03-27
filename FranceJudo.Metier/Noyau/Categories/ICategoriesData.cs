@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using FranceJudo.Core.XML;
+using System.Collections.Generic;
 
 namespace FranceJudo.Metier.Noyau.Categories
 {

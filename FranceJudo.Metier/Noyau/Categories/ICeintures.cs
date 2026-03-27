@@ -1,6 +1,4 @@
-
-using System.Collections.Generic;
-using System.Xml.Linq;
+using FranceJudo.Metier.XML;
 
 
 namespace FranceJudo.Metier.Noyau.Categories
@@ -8,7 +6,7 @@ namespace FranceJudo.Metier.Noyau.Categories
     /// <summary>
     /// Description des Ceintures
     /// </summary>
-    public interface ICeintures
+    public interface ICeintures : IXMLSerializable
     {
         public int id { get; set; }
         public string nom { get; set; }

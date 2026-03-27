@@ -1,8 +1,9 @@
-﻿using System;
+﻿using FranceJudo.Metier.XML;
+using System;
 
 namespace FranceJudo.Metier.Noyau.Deroulement
 {
-    public interface IGroupe_Combats
+    public interface IGroupe_Combats : IXMLSerializable
     {
         public int id { get; set; }
         public int decoupage { get; set; }

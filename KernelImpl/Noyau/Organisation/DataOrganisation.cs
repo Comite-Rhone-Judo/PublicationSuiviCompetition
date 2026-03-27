@@ -3,8 +3,9 @@ using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Export;
-using Tools.Outils;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Export;
 
 namespace KernelImpl.Noyau.Organisation
 {
@@ -23,6 +24,14 @@ namespace KernelImpl.Noyau.Organisation
         public IReadOnlyList<vue_epreuve_equipe> VueEpreuveEquipes { get { return _vepreuves_equipeCache.Cache; } }
         public IReadOnlyList<vue_epreuve> VueEpreuves { get { return _vepreuvesCache.Cache; } }
 
+        IReadOnlyList<ICompetition> IOrganisationData.Competitions => Competitions;
+        IReadOnlyList<IEpreuve> IOrganisationData.Epreuves => Epreuves;
+        IReadOnlyList<IEpreuve_Equipe> IOrganisationData.EpreuveEquipes => EpreuveEquipes;
+        IReadOnlyList<Ivue_epreuve_equipe> IOrganisationData.VueEpreuveEquipes => VueEpreuveEquipes;
+        IReadOnlyList<Ivue_epreuve> IOrganisationData.VueEpreuves => VueEpreuves;
+
+        ICompetition IOrganisationData.Competition => Competition;
+
         public Competition Competition { get; private set; }
 
         /// <summary>
@@ -32,7 +41,7 @@ namespace KernelImpl.Noyau.Organisation
         /// <param name="DC"></param>
         public void lecture_competitions(XElement element, IJudoData DC)
         {
-            ICollection<Competition> competitions = Competition.LectureCompetitions(element, null);
+            ICollection<Competition> competitions = Competition.LectureCompetitions(element);
             _competitionsCache.UpdateFullSnapshot(competitions); 
             Competition = competitions.FirstOrDefault();
 
@@ -47,16 +56,16 @@ namespace KernelImpl.Noyau.Organisation
         /// <param name="DC"></param>
         public void lecture_epreuves_equipe(XElement element, IJudoData DC)
         {
-            ICollection<Epreuve_Equipe> epreuves = Epreuve_Equipe.LectureEpreuveEquipes(element, null);
+            ICollection<Epreuve_Equipe> epreuves = Epreuve_Equipe.LectureEpreuveEquipes(element);
             _epreuve_equipesCache.UpdateFullSnapshot(epreuves);
 
             ICollection<vue_epreuve_equipe> vepreuves = GenereVueEpreuveEquipe(epreuves, DC);
             _vepreuves_equipeCache.UpdateFullSnapshot(vepreuves);
         }
 
-        public ICollection<Epreuve_Equipe> LectureEpreuveEquipes(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public ICollection<Epreuve_Equipe> LectureEpreuveEquipes(XElement xelement)
         {
-            return Epreuve_Equipe.LectureEpreuveEquipes(xelement, MI);
+            return Epreuve_Equipe.LectureEpreuveEquipes(xelement);
         }
 
 
@@ -67,16 +76,16 @@ namespace KernelImpl.Noyau.Organisation
         /// <param name="DC"></param>
         public void lecture_epreuves(XElement element, IJudoData DC)
         {
-            ICollection<Epreuve> epreuves = Epreuve.LectureEpreuves(element, null);
+            ICollection<Epreuve> epreuves = Epreuve.LectureEpreuves(element);
             _epreuvesCache.UpdateFullSnapshot(epreuves);
             
             ICollection<vue_epreuve> vepreuves = GenereVueEpreuves(epreuves, DC);
             _vepreuvesCache.UpdateFullSnapshot(vepreuves);
         }
 
-        public ICollection<Epreuve> LectureEpreuves(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public ICollection<Epreuve> LectureEpreuves(XElement xelement)
         {
-            return Epreuve.LectureEpreuves(xelement, MI);
+            return Epreuve.LectureEpreuves(xelement);
         }
 
         /// <summary>

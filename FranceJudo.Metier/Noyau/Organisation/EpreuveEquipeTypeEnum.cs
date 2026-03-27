@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KernelImpl.Noyau.Organisation
+namespace FranceJudo.Metier.Noyau.Organisation
 {
         /// <summary>
         /// Enumération des type de sexe

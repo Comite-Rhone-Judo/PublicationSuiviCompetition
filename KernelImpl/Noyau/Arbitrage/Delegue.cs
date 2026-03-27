@@ -1,15 +1,16 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Arbitrage;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using FranceJudo.Core.XML;
-using FranceJudo.Metier.Noyau.Arbitrage;
-using FranceJudo.Metier.XML;
 
 
 namespace KernelImpl.Noyau.Arbitrage
 {
-    public class Delegue : IDelegue, IXMLSerializable, IEntityWithKey<int>
+    public class Delegue : IDelegue, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -33,7 +34,7 @@ namespace KernelImpl.Noyau.Arbitrage
         }
 
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xdelegue = new System.Xml.Linq.XElement(ConstantXML.Delegue);
 

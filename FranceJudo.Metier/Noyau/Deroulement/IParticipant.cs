@@ -1,15 +1,13 @@
+using FranceJudo.Core.XML;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Xml.Linq;
+using FranceJudo.Metier.XML;
 
 namespace FranceJudo.Metier.Noyau.Deroulement
 {
     /// <summary>
     /// Description des Participants
     /// </summary>
-    public interface IParticipant
+    public interface IParticipant : IXMLSerializable
     {
         public int judoka { get; set;  }
         public int id {  get; set; }

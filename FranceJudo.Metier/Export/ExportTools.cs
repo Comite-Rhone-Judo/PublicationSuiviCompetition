@@ -7,6 +7,7 @@ using FranceJudo.Core.IO;
 using FranceJudo.Core.Reflection;
 using FranceJudo.Metier.Site;
 using FranceJudo.Metier.Resources;
+using FranceJudo.Metier.IO;
 // using NLog.LayoutRenderers;
 
 namespace FranceJudo.Metier.Export
@@ -251,7 +252,7 @@ namespace FranceJudo.Metier.Export
         /// <returns></returns>
         public static List<FileInfo> EnumerateCustomLogoFiles()
         {
-            DirectoryInfo di = new DirectoryInfo(ConstantFile.ExportStyle_dir);
+            DirectoryInfo di = new DirectoryInfo(AppDirectoryManager.ExportStyle_dir);
             return di.EnumerateFiles("*.png", SearchOption.TopDirectoryOnly).Where(o => o.Name.ToLower().Contains("logo")).ToList();
         }
 

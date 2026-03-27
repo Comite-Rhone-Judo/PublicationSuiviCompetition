@@ -1,15 +1,18 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.Noyau.Organisation;
 using KernelImpl.Internal;
 using System;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.XML;
+
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public partial class vue_groupe : IEntityWithKey<int>
+    public partial class vue_groupe : Ivue_groupe, IEntityWithKey<int>
     {
 
         int IEntityWithKey<int>.EntityKey => groupe_id;
@@ -33,7 +36,7 @@ namespace KernelImpl.Noyau.Deroulement
         public string epreuve_libsexe { get; set; }
 
 
-        public vue_groupe(Groupe_Combats groupe, IJudoData DC)
+        public vue_groupe(IGroupe_Combats groupe, IJudoData DC)
         {
             groupe_id = groupe.id;
             groupe_tapis = groupe.tapis;
@@ -43,7 +46,7 @@ namespace KernelImpl.Noyau.Deroulement
             groupe_verrouille = groupe.verrouille;
             nb_combats_restant = DC.Deroulement.Combats.Count(o => o.groupe == groupe.id && o.vainqueur == null);
 
-            Phase phase = groupe.GetPhase(DC);
+            IPhase phase = groupe.GetPhase(DC);
             if (phase != null)
             {
                 phase_etat = phase.etat;
@@ -51,7 +54,7 @@ namespace KernelImpl.Noyau.Deroulement
                 phase_type = phase.typePhase;
                 phase_id = phase.id;
 
-                Organisation.Epreuve epreuve = groupe.GetEpreuve(DC);
+                IEpreuve epreuve = groupe.GetEpreuve(DC);
                 if (epreuve != null)
                 {
                     epreuve_id = epreuve.id;
@@ -96,7 +99,7 @@ namespace KernelImpl.Noyau.Deroulement
             this.epreuve_libsexe = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Vue_Groupe_EpreuveLibsexe));
         }
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xgroupe = new XElement(ConstantXML.Vue_Groupe);
 
@@ -121,3 +124,4 @@ namespace KernelImpl.Noyau.Deroulement
         }
     }
 }
+

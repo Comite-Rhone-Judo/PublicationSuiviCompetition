@@ -30,7 +30,7 @@ namespace FranceJudo.Metier.IO
                     XDocument document = notSave[file];
 
                     // TODO Replace with AppDirectoryManager
-                    string filename = Path.Combine(ConstantFile.SaveCOMDirectory, file + ConstantFile.ExtensionXML);
+                    string filename = Path.Combine(AppDirectoryManager.SaveCOMDirectory, file + AppDirectoryManager.ExtensionXML);
                     if (!File.Exists(filename) || !FileSystemHelper.IsFileLocked(filename))
                     {
                         FileSystemHelper.NeedAccessFile(filename);

@@ -7,16 +7,20 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.XML;
-using Tools.Outils;
+using FranceJudo.Metier.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Participants;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Core.XML;
+using FranceJudo.Core.Utils;
+using FranceJudo.Core.Threading;
 
 namespace KernelImpl.Noyau.Participants
 {
     /// <summary>
     /// Description des Judokas
     /// </summary>
-    public class Judoka : INotifyPropertyChanged, IEntityWithKey<int>
+    public class Judoka : IJudoka, INotifyPropertyChanged, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -450,7 +454,7 @@ namespace KernelImpl.Noyau.Participants
             xjudoka.SetAttributeValue(ConstantXML.Judoka_ID, id.ToString());
             xjudoka.SetAttributeValue(ConstantXML.Judoka_Licence, licence);
             xjudoka.SetAttributeValue(ConstantXML.Judoka_Nom, nom.ToUpper());
-            xjudoka.SetAttributeValue(ConstantXML.Judoka_Prenom, OutilsTools.FormatPrenom(prenom));
+            xjudoka.SetAttributeValue(ConstantXML.Judoka_Prenom, prenom.FormatPrenom());
             xjudoka.SetAttributeValue(ConstantXML.Judoka_Sexe, sexeEnum.ToString());
             xjudoka.SetAttributeValue(ConstantXML.Judoka_Naissance, naissance.ToString("ddMMyyyy"));
             xjudoka.SetAttributeValue(ConstantXML.Judoka_Pays, pays);
@@ -472,7 +476,7 @@ namespace KernelImpl.Noyau.Participants
             xjudoka.SetAttributeValue(ConstantXML.Judoka_ModeControle, modeControle);
             xjudoka.SetAttributeValue(ConstantXML.Judoka_Equipe, equipe);
 
-            EpreuveJudoka judoka = null;
+            IEpreuveJudoka judoka = null;
             using (TimedLock.Lock((DC.Participants.EpreuveJudokas as ICollection).SyncRoot))
             {
                 judoka = DC.Participants.EpreuveJudokas.FirstOrDefault(o => o.judoka == this.id);
@@ -485,7 +489,7 @@ namespace KernelImpl.Noyau.Participants
                 xjudoka.SetAttributeValue(ConstantXML.Judoka_Serie2, judoka == null ? 0 : judoka.serie2);
                 xjudoka.SetAttributeValue(ConstantXML.Judoka_Observation, judoka == null ? 0 : judoka.observation);
 
-                Organisation.vue_epreuve epreuve = null;
+                Ivue_epreuve epreuve = null;
                 using (TimedLock.Lock((DC.Organisation.VueEpreuves as ICollection).SyncRoot))
                 {
                     epreuve = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == judoka.epreuve);
@@ -508,7 +512,7 @@ namespace KernelImpl.Noyau.Participants
         /// <param name="MI">fonction d'info</param>
         /// <returns>les Judokas</returns>
 
-        public static ICollection<Judoka> LectureJudoka(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Judoka> LectureJudoka(XElement xelement)
         {
             ICollection<Judoka> judokas = new List<Judoka>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.Judoka))

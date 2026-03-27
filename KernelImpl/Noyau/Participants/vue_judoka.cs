@@ -1,4 +1,11 @@
 ﻿using FranceJudo.Core.IO;
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.XML;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.Noyau.Participants;
+using FranceJudo.Metier.Noyau.Categories;
+using FranceJudo.Metier.Noyau.Structures;
 using KernelImpl.Internal;
 using KernelImpl.Noyau.Categories;
 using KernelImpl.Noyau.Organisation;
@@ -7,12 +14,11 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Xml.Linq;
-using FranceJudo.Metier.Resources;
 
 namespace KernelImpl.Noyau.Participants
 {
 
-    public class vue_judoka :  INotifyPropertyChanged, IEntityWithKey<string>
+    public class vue_judoka : Ivue_judoka,  INotifyPropertyChanged, IEntityWithKey<string>
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -1063,13 +1069,13 @@ namespace KernelImpl.Noyau.Participants
 
         public vue_judoka(Judoka judoka, IJudoData DC)
         {
-            EpreuveJudoka ej = DC.Participants.EpreuveJudokas.FirstOrDefault(o => o.judoka == judoka.id);
-            Epreuve ep = ej != null ? DC.Organisation.Epreuves.FirstOrDefault(o => o.id == ej.epreuve) : null;
-            Ceintures ceinture = DC.Categories.Grades.FirstOrDefault(o => o.id == judoka.ceinture);
-            CategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == judoka.categorie);
-            Competition compet = ep != null ? DC.Organisation.Competitions.FirstOrDefault(o => o.id == ep.competition) : null;
-            Equipe equipe = DC.Participants.Equipes.FirstOrDefault(o => o.id == judoka.equipe);
-            Epreuve_Equipe ep2 = ep != null ? DC.Organisation.EpreuveEquipes.FirstOrDefault(o => o.id == ep.epreuve_equipe) : null;
+            IEpreuveJudoka ej = DC.Participants.EpreuveJudokas.FirstOrDefault(o => o.judoka == judoka.id);
+            IEpreuve ep = ej != null ? DC.Organisation.Epreuves.FirstOrDefault(o => o.id == ej.epreuve) : null;
+            ICeintures ceinture = DC.Categories.Grades.FirstOrDefault(o => o.id == judoka.ceinture);
+            ICategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == judoka.categorie);
+            ICompetition compet = ep != null ? DC.Organisation.Competitions.FirstOrDefault(o => o.id == ep.competition) : null;
+            IEquipe equipe = DC.Participants.Equipes.FirstOrDefault(o => o.id == judoka.equipe);
+            IEpreuve_Equipe ep2 = ep != null ? DC.Organisation.EpreuveEquipes.FirstOrDefault(o => o.id == ep.epreuve_equipe) : null;
 
             this.id = judoka.id;
             this.licence = judoka.licence;
@@ -1163,14 +1169,14 @@ namespace KernelImpl.Noyau.Participants
                 this.points = 0;
             }
 
-            Club club = DC.Structures.Clubs.FirstOrDefault(o => o.id == judoka.club);
+            IClub club = DC.Structures.Clubs.FirstOrDefault(o => o.id == judoka.club);
 
             if (club != null)
             {
                 this.clubNomCourt = club.nomCourt;
                 this.clubNom = club.nom;
 
-                Comite comite = DC.Structures.Comites.FirstOrDefault(o => o.id == club.comite && o.ligue == club.ligue);
+                IComite comite = DC.Structures.Comites.FirstOrDefault(o => o.id == club.comite && o.ligue == club.ligue);
                 if (comite != null)
                 {
                     this.comite = comite.id;
@@ -1184,7 +1190,7 @@ namespace KernelImpl.Noyau.Participants
                     this.comiteNom = "";
                 }
 
-                Ligue ligue = DC.Structures.Ligues.FirstOrDefault(o => o.id == club.ligue);
+                ILigue ligue = DC.Structures.Ligues.FirstOrDefault(o => o.id == club.ligue);
                 if (ligue != null)
                 {
                     this.ligue = ligue.id;
@@ -1230,15 +1236,15 @@ namespace KernelImpl.Noyau.Participants
             }
         }
 
-        public vue_judoka(Judoka judoka, Epreuve epreuve, IJudoData DC)
+        public vue_judoka(IJudoka judoka, IEpreuve epreuve, IJudoData DC)
         {
-            EpreuveJudoka ej = DC.Participants.EpreuveJudokas.FirstOrDefault(o => o.judoka == judoka.id && o.epreuve == epreuve.id);
-            Epreuve ep = ej != null ? DC.Organisation.Epreuves.FirstOrDefault(o => o.id == ej.epreuve) : null;
-            Ceintures ceinture = DC.Categories.Grades.FirstOrDefault(o => o.id == judoka.ceinture);
-            CategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == judoka.categorie);
-            Competition compet = ep != null ? DC.Organisation.Competitions.FirstOrDefault(o => o.id == ep.competition) : null;
-            Equipe equipe = DC.Participants.Equipes.FirstOrDefault(o => o.id == judoka.equipe);
-            Epreuve_Equipe ep2 = ep != null ? DC.Organisation.EpreuveEquipes.FirstOrDefault(o => o.id == ep.epreuve_equipe) : null;
+            IEpreuveJudoka ej = DC.Participants.EpreuveJudokas.FirstOrDefault(o => o.judoka == judoka.id && o.epreuve == epreuve.id);
+            IEpreuve ep = ej != null ? DC.Organisation.Epreuves.FirstOrDefault(o => o.id == ej.epreuve) : null;
+            ICeintures ceinture = DC.Categories.Grades.FirstOrDefault(o => o.id == judoka.ceinture);
+            ICategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == judoka.categorie);
+            ICompetition compet = ep != null ? DC.Organisation.Competitions.FirstOrDefault(o => o.id == ep.competition) : null;
+            IEquipe equipe = DC.Participants.Equipes.FirstOrDefault(o => o.id == judoka.equipe);
+            IEpreuve_Equipe ep2 = ep != null ? DC.Organisation.EpreuveEquipes.FirstOrDefault(o => o.id == ep.epreuve_equipe) : null;
 
             this.id = judoka.id;
             this.licence = judoka.licence;
@@ -1333,14 +1339,14 @@ namespace KernelImpl.Noyau.Participants
                 this.points = 0;
             }
 
-            Club club = DC.Structures.Clubs.FirstOrDefault(o => o.id == judoka.club);
+            IClub club = DC.Structures.Clubs.FirstOrDefault(o => o.id == judoka.club);
 
             if (club != null)
             {
                 this.clubNomCourt = club.nomCourt;
                 this.clubNom = club.nom;
 
-                Comite comite = DC.Structures.Comites.FirstOrDefault(o => o.id == club.comite && o.ligue == club.ligue);
+                IComite comite = DC.Structures.Comites.FirstOrDefault(o => o.id == club.comite && o.ligue == club.ligue);
                 if (comite != null)
                 {
                     this.comite = comite.id;
@@ -1354,7 +1360,7 @@ namespace KernelImpl.Noyau.Participants
                     this.comiteNom = "";
                 }
 
-                Ligue ligue = DC.Structures.Ligues.FirstOrDefault(o => o.id == club.ligue);
+                ILigue ligue = DC.Structures.Ligues.FirstOrDefault(o => o.id == club.ligue);
                 if (ligue != null)
                 {
                     this.ligue = ligue.id;
@@ -1399,17 +1405,17 @@ namespace KernelImpl.Noyau.Participants
             }
         }
 
-        public vue_judoka(Judoka judoka, Epreuve epreuve, vue_judoka old_vj, IJudoData DC)
+        public vue_judoka(IJudoka judoka, IEpreuve epreuve, Ivue_judoka old_vj, IJudoData DC)
         {
-            EpreuveJudoka ej = DC.Participants.EpreuveJudokas.FirstOrDefault(o => o.judoka == judoka.id && o.epreuve == old_vj.idepreuve);
+            IEpreuveJudoka ej = DC.Participants.EpreuveJudokas.FirstOrDefault(o => o.judoka == judoka.id && o.epreuve == old_vj.idepreuve);
 
             //Epreuve ep = ej != null ? DC.Organisation.Epreuves.FirstOrDefault(o => o.id == ej.epreuve) : null;
-            Epreuve ep = epreuve;
-            Ceintures ceinture = DC.Categories.Grades.FirstOrDefault(o => o.id == judoka.ceinture);
-            CategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == judoka.categorie);
-            Competition compet = ep != null ? DC.Organisation.Competitions.FirstOrDefault(o => o.id == ep.competition) : null;
-            Equipe equipe = DC.Participants.Equipes.FirstOrDefault(o => o.id == judoka.equipe);
-            Epreuve_Equipe ep2 = ep != null ? DC.Organisation.EpreuveEquipes.FirstOrDefault(o => o.id == ep.epreuve_equipe) : null;
+            IEpreuve ep = epreuve;
+            ICeintures ceinture = DC.Categories.Grades.FirstOrDefault(o => o.id == judoka.ceinture);
+            ICategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == judoka.categorie);
+            ICompetition compet = ep != null ? DC.Organisation.Competitions.FirstOrDefault(o => o.id == ep.competition) : null;
+            IEquipe equipe = DC.Participants.Equipes.FirstOrDefault(o => o.id == judoka.equipe);
+            IEpreuve_Equipe ep2 = ep != null ? DC.Organisation.EpreuveEquipes.FirstOrDefault(o => o.id == ep.epreuve_equipe) : null;
 
             this.id = judoka.id;
             this.licence = judoka.licence;
@@ -1503,14 +1509,14 @@ namespace KernelImpl.Noyau.Participants
                 this.points = 0;
             }
 
-            Club club = DC.Structures.Clubs.FirstOrDefault(o => o.id == judoka.club);
+            IClub club = DC.Structures.Clubs.FirstOrDefault(o => o.id == judoka.club);
 
             if (club != null)
             {
                 this.clubNomCourt = club.nomCourt;
                 this.clubNom = club.nom;
 
-                Comite comite = DC.Structures.Comites.FirstOrDefault(o => o.id == club.comite && o.ligue == club.ligue);
+                IComite comite = DC.Structures.Comites.FirstOrDefault(o => o.id == club.comite && o.ligue == club.ligue);
                 if (comite != null)
                 {
                     this.comite = comite.id;
@@ -1524,7 +1530,7 @@ namespace KernelImpl.Noyau.Participants
                     this.comiteNom = "";
                 }
 
-                Ligue ligue = DC.Structures.Ligues.FirstOrDefault(o => o.id == club.ligue);
+                ILigue ligue = DC.Structures.Ligues.FirstOrDefault(o => o.id == club.ligue);
                 if (ligue != null)
                 {
                     this.ligue = ligue.id;
@@ -1576,8 +1582,9 @@ namespace KernelImpl.Noyau.Participants
             return this.etat == (int)EtatJudokaEnum.AuPoids && this.observation == 0;
         }
 
+        public void LoadXml(XElement node) { throw  new NotImplementedException(); }
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xjudoka = new XElement(ConstantXML.Vue_Judoka);
 

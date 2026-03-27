@@ -1,15 +1,19 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau.Deroulement;
 using KernelImpl.Internal;
 using System;
 using System.Collections;
 using System.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.XML;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.Noyau.Participants;
+using FranceJudo.Core.Threading;
+using FranceJudo.Metier.Noyau;
+
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class vue_combat : IEntityWithKey<int>
+    public class vue_combat : Ivue_combat, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => combat_id;
 
@@ -127,7 +131,7 @@ namespace KernelImpl.Noyau.Deroulement
 			combat_discipline = combat.discipline;
 
             // Ajout de la lecture des donnees de phase et d'epreuve
-            Phase phase = null;
+            IPhase phase = null;
             using (TimedLock.Lock((DC.Deroulement.Phases as ICollection).SyncRoot))
             {
                 phase = DC.Deroulement.Phases.FirstOrDefault(o => o.id == combat.phase);
@@ -139,7 +143,7 @@ namespace KernelImpl.Noyau.Deroulement
                 phase_type = phase.typePhase;
                 phase_etat = phase.etat;
 
-                Organisation.Epreuve epreuve = null;
+                IEpreuve epreuve = null;
                 using (TimedLock.Lock((DC.Organisation.Epreuves as ICollection).SyncRoot))
                 {
                     epreuve = DC.Organisation.Epreuves.FirstOrDefault(o => o.id == phase.epreuve);
@@ -159,7 +163,7 @@ namespace KernelImpl.Noyau.Deroulement
 
             if ((CompetitionTypeEnum)DC.Organisation.Competition.type != CompetitionTypeEnum.Equipe)
             {
-                Participants.Judoka judoka1 = null;
+                IJudoka judoka1 = null;
                 using (TimedLock.Lock((DC.Participants.Judokas as ICollection).SyncRoot))
                 {
                     judoka1 = DC.Participants.Judokas.FirstOrDefault(o => o.id == combat.participant1);
@@ -173,7 +177,7 @@ namespace KernelImpl.Noyau.Deroulement
                     judoka1_club1 = judoka1.club;
                 }
 
-                Participants.Judoka judoka2 = null;
+                IJudoka judoka2 = null;
                 using (TimedLock.Lock((DC.Participants.Judokas as ICollection).SyncRoot))
                 {
                     judoka2 = DC.Participants.Judokas.FirstOrDefault(o => o.id == combat.participant2);
@@ -190,14 +194,14 @@ namespace KernelImpl.Noyau.Deroulement
             }
             else
             {
-                Participants.Equipe E1 = DC.Participants.Equipes.FirstOrDefault(o => o.id == combat.participant1);
+                IEquipe E1 = DC.Participants.Equipes.FirstOrDefault(o => o.id == combat.participant1);
                 if (E1 != null)
                 {
                     judoka1_id1 = E1.id;
                     judoka1_nom1 = E1.libelle;
                 }
 
-                Participants.Equipe E2 = DC.Participants.Equipes.FirstOrDefault(o => o.id == combat.participant2);
+                IEquipe E2 = DC.Participants.Equipes.FirstOrDefault(o => o.id == combat.participant2);
                 if (E2 != null)
                 {
                     judoka2_id1 = E2.id;

@@ -1,10 +1,11 @@
 ﻿
 using System.Xml.Linq;
+using FranceJudo.Metier.XML;
 using FranceJudo.Metier.Noyau.Organisation;
 
 namespace FranceJudo.Metier.Noyau.Arbitrage
 {
-    public interface IArbitre
+    public interface IArbitre : IXMLSerializable
     {
         public string licence { get; set; }
         public string nom { get; set; }

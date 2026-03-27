@@ -8,10 +8,11 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.Struct;
-using Tools.TCP_Tools.Client;
+using FranceJudo.Metier.Network;
+using FranceJudo.Metier.XML;
+using FranceJudo.Core.Threading;
+using FranceJudo.Core.Network.Tcp.Client;
+
 
 namespace JudoClient
 {
@@ -105,7 +106,7 @@ namespace JudoClient
             }
 
             List<string> machines = GetListeMachine(ipAdressText);
-            _nbMachines = machines.Count * (NetworkTools.PortServerMax - NetworkTools.PortServerMin + 1);
+            _nbMachines = machines.Count * (ConstantNetwork.PortServerMax - ConstantNetwork.PortServerMin + 1);
 
             using (TimedLock.Lock((_listeMachines as ICollection).SyncRoot))
             {
@@ -129,7 +130,7 @@ namespace JudoClient
 
                 using (TimedLock.Lock((_listeMachines as ICollection).SyncRoot))
                 {
-                    for (int port = NetworkTools.PortServerMin; port <= NetworkTools.PortServerMax; port++)
+                    for (int port = ConstantNetwork.PortServerMin; port <= ConstantNetwork.PortServerMax; port++)
                     {
                         _listeMachines.Add(new MachineStruct { adresse = adresse + ":" + port, response = ServerResponseEnum.Aucun });
                     }
@@ -146,7 +147,7 @@ namespace JudoClient
                 catch (Exception ex)
                 {
                     ExceptionHelper.ShowException(ex);
-                    for (int port = NetworkTools.PortServerMin; port <= NetworkTools.PortServerMax; port++)
+                    for (int port = ConstantNetwork.PortServerMin; port <= ConstantNetwork.PortServerMax; port++)
                     {
                         AdresseTerminee(adresse, port, ServerResponseEnum.PingFAIL);
                     }
@@ -168,7 +169,7 @@ namespace JudoClient
                 ping.SendAsyncCancel();
 
 
-                for (int port = NetworkTools.PortServerMin; port <= NetworkTools.PortServerMax; port++)
+                for (int port = ConstantNetwork.PortServerMin; port <= ConstantNetwork.PortServerMax; port++)
                 {
 
                     try
@@ -202,7 +203,7 @@ namespace JudoClient
 
             if (!EnvoieConnection)
             {
-                for (int port = NetworkTools.PortServerMin; port <= NetworkTools.PortServerMax; port++)
+                for (int port = ConstantNetwork.PortServerMin; port <= ConstantNetwork.PortServerMax; port++)
                 {
                     //LogTools.Log("PING FAIL -> " + adresse);
                     AdresseTerminee(adresse, port, ServerResponseEnum.PingFAIL);

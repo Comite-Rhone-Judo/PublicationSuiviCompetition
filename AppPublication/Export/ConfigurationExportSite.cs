@@ -1,7 +1,9 @@
-﻿using System;
+﻿using FranceJudo.Metier.XML;
+using FranceJudo.Metier.Resources;
+using System;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
+using FranceJudo.UI.Wpf.ViewModels.Environment;
+
 
 namespace AppPublication.Export
 {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FranceJudo.UI.Wpf.Behaviors;
+using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,7 +8,6 @@ using Telerik.Windows.Documents.Fixed;
 using Telerik.Windows.Documents.Fixed.FormatProviders;
 using Telerik.Windows.Documents.Fixed.FormatProviders.Pdf;
 using Telerik.Windows.Documents.Fixed.Print;
-using Tools.Outils;
 
 namespace FranceJudo.UI.Wpf.Dialogs
 {
@@ -37,7 +37,7 @@ namespace FranceJudo.UI.Wpf.Dialogs
                 SaveButton.IsEnabled = false;
             }
 
-            OutilsTools.ShowInTaskbar(this);
+            WindowHelper.ShowInTaskbar(this);
 
             _document = document;
 

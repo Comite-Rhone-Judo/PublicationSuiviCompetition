@@ -1,20 +1,19 @@
-﻿
-
+﻿using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.Regles;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
-using KernelImpl.Noyau.Arbitrage;
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.XML;
 
 namespace KernelImpl.Noyau.Organisation
 {
     /// <summary>
     /// Description des Competitions
     /// </summary>
-    public class Competition : IEntityWithKey<int>
+    public class Competition : ICompetition, IEntityWithKey<int>
     {
         public Competition()
         {
@@ -131,7 +130,7 @@ namespace KernelImpl.Noyau.Organisation
             this.reglementEquipe = (ReglementEquipeEnum) XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_ReglementEquipe));
         }
 
-        public XElement ToXmlInformations()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xcompetition = new XElement(ConstantXML.Competition);
             xcompetition.SetAttributeValue(ConstantXML.Competition_ID, id.ToString());
@@ -195,7 +194,7 @@ namespace KernelImpl.Noyau.Organisation
         /// <param name="MI">fonction d'info</param>
         /// <returns>les compétition</returns>
 
-        public static ICollection<Competition> LectureCompetitions(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Competition> LectureCompetitions(XElement xelement)
         {
             ICollection<Competition> competitions = new List<Competition>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.Competition))

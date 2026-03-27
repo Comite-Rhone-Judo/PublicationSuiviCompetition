@@ -1,18 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.Noyau;
 
 namespace KernelImpl.Noyau.Deroulement
 {
     public static class DataDeroulementExtension
     {
-        public static IEnumerable<Participant> ListeParticipant1(this IDeroulementData dataContext, int epreuve)
+        public static IEnumerable<IParticipant> ListeParticipant1(this IDeroulementData dataContext, int epreuve)
         {
             IEnumerable<int> phases = dataContext.Phases.Where(o => o.epreuve == epreuve && o.suivant != 0).Select(o => o.id).Distinct();
             return dataContext.Participants.Where(o => phases.Contains(o.phase));
         }
 
-        public static IEnumerable<Participant> ListeParticipant2(this IDeroulementData dataContext, int epreuve)
+        public static IEnumerable<IParticipant> ListeParticipant2(this IDeroulementData dataContext, int epreuve)
         {
             IEnumerable<int> phases = dataContext.Phases.Where(o => o.epreuve == epreuve && o.suivant == 0).Select(o => o.id).Distinct();
             return dataContext.Participants.Where(o => phases.Contains(o.phase));

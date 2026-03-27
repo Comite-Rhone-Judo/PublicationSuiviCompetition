@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
 using System.Linq;
-using Tools.Configuration;
+using FranceJudo.Core.Configuration;
 
 namespace AppPublication.Config.Generation
 {

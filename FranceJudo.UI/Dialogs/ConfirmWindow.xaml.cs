@@ -1,7 +1,7 @@
-﻿using System.Windows;
+﻿using FranceJudo.UI.Wpf.Behaviors;
+using System.Windows;
 using System.Windows.Input;
 using Telerik.Windows.Controls;
-using Tools.Outils;
 
 namespace FranceJudo.UI.Wpf.Dialogs
 {
@@ -17,7 +17,7 @@ namespace FranceJudo.UI.Wpf.Dialogs
         public ConfirmWindow(string header, string message)
         {
             InitializeComponent();
-            OutilsTools.ShowInTaskbar(this);
+            WindowHelper.ShowInTaskbar(this);
             this.DialogResult = false;
 
             this.Header = header;
@@ -29,7 +29,7 @@ namespace FranceJudo.UI.Wpf.Dialogs
         public ConfirmWindow(string message)
         {
             InitializeComponent();
-            OutilsTools.ShowInTaskbar(this);
+            WindowHelper.ShowInTaskbar(this);
             this.DialogResult = false;
 
             this.Header = "";
@@ -41,7 +41,7 @@ namespace FranceJudo.UI.Wpf.Dialogs
         public ConfirmWindow(DialogParameters param)
         {
             InitializeComponent();
-            OutilsTools.ShowInTaskbar(this);
+            WindowHelper.ShowInTaskbar(this);
             this.DialogResult = false;
 
             this.Header = param.Header;

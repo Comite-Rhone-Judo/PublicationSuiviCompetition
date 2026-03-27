@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kerne
+﻿using FranceJudo.Metier.Noyau.Deroulement;
 
 namespace FranceJudo.Metier.Regles
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Configuration;
-using Tools.Configuration;
+using FranceJudo.Core.Configuration;
 using static AppPublication.Models.EcransAppel.EcranAppelModel;
 
 namespace AppPublication.Config.Generation

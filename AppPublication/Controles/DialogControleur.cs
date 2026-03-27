@@ -76,11 +76,11 @@ namespace AppPublication.Controles
             set { _nettoyageEnCours = value; NotifyPropertyChanged(); } // Invalide nativement les commandes
         }
 
-        private Competition _competition = null;
+        private ICompetition _competition = null;
         /// <summary>
         /// On expose la competition courante pour liaison avec l'IHM (et la notification de changement)
         /// </summary>
-        public Competition Competition
+        public ICompetition Competition
         {
             get
             {

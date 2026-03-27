@@ -1,10 +1,12 @@
 
+using FranceJudo.Metier.XML;
+
 namespace FranceJudo.Metier.Noyau.Categories
 {
     /// <summary>
     /// Description des Categorie Age
     /// </summary>
-    public interface ICategorieAge
+    public interface ICategorieAge : IXMLSerializable
     {
         public int id { get; set; }
         public string nom { get; set; }

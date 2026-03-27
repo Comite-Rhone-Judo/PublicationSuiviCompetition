@@ -3,7 +3,7 @@ using System;
 using System.Xml.Linq;
 using FranceJudo.Core.Logging;
 using FranceJudo.Core.Network.Tcp.Client;
-using FranceJudo.Metier.Resources;
+using FranceJudo.Metier.XML;
 using FranceJudo.Metier.Network;
 
 namespace JudoClient

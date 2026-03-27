@@ -1,13 +1,17 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau.Organisation;
 using KernelImpl.Internal;
 using System;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Enum;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Categories;
+using FranceJudo.Metier.XML;
 
 namespace KernelImpl.Noyau.Organisation
 {
-    public class vue_epreuve : i_vue_epreuve_interface, IEntityWithKey<int>
+    public class vue_epreuve : Ivue_epreuve, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -88,18 +92,18 @@ namespace KernelImpl.Noyau.Organisation
 
             lib_sexe = epreuve.sexeEnum.ToString();
 
-            Categories.CategoriePoids c_poids = DC.Categories.CPoids.FirstOrDefault(o => o.id == epreuve.categoriePoids);
+            ICategoriePoids c_poids = DC.Categories.CPoids.FirstOrDefault(o => o.id == epreuve.categoriePoids);
 
             nom_catepoids = c_poids != null ? c_poids.nom : epreuve.nom;
             remoteId_catepoids = c_poids != null ? c_poids.remoteId : String.Empty;
 
-            Categories.CategorieAge c_age = DC.Categories.CAges.FirstOrDefault(o => o.id == epreuve.categorieAge);
+            ICategorieAge c_age = DC.Categories.CAges.FirstOrDefault(o => o.id == epreuve.categorieAge);
 
             nom_cateage = c_age != null ? c_age.nom : String.Empty;
             ordre = c_age != null ? c_age.ordre : "0";
             remoteId_cateage = c_age != null ? c_age.remoteId : String.Empty;
 
-            Epreuve_Equipe ep = DC.Organisation.EpreuveEquipes.FirstOrDefault(o => o.id == epreuve.epreuve_equipe);
+            IEpreuve_Equipe ep = DC.Organisation.EpreuveEquipes.FirstOrDefault(o => o.id == epreuve.epreuve_equipe);
 
             id_epreuve_equipe = ep != null ? ep.id : 0;
             lib_epreuve_equipe = ep != null ? ep.libelle : String.Empty;
@@ -109,7 +113,7 @@ namespace KernelImpl.Noyau.Organisation
             //phase1 = ;
             //phase2 = ;
 
-            Competition compet = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
+            ICompetition compet = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
 
             nom_compet = compet != null ? compet.nom : String.Empty;
             discipline_competition = compet != null ? compet.disciplineId : CompetitionDisciplineEnum.Judo;
@@ -121,6 +125,8 @@ namespace KernelImpl.Noyau.Organisation
         {
             return nom_cateage + " " + lib_sexe + " " + nom_catepoids;
         }
+
+        public void LoadXml(XElement node) { throw new NotImplementedException(); }
 
         public XElement ToXml(IJudoData DC)
         {

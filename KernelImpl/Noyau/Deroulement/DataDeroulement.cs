@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using FranceJudo.Core.XML;
-using FranceJudo.Metier.Regles;
+using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Deroulement;
 using FranceJudo.Metier.XML;
 
@@ -43,12 +43,13 @@ namespace KernelImpl.Noyau.Deroulement
         IReadOnlyList<IFeuille> IDeroulementData.Feuilles => Feuilles;
 
         IReadOnlyList<IPhase_Decoupage> IDeroulementData.Decoupages => Decoupages;
-         IReadOnlyList<IGroupe_Combats> IDeroulementData.Groupes { get { return _groupesCache.Cache; } }
-         IReadOnlyList<IPhase> IDeroulementData.Phases { get { return _phasesCache.Cache; } }
-         IReadOnlyList<IPoule> IDeroulementData.Poules { get { return _poulesCache.Cache; } }
-         IReadOnlyList<IParticipant> IDeroulementData.Participants { get { return _participantsCache.Cache; } }
-         IReadOnlyList<Ivue_groupe> IDeroulementData.VueGroupes { get { return _vgroupesCache.Cache; } }
-         IReadOnlyList<Ivue_combat> IDeroulementData.VueCombats { get { return _vcombatsCache.Cache; } }
+        IReadOnlyList<IGroupe_Combats> IDeroulementData.Groupes => Groupes;
+
+        IReadOnlyList<IPhase> IDeroulementData.Phases => Phases;
+        IReadOnlyList<IPoule> IDeroulementData.Poules => Poules;
+         IReadOnlyList<IParticipant> IDeroulementData.Participants => this.Participants;
+        IReadOnlyList<Ivue_groupe> IDeroulementData.VueGroupes => VueGroupes;
+         IReadOnlyList<Ivue_combat> IDeroulementData.VueCombats => VueCombats;
 
         /// <summary>
         /// lecture des participants
@@ -57,7 +58,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// <param name="DC"></param>
         public void lecture_participants(XElement element/*, bool suppression*/)
         {
-            ICollection<Participant> participants = Participant.LectureParticipant(element, null);
+            ICollection<Participant> participants = Participant.LectureParticipant(element);
             _participantsCache.UpdateFullSnapshot(participants);
         }
 
@@ -68,7 +69,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// <param name="DC"></param>
         public void lecture_phases(XElement element)
         {
-            ICollection<Phase> phases = Phase.LecturePhases(element, null);
+            ICollection<Phase> phases = Phase.LecturePhases(element);
             _phasesCache.UpdateFullSnapshot(phases);
         }
 
@@ -79,7 +80,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// <param name="DC"></param>
         public void lecture_decoupages(XElement element)
         {
-            ICollection<Phase_Decoupage> decoupages = Phase_Decoupage.LectureDecoupages(element, null);
+            ICollection<Phase_Decoupage> decoupages = Phase_Decoupage.LectureDecoupages(element);
             _decoupagesCache.UpdateFullSnapshot(decoupages);
         }
 
@@ -90,7 +91,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// <param name="DC"></param>
         public void lecture_groupes(XElement element, IJudoData DC)
         {
-            ICollection<Groupe_Combats> groupes = Groupe_Combats.LectureGroupes(element, null);
+            ICollection<Groupe_Combats> groupes = Groupe_Combats.LectureGroupes(element);
             _groupesCache.UpdateFullSnapshot(groupes);
 
 
@@ -115,7 +116,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// <param name="DC"></param>
         public void lecture_poules(XElement element)
         {
-            ICollection<Poule> poules = Poule.LecturePoules(element, null);
+            ICollection<Poule> poules = Poule.LecturePoules(element);
             _poulesCache.UpdateFullSnapshot(poules);
         }
 

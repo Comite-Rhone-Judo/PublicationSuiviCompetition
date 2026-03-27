@@ -1,8 +1,9 @@
-﻿using FranceJudo.Metier.Noyau.Organisation;
+﻿using FranceJudo.Metier.XML;
+using FranceJudo.Metier.Noyau.Organisation;
 
 namespace FranceJudo.Metier.Noyau.Arbitrage
 {
-    public interface ICommissaire
+    public interface ICommissaire : IXMLSerializable
     {
         public string licence { get; set; }
         public string nom { get; set; }

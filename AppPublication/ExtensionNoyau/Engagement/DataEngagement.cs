@@ -52,7 +52,7 @@ namespace AppPublication.ExtensionNoyau.Engagement
             // Efface le precedent contenu
             _typesGroupes.Clear();
 
-            foreach (Competition comp in dataContext.Organisation.Competitions)
+            foreach (ICompetition comp in dataContext.Organisation.Competitions)
             {
                 List<EchelonEnum> listEchelon = new List<EchelonEnum>();
 
@@ -112,10 +112,10 @@ namespace AppPublication.ExtensionNoyau.Engagement
             // Vide la precedente liste
             _groupesEngages.Clear();
 
-            IList<Competition> competitions = DC.Organisation.Competitions.ToList();
+            IList<ICompetition> competitions = DC.Organisation.Competitions.ToList();
             string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-            foreach (Competition competition in competitions)
+            foreach (ICompetition competition in competitions)
             {
                 // Pas de groupement en equipe
                 if (competition.IsShiai() || competition.IsIndividuelle())
@@ -126,7 +126,7 @@ namespace AppPublication.ExtensionNoyau.Engagement
                         EpreuveSexe sexe = new EpreuveSexe(s);
 
                         // Recupere les epreuves de la competition pour ce sexe
-                        IList<Epreuve> epreuvesSexe = DC.Organisation.Epreuves.Where(ep => ep.competition == competition.id && ep.sexeEnum.Enum == s).ToList();
+                        IList<IEpreuve> epreuvesSexe = DC.Organisation.Epreuves.Where(ep => ep.competition == competition.id && ep.sexeEnum.Enum == s).ToList();
 
                         // Recupere tous les judokas participant a une des epreuves (présents ou non)
                         // on s'assure de ne pas avoir de doublon avec Distinct

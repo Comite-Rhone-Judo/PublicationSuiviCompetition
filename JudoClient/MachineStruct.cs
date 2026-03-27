@@ -1,4 +1,4 @@
-﻿using Tools.Enum;
+﻿using FranceJudo.Metier.Network;
 
 namespace JudoClient
 {

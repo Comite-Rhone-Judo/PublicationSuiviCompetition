@@ -246,7 +246,7 @@ namespace AppPublication.Generation
 
                     if (_cfgExport.PublierEngagements)
                     {
-                        foreach (Competition comp in _snapshot.Organisation.Competitions)
+                        foreach (ICompetition comp in _snapshot.Organisation.Competitions)
                         {
                             // Recupere les groupes en fonction du type de groupement
                             List<EchelonEnum> typesGrp = _extendedJudoData.Engagement.TypesGroupes[comp.id];

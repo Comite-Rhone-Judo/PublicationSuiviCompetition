@@ -1,12 +1,9 @@
-﻿
-using KernelImpl.Internal;
+﻿using FranceJudo.Metier.XML;
 using System;
-using System.Linq;
-using System.Xml.Linq;
 
 namespace FranceJudo.Metier.Noyau.Deroulement
 {
-    public interface Ivue_groupe
+    public interface Ivue_groupe : IXMLSerializable
     {
         public int groupe_id { get; set; }
 

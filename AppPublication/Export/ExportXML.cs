@@ -475,7 +475,7 @@ namespace AppPublication.Export
         /// <returns></returns>
         public static XDocument CreateDocumentEpreuve(IJudoData DC, i_vue_epreuve_interface epreuve)
         {
-            Competition competition = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
+            ICompetition competition = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
 
             // Sécurité : si la compétition n'existe pas, on renvoie un document vide pour éviter le crash
             if (competition == null) return new XDocument();
@@ -496,7 +496,7 @@ namespace AppPublication.Export
         /// <returns></returns>
         public static XDocument CreateDocumentPhase(i_vue_epreuve_interface epreuve, Phase phase, IJudoData DC)
         {
-            Competition competition = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
+            ICompetition competition = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
             if (competition == null) return new XDocument(); // Sécurité
 
             XElement xcompetition = competition.ToXmlInformations();
@@ -527,7 +527,7 @@ namespace AppPublication.Export
             // 1. DÉTERMINATION DE LA COMPÉTITION DE BASE
             // =========================================================================
             int nbtapis = DC.Organisation.Competitions.Max(o => o.nbTapis);
-            Competition competition = null;
+            ICompetition competition = null;
 
             // Si une phase est fournie, on remonte jusqu'à sa compétition parente
             if (_phase != null)
@@ -715,9 +715,9 @@ namespace AppPublication.Export
         /// Gère l'unicité via les HashSets fournis et protège contre les références nulles.
         /// </summary>
         private static void AddEpreuveToXml(XElement xtapis, int? epreuveIdNullable, int compType, IJudoData DC,
-            Dictionary<int, vue_epreuve> epreuvesDict, Dictionary<int, vue_epreuve_equipe> epreuvesEqDict,
+            Dictionary<int, Ivue_epreuve> epreuvesDict, Dictionary<int, Ivue_epreuve_equipe> epreuvesEqDict,
             HashSet<int> addedEp, HashSet<int> addedEq,
-            ILookup<int?, vue_epreuve> epreuvesByEquipe)
+            ILookup<int?, Ivue_epreuve> epreuvesByEquipe)
         {
             // Clause de garde : si l'épreuve est nulle, on ne fait rien
             if (!epreuveIdNullable.HasValue) return;

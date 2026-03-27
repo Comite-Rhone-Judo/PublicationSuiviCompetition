@@ -7,7 +7,15 @@ using KernelImpl.Noyau.Participants;
 using KernelImpl.Noyau.Structures;
 using System;
 using System.Threading;
-using Tools.Framework;
+using FranceJudo.UI.Wpf.Foundation;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.Noyau.Participants;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.Noyau.Structures;
+using FranceJudo.Metier.Noyau.Categories;
+using FranceJudo.Metier.Noyau.Arbitrage;
+using FranceJudo.Metier.Noyau.Logos;
 
 namespace KernelImpl
 {

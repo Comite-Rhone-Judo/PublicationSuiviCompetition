@@ -2,8 +2,10 @@
 using System.IO;
 using System.Collections.Concurrent;
 using FranceJudo.Core.Logging;
-using Tools.Outils;
-using Tools.Files;
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Utils;
+using FranceJudo.Core.Network.Url;
+
 
 namespace FranceJudo.Metier.Site
 {
@@ -182,7 +184,7 @@ namespace FranceJudo.Metier.Site
         /// <returns></returns>
         protected virtual string GetRootCompetition()
         {
-            return Path.Combine(_rootDir, OutilsTools.TraiteChaineURL(OutilsTools.SubString(_idCompetition, 0, _maxLen)));
+            return Path.Combine(_rootDir, UrlHelper.TraiteChaineURL(_idCompetition.SafeSubstring(0, _maxLen)));
         }
 
         /// <summary>
@@ -213,7 +215,7 @@ namespace FranceJudo.Metier.Site
             return _directoryCache.GetOrAdd(cacheKey, key =>
             {
                 string path = isAbsolute ? folderName : Path.Combine(_rootCompetDir, folderName);
-                string sanitizedPath = OutilsTools.TraiteChaineURL(path);
+                string sanitizedPath = UrlHelper.TraiteChaineURL(path);
 
                 FileSystemHelper.CreateDirectorie(sanitizedPath);
                 return sanitizedPath;

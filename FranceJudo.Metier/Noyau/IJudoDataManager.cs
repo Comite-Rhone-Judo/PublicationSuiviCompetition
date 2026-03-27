@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KernelImpl
+namespace FranceJudo.Metier.Noyau
 {
     /// <summary>
     /// Contrat de service pour le gestionnaire de données Judo.

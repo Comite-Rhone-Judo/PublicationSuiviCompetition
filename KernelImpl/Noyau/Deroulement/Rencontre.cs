@@ -1,18 +1,20 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Deroulement;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Xml.Linq;
-using FranceJudo.Core.XML;
-using FranceJudo.Metier.Resources;
+using FranceJudo.Metier.XML;
 
 namespace KernelImpl.Noyau.Deroulement
 {
     /// <summary>
     /// Description des Rencontres
     /// </summary>
-    public class Rencontre : INotifyPropertyChanged, IEntityWithKey<int>
+    public class Rencontre : IRencontre, INotifyPropertyChanged, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -579,7 +581,7 @@ namespace KernelImpl.Noyau.Deroulement
             this.estDecisif = XMLTools.LectureBool(xrencontre.Attribute(ConstantXML.Rencontre_EstDecisif));
         }
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xrencontre = new XElement(ConstantXML.Rencontre);
 

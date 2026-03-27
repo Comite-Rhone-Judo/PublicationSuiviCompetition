@@ -1,10 +1,11 @@
 
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Categories;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using FranceJudo.Core.XML;
-using FranceJudo.Metier.Noyau.Categories;
-using FranceJudo.Metier.XML;
 
 
 namespace KernelImpl.Noyau.Categories
@@ -12,7 +13,7 @@ namespace KernelImpl.Noyau.Categories
     /// <summary>
     /// Description des Categorie Age
     /// </summary>
-    public class CategorieAge : ICategorieAge, IXMLSerializable, IEntityWithKey<int>
+    public class CategorieAge : ICategorieAge, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -43,7 +44,7 @@ namespace KernelImpl.Noyau.Categories
         /// </summary>
         /// <returns></returns>
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             System.Xml.Linq.XElement xcateage = new System.Xml.Linq.XElement(ConstantXML.CateAge);
             xcateage.SetAttributeValue(ConstantXML.CateAge_id, id.ToString());

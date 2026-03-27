@@ -20,7 +20,7 @@ namespace AppPublication.Views.Main
     {
 
         private ObservableCollection<i_vue_epreuve_interface> _source1 = new ObservableCollection<i_vue_epreuve_interface>();
-        private ObservableCollection<Competition> _source2 = new ObservableCollection<Competition>();
+        private ObservableCollection<ICompetition> _source2 = new ObservableCollection<ICompetition>();
 
         public MainView()
         {

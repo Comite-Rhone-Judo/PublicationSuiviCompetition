@@ -2,8 +2,10 @@
 using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Tools.Outils;
-using Tools.XML;
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.XML;
+using FranceJudo.Metier.Noyau.Structures;
+
 
 namespace KernelImpl.Noyau.Structures
 {
@@ -22,6 +24,12 @@ namespace KernelImpl.Noyau.Structures
         public IReadOnlyList<Ligue> Ligues { get { return _liguesCache.Cache; } }
         public IReadOnlyList<Pays> LesPays { get { return _paysCache.Cache; } }
 
+        IReadOnlyList<IClub> IStructuresData.Clubs => Clubs;
+        IReadOnlyList<IComite> IStructuresData.Comites => Comites;
+        IReadOnlyList<ISecteur> IStructuresData.Secteurs => Secteurs;
+        IReadOnlyList<ILigue> IStructuresData.Ligues => Ligues;
+        IReadOnlyList<IPays> IStructuresData.LesPays => LesPays;
+
         /// <summary>
         /// lecture des clubs
         /// </summary>
@@ -29,13 +37,13 @@ namespace KernelImpl.Noyau.Structures
         /// <param name="DC"></param>
         public void lecture_clubs(XElement element)
         {
-            ICollection<Club> clubs = Club.LectureClubs(element, null);
+            ICollection<Club> clubs = Club.LectureClubs(element);
             _clubsCache.UpdateFullSnapshot(clubs);
         }
 
-        public ICollection<Club> LectureClubs(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public ICollection<Club> LectureClubs(XElement xelement )
         {
-            return Club.LectureClubs(xelement, MI);
+            return Club.LectureClubs(xelement);
         }
 
         /// <summary>
@@ -45,13 +53,13 @@ namespace KernelImpl.Noyau.Structures
         /// <param name="DC"></param>
         public void lecture_comites(XElement element)
         {
-            ICollection<Comite> comites = Comite.LectureComites(element, null);
+            ICollection<Comite> comites = Comite.LectureComites(element);
             _comitesCache.UpdateFullSnapshot(comites); 
         }
 
-        public ICollection<Secteur> LectureSecteurs(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public ICollection<Secteur> LectureSecteurs(XElement xelement)
         {
-            return Secteur.LectureSecteurs(xelement, MI);
+            return Secteur.LectureSecteurs(xelement);
         }
 
         /// <summary>
@@ -61,13 +69,13 @@ namespace KernelImpl.Noyau.Structures
         /// <param name="DC"></param>
         public void lecture_secteurs(XElement element)
         {
-            ICollection<Secteur> secteurs = Secteur.LectureSecteurs(element, null);
+            ICollection<Secteur> secteurs = Secteur.LectureSecteurs(element);
             _secteursCache.UpdateFullSnapshot(secteurs);      
         }
 
-        public ICollection<Comite> LectureComites(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public ICollection<Comite> LectureComites(XElement xelement)
         {
-            return Comite.LectureComites(xelement, MI);
+            return Comite.LectureComites(xelement);
         }
 
 
@@ -78,13 +86,13 @@ namespace KernelImpl.Noyau.Structures
         /// <param name="DC"></param>
         public void lecture_ligues(XElement element)
         {
-            ICollection<Ligue> ligues = Ligue.LectureLigues(element, null);
+            ICollection<Ligue> ligues = Ligue.LectureLigues(element);
             _liguesCache.UpdateFullSnapshot(ligues);
         }
 
-        public ICollection<Ligue> LectureLigues(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public ICollection<Ligue> LectureLigues(XElement xelement)
         {
-            return Ligue.LectureLigues(xelement, MI);
+            return Ligue.LectureLigues(xelement);
         }
 
         /// <summary>
@@ -94,7 +102,7 @@ namespace KernelImpl.Noyau.Structures
         /// <param name="DC"></param>
         public void lecture_pays(XElement element)
         {
-            ICollection<Pays> pays2 = Pays.LecturePays(element, null);
+            ICollection<Pays> pays2 = Pays.LecturePays(element);
             _paysCache.UpdateFullSnapshot(pays2);
         }
     }
