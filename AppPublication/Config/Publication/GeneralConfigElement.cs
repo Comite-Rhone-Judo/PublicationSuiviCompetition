@@ -1,10 +1,9 @@
-﻿using AppPublication.Config.Generation;
-using AppPublication.Tools.Files;
-using AppPublication.Tools.FranceJudo;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using Tools.Configuration;
+using FranceJudo.Core.Configuration;
+using FranceJudo.UI.Wpf.ViewModels.Structures;
+using FranceJudo.Core.IO;
 
 namespace AppPublication.Config.Publication
 {

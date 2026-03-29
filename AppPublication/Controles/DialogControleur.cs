@@ -3,9 +3,21 @@ using AppPublication.Models.Publication;
 using AppPublication.Models.Statistiques;
 using AppPublication.Tools;
 using AppPublication.Tools.Enum;
-using AppPublication.Tools.Streams;
 using AppPublication.ViewModels.Configuration;
 using AppPublication.Views.Configuration;
+using FranceJudo.Core.Environment;
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
+using FranceJudo.Core.Reflection;
+using FranceJudo.Core.Security;
+using FranceJudo.Core.Threading;
+using FranceJudo.Metier.IO;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.UI.Wpf.Dialogs;
+using FranceJudo.UI.Wpf.Foundation;
+using FranceJudo.UI.Wpf.ViewModels.Environment;
+using FranceJudo.UI.Wpf.ViewModels.Network;
 using KernelImpl;
 using KernelImpl.Noyau.Organisation;
 using NLog;
@@ -15,14 +27,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Telerik.Windows.Controls;
-using Tools.Core;
-using Tools.Files;
-using Tools.Framework;
-using FranceJudo.Core.Logging;
-using Tools.Net;
-using Tools.Security;
-using Tools.Threading;
-using Tools.Windows;
 
 namespace AppPublication.Controles
 {
@@ -48,7 +52,11 @@ namespace AppPublication.Controles
         {
             _serverData = data ?? throw new ArgumentNullException(nameof(data));
 
-            FileSystemHelper.InitDataDirectories();
+
+            string dataPath = AppEnvironment.GetDataDirectory();
+            string appPath = AppEnvironment.GetAppDirectory();
+
+            AppDirectoryManager.Initialize(dataPath, appPath);
             InitControleur();
             AppInformation = AppInformation.Instance;
         }
@@ -1005,7 +1013,7 @@ namespace AppPublication.Controles
                             {
                                 if (_manuelViewer == null)
                                 {
-                                    System.IO.Stream manuelStream = ResourcesTools.GetAssembyResource("AppPublication.Documentation.ManuelUtilisateur.pdf", true);
+                                    System.IO.Stream manuelStream = AssemblyResourceHelper.GetAssembyResource("AppPublication.Documentation.ManuelUtilisateur.pdf", true);
                                     if(manuelStream != null)
                                     {
                                         byte[] bytes = manuelStream.ReadAllBytes();
@@ -1226,7 +1234,7 @@ namespace AppPublication.Controles
         {
             LogTools.Logger.Debug("Donnees mises a jour pour la categorie: {0}", e.CategorieDonnee.ToString());
 
-            if (e.CategorieDonnee == KernelImpl.Enum.CategorieDonneesEnum.Organisation)
+            if (e.CategorieDonnee == CategorieDonneesEnum.Organisation)
             {
                 this.UpdateCompetition();
             }

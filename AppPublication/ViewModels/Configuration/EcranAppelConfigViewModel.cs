@@ -5,15 +5,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
-using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Tools.Framework;
+using FranceJudo.UI.Wpf.Foundation;
 using FranceJudo.Core.Logging;
-using Tools.Windows;
-using Tools.Net.Scanner;
+using FranceJudo.UI.Wpf.Dialogs;
 using static AppPublication.Models.EcransAppel.EcranAppelModel;
 
 namespace AppPublication.ViewModels.Configuration
@@ -50,10 +48,7 @@ namespace AppPublication.ViewModels.Configuration
         {
             get
             {
-                if (_cmdOuvrirScanner == null)
-                {
-                    _cmdOuvrirScanner = new RelayCommand(OuvrirScannerAction);
-                }
+                _cmdOuvrirScanner ??= new RelayCommand(OuvrirScannerAction);
                 return _cmdOuvrirScanner;
             }
         }
@@ -119,7 +114,7 @@ namespace AppPublication.ViewModels.Configuration
                         _model.NbCombatsPage = value;
                         NotifyPropertyChanged();
                         var cfg = GetConfigElement();
-                        if (cfg != null) cfg.NbCombatsPage = value;
+                        cfg?.NbCombatsPage = value;
                     }
                 }
             }
@@ -150,7 +145,7 @@ namespace AppPublication.ViewModels.Configuration
                     _model.AjusteTailleTexte = value;
                     NotifyPropertyChanged();
                     var cfg = GetConfigElement();
-                    if (cfg != null) cfg.AjusteTexteAuto = value;
+                    cfg?.AjusteTexteAuto = value;
                 }
             }
         }
@@ -182,10 +177,7 @@ namespace AppPublication.ViewModels.Configuration
 
                     // SAUVEGARDE IMMEDIATE
                     var cfg = GetConfigElement();
-                    if (cfg != null)
-                    {
-                        cfg.Disposition = value;
-                    }
+                    cfg?.Disposition = value;
                 }
             }
         }
@@ -208,10 +200,7 @@ namespace AppPublication.ViewModels.Configuration
 
                     // SAUVEGARDE IMMEDIATE
                     var cfg = GetConfigElement();
-                    if (cfg != null)
-                    {
-                        cfg.DispositionCombat = value;
-                    }
+                    cfg?.DispositionCombat = value;
                 }
             }
         }
@@ -239,8 +228,7 @@ namespace AppPublication.ViewModels.Configuration
 
                     // SAUVEGARDE IMMEDIATE
                     var cfg = GetConfigElement();
-                    if (cfg != null) cfg.Groupement = value; // Déclenche le IsDirty automatique
-
+                    cfg?.Groupement = value; // Déclenche le IsDirty automatique
                 }
             }
         }
@@ -274,7 +262,7 @@ namespace AppPublication.ViewModels.Configuration
 
                     // SAUVEGARDE IMMEDIATE
                     var cfg = GetConfigElement();
-                    if (cfg != null) cfg.Description = value; // Déclenche le IsDirty automatique
+                    cfg?.Description = value; // Déclenche le IsDirty automatique
                 }
             }
         }
@@ -293,7 +281,7 @@ namespace AppPublication.ViewModels.Configuration
                     // SAUVEGARDE IMMEDIATE
                     _model.Hostname = value;
                     var cfg = GetConfigElement();
-                    if (cfg != null) cfg.Hostname = value;
+                    cfg?.Hostname = value;
                 }
             }
         }
@@ -319,7 +307,7 @@ namespace AppPublication.ViewModels.Configuration
 
                             // SAUVEGARDE IMMEDIATE
                             var cfg = GetConfigElement();
-                            if (cfg != null) cfg.AdresseIp = value;
+                            cfg?.AdresseIp = value;
                         }
                     }
                 }
@@ -498,10 +486,7 @@ namespace AppPublication.ViewModels.Configuration
 
             // Mise à jour Configuration
             var cfg = GetConfigElement();
-            if (cfg != null)
-            {
-                cfg.TapisIds = string.Join(";", ids);
-            }
+            cfg?.TapisIds = string.Join(";", ids);
         }
 
         /// <summary>

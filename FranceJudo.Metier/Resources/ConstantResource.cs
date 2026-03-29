@@ -5,6 +5,9 @@ namespace FranceJudo.Metier.Resources
     /// <summary>
     /// Enumération des constants pour la gestion des fichier
     /// </summary>
+
+    // TODO Verifier avec la nouvelle structure des namespace
+
     public class ConstantResource
     {
         public const string CacheMainWindow = "StoryboardCache";

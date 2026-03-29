@@ -1,0 +1,7 @@
+﻿[*.cs]
+
+# IDE0290: Utiliser le constructeur principal
+dotnet_diagnostic.IDE0290.severity = none
+
+# IDE0305: Simplifier l'initialisation des collections
+dotnet_diagnostic.IDE0305.severity = none

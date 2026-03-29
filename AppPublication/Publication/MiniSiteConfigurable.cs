@@ -1,14 +1,14 @@
 ﻿using AppPublication.Config.Publication;
 using FranceJudo.Core.Network.Http.HttpServer.HttpModules;
-using KernelImpl.Noyau.Structures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
-using Tools.Core;
 using FranceJudo.Core.Logging;
-using Tools.Net;
+using FranceJudo.Core.Utils;
+using FranceJudo.UI.Wpf.ViewModels.Network;
+using FranceJudo.Core.Network.Http;
+using FranceJudo.Core.Network.Http.Context;
 
 namespace AppPublication.Publication
 {

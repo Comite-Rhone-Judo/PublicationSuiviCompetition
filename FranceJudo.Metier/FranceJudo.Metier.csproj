@@ -51,12 +51,15 @@
     <Compile Include="Export\ExportEnum.cs" />
     <Compile Include="Export\ExportSiteManager.cs" />
     <Compile Include="Export\ExportTools.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IO\AppDirectoryManager.cs" />
     <Compile Include="IO\FileTools.cs" />
+    <Compile Include="Network\ServerFind.cs" />
     <Compile Include="Noyau\Arbitrage\IArbitre.cs" />
     <Compile Include="Noyau\Arbitrage\ICommissaire.cs" />
     <Compile Include="Noyau\Arbitrage\IDelegue.cs" />
     <Compile Include="Noyau\Arbitrage\IArbitrageData.cs" />
+    <Compile Include="Noyau\CategorieDonneesEnum.cs" />
     <Compile Include="Noyau\Categories\ICategorieAge.cs" />
     <Compile Include="Noyau\Categories\ICategoriePoids.cs" />
     <Compile Include="Noyau\Categories\ICeintures.cs" />

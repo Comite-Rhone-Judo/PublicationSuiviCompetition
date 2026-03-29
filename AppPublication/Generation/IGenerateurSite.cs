@@ -1,4 +1,4 @@
-﻿using Tools.Net;
+﻿using FranceJudo.Metier.Noyau;
 
 namespace AppPublication.Generation
 {

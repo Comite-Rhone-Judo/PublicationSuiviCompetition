@@ -1,7 +1,7 @@
 ﻿using System.Configuration;
 using System.Windows.Automation;
-using Tools.Configuration;
-using Tools.Security;
+using FranceJudo.Core.Configuration;
+using FranceJudo.Core.Security;
 
 namespace AppPublication.Config.Publication
 {

@@ -151,6 +151,7 @@
     <Compile Include="Export\ExportSharedContext.cs" />
     <Compile Include="Export\ExportSharedContextBase.cs" />
     <Compile Include="Generation\GenerationScheduler.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Models\Publication\GestionSiteBase.cs" />
     <Compile Include="Models\Publication\GestionSiteInterne.cs" />
     <Compile Include="Models\Publication\GestionSitePublique.cs" />

@@ -1,14 +1,11 @@
-﻿using AppPublication.Config.Publication;
-using AppPublication.Export;
-using AppPublication.Generation;
+﻿
 using AppPublication.Statistiques;
 using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using FranceJudo.Core.Logging;
-using Tools.Net;
-
+using FranceJudo.Core.Diagnostic;
 
 namespace AppPublication.Generation
 {
@@ -48,9 +45,9 @@ namespace AppPublication.Generation
         #region MEMBRES
         private CancellationTokenSource _tokenSource;   // Token pour la gestion de la thread de lecture
         private Task _taskGeneration = null;            // La tache de generation
-        private StatMgrGeneration _statMgrGeneration = null;    // Pour le gestion des statistiques
-        private StatMgrSynchronisation _statMgrSynchronisation= null;    // Pour le gestion des statistiques
-        private IGenerateurSite _generateur;            // le generateur de site
+        readonly private StatMgrGeneration _statMgrGeneration = null;    // Pour le gestion des statistiques
+        readonly private StatMgrSynchronisation _statMgrSynchronisation= null;    // Pour le gestion des statistiques
+        readonly private IGenerateurSite _generateur;            // le generateur de site
 
         private long _generationCounter = 0;                        // Nombre de generation realisees depuis le demarrage
         // --- Événement unique pour tout _statMgr d'état (Interne ou Métier) ---
@@ -97,12 +94,8 @@ namespace AppPublication.Generation
         {
             get
             {
-                if (_statGeneration == null)
-                {
-                    _statGeneration = new TaskExecutionInformation();
-                }
+                _statGeneration ??= new TaskExecutionInformation();
                 return _statGeneration;
-
             }
             private set
             {
@@ -118,10 +111,7 @@ namespace AppPublication.Generation
         {
             get
             {
-                if (_statSync == null)
-                {
-                    _statSync = new TaskExecutionInformation();
-                }
+                _statSync ??= new TaskExecutionInformation();
                 return _statSync;
             }
             private set

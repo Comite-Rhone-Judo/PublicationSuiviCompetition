@@ -1,22 +1,11 @@
-﻿using AppPublication.ExtensionNoyau;
-using AppPublication.ExtensionNoyau.Engagement;
-using AppPublication.Generation;
-using AppPublication.Tools.Enum;
-using KernelImpl;
-using KernelImpl.Noyau.Deroulement;
-using KernelImpl.Noyau.Organisation;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Runtime.Remoting.Contexts;
-using System.Web.UI.WebControls;
-using System.Xml;
-using System.Xml.Linq;
 using System.Xml.Xsl;
-using Tools.Enum;
-using Tools.Export;
-using Tools.Outils;
+using FranceJudo.Metier.Site;
+using FranceJudo.Metier.Export;
+
+
+
 
 namespace AppPublication.Export
 {

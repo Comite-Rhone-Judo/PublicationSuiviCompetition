@@ -1,17 +1,12 @@
 ﻿using AppPublication.Models.EcransAppel;
-using HttpServer;
 using FranceJudo.Core.Network.Http.HttpServer.Exceptions;
 using FranceJudo.Core.Network.Http.HttpServer.HttpModules;
 using FranceJudo.Core.Network.Http.HttpServer.Sessions;
-using NLog;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Linq;
-using Telerik.Windows.Controls.DataVisualization.Map.BingRest;
-using Tools.Export;
 using FranceJudo.Core.Logging;
-using Tools.Net;
+using FranceJudo.Core.Network.Http.Context;
+using FranceJudo.Core.Network.Http.HttpServer;
 
 namespace AppPublication.Publication
 {
@@ -75,10 +70,7 @@ namespace AppPublication.Publication
             ReferencePath = _structInterne.UrlEcransAppelRedirecteur.AbsolutePath;
 
             // Récupère la configuration des écrans d'appel
-            if (_manager == null)
-            {
-                _manager = _provider.GetContext<EcranCollectionManager>();
-            }
+            _manager ??= _provider.GetContext<EcranCollectionManager>();
             if (_manager == null)
             {
                 LogTools.Logger.Error("EcransAppelRedirectModule: Le contexte n'a pas ete initialise. ExportSiteInterneUrls manquant");
@@ -118,10 +110,7 @@ namespace AppPublication.Publication
                 var ecranToRedirect = _manager.Ecrans.FirstOrDefault(e => e.AdresseIP.MapToIPv4().Equals(clientIp.MapToIPv4()));
 
                 // 3. Rediriger vers la page correspondante ou une page par défaut
-                if (ecranToRedirect == null)
-                {
-                    ecranToRedirect = _manager.Default;
-                }
+                ecranToRedirect ??= _manager.Default;
                 if (ecranToRedirect == null) {
                     LogTools.Logger.Error("EcransAppelRedirectModule: Aucun écran d'appel trouvé pour l'IP {0} et aucun écran par défaut défini.", clientIp);
                     throw new InternalServerException("EcransAppelRedirectModule: Aucun écran d'appel trouvé pour l'IP et aucun écran par défaut défini.");

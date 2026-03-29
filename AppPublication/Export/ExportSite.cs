@@ -1,26 +1,21 @@
 ﻿using AppPublication.ExtensionNoyau;
 using AppPublication.ExtensionNoyau.Engagement;
-using AppPublication.Models.EcransAppel;
 using AppPublication.Publication;
 using AppPublication.Tools.Enum;
-using KernelImpl;
-using KernelImpl.Noyau.Deroulement;
-using KernelImpl.Noyau.Organisation;
-using OfficeOpenXml.Table.PivotTable;
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
+using FranceJudo.Core.Threading;
+using FranceJudo.Metier.Site;
+using FranceJudo.Metier.Export;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.Noyau.Deroulement;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web.UI.WebControls;
-using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Xsl;
-using Tools.Enum;
-using Tools.Export;
-using Tools.Files;
-using FranceJudo.Core.Logging;
-using Tools.Outils;
-using Tools.Threading;
 
 namespace AppPublication.Export
 {
@@ -66,7 +61,7 @@ namespace AppPublication.Export
 
             var xsltArgs = CreateAllXsltArgs(siteStructure, savePath);
 
-            ExportHTML.ToHTMLSite(docMenu, exportType, savePath, xsltArgs);
+            ExportSiteManager.GenererHtmlSite(docMenu, exportType, savePath, xsltArgs);
 
             return new FileWithChecksum($"{savePath}.html");
         }
@@ -84,7 +79,7 @@ namespace AppPublication.Export
         /// Génère les fichiers HTML pour une phase spécifique (Poule ou Tableau) et optionnellement les prochains combats.
         /// Retourne la liste des fichiers générés avec leur checksum pour le suivi.
         /// </summary>
-        public List<FileWithChecksum> GenereWebSitePhase(IJudoData DC, Phase phase, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSitePhase(IJudoData DC, IPhase phase, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
             LogTools.Logger.Debug("Phase ({1}) '{0}'", phase?.libelle, phase?.id);
 
@@ -129,7 +124,7 @@ namespace AppPublication.Export
                     ctx.EnrichWithFullContext(xmlResultat);
                     LogTools.DebugLogData(xmlResultat);
 
-                    ExportHTML.ToHTMLSite(xmlResultat, exportType, savePath, xsltArgs);
+                    ExportSiteManager.GenererHtmlSite(xmlResultat, exportType, savePath, xsltArgs);
 
                     output.Add(new FileWithChecksum($"{savePath}.html"));
                     LogTools.Logger.Debug("{0} = 1", isPoule ? "Poule" : "Tableau");
@@ -149,7 +144,7 @@ namespace AppPublication.Export
                     ctx.EnrichWithFullContext(xmlFeuilleCombat);
                     LogTools.DebugLogData(xmlFeuilleCombat);
 
-                    ExportHTML.ToHTMLSite(xmlFeuilleCombat, exportType, savePath, xsltArgs);
+                    ExportSiteManager.GenererHtmlSite(xmlFeuilleCombat, exportType, savePath, xsltArgs);
 
                     output.Add(new FileWithChecksum($"{savePath}.html"));
                     LogTools.Logger.Debug("ProchainsCombats = 1");
@@ -199,7 +194,7 @@ namespace AppPublication.Export
                 LogTools.DebugLogData(xmlClassement);
 
                 // 3. Transformation HTML
-                ExportHTML.ToHTMLSite(xmlClassement, exportType, savePath, xsltArgs);
+                ExportSiteManager.GenererHtmlSite(xmlClassement, exportType, savePath, xsltArgs);
 
                 output.Add(new FileWithChecksum($"{savePath}.html"));
             }
@@ -252,7 +247,7 @@ namespace AppPublication.Export
                 LogTools.DebugLogData(xmlAllTapis);
 
                 // 3. Transformation HTML
-                ExportHTML.ToHTMLSite(xmlAllTapis, exportType, savePath, xsltArgs);
+                ExportSiteManager.GenererHtmlSite(xmlAllTapis, exportType, savePath, xsltArgs);
 
                 output.Add(new FileWithChecksum($"{savePath}.html"));
             }
@@ -293,7 +288,7 @@ namespace AppPublication.Export
 
                 var indexArgs = CreateAllXsltArgs(siteStructure, indexSavePath);
 
-                ExportHTML.ToHTMLSite(docIndex, indexType, indexSavePath, indexArgs);
+                ExportSiteManager.GenererHtmlSite(docIndex, indexType, indexSavePath, indexArgs);
                 output.Add(new FileWithChecksum($"{indexSavePath}.html"));
 
                 progress?.Report(BatchProgressInfo.Step(1));
@@ -317,7 +312,7 @@ namespace AppPublication.Export
                 var footerArgs = CreateAllXsltArgs(siteStructure, footerSavePath);
 
                 // Utilisation du même docIndex pour générer le JS via XSLT
-                ExportHTML.ToHTMLSite(docIndex, footerType, footerSavePath, footerArgs, "js");
+                ExportSiteManager.GenererHtmlSite(docIndex, footerType, footerSavePath, footerArgs, "js");
                 output.Add(new FileWithChecksum($"{footerSavePath}.js"));
 
                 LogTools.Logger.Debug("GenereWebSiteIndex Terminé - Total: {0} ressources", output.Count);
@@ -423,7 +418,7 @@ namespace AppPublication.Export
 
                 LogTools.DebugLogData(docAffectation);
 
-                ExportHTML.ToHTMLSite(docAffectation, exportType, savePath, xsltArgs);
+                ExportSiteManager.GenererHtmlSite(docAffectation, exportType, savePath, xsltArgs);
 
                 output.Add(new FileWithChecksum($"{savePath}.html"));
             }
@@ -470,7 +465,7 @@ namespace AppPublication.Export
                     );
 
                     // Transformation HTML à partir du document contextuel
-                    ExportHTML.ToHTMLSite(docEngagements, exportType, savePath, xsltArgs);
+                    ExportSiteManager.GenererHtmlSite(docEngagements, exportType, savePath, xsltArgs);
 
                     output.Add(new FileWithChecksum($"{savePath}.html"));
 

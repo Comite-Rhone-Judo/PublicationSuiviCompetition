@@ -1,10 +1,6 @@
 ﻿
-using AppPublication.Tools.Files;
-using AppPublication.Tools.FranceJudo;
-using System;
-using System.Collections.Generic;
 using System.Configuration;
-using Tools.Configuration;
+using FranceJudo.Core.Configuration;
 
 namespace AppPublication.Config.Generation
 {

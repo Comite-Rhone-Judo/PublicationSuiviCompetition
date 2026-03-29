@@ -1,8 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
-using Tools.Net.Ftp;
-using Tools.Framework;
-using Tools.Net;
+using FranceJudo.UI.Wpf.Foundation;
+using FranceJudo.UI.Wpf.ViewModels.Network;
+using FranceJudo.UI.Wpf.ViewModels.Network.Ftp;
+
 
 namespace AppPublication.ViewModels.Configuration
 {

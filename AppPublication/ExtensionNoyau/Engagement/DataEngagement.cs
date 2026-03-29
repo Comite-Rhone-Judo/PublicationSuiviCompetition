@@ -1,10 +1,9 @@
-﻿using KernelImpl;
-using KernelImpl.Noyau.Organisation;
-using KernelImpl.Noyau.Participants;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Tools.Enum;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.Noyau.Participants;
 using FranceJudo.Core.Logging;
 
 namespace AppPublication.ExtensionNoyau.Engagement
@@ -130,7 +129,7 @@ namespace AppPublication.ExtensionNoyau.Engagement
 
                         // Recupere tous les judokas participant a une des epreuves (présents ou non)
                         // on s'assure de ne pas avoir de doublon avec Distinct
-                        IList<vue_judoka> judokasParticipants = DC.Participants.Vuejudokas.Join(epreuvesSexe, vj => vj.idepreuve, ep => ep.id, (vj, ep) => vj).Distinct(new VueJudokaEqualityComparer()).ToList();
+                        IList<Ivue_judoka> judokasParticipants = DC.Participants.Vuejudokas.Join(epreuvesSexe, vj => vj.idepreuve, ep => ep.id, (vj, ep) => vj).Distinct(new VueJudokaEqualityComparer()).ToList();
 
                         // Groupement par entite
                         Dictionary<EchelonEnum, List<string>> dictEntites = new Dictionary<EchelonEnum, List<string>>();

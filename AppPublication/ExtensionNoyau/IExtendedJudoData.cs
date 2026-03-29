@@ -1,9 +1,4 @@
-﻿using KernelImpl;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FranceJudo.Metier.Noyau;
 using AppPublication.ExtensionNoyau.Engagement;
 
 namespace AppPublication.ExtensionNoyau

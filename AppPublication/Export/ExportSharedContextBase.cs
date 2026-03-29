@@ -1,7 +1,8 @@
 ﻿using KernelImpl;
 using KernelImpl.Noyau.Structures;
 using System.Xml.Linq;
-using Tools.Export;
+using FranceJudo.Metier.Noyau;
+
 using FranceJudo.Core.Logging;
 
 namespace AppPublication.Export

@@ -1,7 +1,7 @@
 ﻿using AppPublication.Config.Publication;
 using System;
 using System.Configuration;
-using Tools.Configuration;
+using FranceJudo.Core.Configuration;
 
 namespace AppPublication.Config.Generation
 {

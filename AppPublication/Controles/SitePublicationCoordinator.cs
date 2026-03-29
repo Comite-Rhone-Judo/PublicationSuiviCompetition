@@ -1,26 +1,23 @@
 ﻿using AppPublication.Config.Publication;
-using AppPublication.Controles;
-using AppPublication.Tools.Files;
-using KernelImpl;
+using AppPublication.Models.Publication;
+using AppPublication.Models.Statistiques;
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
+using FranceJudo.Metier.IO;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Export;
+using FranceJudo.Metier.Resources;
+
+using FranceJudo.UI.Wpf.Dialogs;
+using FranceJudo.UI.Wpf.Foundation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using Tools.Enum;
-using Tools.Export;
-using Tools.Framework;
-using FranceJudo.Core.Logging;
-using Tools.Outils;
-using Tools.Windows;
-using AppPublication.Models.Publication;
-using AppPublication.Models.Statistiques;
-using System.ComponentModel;
 
 namespace AppPublication.Controles
 {
@@ -250,10 +247,10 @@ namespace AppPublication.Controles
                                                     // Verifie la taille de l'image
                                                     if (w <= 200 && h <= 200)
                                                     {
-                                                        FilteredFileInfo newItem = new FilteredFileInfo(new FileInfo(imgFile));
+                                                        FilteredFileInfo newItem = new FilteredFileInfo(new FileInfo(imgFile), ConstantResource.Export_site_img);
 
                                                         // Copy le fichier dans le répertoire de travail de l'application
-                                                        File.Copy(newItem.FullName, Path.Combine(ConstantFile.ExportStyle_dir, newItem.Name));
+                                                        File.Copy(newItem.FullName, Path.Combine(AppDirectoryManager.ExportStyle_dir, newItem.Name));
 
                                                         // Actualise la liste des logos
                                                         FichiersLogo.Add(newItem);
@@ -360,7 +357,7 @@ namespace AppPublication.Controles
         private void InitFichiersLogo()
         {
             // Recupere le repertoire des images du site
-            IEnumerable<FilteredFileInfo> files = ExportTools.EnumerateCustomLogoFiles().Select(o => new FilteredFileInfo(o)).OrderBy(o => o.Name);
+            IEnumerable<FilteredFileInfo> files = ExportTools.EnumerateCustomLogoFiles().Select(o => new FilteredFileInfo(o, ConstantResource.Export_site_img)).OrderBy(o => o.Name);
 
             // Liste les fichiers logos
             FichiersLogo = new ObservableCollection<FilteredFileInfo>(files);

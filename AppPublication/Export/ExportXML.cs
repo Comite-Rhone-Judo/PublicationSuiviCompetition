@@ -1,9 +1,9 @@
-﻿using KernelImpl;
-using KernelImpl.Noyau.Categories;
+﻿using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.Noyau.Participants;
 using KernelImpl.Noyau.Deroulement;
-using KernelImpl.Noyau.Organisation;
-using KernelImpl.Noyau.Participants;
-using KernelImpl.Noyau.Structures;
+using FranceJudo.Metier.XML;
 using AppPublication.ExtensionNoyau;
 using System;
 using System.Collections.Generic;
@@ -11,13 +11,11 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Export;
-using Tools.Files;
+using FranceJudo.Core.IO;
 using AppPublication.ExtensionNoyau.Engagement;
-using Tools.XML;
 using FranceJudo.Core.Logging;
 using AppPublication.Publication;
+using KernelImpl.Noyau.Participants;
 
 namespace AppPublication.Export
 {
@@ -177,7 +175,7 @@ namespace AppPublication.Export
         {
             // On construit tout l'arbre en une seule instruction
             return new XDocument(
-                new XElement(ConstantXML.checksums,
+                new XElement(FileWithChecksum.checksums,
                     // .Select() transforme directement votre liste en séquence de XElement
                     listFiles.Select(fc => fc.ToXml())
                 )
@@ -192,7 +190,7 @@ namespace AppPublication.Export
         public static List<FileWithChecksum> ImportChecksumFichiers(XElement rootElem)
         {
             // On prend les descendants, et on les transforme un par un en objets
-            return rootElem.Descendants(ConstantXML.checksumFile)
+            return rootElem.Descendants(FileWithChecksum.checksumFile)
                            .Select(xinfo =>
                            {
                                var fc = new FileWithChecksum();
@@ -217,7 +215,7 @@ namespace AppPublication.Export
                         // On stream directement depuis la base vers les éléments XML
                         DC.Organisation.Competitions
                           .AsEnumerable()
-                          .Select(competition => competition.ToXmlInformations())
+                          .Select(competition => competition.ToXml())
                 )
             ));
         }
@@ -241,7 +239,7 @@ namespace AppPublication.Export
                         DC.Organisation.Competitions.ToList().Select(competition =>
                         {
                             // On récupère l'élément racine de la compétition
-                            XElement xcompetition = competition.ToXmlInformations();
+                            XElement xcompetition = competition.ToXml();
 
                             // --- A. Ajout des Tapis ---
                             // Enumerable.Range permet de remplacer une boucle "for" de manière élégante
@@ -319,7 +317,7 @@ namespace AppPublication.Export
                           .Select(competition =>
                           {
                               // On récupère la base de la compétition
-                              XElement xcompetition = competition.ToXmlInformations();
+                              XElement xcompetition = competition.ToXml();
 
                               // --- A. Ajout des Groupes ---
                               // TryGetValue protège contre une exception si la compétition n'a pas de types de groupes définis
@@ -404,7 +402,7 @@ namespace AppPublication.Export
                     new XElement(ConstantXML.Competitions,
                         DC.Organisation.Competitions.ToList().Select(competition =>
                         {
-                            XElement xcompetition = competition.ToXmlInformations();
+                            XElement xcompetition = competition.ToXml();
 
                             // --- A. Sélection des épreuves ---
                             IEnumerable<i_vue_epreuve_interface> epreuves_compet = competition.IsEquipe()
@@ -481,7 +479,7 @@ namespace AppPublication.Export
             if (competition == null) return new XDocument();
 
             // Construction directe en une passe
-            XElement xcompetition = competition.ToXmlInformations();
+            XElement xcompetition = competition.ToXml();
             xcompetition.Add(ExportEpreuve(DC, epreuve));
 
             return new XDocument(new XElement(ConstantXML.DocRoot, xcompetition));
@@ -494,12 +492,12 @@ namespace AppPublication.Export
         /// <param name="phase"></param>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static XDocument CreateDocumentPhase(i_vue_epreuve_interface epreuve, Phase phase, IJudoData DC)
+        public static XDocument CreateDocumentPhase(i_vue_epreuve_interface epreuve, IPhase phase, IJudoData DC)
         {
             ICompetition competition = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
             if (competition == null) return new XDocument(); // Sécurité
 
-            XElement xcompetition = competition.ToXmlInformations();
+            XElement xcompetition = competition.ToXml();
             XElement xepreuve = epreuve.ToXml(DC);
 
             xepreuve.Add(ExportPhase(DC, phase)); // On délègue au sous-boss optimisé
@@ -521,7 +519,7 @@ namespace AppPublication.Export
         /// <param name="_phase">La phase spécifique à générer (si null, génère pour toute la compétition).</param>
         /// <param name="tapis">Le numéro du tapis spécifique à générer (si null, boucle sur tous les tapis).</param>
         /// <returns>Un objet XDocument contenant la structure XML complète prête à être parsée ou sauvegardée.</returns>
-        public static XDocument CreateDocumentFeuilleCombat(IJudoData DC, Phase _phase, int? tapis)
+        public static XDocument CreateDocumentFeuilleCombat(IJudoData DC, IPhase _phase, int? tapis)
         {
             // =========================================================================
             // 1. DÉTERMINATION DE LA COMPÉTITION DE BASE
@@ -702,7 +700,7 @@ namespace AppPublication.Export
             }
 
             // Création de la racine XML et rattachement de la liste des tapis
-            XElement xRoot = competition.ToXmlInformations();
+            XElement xRoot = competition.ToXml();
             xRoot.Add(xTapisElements);
 
             return new XDocument(new XElement(ConstantXML.DocRoot, xRoot));
@@ -806,7 +804,7 @@ namespace AppPublication.Export
         /// <param name="DC"></param>
         /// <param name="phase"></param>
         /// <returns></returns>
-        private static XElement ExportPhase(IJudoData DC, Phase phase)
+        private static XElement ExportPhase(IJudoData DC, IPhase phase)
         {
             XElement xphase = phase.ToXml();
 
@@ -828,9 +826,9 @@ namespace AppPublication.Export
             var compType = (CompetitionTypeEnum)DC.Organisation.Competition.type;
 
             // Initialisation stricte des dictionnaires et du Lookup en mémoire
-            var judokasDict = new Dictionary<int, Judoka>();
-            var equipesDict = new Dictionary<int, Equipe>();
-            ILookup<int, Judoka> judokasByEquipe = Enumerable.Empty<Judoka>().ToLookup(j => j.equipe);
+            var judokasDict = new Dictionary<int, IJudoka>();
+            var equipesDict = new Dictionary<int, IEquipe>();
+            ILookup<int, IJudoka> judokasByEquipe = Enumerable.Empty<IJudoka>().ToLookup(j => j.equipe);
 
             if (compType == CompetitionTypeEnum.Individuel || compType == CompetitionTypeEnum.Shiai)
             {
@@ -937,9 +935,9 @@ namespace AppPublication.Export
             var participantIds = finalParticipants.Select(p => p.judoka).ToHashSet();
             var compType = (CompetitionTypeEnum)DC.Organisation.Competition.type;
 
-            var judokasDict = new Dictionary<int, Judoka>();
-            var equipesDict = new Dictionary<int, Equipe>();
-            ILookup<int, Judoka> judokasByEquipe = Enumerable.Empty<Judoka>().ToLookup(j => j.equipe);
+            var judokasDict = new Dictionary<int, IJudoka>();
+            var equipesDict = new Dictionary<int, IEquipe>();
+            ILookup<int, IJudoka> judokasByEquipe = Enumerable.Empty<IJudoka>().ToLookup(j => j.equipe);
 
             if (compType == CompetitionTypeEnum.Individuel || compType == CompetitionTypeEnum.Shiai)
             {

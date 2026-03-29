@@ -1,21 +1,18 @@
-﻿using AppPublication.ExtensionNoyau;
-using AppPublication.Generation;
-using AppPublication.Models.EcransAppel;
+﻿using AppPublication.Models.EcransAppel;
 using AppPublication.Publication;
-using KernelImpl;
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
+using FranceJudo.Core.Threading;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Export;
+using FranceJudo.Metier.Site;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web.UI;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Xml.Xsl;
-using Tools.Enum;
-using Tools.Export;
-using Tools.Files;
-using FranceJudo.Core.Logging;
-using Tools.Threading;
 using static AppPublication.Models.EcransAppel.EcranAppelModel;
 
 namespace AppPublication.Export
@@ -68,7 +65,7 @@ namespace AppPublication.Export
                 var footerArgs = CreateAllXsltArgs(siteStructure, footerSavePath);
 
                 // Utilisation du même docIndex pour générer le JS via XSLT
-                ExportHTML.ToHTMLSite(docIndex, footerType, footerSavePath, footerArgs, "js");
+                ExportSiteManager.GenererHtmlSite(docIndex, footerType, footerSavePath, footerArgs, "js");
                 output.Add(new FileWithChecksum($"{footerSavePath}.js"));
 
                 LogTools.Logger.Debug("GenereWebSiteIndex Terminé - Total: {0} ressources", output.Count);
@@ -125,7 +122,7 @@ namespace AppPublication.Export
 
             progress?.Report(BatchProgressInfo.Init(1));
 
-            ExportHTML.ToHTMLSite(ctx.ExportDocument, exportType, savePath, xsltArgs);
+            ExportSiteManager.GenererHtmlSite(ctx.ExportDocument, exportType, savePath, xsltArgs);
 
             output.Add(new FileWithChecksum($"{savePath}.html"));
 

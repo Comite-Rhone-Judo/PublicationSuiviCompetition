@@ -8,9 +8,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Tools.Framework;
+using FranceJudo.UI.Wpf.Foundation;
 using FranceJudo.Core.Logging;
-using Tools.Net.Scanner;
+using FranceJudo.Core.Network.Scanner;
 
 namespace AppPublication.ViewModels.Configuration
 {

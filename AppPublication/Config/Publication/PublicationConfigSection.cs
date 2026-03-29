@@ -1,5 +1,5 @@
 ﻿using System.Configuration;
-using Tools.Configuration;
+using FranceJudo.Core.Configuration;
 
 namespace AppPublication.Config.Publication
 {

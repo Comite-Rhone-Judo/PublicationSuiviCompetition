@@ -8,9 +8,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Telerik.Windows.Controls;
-using Tools.Framework;
+using FranceJudo.UI.Wpf.Foundation;
 using FranceJudo.Core.Logging;
-using Tools.Windows;
+using FranceJudo.UI.Wpf.Dialogs;
 
 namespace AppPublication.ViewModels.Configuration
 {
@@ -40,10 +40,7 @@ namespace AppPublication.ViewModels.Configuration
         {
             get
             {
-                if (_cmdAjouterEcran == null)
-                {
-                    _cmdAjouterEcran = new RelayCommand(AjouterEcranAction);
-                }
+                _cmdAjouterEcran ??= new RelayCommand(AjouterEcranAction);
                 return _cmdAjouterEcran;
             }
         }
@@ -53,10 +50,7 @@ namespace AppPublication.ViewModels.Configuration
         {
             get
             {
-                if (_cmdOnLoaded == null)
-                {
-                    _cmdOnLoaded = new RelayCommand(async (o) => await LoadDataAsync());
-                }
+                _cmdOnLoaded ??= new RelayCommand(async (o) => await LoadDataAsync());
                 return _cmdOnLoaded;
             }
         }
@@ -92,8 +86,10 @@ namespace AppPublication.ViewModels.Configuration
             {
                 foreach (var model in _ecranManager.Ecrans)
                 {
-                    var vm = new EcranAppelConfigViewModel(model, _tapisDisponibles, _scannerContext);
-                    vm.DeleteCommand = new RelayCommand(SupprimerLigne);
+                    var vm = new EcranAppelConfigViewModel(model, _tapisDisponibles, _scannerContext)
+                    {
+                        DeleteCommand = new RelayCommand(SupprimerLigne)
+                    };
                     EcransViewModels.Add(vm);
                 }
             }
@@ -112,8 +108,10 @@ namespace AppPublication.ViewModels.Configuration
                         foreach (var model in _ecranManager.Ecrans)
                         {
                             // La création lourde des sous-VM se fait ici
-                            var vm = new EcranAppelConfigViewModel(model, _tapisDisponibles, _scannerContext);
-                            vm.DeleteCommand = new RelayCommand(SupprimerLigne);
+                            var vm = new EcranAppelConfigViewModel(model, _tapisDisponibles, _scannerContext)
+                            {
+                                DeleteCommand = new RelayCommand(SupprimerLigne)
+                            };
                             resultList.Add(vm);
                         }
                     }
@@ -144,28 +142,28 @@ namespace AppPublication.ViewModels.Configuration
                 Id = nouveauModel.Id,
                 Description = nouveauModel.Description
             };
-            if (GenerationConfigSection.Instance != null)
-            {
-                GenerationConfigSection.Instance.Ecrans.Add(configElement);
-            }
+            GenerationConfigSection.Instance?.Ecrans.Add(configElement);
 
             // 4. Création du ViewModel et ajout à l'interface
-            var vm = new EcranAppelConfigViewModel(nouveauModel, _tapisDisponibles, _scannerContext);
-            vm.DeleteCommand = new RelayCommand(SupprimerLigne);
+            EcranAppelConfigViewModel vm = new EcranAppelConfigViewModel(nouveauModel, _tapisDisponibles, _scannerContext)
+            {
+                DeleteCommand = new RelayCommand(SupprimerLigne)
+            };
 
             EcransViewModels.Add(vm);
         }
 
         private void SupprimerLigne(object param)
         {
-            var vm = param as EcranAppelConfigViewModel;
-            if (vm != null)
+            if (param is EcranAppelConfigViewModel vm)
             {
-                DialogParameters dlgParam = new DialogParameters();
-                dlgParam.OkButtonContent = "Oui";
-                dlgParam.CancelButtonContent = "Non";
-                dlgParam.Content = $"Etes-vous sûr de vouloir supprimer l'écran n° {vm.Id}?";
-                dlgParam.Header = "Supprimer un écran";
+                DialogParameters dlgParam = new DialogParameters
+                {
+                    OkButtonContent = "Oui",
+                    CancelButtonContent = "Non",
+                    Content = $"Etes-vous sûr de vouloir supprimer l'écran n° {vm.Id}?",
+                    Header = "Supprimer un écran"
+                };
 
                 ConfirmWindow win = new ConfirmWindow(dlgParam);
                 win.ShowDialog();
@@ -183,10 +181,7 @@ namespace AppPublication.ViewModels.Configuration
                     _ecranManager.Remove(vm.Id);
 
                     // 3. Supprimer de la Configuration (Disque)
-                    if (GenerationConfigSection.Instance != null)
-                    {
-                        GenerationConfigSection.Instance.Ecrans.Remove(vm.Id);
-                    }
+                    GenerationConfigSection.Instance?.Ecrans.Remove(vm.Id);
                 }
             }
         }

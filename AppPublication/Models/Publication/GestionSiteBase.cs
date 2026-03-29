@@ -1,15 +1,13 @@
-﻿using AppPublication.Config.Publication;
-using AppPublication.Generation;
+﻿using AppPublication.Generation;
 using AppPublication.Models.Statistiques;
 using AppPublication.Statistiques;
-using AppPublication.Tools.Files;
-using KernelImpl;
 using System;
 using System.Net;
-using Tools.Framework;
+using FranceJudo.UI.Wpf.Foundation;
+using FranceJudo.UI.Wpf.ViewModels.Network;
 using FranceJudo.Core.Logging;
-using Tools.Net;
-using Tools.Threading;
+using FranceJudo.Core.IO;
+using FranceJudo.Metier.Noyau;
 
 namespace AppPublication.Models.Publication
 {
@@ -32,7 +30,7 @@ namespace AppPublication.Models.Publication
         {
             get
             {
-                return (SiteLocal != null) ? !SiteLocal.IsActif && !IsGenerationActive : true;
+                return SiteLocal == null || !SiteLocal.IsActif && !IsGenerationActive;
             }
         }
 
@@ -159,10 +157,7 @@ namespace AppPublication.Models.Publication
                 {
                     _delaiGenerationSec = value;
                     // Configure le scheduler
-                    if (_schedulerSite != null)
-                    {
-                        _schedulerSite.DelaiGenerationSec = value;
-                    }
+                    _schedulerSite?.DelaiGenerationSec = value;
                     UpdateDelaiGenerationConfig(value); // Hook pour sauvegarder la bonne config
                     NotifyPropertyChanged();
                 }
@@ -182,10 +177,7 @@ namespace AppPublication.Models.Publication
                 {
                     _effacerAuDemarrage = value;
                     // Configure le scheduler
-                    if (_schedulerSite != null)
-                    {
-                        _schedulerSite.EffacerAuDemarrage = value;
-                    }
+                    _schedulerSite?.EffacerAuDemarrage = value;
                     NotifyPropertyChanged();
                 }
             }

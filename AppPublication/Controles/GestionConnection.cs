@@ -6,7 +6,7 @@ using System;
 using System.Web.UI;
 using System.Windows.Threading;
 using System.Xml.Linq;
-using Tools.Framework;
+using FranceJudo.UI.Wpf.Foundation;
 using FranceJudo.Core.Logging;
 
 namespace AppPublication.Controles

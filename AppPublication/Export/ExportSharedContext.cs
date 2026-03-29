@@ -1,6 +1,7 @@
 ﻿using AppPublication.ExtensionNoyau;
 using KernelImpl;
-using Tools.Export;
+using FranceJudo.Metier.Noyau;
+
 
 namespace AppPublication.Export
 {

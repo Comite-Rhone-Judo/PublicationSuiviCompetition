@@ -1,23 +1,13 @@
-﻿using AppPublication.Controles;
-using AppPublication.Export;
-using AppPublication.ExtensionNoyau;
-using AppPublication.ExtensionNoyau.Engagement;
+﻿using AppPublication.Export;
 using AppPublication.Models.EcransAppel;
 using AppPublication.Publication;
-using KernelImpl;
-using KernelImpl.Noyau.Deroulement;
-using KernelImpl.Noyau.Organisation;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Export;
-using Tools.Files;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
-using Tools.Net;
-using Tools.Threading;
+using FranceJudo.Core.Threading;
 
 
 namespace AppPublication.Generation
@@ -26,7 +16,7 @@ namespace AppPublication.Generation
     {
         #region MEMBRES
         // Les gestionnaires
-        private IJudoDataManager _judoDataManager;                  // Le gestionnaire de données interne
+        readonly private IJudoDataManager _judoDataManager;                  // Le gestionnaire de données interne
         private IJudoData _snapshot;                                // Le snapshot des données 
 
         EcranCollectionManager _ecransAppel;                        // La configuration des ecrans d'appel (pour les combats)
@@ -59,10 +49,7 @@ namespace AppPublication.Generation
         public ConfigurationExportSiteInterne ConfigurationGeneration
         {
             get {
-                if (_cfgExport == null)
-                {
-                    _cfgExport = new ConfigurationExportSiteInterne();
-                }
+                _cfgExport ??= new ConfigurationExportSiteInterne();
                 return _cfgExport;
             }
             private set { _cfgExport = value; }

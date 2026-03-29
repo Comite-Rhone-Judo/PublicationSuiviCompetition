@@ -2,17 +2,19 @@
 using JudoClient;
 using JudoClient.Communication;
 using KernelImpl;
-using KernelImpl.Enum;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Threading;
+using FranceJudo.Core.Threading;
 using FranceJudo.Core.Logging;
+using FranceJudo.Metier.Network;
 using AppPublication.Statistiques;
 using AppPublication.Controles;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.XML;
+using FranceJudo.Core.Diagnostic;
 
 namespace AppPublication.Data
 {
@@ -1001,7 +1003,7 @@ namespace AppPublication.Data
             if (withMessage)
             {
                 // TODO Penser a creer le event Handler pour afficher le message
-                LogTools.Alert("Une erreur est survenue lors du chargement initiale des données. Les données peuvent être incorrecte. Veuillez essayer de vous reconnecter au serveur", "Initialisation");
+                LogTools.Alert("Une erreur est survenue lors du chargement initiale des données. Les données peuvent être incorrecte. Veuillez essayer de vous reconnecter au serveur");
             }
         }
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-using Tools.Net.Scanner;
+using FranceJudo.Core.Network.Scanner;
 
 namespace AppPublication.Tools.Converter
 {

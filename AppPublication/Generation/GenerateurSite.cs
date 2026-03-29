@@ -1,21 +1,16 @@
-﻿using AppPublication.Controles;
-using AppPublication.ExtensionNoyau;
+﻿using AppPublication.ExtensionNoyau;
 using AppPublication.ExtensionNoyau.Engagement;
 using AppPublication.Export;
-using KernelImpl;
-using KernelImpl.Noyau.Deroulement;
-using KernelImpl.Noyau.Organisation;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.UI.Wpf.ViewModels.Network;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Export;
 using FranceJudo.Core.Logging;
-using Tools.Threading;
-using Tools.Files;
-using Tools.Net;
+using FranceJudo.Core.Threading;
+using FranceJudo.Core.IO;
 using AppPublication.Publication;
 
 
