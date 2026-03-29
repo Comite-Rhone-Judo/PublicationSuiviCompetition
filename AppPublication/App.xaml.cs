@@ -16,7 +16,8 @@ namespace AppPublication
   /// </summary>
     public partial class App : Application
     {
-    ConfigurationService _configSvc = null;
+        ConfigurationService _configSvc = null;
+        
         #region PROPERTIES
         // Accès global aux données si strictement nécessaire
         public JudoData DataManager { get; private set; }
@@ -56,9 +57,10 @@ namespace AppPublication
             DialogControleur.Instance.CanManageTracesDebug = LogTools.IsConfigured;
 
             // Demarre la fenetre principale et injecte le Dialog controleur en tant que DataContext
-            AppPublication.Views.Main.MainView mainWin = new AppPublication.Views.Main.MainView();
-
-            mainWin.DataContext = Controles.DialogControleur.Instance;
+            AppPublication.Views.Main.MainView mainWin = new AppPublication.Views.Main.MainView
+            {
+                DataContext = Controles.DialogControleur.Instance
+            };
             mainWin.Show();
         }
 

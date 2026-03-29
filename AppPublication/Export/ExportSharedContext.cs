@@ -1,5 +1,4 @@
 ﻿using AppPublication.ExtensionNoyau;
-using KernelImpl;
 using FranceJudo.Metier.Noyau;
 
 

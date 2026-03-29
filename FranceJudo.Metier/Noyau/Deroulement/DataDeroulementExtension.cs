@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.Noyau.Participants;
 using FranceJudo.Metier.Noyau;
 
-namespace KernelImpl.Noyau.Deroulement
+namespace FranceJudo.Metier.Noyau.Deroulement
 {
     public static class DataDeroulementExtension
     {
@@ -22,7 +22,7 @@ namespace KernelImpl.Noyau.Deroulement
         public static int GetNbCombatJudoka(this IDeroulementData dataContext, string licence, IJudoData DC)
         {
             int result = 0;
-            foreach (Participants.Judoka vj in DC.Participants.Judokas.Where(o => o.licence == licence))
+            foreach (Participants.IJudoka vj in DC.Participants.Judokas.Where(o => o.licence == licence))
             {
                 result += dataContext.Combats.Count(o => o.vainqueur.HasValue && o.vainqueur > 0 && (o.participant1 == vj.id || o.participant2 == vj.id));
             }
@@ -32,9 +32,9 @@ namespace KernelImpl.Noyau.Deroulement
         public static int GetNbPointJudoka(this IDeroulementData dataContext, string licence, IJudoData DC)
         {
             int result = 0;
-            foreach (Participants.Judoka vj in DC.Participants.Judokas.Where(o => o.licence == licence))
+            foreach (Participants.IJudoka vj in DC.Participants.Judokas.Where(o => o.licence == licence))
             {
-                foreach (Participant participant in dataContext.Participants.Where(o => o.judoka == vj.id))
+                foreach (IParticipant participant in dataContext.Participants.Where(o => o.judoka == vj.id))
                 {
                     result += participant.cumulPointsGRCH;
                 }

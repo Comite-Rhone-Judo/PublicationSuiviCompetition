@@ -1,7 +1,5 @@
 ﻿using AppPublication.Data;
-using AppPublication.Models.Publication;
 using AppPublication.Models.Statistiques;
-using AppPublication.Tools;
 using AppPublication.Tools.Enum;
 using AppPublication.ViewModels.Configuration;
 using AppPublication.Views.Configuration;
@@ -10,7 +8,6 @@ using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
 using FranceJudo.Core.Reflection;
 using FranceJudo.Core.Security;
-using FranceJudo.Core.Threading;
 using FranceJudo.Metier.IO;
 using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.Noyau;
@@ -19,8 +16,6 @@ using FranceJudo.UI.Wpf.Foundation;
 using FranceJudo.UI.Wpf.ViewModels.Environment;
 using FranceJudo.UI.Wpf.ViewModels.Network;
 using KernelImpl;
-using KernelImpl.Noyau.Organisation;
-using NLog;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -319,9 +314,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdAfficherTestFtp == null)
-                {
-                    _cmdAfficherTestFtp = new RelayCommand(
+                _cmdAfficherTestFtp ??= new RelayCommand(
                         o =>
                         {
                             // Extrait le mode de passe des controles passes en parametres (1er = FranceJudo, 2nd = Advanced)
@@ -347,7 +340,6 @@ namespace AppPublication.Controles
                                         && SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsFTPConfigPropertiesValid
                                         && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif;
                         });
-                }
                 return _cmdAfficherTestFtp;
             }
         }
@@ -361,9 +353,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdAcquitterErreurCommunication == null)
-                {
-                    _cmdAcquitterErreurCommunication = new RelayCommand(
+                _cmdAcquitterErreurCommunication ??= new RelayCommand(
                             o =>
                             {
                                 if (Connection != null && Connection.HasErreurTransmission)
@@ -376,7 +366,6 @@ namespace AppPublication.Controles
                             {
                                 return true;
                             });
-                }
                 return _cmdAcquitterErreurCommunication;
             }
         }
@@ -390,9 +379,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdCopyUrlLocal == null)
-                {
-                    _cmdCopyUrlLocal = new RelayCommand(
+                _cmdCopyUrlLocal ??= new RelayCommand(
                             o =>
                             {
                                 if (SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif)
@@ -404,9 +391,8 @@ namespace AppPublication.Controles
                             {
 
 
-                                return SiteCoordinator.GestionnaireSitePublique.SiteLocal!= null ? SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif : false;
+                                return SiteCoordinator.GestionnaireSitePublique.SiteLocal!= null && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif;
                             });
-                }
                 return _cmdCopyUrlLocal;
             }
         }
@@ -419,9 +405,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdCopyUrlDistant == null)
-                {
-                    _cmdCopyUrlDistant = new RelayCommand(
+                _cmdCopyUrlDistant ??= new RelayCommand(
                             o =>
                             {
                                 if (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif)
@@ -431,9 +415,8 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null) ? SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif : false;
+                                return (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null) && SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif;
                             });
-                }
                 return _cmdCopyUrlDistant;
             }
         }
@@ -446,9 +429,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdCopyUrlEcransAppel == null)
-                {
-                    _cmdCopyUrlEcransAppel = new RelayCommand(
+                _cmdCopyUrlEcransAppel ??= new RelayCommand(
                             o =>
                             {
                                 if (SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif)
@@ -458,9 +439,8 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return (SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null) ? SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif : false;
+                                return (SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null) && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif;
                             });
-                }
                 return _cmdCopyUrlEcransAppel;
             }
         }
@@ -473,9 +453,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdDemarrerSiteLocal == null)
-                {
-                    _cmdDemarrerSiteLocal = new RelayCommand(
+                _cmdDemarrerSiteLocal ??= new RelayCommand(
                             o =>
                             {
                                 if (SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && !SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif)
@@ -489,9 +467,8 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return SiteCoordinator.GestionnaireSitePublique.SiteLocal != null ? !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSitePublique.IdCompetition) && !SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsChanged : false;
+                                return SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSitePublique.IdCompetition) && !SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsChanged;
                             });
-                }
                 return _cmdDemarrerSiteLocal;
             }
         }
@@ -504,9 +481,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdArreterSiteLocal == null)
-                {
-                    _cmdArreterSiteLocal = new RelayCommand(
+                _cmdArreterSiteLocal ??= new RelayCommand(
                             o =>
                             {
                                 if (SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif)
@@ -517,9 +492,8 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return SiteCoordinator.GestionnaireSitePublique.SiteLocal != null ? SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif : false;
+                                return SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif;
                             });
-                }
                 return _cmdArreterSiteLocal;
             }
         }
@@ -532,9 +506,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdDemarrerSiteInterne == null)
-                {
-                    _cmdDemarrerSiteInterne = new RelayCommand(
+                _cmdDemarrerSiteInterne ??= new RelayCommand(
                             o =>
                             {
                                 if (SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null && !SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif)
@@ -548,9 +520,8 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null ? !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSiteInterne.IdCompetition) && !SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsChanged : false;
+                                return SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null && !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSiteInterne.IdCompetition) && !SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsChanged;
                             });
-                }
                 return _cmdDemarrerSiteInterne;
             }
         }
@@ -563,9 +534,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdArreterSiteInterne == null)
-                {
-                    _cmdArreterSiteInterne = new RelayCommand(
+                _cmdArreterSiteInterne ??= new RelayCommand(
                             o =>
                             {
                                 if (SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif)
@@ -576,9 +545,8 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null ? SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif : false;
+                                return SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif;
                             });
-                }
                 return _cmdArreterSiteInterne;
             }
         }
@@ -591,9 +559,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdDemarrerSiteDistant == null)
-                {
-                    _cmdDemarrerSiteDistant = new RelayCommand(
+                _cmdDemarrerSiteDistant ??= new RelayCommand(
                             async o =>
                             {
                                 if (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif)
@@ -619,8 +585,10 @@ namespace AppPublication.Controles
                                         LogTools.Logger.Error(ex, "Erreur lors du démarrage du site distant.");
                                         Application.Current.Dispatcher.Invoke(() =>
                                         {
-                                            AlertWindow win = new AlertWindow("Erreur", "Impossible de démarrer le site distant. Vérifiez les paramètres de connexion.");
-                                            win.Owner = App.Current.MainWindow;
+                                            AlertWindow win = new AlertWindow("Erreur", "Impossible de démarrer le site distant. Vérifiez les paramètres de connexion.")
+                                            {
+                                                Owner = App.Current.MainWindow
+                                            };
                                             win.ShowDialog();
                                         });
                                     }
@@ -638,9 +606,8 @@ namespace AppPublication.Controles
                                     return false;
 
                                 // Votre logique d'origine
-                                return (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne == null) ? false : !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif && !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSitePublique.IdCompetition);
+                                return SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif && !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSitePublique.IdCompetition);
                             });
-                }
                 return _cmdDemarrerSiteDistant;
             }
         }
@@ -653,9 +620,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdArreterSiteDistant == null)
-                {
-                    _cmdArreterSiteDistant = new RelayCommand(
+                _cmdArreterSiteDistant ??= new RelayCommand(
                             o =>
                             {
                                 if (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif)
@@ -666,9 +631,8 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null) ?  SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif : false;
+                                return (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null) && SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif;
                             });
-                }
                 return _cmdArreterSiteDistant;
             }
         }
@@ -681,18 +645,18 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdNettoyerSiteDistant == null)
-                {
-                    _cmdNettoyerSiteDistant = new RelayCommand(
+                _cmdNettoyerSiteDistant ??= new RelayCommand(
                             async o =>
                             {
                                 if ( SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif)
                                 {
-                                    DialogParameters param = new DialogParameters();
-                                    param.OkButtonContent = "Oui";
-                                    param.CancelButtonContent = "Non";
-                                    param.Content = $"Etes-vous sûr de vouloir supprimer le contenu de '{SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.RepertoireSiteFTPDistant}' sur le site distant ?";
-                                    param.Header = "Nettoyer site distant";
+                                    DialogParameters param = new DialogParameters
+                                    {
+                                        OkButtonContent = "Oui",
+                                        CancelButtonContent = "Non",
+                                        Content = $"Etes-vous sûr de vouloir supprimer le contenu de '{SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.RepertoireSiteFTPDistant}' sur le site distant ?",
+                                        Header = "Nettoyer site distant"
+                                    };
 
                                     ConfirmWindow win = new ConfirmWindow(param);
                                     win.ShowDialog();
@@ -727,9 +691,8 @@ namespace AppPublication.Controles
                             {
                                 // Bloque le bouton si le nettoyage est en cours
                                 if(NettoyageEnCours) { return false; }
-                                return (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne == null) ? false : !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsCleaning;
+                                return SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsCleaning;
                             });
-                }
                 return _cmdNettoyerSiteDistant;
             }
         }
@@ -743,9 +706,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdDemarrerGeneration == null)
-                {
-                    _cmdDemarrerGeneration = new RelayCommand(
+                _cmdDemarrerGeneration ??= new RelayCommand(
                             o =>
                             {
                                 SiteCoordinator.GestionnaireSitePublique.StartGeneration();
@@ -754,7 +715,6 @@ namespace AppPublication.Controles
                             {
                                 return !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSitePublique.IdCompetition) && !SiteCoordinator.GestionnaireSitePublique.IsGenerationActive;
                             });
-                }
                 return _cmdDemarrerGeneration;
             }
         }
@@ -768,9 +728,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdArreterGeneration == null)
-                {
-                    _cmdArreterGeneration = new RelayCommand(
+                _cmdArreterGeneration ??= new RelayCommand(
                             async o =>
                             {
                                 try
@@ -801,7 +759,6 @@ namespace AppPublication.Controles
                             {
                                 return SiteCoordinator.GestionnaireSitePublique.IsGenerationActive;
                             });
-                }
                 return _cmdArreterGeneration;
             }
         }
@@ -816,9 +773,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdDemarrerGenerationInterne == null)
-                {
-                    _cmdDemarrerGenerationInterne = new RelayCommand(
+                _cmdDemarrerGenerationInterne ??= new RelayCommand(
                             o =>
                             {
                                 SiteCoordinator.GestionnaireSiteInterne.StartGeneration();
@@ -827,7 +782,6 @@ namespace AppPublication.Controles
                             {
                                 return !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSiteInterne.IdCompetition) && !SiteCoordinator.GestionnaireSiteInterne.IsGenerationActive;
                             });
-                }
                 return _cmdDemarrerGenerationInterne;
             }
         }
@@ -841,9 +795,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdArreterGenerationInterne == null)
-                {
-                    _cmdArreterGenerationInterne = new RelayCommand(
+                _cmdArreterGenerationInterne ??= new RelayCommand(
                             async o =>
                             {
                                 try
@@ -874,7 +826,6 @@ namespace AppPublication.Controles
                             {
                                 return SiteCoordinator.GestionnaireSiteInterne.IsGenerationActive;
                             });
-                }
                 return _cmdArreterGenerationInterne;
             }
         }
@@ -888,9 +839,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdAfficherSiteLocal == null)
-                {
-                    _cmdAfficherSiteLocal = new RelayCommand(
+                _cmdAfficherSiteLocal ??= new RelayCommand(
                             o =>
                             {
                                 if (SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsLocal && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif)
@@ -901,9 +850,8 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return SiteCoordinator.GestionnaireSitePublique.SiteLocal != null ? SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsLocal && !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSitePublique.IdCompetition) : false;
+                                return SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsLocal && !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSitePublique.IdCompetition);
                             });
-                }
                 return _cmdAfficherSiteLocal;
             }
         }
@@ -916,9 +864,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdAfficherSiteDistant == null)
-                {
-                    _cmdAfficherSiteDistant = new RelayCommand(
+                _cmdAfficherSiteDistant ??= new RelayCommand(
                             o =>
                             {
                                 if ( (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null) && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsLocal)
@@ -931,9 +877,8 @@ namespace AppPublication.Controles
                             o =>
                             {
                                 // on ne peut pas ouvrir l'URL si on n'est pas connecte a une competition
-                                return (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null) ? !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsLocal && !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSitePublique.IdCompetition) : false;
+                                return (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null) && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsLocal && !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSitePublique.IdCompetition);
                             });
-                }
                 return _cmdAfficherSiteDistant;
             }
         }
@@ -946,9 +891,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdAfficherSiteInterne == null)
-                {
-                    _cmdAfficherSiteInterne = new RelayCommand(
+                _cmdAfficherSiteInterne ??= new RelayCommand(
                             o =>
                             {
                                 if (SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsLocal && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif)
@@ -960,9 +903,8 @@ namespace AppPublication.Controles
                             o =>
                             {
                                 // on ne peut pas ouvrir l'URL si on n'est pas connecte a une competition
-                                return SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null ? SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsLocal && !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSiteInterne.IdCompetition) : false;
+                                return SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsLocal && !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSiteInterne.IdCompetition);
                             });
-                }
                 return _cmdAfficherSiteInterne;
             }
         }
@@ -974,9 +916,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdAfficherInformations == null)
-                {
-                    _cmdAfficherInformations = new RelayCommand(
+                _cmdAfficherInformations ??= new RelayCommand(
                             o =>
                             {
                                 if (_infoWindow == null)
@@ -996,7 +936,6 @@ namespace AppPublication.Controles
                             {
                                 return true;
                             });
-                }
                 return _cmdAfficherInformations;
             }
         }
@@ -1006,9 +945,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdAfficherManuel == null)
-                {
-                    _cmdAfficherManuel = new RelayCommand(
+                _cmdAfficherManuel ??= new RelayCommand(
                             o =>
                             {
                                 if (_manuelViewer == null)
@@ -1033,7 +970,6 @@ namespace AppPublication.Controles
                             {
                                 return true;
                             });
-                }
                 return _cmdAfficherManuel;
             }
         }
@@ -1046,9 +982,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdAfficherStatistiques == null)
-                {
-                    _cmdAfficherStatistiques = new RelayCommand(
+                _cmdAfficherStatistiques ??= new RelayCommand(
                             o =>
                             {
                                 if (_statWindow == null)
@@ -1070,7 +1004,6 @@ namespace AppPublication.Controles
                             {
                                 return true;
                             });
-                }
                 return _cmdAfficherStatistiques;
             }
         }
@@ -1083,9 +1016,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdAfficherConfigurationGenerale == null)
-                {
-                    _cmdAfficherConfigurationGenerale = new RelayCommand(
+                _cmdAfficherConfigurationGenerale ??= new RelayCommand(
                             o =>
                             {
                                 var cfgWindowGenerale = new AppPublication.Views.Configuration.ConfigurationGeneraleView(SiteCoordinator);
@@ -1095,7 +1026,6 @@ namespace AppPublication.Controles
                             {
                                 return !SiteCoordinator.IsGenerationActiveOne;
                             });
-                }
                 return _cmdAfficherConfigurationGenerale;
             }
         }
@@ -1108,9 +1038,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdAfficherConfigurationSite == null)
-                {
-                    _cmdAfficherConfigurationSite = new RelayCommand(
+                _cmdAfficherConfigurationSite ??= new RelayCommand(
                             o =>
                             {
                                 var cfgWindowSite = new AppPublication.Views.Configuration.ConfigurationPublicationSiteView(SiteCoordinator);
@@ -1120,7 +1048,6 @@ namespace AppPublication.Controles
                             {
                                 return !SiteCoordinator.GestionnaireSitePublique.IsGenerationActive;
                             });
-                }
                 return _cmdAfficherConfigurationSite;
             }
         }
@@ -1133,9 +1060,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdAfficherConfigurationSiteInterne == null)
-                {
-                    _cmdAfficherConfigurationSiteInterne = new RelayCommand(
+                _cmdAfficherConfigurationSiteInterne ??= new RelayCommand(
                             o =>
                             {
                                 var cfgWindowSiteInterne = new AppPublication.Views.Configuration.ConfigurationPublicationSiteInterneView(SiteCoordinator);
@@ -1145,7 +1070,6 @@ namespace AppPublication.Controles
                             {
                                 return !SiteCoordinator.GestionnaireSiteInterne.IsGenerationActive;
                             });
-                }
                 return _cmdAfficherConfigurationSiteInterne;
             }
         }
@@ -1158,9 +1082,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdGenererTracesIncident == null)
-                {
-                    _cmdGenererTracesIncident = new RelayCommand(
+                _cmdGenererTracesIncident ??= new RelayCommand(
                             o =>
                             {
                                 string msg = string.Empty;
@@ -1198,7 +1120,6 @@ namespace AppPublication.Controles
                             {
                                 return CanManageTracesDebug;
                             });
-                }
                 return _cmdGenererTracesIncident;
             }
         }

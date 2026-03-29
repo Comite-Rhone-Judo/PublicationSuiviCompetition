@@ -35,7 +35,7 @@ namespace KernelImpl.Noyau.Structures
         /// </summary>
         /// <param name="element">element XML contenant les clubs</param>
         /// <param name="DC"></param>
-        public void lecture_clubs(XElement element)
+        public void ChargerClubs(XElement element)
         {
             ICollection<Club> clubs = Club.LectureClubs(element);
             _clubsCache.UpdateFullSnapshot(clubs);
@@ -51,7 +51,7 @@ namespace KernelImpl.Noyau.Structures
         /// </summary>
         /// <param name="element">element XML contenant les comités</param>
         /// <param name="DC"></param>
-        public void lecture_comites(XElement element)
+        public void ChargerComites(XElement element)
         {
             ICollection<Comite> comites = Comite.LectureComites(element);
             _comitesCache.UpdateFullSnapshot(comites); 
@@ -67,7 +67,7 @@ namespace KernelImpl.Noyau.Structures
         /// </summary>
         /// <param name="element">element XML contenant les comités</param>
         /// <param name="DC"></param>
-        public void lecture_secteurs(XElement element)
+        public void ChargerSecteurs(XElement element)
         {
             ICollection<Secteur> secteurs = Secteur.LectureSecteurs(element);
             _secteursCache.UpdateFullSnapshot(secteurs);      
@@ -84,7 +84,7 @@ namespace KernelImpl.Noyau.Structures
         /// </summary>
         /// <param name="element">element XML contenant les ligues</param>
         /// <param name="DC"></param>
-        public void lecture_ligues(XElement element)
+        public void ChargerLigues(XElement element)
         {
             ICollection<Ligue> ligues = Ligue.LectureLigues(element);
             _liguesCache.UpdateFullSnapshot(ligues);
@@ -100,7 +100,7 @@ namespace KernelImpl.Noyau.Structures
         /// </summary>
         /// <param name="element">element XML contenant les ligues</param>
         /// <param name="DC"></param>
-        public void lecture_pays(XElement element)
+        public void ChargerPays(XElement element)
         {
             ICollection<Pays> pays2 = Pays.LecturePays(element);
             _paysCache.UpdateFullSnapshot(pays2);

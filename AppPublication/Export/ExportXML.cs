@@ -2,20 +2,16 @@
 using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.Noyau.Deroulement;
 using FranceJudo.Metier.Noyau.Participants;
-using KernelImpl.Noyau.Deroulement;
 using FranceJudo.Metier.XML;
 using AppPublication.ExtensionNoyau;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using FranceJudo.Core.IO;
 using AppPublication.ExtensionNoyau.Engagement;
 using FranceJudo.Core.Logging;
 using AppPublication.Publication;
-using KernelImpl.Noyau.Participants;
 
 namespace AppPublication.Export
 {
@@ -538,7 +534,7 @@ namespace AppPublication.Export
             }
 
             // Fallback : on prend la première compétition disponible si la résolution a échoué
-            competition = competition ?? DC.Organisation.Competitions.FirstOrDefault();
+            competition ??= DC.Organisation.Competitions.FirstOrDefault();
             if (competition == null) return new XDocument();
 
             // =========================================================================

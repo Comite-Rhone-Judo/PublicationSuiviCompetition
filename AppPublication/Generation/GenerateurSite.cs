@@ -2,6 +2,9 @@
 using AppPublication.ExtensionNoyau.Engagement;
 using AppPublication.Export;
 using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.Export;
 using FranceJudo.UI.Wpf.ViewModels.Network;
 using System;
 using System.Collections.Generic;
@@ -12,6 +15,7 @@ using FranceJudo.Core.Logging;
 using FranceJudo.Core.Threading;
 using FranceJudo.Core.IO;
 using AppPublication.Publication;
+using FranceJudo.Metier.IO;
 
 
 namespace AppPublication.Generation
@@ -20,9 +24,9 @@ namespace AppPublication.Generation
     {
         #region MEMBRES
         // Les gestionnaires
-        private IJudoDataManager _judoDataManager;                  // Le gestionnaire de données interne
+        readonly private IJudoDataManager _judoDataManager;                  // Le gestionnaire de données interne
         private IJudoData _snapshot;                                // Le snapshot des données 
-        private ExtendedJudoData _extendedJudoData;
+        readonly private ExtendedJudoData _extendedJudoData;
         private MiniSite _site = null;                              // Le site a utilise pour le upload a distance
         private ExportSharedContext _currentContext = null;         // Le contexte de generation courant (a passer aux taches de generation)
 
@@ -54,10 +58,7 @@ namespace AppPublication.Generation
         public ConfigurationExportSite ConfigurationGeneration
         {
             get {
-                if (_cfgExport == null)
-                {
-                    _cfgExport = new ConfigurationExportSite();
-                }
+                _cfgExport ??= new ConfigurationExportSite();
                 return _cfgExport;
             }
             private set { _cfgExport = value; }
@@ -267,7 +268,7 @@ namespace AppPublication.Generation
                         }
                     }
 
-                    foreach (Phase phase in _snapshot.Deroulement.Phases)
+                    foreach (IPhase phase in _snapshot.Deroulement.Phases)
                     {
                         _taskBatcher.AddWork(p =>
                         {
@@ -371,7 +372,7 @@ namespace AppPublication.Generation
                 XDocument doc = XDocument.Load(ChecksumFileName);
 
                 // Recherche la racine
-                List<XElement> rootElem = doc.Descendants(ConstantXML.checksums).ToList();
+                List<XElement> rootElem = doc.Descendants(FileWithChecksum.checksums).ToList();
 
                 if (rootElem.Count() >= 1)
                 {
@@ -397,7 +398,7 @@ namespace AppPublication.Generation
                 // Normalement on ne devrait pas avoir de probleme d'exception ici avec la structure de repertoire
                 try
                 {
-                    output = Path.Combine(_siteUrlGenerator.PhysicalStructure.RepertoireRacine, ExportTools.getFileName(ExportEnum.Site_Checksum) + ConstantFile.ExtensionXML);
+                    output = Path.Combine(_siteUrlGenerator.PhysicalStructure.RepertoireRacine, ExportTools.getFileName(ExportEnum.Site_Checksum) + AppDirectoryManager.ExtensionXML);
                 }
                 catch (Exception ex)
                 {

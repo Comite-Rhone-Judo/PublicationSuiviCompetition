@@ -5,3 +5,15 @@ dotnet_diagnostic.IDE0290.severity = none
 
 # IDE0305: Simplifier l'initialisation des collections
 dotnet_diagnostic.IDE0305.severity = none
+
+# IDE0090: Utiliser 'new(...)'
+dotnet_diagnostic.IDE0090.severity = none
+
+# IDE0059: Assignation inutile d'une valeur
+dotnet_diagnostic.IDE0059.severity = none
+
+# IDE0028: Simplifier l'initialisation des collections
+dotnet_diagnostic.IDE0028.severity = none
+
+# IDE0063: Utiliser une instruction 'using' simple
+dotnet_diagnostic.IDE0063.severity = none

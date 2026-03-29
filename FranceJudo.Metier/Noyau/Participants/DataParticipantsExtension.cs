@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using FranceJudo.Metier.Noyau.Participants;
 
-namespace KernelImpl.Noyau.Participants
+namespace FranceJudo.Metier.Noyau.Participants
 {
     public static class DataParticipantsExtension
     {

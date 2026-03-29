@@ -10,7 +10,7 @@ namespace FranceJudo.Core.Utils
     public static class StringExtension
     {
         #region MEMBRES
-        private static Regex _regexLicence = new Regex("[F|M][0-3][0-9][0-1][0-9][1|2][0-9]{3}[A-Z|*|-]{5}[0-9]{2}");
+        readonly private static Regex _regexLicence = new Regex("[F|M][0-3][0-9][0-1][0-9][1|2][0-9]{3}[A-Z|*|-]{5}[0-9]{2}");
         #endregion
 
         #region EXTENSIONS

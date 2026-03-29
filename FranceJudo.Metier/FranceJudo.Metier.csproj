@@ -64,6 +64,7 @@
     <Compile Include="Noyau\Categories\ICategoriePoids.cs" />
     <Compile Include="Noyau\Categories\ICeintures.cs" />
     <Compile Include="Noyau\Categories\ICategoriesData.cs" />
+    <Compile Include="Noyau\Deroulement\DataDeroulementExtension.cs" />
     <Compile Include="Noyau\Deroulement\ICombat.cs" />
     <Compile Include="Noyau\Deroulement\EtatCombatEnum.cs" />
     <Compile Include="Noyau\Deroulement\EtatCombattantEnum.cs" />
@@ -100,6 +101,7 @@
     <Compile Include="Noyau\Organisation\TypeCSAEnum.cs" />
     <Compile Include="Noyau\Organisation\Ivue_epreuve.cs" />
     <Compile Include="Noyau\Organisation\Ivue_epreuve_equipe.cs" />
+    <Compile Include="Noyau\Participants\DataParticipantsExtension.cs" />
     <Compile Include="Noyau\Participants\IEpreuveJudoka.cs" />
     <Compile Include="Noyau\Participants\IEquipe.cs" />
     <Compile Include="Noyau\Participants\EtatJudokaEnum.cs" />

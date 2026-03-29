@@ -1,4 +1,5 @@
 ﻿using FranceJudo.Metier.Site;
+using FranceJudo.Core.Network.Url;
 using System;
 
 
@@ -76,7 +77,7 @@ namespace AppPublication.Publication
         protected override void BuildCompetitionUrl(string competitionId, Uri rootDomain, out string urlPath, out Uri baseUri)
         {
             urlPath = _isolate
-                ? $"{OutilsTools.TraiteChaineURL(competitionId)}/"
+                ? $"{competitionId.TraiteChaineURL()}/"
                 : $"{kCourante}/";
 
             baseUri = new Uri(rootDomain, urlPath);
