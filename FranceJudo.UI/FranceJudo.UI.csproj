@@ -1,0 +1,4173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BFFDEEFA-CCDC-4DC2-8AF5-D6509D2F7619}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FranceJudo.UI</RootNamespace>
+    <AssemblyName>FranceJudo.UI</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <LangVersion>latest</LangVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FluentFTP, Version=54.0.2.0, Culture=neutral, PublicKeyToken=f4af092b1d8df44f, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentFTP.54.0.2\lib\net472\FluentFTP.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.6.1.1\lib\net46\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.ServiceModel.Channels" />
+    <Reference Include="System.Web.DataVisualization.Design" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Telerik.Windows.Controls, Version=2024.1.130.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\RCWPF\2019.2.618.40\Telerik.Windows.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.FixedDocumentViewers">
+      <HintPath>..\lib\RCWPF\2019.2.618.40\Telerik.Windows.Controls.FixedDocumentViewers.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.Navigation">
+      <HintPath>..\lib\RCWPF\2019.2.618.40\Telerik.Windows.Controls.Navigation.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Data">
+      <HintPath>..\lib\RCWPF\2019.2.618.40\Telerik.Windows.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Documents.Core">
+      <HintPath>..\lib\RCWPF\2019.2.618.40\Telerik.Windows.Documents.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Documents.Fixed">
+      <HintPath>..\lib\RCWPF\2019.2.618.40\Telerik.Windows.Documents.Fixed.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Zip">
+      <HintPath>..\lib\RCWPF\2019.2.618.40\Telerik.Windows.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\VersionInfo.cs">
+      <Link>VersionInfo.cs</Link>
+    </Compile>
+    <Compile Include="Wpf\Behaviors\WindowHelper.cs" />
+    <Compile Include="Wpf\Converters\BoolNotConverter.cs" />
+    <Compile Include="Wpf\Converters\BoolOperationConverter.cs" />
+    <Compile Include="Wpf\Converters\BoolToVisibilityConverter.cs" />
+    <Compile Include="Wpf\Converters\ListIntToStringConverter.cs" />
+    <Compile Include="Wpf\Converters\PassthroughConverter.cs" />
+    <Compile Include="Wpf\Converters\ValueToBoolConverter.cs" />
+    <Compile Include="Wpf\Foundation\ThreadingHelper.cs" />
+    <Compile Include="Wpf\PDF\PdfHelper.cs" />
+    <Compile Include="Wpf\Foundation\RelayCommand.cs" />
+    <Compile Include="Wpf\Behaviors\WindowLoadBehavior.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Wpf\Dialogs\AlertWindow.xaml.cs">
+      <DependentUpon>AlertWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Wpf\Dialogs\ChangeLogWindow.xaml.cs">
+      <DependentUpon>ChangeLogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Wpf\Dialogs\ConfirmWindow.xaml.cs">
+      <DependentUpon>ConfirmWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Wpf\Dialogs\PdfViewer.xaml.cs">
+      <DependentUpon>PdfViewer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Wpf\Dialogs\UpdateWindow1.xaml.cs">
+      <DependentUpon>UpdateWindow1.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FranceJudo.Core\FranceJudo.Core.csproj">
+      <Project>{13cad1c5-1448-4b69-b2c9-de15aecce84b}</Project>
+      <Name>FranceJudo.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FranceJudo.Metier\FranceJudo.Metier.csproj">
+      <Project>{e49d2215-4d00-4340-b7d3-ccd85d49e60d}</Project>
+      <Name>FranceJudo.Metier</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\batman_forever\batmfa__.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\batman_forever\batmfo__.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Cabin\Cabin-Bold.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Cabin\Cabin-BoldItalic.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Cabin\Cabin-Italic.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Cabin\Cabin-Medium.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Cabin\Cabin-MediumItalic.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Cabin\Cabin-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Cabin\Cabin-SemiBold.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Cabin\Cabin-SemiBoldItalic.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Cabin\OFL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\COOPBL.TTF" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\dejavu-sans-mono\DejaVuSansMono-Bold.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\dejavu-sans-mono\DejaVuSansMono-BoldOblique.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\dejavu-sans-mono\DejaVuSansMono-Oblique.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\dejavu-sans-mono\DejaVuSansMono.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Droid_Sans\DroidSans-Bold.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Droid_Sans\DroidSans.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Droid_Sans\LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Fjalla_One\FjallaOne-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Fjalla_One\OFL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Fredoka_One\FredokaOne-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Fredoka_One\OFL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\good-times.regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Montserrat\Montserrat-Bold.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Montserrat\Montserrat-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Montserrat\OFL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Oswald\OFL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Oswald\Oswald-Bold.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Oswald\Oswald-Light.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Oswald\Oswald-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Play\OFL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Play\Play-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\PT_Sans_Narrow\OFL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\PT_Sans_Narrow\PT_Sans-Narrow-Web-Bold.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\PT_Sans_Narrow\PT_Sans-Narrow-Web-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\QUARTZMS.TTF" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Ubuntu_Condensed\UbuntuCondensed-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\Ubuntu_Condensed\UFL.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\unispace\unispace bd it.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\unispace\unispace bd.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\unispace\unispace it.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Polices\unispace\unispace rg.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Wpf\Dialogs\AlertWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Wpf\Dialogs\ChangeLogWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Wpf\Dialogs\ConfirmWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Wpf\Dialogs\PdfViewer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Wpf\Dialogs\UpdateWindow1.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\0-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\0_filled-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\1-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\1-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\1_filled-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\2-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\2_filled-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\25_percent-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\2f_double_tap-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\2f_swipe_down-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\2f_swipe_left-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\2f_swipe_right-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\2f_swipe_up-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\2f_tap-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\3-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\3-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\3_filled-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\3d_printer-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\4-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\4-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\4_filled-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\5-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\5_filled-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\50_percent-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\6-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\6_filled-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\7-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\7_filled-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\75_percent-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\8-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\8_filled-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\9-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\9_filled-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\about-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\accept_database-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\accessibility1-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\accessibility2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\action-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\actions2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\active_directory-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\activity_feed-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\Add_Column-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\add_database-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\add_file-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\add_folder-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\add_image-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\add_link-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\add_list-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\add_property-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\Add_Row-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\add_user-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\address_book-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\administrator-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\administrator-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\adventures-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\advertising-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ai-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ai-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\air_force-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\airplane_landing-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\airplane_takeoff-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\airport-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\alarm_clock-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\almost_empty-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\almost_full-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\alphabetical_sorting-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\Alphabetical_Sorting2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\alto_saxophone-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ambulance-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\amex-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ammo_tin-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\amputee-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\android-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\angel-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\angry-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ankh-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\antiseptic_cream-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\anubis-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\apartment-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\app_shield-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\applouse-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\appointment_reminders-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\approval-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\approve-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\archive-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\archive2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\area_chart-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\armchair-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\arrow-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\assistant-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\atm-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\attach-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\audience-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\audio_file-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\audio_wave-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\audio_wave2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\autograf-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\automotive-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\available_updates-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\average-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\avi-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\back-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\backspace-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bacon-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bad_decision-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\banana_split-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bandage-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bandmasters_mace-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bank-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bank_cards-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\banknotes-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bar-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bar-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\barbell-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\barber_scissors-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\barbers_chair-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\barbers_pole-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\barcode-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\barley-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\barn-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\base_jumping-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\baseball_cap-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\basketball-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bass_drum-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\be_os-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\beach-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bear-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bebo-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bed-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\beer-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\beer_bottle-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\beer_glass-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\beeswax-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\beeswax2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bell-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bell_lyre-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\berry-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bg_color-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bib-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bicycle-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bicycle-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bill-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\billing-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\binders-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\biohazard-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\biomass-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\biotech-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bird-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\birthday_cake-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bishop-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\blackberry-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\blu_ray-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\blunderbuss-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bobbin-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bold-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bomb-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\book-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\book_stack-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bookmark-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\books-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\boombox-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\boots-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\border_color-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bottle-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bottom_navigation_toolbar-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bowler_hat-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\box-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\box-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\br-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bra-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\brandenburg_gate-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bread-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\brick-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\briefcase-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\british-army-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\broken_link-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\brush-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bug-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bugle-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bull-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bunch_flowers-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bunch_ingredients-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bungalow-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\burn-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\burn_cd-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\bus-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\business_contact-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\businessman-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\businesswoman-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\button-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\buy-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cafe-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\calculator-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\calendar-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\call_transfer-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\camcoder-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\camcoder_pro-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\camo_cream-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cancel-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cannon-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\canopy-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\capacitor-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\car-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\car_battery-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\card_in_use-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\card_inserting-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cards-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cargo_ship-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\carrot-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cash_receiving-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cat-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cat-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\categorize-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cave-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cd-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\center-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\champagne-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\chance_of_storm-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\change_user-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\channel_mosaic-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cheap-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\check-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\check_book-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\checked_checkbox-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\checked_user-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\checkmark-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\checkout-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cheese-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\chest-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\chichen_itza-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\chiken-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\child_new_post-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\chili_papper-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\chip-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\chrome-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\church-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\church-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cisco_router-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\citrus-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\clapperboard-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\clarnet-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\clenched_fist-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\climbing-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\clinic-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cllipboard-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\clock-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\close_window-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\closed_topic-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cloud-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cloud_lighting-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cloud_storage-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cloudflare-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\clouds-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\clover-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\clubs-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cnc_machine-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\coat-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\coctail-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\coderwall-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\coffe_maker-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\coffee-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\coffee-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\coins-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\coking_pot-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\collaborator-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\collapse-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\comb-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\combo-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\comedy-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\comedy_mask-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\comedy2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\comments-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\commode-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\compact_camera-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\compare-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\compass-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\computer-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\conference-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\conference-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\conference_call-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\coniferous_tree-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\console-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\contacts-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\contacts2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cook-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cooker-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cooker_hood-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cool-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\copy-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\copy_link-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\corkscrew-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cornet-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cottage-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cow-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\crab-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\crib-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\crime-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\crop-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cruise_ship-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\crying-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\css-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\csv-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cup-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cursor-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cut-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\cymbals-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\dashboard-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\data_backup-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\data_configuration-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\data_encryption-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\data_protection-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\data_recovery-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\database-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\date_from-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\date_to-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\day_view-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\deciduous_tree-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\decision-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\decrease_font-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\define_location-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\degrees-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\delete-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\delete-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\Delete_Column-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\delete_database-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\delete_link-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\delete_message-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\delete_property-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\Delete_Row-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\delete_shield-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\delete_ticket-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\delivery-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\delivery_food-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\detective-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\diamonds-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\dice-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\dinghy-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\diploma1-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\diploma2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\disapprove-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\display-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\divide-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\divide2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\dj-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\dll-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\dmg-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\dna_helix-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\dnd-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\doctor-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\doctor_suitecase-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\document-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\documentary-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\documents-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\dog-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\dog-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\domain-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\donat_chart-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\dos-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\dossier-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\double_tap-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\down-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\down_circular-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\download-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\downloading_updates-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\downloads-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\drama-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\dribbble-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\drill-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\drop_zone-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\dropbox-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\duck-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\dumbbell-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\dust-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\dvd-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\dw-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\easter_cake-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\easter_egg-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\easter_rabbit-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\edit-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\edit_image-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\edit_property-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\edit_user-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\eggs-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\eggs-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\eject-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\electric_teapot-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\electricity-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\electro_devices-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\electronics-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ellips-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\empty_battery-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\empty_box-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\empty_filter-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\empty_flag-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\empty_trash-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\end-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\engine-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\engineering-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\enter-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\equal_sign-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\equal_sign2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\erase-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\eraser-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\erotic_bottom-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\erotic_breast-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\error-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ethernet_off-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ethernet_on-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\evil-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\excel-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\exe-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\exel-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\expand-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\expensive-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\explosion-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\extensions-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\external_link-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\facebook-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\factory-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\fan-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\fan2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\fantasy-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\fast_forward-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\female-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ferry-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\file-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\filing_cabinet-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\filled_box-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\filled_filter-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\filled_flag-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\film-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\film_reel-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\film2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\finger_and_thumb-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\finish_flag-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\firefox-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\fireman-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\firewall-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\first-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\fish-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\fish-32 %283%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\fish-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\fishing-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\fit_to_width-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\fl-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\flash_bang-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\flip_flop-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\flip_horizontal-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\flip_vertical-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\flow_chart-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\flower-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\flv-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\flying_stork-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\flying_stork_with_bundle-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\fog_day-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\fog_night-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\foil_space_blanket-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\folder-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\folder-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\football-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\football2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\fork-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\fork_truck-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\forrst-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\forward-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\four_fingers-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\foursquare-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\frame-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\frankenstein-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\free_bsd-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\free_shipping-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\french_fries-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\french_horn-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\fridge-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\frisbee-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\full_battery-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\full_trash-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\fw-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\gaiters-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\gallery-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\gantt_chart-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\gas-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\gas_station-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\gatling_gun-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\geisha-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\genealogy-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\generic_sorting-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\Generic_Sorting2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\generic_text-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\genie-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\geography-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\geothermal-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\german_hat-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\gif-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\gift-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\github-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\glasses-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\globe-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\globe-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\gmail_login-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\goatee-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\good_decision-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\google_alerts-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\google_blog_search-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\google_code-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\google_drive-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\google_earth-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\google_groups-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\google_images-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\google_mobile-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\google_news-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\google_plus-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\google_scholar-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\google_sketchup-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\google_translate-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\google_web_search-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\gps_device-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\gps_disconnected-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\gps_receiving-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\gps_searching-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\graduation_cap-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\grapes-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\grass-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\great_wall-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\greentech-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\grenade-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\grey-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\grid-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\group-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\guest-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\guestion-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\guitar-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\gun-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\haiku-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hail-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hair_band-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hair_brush-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hair_clip-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hair_dryer-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hair_washing_sink-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hammer-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hand_biceps-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hand_cursor-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hand_poking_tool-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\handshake-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\happy-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hat_beanie-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hazelnut-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hdd-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hdtv-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\headset-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\heart_monitor-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hearts-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\heat_map-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\helicopter-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\helmet-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\help-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\herald_trumpet-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hex_burner-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\high_connection-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\high_importance-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\historical-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\holy_bible-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\home-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\honey-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hops-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\horror-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hospital-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hospital2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hot_articcle-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hot_chocolate-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hot_dog-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hot_tube-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hotel-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\html-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hub-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\human_footprints-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\humburger-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\hydroelectric-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\icq-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\icy-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\id-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\idea-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ie-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\image_file-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\in_love-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\incendiary_grenade-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\increase_font-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\info-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\instagram-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\installing_updates-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\instapaper-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\integrated_circuit-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\integrated_webcam-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\internet-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\invisible-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\invoice-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ip_adress-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\iphone-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\iron-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\italic-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\jacket-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\jacuzzi-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\jcb-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\joker-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\Joomla-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\joystick-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\jpg-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\js-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\jump_rope-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\jumper-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\justify-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\kettle-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\key-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\key-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\keyboard-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\keyboard-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\king-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\kiss-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\knife-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\knife-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\knight-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\koran-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ladder-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ladle-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\lamp-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\lamp-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\lamp_genie-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\last-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\latern-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\layers-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\leaf-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\leaf2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\leaf3-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\led_diode-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\left-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\left-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\left_circular-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\left_footprint-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\left_navigation_toolbar-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\left_round-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\left_shoe-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\leg-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\lego-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\length-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\library-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\lifebuoy-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\like-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\like_outline-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\likes-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\line-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\line-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\line_width-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\link-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\linkedin-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\linux-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\linux_client-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\list-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\list_ingredients-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\listen-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\literature-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\little_rain-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\little_snow-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\lock-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\log_cabin-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\login-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\logout-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\lol-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\long_beard-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\loudspeaker-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\low_connection-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\low_importance-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\lyre-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\mac_client-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\mac_os-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\maestro-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\magazin-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\magazine-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\make_dicision-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\male-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\manager-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\map-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\map_marker-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\marine_radio-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\marker-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\martian-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\mastercard-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\matches-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\math-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\maximize_window-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\medal-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\medium_connection-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\megafone1-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\megafone2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\memmory_slot-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\menorah-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\mens_underwear-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\mess_tin-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\message-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\message_outline-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\micro_sd-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\microphone-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\microphone2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\micropore_tape-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\microwave-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\military_backpack_radio-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\milk-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\milk-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\mind_map-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\minimize_window-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\minus-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\minus-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\minus2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\missed_call-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\missile-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\mixer-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\mobile_home-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\moderator-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\money_bag-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\moneybox-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\monitor-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\month_view-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\moon-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\mortar-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\mosque-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\motorcycle-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\mouse-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\mov-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\moved_topic-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\movies-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\mp3-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\mpg-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\multiply-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\multiply2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\museum-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\mushroom-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\mushroom_cloud-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\music-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\music-32 %283%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\music-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\music_conduktor-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\music_record-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\mustache-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\mustache-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\mute-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\my_topic-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\myspace-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\mysql-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\nail-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\nappy-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\nas-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\neck-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\needle-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\negative_dynamic-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\netscape-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\network-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\network_cable-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\network_card-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\neutral_dicision-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\new-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\new_post-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\news-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\newspaper-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\next-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\nightvision-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\no_connection-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\no_smoking-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\not_listen-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\note-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\note-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\notebook-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\novel-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\novel-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\nui1-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\nui2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\numerical_sorting-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\Numerical_Sorting2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\nurse-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\nut-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ogg-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ok-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\old_time_camera-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\one_finger-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\one_free-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\one_note-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\one_page-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\online-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\online_support-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\open_in_browser-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\opera-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\opera_glasses-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\organization-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\origami-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\os2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\outline-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\outline_star-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\outlook-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\overhead_crane-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pacifier-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\package-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\padding-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\paint_brush-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\paint_bucket-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\palm_tree-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\paper-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\paper_plane-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\parallel_tasks-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\partly_cloudy_day-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\partly_cloudy_night-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pause-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pawn-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\paypal-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pdf-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\peanuts-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pencil-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pepper_shaker-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\percentage-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\percentage2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\phone-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\phone-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\phone1-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\phone2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\php-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\php-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\physics-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\piccolo-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pickup-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\picture-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pictures-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pie-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pig-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pill-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pin-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pin-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pin_cushion-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pin2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pincette-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pinch-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ping_pong-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\piston-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pizza-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\planner-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\plasmid-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\plaster-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\play-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\plugin-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\plus-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\plus-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\plus_minus-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\plus_minus2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\plus2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\png-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pocket_lantern-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\point_objects-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\poison-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\police-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\polish_cloth-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\poll_topic-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\polygom-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\polyline-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\poo-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\popular_topic-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\porn-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\positive_dynamic-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\powder-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\powerpoint-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\powerpoint-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\prawn-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\predator-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\prelum-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pressure-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pretzel-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\previous-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\price_tag-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\price_tag_euro-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\print-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\printer-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\printerest-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\private-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\private-32 %283%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\private-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\processor-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\product-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ps-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ps-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\psd-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\psyhology-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\public-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\publisher-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\purchase_order-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\purse-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pussy_willow-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\puzzle-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\pyramids-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\python-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\qr_code-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\queen-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\queen_gb-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\question_shield-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\quote-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\rabbit-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\rack-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\radar_plot-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\radio1-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\radio2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\radioactive-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\railroad_car-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\rain-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\rainy_weather-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\raiway_station-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\rar-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\rating-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\rattle-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\read_message-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\record-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\rectangle-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\recurring_appointment-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\recycle_sign-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\recycling-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\reddit-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\redeem-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\redo-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\refresh-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\refresh_shield-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\remote_working-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\remove_image-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\remove_user-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\rename-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\repeat-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\reply-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\research-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\resistor-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\resize-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\response-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\restaurant-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\restaurant-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\restore_window-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\restriction_shield-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\return-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\reuse-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\reviewer-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\rewind-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\rifle-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\right-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\right-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\right_circular-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\right_footprint-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\right_round-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\right_shoe-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ring-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\rj45-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\road-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\robot-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\rock-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\rocket-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\rook-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\rotate-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\rounded_rectangle-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\router-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\royal_marines-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\royal_navy-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\rpg-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\rss-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\rucksach-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\rugby-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ruler-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\running-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\running_man-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sad-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\safari-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\safety_pin-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sagrada_familia-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sail_boat-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sale-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sale-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\salt_shaker-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sandglass-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\save-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\save_as-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\saxophone-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\scale-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\scales-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\scanner-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\scatter_plot-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\school-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sci_fi-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\scissors-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\scissors-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\scooter-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\screenshot-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\screw-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\screwdriver-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\scrunchy-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sd-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sdtv-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\search-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\self_distract_button-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\self_service_kiosk-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sell-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\send_file-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\serial_tasks-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\server-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\services-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\settings-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\settings-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\settings2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\share_point-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sheep-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sheep_on_bike-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sheep2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\shellfish-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\shield-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\shift-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\shirt-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\shoe_brush1-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\shoe_brush2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\shoe_man-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\shoe_polish-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\shoe_woman-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\shoes-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\shop-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\shoping_bag-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\shoping_basket-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\shoping_cart-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\shoping_cart_filled-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\shopping_basket-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\short_beard-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\shorts-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\shoulders-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\show_property-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\shuffle-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\side_drum-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sideburns-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\signal_horn-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\signpost-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sinchronize-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\skiing-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\skip_to_start-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\skydiving-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\skydiving_gear-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\skype-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sleepin_mat-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sleeping-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sleeping_bag-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sleet-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\slot_machine-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\slr_camera-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\slr_camera2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\smoke_explosion-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\smoking-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sniper_rifle-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\snow-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\snow_storm-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\so-so-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\socks-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\soda_bottle-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sofa-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\software_box-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\solar_panel-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\solutions-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sombrero-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\soundcloud-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\soy-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\spades-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\spark_plug-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\speaker-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\speech_bubble-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\speed-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\speedometer-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\spoon-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sport-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\spread-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\square_root-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\square_root2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ssd-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\stachoverflow_com-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\stack-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\stack_of_photos-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\stadium-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\star-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\star_of_david-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\start-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\statistics-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\steam-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\steering_wheel-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\stethoscope-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\stop-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\stopwatch-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\stork-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\stork_with_bundle-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\storm-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\street_view-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\stroller-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\stubble-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\student-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\stumbleupon-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sugar-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sun-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sun_glasses-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\support-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\surface-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\surprised-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\survival_bag-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\sushi-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\swimming-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\swipe_down-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\swipe_left-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\swipe_right-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\swipe_up-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\switch-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\switch_off-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\switch_on-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\syringe-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\t-shirt-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\table-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tabletop_radio-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\taco-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tag-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\talk-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tap-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tape_drive-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tape_measure-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tape_measure-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tattoo-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tattoo_machine-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\taxi-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tea-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\teapot-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tear_of_calendar-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\temperature-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tennis-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tent-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\test_tube-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\text-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\theatre_masks-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\thermometer-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\thermometer-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\thimble-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\thor_hammer-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\three_fingers-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\thumbs_down-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\thumbs_up-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\ticket-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\time-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\timeline-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\timer-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tire-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\today-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tomato-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tongue-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tool_box-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\top_navigation_toolbar-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\topic-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\torah-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\torrent-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\torso-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\track-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tractor-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tragedy_mask-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\trailer-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\train-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\trainers-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tram-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tram2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\trambone-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\trangia_stove-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\transistor-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\trash-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\treble_clef-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tree_structure-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\trekking-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\triangular_bandage-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\triller-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\trolleybus-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\trousers-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\trumpet-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tuba-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tumblr-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\tv-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\twitter-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\two_fingers-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\two_hands-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\two_page-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\umbrella-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\unchecked_checkbox-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\undo-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\unix-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\unlock-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\unpin-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\unpin2-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\up-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\up_circular-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\upload-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\usb_connected-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\usb_disconnected-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\usb_off-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\usb_on-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\user-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\user-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\user_shield-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\utorrent-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\vampire-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\van_dyke-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\variable-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\very_popular_topic-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\vhs-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\video_call-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\video_file-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\video_projector-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\View_Details-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\viking_helmet-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\viking_ship-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\violin-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\visa-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\visible-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\vk.com-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\vkontakte-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\vlc-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\voip_gateway-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\volume-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\volume_down-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\volume_up-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\vpn-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\walkie_talkie_radio-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wallet-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wallpaper_roll-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wardrobe-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\warning_shield-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\washing_machine-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\watch-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\water-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\water_bottle-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\web_shield-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\webbing-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\webcam-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wedding_cake-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wedding_day-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wedding_photo-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wedding_rings-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\week_view-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\weght-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\weightlift-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\werewolf-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\western-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wheat-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wheel-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\whole_hand-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\widescreen_tv-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wifi-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wii-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wikipedia-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\win-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wind_rose-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wind_turbine-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\windows-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\windows-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\windows_client-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\windows8-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wine_bottle-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wine_glass-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wink-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wipes-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wired_network-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\witch-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wizard-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wma-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\wolfram_alpha-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\womens_underwear-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\word-32 %282%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\word-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\Wordpress-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\worker-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\workers-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\workstation-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\world_map-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\worldwide_location-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\xbox-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\xing-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\xml-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\xray-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\xylophone-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\yacht-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\yin_yang-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\yoga-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\youtube-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\zip-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\zombie-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\zoom_in-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\black\zoom_out-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\white\3-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\white\checked_checkbox-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\white\help-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\white\search-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\white\settings-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\white\tree_structure-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Wpf\Resources\Media\Icons\white\unchecked_checkbox-32.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

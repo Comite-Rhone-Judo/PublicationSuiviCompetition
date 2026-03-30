@@ -63,14 +63,14 @@
 
                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" IsDefault="True" Margin="0 0 15 0" Command="{Binding CmdLancerRecherche}" Height="35">
                         <WrapPanel Orientation="Horizontal">
-                            <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/wizard-32.png" Height="25" Margin="5 0"/>
+                            <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/wizard-32.png" Height="25" Margin="5 0"/>
                             <Label Content="Rechercher" Style="{StaticResource ButtonLabelStyle}" />
                         </WrapPanel>
                     </telerik:RadButton>
 
                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="0 0 15 0" Command="{Binding CmdAnnulerRecherche}" Height="35">
                         <WrapPanel Orientation="Horizontal">
-                            <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/whole_hand-32.png" Height="25" Margin="5 0"/>
+                            <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/whole_hand-32.png" Height="25" Margin="5 0"/>
                             <Label Content="Arrêter" Style="{StaticResource ButtonLabelStyle}" />
                         </WrapPanel>
                     </telerik:RadButton>

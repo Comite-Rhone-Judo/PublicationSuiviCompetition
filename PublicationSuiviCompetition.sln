@@ -26,7 +26,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Installer", "Installer\Inst
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FranceJudo.Core", "FranceJudo.Core\FranceJudo.Core.csproj", "{13CAD1C5-1448-4B69-B2C9-DE15AECCE84B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FranceJudo.UI.Wpf", "FranceJudo.UI\FranceJudo.UI.Wpf.csproj", "{BFFDEEFA-CCDC-4DC2-8AF5-D6509D2F7619}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FranceJudo.UI", "FranceJudo.UI\FranceJudo.UI.csproj", "{BFFDEEFA-CCDC-4DC2-8AF5-D6509D2F7619}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FranceJudo.Metier", "FranceJudo.Metier\FranceJudo.Metier.csproj", "{E49D2215-4D00-4340-B7D3-CCD85D49E60D}"
 EndProject

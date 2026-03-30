@@ -324,9 +324,9 @@
       <Project>{e49d2215-4d00-4340-b7d3-ccd85d49e60d}</Project>
       <Name>FranceJudo.Metier</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FranceJudo.UI\FranceJudo.UI.Wpf.csproj">
+    <ProjectReference Include="..\FranceJudo.UI\FranceJudo.UI.csproj">
       <Project>{bffdeefa-ccdc-4dc2-8af5-d6509d2f7619}</Project>
-      <Name>FranceJudo.UI.Wpf</Name>
+      <Name>FranceJudo.UI</Name>
     </ProjectReference>
     <ProjectReference Include="..\JudoClient\JudoClient.csproj">
       <Project>{7536edc7-a7a2-404d-babd-e78fade367cc}</Project>

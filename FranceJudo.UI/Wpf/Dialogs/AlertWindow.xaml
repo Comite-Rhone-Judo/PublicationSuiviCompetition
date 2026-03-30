@@ -19,7 +19,7 @@
         </Grid.ColumnDefinitions>
 
        
-            <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/white/help-32.png" Margin="15" Height="50"
+            <Image Source="pack://application:,,,/FranceJudo.UI.Wpf;component/Resources/Media/Icons/white/help-32.png" Margin="15" Height="50"
                Grid.Column="0" Grid.Row="0"/>
        
 
@@ -28,7 +28,7 @@
         <WrapPanel HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="2" Margin="10" >
             <telerik:RadButton x:Name="ButOk" Click="ButOk_Click" Width="70" Height="35" telerik:StyleManager.Theme="Expression_Dark">
                 <WrapPanel Orientation="Horizontal">
-                    <!--<Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/ok-32.png" Height="25" Margin="5 0"/>-->
+                    <!--<Image Source="pack://application:,,,/FranceJudo.UI.Wpf;component/Resources/Media/Icons/black/ok-32.png" Height="25" Margin="5 0"/>-->
                     <Label x:Name="ButOkLabel"  Content="Ok" Foreground="White"/>
                 </WrapPanel>
             </telerik:RadButton>         

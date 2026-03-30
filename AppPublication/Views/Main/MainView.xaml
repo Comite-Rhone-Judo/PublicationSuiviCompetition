@@ -43,7 +43,7 @@
                         <WrapPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Margin="20 10 10 10">
                             <Grid>
                                 <telerik:RadButton Name="NetworkConnecte" ToolTip="Connecter au server" Grid.Column="0"
-                                   Tag="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/high_connection-32.png"
+                                   Tag="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/high_connection-32.png"
                                    Visibility="{Binding Connection.Client, Converter={StaticResource ClientConverter}}"
                                                    Command="{Binding Path=CmdAcquitterErreurCommunication}">
                                     <Button.RenderTransform>
@@ -65,7 +65,7 @@
                                     </Button.Template>
                                 </telerik:RadButton>
                                 <telerik:RadButton Name="NetworkNonConnecte" ToolTip="Non connecter au server" Grid.Column="1" 
-                                   Tag="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/no_connection-32.png"
+                                   Tag="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/no_connection-32.png"
                                     Visibility="{Binding Connection.Client, Converter={StaticResource ClientConverter}, ConverterParameter=Not}">
                                     <Button.RenderTransform>
                                         <ScaleTransform ScaleX="1.0" ScaleY="1.0"></ScaleTransform>
@@ -103,50 +103,50 @@
                                                HorizontalAlignment="Center" 
                                                VerticalAlignment="Center">
                                         <Rectangle.OpacityMask>
-                                            <ImageBrush ImageSource="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/warning_shield-32.png" Stretch="Uniform"/>
+                                            <ImageBrush ImageSource="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/warning_shield-32.png" Stretch="Uniform"/>
                                         </Rectangle.OpacityMask>
                                     </Rectangle>
                                 </Border>
                             </Grid>
 
                             <telerik:RadButton Name="BoutonFindServer" Click="BoutonFindServer_Click_1" 
-                                   Tag="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/notebook-32.png" 
+                                   Tag="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/notebook-32.png" 
                                    Margin="5 0 0 0" Style="{StaticResource RadButtonStyleToolbar}" ToolTip="Trouver le server">
                             </telerik:RadButton>
 
                             <telerik:RadButton Name="ButSite" ToolTip="Avancement compétition sur le site local" Style="{StaticResource RadButtonStyleToolbar}"
-                                   Focusable="False" Tag="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/home-32.png" Margin="35 0 0 0"
+                                   Focusable="False" Tag="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/home-32.png" Margin="35 0 0 0"
                                        Command="{Binding Path=CmdAfficherSiteLocal}">
                             </telerik:RadButton>
 
                             <telerik:RadButton Name="ButSiteDistant" ToolTip="Avancement compétition sur le site distant" Style="{StaticResource RadButtonStyleToolbar}"
-                                   Focusable="False" Tag="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/worldwide_location-32.png" Margin="10 0 0 0"
+                                   Focusable="False" Tag="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/worldwide_location-32.png" Margin="10 0 0 0"
                                    Command="{Binding Path=CmdAfficherSiteDistant}">
                             </telerik:RadButton>
 
                             <telerik:RadButton Name="ButSiteInterne" ToolTip="Site Interne Live" Style="{StaticResource RadButtonStyleToolbar}"
-                                   Focusable="False" Tag="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/channel_mosaic-32.png" Margin="10 0 0 0"
+                                   Focusable="False" Tag="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/channel_mosaic-32.png" Margin="10 0 0 0"
                                        Command="{Binding Path=CmdAfficherSiteInterne}">
                             </telerik:RadButton>
 
 
                             <telerik:RadButton ToolTip="Statistiques de fonctionnement" Style="{StaticResource RadButtonStyleToolbar}"
-                                   Focusable="False" Tag="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/statistics-32.png" Margin="35 0 0 0"
+                                   Focusable="False" Tag="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/statistics-32.png" Margin="35 0 0 0"
                                        Command="{Binding Path=CmdAfficherStatistiques}">
                             </telerik:RadButton>
                         </WrapPanel>
 
                         <WrapPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" Margin="20 10 10 10" HorizontalAlignment="Right">
                             <telerik:RadButton ToolTip="Configuration des paramètres générauyx" Style="{StaticResource RadButtonStyleToolbar}"
-                                Focusable="False" Tag="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/settings2-32.png" Margin="25 0 0 0"
+                                Focusable="False" Tag="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/settings2-32.png" Margin="25 0 0 0"
                                 Command="{Binding Path=CmdAfficherConfigurationGenerale}">
                             </telerik:RadButton>
                             <telerik:RadButton ToolTip="Information sur le logiciel" Style="{StaticResource RadButtonStyleToolbar}"
-                                Focusable="False" Tag="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/info-32.png" Margin="25 0 0 0"
+                                Focusable="False" Tag="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Margin="25 0 0 0"
                                 Command="{Binding Path=CmdAfficherInformations}">
                             </telerik:RadButton>
                             <telerik:RadButton ToolTip="Manuel" Style="{StaticResource RadButtonStyleToolbar}"
-                                Focusable="False" Tag="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/book-32.png" Margin="10 0 20 0"
+                                Focusable="False" Tag="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/book-32.png" Margin="10 0 20 0"
                                 Command="{Binding Path=CmdAfficherManuel}">
                             </telerik:RadButton>
                         </WrapPanel>
@@ -269,21 +269,21 @@
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 15 0"
                                                    Command="{Binding Path=CmdDemarrerGeneration}" Height="35">
                                         <WrapPanel Orientation="Horizontal">
-                                            <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/play-32.png" Height="25" Margin="5 0"/>
+                                            <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/play-32.png" Height="25" Margin="5 0"/>
                                             <Label Content="Démarrer" Style="{StaticResource ButtonLabelStyle}" />
                                         </WrapPanel>
                                     </telerik:RadButton>
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="15 0 0 0" Height="35"
                                                    Command="{Binding Path=CmdArreterGeneration}">
                                         <WrapPanel Orientation="Horizontal">
-                                            <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/stop-32.png" Height="25" Margin="5 0"/>
+                                            <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/stop-32.png" Height="25" Margin="5 0"/>
                                             <Label Content="Arrêter" Style="{StaticResource ButtonLabelStyle}" />
                                         </WrapPanel>
                                     </telerik:RadButton>
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="10 0 10 0"
                                                         Command="{Binding Path=CmdAfficherConfigurationSite}" Height="35">
                                         <WrapPanel Orientation="Horizontal">
-                                            <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/settings2-32.png" Height="25" Margin="5 0"/>
+                                            <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/settings2-32.png" Height="25" Margin="5 0"/>
                                             <Label Content="Configurer ..." Style="{StaticResource ButtonLabelStyle}"/>
                                         </WrapPanel>
                                     </telerik:RadButton>
@@ -292,21 +292,21 @@
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 15 0"
                    Command="{Binding Path=CmdDemarrerGenerationInterne}" Height="35">
                                         <WrapPanel Orientation="Horizontal">
-                                            <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/play-32.png" Height="25" Margin="5 0"/>
+                                            <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/play-32.png" Height="25" Margin="5 0"/>
                                             <Label Content="Démarrer" Style="{StaticResource ButtonLabelStyle}" />
                                         </WrapPanel>
                                     </telerik:RadButton>
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="15 0 0 0" Height="35"
                    Command="{Binding Path=CmdArreterGenerationInterne}">
                                         <WrapPanel Orientation="Horizontal">
-                                            <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/stop-32.png" Height="25" Margin="5 0"/>
+                                            <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/stop-32.png" Height="25" Margin="5 0"/>
                                             <Label Content="Arrêter" Style="{StaticResource ButtonLabelStyle}" />
                                         </WrapPanel>
                                     </telerik:RadButton>
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="10 0 10 0"
      Command="{Binding Path=CmdAfficherConfigurationSiteInterne}" Height="35">
                                         <WrapPanel Orientation="Horizontal">
-                                            <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/settings2-32.png" Height="25" Margin="5 0"/>
+                                            <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/settings2-32.png" Height="25" Margin="5 0"/>
                                             <Label Content="Configurer ..." Style="{StaticResource ButtonLabelStyle}"/>
                                         </WrapPanel>
                                     </telerik:RadButton>
@@ -355,14 +355,14 @@
                                                 <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="10 0 0 0" Width="32" HorizontalAlignment="Left"
                                        Click="QRCodeLocalCopy_Click"
                                        IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif}">
-                                                    <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier le QRCode"/>
+                                                    <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier le QRCode"/>
                                                 </telerik:RadButton>
                                                 <WrapPanel Orientation="Horizontal" >
                                                     <Border BorderThickness="1" BorderBrush="Gray" Margin="10 10 10 10">
                                                         <TextBlock Text="{Binding ElementName=QRCodeLocal, Path=Text, Mode=OneWay}" Style="{StaticResource TextBoxTextStyle}" Width="430" Margin=" 0 0 0 0"/>
                                                     </Border>
                                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="0 0 10 0" Width="32" Height="32" HorizontalAlignment="Right" Command="{Binding Path=CmdCopyUrlLocal}">
-                                                        <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier l'URL"/>
+                                                        <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier l'URL"/>
                                                     </telerik:RadButton>
                                                 </WrapPanel>
                                             </WrapPanel>
@@ -396,13 +396,13 @@
                                     <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
                                         <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 20 0" Command="{Binding Path=CmdDemarrerSiteLocal}">
                                             <WrapPanel Orientation="Horizontal">
-                                                <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/play-32.png" Height="25" Margin="5 0"/>
+                                                <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/play-32.png" Height="25" Margin="5 0"/>
                                                 <Label Content="Démarrer" />
                                             </WrapPanel>
                                         </telerik:RadButton>
                                         <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="20 0 0 0" Command="{Binding Path=CmdArreterSiteLocal}">
                                             <WrapPanel Orientation="Horizontal">
-                                                <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/stop-32.png" Height="25" Margin="5 0"/>
+                                                <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/stop-32.png" Height="25" Margin="5 0"/>
                                                 <Label Content="Arrêter" />
                                             </WrapPanel>
                                         </telerik:RadButton>
@@ -439,14 +439,14 @@
                                                 <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="10 0 0 0" Width="32" HorizontalAlignment="Left"
                                        Click="QRCodeEcransAppelCopy_Click"
                                        IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif}">
-                                                    <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier le QRCode"/>
+                                                    <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier le QRCode"/>
                                                 </telerik:RadButton>
                                                 <WrapPanel Orientation="Horizontal" >
                                                     <Border BorderThickness="1" BorderBrush="Gray" Margin="10 10 10 10">
                                                         <TextBlock Text="{Binding ElementName=QRCodeEcransAppel, Path=Text, Mode=OneWay}" Style="{StaticResource TextBoxTextStyle}" Width="430" Margin=" 0 0 0 0"/>
                                                     </Border>
                                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="0 0 10 0" Width="32" Height="32" HorizontalAlignment="Right" Command="{Binding Path=CmdCopyUrlEcransAppel}">
-                                                        <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier l'URL"/>
+                                                        <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier l'URL"/>
                                                     </telerik:RadButton>
                                                 </WrapPanel>
                                             </WrapPanel>
@@ -480,13 +480,13 @@
                                     <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
                                         <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 20 0" Command="{Binding Path=CmdDemarrerSiteInterne}">
                                             <WrapPanel Orientation="Horizontal">
-                                                <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/play-32.png" Height="25" Margin="5 0"/>
+                                                <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/play-32.png" Height="25" Margin="5 0"/>
                                                 <Label Content="Démarrer" />
                                             </WrapPanel>
                                         </telerik:RadButton>
                                         <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="20 0 0 0" Command="{Binding Path=CmdArreterSiteInterne}">
                                             <WrapPanel Orientation="Horizontal">
-                                                <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/stop-32.png" Height="25" Margin="5 0"/>
+                                                <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/stop-32.png" Height="25" Margin="5 0"/>
                                                 <Label Content="Arrêter" />
                                             </WrapPanel>
                                         </telerik:RadButton>
@@ -529,14 +529,14 @@
                                             <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="10 0 0 0" Width="32" HorizontalAlignment="Left"
                                                                Click="QRCodeDistantCopy_Click"
                                                                IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif}">
-                                                <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier le QRCode"/>
+                                                <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier le QRCode"/>
                                             </telerik:RadButton>
                                             <WrapPanel Orientation="Horizontal" >
                                                 <Border BorderThickness="1" BorderBrush="Gray" Margin="10 10 10 10">
                                                     <TextBlock Text="{Binding ElementName=QRCodeDistant, Path=Text, Mode=OneWay}" Style="{StaticResource TextBoxTextStyle}" Width="430" Margin=" 0 0 0 0"/>
                                                 </Border>
                                                 <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark" Margin="0 0 10 0" Width="32" Height="32" HorizontalAlignment="Right" Command="{Binding Path=CmdCopyUrlDistant}">
-                                                    <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier l'URL"/>
+                                                    <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/copy-32.png" Height="26" Width="26" ToolTip="Copier l'URL"/>
                                                 </telerik:RadButton>
                                             </WrapPanel>
                                         </WrapPanel>
@@ -564,7 +564,7 @@
 
 
 
-                                            <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/info-32.png" Height="25" Margin="5 0" DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.Status, Mode=OneWay}" Style="{StaticResource InfoTooltipStyle}"/>
+                                            <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="25" Margin="5 0" DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.Status, Mode=OneWay}" Style="{StaticResource InfoTooltipStyle}"/>
                                         </StackPanel>
                                         <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                         <StackPanel Orientation="Horizontal" >
@@ -604,7 +604,7 @@
                                                     <Binding ElementName="AdvancedPwd"/>
                                                 </MultiBinding>
                                             </Button.CommandParameter>
-                                            <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/check_book-32.png" Height="26" Width="26" ToolTip="Tester la connexion FTP"/>
+                                            <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/check_book-32.png" Height="26" Width="26" ToolTip="Tester la connexion FTP"/>
                                         </telerik:RadButton>
                                     </Grid>
                                     <CheckBox Content="Isoler les compétitions" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=SiteCoordinator.GestionnaireSitePublique.IsolerCompetition}" IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif, Converter={StaticResource BoolNotConverter}}" Margin="10 0 0 0"/>
@@ -696,19 +696,19 @@
                                             </MultiBinding>
                                         </Button.CommandParameter>
                                         <WrapPanel Orientation="Horizontal">
-                                            <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/play-32.png" Height="25" Margin="5 0"/>
+                                            <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/play-32.png" Height="25" Margin="5 0"/>
                                             <Label Content="Démarrer" />
                                         </WrapPanel>
                                     </telerik:RadButton>
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="20 0 0 0" Command="{Binding Path=CmdArreterSiteDistant}">
                                         <WrapPanel Orientation="Horizontal">
-                                            <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/stop-32.png" Height="25" Margin="5 0"/>
+                                            <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/stop-32.png" Height="25" Margin="5 0"/>
                                             <Label Content="Arrêter" />
                                         </WrapPanel>
                                     </telerik:RadButton>
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="20 0 0 0" Command="{Binding Path=CmdNettoyerSiteDistant}">
                                         <WrapPanel Orientation="Horizontal">
-                                            <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/trash-32.png" Height="25" Margin="5 0"/>
+                                            <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/trash-32.png" Height="25" Margin="5 0"/>
                                             <Label Content="Nettoyer" />
                                         </WrapPanel>
                                     </telerik:RadButton>
