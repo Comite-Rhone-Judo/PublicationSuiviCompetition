@@ -24,7 +24,9 @@ namespace FranceJudo.Core.IO
 
         public FilteredFileInfo(FileInfo fileInfo, string baseSuffix)
         {
-            _baseSuffix = baseSuffix;
+            // TODO A remplacer par ResourcePath.XXXX
+            _baseSuffix = baseSuffix.EndsWith(".") ? baseSuffix : baseSuffix + ".";
+
             if (null != fileInfo)
             {
                 _fileinfo = fileInfo;

@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Xml;
-using FranceJudo.Core.Reflection;
+﻿using FranceJudo.Core.Reflection;
 using FranceJudo.Metier.Resources;
 using FranceJudo.Metier.XML;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml;
 
 namespace FranceJudo.Metier.Structures
 {
@@ -10,46 +11,53 @@ namespace FranceJudo.Metier.Structures
     {
         public static IList<Structure> GetStructures()
         {
-            IList<Structure> result = new List<Structure>();
+            // 1. Utilisation de l'initialiseur de collection pour plus de lisibilité
+            IList<Structure> result = new List<Structure>
+    {
+        new Structure
+        {
+            Nom = "FRANCE JUDO",
+            Id = "FRANCE JUDO",
+            Ordre = 1,
+            Type = TypeStructureEnum.National
+        }
+    };
 
-            XmlReader structureReader = XmlReader.Create(AssemblyResourceHelper.GetAssembyResource(ResourceDictionnay.Referentiels_Structures));
-
-            XmlDocument doc = new XmlDocument();
-            doc.Load(structureReader);
-
-            Structure item1 = new Structure
+            // 2. On récupère le flux via notre méthode raccourcie, et on le place dans un bloc 'using' !
+            // Cela garantit que la mémoire est libérée instantanément à la fin de la lecture.
+            using (Stream stream = MetierResources.GetStructuresXml())
             {
-                Nom = "FRANCE JUDO",
-                Id = "FRANCE JUDO",
-                Ordre = 1,
-                Type = TypeStructureEnum.National
-            };
-            result.Add(item1);
+                if (stream == null) return result; // Sécurité si le fichier est introuvable
 
-            XmlNodeList xligues = doc.DocumentElement.SelectNodes("descendant::ligue");
-            foreach (XmlNode xligue in xligues)
-            {
-                Structure item = new Structure
+                XmlDocument doc = new XmlDocument();
+
+                // 3. Pas besoin de XmlReader : XmlDocument.Load() sait lire un Stream nativement !
+                doc.Load(stream);
+
+                XmlNodeList xligues = doc.DocumentElement.SelectNodes("descendant::ligue");
+                foreach (XmlNode xligue in xligues)
                 {
-                    Nom = "LIGUE " + xligue.Attributes[ConstantXML.Structure_Nom].Value,
-                    Id = xligue.Attributes[ConstantXML.Structure_ID].Value,
-                    Ordre = 2,
-                    Type = TypeStructureEnum.Ligue
-                };
-                result.Add(item);
-            }
+                    result.Add(new Structure
+                    {
+                        // Ajout de '?.' par sécurité au cas où un nœud XML n'aurait pas l'attribut
+                        Nom = "LIGUE " + xligue.Attributes[ConstantXML.Structure_Nom]?.Value,
+                        Id = xligue.Attributes[ConstantXML.Structure_ID]?.Value,
+                        Ordre = 2,
+                        Type = TypeStructureEnum.Ligue
+                    });
+                }
 
-            XmlNodeList xcomites = doc.DocumentElement.SelectNodes("descendant::comite");
-            foreach (XmlNode xcomite in xcomites)
-            {
-                Structure item = new Structure
+                XmlNodeList xcomites = doc.DocumentElement.SelectNodes("descendant::comite");
+                foreach (XmlNode xcomite in xcomites)
                 {
-                    Nom = "COMITE " + xcomite.Attributes[ConstantXML.Structure_Nom].Value,
-                    Id = xcomite.Attributes[ConstantXML.Structure_ID].Value,
-                    Ordre = 3,
-                    Type = TypeStructureEnum.Comite
-                };
-                result.Add(item);
+                    result.Add(new Structure
+                    {
+                        Nom = "COMITE " + xcomite.Attributes[ConstantXML.Structure_Nom]?.Value,
+                        Id = xcomite.Attributes[ConstantXML.Structure_ID]?.Value,
+                        Ordre = 3,
+                        Type = TypeStructureEnum.Comite
+                    });
+                }
             }
 
             return result;

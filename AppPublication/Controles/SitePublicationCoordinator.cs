@@ -256,7 +256,7 @@ namespace AppPublication.Controles
                                                     // Verifie la taille de l'image
                                                     if (w <= 200 && h <= 200)
                                                     {
-                                                        FilteredFileInfo newItem = new FilteredFileInfo(new FileInfo(imgFile), ResourceDictionnay.Site_Img);
+                                                        FilteredFileInfo newItem = new FilteredFileInfo(new FileInfo(imgFile), MetierResources.Folders.SiteImg);
 
                                                         // Copy le fichier dans le répertoire de travail de l'application
                                                         File.Copy(newItem.FullName, Path.Combine(AppDirectoryManager.RessoucesImgDir, newItem.Name));
@@ -361,7 +361,7 @@ namespace AppPublication.Controles
         private void InitFichiersLogo()
         {
             // Recupere le repertoire des images du site
-            IEnumerable<FilteredFileInfo> files = ExportTools.EnumerateCustomLogoFiles().Select(o => new FilteredFileInfo(o, ResourceDictionnay.Site_Img)).OrderBy(o => o.Name);
+            IEnumerable<FilteredFileInfo> files = ExportTools.EnumerateCustomLogoFiles().Select(o => new FilteredFileInfo(o, MetierResources.Folders.SiteImg)).OrderBy(o => o.Name);
 
             // Liste les fichiers logos
             FichiersLogo = new ObservableCollection<FilteredFileInfo>(files);

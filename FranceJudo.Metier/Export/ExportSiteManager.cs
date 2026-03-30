@@ -1,6 +1,7 @@
 ﻿using System.Xml.Linq;
 using System.Xml.Xsl;
-using FranceJudo.Core.Export; // Le métier a le droit de référencer le Core
+using FranceJudo.Core.Export;
+using FranceJudo.Metier.Resources; // Le métier a le droit de référencer le Core
 
 namespace FranceJudo.Metier.Export
 {
@@ -15,7 +16,7 @@ namespace FranceJudo.Metier.Export
             string xslt = ExportTools.GetXsltSite(export_type);
 
             // 2. Appel à l'outil technique : génère le HTML
-            ExportHTML.ToHTML(xml, fileSave, argsList, xslt, fileExtension, useCache);
+            ExportHTML.ToHTML(xml, fileSave, argsList, xslt, MetierResources.Dictionary, fileExtension, useCache);
         }
     }
 }

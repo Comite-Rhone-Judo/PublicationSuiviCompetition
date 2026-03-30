@@ -1,13 +1,22 @@
-﻿using System;
+﻿using FranceJudo.Core.Reflection;
+using System;
 using System.IO;
+using System.Linq;
 using System.Xml;
-using FranceJudo.Core.Reflection;
 
 
 namespace FranceJudo.Core.XML
 {
     public class InAssemblyUrlResolver : XmlResolver
     {
+        // On stocke le dictionnaire de l'assembly cible
+        private readonly AssemblyResourceDictionary _dictionary;
+
+        public InAssemblyUrlResolver(AssemblyResourceDictionary dictionary)
+        {
+            _dictionary = dictionary ?? throw new ArgumentNullException(nameof(dictionary));
+        }
+
         public override Uri ResolveUri(Uri baseUri, string relativeUri)
         {
             // C'est une resource embarquee donc, juste nom suffit
@@ -17,24 +26,28 @@ namespace FranceJudo.Core.XML
 
         public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn)
         {
-            // Recupere l'URL au sein de l'assembly et remplace les '/' par des '.'
+            // 1. Remplace les '/' par des '.' pour correspondre au format des ressources
             string resName = absoluteUri.OriginalString.Replace("/", ".");
 
-            // Cherche la resource contenant le nom dans l'URI
-            // Stream res = ResourcesTools.SearchAssemblyResource(absoluteUri.OriginalString);
-            Stream res = AssemblyResourceHelper.GetAssembyResource(resName);
+            // 2. Essaye une recherche directe ciblée
+            Stream res = _dictionary.GetStream(resName);
 
+            // 3. Fallback : L'équivalent exact de votre ancien SearchAssemblyResource
             if (res == null)
             {
-                // Essaye une recherche complete
-                res = AssemblyResourceHelper.SearchAssemblyResource(absoluteUri.OriginalString);
-                if (res == null)
+                // Cherche le premier nom de ressource qui contient la chaîne
+                string foundName = _dictionary.AllResources
+                    .FirstOrDefault(r => r.Contains(resName) || r.Contains(absoluteUri.OriginalString));
+
+                if (foundName != null)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(absoluteUri));
+                    res = _dictionary.GetStream(foundName);
                 }
             }
 
-            return res;
+            return res ?? throw new ArgumentOutOfRangeException(
+                nameof(absoluteUri),
+                $"Impossible de trouver la ressource XSLT liée : {absoluteUri.OriginalString}");
         }
     }
 }

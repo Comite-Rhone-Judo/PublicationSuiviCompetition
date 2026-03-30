@@ -21,7 +21,7 @@ namespace AppPublication.Export
             DelaiActualisationClientSec = delAC;
             NbProchainsCombats = nbPC;
             MsgProchainsCombats = pMsg;
-            Logo = string.IsNullOrEmpty(pLogo) ? ResourceDictionnay.Site_Img_DefaultLogo : pLogo;
+            Logo = string.IsNullOrEmpty(pLogo) ? MetierResources.Files.DefaultLogo : pLogo;
             PouleEnColonnes = pec;
             PouleToujoursEnColonnes = ptec;
             TailleMaxPouleColonnes = maxpc;
@@ -40,7 +40,7 @@ namespace AppPublication.Export
         public long DelaiActualisationClientSec = 30;
         public int NbProchainsCombats = 6;
         public string MsgProchainsCombats = string.Empty;
-        public string Logo = ResourceDictionnay.Site_Img_DefaultLogo;
+        public string Logo = MetierResources.Files.DefaultLogo;
 
         public bool PouleEnColonnes = false;
         public bool PouleToujoursEnColonnes = false;

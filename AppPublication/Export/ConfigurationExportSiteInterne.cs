@@ -10,12 +10,12 @@ namespace AppPublication.Export
     {
         public ConfigurationExportSiteInterne(string pLogo = "", long pDelaiDeroulementSec = 10, int pNbProchainsCombats = 6)
         {
-            Logo = string.IsNullOrEmpty(pLogo) ? ResourceDictionnay.Site_Img_DefaultLogo : pLogo;
+            Logo = string.IsNullOrEmpty(pLogo) ? MetierResources.Files.DefaultLogo : pLogo;
             DelaiDeroulementSec = pDelaiDeroulementSec;
             NbProchainsCombats = pNbProchainsCombats;
         }
 
-        public string Logo = ResourceDictionnay.Site_Img_DefaultLogo;
+        public string Logo = MetierResources.Files.DefaultLogo;
         public long DelaiDeroulementSec = 10;
         public int NbProchainsCombats = 6;
         public string UrlRedirecteur = string.Empty;

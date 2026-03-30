@@ -1,14 +1,15 @@
-﻿using System;
+﻿using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
+using FranceJudo.Core.Reflection;
+using FranceJudo.Core.XML;
+using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq; // Indispensable pour l'usage de XDocument
 using System.Xml.Xsl;
-using FranceJudo.Core.IO;
-using FranceJudo.Core.Logging;
-using FranceJudo.Core.Reflection;
-using FranceJudo.Core.XML;
 
 namespace FranceJudo.Core.Export
 {
@@ -25,19 +26,19 @@ namespace FranceJudo.Core.Export
         /// <param name="argsList"></param>
         /// <param name="xslt_st"></param>
         /// <param name="fileExtension"></param>
-        public static void ToHTML(XDocument xml, string fileSave, XsltArgumentList argsList, string xslt_st, string fileExtension = "html", bool useCache = true)
+        public static void ToHTML(XDocument xml, string fileSave, XsltArgumentList argsList, string xslt_st, AssemblyResourceDictionary resDict, string fileExtension = "html", bool useCache = true)
         {
             XslCompiledTransform xslt = null;
 
             if (useCache)
             {
-                var lazyXslt = _xsltCache.GetOrAdd(xslt_st, key => new Lazy<XslCompiledTransform>(() => GetXsltFromResource(key)));
+                var lazyXslt = _xsltCache.GetOrAdd(xslt_st, key => new Lazy<XslCompiledTransform>(() => GetXsltFromResource(key, resDict)));
                 xslt = lazyXslt.Value;
             }
             else
             {
                 // Lit directement sans passer par le cache
-                xslt = GetXsltFromResource(xslt_st);
+                xslt = GetXsltFromResource(xslt_st, resDict);
             }
 
             string fileSaveWithExt = Path.ChangeExtension(fileSave, fileExtension);
@@ -71,7 +72,7 @@ namespace FranceJudo.Core.Export
         /// </summary>
         /// <param name="xslt_st"></param>
         /// <returns></returns>
-        private static XslCompiledTransform GetXsltFromResource(string xslt_st)
+        private static XslCompiledTransform GetXsltFromResource(string xslt_st, AssemblyResourceDictionary resDict)
         {
             XslCompiledTransform xslt = null;
             XmlReaderSettings readerSettings = new XmlReaderSettings
@@ -85,15 +86,23 @@ namespace FranceJudo.Core.Export
                 EnableDocumentFunction = true,
                 EnableScript = true
             };
-            var resource = AssemblyResourceHelper.GetAssembyResource(xslt_st);
 
-            // L'ajout du bloc using garantit la bonne libération du flux de la ressource
-            using (XmlReader xsltReader = XmlReader.Create(resource, readerSettings))
+            // On utilise le dictionnaire pour obtenir le flux de manière ciblée
+            using (Stream resourceStream = resDict.GetStream(xslt_st))
             {
-                xslt = new XslCompiledTransform();
-                InAssemblyUrlResolver resolver = new InAssemblyUrlResolver();
-                xslt.Load(xsltReader, settings, resolver);
-            }
+                if (resourceStream == null)
+                    throw new FileNotFoundException($"Le fichier XSLT '{xslt_st}' est introuvable dans le dictionnaire.");
+
+                using (XmlReader xsltReader = XmlReader.Create(resourceStream, readerSettings))
+                {
+                    xslt = new XslCompiledTransform();
+
+                    // On passe notre dictionnaire au Resolver pour qu'il sache où chercher les <xsl:include> !
+                    InAssemblyUrlResolver resolver = new InAssemblyUrlResolver(resDict);
+
+                    xslt.Load(xsltReader, settings, resolver);
+                }
+            } // Le Stream resourceStream est proprement libéré ici !
 
             return xslt;
         }

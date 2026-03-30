@@ -1,13 +1,14 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using FranceJudo.Core.Export;
 using FranceJudo.Core.IO;
 using FranceJudo.Core.Reflection;
-using FranceJudo.Metier.Site;
-using FranceJudo.Metier.Resources;
 using FranceJudo.Metier.IO;
+using FranceJudo.Metier.Resources;
+using FranceJudo.Metier.Site;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 // using NLog.LayoutRenderers;
 
 namespace FranceJudo.Metier.Export
@@ -183,63 +184,30 @@ namespace FranceJudo.Metier.Export
         /// <returns></returns>
         public static List<string> ExportEmbeddedImg<T>(bool regenere, bool addCustom, UrlGeneratorBase<T> structSite) where T : PhysicalStructureBase
         {
-            List<string> result = new List<string>();
             string dir = structSite.PhysicalStructure.RepertoireImg();
 
-            // string directory = ExportTools.getDirectory(true, null, null).Replace("common", "");
+            // On détermine AVANT l'extraction si le dossier va être créé ou purgé.
+            // Cela nous indique si on doit copier les fichiers custom.
+            bool isNewlyCreated = regenere || !Directory.Exists(dir);
 
-            if (regenere)
+            // 1. Export des images de base via notre méthode commune
+            List<string> result = ExportResourceFolder(dir, MetierResources.Folders.SiteImg, regenere);
+
+            // 2. Gestion des fichiers personnalisés
+            if (addCustom && isNewlyCreated)
             {
-                FileSystemHelper.DeleteDirectory(dir);
-            }
+                List<FileInfo> customFiles = EnumerateCustomLogoFiles();
+                string prefixToRemove = MetierResources.Dictionary.GetFullName(MetierResources.Folders.SiteImg) + ".";
 
-            if (!Directory.Exists(dir))
-            {
-                FileSystemHelper.CreateDirectorie(dir);
-
-                foreach (string s1 in AssemblyResourceHelper.GetAssembyResourceName())
+                foreach (FileInfo cfile in customFiles)
                 {
-                    if (s1.Contains(ResourceDictionnay.Site_Img))
+                    string cleanCustomName = cfile.Name.Replace(prefixToRemove, "");
+                    string destFile = Path.Combine(dir, cleanCustomName);
+
+                    if (!result.Contains(destFile))
                     {
-                        string fileName = Path.Combine(dir, s1.Replace(ResourceDictionnay.Site_Img, ""));
-                        var resource = AssemblyResourceHelper.GetAssembyResource(s1);
-
-                        FileSystemHelper.NeedAccessFile(fileName);
-                        try
-                        {
-                            using (FileStream fs = new FileStream(fileName, FileMode.Create))
-                            {
-                                byte[] bytes = new byte[resource.Length];
-                                resource.Read(bytes, 0, (int)resource.Length);
-                                fs.Write(bytes, 0, bytes.Length);
-                                resource.Close();
-                            }
-                        }
-                        catch { }
-                        finally
-                        {
-                            FileSystemHelper.ReleaseFile(fileName);
-                        }
-                        result.Add(fileName);
-                    }
-                }
-
-                // Si on doit ajouter des fichiers personnalises
-                if (addCustom)
-                {
-                    // Enumere les fichiers dans le repertoire de travail
-                    List<FileInfo> customFiles = EnumerateCustomLogoFiles();
-
-                    // Copie les nouveaux fichiers trouves
-                    foreach (FileInfo cfile in customFiles)
-                    {
-                        // il faut tenir compte du nom compose pour les resources
-                        string destFile = Path.Combine(dir, cfile.Name.Replace(ResourceDictionnay.Site_Img, ""));
-                        if (!result.Contains(destFile))
-                        {
-                            File.Copy(cfile.FullName, destFile);
-                            result.Add(destFile);
-                        }
+                        File.Copy(cfile.FullName, destFile, true);
+                        result.Add(destFile);
                     }
                 }
             }
@@ -265,82 +233,15 @@ namespace FranceJudo.Metier.Export
         public static List<string> ExportEmbeddedStyleAndJS<T>(bool regenere, UrlGeneratorBase<T> structSite) where T : PhysicalStructureBase
         {
             List<string> result = new List<string>();
-            string dirJs = structSite.PhysicalStructure.RepertoireJs();
+
             string dirStyle = structSite.PhysicalStructure.RepertoireCss();
+            string dirJs = structSite.PhysicalStructure.RepertoireJs();
 
-            // string directory = ExportTools.getDirectory(true, null, null).Replace("common", "");
+            // 1. Export des Styles
+            result.AddRange(ExportResourceFolder(dirStyle, MetierResources.Folders.SiteStyle, regenere));
 
-            if (regenere)
-            {
-                FileSystemHelper.DeleteDirectory(dirStyle);
-                FileSystemHelper.DeleteDirectory(dirJs);
-            }
-
-
-            if (!Directory.Exists(dirStyle))
-            {
-                FileSystemHelper.CreateDirectorie(dirStyle);
-
-                foreach (string s1 in AssemblyResourceHelper.GetAssembyResourceName())
-                {
-                    if (s1.Contains(ResourceDictionnay.Site_Style))
-                    {
-                        string fileName = Path.Combine(dirStyle, s1.Replace(ResourceDictionnay.Site_Style, ""));
-                        var resource = AssemblyResourceHelper.GetAssembyResource(s1);
-
-                        FileSystemHelper.NeedAccessFile(fileName);
-                        try
-                        {
-                            using (FileStream fs = new FileStream(fileName, FileMode.Create))
-                            {
-                                byte[] bytes = new byte[resource.Length];
-                                resource.Read(bytes, 0, (int)resource.Length);
-                                fs.Write(bytes, 0, bytes.Length);
-                                resource.Close();
-                            }
-                        }
-                        catch { }
-                        finally
-                        {
-                            FileSystemHelper.ReleaseFile(fileName);
-                        }
-                        result.Add(fileName);
-                    }
-                }
-            }
-
-            if (!Directory.Exists(dirJs))
-            {
-                FileSystemHelper.CreateDirectorie(dirJs);
-
-                foreach (string s1 in AssemblyResourceHelper.GetAssembyResourceName())
-                {
-                    if (s1.Contains(ResourceDictionnay.Site_Js))
-                    {
-                        string fileName = Path.Combine(dirJs, s1.Replace(ResourceDictionnay.Site_Js, ""));
-
-                        var resource = AssemblyResourceHelper.GetAssembyResource(s1);
-
-                        FileSystemHelper.NeedAccessFile(fileName);
-                        try
-                        {
-                            using (FileStream fs = new FileStream(fileName, FileMode.Create))
-                            {
-                                byte[] bytes = new byte[resource.Length];
-                                resource.Read(bytes, 0, (int)resource.Length);
-                                fs.Write(bytes, 0, bytes.Length);
-                                resource.Close();
-                            }
-                        }
-                        catch { }
-                        finally
-                        {
-                            FileSystemHelper.ReleaseFile(fileName);
-                        }
-                        result.Add(fileName);
-                    }
-                }
-            }
+            // 2. Export des Scripts JS
+            result.AddRange(ExportResourceFolder(dirJs, MetierResources.Folders.SiteJs, regenere));
 
             return result;
         }
@@ -351,32 +252,34 @@ namespace FranceJudo.Metier.Export
         /// <returns></returns>
         public static string GetEmbeddedJS()
         {
-            string result = "";
+            // Utilisation de StringBuilder pour des performances optimales
+            StringBuilder result = new StringBuilder();
 
-            foreach (string js in AssemblyResourceHelper.GetAssembyResourceName())
+            // On boucle uniquement sur les ressources contenues dans le dossier JS
+            foreach (string jsName in MetierResources.Dictionary.FindByFolder(MetierResources.Folders.SiteJs))
             {
-                if (!js.Contains(ResourceDictionnay.Site_Js))
+                // On récupère le flux
+                using (Stream resourceStream = MetierResources.Dictionary.GetStream(jsName))
                 {
-                    continue;
-                }
+                    if (resourceStream == null) continue;
 
-                var resource = AssemblyResourceHelper.GetAssembyResource(js);
-
-                using (StreamReader reader = new StreamReader(resource, Encoding.UTF8))
-                {
-                    result += reader.ReadToEnd() + Environment.NewLine;
+                    // On lit et on ajoute le contenu
+                    using (StreamReader reader = new StreamReader(resourceStream, Encoding.UTF8))
+                    {
+                        result.AppendLine(reader.ReadToEnd());
+                    }
                 }
             }
 
-            return result;
+            return result.ToString();
         }
 
-        /// <summary>
-        /// Retourne le nom de la feuille de style de traitement pour le site
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static string GetXsltSite(ExportEnum type)
+    /// <summary>
+    /// Retourne le nom de la feuille de style de traitement pour le site
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public static string GetXsltSite(ExportEnum type)
         {
             return ExportTools.GetXsltFile(type) + "_site.xslt";
         }
@@ -477,65 +380,66 @@ namespace FranceJudo.Metier.Export
                 */
 
 
+                // TODO A remplacer par ResourcePath.Combine
                 case ExportEnum.Site_Menu:
-                    name = ResourceDictionnay.Site_Xslt + "menu";
+                    name = MetierResources.Folders.SiteXslt + "menu";
                     break;
                 case ExportEnum.Site_Index:
-                    name = ResourceDictionnay.Site_Xslt + "index";
+                    name = MetierResources.Folders.SiteXslt + "index";
                     break;
                 case ExportEnum.Site_QrCode:
-                    name = ResourceDictionnay.Site_Xslt + "qrcode";
+                    name = MetierResources.Folders.SiteXslt + "qrcode";
                     break;
                 case ExportEnum.Site_Tapis1:
-                    name = ResourceDictionnay.Site_Xslt + "temp_1";
+                    name = MetierResources.Folders.SiteXslt + "temp_1";
                     break;
                 case ExportEnum.Site_Tapis2:
-                    name = ResourceDictionnay.Site_Xslt + "temp_2";
+                    name = MetierResources.Folders.SiteXslt + "temp_2";
                     break;
                 case ExportEnum.Site_Tapis4:
-                    name = ResourceDictionnay.Site_Xslt + "temp_4";
+                    name = MetierResources.Folders.SiteXslt + "temp_4";
                     break;
                 case ExportEnum.Site_ListTapis:
-                    name = ResourceDictionnay.Site_Xslt + "list_tapis";
+                    name = MetierResources.Folders.SiteXslt + "list_tapis";
                     break;
                 case ExportEnum.Site_FeuilleCombat:
-                    name = ResourceDictionnay.Site_Xslt + "feuille_matchs";
+                    name = MetierResources.Folders.SiteXslt + "feuille_matchs";
                     break;
                 case ExportEnum.Site_FeuilleCombatTapis:
-                    name = ResourceDictionnay.Site_Xslt + "feuille_matchs";
+                    name = MetierResources.Folders.SiteXslt + "feuille_matchs";
                     break;
                 case ExportEnum.Site_Poule_Resultat:
-                    name = ResourceDictionnay.Site_Xslt + "feuille_resultat";
+                    name = MetierResources.Folders.SiteXslt + "feuille_resultat";
                     break;
                 case ExportEnum.Site_Tableau_Competition:
-                    name = ResourceDictionnay.Site_Xslt + "feuille_competition";
+                    name = MetierResources.Folders.SiteXslt + "feuille_competition";
                     break;
                 case ExportEnum.Site_ClassementFinal:
-                    name = ResourceDictionnay.Site_Xslt + "classement_final";
+                    name = MetierResources.Folders.SiteXslt + "classement_final";
                     break;
                 case ExportEnum.Site_AffectationTapis:
-                    name = ResourceDictionnay.Site_Xslt + "affectation_tapis";
+                    name = MetierResources.Folders.SiteXslt + "affectation_tapis";
                     break;
                 case ExportEnum.Site_Engagements:
-                    name = ResourceDictionnay.Site_Xslt + "groupe_engagements";
+                    name = MetierResources.Folders.SiteXslt + "groupe_engagements";
                     break;
                 case ExportEnum.Site_MenuEngagements:
-                    name = ResourceDictionnay.Site_Xslt + "engagements";
+                    name = MetierResources.Folders.SiteXslt + "engagements";
                     break;
                 case ExportEnum.Site_MenuClassement:
-                    name = ResourceDictionnay.Site_Xslt + "classement";
+                    name = MetierResources.Folders.SiteXslt + "classement";
                     break;
                 case ExportEnum.Site_MenuAvancement:
-                    name = ResourceDictionnay.Site_Xslt + "avancement";
+                    name = MetierResources.Folders.SiteXslt + "avancement";
                     break;
                 case ExportEnum.Site_MenuProchainCombats:
-                    name = ResourceDictionnay.Site_Xslt + "prochains_combats";
+                    name = MetierResources.Folders.SiteXslt + "prochains_combats";
                     break;
                 case ExportEnum.Site_FooterScript:
-                    name = ResourceDictionnay.Site_Xslt + "footer_script";
+                    name = MetierResources.Folders.SiteXslt + "footer_script";
                     break;
                 case ExportEnum.Site_Interne_EcranAppel:
-                        name = ResourceDictionnay.Site_Xslt + "ecrans_appel";
+                        name = MetierResources.Folders.SiteXslt + "ecrans_appel";
                     break;
                 default:
                     return "";
@@ -543,5 +447,42 @@ namespace FranceJudo.Metier.Export
 
             return name;
         }
+
+        #region METHODES PRIVEES
+        /// <summary>
+        /// Extrait tout le contenu d'un dossier virtuel de ressources vers un dossier physique sur le disque.
+        /// </summary>
+        private static List<string> ExportResourceFolder(string targetDirectory, string resourceFolder, bool regenere)
+        {
+            List<string> result = new List<string>();
+
+            if (regenere)
+            {
+                FileSystemHelper.DeleteDirectory(targetDirectory);
+            }
+
+            if (!Directory.Exists(targetDirectory))
+            {
+                FileSystemHelper.CreateDirectorie(targetDirectory);
+
+                // On prépare le préfixe à retirer (ex: "FranceJudo.Metier.Resources.Site.style.")
+                string prefixToRemove = MetierResources.Dictionary.GetFullName(resourceFolder) + ".";
+
+                foreach (string resourceName in MetierResources.Dictionary.FindByFolder(resourceFolder))
+                {
+                    string cleanFileName = resourceName.Replace(prefixToRemove, "");
+                    string fullFilePath = Path.Combine(targetDirectory, cleanFileName);
+
+                    // On délègue la mécanique des flux et des accès disques au Core
+                    if (ResourceExtractor.ExtractToFile(MetierResources.Dictionary, resourceName, fullFilePath))
+                    {
+                        result.Add(fullFilePath);
+                    }
+                }
+            }
+
+            return result;
+        }
+        #endregion
     }
 }

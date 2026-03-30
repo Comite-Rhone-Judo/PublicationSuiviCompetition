@@ -116,6 +116,7 @@
     <Compile Include="Noyau\Structures\IPays.cs" />
     <Compile Include="Noyau\Structures\ISecteur.cs" />
     <Compile Include="Regles\ScoresProLeague.cs" />
+    <Compile Include="Resources\MetierResources.cs" />
     <Compile Include="Resources\Site\PhysicalStructureBase.cs" />
     <Compile Include="Resources\Site\UrlGeneratorBase.cs" />
     <Compile Include="Export\TypeExportSiteEnum.cs" />
@@ -124,7 +125,6 @@
     <Compile Include="Network\ServerCommandEnum.cs" />
     <Compile Include="Network\ServerResponseEnum.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources\ResourceDictionnay.cs" />
     <Compile Include="Structures\EntitePublicationFFJudo.cs" />
     <Compile Include="XML\ConstantXML.cs" />
     <Compile Include="Structures\LectureStructures.cs" />

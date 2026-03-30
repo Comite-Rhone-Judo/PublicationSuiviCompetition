@@ -18,6 +18,7 @@ using FranceJudo.Core.Foundation;
 using KernelImpl;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -950,7 +951,10 @@ namespace AppPublication.Controles
                             {
                                 if (_manuelViewer == null)
                                 {
-                                    System.IO.Stream manuelStream = AssemblyResourceHelper.GetAssembyResource("AppPublication.Documentation.ManuelUtilisateur.pdf", true);
+                                    // Genere un dictionnaire de ressources pour l'assembly courant
+                                    AssemblyResourceDictionary appDict = new AssemblyResourceDictionary(typeof(DialogControleur).Assembly);
+
+                                    Stream manuelStream = appDict.GetStream("AppPublication.Documentation.ManuelUtilisateur.pdf");
                                     if(manuelStream != null)
                                     {
                                         byte[] bytes = manuelStream.ReadAllBytes();

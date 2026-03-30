@@ -562,9 +562,9 @@
         <StackPanel Orientation="Horizontal">
             <Label Content="{Binding IEP}">
             </Label>
-            <Label Content="{Binding machine}"></Label>
-            <Label Content="{Binding user}"></Label>
-            <Label Content="{Binding competition}"></Label>
+            <Label Content="{Binding Machine}"></Label>
+            <Label Content="{Binding User}"></Label>
+            <Label Content="{Binding Competition}"></Label>
         </StackPanel>
     </DataTemplate>
 </ResourceDictionary>

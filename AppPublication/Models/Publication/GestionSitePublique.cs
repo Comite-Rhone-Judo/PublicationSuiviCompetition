@@ -895,7 +895,7 @@ namespace AppPublication.Models.Publication
             {
                 // 1. Chargement avec LINQ to XML
                 XDocument doc;
-                using (var stream = AssemblyResourceHelper.GetAssembyResource(ResourceDictionnay.Referentiels_PublicationFFJUDO))
+                using (var stream = MetierResources.GetPublicationFFJudoXml())
                 {
                     doc = XDocument.Load(stream);
                 }

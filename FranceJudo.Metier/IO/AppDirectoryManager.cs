@@ -1,4 +1,5 @@
 ﻿using FranceJudo.Core.Environment;
+using FranceJudo.Core.Export;
 using FranceJudo.Core.IO;
 using FranceJudo.Core.Reflection;
 using FranceJudo.Metier.Resources;
@@ -153,7 +154,7 @@ namespace FranceJudo.Metier.IO
         /// Initialise les chemins statiques, crée les dossiers physiques et extrait les ressources.
         /// ATTENTION : Doit être appelée une seule fois au démarrage de l'application !
         /// </summary>
-        public static void Initialize(string dataPath, string appPath)
+        public static void Initialize(string dataPath, string _)
         {
             _directoriesToCreate = new List<string>();
             string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -228,40 +229,23 @@ namespace FranceJudo.Metier.IO
             ExtractResources();
         }
 
+        /// <summary>
+        /// Extrait les ressources necessaires
+        /// </summary>
         private static void ExtractResources()
         {
-            string[] files = AssemblyResourceHelper.GetAssembyResourceName();
-            foreach (string s1 in files)
+            // On ne boucle QUE sur les ressources du dossier des images du site
+            foreach (string resourceName in MetierResources.Dictionary.FindByFolder(MetierResources.Folders.SiteImg))
             {
-                if ((!s1.Contains(ResourceDictionnay.Root)) && !(s1.Contains(ResourceDictionnay.Site_Img)))
-                {
-                    continue;
-                }
-
-                var (targetDir, fileName) = ResolveResourceDestination(s1);
+                var (targetDir, fileName) = ResolveResourceDestination(resourceName);
 
                 if (string.IsNullOrEmpty(targetDir) || string.IsNullOrEmpty(fileName))
                     continue;
 
                 string fullFilePath = Path.Combine(targetDir, fileName);
-                var resource = AssemblyResourceHelper.GetAssembyResource(s1);
 
-                try
-                {
-                    FileSystemHelper.NeedAccessFile(fullFilePath);
-                    using (FileStream fs = new FileStream(fullFilePath, FileMode.Create))
-                    {
-                        byte[] bytes = new byte[resource.Length];
-                        resource.Read(bytes, 0, (int)resource.Length);
-                        fs.Write(bytes, 0, bytes.Length);
-                        resource.Close();
-                    }
-                }
-                catch { }
-                finally
-                {
-                    FileSystemHelper.ReleaseFile(fullFilePath);
-                }
+                // Appel de l'extracteur général (qui gère les droits d'accès et l'écriture disque)
+                ResourceExtractor.ExtractToFile(MetierResources.Dictionary, resourceName, fullFilePath);
             }
         }
 
@@ -287,8 +271,15 @@ namespace FranceJudo.Metier.IO
                 return (MediaFlags_dir, resourceName.Replace(ResourceDictionnay.Media_Flags, string.Empty));
 
             */
-            if (resourceName.Contains(ResourceDictionnay.Site_Img))
-                return (RessoucesImgDir, resourceName.Replace(ResourceDictionnay.Site_Img, string.Empty));
+
+            // TODO ici il faut faire attention car MetierResources.Folders.SiteImg est en relatif
+            if (resourceName.Contains(MetierResources.Folders.SiteImg)) {
+
+                // TODO A remplacer par ResourcePath.XXXX
+                string root = MetierResources.Dictionary.GetFullName(MetierResources.Folders.SiteImg);
+                root = root.EndsWith(".") ? root : root + ".";
+                return (RessoucesImgDir, resourceName.Replace(root , string.Empty));
+            }
 
             // Aucune des resources n'est nécessaire pour la generation (on ne travaille que avec des fichiers embarques)
             return (string.Empty, string.Empty);
