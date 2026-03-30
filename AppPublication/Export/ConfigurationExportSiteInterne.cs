@@ -2,7 +2,7 @@
 using System.Xml.Linq;
 using FranceJudo.Metier.Resources;
 using FranceJudo.Metier.XML;
-using FranceJudo.UI.Wpf.ViewModels.Environment;
+using FranceJudo.Core.Environment;
 
 namespace AppPublication.Export
 {
@@ -10,12 +10,12 @@ namespace AppPublication.Export
     {
         public ConfigurationExportSiteInterne(string pLogo = "", long pDelaiDeroulementSec = 10, int pNbProchainsCombats = 6)
         {
-            Logo = string.IsNullOrEmpty(pLogo) ? ConstantResource.Export_DefaultLogo : pLogo;
+            Logo = string.IsNullOrEmpty(pLogo) ? ResourceDictionnay.Site_Img_DefaultLogo : pLogo;
             DelaiDeroulementSec = pDelaiDeroulementSec;
             NbProchainsCombats = pNbProchainsCombats;
         }
 
-        public string Logo = ConstantResource.Export_DefaultLogo;
+        public string Logo = ResourceDictionnay.Site_Img_DefaultLogo;
         public long DelaiDeroulementSec = 10;
         public int NbProchainsCombats = 6;
         public string UrlRedirecteur = string.Empty;

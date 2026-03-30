@@ -12,37 +12,43 @@ namespace FranceJudo.Metier.Structures
         {
             IList<Structure> result = new List<Structure>();
 
-            XmlReader structureReader = XmlReader.Create(AssemblyResourceHelper.GetAssembyResource(ConstantResource.Structures));
+            XmlReader structureReader = XmlReader.Create(AssemblyResourceHelper.GetAssembyResource(ResourceDictionnay.Referentiels_Structures));
 
             XmlDocument doc = new XmlDocument();
             doc.Load(structureReader);
 
-            Structure item1 = new Structure();
-            item1.nom = "FRANCE JUDO";
-            item1.id = "FRANCE JUDO";
-            item1.ordre = 1;
-            item1.type = TypeStructureEnum.National;
+            Structure item1 = new Structure
+            {
+                Nom = "FRANCE JUDO",
+                Id = "FRANCE JUDO",
+                Ordre = 1,
+                Type = TypeStructureEnum.National
+            };
             result.Add(item1);
 
             XmlNodeList xligues = doc.DocumentElement.SelectNodes("descendant::ligue");
             foreach (XmlNode xligue in xligues)
             {
-                Structure item = new Structure();
-                item.nom = "LIGUE " + xligue.Attributes[ConstantXML.Structure_Nom].Value;
-                item.id = xligue.Attributes[ConstantXML.Structure_ID].Value;
-                item.ordre = 2;
-                item.type = TypeStructureEnum.Ligue;
+                Structure item = new Structure
+                {
+                    Nom = "LIGUE " + xligue.Attributes[ConstantXML.Structure_Nom].Value,
+                    Id = xligue.Attributes[ConstantXML.Structure_ID].Value,
+                    Ordre = 2,
+                    Type = TypeStructureEnum.Ligue
+                };
                 result.Add(item);
             }
 
             XmlNodeList xcomites = doc.DocumentElement.SelectNodes("descendant::comite");
             foreach (XmlNode xcomite in xcomites)
             {
-                Structure item = new Structure();
-                item.nom = "COMITE " + xcomite.Attributes[ConstantXML.Structure_Nom].Value;
-                item.id = xcomite.Attributes[ConstantXML.Structure_ID].Value;
-                item.ordre = 3;
-                item.type = TypeStructureEnum.Comite;
+                Structure item = new Structure
+                {
+                    Nom = "COMITE " + xcomite.Attributes[ConstantXML.Structure_Nom].Value,
+                    Id = xcomite.Attributes[ConstantXML.Structure_ID].Value,
+                    Ordre = 3,
+                    Type = TypeStructureEnum.Comite
+                };
                 result.Add(item);
             }
 
@@ -53,10 +59,10 @@ namespace FranceJudo.Metier.Structures
 
     public class Structure
     {
-        public string nom { get; set; }
-        public string id { get; set; }
-        public int ordre { get; set; }
-        public TypeStructureEnum type { get; set; }
+        public string Nom { get; set; }
+        public string Id { get; set; }
+        public int Ordre { get; set; }
+        public TypeStructureEnum Type { get; set; }
     }
 
     public enum TypeStructureEnum

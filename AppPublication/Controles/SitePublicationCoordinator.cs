@@ -7,9 +7,9 @@ using FranceJudo.Metier.IO;
 using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Export;
 using FranceJudo.Metier.Resources;
-
-using FranceJudo.UI.Wpf.Dialogs;
 using FranceJudo.UI.Wpf.Foundation;
+using FranceJudo.UI.Wpf.Dialogs;
+using FranceJudo.Core.Foundation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,29 +18,38 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using NLog;
 
 namespace AppPublication.Controles
 {
     public class SitePublicationCoordinator : NotificationBase
     {
         #region MEMBERS
-        GestionSitePublique _gestionSite;
-        GestionSiteInterne _gestionSiteInterne;
+        private readonly GestionSitePublique _gestionSite;
+        private readonly GestionSiteInterne _gestionSiteInterne;
 
         #endregion
 
         #region CONSTRUCTEUR
         public SitePublicationCoordinator(IJudoDataManager dataManager, GestionStatistiques statMgr)
         {
-            // Initialise la liste des logos
-            InitFichiersLogo();
+            try
+            {
+                // Initialise la liste des logos
+                InitFichiersLogo();
 
-            // Creation des instances de gestion de site
-            _gestionSite = new GestionSitePublique(dataManager, statMgr);
-            _gestionSiteInterne = new GestionSiteInterne(dataManager, statMgr);
+                // Creation des instances de gestion de site
+                _gestionSite = new GestionSitePublique(dataManager, statMgr);
+                _gestionSiteInterne = new GestionSiteInterne(dataManager, statMgr);
 
-            // Lance l'initialisation depuis le cache sur disque
-            InitFromConfigFile();
+                // Lance l'initialisation depuis le cache sur disque
+                InitFromConfigFile();
+            }
+            catch(Exception ex)
+            {
+                LogTools.Logger.Error(ex, "Erreur lors de l'initialisation du Controleur, impossible de continuer");
+                throw new InvalidOperationException("Erreur lors de l'initialisation du Controleur");
+            }
         }
 
         #endregion
@@ -215,19 +224,19 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdAjouterLogo == null)
-                {
-                    _cmdAjouterLogo = new RelayCommand(
+                _cmdAjouterLogo ??= new RelayCommand(
                             o =>
                             {
                                 bool allFileOk = true;
 
-                                OpenFileDialog op = new OpenFileDialog();
-                                op.Title = "Sélectionner une image";
-                                op.Filter = "Portable Network Graphic (*.png)|*.png";
-                                op.Multiselect = true;
-                                op.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-                                op.RestoreDirectory = true;
+                                OpenFileDialog op = new OpenFileDialog
+                                {
+                                    Title = "Sélectionner une image",
+                                    Filter = "Portable Network Graphic (*.png)|*.png",
+                                    Multiselect = true,
+                                    InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+                                    RestoreDirectory = true
+                                };
                                 if (op.ShowDialog() == DialogResult.OK)
                                 {
                                     foreach (string imgFile in op.FileNames)
@@ -247,10 +256,10 @@ namespace AppPublication.Controles
                                                     // Verifie la taille de l'image
                                                     if (w <= 200 && h <= 200)
                                                     {
-                                                        FilteredFileInfo newItem = new FilteredFileInfo(new FileInfo(imgFile), ConstantResource.Export_site_img);
+                                                        FilteredFileInfo newItem = new FilteredFileInfo(new FileInfo(imgFile), ResourceDictionnay.Site_Img);
 
                                                         // Copy le fichier dans le répertoire de travail de l'application
-                                                        File.Copy(newItem.FullName, Path.Combine(AppDirectoryManager.ExportStyle_dir, newItem.Name));
+                                                        File.Copy(newItem.FullName, Path.Combine(AppDirectoryManager.RessoucesImgDir, newItem.Name));
 
                                                         // Actualise la liste des logos
                                                         FichiersLogo.Add(newItem);
@@ -278,10 +287,7 @@ namespace AppPublication.Controles
                                     if (!allFileOk)
                                     {
                                         AlertWindow win = new AlertWindow("Infomation", "Certains fichiers n'ont pas put être chargé. Veuillez vérifier les noms, formats et dimensions");
-                                        if (win != null)
-                                        {
-                                            win.ShowDialog();
-                                        }
+                                        win?.ShowDialog();
                                     }
                                 }
 
@@ -291,7 +297,6 @@ namespace AppPublication.Controles
                                 // Meme si le site est demarre on peut ajouter un logo, il n'est pas pris automatiquement enc compte
                                 return true;
                             });
-                }
                 return _cmdAjouterLogo;
             }
         }
@@ -304,16 +309,16 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdGetRepertoireRacine == null)
-                {
-                    _cmdGetRepertoireRacine = new RelayCommand(
+                _cmdGetRepertoireRacine ??= new RelayCommand(
                             o =>
                             {
                                 string output = string.Empty;
 
-                                FolderBrowserDialog dlg = new FolderBrowserDialog();
-                                dlg.Description = "Sélectionner le répertoire à utiliser pour les exports";
-                                dlg.ShowNewFolderButton = true;
+                                FolderBrowserDialog dlg = new FolderBrowserDialog
+                                {
+                                    Description = "Sélectionner le répertoire à utiliser pour les exports",
+                                    ShowNewFolderButton = true
+                                };
                                 if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                                 {
                                     output = dlg.SelectedPath;
@@ -325,7 +330,6 @@ namespace AppPublication.Controles
                                 // On ne peut modifier le repertoire racine que si tous les processus sont arretes
                                 return GestionnaireSiteInterne.CanChangeProperties && GestionnaireSitePublique.CanChangeProperties;
                             });
-                }
                 return _cmdGetRepertoireRacine;
             }
         }
@@ -357,7 +361,7 @@ namespace AppPublication.Controles
         private void InitFichiersLogo()
         {
             // Recupere le repertoire des images du site
-            IEnumerable<FilteredFileInfo> files = ExportTools.EnumerateCustomLogoFiles().Select(o => new FilteredFileInfo(o, ConstantResource.Export_site_img)).OrderBy(o => o.Name);
+            IEnumerable<FilteredFileInfo> files = ExportTools.EnumerateCustomLogoFiles().Select(o => new FilteredFileInfo(o, ResourceDictionnay.Site_Img)).OrderBy(o => o.Name);
 
             // Liste les fichiers logos
             FichiersLogo = new ObservableCollection<FilteredFileInfo>(files);

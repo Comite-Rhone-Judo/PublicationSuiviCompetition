@@ -474,7 +474,7 @@ namespace AppPublication.Data
         private void LectureDonneesLogos(XElement element)
         {
             var judoDataInstance = InternalDataManager;
-            judoDataInstance.Logos.lecture_logos(element);
+            judoDataInstance.Logos.LectureLogos(element);
         }
 
         public void Client_OnListeLogos(object sender, XElement element)
@@ -988,7 +988,6 @@ namespace AppPublication.Data
             // Affiche un message d'erreur a l'utilisateur
             if (withMessage)
             {
-                // TODO Penser a creer le event Handler pour afficher le message
                 LogTools.Alert("Une erreur est survenue lors du chargement initiale des données. Les données peuvent être incorrecte. Veuillez essayer de vous reconnecter au serveur");
             }
         }

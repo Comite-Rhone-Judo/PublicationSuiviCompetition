@@ -12,8 +12,9 @@ using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Resources;
 using FranceJudo.Metier.XML;
 using FranceJudo.UI.Wpf.Dialogs;
-using FranceJudo.UI.Wpf.ViewModels.Network;
-using FranceJudo.UI.Wpf.ViewModels.Structures;
+using FranceJudo.Core.Network;
+using FranceJudo.Core.Foundation;
+using FranceJudo.Metier.Structures;
 using FranceJudo.UI.Wpf.Foundation;
 using System;
 using System.Collections.Generic;
@@ -894,7 +895,7 @@ namespace AppPublication.Models.Publication
             {
                 // 1. Chargement avec LINQ to XML
                 XDocument doc;
-                using (var stream = AssemblyResourceHelper.GetAssembyResource(ConstantResource.PublicationFFJUDO))
+                using (var stream = AssemblyResourceHelper.GetAssembyResource(ResourceDictionnay.Referentiels_PublicationFFJUDO))
                 {
                     doc = XDocument.Load(stream);
                 }

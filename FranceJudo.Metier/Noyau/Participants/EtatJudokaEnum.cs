@@ -1,4 +1,4 @@
-﻿namespace KernelImpl.Noyau.Participants
+﻿namespace FranceJudo.Metier.Noyau.Participants
 {
     /// <summary>
     /// Enumération des états des judokas

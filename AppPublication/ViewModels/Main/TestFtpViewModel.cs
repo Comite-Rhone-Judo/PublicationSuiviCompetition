@@ -1,8 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 using FranceJudo.UI.Wpf.Foundation;
-using FranceJudo.UI.Wpf.ViewModels.Network;
-using FranceJudo.UI.Wpf.ViewModels.Network.Ftp;
+using FranceJudo.Core.Network;
+using FranceJudo.Core.Foundation;
+using FranceJudo.Core.Network.Ftp.Test;
 
 
 namespace AppPublication.ViewModels.Configuration

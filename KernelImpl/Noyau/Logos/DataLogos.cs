@@ -33,14 +33,13 @@ namespace KernelImpl.Noyau.Logos
         /// </summary>
         /// <param name="element">element XML contenant les ligues</param>
         /// <param name="DC"></param>
-        public void lecture_logos(XElement element)
+        public void LectureLogos(XElement element)
         {
             ICollection<string> allLogos = LectureLogosCommissaire(element);
 
-            // TODO To be replaced by AppDirectoryManager
-            ICollection<string> logos = allLogos.Where(o => o.Contains(AppDirectoryManager.Logo3_dir)).ToList();
-            ICollection<string> fede = allLogos.Where(o => o.Contains(AppDirectoryManager.Logo1_dir)).ToList();
-            ICollection<string> ligues = allLogos.Where(o => o.Contains(AppDirectoryManager.Logo2_dir)).ToList();
+            ICollection<string> logos = allLogos.Where(o => o.Contains(AppDirectoryManager.Logo3Dir)).ToList();
+            ICollection<string> fede = allLogos.Where(o => o.Contains(AppDirectoryManager.Logo1Dir)).ToList();
+            ICollection<string> ligues = allLogos.Where(o => o.Contains(AppDirectoryManager.Logo2Dir)).ToList();
 
             _logosCache.UpdateFullSnapshot(logos, o => o);
             _fedeCache.UpdateFullSnapshot(logos, o => o);
@@ -61,14 +60,14 @@ namespace KernelImpl.Noyau.Logos
 
             try
             {
-                FileSystemHelper.DeleteDirectory(AppDirectoryManager.Logo1_dir);
-                FileSystemHelper.CreateDirectorie(AppDirectoryManager.Logo1_dir);
+                FileSystemHelper.DeleteDirectory(AppDirectoryManager.Logo1Dir);
+                FileSystemHelper.CreateDirectorie(AppDirectoryManager.Logo1Dir);
 
-                FileSystemHelper.DeleteDirectory(AppDirectoryManager.Logo2_dir);
-                FileSystemHelper.CreateDirectorie(AppDirectoryManager.Logo2_dir);
+                FileSystemHelper.DeleteDirectory(AppDirectoryManager.Logo2Dir);
+                FileSystemHelper.CreateDirectorie(AppDirectoryManager.Logo2Dir);
 
-                FileSystemHelper.DeleteDirectory(AppDirectoryManager.Logo3_dir);
-                FileSystemHelper.CreateDirectorie(AppDirectoryManager.Logo3_dir);
+                FileSystemHelper.DeleteDirectory(AppDirectoryManager.Logo3Dir);
+                FileSystemHelper.CreateDirectorie(AppDirectoryManager.Logo3Dir);
 
             }
             catch (Exception ex)
@@ -77,9 +76,9 @@ namespace KernelImpl.Noyau.Logos
             }
             finally
             {
-                urls = urls.Concat(LectureElement(xelement, ConstantXML.LogoFede, AppDirectoryManager.Logo1_dir)).ToList();
-                urls = urls.Concat(LectureElement(xelement, ConstantXML.LogoLigue, AppDirectoryManager.Logo2_dir)).ToList();
-                urls = urls.Concat(LectureElement(xelement, ConstantXML.LogoSponsor, AppDirectoryManager.Logo3_dir)).ToList();
+                urls = urls.Concat(LectureElement(xelement, ConstantXML.LogoFede, AppDirectoryManager.Logo1Dir)).ToList();
+                urls = urls.Concat(LectureElement(xelement, ConstantXML.LogoLigue, AppDirectoryManager.Logo2Dir)).ToList();
+                urls = urls.Concat(LectureElement(xelement, ConstantXML.LogoSponsor, AppDirectoryManager.Logo3Dir)).ToList();
             }
 
             return urls;

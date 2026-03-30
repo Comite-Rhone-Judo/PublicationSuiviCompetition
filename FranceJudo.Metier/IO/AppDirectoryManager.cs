@@ -16,6 +16,13 @@ namespace FranceJudo.Metier.IO
     {
         #region Constantes privées
 
+        private const string kDirSaveCom = @"Save\Com";
+        private const string kDirLogoFede = @"Logos\Fédé";
+        private const string kDirLogoLigue = @"Logos\Ligue";
+        private const string kDirLogoSponsor = @"Logos\sponsor";
+        private const string kDirFlags = "flags";
+
+        /*
         private const string kDirLogoFede = @"Logos\Fédé";
         private const string kDirLogoLigue = @"Logos\Ligue";
         private const string kDirLogoSponsor = @"Logos\sponsor";
@@ -37,14 +44,15 @@ namespace FranceJudo.Metier.IO
         private const string kDirLog = "Log";
         private const string kDirSaveCs = @"Save\CS";
         private const string kDirSavePesee = @"Save\Pesee";
-        private const string kDirSaveCom = @"Save\Com";
         private const string kDirJudoTV = @"FRANCE-JUDO\JudoTV";
-
         private const string kFileListeClubsXml = "ListeClubs.xml";
         private const string kFileInscriptionXml = "Insciption.xml";
         private const string kFileRecentFilesTxt = "RecentFiles.txt";
         private const string kFileJudokaXml = "Judoka.xml";
+        */
 
+        private const string kDirRessources = @"Ressources";
+        private const string kDirRessourcesImg = @"Ressources\Images";
         #endregion
 
         // Liste stricte des répertoires à créer physiquement sur le disque
@@ -52,6 +60,18 @@ namespace FranceJudo.Metier.IO
 
         #region Propriétés Statiques : Chemins de Répertoires (Remplace ConstantFile)
 
+        public static string RessourcesDir { get; private set; }
+        public static string RessoucesImgDir { get; private set; }
+
+        public static string SaveCOMDir { get; private set; }
+        public static string SaveDir { get; private set; }
+        public static string Logo1Dir { get; private set; }
+        public static string Logo2Dir { get; private set; }
+        public static string Logo3Dir { get; private set; }
+
+        public static string MediaFlagsDir { get; private set; }
+
+        /*
         public static string Logo1_dir { get; private set; }
         public static string Logo2_dir { get; private set; }
         public static string Logo3_dir { get; private set; }
@@ -74,22 +94,25 @@ namespace FranceJudo.Metier.IO
         public static string ExportJudoTV { get; private set; }
         public static string SaveCSDirectory { get; private set; }
         public static string SavePeseeDirectory { get; private set; }
-        public static string SaveCOMDirectory { get; private set; }
+        
         public static string ExportSite_dir { get; private set; }
+        */
 
         #endregion
 
         #region Propriétés Statiques : Chemins de Fichiers Complets
 
+        /*
         public static string Extra_ClubsFile { get; private set; }
         public static string Extra_InscriptionFile { get; private set; }
         public static string RecentFiles { get; private set; }
         public static string Extra_JudokasFile { get; private set; }
+        */
 
         #endregion
 
         #region Propriétés Statiques : Noms de Fichiers Constants
-
+        /*
         public static string FilePeseeAll { get; } = "les_pesee_all";
         public static string FileCSAll { get; } = "les_cs_all";
         public static string FileTapis { get; } = "le_tapis";
@@ -119,6 +142,7 @@ namespace FranceJudo.Metier.IO
         public static string FileInscription { get; } = "les_inscriptions";
         public static string FileJudoTV { get; } = "params_judo_tv";
         public static string FileParams { get; } = "params_judo_tv";
+        */
         public static string ExtensionXML { get; } = ".xml";
         public static string ExtensionTXT { get; } = ".txt";
 
@@ -135,31 +159,47 @@ namespace FranceJudo.Metier.IO
             string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
             // 1. Définition et Enregistrement des chemins
-            BD_dir = RegisterDirectory(dataPath, kDirDataBd);
-            Data_dir = RegisterDirectory(dataPath, kDirData);
-            Export_dir = RegisterDirectory(dataPath, kDirExport);
-            ExportStyle_dir = RegisterDirectory(dataPath, kDirExportStyle);
-            ExportStyleSite_dir = RegisterDirectory(dataPath, kDirExportStyleSite);
-            ExportStyleIcon_dir = RegisterDirectory(dataPath, kDirExportStyleIcon);
-            ExportStyleDiplome_dir = RegisterDirectory(dataPath, kDirExportDiplome);
-            ExportSite_dir = RegisterDirectory(dataPath, kDirExportSite);
 
-            ExportJudoTV = RegisterDirectory(documentsPath, kDirJudoTV).Replace('\\', '/');
+            RessourcesDir = RegisterDirectory(dataPath, kDirRessources, createPhysicalFolder: true);
+            RessoucesImgDir = RegisterDirectory(dataPath, kDirRessourcesImg, createPhysicalFolder: true);
 
-            DirectorySave = RegisterDirectory(dataPath, string.Empty);
-            SaveCSDirectory = RegisterDirectory(dataPath, kDirSaveCs);
-            SavePeseeDirectory = RegisterDirectory(dataPath, kDirSavePesee);
-            SaveCOMDirectory = RegisterDirectory(dataPath, kDirSaveCom);
+            SaveDir = RegisterDirectory(dataPath, string.Empty, createPhysicalFolder: true);
+            SaveCOMDir = RegisterDirectory(dataPath, kDirSaveCom, createPhysicalFolder: true);
 
-            Params_dir = RegisterDirectory(dataPath, kDirParams);
-            Logo1_dir = RegisterDirectory(dataPath, kDirLogoFede);
-            Logo2_dir = RegisterDirectory(dataPath, kDirLogoLigue);
-            Logo3_dir = RegisterDirectory(dataPath, kDirLogoSponsor);
-            Logo_tmp_dir = RegisterDirectory(dataPath, kDirLogoTmp);
+            Logo1Dir = RegisterDirectory(dataPath, kDirLogoFede, createPhysicalFolder: true);
+            Logo2Dir = RegisterDirectory(dataPath, kDirLogoLigue, createPhysicalFolder: true);
+            Logo3Dir = RegisterDirectory(dataPath, kDirLogoSponsor, createPhysicalFolder: true);
 
-            MediaSon_dir = RegisterDirectory(dataPath, kDirSon);
-            MediaVideo_dir = RegisterDirectory(dataPath, kDirVideo);
-            MediaFlags_dir = RegisterDirectory(dataPath, kDirFlags);
+            MediaFlagsDir = RegisterDirectory(dataPath, kDirFlags, createPhysicalFolder: true);
+
+
+            /*
+
+            BD_dir = RegisterDirectory(dataPath, kDirDataBd, createPhysicalFolder: false);
+            Data_dir = RegisterDirectory(dataPath, kDirData, createPhysicalFolder: false);
+            Export_dir = RegisterDirectory(dataPath, kDirExport, createPhysicalFolder: false);
+            ExportStyle_dir = RegisterDirectory(dataPath, kDirExportStyle, createPhysicalFolder: false);
+            ExportStyleSite_dir = RegisterDirectory(dataPath, kDirExportStyleSite, createPhysicalFolder: false);
+            ExportStyleIcon_dir = RegisterDirectory(dataPath, kDirExportStyleIcon, createPhysicalFolder: false);
+            ExportStyleDiplome_dir = RegisterDirectory(dataPath, kDirExportDiplome, createPhysicalFolder: false);
+            ExportSite_dir = RegisterDirectory(dataPath, kDirExportSite, createPhysicalFolder: false);
+
+            ExportJudoTV = RegisterDirectory(documentsPath, kDirJudoTV, createPhysicalFolder: false).Replace('\\', '/');
+
+            DirectorySave = RegisterDirectory(dataPath, string.Empty, createPhysicalFolder: false);
+            SaveCSDirectory = RegisterDirectory(dataPath, kDirSaveCs, createPhysicalFolder: false);
+            SavePeseeDirectory = RegisterDirectory(dataPath, kDirSavePesee, createPhysicalFolder: false);
+            SaveCOMDirectory = RegisterDirectory(dataPath, kDirSaveCom, createPhysicalFolder: false);
+
+            Params_dir = RegisterDirectory(dataPath, kDirParams, createPhysicalFolder: false);
+            Logo1_dir = RegisterDirectory(dataPath, kDirLogoFede, createPhysicalFolder: false);
+            Logo2_dir = RegisterDirectory(dataPath, kDirLogoLigue, createPhysicalFolder: false);
+            Logo3_dir = RegisterDirectory(dataPath, kDirLogoSponsor, createPhysicalFolder: false);
+            Logo_tmp_dir = RegisterDirectory(dataPath, kDirLogoTmp, createPhysicalFolder: false);
+
+            MediaSon_dir = RegisterDirectory(dataPath, kDirSon, createPhysicalFolder: false);
+            MediaVideo_dir = RegisterDirectory(dataPath, kDirVideo, createPhysicalFolder: false);
+            MediaFlags_dir = RegisterDirectory(dataPath, kDirFlags, createPhysicalFolder: false);
 
             // Chemins définis mais non créés physiquement
             LogoCom_dir = RegisterDirectory(dataPath, kDirLogoCom, createPhysicalFolder: false);
@@ -171,6 +211,7 @@ namespace FranceJudo.Metier.IO
             Extra_InscriptionFile = Path.Combine(Data_dir, kFileInscriptionXml);
             RecentFiles = Path.Combine(dataPath, kFileRecentFilesTxt);
             Extra_JudokasFile = Path.Combine(dataPath, kFileJudokaXml);
+            */
 
             // 2. Création stricte des dossiers
             foreach (var directory in _directoriesToCreate)
@@ -192,9 +233,7 @@ namespace FranceJudo.Metier.IO
             string[] files = AssemblyResourceHelper.GetAssembyResourceName();
             foreach (string s1 in files)
             {
-                if ((!s1.Contains(ConstantResource.Export) && !s1.Contains(ConstantResource.Media)) ||
-                    s1.Contains(ConstantResource.Export_site_js) ||
-                    s1.Contains(ConstantResource.Export_xslt))
+                if ((!s1.Contains(ResourceDictionnay.Root)) && !(s1.Contains(ResourceDictionnay.Site_Img)))
                 {
                     continue;
                 }
@@ -226,27 +265,33 @@ namespace FranceJudo.Metier.IO
             }
         }
 
-        private static (string targetDir, string fileName) ResolveResourceDestination(string resourceName)
+        private static (string targetDir, string fileName) ResolveResourceDestination(string resourceName )
         {
-            if (resourceName.Contains(ConstantResource.Export_site_style))
-                return (ExportStyleSite_dir, resourceName.Replace(ConstantResource.Export_site_style, string.Empty));
+            /*
+            if (resourceName.Contains(ResourceDictionnay.Export_site_style))
+                return (ExportStyleSite_dir, resourceName.Replace(ResourceDictionnay.Export_site_style, string.Empty));
 
-            if (resourceName.Contains(ConstantResource.Export_Icon))
-                return (ExportStyleIcon_dir, resourceName.Replace(ConstantResource.Export_Icon, string.Empty));
+            if (resourceName.Contains(ResourceDictionnay.Export_Icon))
+                return (ExportStyleIcon_dir, resourceName.Replace(ResourceDictionnay.Export_Icon, string.Empty));
 
-            if (resourceName.Contains(ConstantResource.Export_Diplome))
-                return (ExportStyleDiplome_dir, resourceName.Replace(ConstantResource.Export_Diplome, string.Empty));
+            if (resourceName.Contains(ResourceDictionnay.Export_Diplome))
+                return (ExportStyleDiplome_dir, resourceName.Replace(ResourceDictionnay.Export_Diplome, string.Empty));
 
-            if (resourceName.Contains(ConstantResource.Media_Son))
-                return (MediaSon_dir, resourceName.Replace(ConstantResource.Media_Son, string.Empty));
+            if (resourceName.Contains(ResourceDictionnay.Media_Son))
+                return (MediaSon_dir, resourceName.Replace(ResourceDictionnay.Media_Son, string.Empty));
 
-            if (resourceName.Contains(ConstantResource.Media_Video))
-                return (MediaVideo_dir, resourceName.Replace(ConstantResource.Media_Video, string.Empty));
+            if (resourceName.Contains(ResourceDictionnay.Media_Video))
+                return (MediaVideo_dir, resourceName.Replace(ResourceDictionnay.Media_Video, string.Empty));
 
-            if (resourceName.Contains(ConstantResource.Media_Flags))
-                return (MediaFlags_dir, resourceName.Replace(ConstantResource.Media_Flags, string.Empty));
+            if (resourceName.Contains(ResourceDictionnay.Media_Flags))
+                return (MediaFlags_dir, resourceName.Replace(ResourceDictionnay.Media_Flags, string.Empty));
 
-            return (ExportStyle_dir, resourceName.Replace(ConstantResource.Export_style_res, string.Empty));
+            */
+            if (resourceName.Contains(ResourceDictionnay.Site_Img))
+                return (RessoucesImgDir, resourceName.Replace(ResourceDictionnay.Site_Img, string.Empty));
+
+            // Aucune des resources n'est nécessaire pour la generation (on ne travaille que avec des fichiers embarques)
+            return (string.Empty, string.Empty);
         }
 
         private static string RegisterDirectory(string basePath, string subPath, bool createPhysicalFolder = true)

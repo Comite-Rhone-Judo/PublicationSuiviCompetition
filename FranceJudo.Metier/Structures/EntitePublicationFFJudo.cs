@@ -1,6 +1,6 @@
-﻿using FranceJudo.UI.Wpf.Foundation;
+﻿using FranceJudo.Core.Foundation;
 
-namespace FranceJudo.UI.Wpf.ViewModels.Structures
+namespace FranceJudo.Metier.Structures
 {
     public class EntitePublicationFFJudo : NotificationBase
     {

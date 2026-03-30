@@ -9,9 +9,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using FranceJudo.UI.Wpf.Foundation;
+using FranceJudo.Core.Foundation;
 using FranceJudo.Core.Logging;
 using FranceJudo.UI.Wpf.Dialogs;
+using FranceJudo.UI.Wpf.Foundation;
 using static AppPublication.Models.EcransAppel.EcranAppelModel;
 
 namespace AppPublication.ViewModels.Configuration

@@ -5,7 +5,7 @@ using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.Noyau.Deroulement;
 using FranceJudo.Metier.Export;
-using FranceJudo.UI.Wpf.ViewModels.Network;
+using FranceJudo.Core.Network;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -398,7 +398,7 @@ namespace AppPublication.Generation
                 // Normalement on ne devrait pas avoir de probleme d'exception ici avec la structure de repertoire
                 try
                 {
-                    output = Path.Combine(_siteUrlGenerator.PhysicalStructure.RepertoireRacine, ExportTools.getFileName(ExportEnum.Site_Checksum) + AppDirectoryManager.ExtensionXML);
+                    output = Path.Combine(_siteUrlGenerator.PhysicalStructure.RepertoireRacine, ExportTools.GetFileName(ExportEnum.Site_Checksum) + AppDirectoryManager.ExtensionXML);
                 }
                 catch (Exception ex)
                 {

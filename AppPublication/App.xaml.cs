@@ -9,6 +9,7 @@ using FranceJudo.Core.Configuration;
 using KernelImpl;
 using AppPublication.Controles;
 using FranceJudo.UI.Wpf.Dialogs;
+using FranceJudo.UI.Wpf.Foundation;
 
 namespace AppPublication
 { /// <summary>
@@ -39,6 +40,7 @@ namespace AppPublication
         {
             base.OnStartup(e);
 
+            // Demarrage et configure la couche de Logging
             LogTools.LogStartup();
             LogTools.OnCriticalErrorLogged += LogTools_OnCriticalErrorLogged;
 
@@ -55,6 +57,13 @@ namespace AppPublication
 
             // Assure que le logger est bien configure
             DialogControleur.Instance.CanManageTracesDebug = LogTools.IsConfigured;
+
+            // Configure la couche de notification des IHMs
+            // Avertir le CommandManager de WPF (sur le thread de l'interface graphique)
+            FranceJudo.Core.Foundation.NotificationBase.OnPropertyModifiedGlobally = () =>
+            {
+                Application.Current?.ExecOnUiThread(() => { System.Windows.Input.CommandManager.InvalidateRequerySuggested(); });
+            };
 
             // Demarre la fenetre principale et injecte le Dialog controleur en tant que DataContext
             AppPublication.Views.Main.MainView mainWin = new AppPublication.Views.Main.MainView
@@ -111,9 +120,8 @@ namespace AppPublication
             LogTools.LogStop();
             NLog.LogManager.Shutdown();
 
-            // TODO A ajouter pour le logger
             // DÉSABONNEMENT (Bonne pratique pour éviter les fuites de mémoire)
-            // LogTools.OnCriticalErrorLogged -= LogTools_OnCriticalErrorLogged;
+            LogTools.OnCriticalErrorLogged -= LogTools_OnCriticalErrorLogged;
 
 
             base.OnExit(e);

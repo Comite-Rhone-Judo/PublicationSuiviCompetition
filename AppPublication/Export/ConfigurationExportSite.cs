@@ -2,7 +2,7 @@
 using FranceJudo.Metier.Resources;
 using System;
 using System.Xml.Linq;
-using FranceJudo.UI.Wpf.ViewModels.Environment;
+using FranceJudo.Core.Environment;
 
 
 namespace AppPublication.Export
@@ -21,7 +21,7 @@ namespace AppPublication.Export
             DelaiActualisationClientSec = delAC;
             NbProchainsCombats = nbPC;
             MsgProchainsCombats = pMsg;
-            Logo = string.IsNullOrEmpty(pLogo) ? ConstantResource.Export_DefaultLogo : pLogo;
+            Logo = string.IsNullOrEmpty(pLogo) ? ResourceDictionnay.Site_Img_DefaultLogo : pLogo;
             PouleEnColonnes = pec;
             PouleToujoursEnColonnes = ptec;
             TailleMaxPouleColonnes = maxpc;
@@ -40,7 +40,7 @@ namespace AppPublication.Export
         public long DelaiActualisationClientSec = 30;
         public int NbProchainsCombats = 6;
         public string MsgProchainsCombats = string.Empty;
-        public string Logo = ConstantResource.Export_DefaultLogo;
+        public string Logo = ResourceDictionnay.Site_Img_DefaultLogo;
 
         public bool PouleEnColonnes = false;
         public bool PouleToujoursEnColonnes = false;

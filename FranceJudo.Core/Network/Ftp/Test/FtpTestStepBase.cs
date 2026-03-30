@@ -1,10 +1,9 @@
 ﻿using System.Threading;
 using FluentFTP;
-using FranceJudo.UI.Wpf.Foundation;
+using FranceJudo.Core.Foundation;
 
-// TODO, doit aller dans leViewModel
 
-namespace FranceJudo.UI.Wpf.ViewModels.Network.Ftp
+namespace FranceJudo.Core.Network.Ftp.Test
 {
     public enum TestStatus
     {

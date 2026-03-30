@@ -283,7 +283,7 @@ namespace AppPublication.Export
 
                 // --- 3. GÉNÉRATION DE L'INDEX HTML ---
                 ExportEnum indexType = ExportEnum.Site_Index;
-                string indexFilename = ExportTools.getFileName(indexType).Replace("/", "_");
+                string indexFilename = ExportTools.GetFileName(indexType).Replace("/", "_");
                 string indexSavePath = Path.Combine(siteStructure.PhysicalStructure.RepertoireCommon(), indexFilename);
 
                 var indexArgs = CreateAllXsltArgs(siteStructure, indexSavePath);
@@ -306,7 +306,7 @@ namespace AppPublication.Export
 
                 // --- 5. GÉNÉRATION DU SCRIPT DE MISE À JOUR (FOOTER) ---
                 ExportEnum footerType = ExportEnum.Site_FooterScript;
-                string footerFilename = ExportTools.getFileName(footerType).Replace("/", "_");
+                string footerFilename = ExportTools.GetFileName(footerType).Replace("/", "_");
                 string footerSavePath = Path.Combine(siteStructure.PhysicalStructure.RepertoireJs(), footerFilename);
 
                 var footerArgs = CreateAllXsltArgs(siteStructure, footerSavePath);

@@ -2,23 +2,14 @@
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Net;
 
 namespace FranceJudo.Core.Reflection
 
 {
     public static class AssemblyResourceHelper
     {
-        private static Assembly assembly = Assembly.GetExecutingAssembly();
-        private static Assembly appAssembly = Assembly.GetEntryAssembly();
-
-        /// <summary>
-        /// Renvoit le nom de l'assembly courrante
-        /// </summary>
-        /// <returns></returns>
-        public static string GetAssembyName()
-        {
-            return assembly.GetName().Name;
-        }
+        private static readonly Assembly appAssembly = Assembly.GetEntryAssembly();
 
         /// <summary>
         /// Renvoit une resource de l'assembly sous forme de Stream
@@ -27,6 +18,7 @@ namespace FranceJudo.Core.Reflection
         /// <returns></returns>
         public static Stream GetAssembyResource(string name, bool useApp = false)
         {
+            Assembly assembly = Assembly.GetCallingAssembly();  // On utilise le calling assembly car on n'est pas forcément dans la meme Lib
             Stream output = null;
             output = (useApp) ? appAssembly.GetManifestResourceStream(name) : assembly.GetManifestResourceStream(name);
 
@@ -57,9 +49,13 @@ namespace FranceJudo.Core.Reflection
         /// Renvoit les noms de toutes les resources disponible dans l'assembly
         /// </summary>
         /// <returns></returns>
-        public static string[] GetAssembyResourceName()
+        public static string[] GetAssembyResourceName(Assembly targetAssembly = null)
         {
-            return assembly.GetManifestResourceNames();
+            Assembly assembly = Assembly.GetCallingAssembly();  // On utilise le calling assembly car on n'est pas forcément dans la meme Lib
+
+            // Si targetAssembly n'est pas spécifié, on utilise l'assembly local par défaut
+            Assembly asm = targetAssembly ?? assembly;
+            return asm.GetManifestResourceNames();
         }
     }
 }

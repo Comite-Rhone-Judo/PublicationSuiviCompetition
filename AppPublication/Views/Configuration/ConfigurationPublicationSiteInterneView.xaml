@@ -30,7 +30,7 @@
             <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="0 0 0 0" HorizontalAlignment="Center">
                 <StackPanel Orientation="Horizontal" Margin="0 0 0 0">
                     <Label  HorizontalAlignment="Right" Content="Déroulement:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0"
+                    <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0"
                        ToolTip="Délai en secondes de déroulement des informations."/>
                     <telerik:RadNumericUpDown  Value="{Binding GestionnaireSiteInterne.DelaiDeroulementSec}" Width="100" Height="20" Minimum="1" Maximum="600" SmallChange="1" CustomUnit="sec." HideTrailingZeros="True" Margin="10 0 0 0"/>
                     <Label HorizontalAlignment="Right" Content="Sec." Style="{StaticResource LabelStyle}" />
@@ -38,14 +38,14 @@
                 <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                 <StackPanel Orientation="Horizontal" Margin="0 0 10 0">
                     <Label  HorizontalAlignment="Right" Content="Profondeur:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0"
+                    <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0"
                        ToolTip="Nombre de combats à prendre en compte dans la chambre d'appel"/>
                     <telerik:RadNumericUpDown  Value="{Binding GestionnaireSiteInterne.NbProchainsCombats}" Width="100" Height="20" Minimum="1" Maximum="99" SmallChange="1" HideTrailingZeros="True" Margin="10 0 0 0"/>
                 </StackPanel>
                 <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                 <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal">
                     <Label HorizontalAlignment="Right" Content="Actualisation du site:" Style="{StaticResource LabelStyle}" />
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en secondes entre 2 générations du site interne."/>
+                    <Image Source="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en secondes entre 2 générations du site interne."/>
                     <telerik:RadNumericUpDown  Value="{Binding GestionnaireSiteInterne.DelaiGenerationSec}" Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="10 0 0 0"/>
                     <Label HorizontalAlignment="Right" Content="Sec." Style="{StaticResource LabelStyle}" />
                 </StackPanel>
@@ -74,7 +74,7 @@
                                        telerik:StyleManager.Theme="Expression_Dark"
                                        ToolTip="Ajouter un nouvel écran"
                                        Width="30" Height="30"
-                                       Tag="pack://application:,,,/Tools;component/data/images/icons/black/add_list-32.png">
+                                       Tag="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/add_list-32.png">
                         <Button.RenderTransform>
                             <ScaleTransform ScaleX="1.0" ScaleY="1.0"/>
                         </Button.RenderTransform>
@@ -135,7 +135,7 @@
                     Width="20" Height="20" Margin="10,0,0,0"
                     telerik:StyleManager.Theme="Expression_Dark"
                     Style="{StaticResource RadButtonStyleToolbar}"
-                    Tag="pack://application:,,,/Tools;component/data/images/icons/black/search-32.png" />
+                    Tag="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/search-32.png" />
                                     </Grid>
                                 </DataTemplate>
                             </telerik:GridViewColumn.CellTemplate>
@@ -164,11 +164,6 @@
                             </telerik:GridViewColumn.CellEditTemplate>
 
                         </telerik:GridViewDataColumn>
-
-                        <!-- TODO Revoir la gestion de la dispostion pour afficher 2x4 ou 4x2 etc. et en déduire les parametres
-                                    Converter pour traduire Disposition/Nb <> LxC
-                                    et/ou créer dans le Viex Model la génération des dispositions possible selon orientation
-                                -->
                         <telerik:GridViewDataColumn Header="Disposition" IsResizable="False" Width="85">
                             <telerik:GridViewDataColumn.HeaderCellStyle>
                                 <Style TargetType="telerik:GridViewHeaderCell" BasedOn="{StaticResource {x:Type telerik:GridViewHeaderCell}}">
@@ -365,7 +360,7 @@
                                                        Width="20" Height="20"
                                                        telerik:StyleManager.Theme="Expression_Dark"
                                                        Style="{StaticResource RadButtonStyleToolbar}"
-                                                       Tag="pack://application:,,,/Tools;component/data/images/icons/black/delete-32.png">
+                                                       Tag="pack://application:,,,/FranceJudo.Core;component/Resources/Media/Icons/black/delete-32.png">
                                     </telerik:RadButton>
                                 </DataTemplate>
                             </telerik:GridViewColumn.CellTemplate>

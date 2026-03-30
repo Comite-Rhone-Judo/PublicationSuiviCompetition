@@ -9,12 +9,12 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using FranceJudo.Core.Logging;
-using FranceJudo.UI.Wpf.Foundation;
+using FranceJudo.Core.Foundation;
 using FranceJudo.Core.Network.Http.Context;
 using FranceJudo.Core.Network.Http;
 
 
-namespace FranceJudo.UI.Wpf.ViewModels.Network
+namespace FranceJudo.Core.Network
 {
     #region CLASSES ANNEXES
     public class UploadStatus
@@ -42,7 +42,7 @@ namespace FranceJudo.UI.Wpf.ViewModels.Network
         protected ContextProvider _context = new ContextProvider();    // Stockage des contextes
 
         private FtpProfile _ftp_profile = null;     // Le profile FTP a utiliser pour les connexions
-        private Action<FtpProgress> _ftpProgressCallback = null;
+        readonly private Action<FtpProgress> _ftpProgressCallback = null;
         private long _nbSyncDistant = 0;
         private int _maxRetryFTP = kMaxRetryFTP;
 
@@ -219,7 +219,7 @@ namespace FranceJudo.UI.Wpf.ViewModels.Network
             }
         }
 
-        private bool _local = true;
+        private readonly bool _local = true;
         /// <summary>
         /// Indique si le site est en mode local (true) ou distant (false) - Lecture seule
         /// </summary>
@@ -382,7 +382,7 @@ namespace FranceJudo.UI.Wpf.ViewModels.Network
         /// <summary>
         /// Le statut textuelle du minisite (active, etc.)
         /// </summary>
-        public StatusMiniSite Status
+        public virtual StatusMiniSite Status
         {
             get
             {
@@ -392,18 +392,15 @@ namespace FranceJudo.UI.Wpf.ViewModels.Network
                 }
                 return _status;
             }
-            private set
+            protected set
             {
-                System.Windows.Application.Current.ExecOnUiThread(() =>
-                {
-                    _status = value;
-                    NotifyPropertyChanged(nameof(Status));
+                _status = value;
+                NotifyPropertyChanged(nameof(Status));
 
-                    // Actualise l'etat d'activite du site
-                    // Le site doit etre arrete ou en cours de nettoyage
-                    IsActif = !(_status.State == StateMiniSiteEnum.Stopped || _status.State == StateMiniSiteEnum.Cleaning);
-                    IsCleaning = (_status.State == StateMiniSiteEnum.Cleaning);
-                });
+                // Actualise l'etat d'activite du site
+                // Le site doit etre arrete ou en cours de nettoyage
+                IsActif = !(_status.State == StateMiniSiteEnum.Stopped || _status.State == StateMiniSiteEnum.Cleaning);
+                IsCleaning = (_status.State == StateMiniSiteEnum.Cleaning);
             }
         }
 

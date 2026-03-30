@@ -11,7 +11,7 @@ namespace FranceJudo.Metier.IO
 {
     public static class FileTools
     {
-        private static Dictionary<string, XDocument> notSave = new Dictionary<string, XDocument>();
+        private static readonly Dictionary<string, XDocument> notSave = new Dictionary<string, XDocument>();
 
         public static void SaveFile(XDocument doc, string fileType)
         {
@@ -28,9 +28,7 @@ namespace FranceJudo.Metier.IO
                 foreach (string file in notSave.Keys.ToList())
                 {
                     XDocument document = notSave[file];
-
-                    // TODO Replace with AppDirectoryManager
-                    string filename = Path.Combine(AppDirectoryManager.SaveCOMDirectory, file + AppDirectoryManager.ExtensionXML);
+                    string filename = Path.Combine(AppDirectoryManager.SaveCOMDir, file + AppDirectoryManager.ExtensionXML);
                     if (!File.Exists(filename) || !FileSystemHelper.IsFileLocked(filename))
                     {
                         FileSystemHelper.NeedAccessFile(filename);

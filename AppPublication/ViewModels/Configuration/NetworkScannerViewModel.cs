@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using FranceJudo.UI.Wpf.Foundation;
+using FranceJudo.Core.Foundation;
 using FranceJudo.Core.Logging;
 using FranceJudo.Core.Network.Scanner;
 

@@ -59,7 +59,7 @@ namespace AppPublication.Export
 
                 // --- 5. GÉNÉRATION DU SCRIPT DE MISE À JOUR (FOOTER) ---
                 ExportEnum footerType = ExportEnum.Site_FooterScript;
-                string footerFilename = ExportTools.getFileName(footerType).Replace("/", "_");
+                string footerFilename = ExportTools.GetFileName(footerType).Replace("/", "_");
                 string footerSavePath = Path.Combine(siteStructure.PhysicalStructure.RepertoireJs(), footerFilename);
 
                 var footerArgs = CreateAllXsltArgs(siteStructure, footerSavePath);

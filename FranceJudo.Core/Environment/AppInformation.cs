@@ -1,7 +1,6 @@
-﻿using FranceJudo.UI.Wpf.Foundation;
-using FranceJudo.Core.Environment;
+﻿using FranceJudo.Core.Foundation;
 
-namespace FranceJudo.UI.Wpf.ViewModels.Environment
+namespace FranceJudo.Core.Environment
 {
     public class AppInformation : NotificationBase
     {
@@ -22,7 +21,7 @@ namespace FranceJudo.UI.Wpf.ViewModels.Environment
         {
             get
             {
-                if( _instance == null ) {  _instance = new AppInformation(); }
+                _instance ??= new AppInformation();
                 return _instance;
             }
         }

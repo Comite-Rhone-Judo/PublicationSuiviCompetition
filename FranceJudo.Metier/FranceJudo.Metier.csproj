@@ -116,15 +116,16 @@
     <Compile Include="Noyau\Structures\IPays.cs" />
     <Compile Include="Noyau\Structures\ISecteur.cs" />
     <Compile Include="Regles\ScoresProLeague.cs" />
-    <Compile Include="Site\PhysicalStructureBase.cs" />
-    <Compile Include="Site\UrlGeneratorBase.cs" />
+    <Compile Include="Resources\Site\PhysicalStructureBase.cs" />
+    <Compile Include="Resources\Site\UrlGeneratorBase.cs" />
     <Compile Include="Export\TypeExportSiteEnum.cs" />
     <Compile Include="Regles\ScoresJujitsu.cs" />
     <Compile Include="Network\ConstantNetwork.cs" />
     <Compile Include="Network\ServerCommandEnum.cs" />
     <Compile Include="Network\ServerResponseEnum.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources\ConstantResource.cs" />
+    <Compile Include="Resources\ResourceDictionnay.cs" />
+    <Compile Include="Structures\EntitePublicationFFJudo.cs" />
     <Compile Include="XML\ConstantXML.cs" />
     <Compile Include="Structures\LectureStructures.cs" />
     <Compile Include="XML\IXMLSerializable.cs" />
@@ -177,97 +178,97 @@
     <Resource Include="Resources\Media\Images\France-Judo.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Arbitre1.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Arbitre1.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Arbitre2.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Arbitre2.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Arbitre3.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Arbitre3.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Classement-final1.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Classement-final1.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Classement-final2.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Classement-final2.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Classement-poule1.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Classement-poule1.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Classement-poule2.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Classement-poule2.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Classement-tableau1.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Classement-tableau1.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Classement-tableau2.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Classement-tableau2.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Commissaires1.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Commissaires1.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Commissaires2.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Commissaires2.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Commissaires3.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Commissaires3.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Epreuves1.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Epreuves1.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Epreuves2.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Epreuves2.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Exporte-XML.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Exporte-XML.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Exporte-XML2.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Exporte-XML2.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Exporte-XML3.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Exporte-XML3.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Formule1.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Formule1.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Formule2.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Formule2.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Inscription1.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Inscription1.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Inscription2.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Inscription2.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Judoka1.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Judoka1.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Judoka2.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Judoka2.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Judoka3.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Judoka3.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Parametres1.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Parametres1.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Parametres2.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Parametres2.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Parametres3.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Parametres3.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Tirage-poule1.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Tirage-poule1.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Tirage-poule2.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Tirage-poule2.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Tirage-tableau1.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Tirage-tableau1.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Media\Icons\Tirage-tableau2.png" />
+    <EmbeddedResource Include="Resources\Media\Icons\Tirage-tableau2.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Media\Images\Tournoi_Judo.png" />
@@ -279,149 +280,149 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\img\checked_checkbox-32.png" />
+    <EmbeddedResource Include="Resources\Site\img\checked_checkbox-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\img\unchecked_checkbox-32.png" />
+    <EmbeddedResource Include="Resources\Site\img\unchecked_checkbox-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\img\badge-1st-32.png" />
+    <EmbeddedResource Include="Resources\Site\img\badge-1st-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\img\down_circular-32.png" />
+    <EmbeddedResource Include="Resources\Site\img\down_circular-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\img\equal-sign-32.png" />
+    <EmbeddedResource Include="Resources\Site\img\equal-sign-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\img\home-32.png" />
+    <EmbeddedResource Include="Resources\Site\img\home-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\img\logo-France-Judo-Rhone.png" />
+    <EmbeddedResource Include="Resources\Site\img\logo-France-Judo-Rhone.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\img\logo-France-Judo.png" />
+    <EmbeddedResource Include="Resources\Site\img\logo-France-Judo.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\img\refresh-32.png" />
+    <EmbeddedResource Include="Resources\Site\img\refresh-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\img\repeat-32.png" />
+    <EmbeddedResource Include="Resources\Site\img\repeat-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\img\sablier.png" />
+    <EmbeddedResource Include="Resources\Site\img\sablier.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\img\starter-32.png" />
+    <EmbeddedResource Include="Resources\Site\img\starter-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\img\up_circular-32.png" />
+    <EmbeddedResource Include="Resources\Site\img\up_circular-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\img\winner-32.png" />
+    <EmbeddedResource Include="Resources\Site\img\winner-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\js\site-animation.js" />
+    <EmbeddedResource Include="Resources\Site\js\site-animation.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\js\site-display.js" />
+    <EmbeddedResource Include="Resources\Site\js\site-display.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\style\style-classement.css" />
+    <EmbeddedResource Include="Resources\Site\style\style-classement.css" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\style\style-common.css" />
+    <EmbeddedResource Include="Resources\Site\style\style-common.css" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\style\style-ecran-appel.css" />
+    <EmbeddedResource Include="Resources\Site\style\style-ecran-appel.css" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\style\style-poule.css" />
+    <EmbeddedResource Include="Resources\Site\style\style-poule.css" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\style\style-tableau.css" />
+    <EmbeddedResource Include="Resources\Site\style\style-tableau.css" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\style\w3.css" />
+    <EmbeddedResource Include="Resources\Site\style\w3.css" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\xslt\affectation_tapis_site.xslt">
+    <EmbeddedResource Include="Resources\Site\xslt\affectation_tapis_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\xslt\avancement_site.xslt">
+    <EmbeddedResource Include="Resources\Site\xslt\avancement_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\xslt\classement_final_site.xslt">
+    <EmbeddedResource Include="Resources\Site\xslt\classement_final_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\xslt\classement_site.xslt">
+    <EmbeddedResource Include="Resources\Site\xslt\classement_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\xslt\ecrans_appel_site.xslt">
+    <EmbeddedResource Include="Resources\Site\xslt\ecrans_appel_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\xslt\engagements_site.xslt">
+    <EmbeddedResource Include="Resources\Site\xslt\engagements_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\xslt\entete.xslt">
+    <EmbeddedResource Include="Resources\Site\xslt\entete.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\xslt\feuille_competition_site.xslt">
+    <EmbeddedResource Include="Resources\Site\xslt\feuille_competition_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\xslt\feuille_matchs_site.xslt">
+    <EmbeddedResource Include="Resources\Site\xslt\feuille_matchs_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\xslt\feuille_resultat_site.xslt">
+    <EmbeddedResource Include="Resources\Site\xslt\feuille_resultat_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\xslt\footer_script_site.xslt" />
+    <EmbeddedResource Include="Resources\Site\xslt\footer_script_site.xslt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\xslt\groupe_engagements_site.xslt">
+    <EmbeddedResource Include="Resources\Site\xslt\groupe_engagements_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\xslt\index_site.xslt">
+    <EmbeddedResource Include="Resources\Site\xslt\index_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\xslt\niveau_tour_combat.xslt" />
+    <EmbeddedResource Include="Resources\Site\xslt\niveau_tour_combat.xslt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\xslt\panel_epreuve.xslt">
+    <EmbeddedResource Include="Resources\Site\xslt\panel_epreuve.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\xslt\prochains_combats_site.xslt">
+    <EmbeddedResource Include="Resources\Site\xslt\prochains_combats_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Site\Assets\xslt\qrcode.xslt" />
+    <EmbeddedResource Include="Resources\Site\xslt\qrcode.xslt" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json">

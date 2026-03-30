@@ -22,11 +22,12 @@ namespace FranceJudo.Metier.Export
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static string getFileName(ExportEnum type)
+        public static string GetFileName(ExportEnum type)
         {
             string result = "";
             switch (type)
             {
+                /*
                 case ExportEnum.Participants:
                     result = "judokas";
                     break;
@@ -96,7 +97,7 @@ namespace FranceJudo.Metier.Export
                 case ExportEnum.Dispatch:
                     result = "dispatch";
                     break;
-
+                */
 
                 case ExportEnum.Site_Index:
                     result = "index";
@@ -198,9 +199,9 @@ namespace FranceJudo.Metier.Export
 
                 foreach (string s1 in AssemblyResourceHelper.GetAssembyResourceName())
                 {
-                    if (s1.Contains(ConstantResource.Export_site_img))
+                    if (s1.Contains(ResourceDictionnay.Site_Img))
                     {
-                        string fileName = Path.Combine(dir, s1.Replace(ConstantResource.Export_site_img, ""));
+                        string fileName = Path.Combine(dir, s1.Replace(ResourceDictionnay.Site_Img, ""));
                         var resource = AssemblyResourceHelper.GetAssembyResource(s1);
 
                         FileSystemHelper.NeedAccessFile(fileName);
@@ -233,7 +234,7 @@ namespace FranceJudo.Metier.Export
                     foreach (FileInfo cfile in customFiles)
                     {
                         // il faut tenir compte du nom compose pour les resources
-                        string destFile = Path.Combine(dir, cfile.Name.Replace(ConstantResource.Export_site_img, ""));
+                        string destFile = Path.Combine(dir, cfile.Name.Replace(ResourceDictionnay.Site_Img, ""));
                         if (!result.Contains(destFile))
                         {
                             File.Copy(cfile.FullName, destFile);
@@ -252,7 +253,7 @@ namespace FranceJudo.Metier.Export
         /// <returns></returns>
         public static List<FileInfo> EnumerateCustomLogoFiles()
         {
-            DirectoryInfo di = new DirectoryInfo(AppDirectoryManager.ExportStyle_dir);
+            DirectoryInfo di = new DirectoryInfo(AppDirectoryManager.RessoucesImgDir);
             return di.EnumerateFiles("*.png", SearchOption.TopDirectoryOnly).Where(o => o.Name.ToLower().Contains("logo")).ToList();
         }
 
@@ -282,9 +283,9 @@ namespace FranceJudo.Metier.Export
 
                 foreach (string s1 in AssemblyResourceHelper.GetAssembyResourceName())
                 {
-                    if (s1.Contains(ConstantResource.Export_site_style))
+                    if (s1.Contains(ResourceDictionnay.Site_Style))
                     {
-                        string fileName = Path.Combine(dirStyle, s1.Replace(ConstantResource.Export_site_style, ""));
+                        string fileName = Path.Combine(dirStyle, s1.Replace(ResourceDictionnay.Site_Style, ""));
                         var resource = AssemblyResourceHelper.GetAssembyResource(s1);
 
                         FileSystemHelper.NeedAccessFile(fileName);
@@ -314,9 +315,9 @@ namespace FranceJudo.Metier.Export
 
                 foreach (string s1 in AssemblyResourceHelper.GetAssembyResourceName())
                 {
-                    if (s1.Contains(ConstantResource.Export_site_js))
+                    if (s1.Contains(ResourceDictionnay.Site_Js))
                     {
-                        string fileName = Path.Combine(dirJs, s1.Replace(ConstantResource.Export_site_js, ""));
+                        string fileName = Path.Combine(dirJs, s1.Replace(ResourceDictionnay.Site_Js, ""));
 
                         var resource = AssemblyResourceHelper.GetAssembyResource(s1);
 
@@ -348,13 +349,13 @@ namespace FranceJudo.Metier.Export
         /// Recupere la liste des fichiers js
         /// </summary>
         /// <returns></returns>
-        public static string getEmbeddedJS()
+        public static string GetEmbeddedJS()
         {
             string result = "";
 
             foreach (string js in AssemblyResourceHelper.GetAssembyResourceName())
             {
-                if (!js.Contains(ConstantResource.Export_site_js))
+                if (!js.Contains(ResourceDictionnay.Site_Js))
                 {
                     continue;
                 }
@@ -400,6 +401,7 @@ namespace FranceJudo.Metier.Export
             string name = "";
             switch (type)
             {
+                /*
                 case ExportEnum.Pesee:
                     name = ConstantResource.Export_Judoka_res + "pesee";
                     break;
@@ -472,68 +474,68 @@ namespace FranceJudo.Metier.Export
                 case ExportEnum.Dispatch:
                     name = ConstantResource.Export_Common_res + "feuille_dispatch";
                     break;
-
+                */
 
 
                 case ExportEnum.Site_Menu:
-                    name = ConstantResource.Export_Site_res + "menu";
+                    name = ResourceDictionnay.Site_Xslt + "menu";
                     break;
                 case ExportEnum.Site_Index:
-                    name = ConstantResource.Export_Site_res + "index";
+                    name = ResourceDictionnay.Site_Xslt + "index";
                     break;
                 case ExportEnum.Site_QrCode:
-                    name = ConstantResource.Export_Site_res + "qrcode";
+                    name = ResourceDictionnay.Site_Xslt + "qrcode";
                     break;
                 case ExportEnum.Site_Tapis1:
-                    name = ConstantResource.Export_Site_res + "temp_1";
+                    name = ResourceDictionnay.Site_Xslt + "temp_1";
                     break;
                 case ExportEnum.Site_Tapis2:
-                    name = ConstantResource.Export_Site_res + "temp_2";
+                    name = ResourceDictionnay.Site_Xslt + "temp_2";
                     break;
                 case ExportEnum.Site_Tapis4:
-                    name = ConstantResource.Export_Site_res + "temp_4";
+                    name = ResourceDictionnay.Site_Xslt + "temp_4";
                     break;
                 case ExportEnum.Site_ListTapis:
-                    name = ConstantResource.Export_Site_res + "list_tapis";
+                    name = ResourceDictionnay.Site_Xslt + "list_tapis";
                     break;
                 case ExportEnum.Site_FeuilleCombat:
-                    name = ConstantResource.Export_Site_res + "feuille_matchs";
+                    name = ResourceDictionnay.Site_Xslt + "feuille_matchs";
                     break;
                 case ExportEnum.Site_FeuilleCombatTapis:
-                    name = ConstantResource.Export_Site_res + "feuille_matchs";
+                    name = ResourceDictionnay.Site_Xslt + "feuille_matchs";
                     break;
                 case ExportEnum.Site_Poule_Resultat:
-                    name = ConstantResource.Export_Site_res + "feuille_resultat";
+                    name = ResourceDictionnay.Site_Xslt + "feuille_resultat";
                     break;
                 case ExportEnum.Site_Tableau_Competition:
-                    name = ConstantResource.Export_Site_res + "feuille_competition";
+                    name = ResourceDictionnay.Site_Xslt + "feuille_competition";
                     break;
                 case ExportEnum.Site_ClassementFinal:
-                    name = ConstantResource.Export_Site_res + "classement_final";
+                    name = ResourceDictionnay.Site_Xslt + "classement_final";
                     break;
                 case ExportEnum.Site_AffectationTapis:
-                    name = ConstantResource.Export_Site_res + "affectation_tapis";
+                    name = ResourceDictionnay.Site_Xslt + "affectation_tapis";
                     break;
                 case ExportEnum.Site_Engagements:
-                    name = ConstantResource.Export_Site_res + "groupe_engagements";
+                    name = ResourceDictionnay.Site_Xslt + "groupe_engagements";
                     break;
                 case ExportEnum.Site_MenuEngagements:
-                    name = ConstantResource.Export_Site_res + "engagements";
+                    name = ResourceDictionnay.Site_Xslt + "engagements";
                     break;
                 case ExportEnum.Site_MenuClassement:
-                    name = ConstantResource.Export_Site_res + "classement";
+                    name = ResourceDictionnay.Site_Xslt + "classement";
                     break;
                 case ExportEnum.Site_MenuAvancement:
-                    name = ConstantResource.Export_Site_res + "avancement";
+                    name = ResourceDictionnay.Site_Xslt + "avancement";
                     break;
                 case ExportEnum.Site_MenuProchainCombats:
-                    name = ConstantResource.Export_Site_res + "prochains_combats";
+                    name = ResourceDictionnay.Site_Xslt + "prochains_combats";
                     break;
                 case ExportEnum.Site_FooterScript:
-                    name = ConstantResource.Export_Site_res + "footer_script";
+                    name = ResourceDictionnay.Site_Xslt + "footer_script";
                     break;
                 case ExportEnum.Site_Interne_EcranAppel:
-                        name = ConstantResource.Export_Site_res + "ecrans_appel";
+                        name = ResourceDictionnay.Site_Xslt + "ecrans_appel";
                     break;
                 default:
                     return "";

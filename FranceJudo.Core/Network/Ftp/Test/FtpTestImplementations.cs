@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Net;
 using System.Threading;
-using FranceJudo.Core.Network.Ftp;
+using FranceJudo.Core.Network;
 using FluentFTP;
 
 
-namespace FranceJudo.UI.Wpf.ViewModels.Network.Ftp
+namespace FranceJudo.Core.Network.Ftp.Test
 {
     public class DnsResolutionTest : FtpTestStepBase
     {

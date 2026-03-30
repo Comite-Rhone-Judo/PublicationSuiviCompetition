@@ -54,7 +54,7 @@ namespace AppPublication.Export
         /// <returns>Le chemin complet du fichier (sans l'extension)</returns>
         protected virtual string GetFileSavePath(string targetDirectory, ExportEnum exportType, string suffix = "")
         {
-            string filename = $"{ExportTools.getFileName(exportType).Replace("/", "_")}{(string.IsNullOrEmpty(suffix) ? "" : $"-{suffix}")}";
+            string filename = $"{ExportTools.GetFileName(exportType).Replace("/", "_")}{(string.IsNullOrEmpty(suffix) ? "" : $"-{suffix}")}";
             return Path.Combine(targetDirectory, filename);
         }
 

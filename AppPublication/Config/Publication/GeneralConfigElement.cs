@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using FranceJudo.Core.Configuration;
-using FranceJudo.UI.Wpf.ViewModels.Structures;
+using FranceJudo.Metier.Structures;
 using FranceJudo.Core.IO;
 
 namespace AppPublication.Config.Publication
@@ -38,10 +38,7 @@ namespace AppPublication.Config.Publication
         /// </summary>
         protected override void NotifyParentOfModification()
         {
-            if (PublicationConfigSection.Instance != null)
-            {
-                PublicationConfigSection.Instance.NotifyChildModification();
-            }
+            PublicationConfigSection.Instance?.NotifyChildModification();
         }
         #endregion
 

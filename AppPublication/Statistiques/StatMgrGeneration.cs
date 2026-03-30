@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using FranceJudo.UI.Wpf.Foundation;
+using FranceJudo.Core.Foundation;
 using FranceJudo.Core.Logging;
 
 namespace AppPublication.Statistiques

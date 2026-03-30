@@ -1,6 +1,6 @@
-﻿using FranceJudo.UI.Wpf.Foundation;
+﻿using FranceJudo.Core.Foundation;
 
-namespace FranceJudo.UI.Wpf.ViewModels.Network
+namespace FranceJudo.Core.Network
 {
     public enum StateMiniSiteEnum
     {
@@ -28,7 +28,7 @@ namespace FranceJudo.UI.Wpf.ViewModels.Network
             State = pStatus;
             Message = pMsg;
             MessageDetaille = pMsgDet;
-            Progress = -1;
+            Progress = pProgress;
         }
 
         #endregion

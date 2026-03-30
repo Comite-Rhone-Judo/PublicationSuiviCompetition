@@ -13,8 +13,7 @@ namespace JudoClient
 
     public class ClientJudo
     {
-        // TODO Il faut passer au constructeur le Tag de fin de message
-        ClientGenerique _client = null;
+        private readonly ClientGenerique _client = null;
 
         public event OnEndConnectionHandler OnEndConnection;
         public event OnReceivedDataEventOccured OnReceivedDataErrorOccured;
@@ -23,28 +22,28 @@ namespace JudoClient
         public ClientGenerique NetworkClient { get { return _client; } }
 
 
-        private TraitementArbitrage _traitement_arb = null;
+        private readonly TraitementArbitrage _traitement_arb = null;
         public TraitementArbitrage TraitementArbitrage { get { return _traitement_arb; } }
 
-        private TraitementCategories _traitement_cate = null;
+        private readonly TraitementCategories _traitement_cate = null;
         public TraitementCategories TraitementCategories { get { return _traitement_cate; } }
 
-        private TraitementConnexion _traitement_con = null;
+        private readonly TraitementConnexion _traitement_con = null;
         public TraitementConnexion TraitementConnexion { get { return _traitement_con; } }
 
-        private TraitementDeroulement _traitement_der = null;
+        private readonly TraitementDeroulement _traitement_der = null;
         public TraitementDeroulement TraitementDeroulement { get { return _traitement_der; } }
 
-        private TraitementOrganisation _traitement_org = null;
+        private readonly TraitementOrganisation _traitement_org = null;
         public TraitementOrganisation TraitementOrganisation { get { return _traitement_org; } }
 
-        private TraitementParticipants _traitement_part = null;
+        private readonly TraitementParticipants _traitement_part = null;
         public TraitementParticipants TraitementParticipants { get { return _traitement_part; } }
 
-        private TraitementStructure _traitement_struc = null;
+        private readonly TraitementStructure _traitement_struc = null;
         public TraitementStructure TraitementStructure { get { return _traitement_struc; } }
 
-        private TraitementLogos _traitement_log = null;
+        private readonly TraitementLogos _traitement_log = null;
         public TraitementLogos TraitementLogos { get { return _traitement_log; } }
 
 
@@ -77,36 +76,32 @@ namespace JudoClient
             _traitement_struc = new TraitementStructure(this);
 
             string endTag = "</" + ConstantXML.ServerJudo + ">";
-
             _client = new ClientGenerique(ip, port, endTag);
 
-            _client.OnConnection += client_OnConnection;
-            _client.OnDataRecieve += client_OnDataRecieve;
-            _client.OnDataSent += client_OnDataSent;
-            _client.OnEndConnection += client_OnEndConnection;
+            _client.OnConnection += Client_OnConnection;
+            _client.OnDataRecieve += Client_OnDataRecieve;
+            _client.OnDataSent += Client_OnDataSent;
+            _client.OnEndConnection += Client_OnEndConnection;
 
             _client.Connect();
         }
 
-        void client_OnConnection(object sender)
+        void Client_OnConnection(object sender)
         {
 
         }
 
-        void client_OnEndConnection(object sender)
+        void Client_OnEndConnection(object sender)
         {
-            if (OnEndConnection != null)
-            {
-                OnEndConnection(this);
-            }
+            OnEndConnection?.Invoke(this);
         }
 
-        void client_OnDataSent(object sender)
+        void Client_OnDataSent(object sender)
         {
             //SaveToLog("message envoyé");
         }
 
-        void client_OnDataRecieve(object sender, string donnees)
+        void Client_OnDataRecieve(object sender, string donnees)
         {
             try
             {
@@ -430,20 +425,14 @@ namespace JudoClient
                 }
 
                 // Ajoute un evenement general de reception de donnees avec succes
-                if (OnReceivedDataSuccessOccured != null)
-                {
-                    OnReceivedDataSuccessOccured(this, donnees);
-                }
+                OnReceivedDataSuccessOccured?.Invoke(this, donnees);
             }
             catch (Exception ex)
             {
                 LogTools.Error(ex);
 
                 // Appelle le callback d'erreur
-                if (OnReceivedDataErrorOccured != null)
-                {
-                    OnReceivedDataErrorOccured(this, donnees);
-                }
+                OnReceivedDataErrorOccured?.Invoke(this, donnees);
             }
         }
     }

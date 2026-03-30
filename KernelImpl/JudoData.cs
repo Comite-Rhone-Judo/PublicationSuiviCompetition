@@ -7,7 +7,7 @@ using KernelImpl.Noyau.Participants;
 using KernelImpl.Noyau.Structures;
 using System;
 using System.Threading;
-using FranceJudo.UI.Wpf.Foundation;
+using FranceJudo.Core.Foundation;
 using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Deroulement;
 using FranceJudo.Metier.Noyau.Participants;

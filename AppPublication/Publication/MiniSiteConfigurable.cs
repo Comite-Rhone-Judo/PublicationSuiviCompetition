@@ -1,14 +1,16 @@
 ﻿using AppPublication.Config.Publication;
+using FranceJudo.Core.Logging;
+using FranceJudo.Core.Network;
+using FranceJudo.Core.Network.Http;
+using FranceJudo.Core.Network.Http.Context;
 using FranceJudo.Core.Network.Http.HttpServer.HttpModules;
+using FranceJudo.Core.Utils;
+using FranceJudo.UI.Wpf.Foundation;
 using System;
+using System.Windows;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using FranceJudo.Core.Logging;
-using FranceJudo.Core.Utils;
-using FranceJudo.UI.Wpf.ViewModels.Network;
-using FranceJudo.Core.Network.Http;
-using FranceJudo.Core.Network.Http.Context;
 
 namespace AppPublication.Publication
 {
@@ -70,6 +72,21 @@ namespace AppPublication.Publication
         #endregion
 
         #region PROPERTIES
+
+        public override StatusMiniSite Status
+        {
+            get => base.Status;
+            protected set
+            {
+                // On intercepte la modification pour la rediriger sur le thread UI
+                Application.Current?.ExecOnUiThread(() =>
+                {
+                    // L'appel à la base va exécuter le code du Core (avec les NotifyPropertyChanged)
+                    // de manière totalement sécurisée !
+                    base.Status = value;
+                });
+            }
+        }
 
         private string _instanceName = string.Empty;
         /// <summary>

@@ -27,7 +27,7 @@ namespace FranceJudo.Core.Network.Tcp.Server
         #region field
 
         const int READ_BUFFER_SIZE = 10240;
-        private byte[] readBuffer = new byte[READ_BUFFER_SIZE];
+        private readonly byte[] readBuffer = new byte[READ_BUFFER_SIZE];
 
         /// <summary>
         /// événement de réception de données
@@ -39,9 +39,9 @@ namespace FranceJudo.Core.Network.Tcp.Server
         /// </summary>
         public event RemoteHostClose OnRemoteHostClosed;
 
-        private TcpClient _Client;
+        private readonly TcpClient _Client;
         private string chaine = "";
-        private string _endMsgTag = string.Empty;
+        private readonly string _endMsgTag = string.Empty;
 
         /// <summary>
         /// Le client
@@ -191,10 +191,7 @@ namespace FranceJudo.Core.Network.Tcp.Server
                 {
                     OnRemoteHostClosed(this);
 
-                    if (objNetworkStream != null)
-                    {
-                        objNetworkStream.Close();
-                    }
+                    objNetworkStream?.Close();
 
                     client.Close();
                     return;

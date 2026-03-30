@@ -45,15 +45,15 @@ namespace FranceJudo.Core.Network.Tcp.Client
         //public event OnErrorHandler OnError;
 
         private const int READ_BUFFER_SIZE = 10240;
-        private static byte[] readBuffer = new byte[READ_BUFFER_SIZE];
+        private static readonly byte[] readBuffer = new byte[READ_BUFFER_SIZE];
 
 
         private string chaine = "";
-        private string _endMsgTag = string.Empty;
+        private readonly string _endMsgTag = string.Empty;
 
         private TcpClient objClient = null;
-        int _port = 8484;
-        string _ip = "127.0.0.1";
+        private readonly int _port = 8484;
+        private readonly string _ip = "127.0.0.1";
 
         /// <summary>
         /// IP du server
@@ -166,10 +166,7 @@ namespace FranceJudo.Core.Network.Tcp.Client
                 {
                     client.EndConnect(ar);
 
-                    if (OnConnection != null)
-                    {
-                        OnConnection(this);
-                    }
+                    OnConnection?.Invoke(this);
 
                     client.GetStream().BeginRead(readBuffer, 0, READ_BUFFER_SIZE, new AsyncCallback(DoReading), client);
                 }
@@ -239,10 +236,7 @@ namespace FranceJudo.Core.Network.Tcp.Client
                 }
                 else
                 {
-                    if (OnEndConnection != null)
-                    {
-                        OnEndConnection(this);
-                    }
+                    OnEndConnection?.Invoke(this);
 
                     client.Close();
 
@@ -254,10 +248,7 @@ namespace FranceJudo.Core.Network.Tcp.Client
             }
             catch (IOException ex)
             {
-                if (OnEndConnection != null)
-                {
-                    OnEndConnection(this);
-                }
+                OnEndConnection?.Invoke(this);
 
                 client.Close();
                 ExceptionHelper.ShowException(ex);
@@ -284,10 +275,7 @@ namespace FranceJudo.Core.Network.Tcp.Client
                 NetworkStream networkStream = client.GetStream();
                 networkStream.EndWrite(ar);
 
-                if (OnDataSent != null)
-                {
-                    OnDataSent(this);
-                }
+                OnDataSent?.Invoke(this);
 
                 //(new JudoClient.ClientHelper.ReceiveData(HandleReceive)).BeginInvoke(client, strReceiveData,
                 //        new AsyncCallback(ReceiveCallback), client);

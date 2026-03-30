@@ -27,7 +27,7 @@ namespace KernelImpl.Noyau.Structures
 
         public BitmapImage GetFlag()
         {
-            string uri_flag = AppDirectoryManager.MediaFlags_dir + @"" + this.abr3 + ".svg_800.png";
+            string uri_flag = AppDirectoryManager.MediaFlagsDir + @"" + this.abr3 + ".svg_800.png";
             if (File.Exists(uri_flag))
             {
                 return new BitmapImage(new Uri(uri_flag));

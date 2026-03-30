@@ -79,9 +79,7 @@ namespace AppPublication.Views.Server
                     message += "   - L\'application GESTION DES COMPETITION n\'est lancée sur aucune des machines.\n";
                     message += "   - Le pare-feu (windows ou de l'anti-virus comme AVG) bloque les ports " + ConstantNetwork.PortServerMin + " à " + ConstantNetwork.PortServerMax + ".\n";
                     message += "   - Le réseau WIFI, sur lequel sont les machines, est paramétré en réseau PUBLIC alors qu'il doit être en réseau PRIVE.\n";
-                    // string header = "Recherche Serveur";
 
-                    // TODO Penser a creer le event Handler pour afficher le message
                     LogTools.Alert(message);
                 }
             }));

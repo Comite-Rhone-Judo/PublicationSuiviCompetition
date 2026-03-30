@@ -60,6 +60,7 @@
     <Compile Include="Configuration\ConfigurationService.cs" />
     <Compile Include="Configuration\InternalConfigSectionBase.cs" />
     <Compile Include="Diagnostic\ActionWatcher.cs" />
+    <Compile Include="Environment\AppInformation.cs" />
     <Compile Include="Exceptions\AppUpdateException.cs" />
     <Compile Include="Exceptions\ConnexionException.cs" />
     <Compile Include="Exceptions\ServerException.cs" />
@@ -67,6 +68,8 @@
     <Compile Include="Exceptions\WebServicesException.cs" />
     <Compile Include="Exceptions\XmlFormatException.cs" />
     <Compile Include="Export\ExportHTML.cs" />
+    <Compile Include="Foundation\NotificationBase.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IO\FileSystemHelper.cs" />
     <Compile Include="IO\FileWithChecksum.cs" />
     <Compile Include="IO\FileWithChecksumComparer.cs" />
@@ -76,6 +79,9 @@
     <Compile Include="Logging\LogTools.cs" />
     <Compile Include="Media\Images\ImageHelper.cs" />
     <Compile Include="Network\Ftp\FTPTools.cs" />
+    <Compile Include="Network\Ftp\Test\FtpTestImplementations.cs" />
+    <Compile Include="Network\Ftp\Test\FtpTestScheduler.cs" />
+    <Compile Include="Network\Ftp\Test\FtpTestStepBase.cs" />
     <Compile Include="Network\Http\Context\ContextProvider.cs" />
     <Compile Include="Network\Http\Context\IContextAware.cs" />
     <Compile Include="Network\Http\Context\IContextProvider.cs" />
@@ -159,6 +165,8 @@
     <Compile Include="Network\Http\HttpServer\Templates\TemplateEngine.cs" />
     <Compile Include="Network\Http\IServeurHttp.cs" />
     <Compile Include="Network\Http\ServeurHttpBase.cs" />
+    <Compile Include="Network\MiniSite.cs" />
+    <Compile Include="Network\StatusMiniSite.cs" />
     <Compile Include="Network\NetworkHelper.cs" />
     <Compile Include="Environment\AppEnvironment.cs" />
     <Compile Include="Network\Scanner\DeviceType.cs" />
@@ -200,8 +208,10 @@
       <Version>6.1.1</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="Resources\Media\Icons\black\0-32.png" />
+    <Resource Include="Resources\Media\Icons\white\3-32.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Media\Icons\black\0_filled-32.png" />
@@ -4069,9 +4079,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Media\Icons\black\zoom_out-32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Media\Icons\white\3-32.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Media\Icons\white\checked_checkbox-32.png" />

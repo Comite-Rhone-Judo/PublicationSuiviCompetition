@@ -1,5 +1,5 @@
 using AppPublication.Config.Generation;
-using AppPublication.Controles;
+using FranceJudo.Core.Foundation;
 using AppPublication.Models.EcransAppel;
 using System;
 using System.Collections.Generic;
@@ -8,9 +8,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Telerik.Windows.Controls;
-using FranceJudo.UI.Wpf.Foundation;
 using FranceJudo.Core.Logging;
 using FranceJudo.UI.Wpf.Dialogs;
+using FranceJudo.UI.Wpf.Foundation;
 
 namespace AppPublication.ViewModels.Configuration
 {
