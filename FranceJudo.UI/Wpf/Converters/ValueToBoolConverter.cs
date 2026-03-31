@@ -10,7 +10,10 @@ namespace FranceJudo.UI.Wpf.Converters
         {
             // Si la valeur est un booléen true, on renvoie true.
             // Sinon (false, null, ou autre type), on renvoie false.
-            if (value is bool b && b == true)
+            if (value is bool b)
+                return b;
+
+            if(value != null)
                 return true;
 
             return false;

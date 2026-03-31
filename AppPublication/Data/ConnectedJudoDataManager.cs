@@ -424,9 +424,9 @@ namespace AppPublication.Data
         private void LectureDonneesCategories(XElement element)
         {
             var judoDataInstance = InternalDataManager;
-            judoDataInstance.Categories.lecture_cateages(element);
-            judoDataInstance.Categories.lecture_catepoids(element);
-            judoDataInstance.Categories.lecture_ceintures(element);
+            judoDataInstance.Categories.ChargeCategorieAges(element);
+            judoDataInstance.Categories.ChargeCategoriePoids(element);
+            judoDataInstance.Categories.ChargeCeintures(element);
         }
 
         /// <summary>
@@ -576,9 +576,9 @@ namespace AppPublication.Data
         private void LectureDonneesEquipes(XElement element)
         {
             var judoDataInstance = InternalDataManager;
-            judoDataInstance.Participants.lecture_epreuves_judokas(element, judoDataInstance);
-            judoDataInstance.Participants.lecture_equipes(element);
-            judoDataInstance.Participants.lecture_judokas(element, judoDataInstance);
+            judoDataInstance.Participants.ChargeEpreuvesJudokas(element);
+            judoDataInstance.Participants.ChargeEquipes(element);
+            judoDataInstance.Participants.ChargeJudokas(element, judoDataInstance);
         }
 
         public void Client_OnListeEquipes(object sender, XElement element)
@@ -624,8 +624,8 @@ namespace AppPublication.Data
         private void LectureDonneesJudokas(XElement element)
         {
             var judoDataInstance = InternalDataManager;
-            judoDataInstance.Participants.lecture_epreuves_judokas(element, judoDataInstance);
-            judoDataInstance.Participants.lecture_judokas(element, judoDataInstance);
+            judoDataInstance.Participants.ChargeEpreuvesJudokas(element);
+            judoDataInstance.Participants.ChargeJudokas(element, judoDataInstance);
         }
 
         public void Client_OnListeJudokas(object sender, XElement element)
@@ -671,11 +671,11 @@ namespace AppPublication.Data
         {
             var judoDataInstance = InternalDataManager;
             // DC.ServerData.Deroulement.clear_deroulement();
-            judoDataInstance.Deroulement.lecture_phases(element);
-            judoDataInstance.Deroulement.lecture_participants(element);
-            judoDataInstance.Deroulement.lecture_decoupages(element);
-            judoDataInstance.Deroulement.lecture_poules(element);
-            judoDataInstance.Deroulement.lecture_groupes(element, judoDataInstance);
+            judoDataInstance.Deroulement.ChargePhases(element);
+            judoDataInstance.Deroulement.ChargeParticipants(element);
+            judoDataInstance.Deroulement.ChargeDecoupages(element);
+            judoDataInstance.Deroulement.ChargePoules(element);
+            judoDataInstance.Deroulement.ChargeGroupes(element, judoDataInstance);
         }
 
         public void Client_OnListePhases(object sender, XElement element)
@@ -719,9 +719,9 @@ namespace AppPublication.Data
         private void LectureDonneesCombats(XElement element, bool isFull)
         {
             var judoDataInstance = InternalDataManager;
-            judoDataInstance.Deroulement.lecture_rencontres(element, isFull);
-            judoDataInstance.Deroulement.lecture_feuilles(element, isFull);
-            judoDataInstance.Deroulement.lecture_combats(element, judoDataInstance, isFull);
+            judoDataInstance.Deroulement.ChargeRencontres(element, isFull);
+            judoDataInstance.Deroulement.ChargeFeuilles(element, isFull);
+            judoDataInstance.Deroulement.ChargeCombats(element, judoDataInstance, isFull);
         }
 
 
@@ -855,7 +855,7 @@ namespace AppPublication.Data
         private void LectureDonneesRencontres(XElement element)
         {
             var judoDataInstance = InternalDataManager;
-            judoDataInstance.Deroulement.lecture_rencontres(element, true);
+            judoDataInstance.Deroulement.ChargeRencontres(element, true);
         }
 
         public void Client_onUpdateRencontres(object sender, XElement element)
@@ -877,9 +877,9 @@ namespace AppPublication.Data
         private void LectureDonneesArbitrage(XElement element)
         {
             var judoDataInstance = InternalDataManager;
-            judoDataInstance.Arbitrage.lecture_arbitres(element);
-            judoDataInstance.Arbitrage.lecture_commissaires(element);
-            judoDataInstance.Arbitrage.lecture_delegues(element);
+            judoDataInstance.Arbitrage.ChargeArbitres(element);
+            judoDataInstance.Arbitrage.ChargeCommissaires(element);
+            judoDataInstance.Arbitrage.ChargeDelegues(element);
         }
 
         public void Client_OnListeArbitrage(object sender, XElement element)

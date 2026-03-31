@@ -5,7 +5,7 @@ using System;
 namespace FranceJudo.Metier.Noyau.Participants
 {
 
-    public interface Ivue_judoka : IXMLSerializable
+    public interface IVueJudoka : IXMLSerializable
     {
 
         #region PROPERTIES

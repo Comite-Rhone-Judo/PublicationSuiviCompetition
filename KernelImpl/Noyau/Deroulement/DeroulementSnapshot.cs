@@ -13,8 +13,8 @@ namespace KernelImpl.Noyau.Deroulement
         public IReadOnlyList<IPhase> Phases { get; private set; }
         public IReadOnlyList<IPoule> Poules { get; private set; }
         public IReadOnlyList<IParticipant> Participants { get; private set; }
-        public IReadOnlyList<Ivue_groupe> VueGroupes { get; private set; }
-        public IReadOnlyList<Ivue_combat> VueCombats { get; private set; }
+        public IReadOnlyList<IVueGroupe> VueGroupes { get; private set; }
+        public IReadOnlyList<IVueCombat> VueCombats { get; private set; }
 
         public DeroulementSnapshot(DataDeroulement source)
         {

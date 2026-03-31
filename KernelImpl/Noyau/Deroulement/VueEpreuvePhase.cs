@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class vue_epreuve_phase : Ivue_epreuve_phase, INotifyPropertyChanged, IEntityWithKey<int>
+    public class VueEpreuvePhase : IVueEpreuvePhase, INotifyPropertyChanged, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -16,7 +16,7 @@ namespace KernelImpl.Noyau.Deroulement
         }
 
 
-        public vue_epreuve_phase(Phase phase)
+        public VueEpreuvePhase(Phase phase)
         {
             _id = phase.id;
             _nom = phase.libelle;
@@ -24,7 +24,7 @@ namespace KernelImpl.Noyau.Deroulement
             _etat = ((EtatPhaseEnum)phase.etat).ToString();
         }
 
-        int _id = 0;
+        readonly int _id = 0;
         public int id
         {
             get
@@ -33,7 +33,7 @@ namespace KernelImpl.Noyau.Deroulement
             }
         }
 
-        int _type_phase = 0;
+        readonly int _type_phase = 0;
         public int type_phase
         {
             get
@@ -42,7 +42,7 @@ namespace KernelImpl.Noyau.Deroulement
             }
         }
 
-        string _nom = "";
+        readonly string _nom = "";
         public string nom
         {
             get
@@ -51,7 +51,7 @@ namespace KernelImpl.Noyau.Deroulement
             }
         }
 
-        string _etat = "";
+        readonly string _etat = "";
         public string etat
         {
             get

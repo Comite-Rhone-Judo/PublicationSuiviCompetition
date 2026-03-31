@@ -5,5 +5,14 @@
 
 using System.Diagnostics.CodeAnalysis;
 
+[assembly: SuppressMessage("Style", "IDE0306:Simplifier l'initialisation des collections", Justification = "<En attente>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0034:Simplify 'default' expression", Justification = "<Pending>", Scope = "module")]
 [assembly: SuppressMessage("Style", "IDE0290:Use primary constructor", Justification = "<Pending>", Scope = "module")]
 [assembly: SuppressMessage("Style", "IDE0090:Use 'new(...)'", Justification = "<Pending>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "<Pending>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0300:Simplify collection initialization", Justification = "<Pending>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0305:Simplify collection initialization", Justification = "<Pending>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0038:Use pattern matching", Justification = "<Pending>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0020:Use pattern matching", Justification = "<Pending>", Scope = "module")]

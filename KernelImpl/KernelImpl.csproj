@@ -102,12 +102,12 @@
     <Compile Include="Noyau\Deroulement\Phase_Decoupage.cs" />
     <Compile Include="Noyau\Deroulement\Poule.cs" />
     <Compile Include="Noyau\Deroulement\Rencontre.cs" />
-    <Compile Include="Noyau\Deroulement\vue_combat.cs" />
-    <Compile Include="Noyau\Organisation\vue_epreuve.cs" />
-    <Compile Include="Noyau\Organisation\vue_epreuve_equipe.cs" />
-    <Compile Include="Noyau\Deroulement\vue_epreuve_phase.cs" />
-    <Compile Include="Noyau\Deroulement\vue_groupe.cs" />
-    <Compile Include="Noyau\Participants\vue_judoka.cs" />
+    <Compile Include="Noyau\Deroulement\VueCombat.cs" />
+    <Compile Include="Noyau\Organisation\VueEpreuve.cs" />
+    <Compile Include="Noyau\Organisation\VueEpreuveEquipe.cs" />
+    <Compile Include="Noyau\Deroulement\VueEpreuvePhase.cs" />
+    <Compile Include="Noyau\Deroulement\VueGroupe.cs" />
+    <Compile Include="Noyau\Participants\VueJudoka.cs" />
     <Compile Include="Noyau\Structures\StructuresSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

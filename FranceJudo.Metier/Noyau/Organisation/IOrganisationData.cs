@@ -8,7 +8,7 @@ namespace FranceJudo.Metier.Noyau.Organisation
         IReadOnlyList<ICompetition> Competitions { get; }
         IReadOnlyList<IEpreuve> Epreuves { get; }
         IReadOnlyList<IEpreuve_Equipe> EpreuveEquipes { get; }
-        IReadOnlyList<Ivue_epreuve_equipe> VueEpreuveEquipes { get; }
-        IReadOnlyList<Ivue_epreuve> VueEpreuves { get; }
+        IReadOnlyList<IVueEpreuveEquipe> VueEpreuveEquipes { get; }
+        IReadOnlyList<IVueEpreuve> VueEpreuves { get; }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace FranceJudo.Metier.Noyau.Organisation
 {
-    public interface Ivue_epreuve : i_vue_epreuve_interface
+    public interface IVueEpreuve : i_vue_epreuve_interface
     {
         public int categoriePoids { get; set; }
         public int poidsMin { get; set; }

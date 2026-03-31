@@ -25,34 +25,22 @@ namespace JudoClient.Communication
 
         public void ListeCategories(XElement element)
         {
-            if (OnListeCategories != null)
-            {
-                OnListeCategories(_client, element);
-            }
+            OnListeCategories?.Invoke(_client, element);
         }
 
         public void ListeCateAge(XElement element)
         {
-            if (OnListeCateAge != null)
-            {
-                OnListeCateAge(_client, element);
-            }
+            OnListeCateAge?.Invoke(_client, element);
         }
 
         public void ListeCatePoids(XElement element)
         {
-            if (OnListeCatePoids != null)
-            {
-                OnListeCatePoids(_client, element);
-            }
+            OnListeCatePoids?.Invoke(_client, element);
         }
 
         public void ListeCeintures(XElement element)
         {
-            if (OnListeCeintures != null)
-            {
-                OnListeCeintures(_client, element);
-            }
+            OnListeCeintures?.Invoke(_client, element);
         }
 
 
@@ -70,34 +58,22 @@ namespace JudoClient.Communication
 
         public void UpdateCategories(XElement element)
         {
-            if (OnUpdateCategories != null)
-            {
-                OnUpdateCategories(_client, element);
-            }
+            OnUpdateCategories?.Invoke(_client, element);
         }
 
         public void UpdateCateAge(XElement element)
         {
-            if (OnUpdateCateAge != null)
-            {
-                OnUpdateCateAge(_client, element);
-            }
+            OnUpdateCateAge?.Invoke(_client, element);
         }
 
         public void UpdateCatePoids(XElement element)
         {
-            if (OnUpdateCatePoids != null)
-            {
-                OnUpdateCatePoids(_client, element);
-            }
+            OnUpdateCatePoids?.Invoke(_client, element);
         }
 
         public void UpdateCeintures(XElement element)
         {
-            if (OnUpdateCeintures != null)
-            {
-                OnUpdateCeintures(_client, element);
-            }
+            OnUpdateCeintures?.Invoke(_client, element);
         }
     }
 }

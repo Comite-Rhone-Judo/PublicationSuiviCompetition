@@ -4,7 +4,7 @@ namespace JudoClient.Communication
 {
     public class TraitementLogos
     {
-        ClientJudo _client = null;
+        readonly ClientJudo _client = null;
 
         public TraitementLogos(ClientJudo client)
         {
@@ -16,10 +16,7 @@ namespace JudoClient.Communication
 
         public void ListeLogos(XElement element)
         {
-            if (OnListeLogos != null)
-            {
-                OnListeLogos(_client, element);
-            }
+            OnListeLogos?.Invoke(_client, element);
         }
 
         public delegate void OnUpdateLogosHandler(object sender, XElement xelements);
@@ -27,10 +24,7 @@ namespace JudoClient.Communication
 
         public void UpdateLogos(XElement element)
         {
-            if (OnUpdateLogos != null)
-            {
-                OnUpdateLogos(_client, element);
-            }
+            OnUpdateLogos?.Invoke(_client, element);
         }
     }
 }

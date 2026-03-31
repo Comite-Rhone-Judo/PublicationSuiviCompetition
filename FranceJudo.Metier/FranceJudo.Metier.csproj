@@ -12,8 +12,8 @@
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <LangVersion>latest</LangVersion>
     <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>	
-	<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <Deterministic>true</Deterministic>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -78,9 +78,9 @@
     <Compile Include="Noyau\Deroulement\IPoule.cs" />
     <Compile Include="Noyau\Deroulement\IRencontre.cs" />
     <Compile Include="Noyau\Deroulement\TypePhaseEnum.cs" />
-    <Compile Include="Noyau\Deroulement\Ivue_combat.cs" />
-    <Compile Include="Noyau\Deroulement\Ivue_epreuve_phase.cs" />
-    <Compile Include="Noyau\Deroulement\Ivue_groupe.cs" />
+    <Compile Include="Noyau\Deroulement\IVueCombat.cs" />
+    <Compile Include="Noyau\Deroulement\IVueEpreuvePhase.cs" />
+    <Compile Include="Noyau\Deroulement\IVueGroupe.cs" />
     <Compile Include="Noyau\IJudoData.cs" />
     <Compile Include="Noyau\IJudoDataManager.cs" />
     <Compile Include="Noyau\Logos\IlogosData.cs" />
@@ -99,8 +99,8 @@
     <Compile Include="Noyau\Organisation\i_vue_epreuve_interface.cs" />
     <Compile Include="Noyau\Organisation\ReglementEquipeEnum.cs" />
     <Compile Include="Noyau\Organisation\TypeCSAEnum.cs" />
-    <Compile Include="Noyau\Organisation\Ivue_epreuve.cs" />
-    <Compile Include="Noyau\Organisation\Ivue_epreuve_equipe.cs" />
+    <Compile Include="Noyau\Organisation\IVueEpreuve.cs" />
+    <Compile Include="Noyau\Organisation\IVueEpreuveEquipe.cs" />
     <Compile Include="Noyau\Participants\DataParticipantsExtension.cs" />
     <Compile Include="Noyau\Participants\IEpreuveJudoka.cs" />
     <Compile Include="Noyau\Participants\IEquipe.cs" />
@@ -108,7 +108,7 @@
     <Compile Include="Noyau\Participants\IParticipantsData.cs" />
     <Compile Include="Noyau\Participants\IJudoka.cs" />
     <Compile Include="Noyau\Participants\QualifieEnum.cs" />
-    <Compile Include="Noyau\Participants\Ivue_judoka.cs" />
+    <Compile Include="Noyau\Participants\IVueJudoka.cs" />
     <Compile Include="Noyau\Structures\IClub.cs" />
     <Compile Include="Noyau\Structures\IComite.cs" />
     <Compile Include="Noyau\Structures\IStructuresData.cs" />

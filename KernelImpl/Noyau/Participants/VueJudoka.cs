@@ -13,7 +13,7 @@ using System.Xml.Linq;
 namespace KernelImpl.Noyau.Participants
 {
 
-    public class vue_judoka : Ivue_judoka, INotifyPropertyChanged, IEntityWithKey<string>
+    public class VueJudoka : IVueJudoka, INotifyPropertyChanged, IEntityWithKey<string>
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -677,8 +677,7 @@ namespace KernelImpl.Noyau.Participants
         {
             get
             {
-                int com = 0;
-                if (int.TryParse(_comiteNomCourt, out com))
+                if (int.TryParse(_comiteNomCourt, out int com))
                 {
                     return com.ToString("00");
                 }
@@ -1062,7 +1061,7 @@ namespace KernelImpl.Noyau.Participants
         #endregion
         #region CONSTRUCTEURS
 
-        public vue_judoka(Judoka judoka, IJudoData DC)
+        public VueJudoka(Judoka judoka, IJudoData DC)
         {
             IEpreuveJudoka ej = DC.Participants.EpreuveJudokas.FirstOrDefault(o => o.judoka == judoka.id);
             IEpreuve ep = ej != null ? DC.Organisation.Epreuves.FirstOrDefault(o => o.id == ej.epreuve) : null;
@@ -1231,7 +1230,7 @@ namespace KernelImpl.Noyau.Participants
             }
         }
 
-        public vue_judoka(IJudoka judoka, IEpreuve epreuve, IJudoData DC)
+        public VueJudoka(IJudoka judoka, IEpreuve epreuve, IJudoData DC)
         {
             IEpreuveJudoka ej = DC.Participants.EpreuveJudokas.FirstOrDefault(o => o.judoka == judoka.id && o.epreuve == epreuve.id);
             IEpreuve ep = ej != null ? DC.Organisation.Epreuves.FirstOrDefault(o => o.id == ej.epreuve) : null;
@@ -1400,7 +1399,7 @@ namespace KernelImpl.Noyau.Participants
             }
         }
 
-        public vue_judoka(IJudoka judoka, IEpreuve epreuve, Ivue_judoka old_vj, IJudoData DC)
+        public VueJudoka(IJudoka judoka, IEpreuve epreuve, IVueJudoka old_vj, IJudoData DC)
         {
             IEpreuveJudoka ej = DC.Participants.EpreuveJudokas.FirstOrDefault(o => o.judoka == judoka.id && o.epreuve == old_vj.idepreuve);
 

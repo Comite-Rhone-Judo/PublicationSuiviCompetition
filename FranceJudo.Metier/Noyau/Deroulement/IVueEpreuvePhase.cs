@@ -1,6 +1,6 @@
 ﻿namespace FranceJudo.Metier.Noyau.Deroulement
 {
-    public interface Ivue_epreuve_phase
+    public interface IVueEpreuvePhase
     {
         public int id { get; }
         public int type_phase { get; }

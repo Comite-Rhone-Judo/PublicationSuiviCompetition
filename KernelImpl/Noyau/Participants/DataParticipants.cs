@@ -13,33 +13,33 @@ namespace KernelImpl.Noyau.Participants
         private readonly DeduplicatedCachedData<int, Equipe> _equipesCache = new DeduplicatedCachedData<int, Equipe>();
         private readonly DeduplicatedCachedData<int, Judoka> _judokasCache = new DeduplicatedCachedData<int, Judoka>();
         private readonly DeduplicatedCachedData<int, EpreuveJudoka> _epreuvejudokasCache = new DeduplicatedCachedData<int, EpreuveJudoka>();
-        private readonly DeduplicatedCachedData<string, vue_judoka> _vue_judokasCache = new DeduplicatedCachedData<string, vue_judoka>();
+        private readonly DeduplicatedCachedData<string, VueJudoka> _vue_judokasCache = new DeduplicatedCachedData<string, VueJudoka>();
 
         // Accesseurs O(1)
         public IReadOnlyList<Equipe> Equipes { get { return _equipesCache.Cache; } }
         public IReadOnlyList<Judoka> Judokas { get { return _judokasCache.Cache; } }
         public IReadOnlyList<EpreuveJudoka> EpreuveJudokas { get { return _epreuvejudokasCache.Cache; } }
-        public IReadOnlyList<vue_judoka> Vuejudokas { get { return _vue_judokasCache.Cache; } }
+        public IReadOnlyList<VueJudoka> Vuejudokas { get { return _vue_judokasCache.Cache; } }
 
         IReadOnlyList<IEquipe> IParticipantsData.Equipes => Equipes;
         IReadOnlyList<IJudoka> IParticipantsData.Judokas => Judokas;
         IReadOnlyList<IEpreuveJudoka> IParticipantsData.EpreuveJudokas => EpreuveJudokas;
-        IReadOnlyList<Ivue_judoka> IParticipantsData.Vuejudokas => Vuejudokas;
+        IReadOnlyList<IVueJudoka> IParticipantsData.Vuejudokas => Vuejudokas;
 
 
         // Expose le dictionnaire courant. Note: IDictionary est utilisé pour la compatibilité, 
         // mais l'objet sous-jacent ne doit pas être modifié par le consommateur.
-        private readonly SimpleCachedData<Dictionary<int, IList<vue_judoka>>> _vjudokasEpreuveMap = new SimpleCachedData<Dictionary<int, IList<vue_judoka>>>();
+        private readonly SimpleCachedData<Dictionary<int, IList<VueJudoka>>> _vjudokasEpreuveMap = new SimpleCachedData<Dictionary<int, IList<VueJudoka>>>();
 
 
-        public IDictionary<int, IList<vue_judoka>> vjudokas_epreuve { get { return _vjudokasEpreuveMap.Cache; } }
+        public IDictionary<int, IList<VueJudoka>> VueJudokasEpreuve { get { return _vjudokasEpreuveMap.Cache; } }
 
         /// <summary>
         /// lecture des judoka
         /// </summary>
         /// <param name="element">element XML contenant les judoka</param>
         /// <param name="DC"></param>
-        public void lecture_judokas(XElement element, IJudoData DC)
+        public void ChargeJudokas(XElement element, IJudoData DC)
         {
             ICollection<Judoka> judokasRecu = Judoka.LectureJudoka(element);
             _judokasCache.UpdateFullSnapshot(judokasRecu);
@@ -69,7 +69,7 @@ namespace KernelImpl.Noyau.Participants
         /// </summary>
         /// <param name="element">element XML contenant les équipes</param>
         /// <param name="DC"></param>
-        public void lecture_equipes(XElement element)
+        public void ChargeEquipes(XElement element)
         {
             ICollection<Equipe> equipes = Equipe.LectureEquipes(element);
             _equipesCache.UpdateFullSnapshot(equipes);
@@ -86,7 +86,7 @@ namespace KernelImpl.Noyau.Participants
         /// </summary>
         /// <param name="element">element XML contenant les  épreuves des judokas</param>
         /// <param name="DC"></param>
-        public void lecture_epreuves_judokas(XElement element, IJudoData DC)
+        public void ChargeEpreuvesJudokas(XElement element)
         {
             ICollection<EpreuveJudoka> ejs = EpreuveJudoka.LectureEpreuveJudokas(element);
             _epreuvejudokasCache.UpdateFullSnapshot(ejs);
@@ -136,7 +136,7 @@ namespace KernelImpl.Noyau.Participants
         /// Ne modifie aucun état de la classe.
         /// </summary>
         /// <returns>Un Tuple contenant la liste plate et le dictionnaire construits.</returns>
-        private (List<vue_judoka> VueJudoka, Dictionary<int, IList<vue_judoka>> JudokasParEpreuve) GenereVueJudokas(IJudoData DC)
+        private (List<VueJudoka> VueJudoka, Dictionary<int, IList<VueJudoka>> JudokasParEpreuve) GenereVueJudokas(IJudoData DC)
         {
             // 1. Capture des Snapshots locaux (Lecture O(1)) pour cohérence durant le traitement
             var sourceJudokas = Judokas;
@@ -148,13 +148,13 @@ namespace KernelImpl.Noyau.Participants
                 from j in sourceJudokas
                 join ej in sourceEJS on j.id equals ej.judoka
                 join ep in sourceEpreuves on ej.epreuve equals ep.id
-                select new vue_judoka(j, ep, DC);
+                select new VueJudoka(j, ep, DC);
 
             var listeVues = requeteVues.ToList();
 
             // 3. Construction du Dictionnaire
-            var nouveauDico = new Dictionary<int, IList<vue_judoka>>();
-            nouveauDico[0] = new List<vue_judoka>();
+            var nouveauDico = new Dictionary<int, IList<VueJudoka>>();
+            nouveauDico[0] = new List<VueJudoka>();
 
             // 3.1 Initialisation des clés
             var epreuvesAInitialiser = DC.Organisation.Competition.IsEquipe()
@@ -164,14 +164,14 @@ namespace KernelImpl.Noyau.Participants
             foreach (var ep in epreuvesAInitialiser)
             {
                 if (!nouveauDico.ContainsKey(ep.EntityKey))
-                    nouveauDico[ep.EntityKey] = new List<vue_judoka>();
+                    nouveauDico[ep.EntityKey] = new List<VueJudoka>();
             }
 
             // 3.2 Remplissage
             foreach (var vue in listeVues)
             {
                 int targetId = (vue.idepreuve_equipe != 0) ? vue.idepreuve_equipe : vue.idepreuve;
-                if (nouveauDico.TryGetValue(targetId, out IList<vue_judoka> listeCible))
+                if (nouveauDico.TryGetValue(targetId, out IList<VueJudoka> listeCible))
                 {
                     listeCible.Add(vue);
                 }

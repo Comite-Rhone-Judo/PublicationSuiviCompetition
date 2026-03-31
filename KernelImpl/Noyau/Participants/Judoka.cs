@@ -488,7 +488,7 @@ namespace KernelImpl.Noyau.Participants
                 xjudoka.SetAttributeValue(ConstantXML.Judoka_Serie2, judoka == null ? 0 : judoka.serie2);
                 xjudoka.SetAttributeValue(ConstantXML.Judoka_Observation, judoka == null ? 0 : judoka.observation);
 
-                Ivue_epreuve epreuve = null;
+                IVueEpreuve epreuve = null;
                 using (TimedLock.Lock((DC.Organisation.VueEpreuves as ICollection).SyncRoot))
                 {
                     epreuve = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == judoka.epreuve);

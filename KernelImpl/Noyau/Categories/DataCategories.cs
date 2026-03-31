@@ -31,7 +31,7 @@ namespace KernelImpl.Noyau.Categories
         /// </summary>
         /// <param name="element">element XML contenant les catégories d'âge</param>
         /// <param name="DC"></param>
-        public void lecture_cateages(XElement element)
+        public void ChargeCategorieAges(XElement element)
         {
             ICollection<CategorieAge> cateages = CategorieAge.LectureCategorieAge(element);
             _cAgesCache.UpdateFullSnapshot(cateages);
@@ -43,7 +43,7 @@ namespace KernelImpl.Noyau.Categories
         /// </summary>
         /// <param name="element">element XML contenant les catégories de poids</param>
         /// <param name="DC"></param>
-        public void lecture_catepoids(XElement element)
+        public void ChargeCategoriePoids(XElement element)
         {
             ICollection<CategoriePoids> catepoids = CategoriePoids.LectureCategoriePoids(element);
             _cPoidsCache.UpdateFullSnapshot(catepoids);
@@ -55,7 +55,7 @@ namespace KernelImpl.Noyau.Categories
         /// </summary>
         /// <param name="element">element XML contenant les ceintures</param>
         /// <param name="DC"></param>
-        public void lecture_ceintures(XElement element)
+        public void ChargeCeintures(XElement element)
         {
             ICollection<Ceintures> ceintures = Ceintures.LectureCeintures(element);
             _gradesCache.UpdateFullSnapshot(ceintures);

@@ -6,7 +6,7 @@ namespace AppPublication.ExtensionNoyau.Engagement
 {
 
     // Comparateur de judokas pour trier les listes de judokas
-    class VueJudokaEqualityComparer : IEqualityComparer<Ivue_judoka>
+    class VueJudokaEqualityComparer : IEqualityComparer<IVueJudoka>
     {
         /// <summary>
         /// Les judokas sont egaux si nom et prenom sont egaux
@@ -14,7 +14,7 @@ namespace AppPublication.ExtensionNoyau.Engagement
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public bool Equals(Ivue_judoka x, Ivue_judoka y)
+        public bool Equals(IVueJudoka x, IVueJudoka y)
         {
 
             //Check whether the compared objects reference the same data.
@@ -30,7 +30,7 @@ namespace AppPublication.ExtensionNoyau.Engagement
 
         // If Equals() returns true for a pair of objects
         // then GetHashCode() must return the same value for these objects.
-        public int GetHashCode(Ivue_judoka j)
+        public int GetHashCode(IVueJudoka j)
         {
             //Check whether the object is null
             if (j is null) return 0;

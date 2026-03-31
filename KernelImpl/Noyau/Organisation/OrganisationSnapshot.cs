@@ -10,8 +10,8 @@ namespace KernelImpl.Noyau.Organisation
         public IReadOnlyList<ICompetition> Competitions { get; private set; }
         public IReadOnlyList<IEpreuve> Epreuves { get; private set; }
         public IReadOnlyList<IEpreuve_Equipe> EpreuveEquipes { get; private set; }
-        public IReadOnlyList<Ivue_epreuve_equipe> VueEpreuveEquipes { get; private set; }
-        public IReadOnlyList<Ivue_epreuve> VueEpreuves { get; private set; }
+        public IReadOnlyList<IVueEpreuveEquipe> VueEpreuveEquipes { get; private set; }
+        public IReadOnlyList<IVueEpreuve> VueEpreuves { get; private set; }
 
         public OrganisationSnapshot(DataOrganisation source)
         {

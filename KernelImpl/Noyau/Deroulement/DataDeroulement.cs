@@ -19,8 +19,8 @@ namespace KernelImpl.Noyau.Deroulement
         private readonly DeduplicatedCachedData<int, Phase> _phasesCache = new DeduplicatedCachedData<int, Phase>();
         private readonly DeduplicatedCachedData<int, Poule> _poulesCache = new DeduplicatedCachedData<int, Poule>();
         private readonly DeduplicatedCachedData<int, Participant> _participantsCache = new DeduplicatedCachedData<int, Participant>();
-        private readonly DeduplicatedCachedData<int, vue_groupe> _vgroupesCache = new DeduplicatedCachedData<int, vue_groupe>();
-        private readonly DeduplicatedCachedData<int, vue_combat> _vcombatsCache = new DeduplicatedCachedData<int, vue_combat>();
+        private readonly DeduplicatedCachedData<int, VueGroupe> _vgroupesCache = new DeduplicatedCachedData<int, VueGroupe>();
+        private readonly DeduplicatedCachedData<int, VueCombat> _vcombatsCache = new DeduplicatedCachedData<int, VueCombat>();
         #endregion
 
         // Accesseurs O(1)
@@ -32,8 +32,8 @@ namespace KernelImpl.Noyau.Deroulement
         public IReadOnlyList<Phase> Phases { get { return _phasesCache.Cache; } }
         public IReadOnlyList<Poule> Poules { get { return _poulesCache.Cache; } }
         public IReadOnlyList<Participant> Participants { get { return _participantsCache.Cache; } }
-        public IReadOnlyList<vue_groupe> VueGroupes { get { return _vgroupesCache.Cache; } }
-        public IReadOnlyList<vue_combat> VueCombats { get { return _vcombatsCache.Cache; } }
+        public IReadOnlyList<VueGroupe> VueGroupes { get { return _vgroupesCache.Cache; } }
+        public IReadOnlyList<VueCombat> VueCombats { get { return _vcombatsCache.Cache; } }
 
 
         IReadOnlyList<ICombat> IDeroulementData.Combats => Combats;
@@ -46,15 +46,15 @@ namespace KernelImpl.Noyau.Deroulement
         IReadOnlyList<IPhase> IDeroulementData.Phases => Phases;
         IReadOnlyList<IPoule> IDeroulementData.Poules => Poules;
         IReadOnlyList<IParticipant> IDeroulementData.Participants => this.Participants;
-        IReadOnlyList<Ivue_groupe> IDeroulementData.VueGroupes => VueGroupes;
-        IReadOnlyList<Ivue_combat> IDeroulementData.VueCombats => VueCombats;
+        IReadOnlyList<IVueGroupe> IDeroulementData.VueGroupes => VueGroupes;
+        IReadOnlyList<IVueCombat> IDeroulementData.VueCombats => VueCombats;
 
         /// <summary>
         /// lecture des participants
         /// </summary>
         /// <param name="element">element XML contenant les participants</param>
         /// <param name="DC"></param>
-        public void lecture_participants(XElement element/*, bool suppression*/)
+        public void ChargeParticipants(XElement element/*, bool suppression*/)
         {
             ICollection<Participant> participants = Participant.LectureParticipant(element);
             _participantsCache.UpdateFullSnapshot(participants);
@@ -65,7 +65,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// </summary>
         /// <param name="element">element XML contenant les phases</param>
         /// <param name="DC"></param>
-        public void lecture_phases(XElement element)
+        public void ChargePhases(XElement element)
         {
             ICollection<Phase> phases = Phase.LecturePhases(element);
             _phasesCache.UpdateFullSnapshot(phases);
@@ -76,7 +76,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// </summary>
         /// <param name="element">element XML contenant les découpages</param>
         /// <param name="DC"></param>
-        public void lecture_decoupages(XElement element)
+        public void ChargeDecoupages(XElement element)
         {
             ICollection<Phase_Decoupage> decoupages = Phase_Decoupage.LectureDecoupages(element);
             _decoupagesCache.UpdateFullSnapshot(decoupages);
@@ -87,13 +87,13 @@ namespace KernelImpl.Noyau.Deroulement
         /// </summary>
         /// <param name="element">element XML contenant les groupes</param>
         /// <param name="DC"></param>
-        public void lecture_groupes(XElement element, IJudoData DC)
+        public void ChargeGroupes(XElement element, IJudoData DC)
         {
             ICollection<Groupe_Combats> groupes = Groupe_Combats.LectureGroupes(element);
             _groupesCache.UpdateFullSnapshot(groupes);
 
 
-            ICollection<vue_groupe> vgroupes = GenereVueGroupe(groupes, DC);
+            ICollection<VueGroupe> vgroupes = GenereVueGroupe(groupes, DC);
             _vgroupesCache.UpdateFullSnapshot(vgroupes);
         }
 
@@ -102,9 +102,9 @@ namespace KernelImpl.Noyau.Deroulement
         /// </summary>
         /// <param name="groupes">Le snapshot des groupes</param>
         /// <param name="DC"></param>
-        private ICollection<vue_groupe> GenereVueGroupe(ICollection<Groupe_Combats> groupes, IJudoData DC)
+        private ICollection<VueGroupe> GenereVueGroupe(ICollection<Groupe_Combats> groupes, IJudoData DC)
         {
-            return groupes.Select(o => new vue_groupe(o, DC)).ToList();
+            return groupes.Select(o => new VueGroupe(o, DC)).ToList();
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// </summary>
         /// <param name="element">element XML contenant les poules</param>
         /// <param name="DC"></param>
-        public void lecture_poules(XElement element)
+        public void ChargePoules(XElement element)
         {
             ICollection<Poule> poules = Poule.LecturePoules(element);
             _poulesCache.UpdateFullSnapshot(poules);
@@ -125,10 +125,10 @@ namespace KernelImpl.Noyau.Deroulement
         /// <param name="element">element XML contenant les combats</param>
         /// <param name="DC">Data Context</param>
         /// <param name="isFull">True si on traite le snapshot comme complet</param>
-        public void lecture_combats(XElement element, IJudoData DC, bool isFull)
+        public void ChargeCombats(XElement element, IJudoData DC, bool isFull)
         {
             ICollection<Combat> combats = Combat.LectureCombats(element);
-            ICollection<vue_combat> vcombats = GenereVueCombat(combats, DC);
+            ICollection<VueCombat> vcombats = GenereVueCombat(combats, DC);
 
             if (isFull)
             {
@@ -147,9 +147,9 @@ namespace KernelImpl.Noyau.Deroulement
         /// </summary>
         /// <param name="groupes">Le snapshot des groupes</param>
         /// <param name="DC"></param>
-        private ICollection<vue_combat> GenereVueCombat(ICollection<Combat> combats, IJudoData DC)
+        private ICollection<VueCombat> GenereVueCombat(ICollection<Combat> combats, IJudoData DC)
         {
-            return combats.Select(o => new vue_combat(o, DC)).ToList();
+            return combats.Select(o => new VueCombat(o, DC)).ToList();
         }
 
         public ICollection<Combat> LectureCombats(XElement xelement)
@@ -162,7 +162,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// </summary>
         /// <param name="element">element XML contenant les rencontres</param>
         /// <param name="isFull">True si on traite le snapshot comme complet</param>
-        public void lecture_rencontres(XElement element, bool isFull)
+        public void ChargeRencontres(XElement element, bool isFull)
         {
             ICollection<Rencontre> rencontres = Rencontre.LectureRencontres(element);
             if (isFull)
@@ -185,7 +185,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// </summary>
         /// <param name="element">element XML contenant les feuilles</param>
         /// <param name="isFull">True si on traite le snapshot comme complet</param>
-        public void lecture_feuilles(XElement element, bool isFull)
+        public void ChargeFeuilles(XElement element, bool isFull)
         {
             ICollection<Feuille> feuilles = Feuille.LectureFeuilles(element);
             if (isFull)

@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class vue_combat : Ivue_combat, IEntityWithKey<int>
+    public class VueCombat : IVueCombat, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => combat_id;
 
@@ -108,7 +108,7 @@ namespace KernelImpl.Noyau.Deroulement
         public string judoka2_prenom1 { get; set; }
         public string judoka2_club1 { get; set; }
 
-        public vue_combat(Combat combat, IJudoData DC)
+        public VueCombat(Combat combat, IJudoData DC)
         {
             combat_id = combat.id;
             combat_numero = combat.numero;

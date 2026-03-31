@@ -9,7 +9,7 @@ namespace KernelImpl.Noyau.Participants
         public IReadOnlyList<IEquipe> Equipes { get; private set; }
         public IReadOnlyList<IEpreuveJudoka> EpreuveJudokas { get; private set; }
 
-        public IReadOnlyList<Ivue_judoka> Vuejudokas { get; private set; }
+        public IReadOnlyList<IVueJudoka> Vuejudokas { get; private set; }
 
         public ParticipantsSnapshot(DataParticipants source)
         {

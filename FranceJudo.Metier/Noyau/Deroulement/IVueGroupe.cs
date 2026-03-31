@@ -3,7 +3,7 @@ using System;
 
 namespace FranceJudo.Metier.Noyau.Deroulement
 {
-    public interface Ivue_groupe : IXMLSerializable
+    public interface IVueGroupe : IXMLSerializable
     {
         public int groupe_id { get; set; }
 

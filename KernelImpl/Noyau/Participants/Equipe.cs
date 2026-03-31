@@ -158,31 +158,32 @@ namespace KernelImpl.Noyau.Participants
 
             //ON Creer les judokas avec des nom bidon
 
-            Judoka j1 = new Judoka();
-
-            j1.club = this.club;
-            j1.nom = "Judoka " + judoka;
-            j1.prenom = "(" + epreuve.nom + ")";
-            j1.sexeEnum = epreuve.sexeEnum;
-            j1.equipe = this.id;
-            j1.naissance = new DateTime(epreuve.anneeMin, 01, 01);
-            j1.passeport = false;
-            j1.pays = 250;
-            j1.poids = 0;
-            j1.poidsMesure = 0;
-            j1.remoteID = "";
-            j1.qualifieE0 = 0;
-            j1.qualifieE1 = 0;
-            j1.ajoute = true;
-            j1.licence = "";
-            //j1.modeControle = 1;
-            j1.modePesee = 1;
-            j1.modification = false;
-            j1.datePesee = DateTime.Now;
-            j1.categorie = epreuve.categorieAge;
-            j1.ceinture = epreuve.ceintureMin;
-            j1.etat = (int)EtatJudokaEnum.Inscrit;
-            j1.present = false;
+            Judoka j1 = new Judoka
+            {
+                club = this.club,
+                nom = "Judoka " + judoka,
+                prenom = "(" + epreuve.nom + ")",
+                sexeEnum = epreuve.sexeEnum,
+                equipe = this.id,
+                naissance = new DateTime(epreuve.anneeMin, 01, 01),
+                passeport = false,
+                pays = 250,
+                poids = 0,
+                poidsMesure = 0,
+                remoteID = "",
+                qualifieE0 = 0,
+                qualifieE1 = 0,
+                ajoute = true,
+                licence = "",
+                //j1.modeControle = 1;
+                modePesee = 1,
+                modification = false,
+                datePesee = DateTime.Now,
+                categorie = epreuve.categorieAge,
+                ceinture = epreuve.ceintureMin,
+                etat = (int)EtatJudokaEnum.Inscrit,
+                present = false
+            };
 
             return j1;
         }

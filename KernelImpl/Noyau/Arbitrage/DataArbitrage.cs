@@ -27,7 +27,7 @@ namespace KernelImpl.Noyau.Arbitrage
         /// </summary>
         /// <param name="element">element XML contenant les commissaires</param>
         /// <param name="DC"></param>
-        public void lecture_commissaires(XElement element)
+        public void ChargeCommissaires(XElement element)
         {
             ICollection<Commissaire> commissaires = Commissaire.LectureCommissaire(element);
             _commissairesCache.UpdateFullSnapshot(commissaires);
@@ -38,7 +38,7 @@ namespace KernelImpl.Noyau.Arbitrage
         /// </summary>
         /// <param name="element">element XML contenant les arbitres</param>
         /// <param name="DC"></param>
-        public void lecture_arbitres(XElement element)
+        public void ChargeArbitres(XElement element)
         {
             ICollection<Arbitre> arbitres = Arbitre.LectureArbitre(element);
             _arbitresCache.UpdateFullSnapshot(arbitres);
@@ -49,7 +49,7 @@ namespace KernelImpl.Noyau.Arbitrage
         /// </summary>
         /// <param name="element">element XML contenant les delegues</param>
         /// <param name="DC"></param>
-        public void lecture_delegues(XElement element)
+        public void ChargeDelegues(XElement element)
         {
             ICollection<Delegue> delegues = Delegue.LectureDelegue(element);
             _deleguesCache.UpdateFullSnapshot(delegues);

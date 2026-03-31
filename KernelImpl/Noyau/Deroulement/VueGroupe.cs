@@ -12,7 +12,7 @@ using System.Xml.Linq;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public partial class vue_groupe : Ivue_groupe, IEntityWithKey<int>
+    public partial class VueGroupe : IVueGroupe, IEntityWithKey<int>
     {
 
         int IEntityWithKey<int>.EntityKey => groupe_id;
@@ -36,7 +36,7 @@ namespace KernelImpl.Noyau.Deroulement
         public string epreuve_libsexe { get; set; }
 
 
-        public vue_groupe(IGroupe_Combats groupe, IJudoData DC)
+        public VueGroupe(IGroupe_Combats groupe, IJudoData DC)
         {
             groupe_id = groupe.id;
             groupe_tapis = groupe.tapis;

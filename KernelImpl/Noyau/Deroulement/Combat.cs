@@ -208,7 +208,7 @@ namespace KernelImpl.Noyau.Deroulement
             xcombat.SetAttributeValue(ConstantXML.Combat_Reference, reference);
             xcombat.SetAttributeValue(ConstantXML.Combat_Groupe, groupe);
             xcombat.SetAttributeValue(ConstantXML.Combat_FirstRencontre, first_rencontre);
-            Ivue_epreuve ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == first_rencontre);
+            IVueEpreuve ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == first_rencontre);
             string lib = string.Empty;
             if (ep != null)
             {
@@ -668,7 +668,7 @@ namespace KernelImpl.Noyau.Deroulement
                 else
                 {
                     ScoresJujitsu scoresJson = Newtonsoft.Json.JsonConvert.DeserializeObject<ScoresJujitsu>(this.scoresJujitsu);
-                    if (scoresJson is null) scoresJson = new ScoresJujitsu();
+                    scoresJson ??= new ScoresJujitsu();
 
                     if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.JujitsuCombat)
                     {
@@ -820,14 +820,11 @@ namespace KernelImpl.Noyau.Deroulement
 
                 if (isEquipe)
                 {
-                    switch (DC.Organisation.Competition.reglementEquipe)
+                    return DC.Organisation.Competition.reglementEquipe switch
                     {
-                        case ReglementEquipeEnum.FIJ:
-                            return string.Format("{0}v", nbV);
-                        case ReglementEquipeEnum.FFJDA:
-                        default:
-                            return string.Format("{0}v.{1:000}", nbV, score);
-                    }
+                        ReglementEquipeEnum.FIJ => string.Format("{0}v", nbV),
+                        _ => string.Format("{0}v.{1:000}", nbV, score),
+                    };
                 }
 
                 // string res = score.ToString("000");
@@ -890,14 +887,11 @@ namespace KernelImpl.Noyau.Deroulement
 
                 if (DC.Organisation.Competition.type == (int)CompetitionTypeEnum.Equipe)
                 {
-                    switch (DC.Organisation.Competition.reglementEquipe)
+                    return DC.Organisation.Competition.reglementEquipe switch
                     {
-                        case ReglementEquipeEnum.FIJ:
-                            return string.Format("{0}v", nbV);
-                        case ReglementEquipeEnum.FFJDA:
-                        default:
-                            return string.Format("{0}v.{1:000}", nbV, score);
-                    }
+                        ReglementEquipeEnum.FIJ => string.Format("{0}v", nbV),
+                        _ => string.Format("{0}v.{1:000}", nbV, score),
+                    };
                 }
 
                 // string res = score.ToString("000");
@@ -930,7 +924,7 @@ namespace KernelImpl.Noyau.Deroulement
 
         }
 
-        public int? getVainqueur(EtatCombattantEnum etat1, EtatCombattantEnum etat2, IJudoData DC)
+        public int? GetVainqueur(EtatCombattantEnum etat1, EtatCombattantEnum etat2, IJudoData DC)
         {
             int? res = null;
             if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.Judo)
@@ -977,7 +971,7 @@ namespace KernelImpl.Noyau.Deroulement
             else
             {
                 ScoresJujitsu scoresJson = Newtonsoft.Json.JsonConvert.DeserializeObject<ScoresJujitsu>(this.scoresJujitsu);
-                if (scoresJson is null) scoresJson = new ScoresJujitsu();
+                scoresJson ??= new ScoresJujitsu();
 
                 if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.JujitsuCombat)
                 {
@@ -1038,11 +1032,11 @@ namespace KernelImpl.Noyau.Deroulement
 
 
                     int maxPenalites = 4;
-                    Ivue_epreuve ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == this.epreuve);
-                    if (!(ep is null))
+                    IVueEpreuve ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == this.epreuve);
+                    if (ep is not null)
                     {
                         ICategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == ep.categorieAge);
-                        if (!(cateAge is null))
+                        if (cateAge is not null)
                         {
                             if (cateAge.remoteId == "B" || cateAge.remoteId == "M") //Benjamin ou minime
                             {
@@ -1110,11 +1104,11 @@ namespace KernelImpl.Noyau.Deroulement
             if (discipline == CompetitionDisciplineEnum.JujitsuNeWaza)
             {
                 maxPenalites = 4;
-                Ivue_epreuve ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == this.epreuve);
-                if (!(ep is null))
+                IVueEpreuve ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == this.epreuve);
+                if (ep is not null)
                 {
                     ICategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == ep.categorieAge);
-                    if (!(cateAge is null))
+                    if (cateAge is not null)
                     {
                         if (cateAge.remoteId == "B" || cateAge.remoteId == "M") //Benjamin ou minime
                         {
@@ -1143,7 +1137,7 @@ namespace KernelImpl.Noyau.Deroulement
             else
             {
                 ScoresJujitsu scoresJson = Newtonsoft.Json.JsonConvert.DeserializeObject<ScoresJujitsu>(this.scoresJujitsu);
-                if (scoresJson is null) scoresJson = new ScoresJujitsu();
+                scoresJson ??= new ScoresJujitsu();
 
                 if (discipline == CompetitionDisciplineEnum.JujitsuCombat)
                 {
@@ -1203,7 +1197,7 @@ namespace KernelImpl.Noyau.Deroulement
             else
             {
                 ScoresJujitsu scoresJson = Newtonsoft.Json.JsonConvert.DeserializeObject<ScoresJujitsu>(this.scoresJujitsu);
-                if (scoresJson is null) scoresJson = new ScoresJujitsu();
+                scoresJson ??= new ScoresJujitsu();
 
                 if (discipline == CompetitionDisciplineEnum.JujitsuCombat)
                 {
@@ -1263,28 +1257,15 @@ namespace KernelImpl.Noyau.Deroulement
 
             int etat = judoka == 1 ? this.etatJ1 : this.etatJ2;
 
-            switch (etat)
+            pen1 += etat switch
             {
-                case (int)EtatCombattantEnum.Abandon:
-                    pen1 += "A";
-                    break;
-                case (int)EtatCombattantEnum.Medical:
-                    pen1 += "M";
-                    break;
-                case (int)EtatCombattantEnum.Forfait:
-                    pen1 += "F";
-                    break;
-                case (int)EtatCombattantEnum.HansokuMakeH:
-                    pen1 += "H";
-                    break;
-                case (int)EtatCombattantEnum.HansokuMakeX:
-                    pen1 += "X";
-                    break;
-                default:
-                    pen1 += (judoka == 1 ? this.penalite1.ToString() : this.penalite2.ToString());
-                    break;
-            }
-
+                (int)EtatCombattantEnum.Abandon => "A",
+                (int)EtatCombattantEnum.Medical => "M",
+                (int)EtatCombattantEnum.Forfait => "F",
+                (int)EtatCombattantEnum.HansokuMakeH => "H",
+                (int)EtatCombattantEnum.HansokuMakeX => "X",
+                _ => (judoka == 1 ? this.penalite1.ToString() : this.penalite2.ToString()),
+            };
             return pen1;
         }
 

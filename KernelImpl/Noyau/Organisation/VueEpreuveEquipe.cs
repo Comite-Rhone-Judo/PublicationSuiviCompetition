@@ -10,7 +10,7 @@ using System.Xml.Linq;
 
 namespace KernelImpl.Noyau.Organisation
 {
-    public class vue_epreuve_equipe : Ivue_epreuve_equipe, IEntityWithKey<int>
+    public class VueEpreuveEquipe : IVueEpreuveEquipe, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -62,7 +62,7 @@ namespace KernelImpl.Noyau.Organisation
         }
 
 
-        public vue_epreuve_equipe(Epreuve_Equipe epreuve, IJudoData DC)
+        public VueEpreuveEquipe(Epreuve_Equipe epreuve, IJudoData DC)
         {
             id = epreuve.id;
             nom = epreuve.libelle;

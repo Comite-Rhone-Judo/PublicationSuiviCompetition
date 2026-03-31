@@ -709,9 +709,9 @@ namespace AppPublication.Export
         /// Gère l'unicité via les HashSets fournis et protège contre les références nulles.
         /// </summary>
         private static void AddEpreuveToXml(XElement xtapis, int? epreuveIdNullable, int compType, IJudoData DC,
-            Dictionary<int, Ivue_epreuve> epreuvesDict, Dictionary<int, Ivue_epreuve_equipe> epreuvesEqDict,
+            Dictionary<int, IVueEpreuve> epreuvesDict, Dictionary<int, IVueEpreuveEquipe> epreuvesEqDict,
             HashSet<int> addedEp, HashSet<int> addedEq,
-            ILookup<int?, Ivue_epreuve> epreuvesByEquipe)
+            ILookup<int?, IVueEpreuve> epreuvesByEquipe)
         {
             // Clause de garde : si l'épreuve est nulle, on ne fait rien
             if (!epreuveIdNullable.HasValue) return;

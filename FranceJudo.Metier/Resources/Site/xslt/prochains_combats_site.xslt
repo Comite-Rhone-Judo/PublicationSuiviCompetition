@@ -4,8 +4,8 @@
 	<!ENTITY times "&#215;">
 ]>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:import href="Tools/Export/xslt/Site/entete.xslt"/>
-	<xsl:import href="Tools/Export/xslt/Site/panel_epreuve.xslt"/>
+	<xsl:import href="FranceJudo.Metier/Resources/Site/xslt/entete.xslt"/>
+	<xsl:import href="FranceJudo.Metier/Resources/Site/xslt/panel_epreuve.xslt"/>
 	
 	<xsl:output method="html" indent="yes"/>
 	<xsl:param name="style"/>

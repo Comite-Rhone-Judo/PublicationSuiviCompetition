@@ -120,12 +120,12 @@ namespace KernelImpl.Noyau.Organisation
             this.couleur2 = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_Couleur2));
             this.afficheCSA = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_AfficheCSA));
 
-            this.afficheKinzas = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_AfficheKinzas)) == "Oui" ? true : false;
-            this.afficheAutoTempsRecuperation = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_AfficheAutoTempsRecuperation)) == "Oui" ? true : false;
-            this.afficheAnimationVainqueur = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_AfficheAnimationVainqueur)) == "Oui" ? true : false;
+            this.afficheKinzas = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_AfficheKinzas)) == "Oui";
+            this.afficheAutoTempsRecuperation = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_AfficheAutoTempsRecuperation)) == "Oui";
+            this.afficheAnimationVainqueur = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_AfficheAnimationVainqueur)) == "Oui";
 
             this.tempsMedical = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_TempsMedical));
-            this.isRandomCombat = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_RandomCombat)) == "Oui" ? true : false;
+            this.isRandomCombat = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_RandomCombat)) == "Oui";
             this.reglementEquipe = (ReglementEquipeEnum)XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_ReglementEquipe));
         }
 

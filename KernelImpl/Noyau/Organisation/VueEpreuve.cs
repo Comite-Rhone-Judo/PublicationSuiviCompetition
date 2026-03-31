@@ -9,7 +9,7 @@ using System.Xml.Linq;
 
 namespace KernelImpl.Noyau.Organisation
 {
-    public class vue_epreuve : Ivue_epreuve, IEntityWithKey<int>
+    public class VueEpreuve : IVueEpreuve, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -70,7 +70,7 @@ namespace KernelImpl.Noyau.Organisation
         public CompetitionDisciplineEnum discipline_competition { get; set; } = CompetitionDisciplineEnum.Judo;
 
 
-        public vue_epreuve(Epreuve epreuve, IJudoData DC)
+        public VueEpreuve(Epreuve epreuve, IJudoData DC)
         {
             id = epreuve.id;
             nom = epreuve.nom;

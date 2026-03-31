@@ -14,21 +14,21 @@ namespace KernelImpl.Noyau.Organisation
         private readonly DeduplicatedCachedData<int, Competition> _competitionsCache = new DeduplicatedCachedData<int, Competition>();
         private readonly DeduplicatedCachedData<int, Epreuve> _epreuvesCache = new DeduplicatedCachedData<int, Epreuve>();
         private readonly DeduplicatedCachedData<int, Epreuve_Equipe> _epreuve_equipesCache = new DeduplicatedCachedData<int, Epreuve_Equipe>();
-        private readonly DeduplicatedCachedData<int, vue_epreuve_equipe> _vepreuves_equipeCache = new DeduplicatedCachedData<int, vue_epreuve_equipe>();
-        private readonly DeduplicatedCachedData<int, vue_epreuve> _vepreuvesCache = new DeduplicatedCachedData<int, vue_epreuve>();
+        private readonly DeduplicatedCachedData<int, VueEpreuveEquipe> _vepreuves_equipeCache = new DeduplicatedCachedData<int, VueEpreuveEquipe>();
+        private readonly DeduplicatedCachedData<int, VueEpreuve> _vepreuvesCache = new DeduplicatedCachedData<int, VueEpreuve>();
 
         // Accesseurs O(1)
         public IReadOnlyList<Competition> Competitions { get { return _competitionsCache.Cache; } }
         public IReadOnlyList<Epreuve> Epreuves { get { return _epreuvesCache.Cache; } }
         public IReadOnlyList<Epreuve_Equipe> EpreuveEquipes { get { return _epreuve_equipesCache.Cache; } }
-        public IReadOnlyList<vue_epreuve_equipe> VueEpreuveEquipes { get { return _vepreuves_equipeCache.Cache; } }
-        public IReadOnlyList<vue_epreuve> VueEpreuves { get { return _vepreuvesCache.Cache; } }
+        public IReadOnlyList<VueEpreuveEquipe> VueEpreuveEquipes { get { return _vepreuves_equipeCache.Cache; } }
+        public IReadOnlyList<VueEpreuve> VueEpreuves { get { return _vepreuvesCache.Cache; } }
 
         IReadOnlyList<ICompetition> IOrganisationData.Competitions => Competitions;
         IReadOnlyList<IEpreuve> IOrganisationData.Epreuves => Epreuves;
         IReadOnlyList<IEpreuve_Equipe> IOrganisationData.EpreuveEquipes => EpreuveEquipes;
-        IReadOnlyList<Ivue_epreuve_equipe> IOrganisationData.VueEpreuveEquipes => VueEpreuveEquipes;
-        IReadOnlyList<Ivue_epreuve> IOrganisationData.VueEpreuves => VueEpreuves;
+        IReadOnlyList<IVueEpreuveEquipe> IOrganisationData.VueEpreuveEquipes => VueEpreuveEquipes;
+        IReadOnlyList<IVueEpreuve> IOrganisationData.VueEpreuves => VueEpreuves;
 
         ICompetition IOrganisationData.Competition => Competition;
 
@@ -59,7 +59,7 @@ namespace KernelImpl.Noyau.Organisation
             ICollection<Epreuve_Equipe> epreuves = Epreuve_Equipe.LectureEpreuveEquipes(element);
             _epreuve_equipesCache.UpdateFullSnapshot(epreuves);
 
-            ICollection<vue_epreuve_equipe> vepreuves = GenereVueEpreuveEquipe(epreuves, DC);
+            ICollection<VueEpreuveEquipe> vepreuves = GenereVueEpreuveEquipe(epreuves, DC);
             _vepreuves_equipeCache.UpdateFullSnapshot(vepreuves);
         }
 
@@ -79,7 +79,7 @@ namespace KernelImpl.Noyau.Organisation
             ICollection<Epreuve> epreuves = Epreuve.LectureEpreuves(element);
             _epreuvesCache.UpdateFullSnapshot(epreuves);
 
-            ICollection<vue_epreuve> vepreuves = GenereVueEpreuves(epreuves, DC);
+            ICollection<VueEpreuve> vepreuves = GenereVueEpreuves(epreuves, DC);
             _vepreuvesCache.UpdateFullSnapshot(vepreuves);
         }
 
@@ -93,9 +93,9 @@ namespace KernelImpl.Noyau.Organisation
         /// </summary>
         /// <param name="equipes">element XML contenant les épreuves (équipe)</param>
         /// <param name="DC"></param>
-        private ICollection<vue_epreuve_equipe> GenereVueEpreuveEquipe(ICollection<Epreuve_Equipe> epreuves, IJudoData DC)
+        private ICollection<VueEpreuveEquipe> GenereVueEpreuveEquipe(ICollection<Epreuve_Equipe> epreuves, IJudoData DC)
         {
-            return epreuves.Select(epreuve => new vue_epreuve_equipe(epreuve, DC)).ToList();
+            return epreuves.Select(epreuve => new VueEpreuveEquipe(epreuve, DC)).ToList();
         }
 
         /// <summary>
@@ -103,9 +103,9 @@ namespace KernelImpl.Noyau.Organisation
         /// </summary>
         /// <param name="element">element XML contenant les épreuves</param>
         /// <param name="DC"></param>
-        private ICollection<vue_epreuve> GenereVueEpreuves(ICollection<Epreuve> epreuves, IJudoData DC)
+        private ICollection<VueEpreuve> GenereVueEpreuves(ICollection<Epreuve> epreuves, IJudoData DC)
         {
-            return epreuves.Select(epreuve => new vue_epreuve(epreuve, DC)).ToList();
+            return epreuves.Select(epreuve => new VueEpreuve(epreuve, DC)).ToList();
         }
     }
 }

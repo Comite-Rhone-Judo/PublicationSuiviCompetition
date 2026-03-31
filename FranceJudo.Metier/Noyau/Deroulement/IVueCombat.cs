@@ -3,7 +3,7 @@ using System;
 
 namespace FranceJudo.Metier.Noyau.Deroulement
 {
-    public interface Ivue_combat
+    public interface IVueCombat
     {
         public int combat_id { get; set; }
 

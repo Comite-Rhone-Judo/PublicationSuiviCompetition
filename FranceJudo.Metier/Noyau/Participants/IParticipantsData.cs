@@ -7,6 +7,6 @@ namespace FranceJudo.Metier.Noyau.Participants
         IReadOnlyList<IJudoka> Judokas { get; }
         IReadOnlyList<IEquipe> Equipes { get; }
         IReadOnlyList<IEpreuveJudoka> EpreuveJudokas { get; }
-        IReadOnlyList<Ivue_judoka> Vuejudokas { get; }
+        IReadOnlyList<IVueJudoka> Vuejudokas { get; }
     }
 }

@@ -19,7 +19,7 @@ namespace FranceJudo.Metier.Noyau.Deroulement
         IReadOnlyList<IParticipant> Participants { get; }
 
         // Vues
-        IReadOnlyList<Ivue_groupe> VueGroupes { get; }
-        IReadOnlyList<Ivue_combat> VueCombats { get; }
+        IReadOnlyList<IVueGroupe> VueGroupes { get; }
+        IReadOnlyList<IVueCombat> VueCombats { get; }
     }
 }
