@@ -1,6 +1,6 @@
+using FranceJudo.Metier.Noyau.Participants;
 using System;
 using System.Collections.Generic;
-using FranceJudo.Metier.Noyau.Participants;
 
 namespace AppPublication.ExtensionNoyau.Engagement
 {
@@ -21,7 +21,7 @@ namespace AppPublication.ExtensionNoyau.Engagement
             if (Object.ReferenceEquals(x, y)) return true;
 
             //Check whether any of the compared objects is null.
-            if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null))
+            if (x is null || y is null)
                 return false;
 
             //Check whether the products' properties are equal.
@@ -33,7 +33,7 @@ namespace AppPublication.ExtensionNoyau.Engagement
         public int GetHashCode(Ivue_judoka j)
         {
             //Check whether the object is null
-            if (Object.ReferenceEquals(j, null)) return 0;
+            if (j is null) return 0;
 
             //Get hash code for the Name field if it is not null.
             int hashNom = j.nom == null ? 0 : j.nom.GetHashCode();

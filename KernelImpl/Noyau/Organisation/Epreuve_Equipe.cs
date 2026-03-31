@@ -2,11 +2,11 @@
 using FranceJudo.Core.XML;
 using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using FranceJudo.Metier.XML;
 
 namespace KernelImpl.Noyau.Organisation
 {
@@ -46,7 +46,7 @@ namespace KernelImpl.Noyau.Organisation
             this.anneeMin = XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Epreuve_Equipe_AnneeMin));
             this.anneeMax = XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Epreuve_Equipe_AnneeMax));
             this.epreuveRef = XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Epreuve_Equipe_EpreuveRef));
-            this.type = (EpreuveEquipeTypeEnum) XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Epreuve_Equipe_Type));
+            this.type = (EpreuveEquipeTypeEnum)XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Epreuve_Equipe_Type));
         }
 
         public XElement ToXml(IJudoData DC = null)

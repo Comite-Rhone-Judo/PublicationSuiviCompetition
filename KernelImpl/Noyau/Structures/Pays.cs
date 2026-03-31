@@ -1,15 +1,15 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.IO;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Structures;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Media.Imaging;
 using System.Xml.Linq;
-using FranceJudo.Core.XML;
-using FranceJudo.Metier.XML;
-using FranceJudo.Metier.Noyau.Structures;
-using FranceJudo.Metier.Noyau;
-using FranceJudo.Metier.IO;
 
 
 namespace KernelImpl.Noyau.Structures

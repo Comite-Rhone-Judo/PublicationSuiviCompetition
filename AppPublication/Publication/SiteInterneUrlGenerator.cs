@@ -1,6 +1,6 @@
-﻿using System;
+﻿using FranceJudo.Core.Network.Url;
 using FranceJudo.Metier.Site;
-using FranceJudo.Core.Network.Url;
+using System;
 
 
 namespace AppPublication.Publication

@@ -38,7 +38,7 @@ namespace FranceJudo.Metier.Noyau.Organisation
         public bool afficheAnimationVainqueur { get; set; }
 
         public int tempsMedical { get; set; }
-         public bool isRandomCombat { get; set; }
+        public bool isRandomCombat { get; set; }
         public ReglementEquipeEnum reglementEquipe { get; set; }
 
         public bool IsOfficielle();

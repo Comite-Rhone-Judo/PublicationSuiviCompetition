@@ -2,12 +2,12 @@
 using FranceJudo.Core.XML;
 using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Xml.Linq;
-using FranceJudo.Metier.XML;
 
 namespace KernelImpl.Noyau.Deroulement
 {
@@ -404,7 +404,7 @@ namespace KernelImpl.Noyau.Deroulement
             {*/
             //if (this.etatJ1 != (int)EtatCombattantEnum.HansokuMakeX && this.etatJ2 != (int)EtatCombattantEnum.HansokuMakeX &&
             //    this.etatJ1 != (int)EtatCombattantEnum.HansokuMakeH && this.etatJ2 != (int)EtatCombattantEnum.HansokuMakeH)
-                if (this.etatJ1 == (int)EtatCombattantEnum.Normal && this.etatJ2 == (int)EtatCombattantEnum.Normal)
+            if (this.etatJ1 == (int)EtatCombattantEnum.Normal && this.etatJ2 == (int)EtatCombattantEnum.Normal)
             {
                 if ((this.judoka1 == null && this.judoka2 == this.vainqueur) || (this.judoka2 == null && this.judoka1 == this.vainqueur))
                 {
@@ -427,7 +427,8 @@ namespace KernelImpl.Noyau.Deroulement
                 if (penP >= 3 && penV >= 3)
                 {
                     return scoreV / 10;
-                }else if (penP >= 3)
+                }
+                else if (penP >= 3)
                 {
                     return 100; // 10;
                     ////----return 0;
@@ -577,7 +578,7 @@ namespace KernelImpl.Noyau.Deroulement
 
             this.goldenScore = XMLTools.LectureBool(xrencontre.Attribute(ConstantXML.Rencontre_GoldenScore));
             this.isNewRencontre = XMLTools.LectureBool(xrencontre.Attribute(ConstantXML.Rencontre_IsNewRencontre));
-            
+
             this.estDecisif = XMLTools.LectureBool(xrencontre.Attribute(ConstantXML.Rencontre_EstDecisif));
         }
 

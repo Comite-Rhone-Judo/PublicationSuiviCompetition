@@ -1,5 +1,5 @@
-using FranceJudo.Metier.XML;
 using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.XML;
 using System;
 
 namespace FranceJudo.Metier.Noyau.Participants

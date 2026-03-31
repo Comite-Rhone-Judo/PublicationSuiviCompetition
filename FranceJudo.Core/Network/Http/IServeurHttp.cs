@@ -11,7 +11,7 @@ namespace FranceJudo.Core.Network.Http
 
         int PortMin { get; set; }
 
-        int PortMax { get; set; }   
+        int PortMax { get; set; }
 
         /// <summary>
         /// Port d'ecoute automatiqiement assigne
@@ -27,12 +27,12 @@ namespace FranceJudo.Core.Network.Http
         /// La racine du site
         /// </summary>
         string LocalRootPath { get; set; }
-     
+
         /// <summary>
         /// Demarre le serveur
         /// </summary>
         void Start();
-        
+
         /// <summary>
         /// Arrete le serveur
         /// </summary>
@@ -42,6 +42,6 @@ namespace FranceJudo.Core.Network.Http
         /// Ajoute un module au serveur HTTP
         /// </summary>
         /// <param name="module"></param>
-        void AddModule(object module)   ;
+        void AddModule(object module);
     }
 }

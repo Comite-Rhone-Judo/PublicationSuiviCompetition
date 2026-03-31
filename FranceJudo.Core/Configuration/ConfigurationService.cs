@@ -1,10 +1,10 @@
-﻿using System;
+﻿using FranceJudo.Core.Logging;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FranceJudo.Core.Logging;
 
 
 namespace FranceJudo.Core.Configuration
@@ -17,8 +17,9 @@ namespace FranceJudo.Core.Configuration
     {
         // --- SINGLETON ---
         private static ConfigurationService _instance = null;
-        public static ConfigurationService Instance { 
-        get
+        public static ConfigurationService Instance
+        {
+            get
             {
                 if (_instance == null)
                     throw new InvalidOperationException("ConfigurationService non initialise ! Appelez ConfigurationService.CreateInstance()");
@@ -34,7 +35,7 @@ namespace FranceJudo.Core.Configuration
         private readonly List<InternalConfigSectionBase> _sectionsToSave = new List<InternalConfigSectionBase>();
 
         private Task _saveWorker = null;
-        private CancellationTokenSource _cts = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cts = new CancellationTokenSource();
         private const int kSaveIntervalMs = 10000; // Intervalle de vérification du worker (10 secondes)
 
         private ConfigurationService()
@@ -231,7 +232,7 @@ namespace FranceJudo.Core.Configuration
             {
                 // 2. Créer une instance vierge du même type que notre section
                 // (Utilise le constructeur privé via Activator)
-                var tempSection = (InternalConfigSectionBase) Activator.CreateInstance(section.GetType(), true);
+                var tempSection = (InternalConfigSectionBase)Activator.CreateInstance(section.GetType(), true);
 
                 // 3. COPIE MANUELLE DES PROPRIÉTÉS (La correction est ici)
                 section.CopyValuesTo(tempSection);

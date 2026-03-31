@@ -14,7 +14,7 @@ namespace AppPublication.Tools.Converter
             int output = 0;
             if (value != null)
             {
-                Enum.BusyStatusEnum status = (Enum.BusyStatusEnum) value;
+                Enum.BusyStatusEnum status = (Enum.BusyStatusEnum)value;
                 int statusVal = (int)status;
 
                 // Sequence d'initialisation
@@ -28,11 +28,11 @@ namespace AppPublication.Tools.Converter
                 // 8 - Arbitres (Dem/Rep)
 
                 // Nombre d'etapes declare dans l'enum
-                int nbStep = (int) System.Enum.GetValues(typeof(BusyStatusEnum)).Cast<BusyStatusEnum>().Max() + 1;
+                int nbStep = (int)System.Enum.GetValues(typeof(BusyStatusEnum)).Cast<BusyStatusEnum>().Max() + 1;
 
-                if(statusVal >= 0)
+                if (statusVal >= 0)
                 {
-                    output = (int) Math.Truncate(((statusVal +1 ) * 100.0) / nbStep);
+                    output = (int)Math.Truncate(((statusVal + 1) * 100.0) / nbStep);
                 }
             }
             return output;

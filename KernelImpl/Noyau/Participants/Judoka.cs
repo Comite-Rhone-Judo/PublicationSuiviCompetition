@@ -1,19 +1,18 @@
 
+using FranceJudo.Core.Threading;
+using FranceJudo.Core.Utils;
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.Noyau.Participants;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
-using KernelImpl.Noyau.Deroulement;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Xml.Linq;
-using FranceJudo.Metier.XML;
-using FranceJudo.Metier.Noyau;
-using FranceJudo.Metier.Noyau.Participants;
-using FranceJudo.Metier.Noyau.Organisation;
-using FranceJudo.Core.XML;
-using FranceJudo.Core.Utils;
-using FranceJudo.Core.Threading;
 
 namespace KernelImpl.Noyau.Participants
 {
@@ -410,7 +409,7 @@ namespace KernelImpl.Noyau.Participants
 
             this.nom = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Judoka_Nom));
             this.prenom = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Judoka_Prenom));
-			this.sexeEnum = new EpreuveSexe(XMLTools.LectureString(xinfo.Attribute(ConstantXML.Judoka_Sexe)));
+            this.sexeEnum = new EpreuveSexe(XMLTools.LectureString(xinfo.Attribute(ConstantXML.Judoka_Sexe)));
             this.naissance = XMLTools.LectureDate(xinfo.Attribute(ConstantXML.Judoka_Naissance), "ddMMyyyy", DateTime.MinValue);
             this.pays = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Judoka_Pays));
             this.club = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Judoka_Club));

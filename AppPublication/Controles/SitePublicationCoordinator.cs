@@ -1,15 +1,15 @@
 ﻿using AppPublication.Config.Publication;
 using AppPublication.Models.Publication;
 using AppPublication.Models.Statistiques;
+using FranceJudo.Core.Foundation;
 using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
+using FranceJudo.Metier.Export;
 using FranceJudo.Metier.IO;
 using FranceJudo.Metier.Noyau;
-using FranceJudo.Metier.Export;
 using FranceJudo.Metier.Resources;
-using FranceJudo.UI.Wpf.Foundation;
 using FranceJudo.UI.Wpf.Dialogs;
-using FranceJudo.Core.Foundation;
+using FranceJudo.UI.Wpf.Foundation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,7 +18,6 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using NLog;
 
 namespace AppPublication.Controles
 {
@@ -45,7 +44,7 @@ namespace AppPublication.Controles
                 // Lance l'initialisation depuis le cache sur disque
                 InitFromConfigFile();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogTools.Logger.Error(ex, "Erreur lors de l'initialisation du Controleur, impossible de continuer");
                 throw new InvalidOperationException("Erreur lors de l'initialisation du Controleur");
@@ -63,7 +62,7 @@ namespace AppPublication.Controles
         {
             get
             {
-               return !(GestionnaireSitePublique.IsGenerationActive || GestionnaireSiteInterne.IsGenerationActive);
+                return !(GestionnaireSitePublique.IsGenerationActive || GestionnaireSiteInterne.IsGenerationActive);
             }
         }
 
@@ -361,7 +360,7 @@ namespace AppPublication.Controles
         private void InitFichiersLogo()
         {
             // Recupere le repertoire des images du site
-            IEnumerable<FilteredFileInfo> files = ExportTools.EnumerateCustomLogoFiles().Select(o => new FilteredFileInfo(o, MetierResources.Folders.SiteImg)).OrderBy(o => o.Name);
+            IEnumerable<FilteredFileInfo> files = SiteExportEngine.EnumerateCustomLogoFiles().Select(o => new FilteredFileInfo(o, MetierResources.Folders.SiteImg)).OrderBy(o => o.Name);
 
             // Liste les fichiers logos
             FichiersLogo = new ObservableCollection<FilteredFileInfo>(files);

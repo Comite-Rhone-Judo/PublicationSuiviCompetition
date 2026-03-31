@@ -1,5 +1,5 @@
-﻿using System;
-using FranceJudo.Metier.Noyau.Organisation;
+﻿using FranceJudo.Metier.Noyau.Organisation;
+using System;
 
 namespace FranceJudo.Metier.Noyau.Deroulement
 {

@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FranceJudo.Core.Security
 {
     public class Encryption
     {
 
-        static byte[] entropy = System.Text.Encoding.Unicode.GetBytes("Salt Is Not A Password");
+        static readonly byte[] entropy = System.Text.Encoding.Unicode.GetBytes("Salt Is Not A Password");
 
         public static string EncryptString(System.Security.SecureString input)
         {
@@ -55,7 +51,7 @@ namespace FranceJudo.Core.Security
 
         public static string ToInsecureString(SecureString input)
         {
-            if(input == null)
+            if (input == null)
             {
                 return string.Empty;
             }

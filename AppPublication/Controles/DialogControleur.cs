@@ -4,21 +4,20 @@ using AppPublication.Tools.Enum;
 using AppPublication.ViewModels.Configuration;
 using AppPublication.Views.Configuration;
 using FranceJudo.Core.Environment;
+using FranceJudo.Core.Foundation;
 using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
+using FranceJudo.Core.Network;
 using FranceJudo.Core.Reflection;
 using FranceJudo.Core.Security;
-using FranceJudo.Core.Network;
 using FranceJudo.Metier.IO;
-using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.UI.Wpf.Dialogs;
 using FranceJudo.UI.Wpf.Foundation;
-using FranceJudo.Core.Foundation;
 using KernelImpl;
 using System;
 using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -91,7 +90,8 @@ namespace AppPublication.Controles
                 return _competition;
             }
 
-            private set { 
+            private set
+            {
                 _competition = value;
                 NotifyPropertyChanged();
             }
@@ -106,7 +106,8 @@ namespace AppPublication.Controles
             {
                 return _appInformation;
             }
-            private set { 
+            private set
+            {
                 _appInformation = value;
                 NotifyPropertyChanged();
             }
@@ -206,7 +207,7 @@ namespace AppPublication.Controles
             }
         }
 
-        private bool _tracesDebugOn  =false;
+        private bool _tracesDebugOn = false;
         /// <summary>
         /// Indique si les traces avancees sont activees
         /// </summary>
@@ -320,7 +321,7 @@ namespace AppPublication.Controles
                         {
                             // Extrait le mode de passe des controles passes en parametres (1er = FranceJudo, 2nd = Advanced)
                             ExtractPasswordFromParameters(o);
-                            
+
                             // Lecture directe de la propriété courante du ViewModel
                             MiniSite siteToTest = SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne;
 
@@ -392,7 +393,7 @@ namespace AppPublication.Controles
                             {
 
 
-                                return SiteCoordinator.GestionnaireSitePublique.SiteLocal!= null && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif;
+                                return SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif;
                             });
                 return _cmdCopyUrlLocal;
             }
@@ -649,7 +650,7 @@ namespace AppPublication.Controles
                 _cmdNettoyerSiteDistant ??= new RelayCommand(
                             async o =>
                             {
-                                if ( SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif)
+                                if (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif)
                                 {
                                     DialogParameters param = new DialogParameters
                                     {
@@ -691,7 +692,7 @@ namespace AppPublication.Controles
                             o =>
                             {
                                 // Bloque le bouton si le nettoyage est en cours
-                                if(NettoyageEnCours) { return false; }
+                                if (NettoyageEnCours) { return false; }
                                 return SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsCleaning;
                             });
                 return _cmdNettoyerSiteDistant;
@@ -744,7 +745,7 @@ namespace AppPublication.Controles
                                         SiteCoordinator.GestionnaireSitePublique.StopGeneration();
                                     });
                                 }
-                                catch(Exception ex)
+                                catch (Exception ex)
                                 {
                                     LogTools.Logger.Error(ex, "Erreur lors de CmdArreterGeneration");
                                 }
@@ -868,7 +869,7 @@ namespace AppPublication.Controles
                 _cmdAfficherSiteDistant ??= new RelayCommand(
                             o =>
                             {
-                                if ( (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null) && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsLocal)
+                                if ((SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null) && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsLocal)
                                 {
                                     string url = SiteCoordinator.GestionnaireSitePublique.URLDistantPublication;
 
@@ -910,7 +911,7 @@ namespace AppPublication.Controles
             }
         }
 
-        
+
 
         private ICommand _cmdAfficherInformations = null;
         public ICommand CmdAfficherInformations
@@ -955,7 +956,7 @@ namespace AppPublication.Controles
                                     AssemblyResourceDictionary appDict = new AssemblyResourceDictionary(typeof(DialogControleur).Assembly);
 
                                     Stream manuelStream = appDict.GetStream("AppPublication.Documentation.ManuelUtilisateur.pdf");
-                                    if(manuelStream != null)
+                                    if (manuelStream != null)
                                     {
                                         byte[] bytes = manuelStream.ReadAllBytes();
                                         // Fenetre de visualisation du manuel utilisateur (sans impression)
@@ -1096,7 +1097,7 @@ namespace AppPublication.Controles
                                     // Par defaut, on va generer le fichier sur le bureau
                                     string destDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 
-                                    string destZip = string.Format("LogAppPublication_{0:yyyyMMdd-HHmmss}.zip",DateTime.Now);
+                                    string destZip = string.Format("LogAppPublication_{0:yyyyMMdd-HHmmss}.zip", DateTime.Now);
 
                                     string fulldestZip = Path.Combine(destDir, destZip);
 

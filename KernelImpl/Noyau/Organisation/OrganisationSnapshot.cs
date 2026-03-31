@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using FranceJudo.Metier.Noyau.Organisation;
+﻿using FranceJudo.Metier.Noyau.Organisation;
+using System.Collections.Generic;
 
 namespace KernelImpl.Noyau.Organisation
 {

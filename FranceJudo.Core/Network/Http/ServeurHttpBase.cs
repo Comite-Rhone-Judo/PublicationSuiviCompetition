@@ -1,10 +1,10 @@
-﻿using FranceJudo.Core.Network.Http.HttpServer.HttpModules;
-using HttpListener = FranceJudo.Core.Network.Http.HttpServer.HttpListener;
+﻿using FranceJudo.Core.Logging;
+using FranceJudo.Core.Network.Http.HttpServer.HttpModules;
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Linq;
-using FranceJudo.Core.Logging;
+using HttpListener = FranceJudo.Core.Network.Http.HttpServer.HttpListener;
 
 namespace FranceJudo.Core.Network.Http
 {
@@ -35,7 +35,7 @@ namespace FranceJudo.Core.Network.Http
             }
         }
 
-        public int PortMin { get; set;  }
+        public int PortMin { get; set; }
 
         public int PortMax { get; set; }
 
@@ -69,7 +69,7 @@ namespace FranceJudo.Core.Network.Http
             {
                 if (!String.IsNullOrWhiteSpace(value) && _localRoolPath != value)
                 {
-                    if(_isStart)
+                    if (_isStart)
                     {
                         throw new InvalidOperationException("Impossible de changer le repertoire racine lorsque le serveur est demarre");
                     }
@@ -171,7 +171,7 @@ namespace FranceJudo.Core.Network.Http
         /// <param name="module"></param>
         public void AddModule(HttpModule module)
         {
-            if(_server != null)
+            if (_server != null)
             {
                 // On retire le module par defaut s'il existe
                 if (_defaultFileModule != null)
@@ -233,7 +233,7 @@ namespace FranceJudo.Core.Network.Http
                 }
             }
 
-            if(!freePort)
+            if (!freePort)
             {
                 LogTools.Logger.Error("Impossible de trouver un port disponible");
                 throw new ArgumentOutOfRangeException("Impossible de trouver un port disponible");

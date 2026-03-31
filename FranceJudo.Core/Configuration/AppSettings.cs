@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Configuration;
+﻿using FranceJudo.Core.Logging;
 using FranceJudo.Core.Security;
-using FranceJudo.Core.Logging;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
 
 namespace FranceJudo.Core.Configuration
 {
@@ -41,7 +41,7 @@ namespace FranceJudo.Core.Configuration
         /// <param name="value">Valeur du parametre</param>
         public static void SaveEncryptedSetting(string key, string value, string prefix = "")
         {
-            string encryptedValue = Encryption.EncryptString( Encryption.ToSecureString(value));
+            string encryptedValue = Encryption.EncryptString(Encryption.ToSecureString(value));
             var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             string internalKey = (string.IsNullOrEmpty(prefix) ? key : prefix + "_" + key);
 
@@ -167,7 +167,7 @@ namespace FranceJudo.Core.Configuration
         /// <param name="defaultValue">Valeur par defaut si le parametre est absent</param>
         /// <returns>Valeur du parametre</returns>
         public static bool ReadSetting(string key, bool defaultValue, string prefix = null)
-        {            
+        {
             string valCache = AppSettings.ReadRawSetting(key, prefix);
 
             bool val = defaultValue;
@@ -185,7 +185,7 @@ namespace FranceJudo.Core.Configuration
         public static string ReadSetting(string key, string defaultValue, string prefix = null)
         {
             string valCache = AppSettings.ReadRawSetting(key, prefix);
-            return (valCache == null) ? defaultValue : valCache;
+            return valCache ?? defaultValue;
         }
 
         /// <summary>
@@ -197,7 +197,7 @@ namespace FranceJudo.Core.Configuration
         public static string ReadEncryptedSetting(string key, string defaultValue, string prefix = null)
         {
             string valCache = AppSettings.ReadRawEncryptedSetting(key, prefix);
-            return (valCache == null) ? defaultValue : valCache;
+            return valCache ?? defaultValue;
         }
 
         /// <summary>

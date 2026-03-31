@@ -1,11 +1,11 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Structures;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using FranceJudo.Core.XML;
-using FranceJudo.Metier.XML;
-using FranceJudo.Metier.Noyau.Structures;
-using FranceJudo.Metier.Noyau;
 
 namespace KernelImpl.Noyau.Structures
 {
@@ -22,8 +22,7 @@ namespace KernelImpl.Noyau.Structures
         {
             get
             {
-                int com = 0;
-                if (int.TryParse(_id, out com))
+                if (int.TryParse(_id, out int com))
                 {
                     return com.ToString("00");
                 }
@@ -63,8 +62,7 @@ namespace KernelImpl.Noyau.Structures
         {
             XElement xcomite = new XElement(ConstantXML.Comite);
 
-            int com = 0;
-            if (int.TryParse(id, out com))
+            if (int.TryParse(id, out int com))
             {
                 xcomite.SetAttributeValue(ConstantXML.Comite_ID, com.ToString("00"));
             }

@@ -1,6 +1,9 @@
 using AppPublication.Config.Generation;
-using FranceJudo.Core.Foundation;
 using AppPublication.Models.EcransAppel;
+using FranceJudo.Core.Foundation;
+using FranceJudo.Core.Logging;
+using FranceJudo.UI.Wpf.Dialogs;
+using FranceJudo.UI.Wpf.Foundation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,9 +11,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Telerik.Windows.Controls;
-using FranceJudo.Core.Logging;
-using FranceJudo.UI.Wpf.Dialogs;
-using FranceJudo.UI.Wpf.Foundation;
 
 namespace AppPublication.ViewModels.Configuration
 {
@@ -71,7 +71,7 @@ namespace AppPublication.ViewModels.Configuration
 
             EcransViewModels = new ObservableCollection<EcranAppelConfigViewModel>();
 
-            Task.Factory.StartNew( async () => { await LoadDataAsync(); });
+            Task.Factory.StartNew(async () => { await LoadDataAsync(); });
         }
         #endregion
 
@@ -124,7 +124,7 @@ namespace AppPublication.ViewModels.Configuration
                     EcransViewModels.Add(vm);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 // Gérer les erreurs (logging, message utilisateur, etc.)
                 LogTools.Logger.Debug(ex, "Erreur lors du chargement des donnees de configuration des ecrans");

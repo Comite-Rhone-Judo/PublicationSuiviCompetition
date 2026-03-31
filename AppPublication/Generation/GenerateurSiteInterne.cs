@@ -1,13 +1,12 @@
 ﻿using AppPublication.Export;
 using AppPublication.Models.EcransAppel;
 using AppPublication.Publication;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using FranceJudo.Metier.Noyau;
 using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
 using FranceJudo.Core.Threading;
+using FranceJudo.Metier.Noyau;
+using System;
+using System.Collections.Generic;
 
 
 namespace AppPublication.Generation
@@ -48,7 +47,8 @@ namespace AppPublication.Generation
         /// </summary>
         public ConfigurationExportSiteInterne ConfigurationGeneration
         {
-            get {
+            get
+            {
                 _cfgExport ??= new ConfigurationExportSiteInterne();
                 return _cfgExport;
             }
@@ -61,7 +61,8 @@ namespace AppPublication.Generation
             {
                 return _ecransAppel;
             }
-            set {
+            set
+            {
                 _ecransAppel = value;
             }
         }
@@ -78,7 +79,7 @@ namespace AppPublication.Generation
             try
             {
                 // Initialise le gestionnaire de taches paralleles
-                _taskBatcher = new ParallelTaskBatcher<OperationProgress, FileWithChecksum>(progressHandler, (f) => { return new OperationProgress(_etapeCourante, f);});
+                _taskBatcher = new ParallelTaskBatcher<OperationProgress, FileWithChecksum>(progressHandler, (f) => { return new OperationProgress(_etapeCourante, f); });
             }
             catch (Exception ex)
             {
@@ -102,7 +103,7 @@ namespace AppPublication.Generation
                 // Efface le contenu local
                 ClearRepertoireCompetition();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogTools.Logger.Error(ex, "Erreur lors du nettoyage initial du site");
                 return new ResultatOperation(EtapeGenerateurSiteEnum.CleanupInitial, false, true, -1);
@@ -128,7 +129,7 @@ namespace AppPublication.Generation
         public ResultatOperation PrepareGeneration()
         {
             _etapeCourante = EtapeGenerateurSiteEnum.PrepareGeneration;
-         
+
             // Commence par garantir que les données des caches sont consistantes
             bool dataConsistent = false;
             try

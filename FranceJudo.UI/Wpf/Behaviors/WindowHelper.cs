@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using Telerik.Windows.Controls;
 
@@ -33,7 +29,7 @@ namespace FranceJudo.UI.Wpf.Behaviors
             }
         }
 
-        static void window_StateChanged(object sender, EventArgs e)
+        static void Window_StateChanged(object sender, EventArgs e)
         {
             var window = ((RadWindow)sender).ParentOfType<System.Windows.Window>();
             ((RadWindow)sender).WindowState = window.WindowState;

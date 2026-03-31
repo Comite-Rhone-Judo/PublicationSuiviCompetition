@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FranceJudo.Core.Threading
+﻿namespace FranceJudo.Core.Threading
 {
     public enum BatchProgressType
     {
@@ -31,9 +25,9 @@ namespace FranceJudo.Core.Threading
 
         // Helpers pour simplifier l'écriture dans les tâches
         public static BatchProgressInfo Init(int total)
-            => new BatchProgressInfo ( BatchProgressType.Initialization, total );
+            => new BatchProgressInfo(BatchProgressType.Initialization, total);
 
         public static BatchProgressInfo Step(int current)
-            => new BatchProgressInfo (BatchProgressType.Progress, current);
+            => new BatchProgressInfo(BatchProgressType.Progress, current);
     }
 }

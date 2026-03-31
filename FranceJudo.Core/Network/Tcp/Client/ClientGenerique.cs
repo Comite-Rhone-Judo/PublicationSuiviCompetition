@@ -211,7 +211,7 @@ namespace FranceJudo.Core.Network.Tcp.Client
                             foreach (string data in chaine.Split(new string[] { "\n<EOF>" }, StringSplitOptions.RemoveEmptyEntries))
                             {
                                 // if (data.EndsWith("</" + ConstantXML.ServerJudo + ">"))
-                                if (data.EndsWith(EndMsgFlag)) 
+                                if (data.EndsWith(EndMsgFlag))
                                 {
                                     OnDataRecieve(this, data);
                                 }

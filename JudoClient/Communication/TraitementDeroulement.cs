@@ -1,12 +1,12 @@
-﻿using System.Xml.Linq;
-using FranceJudo.Metier.XML;
+﻿using FranceJudo.Metier.XML;
+using System.Xml.Linq;
 
 
 namespace JudoClient.Communication
 {
     public class TraitementDeroulement
     {
-        ClientJudo _client = null;
+        readonly ClientJudo _client = null;
 
         public TraitementDeroulement(ClientJudo client)
         {

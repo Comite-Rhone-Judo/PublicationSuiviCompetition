@@ -1,11 +1,11 @@
 ﻿
 using AppPublication.Statistiques;
+using FranceJudo.Core.Diagnostic;
+using FranceJudo.Core.Logging;
 using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using FranceJudo.Core.Logging;
-using FranceJudo.Core.Diagnostic;
 
 namespace AppPublication.Generation
 {
@@ -46,7 +46,7 @@ namespace AppPublication.Generation
         private CancellationTokenSource _tokenSource;   // Token pour la gestion de la thread de lecture
         private Task _taskGeneration = null;            // La tache de generation
         readonly private StatMgrGeneration _statMgrGeneration = null;    // Pour le gestion des statistiques
-        readonly private StatMgrSynchronisation _statMgrSynchronisation= null;    // Pour le gestion des statistiques
+        readonly private StatMgrSynchronisation _statMgrSynchronisation = null;    // Pour le gestion des statistiques
         readonly private IGenerateurSite _generateur;            // le generateur de site
 
         private long _generationCounter = 0;                        // Nombre de generation realisees depuis le demarrage
@@ -261,7 +261,7 @@ namespace AppPublication.Generation
                     _generateur?.Demarrage();
 
                     // Lance la tache de fond de generation
-                    _taskGeneration = Task.Factory.StartNew( () => { GenerationRun(); }, _tokenSource.Token);
+                    _taskGeneration = Task.Factory.StartNew(() => { GenerationRun(); }, _tokenSource.Token);
                 }
                 catch (Exception ex)
                 {
@@ -341,15 +341,15 @@ namespace AppPublication.Generation
 
                                 // Lance la tache du generateyr en mesurant son temps de travail
                                 var genTime = ActionWatcher.Execute<ResultatOperation>(() => { return _generateur.ExecuteGeneration(); });
-                                
+
                                 // Recupere le resultat et les stats
                                 statGeneration.DelaiExecutionMs = genTime.DurationMs;
                                 statGeneration.IsSuccess = genTime.Result.IsSuccess;
                                 SiteGenere = genTime.Result.IsSuccess;
 
-                                _statMgrGeneration?.EnregistrerGeneration( (float) genTime.DurationMs / 1000F);
+                                _statMgrGeneration?.EnregistrerGeneration((float)genTime.DurationMs / 1000F);
 
-                                if(SiteGenere)
+                                if (SiteGenere)
                                 {
                                     try
                                     {

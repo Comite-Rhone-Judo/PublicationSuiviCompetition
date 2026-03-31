@@ -1,12 +1,12 @@
 ﻿using AppPublication.Models.EcransAppel;
+using FranceJudo.Core.Logging;
+using FranceJudo.Core.Network.Http.Context;
+using FranceJudo.Core.Network.Http.HttpServer;
 using FranceJudo.Core.Network.Http.HttpServer.Exceptions;
 using FranceJudo.Core.Network.Http.HttpServer.HttpModules;
 using FranceJudo.Core.Network.Http.HttpServer.Sessions;
 using System;
 using System.Linq;
-using FranceJudo.Core.Logging;
-using FranceJudo.Core.Network.Http.Context;
-using FranceJudo.Core.Network.Http.HttpServer;
 
 namespace AppPublication.Publication
 {
@@ -111,7 +111,8 @@ namespace AppPublication.Publication
 
                 // 3. Rediriger vers la page correspondante ou une page par défaut
                 ecranToRedirect ??= _manager.Default;
-                if (ecranToRedirect == null) {
+                if (ecranToRedirect == null)
+                {
                     LogTools.Logger.Error("EcransAppelRedirectModule: Aucun écran d'appel trouvé pour l'IP {0} et aucun écran par défaut défini.", clientIp);
                     throw new InternalServerException("EcransAppelRedirectModule: Aucun écran d'appel trouvé pour l'IP et aucun écran par défaut défini.");
                 }

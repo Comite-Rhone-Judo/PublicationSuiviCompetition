@@ -1,6 +1,6 @@
-﻿using System;
+﻿using FranceJudo.Core.Logging;
+using System;
 using System.Threading;
-using FranceJudo.Core.Logging;
 
 namespace FranceJudo.Core.Threading
 {
@@ -12,7 +12,7 @@ namespace FranceJudo.Core.Threading
         private TimeSpan _disposeTimeout;     // Temps max pour liberer le timer
 
         private System.Threading.Timer _timer = null;   // Le timer en lui meme
-        private object _lock = null;                    // Verrour interne pour la synchronisation
+        private readonly object _lock = null;                    // Verrour interne pour la synchronisation
         private bool _isRunning = false;                // Indique si le timer est actif
 
         #endregion
@@ -61,7 +61,7 @@ namespace FranceJudo.Core.Threading
         /// </summary>
         /// <param name="durationMs">Delai avant le declenchement</param>
         /// <param name="state">objet d'etat a passer en parametre au callback</param>
-        public void Start(long durationMs, object state = null)
+        public void Start(long durationMs)
         {
             lock (_lock)
             {
@@ -111,12 +111,13 @@ namespace FranceJudo.Core.Threading
                     _isRunning = false;
                 }
             }
-            finally {
+            finally
+            {
                 try
                 {
                     Monitor.Exit(_lock);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     LogTools.Logger.Debug(ex, "Erreur lors de la liberation du verrou interne");
                 }
@@ -129,7 +130,7 @@ namespace FranceJudo.Core.Threading
         /// <exception cref="TimeoutException">Impossible d'arreter le timer dans le temps imparti</exception>
         public void Stop()
         {
-            lock(_lock)
+            lock (_lock)
             {
                 UnsafeStop();
             }

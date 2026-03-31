@@ -1,14 +1,14 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Categories;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using FranceJudo.Core.XML;
-using FranceJudo.Metier.Noyau;
-using FranceJudo.Metier.Noyau.Organisation;
-using FranceJudo.Metier.Noyau.Categories;
-using FranceJudo.Metier.XML;
 
 namespace KernelImpl.Noyau.Organisation
 {
@@ -19,7 +19,7 @@ namespace KernelImpl.Noyau.Organisation
     {
 
         int IEntityWithKey<int>.EntityKey => id;
-        
+
         public int id { get; set; }
         public string nom { get; set; }
         public System.DateTime debut { get; set; }
@@ -48,8 +48,9 @@ namespace KernelImpl.Noyau.Organisation
             }
         }
 
-        private EpreuveSexe _sexeEnum; 
-        public EpreuveSexe sexeEnum {
+        private EpreuveSexe _sexeEnum;
+        public EpreuveSexe sexeEnum
+        {
             get
             {
                 return _sexeEnum;

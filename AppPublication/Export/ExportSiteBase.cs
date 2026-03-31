@@ -1,8 +1,8 @@
-﻿using System;
+﻿using FranceJudo.Metier.Export;
+using FranceJudo.Metier.Site;
+using System;
 using System.IO;
 using System.Xml.Xsl;
-using FranceJudo.Metier.Site;
-using FranceJudo.Metier.Export;
 
 
 
@@ -54,7 +54,7 @@ namespace AppPublication.Export
         /// <returns>Le chemin complet du fichier (sans l'extension)</returns>
         protected virtual string GetFileSavePath(string targetDirectory, ExportEnum exportType, string suffix = "")
         {
-            string filename = $"{ExportTools.GetFileName(exportType).Replace("/", "_")}{(string.IsNullOrEmpty(suffix) ? "" : $"-{suffix}")}";
+            string filename = $"{SiteExportEngine.GetFileName(exportType).Replace("/", "_")}{(string.IsNullOrEmpty(suffix) ? "" : $"-{suffix}")}";
             return Path.Combine(targetDirectory, filename);
         }
 

@@ -4,11 +4,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FranceJudo.Core.Network;
 
 
 namespace FranceJudo.Core.Network.Ftp.Test
-{ 
+{
     public enum FtpTestSequence
     {
         DnsResolution = 10,

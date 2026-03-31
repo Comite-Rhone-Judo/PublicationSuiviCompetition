@@ -85,10 +85,7 @@ namespace FranceJudo.Core.Configuration
         /// </summary>
         protected void NotifyParentOfModification()
         {
-            if (ConfigSectionBase<TSection>.Instance != null)
-            {
-                ConfigSectionBase<TSection>.Instance.NotifyChildModification();
-            }
+            ConfigSectionBase<TSection>.Instance?.NotifyChildModification();
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using FranceJudo.Core.Logging;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FranceJudo.Core.Logging;
 
 namespace FranceJudo.Core.Threading
 {
@@ -114,7 +114,7 @@ namespace FranceJudo.Core.Threading
                 // 1. On logue toutes les erreurs individuelles
                 foreach (var innerEx in ae.Flatten().InnerExceptions)
                 {
-                    LogTools.Logger.Error(innerEx,"Erreur dans une tâche du Batcher");
+                    LogTools.Logger.Error(innerEx, "Erreur dans une tâche du Batcher");
                 }
 
                 // 2. IMPORTANT : On ne fait pas "return null" ou on ne plante pas tout de suite.
@@ -194,7 +194,7 @@ namespace FranceJudo.Core.Threading
 
             if (totalGlobal == 0) totalGlobal = 1;
 
-            float globalPercent = ((float) currentGlobal) / totalGlobal;
+            float globalPercent = ((float)currentGlobal) / totalGlobal;
             if (globalPercent > 1.0) globalPercent = 1.0F;
 
             _globalProgressReporter.Report(_converter(globalPercent));

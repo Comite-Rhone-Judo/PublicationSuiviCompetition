@@ -1,5 +1,9 @@
 ﻿using AppPublication.Config.Generation;
 using AppPublication.Models.EcransAppel;
+using FranceJudo.Core.Foundation;
+using FranceJudo.Core.Logging;
+using FranceJudo.UI.Wpf.Dialogs;
+using FranceJudo.UI.Wpf.Foundation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,10 +13,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using FranceJudo.Core.Foundation;
-using FranceJudo.Core.Logging;
-using FranceJudo.UI.Wpf.Dialogs;
-using FranceJudo.UI.Wpf.Foundation;
 using static AppPublication.Models.EcransAppel.EcranAppelModel;
 
 namespace AppPublication.ViewModels.Configuration
@@ -71,7 +71,7 @@ namespace AppPublication.ViewModels.Configuration
 
             // Initialisation visuelle
             Hostname = string.IsNullOrEmpty(model.Hostname) ? string.Empty : model.Hostname;
-            AdresseIP = (model.AdresseIP == null || model.AdresseIP.Equals(IPAddress.None))  ? string.Empty : model.AdresseIP.ToString();
+            AdresseIP = (model.AdresseIP == null || model.AdresseIP.Equals(IPAddress.None)) ? string.Empty : model.AdresseIP.ToString();
 
             // On pré-remplit la saisie avec le Hostname ou l'IP existant
             _rawUserInput = (model.AdresseIP != null && !model.AdresseIP.Equals(IPAddress.None) ? model.AdresseIP.ToString()
@@ -138,7 +138,8 @@ namespace AppPublication.ViewModels.Configuration
         /// Indique si on doit ajuster automatiquement la taille du texte
         /// </summary>
         public bool AjusteTailleTexte
-        {             get => _model.AjusteTailleTexte;
+        {
+            get => _model.AjusteTailleTexte;
             set
             {
                 if (_model.AjusteTailleTexte != value)
@@ -537,8 +538,8 @@ namespace AppPublication.ViewModels.Configuration
             }
 
             // Determine le type de recherche a effectuer et Vide le champ que l'on va rechercher
-            switch (type) 
-                            {
+            switch (type)
+            {
                 case TypeSaisieEnum.AddressIP:
                     IsRechercheHostnameEnCours = true;
                     Hostname = String.Empty;
@@ -579,8 +580,8 @@ namespace AppPublication.ViewModels.Configuration
                         }
                     }
                     catch (Exception ex)
-                    { 
-                        LogTools.Logger.Warn($"LancerRechercheComplementaire: Erreur lors de la recherche DNS pour '{saisie}': {ex.Message}");  
+                    {
+                        LogTools.Logger.Warn($"LancerRechercheComplementaire: Erreur lors de la recherche DNS pour '{saisie}': {ex.Message}");
                     }
                 }, token);
 

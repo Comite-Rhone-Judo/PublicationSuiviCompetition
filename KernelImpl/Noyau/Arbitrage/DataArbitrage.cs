@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Xml.Linq;
+﻿using FranceJudo.Metier.Noyau.Arbitrage;
 using KernelImpl.Internal;
-using FranceJudo.Metier.Noyau.Arbitrage;
+using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace KernelImpl.Noyau.Arbitrage
 {
@@ -41,7 +41,7 @@ namespace KernelImpl.Noyau.Arbitrage
         public void lecture_arbitres(XElement element)
         {
             ICollection<Arbitre> arbitres = Arbitre.LectureArbitre(element);
-            _arbitresCache.UpdateFullSnapshot(arbitres); 
+            _arbitresCache.UpdateFullSnapshot(arbitres);
         }
 
         /// <summary>

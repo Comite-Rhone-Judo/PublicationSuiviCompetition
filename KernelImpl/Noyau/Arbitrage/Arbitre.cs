@@ -20,7 +20,7 @@ namespace KernelImpl.Noyau.Arbitrage
         public string nom { get; set; }
         public string prenom { get; set; }
         public System.DateTime naissance { get; set; }
-                
+
         private bool _sexe;
         public bool sexe
         {
@@ -80,7 +80,7 @@ namespace KernelImpl.Noyau.Arbitrage
 
             this.naissance = XMLTools.LectureDate(xinfo.Attribute(ConstantXML.Arbitre_Naissance), "ddMMyyyy", DateTime.Now);
 
-            this.sexeEnum =  new EpreuveSexe(XMLTools.LectureString(xinfo.Attribute(ConstantXML.Arbitre_Sexe)));
+            this.sexeEnum = new EpreuveSexe(XMLTools.LectureString(xinfo.Attribute(ConstantXML.Arbitre_Sexe)));
 
             this.modification = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Arbitre_Modification));
             this.estResponsable = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Arbitre_EstResponsable));

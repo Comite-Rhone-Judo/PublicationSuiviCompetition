@@ -26,7 +26,7 @@ namespace FranceJudo.Core.Network.Tcp.Server
         /// <param name="mes"></param>
         /// <param name="client"></param>
         /// <param name="type"></param>
-        public static void ShowLog(string mes, TcpClient client, TypeLog type)
+        public static void ShowLog(string mes, TcpClient _, TypeLog type)
         {
             string mess = "";
             switch (type)

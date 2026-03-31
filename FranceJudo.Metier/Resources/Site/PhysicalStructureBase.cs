@@ -1,10 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Collections.Concurrent;
+﻿using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
-using FranceJudo.Core.IO;
-using FranceJudo.Core.Utils;
 using FranceJudo.Core.Network.Url;
+using FranceJudo.Core.Utils;
+using System;
+using System.Collections.Concurrent;
+using System.IO;
 
 
 namespace FranceJudo.Metier.Site
@@ -61,15 +61,15 @@ namespace FranceJudo.Metier.Site
             }
             set
             {
-                    if (_idCompetition != value)
-                    {
-                        _idCompetition = value;
-                        _directoryCache.Clear(); // Invalidation du cache si changement à la volée
-                        _fileCache.Clear();      // Invalidation du cache des fichiers
+                if (_idCompetition != value)
+                {
+                    _idCompetition = value;
+                    _directoryCache.Clear(); // Invalidation du cache si changement à la volée
+                    _fileCache.Clear();      // Invalidation du cache des fichiers
 
-                        CalculateConfigurationStatus();
+                    CalculateConfigurationStatus();
 
-                        if (_isFullyConfigured)
+                    if (_isFullyConfigured)
                     {
                         SetRepertoireCompetition(GetRootCompetition());
                     }

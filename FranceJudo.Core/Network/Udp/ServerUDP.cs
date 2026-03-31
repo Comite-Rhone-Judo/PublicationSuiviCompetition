@@ -9,7 +9,7 @@ namespace FranceJudo.Core.Network.Udp
     public class ServerUDP
     {
 
-        private int listenPort = 11000;
+        private readonly int listenPort = 11000;
         // public delegate void OnDataReceiveHandler(object sender, string donnees);
         // public event OnDataReceiveHandler OnDataReceive;
 

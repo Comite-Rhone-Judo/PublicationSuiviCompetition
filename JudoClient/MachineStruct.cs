@@ -4,7 +4,7 @@ namespace JudoClient
 {
     public struct MachineStruct
     {
-        public string adresse { get; set; }
-        public ServerResponseEnum response { get; set; }
+        public string Adresse { get; set; }
+        public ServerResponseEnum Response { get; set; }
     }
 }

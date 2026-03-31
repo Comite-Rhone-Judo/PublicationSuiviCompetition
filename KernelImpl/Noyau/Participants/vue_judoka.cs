@@ -1,15 +1,10 @@
-﻿using FranceJudo.Core.IO;
-using FranceJudo.Core.XML;
-using FranceJudo.Metier.Noyau;
-using FranceJudo.Metier.XML;
+﻿using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Categories;
 using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.Noyau.Participants;
-using FranceJudo.Metier.Noyau.Categories;
 using FranceJudo.Metier.Noyau.Structures;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
-using KernelImpl.Noyau.Categories;
-using KernelImpl.Noyau.Organisation;
-using KernelImpl.Noyau.Structures;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -18,7 +13,7 @@ using System.Xml.Linq;
 namespace KernelImpl.Noyau.Participants
 {
 
-    public class vue_judoka : Ivue_judoka,  INotifyPropertyChanged, IEntityWithKey<string>
+    public class vue_judoka : Ivue_judoka, INotifyPropertyChanged, IEntityWithKey<string>
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -1226,7 +1221,7 @@ namespace KernelImpl.Noyau.Participants
                 this.nom_compet = "Non inscrits";
             }
 
-            if(ep2 == null)
+            if (ep2 == null)
             {
                 this.idepreuve_equipe = 0;
             }
@@ -1582,7 +1577,7 @@ namespace KernelImpl.Noyau.Participants
             return this.etat == (int)EtatJudokaEnum.AuPoids && this.observation == 0;
         }
 
-        public void LoadXml(XElement node) { throw  new NotImplementedException(); }
+        public void LoadXml(XElement node) { throw new NotImplementedException(); }
 
         public XElement ToXml(IJudoData DC = null)
         {
@@ -1621,7 +1616,7 @@ namespace KernelImpl.Noyau.Participants
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_IdEpreuve, this.idepreuve.ToString());
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_LibEpreuve, this.libepreuve);
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_Qualifie0, this.qualifie0.ToString().ToLower());
-            xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_Qualifie1, this.qualifie1.ToString().ToLower());            
+            xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_Qualifie1, this.qualifie1.ToString().ToLower());
 
             return xjudoka;
         }

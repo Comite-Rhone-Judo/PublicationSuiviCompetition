@@ -6,14 +6,14 @@ namespace FranceJudo.Core.Threading
     public class BlockingCounter : IDisposable
     {
         private int m_Count;
-        private object m_counterLock = new object();
+        private readonly object m_counterLock = new object();
 
         private bool m_isClosed = false;
         private volatile bool m_isDisposed = false;
 
-        private int m_MaxSize = 0;
+        private readonly int m_MaxSize = 0;
 
-        private ManualResetEvent m_Finished = new ManualResetEvent(false);
+        private readonly ManualResetEvent m_Finished = new ManualResetEvent(false);
 
         public BlockingCounter(int maxSize = 0)
         {

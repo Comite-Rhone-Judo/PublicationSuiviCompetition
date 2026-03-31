@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using FranceJudo.Metier.Noyau.Deroulement;
+﻿using FranceJudo.Metier.Noyau.Deroulement;
+using System.Collections.Generic;
 
 namespace KernelImpl.Noyau.Deroulement
 {

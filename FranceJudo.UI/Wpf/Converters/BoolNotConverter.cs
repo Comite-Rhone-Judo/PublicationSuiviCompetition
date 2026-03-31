@@ -9,14 +9,7 @@ namespace FranceJudo.UI.Wpf.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is bool)
-            {
-                return !(bool)value;
-            }
-            else
-            {
-                return null;
-            }
+            return value is bool ? !(bool)value : null;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

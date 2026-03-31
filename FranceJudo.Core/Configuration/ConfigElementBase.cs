@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Configuration;
+using System.Linq;
 
 namespace FranceJudo.Core.Configuration
-{ 
+{
     /// <summary>
     /// Classe de base pour tous les éléments de configuration (ConfigurationElement).
     /// Factorise les méthodes GetConfigValue et SetValueAndMarkDirty.
@@ -20,10 +20,7 @@ namespace FranceJudo.Core.Configuration
         protected virtual void NotifyParentOfModification()
         {
             // Appel direct au singleton de la section typée
-            if (ConfigSectionBase<TSection>.Instance != null)
-            {
-                ConfigSectionBase<TSection>.Instance.NotifyChildModification();
-            }
+            ConfigSectionBase<TSection>.Instance?.NotifyChildModification();
         }
 
         /// <summary>

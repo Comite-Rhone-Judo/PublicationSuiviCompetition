@@ -1,20 +1,19 @@
-﻿using Microsoft.Win32;
+﻿using FranceJudo.Core.Logging;
+using FranceJudo.Core.Threading;
+using Microsoft.Win32;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Deployment.Application;
 using System.IO;
 using System.Text;
 using System.Threading;
-using FranceJudo.Core.Logging;
-using FranceJudo.Core.Threading;
 
 
 namespace FranceJudo.Core.IO
 {
-    public static class FileSystemHelper    
+    public static class FileSystemHelper
     {
-        private static IDictionary<string, Mutex> Files_mutex = new Dictionary<string, Mutex>();
+        private static readonly IDictionary<string, Mutex> Files_mutex = new Dictionary<string, Mutex>();
 
         public static void NeedAccessFile(string file)
         {
@@ -110,10 +109,7 @@ namespace FranceJudo.Core.IO
             }
             finally
             {
-                if (stream != null)
-                {
-                    stream.Close();
-                }
+                stream?.Close();
             }
 
             //file is not locked

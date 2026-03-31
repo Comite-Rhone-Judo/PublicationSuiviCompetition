@@ -1,17 +1,17 @@
 ﻿
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
+using FranceJudo.Core.Media.Images;
+using FranceJudo.Metier.IO;
+using FranceJudo.Metier.Noyau.Logos;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using System.Drawing;
-using FranceJudo.Core.Logging;
-using FranceJudo.Core.IO;
-using FranceJudo.Core.Media.Images;
-using FranceJudo.Metier.Noyau.Logos;
-using FranceJudo.Metier.IO;
-using FranceJudo.Metier.XML;
 
 
 namespace KernelImpl.Noyau.Logos

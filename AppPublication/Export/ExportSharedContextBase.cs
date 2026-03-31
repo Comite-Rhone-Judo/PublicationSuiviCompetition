@@ -1,7 +1,6 @@
-﻿using System.Xml.Linq;
+﻿using FranceJudo.Core.Logging;
 using FranceJudo.Metier.Noyau;
-
-using FranceJudo.Core.Logging;
+using System.Xml.Linq;
 
 namespace AppPublication.Export
 {

@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using FranceJudo.Core.Logging;
 using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.Noyau.Participants;
-using FranceJudo.Core.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AppPublication.ExtensionNoyau.Engagement
 {
     public class DataEngagement : IEngagementData
     {
         private List<GroupeEngagements> _groupesEngages = new List<GroupeEngagements>();
-        private Dictionary<int, List<EchelonEnum>> _typesGroupes = new Dictionary<int, List<EchelonEnum>>();
+        private readonly Dictionary<int, List<EchelonEnum>> _typesGroupes = new Dictionary<int, List<EchelonEnum>>();
 
         /// <summary>
         /// Contient la liste des groupes de engages (par rapport a la derniere generation Par GetGroupesEngagements) par echelon
@@ -182,7 +182,7 @@ namespace AppPublication.ExtensionNoyau.Engagement
 
                         // Ajoute le Groupement par nom qui est toujours present
                         foreach (char c in alphabet)
-                        {  
+                        {
                             int nj = judokasParticipants.Count(o => Char.ToUpper(o.nom.First()) == c);
 
                             if (nj > 0)

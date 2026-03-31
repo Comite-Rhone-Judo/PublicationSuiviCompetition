@@ -1,5 +1,5 @@
-﻿using FranceJudo.Metier.Noyau;
-using AppPublication.ExtensionNoyau.Engagement;
+﻿using AppPublication.ExtensionNoyau.Engagement;
+using FranceJudo.Metier.Noyau;
 
 namespace AppPublication.ExtensionNoyau
 {
@@ -9,7 +9,7 @@ namespace AppPublication.ExtensionNoyau
         /// Retourne la section de donnees d'engagement
         /// </summary>
         DataEngagement Engagement { get; set; }
-        
+
         /// <summary>
         /// Synchronise les donnees etendue avec les donnees principales
         /// </summary>

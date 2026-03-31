@@ -1,10 +1,5 @@
-﻿using KernelImpl.Noyau.Participants;
-using System;
+﻿using FranceJudo.Metier.Noyau.Arbitrage;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FranceJudo.Metier.Noyau.Arbitrage;
 
 namespace KernelImpl.Noyau.Arbitrage
 {

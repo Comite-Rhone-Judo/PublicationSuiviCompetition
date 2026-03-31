@@ -54,6 +54,7 @@ namespace FranceJudo.Metier.Regles
         }
         private static int getScoreProLeague(int waza, int ippon, int yuko)
         {
+            int y = yuko;
             int res = 0;
             int scoreWaza = 0;
             if (waza == 1)

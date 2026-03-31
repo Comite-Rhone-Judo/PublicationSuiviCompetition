@@ -1,7 +1,7 @@
 ﻿namespace AppPublication.Tools.Enum
 {
     public enum BusyStatusEnum
-    { 
+    {
         None = -1,
         DemandeDonneesStructures = 0,
         InitDonneesStructures,
@@ -14,7 +14,7 @@
 
         DemandeDonneesOrganisation,
         InitDonneesOrganisation,
-       
+
         DemandeDonneesJudokas,
         InitDonneesJudokas,
 

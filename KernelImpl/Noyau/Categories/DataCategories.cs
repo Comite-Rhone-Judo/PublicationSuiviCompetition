@@ -1,9 +1,8 @@
 
+using FranceJudo.Metier.Noyau.Categories;
 using KernelImpl.Internal;
 using System.Collections.Generic;
-using System.Linq;
 using System.Xml.Linq;
-using FranceJudo.Metier.Noyau.Categories;
 
 namespace KernelImpl.Noyau.Categories
 {
@@ -23,7 +22,7 @@ namespace KernelImpl.Noyau.Categories
         IReadOnlyList<ICategorieAge> ICategoriesData.CAges => CAges;
 
         IReadOnlyList<ICategoriePoids> ICategoriesData.CPoids => CPoids;
-         
+
         IReadOnlyList<ICeintures> ICategoriesData.Grades => Grades;
 
 

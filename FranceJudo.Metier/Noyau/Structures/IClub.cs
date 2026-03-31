@@ -1,4 +1,3 @@
-using FranceJudo.Core.XML;
 using FranceJudo.Metier.XML;
 
 namespace FranceJudo.Metier.Noyau.Structures

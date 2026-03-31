@@ -1,10 +1,10 @@
-﻿using FranceJudo.Metier.Site;
-using FranceJudo.Core.Network.Url;
+﻿using FranceJudo.Core.Network.Url;
+using FranceJudo.Metier.Site;
 using System;
 
 
 namespace AppPublication.Publication
-{ 
+{
     /// <summary>
     /// Generateur d'URL du site interne
     /// </summary>

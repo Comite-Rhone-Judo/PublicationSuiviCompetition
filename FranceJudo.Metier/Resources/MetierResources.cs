@@ -34,12 +34,12 @@ namespace FranceJudo.Metier.Resources
         // Cela évite de chercher le nom du fichier exact dans le code appelant
 
         public static Stream GetPublicationFFJudoXml()
-            => Dictionary.GetStream(Folders.Referentiels + "." + Files.PublicationFFJudo);
+            => Dictionary.GetStream(ResourcePath.Combine(Folders.Referentiels, Files.PublicationFFJudo));
 
         public static Stream GetStructuresXml()
-            => Dictionary.GetStream(Folders.Referentiels + "." + Files.Structures);
+            => Dictionary.GetStream(ResourcePath.Combine(Folders.Referentiels, Files.Structures));
 
         public static Stream GetDefaultLogo()
-            => Dictionary.GetStream(Folders.SiteImg + "." + Files.DefaultLogo);
+            => Dictionary.GetStream(ResourcePath.Combine(Folders.SiteImg, Files.DefaultLogo));
     }
 }

@@ -1,8 +1,8 @@
-﻿using FranceJudo.Metier.Site;
+﻿using FranceJudo.Core.Network.Url;
+using FranceJudo.Core.Utils;
+using FranceJudo.Metier.Site;
 using System;
 using System.IO;
-using FranceJudo.Core.Network.Url;
-using FranceJudo.Core.Utils;
 
 namespace AppPublication.Publication
 {
@@ -64,7 +64,7 @@ namespace AppPublication.Publication
                 throw new ArgumentNullException("idEpreuve ou nomEpreuve est manquant.");
 
             string tmp = $"{idEpreuve}_{nomEpreuve}";
-            string folderName = tmp.TraiteChaine().SafeSubstring( 0, _maxLen);
+            string folderName = tmp.TraiteChaine().SafeSubstring(0, _maxLen);
 
             return GetAndCreateDirectory(folderName);
         }

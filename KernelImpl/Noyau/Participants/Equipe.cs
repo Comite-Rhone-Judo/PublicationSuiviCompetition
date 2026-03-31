@@ -1,8 +1,8 @@
 ﻿
 using FranceJudo.Core.XML;
 using FranceJudo.Metier.Noyau;
-using FranceJudo.Metier.XML;
 using FranceJudo.Metier.Noyau.Participants;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;

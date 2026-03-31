@@ -1,14 +1,14 @@
 ﻿using AppPublication.Generation;
 using AppPublication.Models.Statistiques;
 using AppPublication.Statistiques;
+using FranceJudo.Core.Foundation;
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
+using FranceJudo.Core.Network;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.UI.Wpf.Foundation;
 using System;
 using System.Net;
-using FranceJudo.UI.Wpf.Foundation;
-using FranceJudo.Core.Foundation;
-using FranceJudo.Core.Network;
-using FranceJudo.Core.Logging;
-using FranceJudo.Core.IO;
-using FranceJudo.Metier.Noyau;
 
 namespace AppPublication.Models.Publication
 {

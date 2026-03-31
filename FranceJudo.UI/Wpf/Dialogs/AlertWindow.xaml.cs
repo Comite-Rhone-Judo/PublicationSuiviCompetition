@@ -1,7 +1,7 @@
-﻿using System.Windows;
+﻿using FranceJudo.UI.Wpf.Behaviors;
+using System.Windows;
 using System.Windows.Input;
 using Telerik.Windows.Controls;
-using FranceJudo.UI.Wpf.Behaviors;
 
 namespace FranceJudo.UI.Wpf.Dialogs
 {

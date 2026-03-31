@@ -5,11 +5,11 @@ using AppPublication.Tools.Enum;
 using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
 using FranceJudo.Core.Threading;
-using FranceJudo.Metier.Site;
 using FranceJudo.Metier.Export;
 using FranceJudo.Metier.Noyau;
-using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.Site;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -61,7 +61,7 @@ namespace AppPublication.Export
 
             var xsltArgs = CreateAllXsltArgs(siteStructure, savePath);
 
-            ExportSiteManager.GenererHtmlSite(docMenu, exportType, savePath, xsltArgs);
+            SiteExportEngine.GenererHtmlSite(docMenu, exportType, savePath, xsltArgs);
 
             return new FileWithChecksum($"{savePath}.html");
         }
@@ -124,7 +124,7 @@ namespace AppPublication.Export
                     ctx.EnrichWithFullContext(xmlResultat);
                     LogTools.DebugLogData(xmlResultat);
 
-                    ExportSiteManager.GenererHtmlSite(xmlResultat, exportType, savePath, xsltArgs);
+                    SiteExportEngine.GenererHtmlSite(xmlResultat, exportType, savePath, xsltArgs);
 
                     output.Add(new FileWithChecksum($"{savePath}.html"));
                     LogTools.Logger.Debug("{0} = 1", isPoule ? "Poule" : "Tableau");
@@ -144,7 +144,7 @@ namespace AppPublication.Export
                     ctx.EnrichWithFullContext(xmlFeuilleCombat);
                     LogTools.DebugLogData(xmlFeuilleCombat);
 
-                    ExportSiteManager.GenererHtmlSite(xmlFeuilleCombat, exportType, savePath, xsltArgs);
+                    SiteExportEngine.GenererHtmlSite(xmlFeuilleCombat, exportType, savePath, xsltArgs);
 
                     output.Add(new FileWithChecksum($"{savePath}.html"));
                     LogTools.Logger.Debug("ProchainsCombats = 1");
@@ -194,7 +194,7 @@ namespace AppPublication.Export
                 LogTools.DebugLogData(xmlClassement);
 
                 // 3. Transformation HTML
-                ExportSiteManager.GenererHtmlSite(xmlClassement, exportType, savePath, xsltArgs);
+                SiteExportEngine.GenererHtmlSite(xmlClassement, exportType, savePath, xsltArgs);
 
                 output.Add(new FileWithChecksum($"{savePath}.html"));
             }
@@ -247,7 +247,7 @@ namespace AppPublication.Export
                 LogTools.DebugLogData(xmlAllTapis);
 
                 // 3. Transformation HTML
-                ExportSiteManager.GenererHtmlSite(xmlAllTapis, exportType, savePath, xsltArgs);
+                SiteExportEngine.GenererHtmlSite(xmlAllTapis, exportType, savePath, xsltArgs);
 
                 output.Add(new FileWithChecksum($"{savePath}.html"));
             }
@@ -283,36 +283,36 @@ namespace AppPublication.Export
 
                 // --- 3. GÉNÉRATION DE L'INDEX HTML ---
                 ExportEnum indexType = ExportEnum.Site_Index;
-                string indexFilename = ExportTools.GetFileName(indexType).Replace("/", "_");
+                string indexFilename = SiteExportEngine.GetFileName(indexType).Replace("/", "_");
                 string indexSavePath = Path.Combine(siteStructure.PhysicalStructure.RepertoireCommon(), indexFilename);
 
                 var indexArgs = CreateAllXsltArgs(siteStructure, indexSavePath);
 
-                ExportSiteManager.GenererHtmlSite(docIndex, indexType, indexSavePath, indexArgs);
+                SiteExportEngine.GenererHtmlSite(docIndex, indexType, indexSavePath, indexArgs);
                 output.Add(new FileWithChecksum($"{indexSavePath}.html"));
 
                 progress?.Report(BatchProgressInfo.Step(1));
 
                 // --- 4. RESSOURCES STATIQUES (CSS, JS, IMG) ---
                 // Export direct des styles et scripts
-                var staticFiles = ExportTools.ExportEmbeddedStyleAndJS(true, siteStructure);
+                var staticFiles = SiteExportEngine.ExportEmbeddedStyleAndJS(true, siteStructure);
                 output.AddRange(staticFiles.Select(path => new FileWithChecksum(path)));
                 LogTools.Logger.Debug("GenereWebSiteIndex - Style/JS: {0} fichiers", staticFiles.Count);
 
                 // Export des images
-                var imageFiles = ExportTools.ExportEmbeddedImg(true, true, siteStructure);
+                var imageFiles = SiteExportEngine.ExportEmbeddedImg(true, true, siteStructure);
                 output.AddRange(imageFiles.Select(path => new FileWithChecksum(path)));
                 LogTools.Logger.Debug("GenereWebSiteIndex - Images: {0} fichiers", imageFiles.Count);
 
                 // --- 5. GÉNÉRATION DU SCRIPT DE MISE À JOUR (FOOTER) ---
                 ExportEnum footerType = ExportEnum.Site_FooterScript;
-                string footerFilename = ExportTools.GetFileName(footerType).Replace("/", "_");
+                string footerFilename = SiteExportEngine.GetFileName(footerType).Replace("/", "_");
                 string footerSavePath = Path.Combine(siteStructure.PhysicalStructure.RepertoireJs(), footerFilename);
 
                 var footerArgs = CreateAllXsltArgs(siteStructure, footerSavePath);
 
                 // Utilisation du même docIndex pour générer le JS via XSLT
-                ExportSiteManager.GenererHtmlSite(docIndex, footerType, footerSavePath, footerArgs, "js");
+                SiteExportEngine.GenererHtmlSite(docIndex, footerType, footerSavePath, footerArgs, "js");
                 output.Add(new FileWithChecksum($"{footerSavePath}.js"));
 
                 LogTools.Logger.Debug("GenereWebSiteIndex Terminé - Total: {0} ressources", output.Count);
@@ -409,7 +409,7 @@ namespace AppPublication.Export
 
                 // Appel unifié avec notre méthode utilitaire
                 string savePath = GetFileSavePath(targetDirectory, exportType);
-                
+
                 var xsltArgs = CreateAllXsltArgs(siteStructure, savePath);
 
                 // Génération du document et enrichissement via le contexte
@@ -418,7 +418,7 @@ namespace AppPublication.Export
 
                 LogTools.DebugLogData(docAffectation);
 
-                ExportSiteManager.GenererHtmlSite(docAffectation, exportType, savePath, xsltArgs);
+                SiteExportEngine.GenererHtmlSite(docAffectation, exportType, savePath, xsltArgs);
 
                 output.Add(new FileWithChecksum($"{savePath}.html"));
             }
@@ -465,7 +465,7 @@ namespace AppPublication.Export
                     );
 
                     // Transformation HTML à partir du document contextuel
-                    ExportSiteManager.GenererHtmlSite(docEngagements, exportType, savePath, xsltArgs);
+                    SiteExportEngine.GenererHtmlSite(docEngagements, exportType, savePath, xsltArgs);
 
                     output.Add(new FileWithChecksum($"{savePath}.html"));
 

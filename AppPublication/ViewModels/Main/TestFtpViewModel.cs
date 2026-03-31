@@ -1,9 +1,9 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows.Input;
-using FranceJudo.UI.Wpf.Foundation;
+﻿using FranceJudo.Core.Foundation;
 using FranceJudo.Core.Network;
-using FranceJudo.Core.Foundation;
 using FranceJudo.Core.Network.Ftp.Test;
+using FranceJudo.UI.Wpf.Foundation;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 
 namespace AppPublication.ViewModels.Configuration
@@ -41,9 +41,7 @@ namespace AppPublication.ViewModels.Configuration
         {
             get
             {
-                if (_cmdStartTest == null)
-                {
-                    _cmdStartTest = new RelayCommand(
+                _cmdStartTest ??= new RelayCommand(
                         async o =>
                         {
                             IsTestRunning = true;
@@ -58,7 +56,6 @@ namespace AppPublication.ViewModels.Configuration
                             return !IsTestRunning;
                         }
                     );
-                }
                 return _cmdStartTest;
             }
         }
@@ -67,9 +64,7 @@ namespace AppPublication.ViewModels.Configuration
         {
             get
             {
-                if (_cmdCancelTest == null)
-                {
-                    _cmdCancelTest = new RelayCommand(
+                _cmdCancelTest ??= new RelayCommand(
                         o =>
                         {
                             _scheduler.Cancel();
@@ -79,7 +74,6 @@ namespace AppPublication.ViewModels.Configuration
                             return IsTestRunning;
                         }
                     );
-                }
                 return _cmdCancelTest;
             }
         }

@@ -477,7 +477,7 @@
         public const string Vue_Judoka_Ligue = "ligue";
         public const string Vue_Judoka_LigueNomCourt = "liguenomcourt";
         public const string Vue_Judoka_LigueNom = "liguenom";
-        
+
         public const string Vue_Judoka_Pays = "pays";
 
         public const string Vue_Judoka_IdEpreuve = "idepreuve";
@@ -637,7 +637,7 @@
         public const string Rencontre_GoldenScore = "goldenScore";
         public const string Rencontre_IsNewRencontre = "isNewRencontre";
         public const string Rencontre_EstDecisif = "estDecisif";
-        
+
 
         public const string Rencontre_TempsCombat = "tempsCombat";
         public const string Rencontre_TempsRecuperation = "tempsRecuperation";

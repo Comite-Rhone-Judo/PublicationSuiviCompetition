@@ -27,10 +27,7 @@ namespace FranceJudo.UI.Wpf.Converters
                             {
                                 ope1 = (bool)item;
                             }
-                            else if (ope2 == null)
-                            {
-                                ope2 = (bool)item;
-                            }
+                            else ope2 ??= (bool)item;
                         }
                     }
                 }

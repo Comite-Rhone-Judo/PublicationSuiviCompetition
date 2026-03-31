@@ -1,5 +1,4 @@
 ﻿using AppPublication.Controles;
-using AppPublication.ViewModels.Configuration;
 using System.Windows;
 
 namespace AppPublication.Views.Configuration

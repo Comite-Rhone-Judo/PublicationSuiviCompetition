@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FranceJudo.Core.Network.Http.Context
+﻿namespace FranceJudo.Core.Network.Http.Context
 {
     /// <summary>
     /// Interface à implémenter par les modules qui ont besoin d'accéder aux données de l'application.

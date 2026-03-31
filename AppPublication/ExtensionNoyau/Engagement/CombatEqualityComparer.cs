@@ -19,7 +19,7 @@ namespace AppPublication.ExtensionNoyau.Engagement
             if (Object.ReferenceEquals(x, y)) return true;
 
             //Check whether any of the compared objects is null.
-            if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null))
+            if (x is null || y is null)
                 return false;
 
             //Check whether the products' properties are equal.
@@ -31,7 +31,7 @@ namespace AppPublication.ExtensionNoyau.Engagement
         public int GetHashCode(ICombat j)
         {
             //Check whether the object is null
-            if (Object.ReferenceEquals(j, null)) return 0;
+            if (j is null) return 0;
 
             //Calculate the hash code for the product.
             return j.id;

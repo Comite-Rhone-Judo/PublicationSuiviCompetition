@@ -5,6 +5,13 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Style", "IDE0028:Simplifier l'initialisation des collections", Justification = "<En attente>", Scope = "member", Target = "~M:FranceJudo.Metier.IO.AppDirectoryManager.Initialize(System.String,System.String)")]
-[assembly: SuppressMessage("Style", "IDE0063:Utiliser une instruction 'using' simple", Justification = "<En attente>", Scope = "member", Target = "~M:FranceJudo.Metier.IO.AppDirectoryManager.ExtractResources")]
-[assembly: SuppressMessage("Style", "IDE0090:Utiliser 'new(...)'", Justification = "<En attente>", Scope = "member", Target = "~M:FranceJudo.Metier.IO.AppDirectoryManager.ExtractResources")]
+[assembly: SuppressMessage("Style", "IDE0306:Simplifier l'initialisation des collections", Justification = "<En attente>", Scope = "member", Target = "~M:FranceJudo.Core.Reflection.AssemblyResourceDictionary.#ctor(System.Reflection.Assembly,System.String)")]
+[assembly: SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0034:Simplify 'default' expression", Justification = "<Pending>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0290:Use primary constructor", Justification = "<Pending>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0090:Use 'new(...)'", Justification = "<Pending>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "<Pending>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0300:Simplify collection initialization", Justification = "<Pending>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0305:Simplify collection initialization", Justification = "<Pending>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "module")]

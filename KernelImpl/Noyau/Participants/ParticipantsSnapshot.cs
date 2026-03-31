@@ -1,6 +1,5 @@
-﻿using System;
+﻿using FranceJudo.Metier.Noyau.Participants;
 using System.Collections.Generic;
-using FranceJudo.Metier.Noyau.Participants;
 
 namespace KernelImpl.Noyau.Participants
 {

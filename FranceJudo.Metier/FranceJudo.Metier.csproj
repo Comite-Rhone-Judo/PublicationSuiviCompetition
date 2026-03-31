@@ -12,7 +12,8 @@
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <LangVersion>latest</LangVersion>
     <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
+    <Deterministic>true</Deterministic>	
+	<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -49,8 +50,7 @@
     <Compile Include="Exceptions\JudoServerException.cs" />
     <Compile Include="Exceptions\ParametrageBalanceException.cs" />
     <Compile Include="Export\ExportEnum.cs" />
-    <Compile Include="Export\ExportSiteManager.cs" />
-    <Compile Include="Export\ExportTools.cs" />
+    <Compile Include="Export\SiteExportEngine.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IO\AppDirectoryManager.cs" />
     <Compile Include="IO\FileTools.cs" />
@@ -119,7 +119,6 @@
     <Compile Include="Resources\MetierResources.cs" />
     <Compile Include="Resources\Site\PhysicalStructureBase.cs" />
     <Compile Include="Resources\Site\UrlGeneratorBase.cs" />
-    <Compile Include="Export\TypeExportSiteEnum.cs" />
     <Compile Include="Regles\ScoresJujitsu.cs" />
     <Compile Include="Network\ConstantNetwork.cs" />
     <Compile Include="Network\ServerCommandEnum.cs" />
@@ -420,9 +419,6 @@
     <EmbeddedResource Include="Resources\Site\xslt\prochains_combats_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\xslt\qrcode.xslt" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json">

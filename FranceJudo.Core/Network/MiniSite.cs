@@ -1,5 +1,9 @@
 ﻿using FluentFTP;
 using FluentFTP.Model.Functions;
+using FranceJudo.Core.Foundation;
+using FranceJudo.Core.Logging;
+using FranceJudo.Core.Network.Http;
+using FranceJudo.Core.Network.Http.Context;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,10 +12,6 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
-using FranceJudo.Core.Logging;
-using FranceJudo.Core.Foundation;
-using FranceJudo.Core.Network.Http.Context;
-using FranceJudo.Core.Network.Http;
 
 
 namespace FranceJudo.Core.Network
@@ -59,7 +59,7 @@ namespace FranceJudo.Core.Network
         /// <param name="instanceName">Nom de l'instance</param>
         public MiniSite(bool local, IServeurHttp instance = null)
         {
-            if(local && instance == null) throw new ArgumentNullException("instance", "Le serveur HTTP local ne peut pas être null en mode local");
+            if (local && instance == null) throw new ArgumentNullException("instance", "Le serveur HTTP local ne peut pas être null en mode local");
 
             if (local)
             {
@@ -111,7 +111,7 @@ namespace FranceJudo.Core.Network
                 return _isFTPConfigPropertiesValid;
             }
             private set
-            { 
+            {
                 _isFTPConfigPropertiesValid = value;
                 NotifyPropertyChanged();
             }
@@ -323,7 +323,7 @@ namespace FranceJudo.Core.Network
                 IsChanged = true;
                 IsFTPConfigPropertiesValid = CheckConfigurationProperties();
             }
-        }  
+        }
 
         private bool _syncDiff = false;
         /// <summary>
@@ -801,7 +801,7 @@ namespace FranceJudo.Core.Network
                                 retry = 0;
 
                                 // Deplace le fichier temporaire vers le fichier final
-                                while(!moved && retry <= _maxRetryFTP)
+                                while (!moved && retry <= _maxRetryFTP)
                                 {
                                     moved = ftpClient.MoveFile(ftpTmpFile, ftpFileName, FtpRemoteExists.Overwrite);
                                     retry++;
@@ -810,8 +810,8 @@ namespace FranceJudo.Core.Network
                                         LogTools.Logger.Debug("Erreur lors du deplacement du fichier {0} vers {1}, essai {2}", ftpTmpFile, ftpFileName, retry);
                                         Thread.Sleep(100);  // Attend 100ms avant de reessayer
                                     }
-                                }                                
-                                
+                                }
+
                                 if (moved)
                                 {
                                     // Un fichier de plus charge
@@ -829,7 +829,7 @@ namespace FranceJudo.Core.Network
                                 done = false;
                             }
 
-                            if(!done)
+                            if (!done)
                             {
                                 // NOK car pas tous les fichiers charges
                                 output.IsSuccess = false;
@@ -983,7 +983,7 @@ namespace FranceJudo.Core.Network
                 List<FtpListItem> ftpFic = ftpList.Where(o => o.Type == FtpObjectType.File).ToList();
 
                 foreach (var item in ftpFic)
-                    {
+                {
                     // Supprime le fichier
                     ftpClient.DeleteFile(item.FullName);
 
@@ -1037,7 +1037,7 @@ namespace FranceJudo.Core.Network
             if (index >= 0 && total > 0)
             {
                 // Pn majore la progression a 100% pour eviter les erreurs d'arrondis
-                pct = Math.Min( 100, (int)Math.Round(((index + 1.0) / total) * 100));
+                pct = Math.Min(100, (int)Math.Round(((index + 1.0) / total) * 100));
             }
 
             Status.Progress = pct;

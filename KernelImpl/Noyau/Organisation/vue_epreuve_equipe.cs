@@ -1,14 +1,12 @@
-﻿
-using FranceJudo.Core.XML;
+﻿using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Categories;
 using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using FranceJudo.Metier.Noyau;
-using FranceJudo.Metier.XML;
-using FranceJudo.Metier.Noyau.Categories;
 
 namespace KernelImpl.Noyau.Organisation
 {
@@ -95,7 +93,7 @@ namespace KernelImpl.Noyau.Organisation
             discipline_competition = compet != null ? compet.disciplineId : CompetitionDisciplineEnum.Judo;
         }
 
-        public void LoadXml(XElement node) { throw  new NotImplementedException(); }
+        public void LoadXml(XElement node) { throw new NotImplementedException(); }
 
         public XElement ToXml(IJudoData DC)
         {
@@ -115,7 +113,7 @@ namespace KernelImpl.Noyau.Organisation
 
             List<IEpreuve> epreuves = DC.Organisation.Epreuves.Where(o => o.epreuve_equipe == this.id).ToList();
             EpreuveSexe sexe = new EpreuveSexe(EpreuveSexeEnum.Feminine);
-            
+
             if (epreuves.Count(o => o.sexe == 1) > 0 && epreuves.Count(o => o.sexe == 0) > 0)
             {
                 sexe = new EpreuveSexe(EpreuveSexeEnum.Mixte);

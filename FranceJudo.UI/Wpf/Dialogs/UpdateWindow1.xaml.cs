@@ -1,5 +1,5 @@
-﻿using FranceJudo.Core.Logging;
-using FranceJudo.Core.Exceptions;
+﻿using FranceJudo.Core.Exceptions;
+using FranceJudo.Core.Logging;
 using FranceJudo.UI.Wpf.Behaviors;
 using System;
 using System.ComponentModel;

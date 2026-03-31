@@ -1,5 +1,5 @@
-﻿using System.Xml.Linq;
-using FranceJudo.Metier.Network;
+﻿using FranceJudo.Metier.Network;
+using System.Xml.Linq;
 
 namespace JudoClient.Communication
 {

@@ -9,14 +9,7 @@ namespace AppPublication.Tools.Converter
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is bool)
-            {
-                return (bool)value ? "Démarré" : "Arrêté";
-            }
-            else
-            {
-                return "N/A";
-            }
+            return value is bool ? (bool)value ? "Démarré" : "Arrêté" : "N/A";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -1,6 +1,6 @@
-﻿using System;
+﻿using FranceJudo.Core.IO;
+using System;
 using System.Net.Sockets;
-using FranceJudo.Core.IO;
 
 namespace FranceJudo.Core.Network.Tcp.Client
 {
@@ -45,9 +45,11 @@ namespace FranceJudo.Core.Network.Tcp.Client
 
                 if (client == null || client.Client == null)
                 {
-                    client = new TcpClient();
-                    client.NoDelay = true;
-                    client.LingerState = new LingerOption(true, 20);
+                    client = new TcpClient
+                    {
+                        NoDelay = true,
+                        LingerState = new LingerOption(true, 20)
+                    };
                 }
 
                 if (client.Connected)
@@ -55,16 +57,15 @@ namespace FranceJudo.Core.Network.Tcp.Client
                     LogHelper.ShowLog("Re-Connect\t" + DateTime.Now.ToString() + "\t" +
                         "close current connect\t" + client.GetHashCode().ToString());
 
-                    if (client.GetStream() != null)
-                    {
-                        client.GetStream().Close();
-                    }
+                    client.GetStream()?.Close();
 
                     client.Close();
 
-                    client = new TcpClient();
-                    client.NoDelay = true;
-                    client.LingerState = new LingerOption(true, 20);
+                    client = new TcpClient
+                    {
+                        NoDelay = true,
+                        LingerState = new LingerOption(true, 20)
+                    };
 
                     LogHelper.ShowLog("Create Client\t" + DateTime.Now.ToString() + "\t" +
                         client.GetHashCode().ToString());
@@ -84,9 +85,11 @@ namespace FranceJudo.Core.Network.Tcp.Client
                 }
                 catch (ObjectDisposedException)
                 {
-                    client = new TcpClient();
-                    client.NoDelay = true;
-                    client.LingerState = new LingerOption(true, 20);
+                    client = new TcpClient
+                    {
+                        NoDelay = true,
+                        LingerState = new LingerOption(true, 20)
+                    };
 
                     client.Connect(remoteHost, remotePort);
 
@@ -100,19 +103,13 @@ namespace FranceJudo.Core.Network.Tcp.Client
             }
             catch (SocketException ex)
             {
-                if (client != null)
-                {
-                    client.Close();
-                }
+                client?.Close();
 
                 ExceptionHelper.ShowException(ex);
             }
             catch (Exception ex)
             {
-                if (client != null)
-                {
-                    client.Close();
-                }
+                client?.Close();
 
                 ExceptionHelper.ShowException(ex);
             }
@@ -138,7 +135,7 @@ namespace FranceJudo.Core.Network.Tcp.Client
                 NetworkStream stream = null;
                 try
                 {
-                   stream  = client.GetStream();
+                    stream = client.GetStream();
                 }
                 catch
                 {

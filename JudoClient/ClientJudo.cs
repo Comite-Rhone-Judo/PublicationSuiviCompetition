@@ -1,10 +1,10 @@
-﻿using JudoClient.Communication;
+﻿using FranceJudo.Core.Logging;
+using FranceJudo.Core.Network.Tcp.Client;
+using FranceJudo.Metier.Network;
+using FranceJudo.Metier.XML;
+using JudoClient.Communication;
 using System;
 using System.Xml.Linq;
-using FranceJudo.Core.Logging;
-using FranceJudo.Core.Network.Tcp.Client;
-using FranceJudo.Metier.XML;
-using FranceJudo.Metier.Network;
 
 namespace JudoClient
 {

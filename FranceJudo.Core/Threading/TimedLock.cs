@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace FranceJudo.Core.Threading
 {
-    public struct TimedLock : IDisposable
+    public readonly struct TimedLock : IDisposable
     {
         public static TimedLock Lock(object o)
         {
@@ -31,9 +31,9 @@ namespace FranceJudo.Core.Threading
             leakDetector = new Sentinel();
 #endif
         }
-        private object target;
+        private readonly object target;
 
-        public void Dispose()
+        public readonly void Dispose()
         {
             Monitor.Exit(target);
 
@@ -59,7 +59,7 @@ namespace FranceJudo.Core.Threading
                 System.Diagnostics.Debug.Fail("Undisposed lock");
             }
         }
-        private Sentinel leakDetector;
+        private readonly Sentinel leakDetector;
 #endif
 
     }

@@ -1,5 +1,5 @@
-﻿using System.Diagnostics;
-using FranceJudo.UI.Wpf.Dialogs;
+﻿using FranceJudo.UI.Wpf.Dialogs;
+using System.Diagnostics;
 using System.IO;
 
 namespace FranceJudo.UI.Wpf.PDF

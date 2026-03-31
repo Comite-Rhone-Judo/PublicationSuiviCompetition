@@ -1,14 +1,12 @@
-﻿
-using FranceJudo.Core.XML;
+﻿using FranceJudo.Core.Threading;
+using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.Noyau.Participants;
 using KernelImpl.Internal;
 using System;
 using System.Collections;
 using System.Linq;
-using FranceJudo.Metier.Noyau.Organisation;
-using FranceJudo.Metier.Noyau.Participants;
-using FranceJudo.Core.Threading;
-using FranceJudo.Metier.Noyau;
 
 
 namespace KernelImpl.Noyau.Deroulement
@@ -128,7 +126,7 @@ namespace KernelImpl.Noyau.Deroulement
             combat_programmation = combat.programmation;
             combat_debut = combat.debut;
             combat_fin = combat.fin;
-			combat_discipline = combat.discipline;
+            combat_discipline = combat.discipline;
 
             // Ajout de la lecture des donnees de phase et d'epreuve
             IPhase phase = null;

@@ -1,7 +1,5 @@
 ﻿using AppPublication.Controles;
-using AppPublication.ViewModels.Configuration;
 using System.Windows;
-using Telerik.Windows.Controls;
 
 namespace AppPublication.Views.Configuration
 {

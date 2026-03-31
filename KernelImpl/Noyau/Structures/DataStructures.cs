@@ -1,10 +1,8 @@
 ﻿
+using FranceJudo.Metier.Noyau.Structures;
 using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using FranceJudo.Core.XML;
-using FranceJudo.Metier.XML;
-using FranceJudo.Metier.Noyau.Structures;
 
 
 namespace KernelImpl.Noyau.Structures
@@ -19,7 +17,7 @@ namespace KernelImpl.Noyau.Structures
 
         // Accesseurs O(1)
         public IReadOnlyList<Club> Clubs { get { return _clubsCache.Cache; } }
-        public IReadOnlyList<Comite> Comites { get { return _comitesCache.Cache ; } }
+        public IReadOnlyList<Comite> Comites { get { return _comitesCache.Cache; } }
         public IReadOnlyList<Secteur> Secteurs { get { return _secteursCache.Cache; } }
         public IReadOnlyList<Ligue> Ligues { get { return _liguesCache.Cache; } }
         public IReadOnlyList<Pays> LesPays { get { return _paysCache.Cache; } }
@@ -41,7 +39,7 @@ namespace KernelImpl.Noyau.Structures
             _clubsCache.UpdateFullSnapshot(clubs);
         }
 
-        public ICollection<Club> LectureClubs(XElement xelement )
+        public ICollection<Club> LectureClubs(XElement xelement)
         {
             return Club.LectureClubs(xelement);
         }
@@ -54,7 +52,7 @@ namespace KernelImpl.Noyau.Structures
         public void ChargerComites(XElement element)
         {
             ICollection<Comite> comites = Comite.LectureComites(element);
-            _comitesCache.UpdateFullSnapshot(comites); 
+            _comitesCache.UpdateFullSnapshot(comites);
         }
 
         public ICollection<Secteur> LectureSecteurs(XElement xelement)
@@ -70,7 +68,7 @@ namespace KernelImpl.Noyau.Structures
         public void ChargerSecteurs(XElement element)
         {
             ICollection<Secteur> secteurs = Secteur.LectureSecteurs(element);
-            _secteursCache.UpdateFullSnapshot(secteurs);      
+            _secteursCache.UpdateFullSnapshot(secteurs);
         }
 
         public ICollection<Comite> LectureComites(XElement xelement)

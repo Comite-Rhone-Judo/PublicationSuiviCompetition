@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FranceJudo.Core.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -8,7 +9,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using FranceJudo.Core.Logging;
 
 namespace FranceJudo.Core.Network.Scanner
 {

@@ -1,6 +1,6 @@
-﻿using System;
-using FranceJudo.Core.Exceptions;
+﻿using FranceJudo.Core.Exceptions;
 using FranceJudo.Core.Logging;
+using System;
 
 namespace FranceJudo.Core.Network.Tcp.Client
 {

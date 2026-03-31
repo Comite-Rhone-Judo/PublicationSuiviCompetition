@@ -36,8 +36,8 @@ namespace AppPublication.Views.Server
             recherche_Worker.WorkerSupportsCancellation = true;
 
             recherche = new RechercheServeurJudo();
-            recherche.onServerTrouve += RechercheOnServerTrouve;
-            recherche.onTermine += RechercheOnTermine;
+            recherche.OnServerTrouve += RechercheOnServerTrouve;
+            recherche.OnTermine += RechercheOnTermine;
         }
 
         private void RechercheWorkerDoWork(object sender, DoWorkEventArgs args)

@@ -1,6 +1,5 @@
-using FranceJudo.Core.XML;
-using System;
 using FranceJudo.Metier.XML;
+using System;
 
 namespace FranceJudo.Metier.Noyau.Deroulement
 {
@@ -9,9 +8,9 @@ namespace FranceJudo.Metier.Noyau.Deroulement
     /// </summary>
     public interface IParticipant : IXMLSerializable
     {
-        public int judoka { get; set;  }
-        public int id {  get; set; }
-        public int phase {  get; set; }
+        public int judoka { get; set; }
+        public int id { get; set; }
+        public int phase { get; set; }
         public int ranking { get; set; }
         public int classementAvant { get; set; }
 

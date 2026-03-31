@@ -1,8 +1,8 @@
-﻿using System;
+﻿using FranceJudo.Core.XML;
+using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Xml.Linq;
-using FranceJudo.Core.XML;
 
 namespace FranceJudo.Core.IO
 {

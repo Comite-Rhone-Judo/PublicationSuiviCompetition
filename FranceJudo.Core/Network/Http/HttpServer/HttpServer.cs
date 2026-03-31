@@ -786,16 +786,10 @@ namespace FranceJudo.Core.Network.Http.HttpServer
         /// </summary>
         public void Stop()
         {
-            if (_httpListener != null)
-            {
-                _httpListener.Stop();
-                _httpListener = null;
-            }
-            if (_httpsListener != null)
-            {
-                _httpsListener.Stop();
-                _httpsListener = null;
-            }
+            _httpListener?.Stop();
+            _httpListener = null;
+            _httpsListener?.Stop();
+            _httpsListener = null;
 
             _requestQueue.Stop();
         }
@@ -839,18 +833,14 @@ namespace FranceJudo.Core.Network.Http.HttpServer
             add
             {
                 _exceptionHandler += value;
-                if (_httpListener != null)
-                    _httpListener.ExceptionThrown += value;
-                if (_httpsListener != null)
-                    _httpsListener.ExceptionThrown += value;
+                _httpListener?.ExceptionThrown += value;
+                _httpsListener?.ExceptionThrown += value;
             }
             remove
             {
                 _exceptionHandler -= value;
-                if (_httpListener != null)
-                    _httpListener.ExceptionThrown -= value;
-                if (_httpsListener != null)
-                    _httpsListener.ExceptionThrown -= value;
+                _httpListener?.ExceptionThrown -= value;
+                _httpsListener?.ExceptionThrown -= value;
             }
         }
     }

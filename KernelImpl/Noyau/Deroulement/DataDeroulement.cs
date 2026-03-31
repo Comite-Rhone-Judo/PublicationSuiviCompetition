@@ -1,12 +1,10 @@
 ﻿
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Deroulement;
 using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using FranceJudo.Core.XML;
-using FranceJudo.Metier.Noyau;
-using FranceJudo.Metier.Noyau.Deroulement;
-using FranceJudo.Metier.XML;
 
 namespace KernelImpl.Noyau.Deroulement
 {
@@ -47,9 +45,9 @@ namespace KernelImpl.Noyau.Deroulement
 
         IReadOnlyList<IPhase> IDeroulementData.Phases => Phases;
         IReadOnlyList<IPoule> IDeroulementData.Poules => Poules;
-         IReadOnlyList<IParticipant> IDeroulementData.Participants => this.Participants;
+        IReadOnlyList<IParticipant> IDeroulementData.Participants => this.Participants;
         IReadOnlyList<Ivue_groupe> IDeroulementData.VueGroupes => VueGroupes;
-         IReadOnlyList<Ivue_combat> IDeroulementData.VueCombats => VueCombats;
+        IReadOnlyList<Ivue_combat> IDeroulementData.VueCombats => VueCombats;
 
         /// <summary>
         /// lecture des participants
@@ -95,7 +93,7 @@ namespace KernelImpl.Noyau.Deroulement
             _groupesCache.UpdateFullSnapshot(groupes);
 
 
-            ICollection<vue_groupe> vgroupes = GenereVueGroupe(groupes, DC);    
+            ICollection<vue_groupe> vgroupes = GenereVueGroupe(groupes, DC);
             _vgroupesCache.UpdateFullSnapshot(vgroupes);
         }
 

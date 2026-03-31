@@ -1,9 +1,9 @@
-﻿using System;
+﻿using FranceJudo.Core.Logging;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Reflection;
-using FranceJudo.Core.Logging;
 
 
 namespace FranceJudo.Core.Configuration
@@ -97,13 +97,10 @@ namespace FranceJudo.Core.Configuration
             lock (_sharedConfigLock)
             {
                 // ouvre la configuration de l'application si pas déjà fait
-                if (_sharedConfig == null)
-                {
-                    _sharedConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                }
+                _sharedConfig ??= ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
                 // Recupere une section
-                var section = _sharedConfig.GetSection(sectionName) as TModel;
+                TModel section = _sharedConfig.GetSection(sectionName) as TModel;
 
                 // Si la section n'existe pas, on la crée et l'ajoute
                 if (section == null)
@@ -124,7 +121,7 @@ namespace FranceJudo.Core.Configuration
         /// Méthode factorisée pour tous les Setters. Met à jour la valeur,
         /// et marque la section comme 'Dirty' si la valeur a changé, en notifiant le système.
         /// </summary>
-        protected void SetValueAndMarkDirty<T>(string propertyName, T newValue, T defaultValue = default(T))
+        protected void SetValueAndMarkDirty<T>(string propertyName, T newValue)
         {
             bool notify = false;
 
@@ -338,16 +335,10 @@ namespace FranceJudo.Core.Configuration
             {
                 // 1. Créer un nouvel élément dans la cible du bon type
                 // (CreateNewElement est protected, donc appel via Reflection)
-                var createMethod = target.GetType().GetMethod("CreateNewElement",
-                    BindingFlags.Instance | BindingFlags.NonPublic, null, Type.EmptyTypes, null);
-
                 // Si non trouvé sur le type dérivé, chercher sur la classe de base
-                if (createMethod == null)
-                {
-                    createMethod = typeof(ConfigurationElementCollection).GetMethod("CreateNewElement",
+                var createMethod = target.GetType().GetMethod("CreateNewElement",
+                    BindingFlags.Instance | BindingFlags.NonPublic, null, Type.EmptyTypes, null) ?? typeof(ConfigurationElementCollection).GetMethod("CreateNewElement",
                        BindingFlags.Instance | BindingFlags.NonPublic, null, Type.EmptyTypes, null);
-                }
-
                 if (createMethod != null)
                 {
                     // Appel de CreateNewElement()
@@ -359,15 +350,9 @@ namespace FranceJudo.Core.Configuration
                     // 3. Ajouter le nouvel item à la collection cible via BaseAdd (protected)
                     var addMethod = target.GetType().GetMethod("BaseAdd",
                         BindingFlags.Instance | BindingFlags.NonPublic,
-                        null, new Type[] { typeof(ConfigurationElement) }, null);
-
-                    if (addMethod == null)
-                    {
-                        addMethod = typeof(ConfigurationElementCollection).GetMethod("BaseAdd",
+                        null, new Type[] { typeof(ConfigurationElement) }, null) ?? typeof(ConfigurationElementCollection).GetMethod("BaseAdd",
                             BindingFlags.Instance | BindingFlags.NonPublic,
                             null, new Type[] { typeof(ConfigurationElement) }, null);
-                    }
-
                     addMethod?.Invoke(target, new object[] { newItem });
                 }
             }

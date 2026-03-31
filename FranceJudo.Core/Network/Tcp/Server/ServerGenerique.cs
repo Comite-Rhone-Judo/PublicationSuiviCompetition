@@ -1,11 +1,11 @@
-﻿using System;
+﻿using FranceJudo.Core.IO;
+using FranceJudo.Core.Threading;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using FranceJudo.Core.Threading;
-using FranceJudo.Core.IO;
 
 namespace FranceJudo.Core.Network.Tcp.Server
 {
@@ -66,11 +66,11 @@ namespace FranceJudo.Core.Network.Tcp.Server
         //protected System.Net.Sockets.Socket listener;
 
         private TcpListener tcpListener;
-        private List<TcpClient> clients = new List<TcpClient>();
-        private List<SentData> sentData = new List<SentData>();
+        private readonly List<TcpClient> clients = new List<TcpClient>();
+        private readonly List<SentData> sentData = new List<SentData>();
         //private string chaine = "";
-        private int _port = 0;
-        private string _endMsgTag;
+        private readonly int _port = 0;
+        private readonly string _endMsgTag;
 
         /// <summary>
         /// Balise de fin de message
@@ -164,20 +164,14 @@ namespace FranceJudo.Core.Network.Tcp.Server
             {
                 //Stop Listening 
 
-                if (objListenerAndClient.Client != null)
-                {
-                    objListenerAndClient.Client.Close();
-                }
+                objListenerAndClient.Client?.Close();
 
                 ExceptionHelper.ShowException(ex);
 
                 return;
             }
 
-            if (OnConnection != null)
-            {
-                OnConnection(this, client);
-            }
+            OnConnection?.Invoke(this, client);
 
             new ListenerHelper.ReceiveData(HandleReceive).BeginInvoke(client,
                 new AsyncCallback(ReceiveCallback), objListenerAndClient.Listener);
@@ -209,11 +203,7 @@ namespace FranceJudo.Core.Network.Tcp.Server
         {
             try
             {
-                if (OnDataRecieve != null)
-                {
-                    OnDataRecieve(tcpListener, sender.Client, data);
-                    //this.chaine = "";
-                }
+                OnDataRecieve?.Invoke(tcpListener, sender.Client, data);
 
                 _receive_data += (ulong)data.Length;
 
@@ -234,10 +224,7 @@ namespace FranceJudo.Core.Network.Tcp.Server
 
             clients.Remove(sender.Client);
 
-            if (OnEndConnection != null)
-            {
-                OnEndConnection(tcpListener, sender.Client);
-            }
+            OnEndConnection?.Invoke(tcpListener, sender.Client);
 
             if (clients.Count == 0)
             {
@@ -259,14 +246,14 @@ namespace FranceJudo.Core.Network.Tcp.Server
 
             using (TimedLock.Lock((sentData as ICollection).SyncRoot))
             {
-                SentData sent = sentData.FirstOrDefault(o => o != null && o.client == tcpClient);
+                SentData sent = sentData.FirstOrDefault(o => o != null && o.Client == tcpClient);
                 if (sent == null)
                 {
-                    sentData.Add(new SentData { data = data, client = tcpClient, tentative = 1 });
+                    sentData.Add(new SentData { Data = data, Client = tcpClient, Tentative = 1 });
                 }
                 else
                 {
-                    sentData.Add(new SentData { data = data, client = tcpClient, tentative = sent.tentative + 1 });
+                    sentData.Add(new SentData { Data = data, Client = tcpClient, Tentative = sent.Tentative + 1 });
                 }
             }
 
@@ -312,17 +299,14 @@ namespace FranceJudo.Core.Network.Tcp.Server
 
                 using (TimedLock.Lock((sentData as ICollection).SyncRoot))
                 {
-                    SentData sent = sentData.FirstOrDefault(o => o != null && o.client == client);
+                    SentData sent = sentData.FirstOrDefault(o => o != null && o.Client == client);
                     if (sent != null)
                     {
                         sentData.Remove(sent);
                     }
                 }
 
-                if (OnDataSent != null)
-                {
-                    OnDataSent(this, client);
-                }
+                OnDataSent?.Invoke(this, client);
 
                 //(new JudoClient.ClientHelper.ReceiveData(HandleReceive)).BeginInvoke(client, strReceiveData,
                 //        new AsyncCallback(ReceiveCallback), client);
@@ -330,10 +314,10 @@ namespace FranceJudo.Core.Network.Tcp.Server
             catch (Exception ex)
             {
                 ExceptionHelper.ShowException(ex);
-                SentData sent = sentData.FirstOrDefault(o => o != null && o.client == client);
+                SentData sent = sentData.FirstOrDefault(o => o != null && o.Client == client);
                 if (sent == null)
                 {
-                    Write(client, sent.data);
+                    Write(client, sent.Data);
                 }
             }
         }
@@ -342,9 +326,9 @@ namespace FranceJudo.Core.Network.Tcp.Server
 
     internal class SentData
     {
-        public string data { get; set; }
-        public TcpClient client { get; set; }
-        public int tentative { get; set; }
+        public string Data { get; set; }
+        public TcpClient Client { get; set; }
+        public int Tentative { get; set; }
     }
 
     ///// <summary>

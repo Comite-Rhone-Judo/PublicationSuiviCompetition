@@ -3,9 +3,7 @@ using FranceJudo.Core.Logging;
 using FranceJudo.Core.Reflection;
 using FranceJudo.Core.XML;
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq; // Indispensable pour l'usage de XDocument
@@ -13,7 +11,7 @@ using System.Xml.Xsl;
 
 namespace FranceJudo.Core.Export
 {
-    public static class ExportHTML     
+    public static class ExportHTML
     {
         // Dictionnaire pour mettre en cache les XSLT compilés
         private static readonly ConcurrentDictionary<string, Lazy<XslCompiledTransform>> _xsltCache = new ConcurrentDictionary<string, Lazy<XslCompiledTransform>>();

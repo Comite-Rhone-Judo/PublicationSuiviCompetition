@@ -1,9 +1,9 @@
-﻿using System;
+﻿using FranceJudo.Core.Configuration;
+using FranceJudo.Core.IO;
+using FranceJudo.Metier.Structures;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
-using FranceJudo.Core.Configuration;
-using FranceJudo.Metier.Structures;
-using FranceJudo.Core.IO;
 
 namespace AppPublication.Config.Publication
 {

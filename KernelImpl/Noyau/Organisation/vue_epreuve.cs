@@ -1,13 +1,11 @@
-﻿
-using FranceJudo.Core.XML;
+﻿using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Categories;
 using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System;
 using System.Linq;
 using System.Xml.Linq;
-using FranceJudo.Metier.Noyau;
-using FranceJudo.Metier.Noyau.Categories;
-using FranceJudo.Metier.XML;
 
 namespace KernelImpl.Noyau.Organisation
 {
@@ -150,7 +148,7 @@ namespace KernelImpl.Noyau.Organisation
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_PoidsMax, poidsMax);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_CatePoids_RemoteId, remoteId_catepoids);
             xepreuve.SetAttributeValue(ConstantXML.Vue_Epreuve_Nom_Competition, nom_compet);
-            xepreuve.SetAttributeValue(ConstantXML.Vue_Epreuve_Discipline_Competition, (int) discipline_competition);
+            xepreuve.SetAttributeValue(ConstantXML.Vue_Epreuve_Discipline_Competition, (int)discipline_competition);
 
             return xepreuve;
         }

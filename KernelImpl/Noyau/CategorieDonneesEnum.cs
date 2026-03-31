@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace KernelImpl.Noyau
+﻿namespace KernelImpl.Noyau
 {
-   public enum CategorieDonneesEnum
+    public enum CategorieDonneesEnum
     {
         Arbitrage,
         Categories,

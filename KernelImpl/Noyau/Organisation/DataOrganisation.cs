@@ -1,11 +1,11 @@
 ﻿
+using FranceJudo.Metier.Export;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Organisation;
 using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using FranceJudo.Metier.Noyau.Organisation;
-using FranceJudo.Metier.Noyau;
-using FranceJudo.Metier.Export;
 
 namespace KernelImpl.Noyau.Organisation
 {
@@ -39,13 +39,13 @@ namespace KernelImpl.Noyau.Organisation
         /// </summary>
         /// <param name="element">element XML contenant les compétitions</param>
         /// <param name="DC"></param>
-        public void lecture_competitions(XElement element, IJudoData DC)
+        public void ChargeCompetitions(XElement element, IJudoData DC)
         {
             ICollection<Competition> competitions = Competition.LectureCompetitions(element);
-            _competitionsCache.UpdateFullSnapshot(competitions); 
+            _competitionsCache.UpdateFullSnapshot(competitions);
             Competition = competitions.FirstOrDefault();
 
-            ExportTools.default_competition = DC.Organisation.Competition.remoteId;
+            SiteExportEngine.DefaultCompetition = DC.Organisation.Competition.remoteId;
         }
 
 
@@ -54,7 +54,7 @@ namespace KernelImpl.Noyau.Organisation
         /// </summary>
         /// <param name="element">element XML contenant les épreuves (équipe)</param>
         /// <param name="DC"></param>
-        public void lecture_epreuves_equipe(XElement element, IJudoData DC)
+        public void ChargeEpreuvesEquipe(XElement element, IJudoData DC)
         {
             ICollection<Epreuve_Equipe> epreuves = Epreuve_Equipe.LectureEpreuveEquipes(element);
             _epreuve_equipesCache.UpdateFullSnapshot(epreuves);
@@ -74,11 +74,11 @@ namespace KernelImpl.Noyau.Organisation
         /// </summary>
         /// <param name="element">element XML contenant les épreuves</param>
         /// <param name="DC"></param>
-        public void lecture_epreuves(XElement element, IJudoData DC)
+        public void ChargeEpreuves(XElement element, IJudoData DC)
         {
             ICollection<Epreuve> epreuves = Epreuve.LectureEpreuves(element);
             _epreuvesCache.UpdateFullSnapshot(epreuves);
-            
+
             ICollection<vue_epreuve> vepreuves = GenereVueEpreuves(epreuves, DC);
             _vepreuvesCache.UpdateFullSnapshot(vepreuves);
         }

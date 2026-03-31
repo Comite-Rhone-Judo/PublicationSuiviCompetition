@@ -1,10 +1,10 @@
-﻿using System.Collections;
+﻿using FranceJudo.Core.IO;
+using FranceJudo.Core.Threading;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using FranceJudo.Core.Threading;
-using FranceJudo.Core.IO;
 
 
 namespace FranceJudo.Metier.IO

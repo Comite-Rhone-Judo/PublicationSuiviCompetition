@@ -1,6 +1,6 @@
 
-using FranceJudo.Metier.XML;
 using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.XML;
 
 namespace FranceJudo.Metier.Noyau.Categories
 {

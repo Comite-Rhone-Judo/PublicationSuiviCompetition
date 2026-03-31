@@ -1,5 +1,5 @@
-﻿using System;
-using FranceJudo.Core.Foundation;
+﻿using FranceJudo.Core.Foundation;
+using System;
 
 namespace AppPublication.Generation
 {
@@ -48,7 +48,7 @@ namespace AppPublication.Generation
             }
             set
             {
-                if(_state != value)
+                if (_state != value)
                 {
                     _state = value;
                     NotifyPropertyChanged();
@@ -144,7 +144,7 @@ namespace AppPublication.Generation
         #region METHODES
         private void CalculMessage()
         {
-            string msg = string.Empty;
+            string msg;
             switch (_state)
             {
                 case StateGenerationEnum.Stopped:

@@ -1,7 +1,6 @@
-﻿using System.Configuration;
-using System.Windows.Automation;
-using FranceJudo.Core.Configuration;
+﻿using FranceJudo.Core.Configuration;
 using FranceJudo.Core.Security;
+using System.Configuration;
 
 namespace AppPublication.Config.Publication
 {
@@ -30,10 +29,7 @@ namespace AppPublication.Config.Publication
         /// </summary>
         protected override void NotifyParentOfModification()
         {
-            if (PublicationConfigSection.Instance != null)
-            {
-                PublicationConfigSection.Instance.NotifyChildModification();
-            }
+            PublicationConfigSection.Instance?.NotifyChildModification();
         }
 
         [ConfigurationProperty(kId, IsRequired = true, IsKey = true)]

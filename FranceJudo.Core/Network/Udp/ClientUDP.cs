@@ -1,7 +1,7 @@
-﻿using System;
-using System.Net.Sockets;
+﻿using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
-using FranceJudo.Core.IO;
+using System;
+using System.Net.Sockets;
 
 namespace FranceJudo.Core.Network.Udp
 {
@@ -10,8 +10,8 @@ namespace FranceJudo.Core.Network.Udp
     /// </summary>
     public class ClientUDP
     {
-        int _port = 8484;
-        string _ip = "127.0.0.1";
+        readonly int _port = 8484;
+        readonly string _ip = "127.0.0.1";
         UdpClient _udpClient = null;
 
         /// <summary>

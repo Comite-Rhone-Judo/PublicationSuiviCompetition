@@ -1,11 +1,4 @@
-﻿using KernelImpl.Noyau.Arbitrage;
-using KernelImpl.Noyau.Categories;
-using KernelImpl.Noyau.Deroulement;
-using KernelImpl.Noyau.Logos;
-using KernelImpl.Noyau.Organisation;
-using KernelImpl.Noyau.Participants;
-using KernelImpl.Noyau.Structures;
-using FranceJudo.Metier.Noyau;
+﻿using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Arbitrage;
 using FranceJudo.Metier.Noyau.Categories;
 using FranceJudo.Metier.Noyau.Deroulement;
@@ -13,6 +6,13 @@ using FranceJudo.Metier.Noyau.Logos;
 using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.Noyau.Participants;
 using FranceJudo.Metier.Noyau.Structures;
+using KernelImpl.Noyau.Arbitrage;
+using KernelImpl.Noyau.Categories;
+using KernelImpl.Noyau.Deroulement;
+using KernelImpl.Noyau.Logos;
+using KernelImpl.Noyau.Organisation;
+using KernelImpl.Noyau.Participants;
+using KernelImpl.Noyau.Structures;
 
 namespace KernelImpl
 {

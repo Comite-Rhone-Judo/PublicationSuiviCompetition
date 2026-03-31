@@ -1,5 +1,5 @@
-﻿using System;
-using FranceJudo.Core.Foundation;
+﻿using FranceJudo.Core.Foundation;
+using System;
 
 namespace AppPublication.Statistiques
 {

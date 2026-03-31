@@ -21,6 +21,7 @@
     </SccProvider>
     <TargetFrameworkProfile />
     <LangVersion>latest</LangVersion>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -71,6 +72,7 @@
     <Compile Include="Communication\Participants.cs" />
     <Compile Include="Communication\TraitementStructure.cs" />
     <Compile Include="Communication\Structure.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="MachineStruct.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RechercheServeurJudo.cs" />

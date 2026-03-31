@@ -2,10 +2,10 @@
 using FranceJudo.Core.XML;
 using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using FranceJudo.Metier.XML;
 
 
 namespace KernelImpl.Noyau.Deroulement

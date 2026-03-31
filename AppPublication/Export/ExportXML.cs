@@ -1,17 +1,17 @@
-﻿using FranceJudo.Metier.Noyau;
-using FranceJudo.Metier.Noyau.Organisation;
+﻿using AppPublication.ExtensionNoyau;
+using AppPublication.ExtensionNoyau.Engagement;
+using AppPublication.Publication;
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
+using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.Noyau.Participants;
 using FranceJudo.Metier.XML;
-using AppPublication.ExtensionNoyau;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using FranceJudo.Core.IO;
-using AppPublication.ExtensionNoyau.Engagement;
-using FranceJudo.Core.Logging;
-using AppPublication.Publication;
 
 namespace AppPublication.Export
 {
@@ -28,7 +28,7 @@ namespace AppPublication.Export
             {
                 // On utilise AsEnumerable() pour lire les données en flux continu 
                 // et on les transforme à la volée avec Select()
-                return new XElement(ConstantXML.Comites, 
+                return new XElement(ConstantXML.Comites,
                         DC.Structures.Comites
                          .AsEnumerable()
                          .Select(comite => comite.ToXml()));
@@ -50,7 +50,7 @@ namespace AppPublication.Export
             try
             {
                 // Lecture en flux et transformation directe via LINQ
-                return new XElement(ConstantXML.Ligues, 
+                return new XElement(ConstantXML.Ligues,
                             DC.Structures.Ligues
                          .AsEnumerable()
                          .Select(ligue => ligue.ToXml()));
@@ -93,7 +93,7 @@ namespace AppPublication.Export
         {
             try
             {
-                return new XElement(ConstantXML.LesPays, 
+                return new XElement(ConstantXML.LesPays,
                             DC.Structures.LesPays
                                  .AsEnumerable()
                                  .Select(pays => pays.ToXml()));
@@ -150,7 +150,7 @@ namespace AppPublication.Export
 
             try
             {
-                return new XElement(ConstantXML.Ceintures, 
+                return new XElement(ConstantXML.Ceintures,
                             DC.Categories.Grades
                             .AsEnumerable()
                             .Select(ceinture => ceinture.ToXml()));
@@ -159,7 +159,7 @@ namespace AppPublication.Export
             {
                 LogTools.Logger.Debug(ex);
                 return new XElement(ConstantXML.Ceintures);
-            }            
+            }
         }
 
         /// <summary>

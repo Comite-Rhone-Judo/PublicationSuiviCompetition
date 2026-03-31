@@ -4,7 +4,7 @@ namespace JudoClient.Communication
 {
     public class TraitementConnexion
     {
-        ClientJudo _client = null;
+        readonly ClientJudo _client = null;
 
         public TraitementConnexion(ClientJudo client)
         {

@@ -1,15 +1,14 @@
 ﻿
-using KernelImpl.Internal;
 using FranceJudo.Core.XML;
-using FranceJudo.Metier.Regles;
+using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.XML;
+using KernelImpl.Internal;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using System.Collections.Generic;
-using FranceJudo.Metier.Noyau;
-using FranceJudo.Metier.Noyau.Organisation;
 
 namespace KernelImpl.Noyau.Deroulement
 {

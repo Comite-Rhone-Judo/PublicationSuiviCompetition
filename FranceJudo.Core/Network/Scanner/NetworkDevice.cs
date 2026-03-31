@@ -3,7 +3,7 @@
     public class NetworkDevice
     {
         public string IpAddress { get; set; }
-        public string Hostname { get; set; } 
+        public string Hostname { get; set; }
         public string MacAddress { get; set; }
         public DeviceType Category { get; set; }
 

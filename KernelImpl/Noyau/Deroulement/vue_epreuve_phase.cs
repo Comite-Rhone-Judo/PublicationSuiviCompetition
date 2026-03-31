@@ -1,6 +1,4 @@
-﻿
-using FranceJudo.Core.XML;
-using FranceJudo.Metier.Noyau.Deroulement;
+﻿using FranceJudo.Metier.Noyau.Deroulement;
 using KernelImpl.Internal;
 using System.ComponentModel;
 

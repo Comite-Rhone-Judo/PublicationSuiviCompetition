@@ -1,6 +1,4 @@
-﻿using FranceJudo.Metier.Noyau;
-
-namespace AppPublication.Generation
+﻿namespace AppPublication.Generation
 {
     #region CLASSE ANNEXE
 
@@ -41,7 +39,7 @@ namespace AppPublication.Generation
         /// <summary>
         /// L'étape de génération concernée
         /// </summary>
-        public EtapeGenerateurSiteEnum Etape { get;  }
+        public EtapeGenerateurSiteEnum Etape { get; }
 
         /// <summary>
         /// Etat final de la generation

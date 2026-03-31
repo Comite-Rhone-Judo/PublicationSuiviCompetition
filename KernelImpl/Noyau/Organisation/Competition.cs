@@ -1,7 +1,6 @@
 ﻿using FranceJudo.Core.XML;
 using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Organisation;
-using FranceJudo.Metier.Regles;
 using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System;
@@ -29,7 +28,7 @@ namespace KernelImpl.Noyau.Organisation
             this.discipline = CompetitionDisciplineEnum.Judo.ToString2();
             this.nbTapis = 6;
             this.tempsCombat = 600;
-            this.niveau = (int) EchelonEnum.Club;
+            this.niveau = (int)EchelonEnum.Club;
             this.couleur1 = "";
             this.couleur2 = "";
             this.version = "";
@@ -41,7 +40,7 @@ namespace KernelImpl.Noyau.Organisation
             this.isRandomCombat = false;
             this.couleur1 = ConstantCouleur.Rouge.ToString();
             this.couleur2 = ConstantCouleur.Blanc.ToString();
-			this.reglementEquipe = ReglementEquipeEnum.FFJDA;
+            this.reglementEquipe = ReglementEquipeEnum.FFJDA;
         }
 
         int IEntityWithKey<int>.EntityKey => id;
@@ -95,7 +94,7 @@ namespace KernelImpl.Noyau.Organisation
         public bool afficheAnimationVainqueur { get; set; }
 
         public int tempsMedical { get; set; }
-         public bool isRandomCombat { get; set; }
+        public bool isRandomCombat { get; set; }
         public ReglementEquipeEnum reglementEquipe { get; set; }
 
 
@@ -127,7 +126,7 @@ namespace KernelImpl.Noyau.Organisation
 
             this.tempsMedical = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_TempsMedical));
             this.isRandomCombat = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_RandomCombat)) == "Oui" ? true : false;
-            this.reglementEquipe = (ReglementEquipeEnum) XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_ReglementEquipe));
+            this.reglementEquipe = (ReglementEquipeEnum)XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_ReglementEquipe));
         }
 
         public XElement ToXml(IJudoData DC = null)
@@ -138,9 +137,9 @@ namespace KernelImpl.Noyau.Organisation
             xcompetition.SetAttributeValue(ConstantXML.Competition_Date, date.ToString("ddMMyyyy"));
             xcompetition.SetAttributeValue(ConstantXML.Competition_Type, type.ToString());
             xcompetition.SetAttributeValue(ConstantXML.Competition_Type2, type2.ToString());
-  
+
             xcompetition.SetAttributeValue(ConstantXML.Competition_Discipline, discipline);
-            xcompetition.SetAttributeValue(ConstantXML.Competition_DisciplineId, (int) disciplineId);
+            xcompetition.SetAttributeValue(ConstantXML.Competition_DisciplineId, (int)disciplineId);
 
             xcompetition.SetAttributeValue(ConstantXML.Competition_Niveau, niveau.ToString());
             xcompetition.SetAttributeValue(ConstantXML.Competition_Version, version.ToString());

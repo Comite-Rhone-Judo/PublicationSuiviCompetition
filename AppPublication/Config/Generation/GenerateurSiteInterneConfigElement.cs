@@ -1,6 +1,6 @@
 ﻿
-using System.Configuration;
 using FranceJudo.Core.Configuration;
+using System.Configuration;
 
 namespace AppPublication.Config.Generation
 {
@@ -26,10 +26,7 @@ namespace AppPublication.Config.Generation
         /// </summary>
         protected override void NotifyParentOfModification()
         {
-            if (GenerationConfigSection.Instance != null)
-            {
-                GenerationConfigSection.Instance.NotifyChildModification();
-            }
+            GenerationConfigSection.Instance?.NotifyChildModification();
         }
         #endregion
 

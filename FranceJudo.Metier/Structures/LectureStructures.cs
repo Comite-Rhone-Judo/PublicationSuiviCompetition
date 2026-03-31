@@ -1,5 +1,4 @@
-﻿using FranceJudo.Core.Reflection;
-using FranceJudo.Metier.Resources;
+﻿using FranceJudo.Metier.Resources;
 using FranceJudo.Metier.XML;
 using System.Collections.Generic;
 using System.IO;

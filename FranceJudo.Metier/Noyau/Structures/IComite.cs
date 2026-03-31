@@ -7,7 +7,7 @@ namespace FranceJudo.Metier.Noyau.Structures
     /// </summary>
     public interface IComite : IXMLSerializable
     {
-        public string id {  get; set; }
+        public string id { get; set; }
         public string nom { get; set; }
         public string nomCourt { get; set; }
 

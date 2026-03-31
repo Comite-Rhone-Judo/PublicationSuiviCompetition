@@ -1,21 +1,20 @@
-﻿using AppPublication.ExtensionNoyau;
+﻿using AppPublication.Export;
+using AppPublication.ExtensionNoyau;
 using AppPublication.ExtensionNoyau.Engagement;
-using AppPublication.Export;
-using FranceJudo.Metier.Noyau;
-using FranceJudo.Metier.Noyau.Organisation;
-using FranceJudo.Metier.Noyau.Deroulement;
-using FranceJudo.Metier.Export;
+using AppPublication.Publication;
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
 using FranceJudo.Core.Network;
+using FranceJudo.Core.Threading;
+using FranceJudo.Metier.IO;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.Noyau.Organisation;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using FranceJudo.Core.Logging;
-using FranceJudo.Core.Threading;
-using FranceJudo.Core.IO;
-using AppPublication.Publication;
-using FranceJudo.Metier.IO;
 
 
 namespace AppPublication.Generation
@@ -57,7 +56,8 @@ namespace AppPublication.Generation
         /// </summary>
         public ConfigurationExportSite ConfigurationGeneration
         {
-            get {
+            get
+            {
                 _cfgExport ??= new ConfigurationExportSite();
                 return _cfgExport;
             }
@@ -94,7 +94,7 @@ namespace AppPublication.Generation
             try
             {
                 // Initialise le gestionnaire de taches paralleles
-                _taskBatcher = new ParallelTaskBatcher<OperationProgress, FileWithChecksum>(progressHandler, (f) => { return new OperationProgress(_etapeCourante, f);});
+                _taskBatcher = new ParallelTaskBatcher<OperationProgress, FileWithChecksum>(progressHandler, (f) => { return new OperationProgress(_etapeCourante, f); });
             }
             catch (Exception ex)
             {
@@ -124,7 +124,7 @@ namespace AppPublication.Generation
                     _site.NettoyerSite();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogTools.Logger.Error(ex, "Erreur lors du nettoyage initial du site");
                 return new ResultatOperation(EtapeGenerateurSiteEnum.CleanupInitial, false, true, -1);
@@ -150,7 +150,7 @@ namespace AppPublication.Generation
         public ResultatOperation PrepareGeneration()
         {
             _etapeCourante = EtapeGenerateurSiteEnum.PrepareGeneration;
-         
+
             // Commence par garantir que les données des caches sont consistantes
             bool dataConsistent = false;
             try
@@ -394,11 +394,11 @@ namespace AppPublication.Generation
         {
             get
             {
-                string output = string.Empty;
+                string output;
                 // Normalement on ne devrait pas avoir de probleme d'exception ici avec la structure de repertoire
                 try
                 {
-                    output = Path.Combine(_siteUrlGenerator.PhysicalStructure.RepertoireRacine, ExportTools.GetFileName(ExportEnum.Site_Checksum) + AppDirectoryManager.ExtensionXML);
+                    output = Path.Combine(_siteUrlGenerator.PhysicalStructure.RepertoireRacine, AppDirectoryManager.ChecksumFile);
                 }
                 catch (Exception ex)
                 {
@@ -460,7 +460,7 @@ namespace AppPublication.Generation
                     FileSystemHelper.ReleaseFile(ChecksumFileName);
                 }
             }
-        }   
+        }
 
         #endregion
     }

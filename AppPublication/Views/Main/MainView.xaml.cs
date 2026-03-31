@@ -1,13 +1,13 @@
 ﻿using AppPublication.Controles;
 using AppPublication.Views.Server;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.UI.Wpf.Dialogs;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Telerik.Windows.Controls;
-using FranceJudo.UI.Wpf.Dialogs;
-using FranceJudo.Metier.Noyau.Organisation;
 
 namespace AppPublication.Views.Main
 {
@@ -98,7 +98,7 @@ namespace AppPublication.Views.Main
         private void Window_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             // On doit configurer les mots de passe par defaut ici car le composant Password ne supporte pas le Binding sur cette propriete
-            if(e!= null && e.NewValue != null && e.NewValue.GetType() == typeof(DialogControleur) )
+            if (e != null && e.NewValue != null && e.NewValue.GetType() == typeof(DialogControleur))
             {
                 DialogControleur dc = (DialogControleur)e.NewValue;
                 this.AdvancedPwd.Password = dc.SiteCoordinator.GestionnaireSitePublique.SiteDistant.PasswordSiteFTPDistant;

@@ -7,7 +7,7 @@ namespace FranceJudo.Metier.Noyau.Participants
     /// </summary>
     public interface IEquipe : IXMLSerializable
     {
-        public int id {  get; set; }
+        public int id { get; set; }
         public string libelle { get; set; }
         public string club { get; set; }
         public string comite { get; set; }

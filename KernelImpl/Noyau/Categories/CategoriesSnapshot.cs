@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using FranceJudo.Metier.Noyau.Categories;
+﻿using FranceJudo.Metier.Noyau.Categories;
+using System.Collections.Generic;
 
 namespace KernelImpl.Noyau.Categories
 {

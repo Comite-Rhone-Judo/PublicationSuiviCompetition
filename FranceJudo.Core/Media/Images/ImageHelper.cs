@@ -1,8 +1,8 @@
 ﻿using System;
-using System.IO;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
 
 namespace FranceJudo.Core.Media.Images
 {
@@ -75,21 +75,13 @@ namespace FranceJudo.Core.Media.Images
 
                             while ((sizef.Height > (newH / 4) || sizef.Width > (newW / 2)) && currfontsize >= 12)
                             {
-                                switch (currfontsize)
+                                currfontsize = currfontsize switch
                                 {
-                                    case 48:
-                                        currfontsize = 36;
-                                        break;
-                                    case 36:
-                                        currfontsize = 24;
-                                        break;
-                                    case 24:
-                                        currfontsize = 20;
-                                        break;
-                                    default:
-                                        currfontsize = currfontsize - 2;
-                                        break;
-                                }
+                                    48 => 36,
+                                    36 => 24,
+                                    24 => 20,
+                                    _ => currfontsize - 2,
+                                };
                                 font = new Font("Times New Roman", currfontsize);
                                 sizef = graphic.MeasureString(tag, font, Int32.MaxValue);
 

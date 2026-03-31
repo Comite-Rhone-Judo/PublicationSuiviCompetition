@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FranceJudo.Core.Network.Http.Context
+﻿namespace FranceJudo.Core.Network.Http.Context
 {
     /// <summary>
     /// Interface permettant de récupérer un contexte par son type.

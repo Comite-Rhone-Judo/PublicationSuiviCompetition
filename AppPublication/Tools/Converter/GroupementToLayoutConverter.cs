@@ -1,7 +1,5 @@
-﻿using NLog.Layouts;
-using System;
+﻿using System;
 using System.Globalization;
-using System.Web.UI.WebControls;
 using System.Windows.Data;
 using static AppPublication.Models.EcransAppel.EcranAppelModel;
 
@@ -23,17 +21,15 @@ namespace AppPublication.Tools.Converter
                 8       4x2     2x4
             */
 
-            string layout = "";
-            switch (total)
+            string layout = total switch
             {
-                case 1: layout = "1x1"; break;
-                case 2: layout = (disp == DispositionAffichage.Ligne) ? "2x1" : "1x2"; break;
-                case 4: layout = (disp == DispositionAffichage.Ligne) ? "2x2" : "2x2"; break;
-                case 6: layout = (disp == DispositionAffichage.Ligne) ? "3x2" : "2x3"; break;
-                case 8: layout = (disp == DispositionAffichage.Ligne) ? "4x2" : "2x4"; break;
-                default: layout = total.ToString(); break;
-            }
-
+                1 => "1x1",
+                2 => (disp == DispositionAffichage.Ligne) ? "2x1" : "1x2",
+                4 => (disp == DispositionAffichage.Ligne) ? "2x2" : "2x2",
+                6 => (disp == DispositionAffichage.Ligne) ? "3x2" : "2x3",
+                8 => (disp == DispositionAffichage.Ligne) ? "4x2" : "2x4",
+                _ => total.ToString(),
+            };
             return $"{layout} ({total} tapis)";
         }
 

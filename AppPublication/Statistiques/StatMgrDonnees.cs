@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using FranceJudo.Core.Foundation;
+﻿using FranceJudo.Core.Foundation;
 using FranceJudo.Core.Logging;
+using System.Collections.Generic;
 
 namespace AppPublication.Statistiques
 {

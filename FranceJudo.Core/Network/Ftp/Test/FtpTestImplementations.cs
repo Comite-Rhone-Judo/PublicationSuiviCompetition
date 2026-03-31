@@ -1,8 +1,7 @@
-﻿using System;
+﻿using FluentFTP;
+using System;
 using System.Net;
 using System.Threading;
-using FranceJudo.Core.Network;
-using FluentFTP;
 
 
 namespace FranceJudo.Core.Network.Ftp.Test

@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using FranceJudo.Metier.Noyau.Participants;
-using FranceJudo.Metier.Noyau;
 
 namespace FranceJudo.Metier.Noyau.Deroulement
 {

@@ -1,10 +1,10 @@
 ﻿
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Participants;
 using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using FranceJudo.Metier.Noyau;
-using FranceJudo.Metier.Noyau.Participants;
 
 namespace KernelImpl.Noyau.Participants
 {
@@ -29,7 +29,7 @@ namespace KernelImpl.Noyau.Participants
 
         // Expose le dictionnaire courant. Note: IDictionary est utilisé pour la compatibilité, 
         // mais l'objet sous-jacent ne doit pas être modifié par le consommateur.
-        private readonly SimpleCachedData<Dictionary<int, IList<vue_judoka>>> _vjudokasEpreuveMap  = new SimpleCachedData<Dictionary<int, IList<vue_judoka>>>();
+        private readonly SimpleCachedData<Dictionary<int, IList<vue_judoka>>> _vjudokasEpreuveMap = new SimpleCachedData<Dictionary<int, IList<vue_judoka>>>();
 
 
         public IDictionary<int, IList<vue_judoka>> vjudokas_epreuve { get { return _vjudokasEpreuveMap.Cache; } }

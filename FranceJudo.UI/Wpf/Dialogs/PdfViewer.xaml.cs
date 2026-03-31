@@ -22,17 +22,17 @@ namespace FranceJudo.UI.Wpf.Dialogs
         {
             InitializeComponent();
 
-            if(!string.IsNullOrEmpty(title))
+            if (!string.IsNullOrEmpty(title))
             {
                 this.Header += " - " + title;
             }
 
-            if(!allowPrint)
+            if (!allowPrint)
             {
                 PDFButton.IsEnabled = false;
             }
 
-            if(!allowSave)
+            if (!allowSave)
             {
                 SaveButton.IsEnabled = false;
             }

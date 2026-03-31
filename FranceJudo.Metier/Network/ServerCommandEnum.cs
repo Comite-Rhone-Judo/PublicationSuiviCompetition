@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace FranceJudo.Metier.Network 
+﻿namespace FranceJudo.Metier.Network
 {
     /// <summary>
     /// Enumération des différents type d'échange possoble entre un client-serveur

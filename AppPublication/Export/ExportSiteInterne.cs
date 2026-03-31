@@ -3,8 +3,8 @@ using AppPublication.Publication;
 using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
 using FranceJudo.Core.Threading;
-using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Export;
+using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Site;
 using System;
 using System.Collections.Generic;
@@ -48,24 +48,24 @@ namespace AppPublication.Export
 
                 // --- 4. RESSOURCES STATIQUES (CSS, JS, IMG) ---
                 // Export direct des styles et scripts
-                var staticFiles = ExportTools.ExportEmbeddedStyleAndJS(true, siteStructure);
+                var staticFiles = SiteExportEngine.ExportEmbeddedStyleAndJS(true, siteStructure);
                 output.AddRange(staticFiles.Select(path => new FileWithChecksum(path)));
                 LogTools.Logger.Debug("GenereWebSiteIndex - Style/JS: {0} fichiers", staticFiles.Count);
 
                 // Export des images
-                var imageFiles = ExportTools.ExportEmbeddedImg(true, true, siteStructure);
+                var imageFiles = SiteExportEngine.ExportEmbeddedImg(true, true, siteStructure);
                 output.AddRange(imageFiles.Select(path => new FileWithChecksum(path)));
                 LogTools.Logger.Debug("GenereWebSiteIndex - Images: {0} fichiers", imageFiles.Count);
 
                 // --- 5. GÉNÉRATION DU SCRIPT DE MISE À JOUR (FOOTER) ---
                 ExportEnum footerType = ExportEnum.Site_FooterScript;
-                string footerFilename = ExportTools.GetFileName(footerType).Replace("/", "_");
+                string footerFilename = SiteExportEngine.GetFileName(footerType).Replace("/", "_");
                 string footerSavePath = Path.Combine(siteStructure.PhysicalStructure.RepertoireJs(), footerFilename);
 
                 var footerArgs = CreateAllXsltArgs(siteStructure, footerSavePath);
 
                 // Utilisation du même docIndex pour générer le JS via XSLT
-                ExportSiteManager.GenererHtmlSite(docIndex, footerType, footerSavePath, footerArgs, "js");
+                SiteExportEngine.GenererHtmlSite(docIndex, footerType, footerSavePath, footerArgs, "js");
                 output.Add(new FileWithChecksum($"{footerSavePath}.js"));
 
                 LogTools.Logger.Debug("GenereWebSiteIndex Terminé - Total: {0} ressources", output.Count);
@@ -107,9 +107,9 @@ namespace AppPublication.Export
             XDocument docParams = new XDocument(
                                         new XElement("tapisIds",
                                         ecran.TapisIds.Where(num => (num <= nbTapisMax)).Select(num => new XElement("tapis",
-                                                                            new XAttribute("id",num)))));    // La liste des tapis doit etre passee sous forme d'un NodeSet
+                                                                            new XAttribute("id", num)))));    // La liste des tapis doit etre passee sous forme d'un NodeSet
             ecransParams.Add(("tapisAffiches", docParams.CreateNavigator().Select("/")));
-                    
+
             ecransParams.Add(("combatsParPageEff", ecran.NbCombatsPage));
             // On le garde au cas ou pour la suite, mais normalement, la disposition des combats est gere via la disposition d'affichage
             ecransParams.Add(("isAffichageCombatLigne", ecran.DispositionCombat == DispositionAffichage.Ligne ? "true" : "false"));
@@ -122,7 +122,7 @@ namespace AppPublication.Export
 
             progress?.Report(BatchProgressInfo.Init(1));
 
-            ExportSiteManager.GenererHtmlSite(ctx.ExportDocument, exportType, savePath, xsltArgs);
+            SiteExportEngine.GenererHtmlSite(ctx.ExportDocument, exportType, savePath, xsltArgs);
 
             output.Add(new FileWithChecksum($"{savePath}.html"));
 

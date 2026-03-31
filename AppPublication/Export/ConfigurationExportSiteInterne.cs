@@ -1,8 +1,8 @@
-﻿using System;
-using System.Xml.Linq;
+﻿using FranceJudo.Core.Environment;
 using FranceJudo.Metier.Resources;
 using FranceJudo.Metier.XML;
-using FranceJudo.Core.Environment;
+using System;
+using System.Xml.Linq;
 
 namespace AppPublication.Export
 {

@@ -1,7 +1,5 @@
-﻿
-using System.Xml.Linq;
+﻿using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.XML;
-using FranceJudo.Metier.Noyau.Organisation;
 
 namespace FranceJudo.Metier.Noyau.Arbitrage
 {
@@ -11,7 +9,7 @@ namespace FranceJudo.Metier.Noyau.Arbitrage
         public string nom { get; set; }
         public string prenom { get; set; }
         public System.DateTime naissance { get; set; }
-              
+
         public bool sexe { get; set; }
 
         public EpreuveSexe sexeEnum { get; set; }

@@ -13,6 +13,7 @@
     <LangVersion>latest</LangVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -86,6 +87,7 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Wpf\Behaviors\WindowHelper.cs" />
     <Compile Include="Wpf\Converters\BoolNotConverter.cs" />
     <Compile Include="Wpf\Converters\BoolOperationConverter.cs" />
@@ -125,133 +127,133 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\batman_forever\batmfa__.ttf" />
+    <Resource Include="Wpf\Resources\Polices\batman_forever\batmfa__.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\batman_forever\batmfo__.ttf" />
+    <Resource Include="Wpf\Resources\Polices\batman_forever\batmfo__.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Cabin\Cabin-Bold.ttf" />
+    <Resource Include="Wpf\Resources\Polices\Cabin\Cabin-Bold.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Cabin\Cabin-BoldItalic.ttf" />
+    <Resource Include="Wpf\Resources\Polices\Cabin\Cabin-BoldItalic.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Cabin\Cabin-Italic.ttf" />
+    <Resource Include="Wpf\Resources\Polices\Cabin\Cabin-Italic.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Cabin\Cabin-Medium.ttf" />
+    <Resource Include="Wpf\Resources\Polices\Cabin\Cabin-Medium.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Cabin\Cabin-MediumItalic.ttf" />
+    <Resource Include="Wpf\Resources\Polices\Cabin\Cabin-MediumItalic.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Cabin\Cabin-Regular.ttf" />
+    <Resource Include="Wpf\Resources\Polices\Cabin\Cabin-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Cabin\Cabin-SemiBold.ttf" />
+    <Resource Include="Wpf\Resources\Polices\Cabin\Cabin-SemiBold.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Cabin\Cabin-SemiBoldItalic.ttf" />
+    <Resource Include="Wpf\Resources\Polices\Cabin\Cabin-SemiBoldItalic.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Cabin\OFL.txt" />
+    <Resource Include="Wpf\Resources\Polices\Cabin\OFL.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\COOPBL.TTF" />
+    <Resource Include="Wpf\Resources\Polices\COOPBL.TTF" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\dejavu-sans-mono\DejaVuSansMono-Bold.ttf" />
+    <Resource Include="Wpf\Resources\Polices\dejavu-sans-mono\DejaVuSansMono-Bold.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\dejavu-sans-mono\DejaVuSansMono-BoldOblique.ttf" />
+    <Resource Include="Wpf\Resources\Polices\dejavu-sans-mono\DejaVuSansMono-BoldOblique.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\dejavu-sans-mono\DejaVuSansMono-Oblique.ttf" />
+    <Resource Include="Wpf\Resources\Polices\dejavu-sans-mono\DejaVuSansMono-Oblique.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\dejavu-sans-mono\DejaVuSansMono.ttf" />
+    <Resource Include="Wpf\Resources\Polices\dejavu-sans-mono\DejaVuSansMono.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Droid_Sans\DroidSans-Bold.ttf" />
+    <Resource Include="Wpf\Resources\Polices\Droid_Sans\DroidSans-Bold.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Droid_Sans\DroidSans.ttf" />
+    <Resource Include="Wpf\Resources\Polices\Droid_Sans\DroidSans.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Droid_Sans\LICENSE.txt" />
+    <Resource Include="Wpf\Resources\Polices\Droid_Sans\LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Fjalla_One\FjallaOne-Regular.ttf" />
+    <Resource Include="Wpf\Resources\Polices\Fjalla_One\FjallaOne-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Fjalla_One\OFL.txt" />
+    <Resource Include="Wpf\Resources\Polices\Fjalla_One\OFL.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Fredoka_One\FredokaOne-Regular.ttf" />
+    <Resource Include="Wpf\Resources\Polices\Fredoka_One\FredokaOne-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Fredoka_One\OFL.txt" />
+    <Resource Include="Wpf\Resources\Polices\Fredoka_One\OFL.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\good-times.regular.ttf" />
+    <Resource Include="Wpf\Resources\Polices\good-times.regular.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Montserrat\Montserrat-Bold.ttf" />
+    <Resource Include="Wpf\Resources\Polices\Montserrat\Montserrat-Bold.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Montserrat\Montserrat-Regular.ttf" />
+    <Resource Include="Wpf\Resources\Polices\Montserrat\Montserrat-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Montserrat\OFL.txt" />
+    <Resource Include="Wpf\Resources\Polices\Montserrat\OFL.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Oswald\OFL.txt" />
+    <Resource Include="Wpf\Resources\Polices\Oswald\OFL.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Oswald\Oswald-Bold.ttf" />
+    <Resource Include="Wpf\Resources\Polices\Oswald\Oswald-Bold.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Oswald\Oswald-Light.ttf" />
+    <Resource Include="Wpf\Resources\Polices\Oswald\Oswald-Light.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Oswald\Oswald-Regular.ttf" />
+    <Resource Include="Wpf\Resources\Polices\Oswald\Oswald-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Play\OFL.txt" />
+    <Resource Include="Wpf\Resources\Polices\Play\OFL.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Play\Play-Regular.ttf" />
+    <Resource Include="Wpf\Resources\Polices\Play\Play-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\PT_Sans_Narrow\OFL.txt" />
+    <Resource Include="Wpf\Resources\Polices\PT_Sans_Narrow\OFL.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\PT_Sans_Narrow\PT_Sans-Narrow-Web-Bold.ttf" />
+    <Resource Include="Wpf\Resources\Polices\PT_Sans_Narrow\PT_Sans-Narrow-Web-Bold.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\PT_Sans_Narrow\PT_Sans-Narrow-Web-Regular.ttf" />
+    <Resource Include="Wpf\Resources\Polices\PT_Sans_Narrow\PT_Sans-Narrow-Web-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\QUARTZMS.TTF" />
+    <Resource Include="Wpf\Resources\Polices\QUARTZMS.TTF" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Ubuntu_Condensed\UbuntuCondensed-Regular.ttf" />
+    <Resource Include="Wpf\Resources\Polices\Ubuntu_Condensed\UbuntuCondensed-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\Ubuntu_Condensed\UFL.txt" />
+    <Resource Include="Wpf\Resources\Polices\Ubuntu_Condensed\UFL.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\unispace\unispace bd it.ttf" />
+    <Resource Include="Wpf\Resources\Polices\unispace\unispace bd it.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\unispace\unispace bd.ttf" />
+    <Resource Include="Wpf\Resources\Polices\unispace\unispace bd.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\unispace\unispace it.ttf" />
+    <Resource Include="Wpf\Resources\Polices\unispace\unispace it.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Wpf\Polices\unispace\unispace rg.ttf" />
+    <Resource Include="Wpf\Resources\Polices\unispace\unispace rg.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Wpf\Dialogs\AlertWindow.xaml">

@@ -1,5 +1,5 @@
-﻿using FranceJudo.Metier.XML;
-using FranceJudo.Metier.Noyau.Organisation;
+﻿using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.XML;
 using System;
 
 namespace FranceJudo.Metier.Noyau.Participants
@@ -197,7 +197,7 @@ namespace FranceJudo.Metier.Noyau.Participants
         /// </summary>
         public string ligueNom { get; set; }
 
-       
+
         /// <summary>
         /// Nom de la ceiture du judoka
         /// </summary>
@@ -263,7 +263,7 @@ namespace FranceJudo.Metier.Noyau.Participants
         public float poidsKg { get; set; }
         public int idepreuve_equipe { get; set; }
         public bool isPresent { get; }
-        
+
         #endregion
 
         #region METHODES

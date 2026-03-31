@@ -12,7 +12,7 @@ namespace FranceJudo.Core.IO
             if (Object.ReferenceEquals(x, y)) return true;
 
             //Check whether any of the compared objects is null.
-            if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null))
+            if (x is null || y is null)
                 return false;
 
             //Check whether the products' properties are equal.
@@ -25,7 +25,7 @@ namespace FranceJudo.Core.IO
         public int GetHashCode(FileWithChecksum p)
         {
             //Check whether the object is null
-            if (Object.ReferenceEquals(p, null)) return 0;
+            if (p is null) return 0;
 
             //Get hash code for the Name field if it is not null.
             int hashFileName = p.File == null ? 0 : p.File.FullName.GetHashCode();

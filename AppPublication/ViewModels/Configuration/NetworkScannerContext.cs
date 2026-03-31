@@ -1,5 +1,5 @@
-﻿using System.Collections.ObjectModel;
-using FranceJudo.Core.Network.Scanner;
+﻿using FranceJudo.Core.Network.Scanner;
+using System.Collections.ObjectModel;
 
 namespace AppPublication.ViewModels.Configuration
 {

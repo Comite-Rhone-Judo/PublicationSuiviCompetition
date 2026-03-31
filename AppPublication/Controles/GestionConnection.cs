@@ -1,13 +1,11 @@
 ﻿using AppPublication.Tools.Enum;
-using JudoClient;
-using JudoClient.Communication;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Numeric;
-using System;
-using System.Web.UI;
-using System.Windows.Threading;
-using System.Xml.Linq;
 using FranceJudo.Core.Foundation;
 using FranceJudo.Core.Logging;
+using JudoClient;
+using JudoClient.Communication;
+using System;
+using System.Windows.Threading;
+using System.Xml.Linq;
 
 namespace AppPublication.Controles
 {

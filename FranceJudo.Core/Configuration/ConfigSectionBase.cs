@@ -39,8 +39,7 @@ namespace FranceJudo.Core.Configuration
                     {
                         if (_instance == null)
                         {
-                            var attr = typeof(T).GetCustomAttribute<SectionNameAttribute>();
-                            if (attr == null) throw new InvalidOperationException($"Attribut [SectionName] manquant sur {typeof(T).Name}");
+                            var attr = typeof(T).GetCustomAttribute<SectionNameAttribute>() ?? throw new InvalidOperationException($"Attribut [SectionName] manquant sur {typeof(T).Name}");
 
                             // Chargement standard
                             _instance = LoadSectionInstance<T>(attr.Name);

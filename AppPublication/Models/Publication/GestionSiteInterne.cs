@@ -5,18 +5,16 @@ using AppPublication.Models.EcransAppel;
 using AppPublication.Models.Statistiques;
 using AppPublication.Publication;
 using AppPublication.ViewModels.Configuration;
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
+using FranceJudo.Metier.IO;
 using FranceJudo.Metier.Noyau;
+using FranceJudo.UI.Wpf.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-
-using FranceJudo.Core.IO;
-using FranceJudo.Core.Logging;
-
-using FranceJudo.UI.Wpf.Dialogs;
-using FranceJudo.Metier.IO;
 
 namespace AppPublication.Models.Publication
 {
@@ -169,7 +167,7 @@ namespace AppPublication.Models.Publication
                 DelaiGenerationSec = cfgPriv.DelaiGenerationSec;
                 DelaiDeroulementSec = GenerationConfigSection.Instance.GenerateurSiteInterne.DelaiDeroulementSec;
                 NbProchainsCombats = GenerationConfigSection.Instance.GenerateurSiteInterne.NbProchainsCombats;
-                    
+
                 // L'interface local de publication a ete chargee via la configuration du minisite, il faut juste s'assurer du bon calcul des URLs
                 URLLocalPublication = CalculURLSiteLocal();
 

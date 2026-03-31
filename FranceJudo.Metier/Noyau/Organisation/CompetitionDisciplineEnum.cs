@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-
-namespace FranceJudo.Metier.Noyau.Organisation
+﻿namespace FranceJudo.Metier.Noyau.Organisation
 {
     /// <summary>
     /// Enumération des type de compétition
@@ -39,94 +33,70 @@ namespace FranceJudo.Metier.Noyau.Organisation
 
         public static string ToString2(this CompetitionDisciplineEnum e)
         {
-            switch (e)
+            return e switch
             {
-                case CompetitionDisciplineEnum.JujitsuCombat:
-                    return "JJ_COMBAT";
-                case CompetitionDisciplineEnum.JujitsuNeWaza:
-                    return "JJ_NE WAZA";
-                default:
-                    return "C_COMPETITION";
-
-            }
+                CompetitionDisciplineEnum.JujitsuCombat => "JJ_COMBAT",
+                CompetitionDisciplineEnum.JujitsuNeWaza => "JJ_NE WAZA",
+                _ => "C_COMPETITION",
+            };
         }
         public static CompetitionDisciplineEnum ByString2(this string e)
         {
-            switch (e)
+            return e switch
             {
-                case "JJ_COMBAT":
-                    return CompetitionDisciplineEnum.JujitsuCombat;
-                case "JJ_NE WAZA":
-                    return CompetitionDisciplineEnum.JujitsuNeWaza;
-                default:
-                    return CompetitionDisciplineEnum.Judo;
-
-            }
+                "JJ_COMBAT" => CompetitionDisciplineEnum.JujitsuCombat,
+                "JJ_NE WAZA" => CompetitionDisciplineEnum.JujitsuNeWaza,
+                _ => CompetitionDisciplineEnum.Judo,
+            };
         }
 
         public static CompetitionDisciplineEnum ByString(this string e)
         {
-            switch (e)
+            return e switch
             {
-                case nameof(CompetitionDisciplineEnum.JujitsuCombat):
-                    return CompetitionDisciplineEnum.JujitsuCombat;
-                case nameof(CompetitionDisciplineEnum.JujitsuNeWaza):
-                    return CompetitionDisciplineEnum.JujitsuNeWaza;
-            }
-            return CompetitionDisciplineEnum.Judo;
+                nameof(CompetitionDisciplineEnum.JujitsuCombat) => CompetitionDisciplineEnum.JujitsuCombat,
+                nameof(CompetitionDisciplineEnum.JujitsuNeWaza) => CompetitionDisciplineEnum.JujitsuNeWaza,
+                _ => CompetitionDisciplineEnum.Judo,
+            };
         }
 
         public static string ToShort(this CompetitionDisciplineEnum e)
         {
-            switch (e)
+            return e switch
             {
-                case CompetitionDisciplineEnum.JujitsuCombat:
-                    return "Combat";
-                case CompetitionDisciplineEnum.JujitsuNeWaza:
-                    return "Ne-Waza";
-                default:
-                    return "Judo";
-
-            }
+                CompetitionDisciplineEnum.JujitsuCombat => "Combat",
+                CompetitionDisciplineEnum.JujitsuNeWaza => "Ne-Waza",
+                _ => "Judo",
+            };
         }
 
         public static string ToShort2(this CompetitionDisciplineEnum e)
         {
-            switch (e)
+            return e switch
             {
-                case CompetitionDisciplineEnum.JujitsuCombat:
-                    return "COMB";
-                case CompetitionDisciplineEnum.JujitsuNeWaza:
-                    return "N W";
-                default:
-                    return "Judo";
-
-            }
+                CompetitionDisciplineEnum.JujitsuCombat => "COMB",
+                CompetitionDisciplineEnum.JujitsuNeWaza => "N W",
+                _ => "Judo",
+            };
         }
 
         public static string ToLabel(this CompetitionDisciplineEnum e)
         {
-            switch (e)
+            return e switch
             {
-                case CompetitionDisciplineEnum.JujitsuCombat:
-                    return "Jujitsu Combat";
-                case CompetitionDisciplineEnum.JujitsuNeWaza:
-                    return "Jujitsu Ne-Waza";
-                default:
-                    return "Judo";
-
-            }
+                CompetitionDisciplineEnum.JujitsuCombat => "Jujitsu Combat",
+                CompetitionDisciplineEnum.JujitsuNeWaza => "Jujitsu Ne-Waza",
+                _ => "Judo",
+            };
         }
         public static CompetitionDisciplineEnum ByLabel(this string e)
         {
-            switch (e)
+            return e switch
             {
-                case "Jujitsu Combat":
-                    return CompetitionDisciplineEnum.JujitsuCombat;
-                case "Jujitsu Ne-Waza":
-                    return CompetitionDisciplineEnum.JujitsuNeWaza;
-            }
-            return CompetitionDisciplineEnum.Judo;
+                "Jujitsu Combat" => CompetitionDisciplineEnum.JujitsuCombat,
+                "Jujitsu Ne-Waza" => CompetitionDisciplineEnum.JujitsuNeWaza,
+                _ => CompetitionDisciplineEnum.Judo,
+            };
         }
 
     }

@@ -221,10 +221,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer
             }
             set
             {
-                if (_context != null)
-                {
-                    _context.EndWhenDone = !value;
-                }
+                _context?.EndWhenDone = !value;
             }
         }
 

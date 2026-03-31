@@ -3,7 +3,6 @@ using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Deroulement;
 using FranceJudo.Metier.Noyau.Participants;
 using FranceJudo.Metier.XML;
-using FranceJudo.UI.Wpf.Foundation;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;

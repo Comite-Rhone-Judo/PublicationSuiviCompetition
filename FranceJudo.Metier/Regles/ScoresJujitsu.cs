@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
-using System.IO.Ports;
-using System.Linq;
-using System.Text;
-using System.Threading;
-
-namespace FranceJudo.Metier.Regles
+﻿namespace FranceJudo.Metier.Regles
 {
     public class ScoresJujitsu
     {
@@ -154,42 +145,43 @@ namespace FranceJudo.Metier.Regles
 
         public static string ScoreJsonToString(ScoresJujitsu scores)
         {
-            ScoresJujitsu scoresJson = new ScoresJujitsu();
+            ScoresJujitsu scoresJson = new ScoresJujitsu
+            {
+                avantages1 = scores.avantages1,
+                avantages2 = scores.avantages2,
+                points2_1 = scores.points2_1,
+                points3_1 = scores.points3_1,
+                points4_1 = scores.points4_1,
+                points2_2 = scores.points2_2,
+                points3_2 = scores.points3_2,
+                points4_2 = scores.points4_2,
+                ippon1 = scores.ippon1,
+                ippon2 = scores.ippon2,
+                penalites1 = scores.penalites1,
+                penalites2 = scores.penalites2,
 
-            scoresJson.avantages1 = scores.avantages1;
-            scoresJson.avantages2 = scores.avantages2;
-            scoresJson.points2_1 = scores.points2_1;
-            scoresJson.points3_1 = scores.points3_1;
-            scoresJson.points4_1 = scores.points4_1;
-            scoresJson.points2_2 = scores.points2_2;
-            scoresJson.points3_2 = scores.points3_2;
-            scoresJson.points4_2 = scores.points4_2;
-            scoresJson.ippon1 = scores.ippon1;
-            scoresJson.ippon2 = scores.ippon2;
-            scoresJson.penalites1 = scores.penalites1;
-            scoresJson.penalites2 = scores.penalites2;
 
-
-            scoresJson.ippon1_1_1 = scores.ippon1_1_1;
-            scoresJson.ippon1_1_2 = scores.ippon1_1_2;
-            scoresJson.ippon1_2_1 = scores.ippon1_2_1;
-            scoresJson.ippon1_2_2 = scores.ippon1_2_2;
-            scoresJson.ippon1_3_1 = scores.ippon1_3_1;
-            scoresJson.ippon1_3_2 = scores.ippon1_3_2;
-            scoresJson.ippon2_1_1 = scores.ippon2_1_1;
-            scoresJson.ippon2_1_2 = scores.ippon2_1_2;
-            scoresJson.ippon2_2_1 = scores.ippon2_2_1;
-            scoresJson.ippon2_2_2 = scores.ippon2_2_2;
-            scoresJson.ippon2_3_1 = scores.ippon2_3_1;
-            scoresJson.ippon2_3_2 = scores.ippon2_3_2;
-            scoresJson.waza1 = scores.waza1;
-            scoresJson.waza2 = scores.waza2;
-            scoresJson.shido1 = scores.shido1;
-            scoresJson.shido2 = scores.shido2;
-            scoresJson.chui1 = scores.chui1;
-            scoresJson.chui2 = scores.chui2;
-            scoresJson.tempsMedical1 = scores.tempsMedical1;
-            scoresJson.tempsMedical2 = scores.tempsMedical2;
+                ippon1_1_1 = scores.ippon1_1_1,
+                ippon1_1_2 = scores.ippon1_1_2,
+                ippon1_2_1 = scores.ippon1_2_1,
+                ippon1_2_2 = scores.ippon1_2_2,
+                ippon1_3_1 = scores.ippon1_3_1,
+                ippon1_3_2 = scores.ippon1_3_2,
+                ippon2_1_1 = scores.ippon2_1_1,
+                ippon2_1_2 = scores.ippon2_1_2,
+                ippon2_2_1 = scores.ippon2_2_1,
+                ippon2_2_2 = scores.ippon2_2_2,
+                ippon2_3_1 = scores.ippon2_3_1,
+                ippon2_3_2 = scores.ippon2_3_2,
+                waza1 = scores.waza1,
+                waza2 = scores.waza2,
+                shido1 = scores.shido1,
+                shido2 = scores.shido2,
+                chui1 = scores.chui1,
+                chui2 = scores.chui2,
+                tempsMedical1 = scores.tempsMedical1,
+                tempsMedical2 = scores.tempsMedical2
+            };
             return Newtonsoft.Json.JsonConvert.SerializeObject(scoresJson);
         }
 

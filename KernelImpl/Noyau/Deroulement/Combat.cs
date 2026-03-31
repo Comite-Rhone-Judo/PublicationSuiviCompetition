@@ -1,22 +1,19 @@
+using FranceJudo.Core.Logging;
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Categories;
+using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.Noyau.Participants;
+using FranceJudo.Metier.Regles;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
-using KernelImpl.Noyau.Categories;
-using KernelImpl.Noyau.Organisation;
-using KernelImpl.Noyau.Participants;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
-using FranceJudo.Core.Logging;
-using FranceJudo.Core.XML;
-using FranceJudo.Metier.Regles;
-using FranceJudo.Metier.Noyau.Deroulement;
-using FranceJudo.Metier.Noyau.Organisation;
-using FranceJudo.Metier.Noyau.Categories;
-using FranceJudo.Metier.Noyau.Participants;
-using FranceJudo.Metier.XML;
-using FranceJudo.Metier.Noyau;
 
 namespace KernelImpl.Noyau.Deroulement
 {
@@ -211,19 +208,20 @@ namespace KernelImpl.Noyau.Deroulement
             xcombat.SetAttributeValue(ConstantXML.Combat_Reference, reference);
             xcombat.SetAttributeValue(ConstantXML.Combat_Groupe, groupe);
             xcombat.SetAttributeValue(ConstantXML.Combat_FirstRencontre, first_rencontre);
-                Ivue_epreuve ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == first_rencontre);
-                string lib = string.Empty;
-                if (ep != null) {
-                    // Pour les epreuves mixte, on ajoute le sexe de l'epreuve qui commence, sinon, juste le nom de la cate de poids
-                    if(ep.type_epreuve_equipe == EpreuveEquipeTypeEnum.Mixte)
-                    {
-                        lib = string.Format("{0} {1} kg", ep.lib_sexe, ep.nom_catepoids);
-                    }
-                    else
-                    {
-                        lib = string.Format("{0} kg", ep.nom_catepoids);
-                    }
+            Ivue_epreuve ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == first_rencontre);
+            string lib = string.Empty;
+            if (ep != null)
+            {
+                // Pour les epreuves mixte, on ajoute le sexe de l'epreuve qui commence, sinon, juste le nom de la cate de poids
+                if (ep.type_epreuve_equipe == EpreuveEquipeTypeEnum.Mixte)
+                {
+                    lib = string.Format("{0} {1} kg", ep.lib_sexe, ep.nom_catepoids);
                 }
+                else
+                {
+                    lib = string.Format("{0} kg", ep.nom_catepoids);
+                }
+            }
             xcombat.SetAttributeValue(ConstantXML.Combat_FirstRencontreLib, lib);
             xcombat.SetAttributeValue(ConstantXML.Combat_Niveau, niveau);
             xcombat.SetAttributeValue(ConstantXML.Combat_Temps, temps.ToString(CultureInfo.InvariantCulture));
@@ -517,7 +515,7 @@ namespace KernelImpl.Noyau.Deroulement
 
         public int CalculeScoreGRCH(IJudoData DC, int? participant)
         {
-            if (DC.Organisation.Competition.type == (int) CompetitionTypeEnum.Equipe)
+            if (DC.Organisation.Competition.type == (int)CompetitionTypeEnum.Equipe)
             {
                 return 0;
             }

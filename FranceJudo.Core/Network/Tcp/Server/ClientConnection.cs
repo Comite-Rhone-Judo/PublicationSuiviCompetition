@@ -1,7 +1,7 @@
-﻿using System;
+﻿using FranceJudo.Core.IO;
+using System;
 using System.IO;
 using System.Net.Sockets;
-using FranceJudo.Core.IO;
 
 namespace FranceJudo.Core.Network.Tcp.Server
 {

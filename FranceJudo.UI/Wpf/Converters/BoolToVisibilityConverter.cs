@@ -18,7 +18,7 @@ namespace FranceJudo.UI.Wpf.Converters
                 {
                     string operation = ((string)parameter).ToLower();
 
-                    valTest = (operation == "not") ? !(bool)value : (bool)value;  
+                    valTest = (operation == "not") ? !(bool)value : (bool)value;
                 }
 
                 output = ((bool)valTest) ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;

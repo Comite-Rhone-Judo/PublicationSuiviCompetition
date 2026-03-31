@@ -1,5 +1,5 @@
-﻿using System.Configuration;
-using FranceJudo.Core.Configuration;
+﻿using FranceJudo.Core.Configuration;
+using System.Configuration;
 
 namespace AppPublication.Config.Publication
 {
@@ -42,7 +42,7 @@ namespace AppPublication.Config.Publication
         #region CONSTRUCTEURS
 
         // Constructeur privé pour le Singleton
-        protected PublicationConfigSection() : base() {}
+        protected PublicationConfigSection() : base() { }
 
         #endregion
 
@@ -65,12 +65,12 @@ namespace AppPublication.Config.Publication
         #endregion
 
         #region PROPRIETES DE CONFIGURATION
-        
+
 
         [ConfigurationProperty(kGeneralElementName, IsRequired = true)]
         public GeneralConfigElement General
         {
-            get { return (GeneralConfigElement) this[kGeneralElementName]; }
+            get { return (GeneralConfigElement)this[kGeneralElementName]; }
             set { this[kGeneralElementName] = value; }
         }
 

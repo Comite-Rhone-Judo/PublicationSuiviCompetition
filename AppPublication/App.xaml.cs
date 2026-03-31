@@ -1,15 +1,15 @@
-﻿using System;
+﻿using AppPublication.Controles;
+using FranceJudo.Core.Configuration;
+using FranceJudo.Core.Logging;
+using FranceJudo.UI.Wpf.Dialogs;
+using FranceJudo.UI.Wpf.Foundation;
+using KernelImpl;
+using System;
 using System.Globalization;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using Telerik.Windows.Controls;
-using FranceJudo.Core.Logging;
-using FranceJudo.Core.Configuration;
-using KernelImpl;
-using AppPublication.Controles;
-using FranceJudo.UI.Wpf.Dialogs;
-using FranceJudo.UI.Wpf.Foundation;
 
 namespace AppPublication
 { /// <summary>
@@ -18,7 +18,7 @@ namespace AppPublication
     public partial class App : Application
     {
         ConfigurationService _configSvc = null;
-        
+
         #region PROPERTIES
         // Accès global aux données si strictement nécessaire
         public JudoData DataManager { get; private set; }
@@ -146,18 +146,18 @@ namespace AppPublication
             e.Handled = true;
         }
 
-         /// <summary>
+        /// <summary>
         /// Cette méthode est appelée automatiquement quand LogTools.LogFatal() est exécuté avec notifyUser = true
         /// </summary>
         private void LogTools_OnCriticalErrorLogged(object sender, ExceptionEventArgs e)
         {
             // Sécurité : On s'assure d'être sur le thread de l'interface graphique (UI Thread)
             // C'est indispensable car l'erreur peut provenir d'un processus en arrière-plan (TCP, FTP, etc.)
-            Application.Current.Dispatcher.Invoke(() => 
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // C'est SEULEMENT ici que l'on utilise WPF et vos fenêtres personnalisées
                 AlertWindow alert = new AlertWindow(
-                    header: "Une erreur critique est survenue", 
+                    header: "Une erreur critique est survenue",
                     message: $"{e.Message}\n\nDétails techniques : {e.Exception?.Message}"
                 );
                 alert.ShowDialog();

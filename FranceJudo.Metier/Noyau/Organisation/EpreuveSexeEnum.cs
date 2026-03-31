@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Net;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace FranceJudo.Metier.Noyau.Organisation
 {
@@ -31,20 +28,13 @@ namespace FranceJudo.Metier.Noyau.Organisation
 
         public EpreuveSexe(string s)
         {
-            switch(s)
+            _enum = s switch
             {
-                case "M":
-                    _enum = EpreuveSexeEnum.Masculin;
-                    break;
-                case "F":
-                    _enum = EpreuveSexeEnum.Feminine;
-                    break;
-                case "X":
-                    _enum = EpreuveSexeEnum.Mixte;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("Invalid value for EpreuveSexe: " + s);
-            }
+                "M" => EpreuveSexeEnum.Masculin,
+                "F" => EpreuveSexeEnum.Feminine,
+                "X" => EpreuveSexeEnum.Mixte,
+                _ => throw new ArgumentOutOfRangeException("Invalid value for EpreuveSexe: " + s),
+            };
         }
 
         public EpreuveSexe(bool s)
@@ -54,7 +44,7 @@ namespace FranceJudo.Metier.Noyau.Organisation
 
         public EpreuveSexeEnum Enum
         {
-            get
+            readonly get
             {
                 return _enum;
             }
@@ -65,19 +55,15 @@ namespace FranceJudo.Metier.Noyau.Organisation
 
         }
 
-        public override string ToString()
+        public override readonly string ToString()
         {
-            switch(_enum)
+            return _enum switch
             {
-                case EpreuveSexeEnum.Masculin:
-                    return "M";
-                case EpreuveSexeEnum.Feminine:
-                    return "F";
-                case EpreuveSexeEnum.Mixte:
-                    return "X";
-                default:
-                    throw new ArgumentOutOfRangeException("Invalid value for EpreuveSexeEnum: " + _enum);
-            }
+                EpreuveSexeEnum.Masculin => "M",
+                EpreuveSexeEnum.Feminine => "F",
+                EpreuveSexeEnum.Mixte => "X",
+                _ => throw new ArgumentOutOfRangeException("Invalid value for EpreuveSexeEnum: " + _enum),
+            };
         }
 
         public static implicit operator int(EpreuveSexe s)

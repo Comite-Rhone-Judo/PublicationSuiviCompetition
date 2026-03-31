@@ -1,6 +1,6 @@
-﻿using System;
+﻿using FranceJudo.Core.IO;
+using System;
 using System.Net.Sockets;
-using FranceJudo.Core.IO;
 
 namespace FranceJudo.Core.Network.Tcp.Server
 {
@@ -51,9 +51,10 @@ namespace FranceJudo.Core.Network.Tcp.Server
                 tcpListener = CreateTcpListener(port);
             }
 
-            ListenerAndClient objListenerAndClient = new ListenerAndClient();
-
-            objListenerAndClient.Listener = tcpListener;
+            ListenerAndClient objListenerAndClient = new ListenerAndClient
+            {
+                Listener = tcpListener
+            };
 
             try
             {
@@ -78,10 +79,7 @@ namespace FranceJudo.Core.Network.Tcp.Server
         /// </summary>
         public static void StopListening(ref TcpListener tcpListener)
         {
-            if (tcpListener != null)
-            {
-                tcpListener.Stop();
-            }
+            tcpListener?.Stop();
         }
 
         #endregion

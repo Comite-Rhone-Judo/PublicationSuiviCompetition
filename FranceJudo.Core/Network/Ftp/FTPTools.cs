@@ -1,9 +1,9 @@
-﻿using System;
+﻿using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
+using System;
 using System.IO;
 using System.Net;
 using System.Text;
-using FranceJudo.Core.Logging;
-using FranceJudo.Core.IO;
 
 namespace FranceJudo.Core.Network.Ftp
 {

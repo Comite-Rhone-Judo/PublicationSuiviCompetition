@@ -1,10 +1,10 @@
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Structures;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using FranceJudo.Metier.XML;
-using FranceJudo.Core.XML;
-using FranceJudo.Metier.Noyau;
 
 
 namespace KernelImpl.Noyau.Structures
@@ -43,8 +43,7 @@ namespace KernelImpl.Noyau.Structures
             xclub.Add(new XElement(ConstantXML.Club_Nom, nom.ToString()));
             xclub.SetAttributeValue(ConstantXML.Club_ID, id.ToString());
 
-            int com = 0;
-            if (int.TryParse(comite, out com))
+            if (int.TryParse(comite, out int com))
             {
                 xclub.SetAttributeValue(ConstantXML.Club_Comite, com.ToString("00"));
             }

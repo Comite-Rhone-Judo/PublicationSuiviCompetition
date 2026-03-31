@@ -1,4 +1,5 @@
-﻿using NLog;
+﻿using FranceJudo.Core.Environment;
+using NLog;
 using NLog.Layouts;
 using NLog.Targets;
 using System;
@@ -7,7 +8,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Xml.Linq;
-using FranceJudo.Core.Environment;
 
 namespace FranceJudo.Core.Logging
 {
@@ -23,8 +23,8 @@ namespace FranceJudo.Core.Logging
         /// <summary>
         /// Define a static logger variable so that it references
         /// </summary>
-        private static Logger _logger = NLog.LogManager.GetLogger(kDefaultLoggerName);
-        private static Logger _dataLogger = NLog.LogManager.GetLogger(kDbgDataLoggerName);
+        private static readonly Logger _logger = NLog.LogManager.GetLogger(kDefaultLoggerName);
+        private static readonly Logger _dataLogger = NLog.LogManager.GetLogger(kDbgDataLoggerName);
         private static Layout _previousLogLevel = null;
         // private static Logger Logger { get { return _logger; } }
 
@@ -109,7 +109,7 @@ namespace FranceJudo.Core.Logging
         /// <summary>
         /// Trace le demarrage de l'application
         /// </summary>
-        public static void LogStartup() 
+        public static void LogStartup()
         {
             _logger.Info("-----------------------------------------------------------------------------------------------------");
             _logger.Info("App Publication is starting - Version " + AppEnvironment.GetVersionInformation().ToString());
@@ -160,7 +160,7 @@ namespace FranceJudo.Core.Logging
         }
 
         private static string _logDirectory;
-        
+
         /// <summary>
         /// Propriete exposant le repertoire de trace extrait dynamiquement depuis le fichier de configuration
         /// </summary>
@@ -217,14 +217,15 @@ namespace FranceJudo.Core.Logging
                                     inStream.CopyTo(outStream);
                                 }
                             }
-                            
+
                             // On ne peut pas utiliser ce code directement car le fichier est en cours d'utilisation
                             // archive.CreateEntryFromFile(file.FullName, file.Name);
                         }
                     }
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 LogTools.Logger.Error(ex, "Impossible de creer l'archive Zip contenant les fichiers de trace de l'application vers '{0}'", targetArchiveName);
                 throw new Exception("Impossible de creer l'archive Zip contenant les fichiers de trace de l'application", ex);
             }

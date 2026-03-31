@@ -1,5 +1,5 @@
-﻿using System;
-using FranceJudo.Core.Foundation;
+﻿using FranceJudo.Core.Foundation;
+using System;
 
 namespace AppPublication.Statistiques
 {
@@ -18,7 +18,8 @@ namespace AppPublication.Statistiques
         #region PROPRIETES
 
         private bool _isSuccess;
-        public bool IsSuccess {
+        public bool IsSuccess
+        {
             get
             {
                 return _isSuccess;
