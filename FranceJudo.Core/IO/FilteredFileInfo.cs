@@ -30,7 +30,7 @@ namespace FranceJudo.Core.IO
             if (null != fileInfo)
             {
                 _fileinfo = fileInfo;
-                Name = ResourcePath.GetRelativePath(fileInfo.FullName, baseSuffix);
+                Name = ResourcePath.GetRelativePath(fileInfo.Name, baseSuffix);
             }
         }
 

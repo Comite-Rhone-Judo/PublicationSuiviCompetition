@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AppPublication.Views.Infos"
         mc:Ignorable="d"
-        Header="Informations" Height="440" Width="620"
+        Header="Informations" Height="400" Width="620"
         WindowStartupLocation="CenterScreen" 
         CanClose="True" CanMove="True" ResizeMode="NoResize" 
         WindowState="Normal" Name="UI" Background="Black" SizeToContent="True">
