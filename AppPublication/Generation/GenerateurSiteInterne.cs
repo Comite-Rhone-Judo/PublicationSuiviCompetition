@@ -1,23 +1,12 @@
-﻿using AppPublication.Controles;
-using AppPublication.Export;
-using AppPublication.ExtensionNoyau;
-using AppPublication.ExtensionNoyau.Engagement;
+﻿using AppPublication.Export;
 using AppPublication.Models.EcransAppel;
 using AppPublication.Publication;
-using KernelImpl;
-using KernelImpl.Noyau.Deroulement;
-using KernelImpl.Noyau.Organisation;
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
+using FranceJudo.Core.Threading;
+using FranceJudo.Metier.Noyau;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Export;
-using Tools.Files;
-using Tools.Logging;
-using Tools.Net;
-using Tools.Threading;
 
 
 namespace AppPublication.Generation
@@ -26,7 +15,7 @@ namespace AppPublication.Generation
     {
         #region MEMBRES
         // Les gestionnaires
-        private IJudoDataManager _judoDataManager;                  // Le gestionnaire de données interne
+        readonly private IJudoDataManager _judoDataManager;                  // Le gestionnaire de données interne
         private IJudoData _snapshot;                                // Le snapshot des données 
 
         EcranCollectionManager _ecransAppel;                        // La configuration des ecrans d'appel (pour les combats)
@@ -58,11 +47,9 @@ namespace AppPublication.Generation
         /// </summary>
         public ConfigurationExportSiteInterne ConfigurationGeneration
         {
-            get {
-                if (_cfgExport == null)
-                {
-                    _cfgExport = new ConfigurationExportSiteInterne();
-                }
+            get
+            {
+                _cfgExport ??= new ConfigurationExportSiteInterne();
                 return _cfgExport;
             }
             private set { _cfgExport = value; }
@@ -74,7 +61,8 @@ namespace AppPublication.Generation
             {
                 return _ecransAppel;
             }
-            set {
+            set
+            {
                 _ecransAppel = value;
             }
         }
@@ -91,7 +79,7 @@ namespace AppPublication.Generation
             try
             {
                 // Initialise le gestionnaire de taches paralleles
-                _taskBatcher = new ParallelTaskBatcher<OperationProgress, FileWithChecksum>(progressHandler, (f) => { return new OperationProgress(_etapeCourante, f);});
+                _taskBatcher = new ParallelTaskBatcher<OperationProgress, FileWithChecksum>(progressHandler, (f) => { return new OperationProgress(_etapeCourante, f); });
             }
             catch (Exception ex)
             {
@@ -115,7 +103,7 @@ namespace AppPublication.Generation
                 // Efface le contenu local
                 ClearRepertoireCompetition();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogTools.Logger.Error(ex, "Erreur lors du nettoyage initial du site");
                 return new ResultatOperation(EtapeGenerateurSiteEnum.CleanupInitial, false, true, -1);
@@ -141,7 +129,7 @@ namespace AppPublication.Generation
         public ResultatOperation PrepareGeneration()
         {
             _etapeCourante = EtapeGenerateurSiteEnum.PrepareGeneration;
-         
+
             // Commence par garantir que les données des caches sont consistantes
             bool dataConsistent = false;
             try

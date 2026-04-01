@@ -32,7 +32,7 @@
                 <telerik:RadTabControl telerik:StyleManager.Theme="Expression_Dark" Margin="10 10 10 10" Width="410" HeaderBackground="Black" BorderThickness="1" BorderBrush="White" Background="Black"
                             FontWeight="DemiBold">
                     <telerik:RadTabControl.Items>
-                        <telerik:RadTabItem Header="Site Public" IsSelected="True">
+                        <telerik:RadTabItem Header="Site Coachs &amp; Public" IsSelected="True">
                             <telerik:RadGridView ItemsSource="{Binding GenerationSite.CompteursGeneration}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
                     CanUserDeleteRows="False" CanUserGroupColumns="False" CanUserInsertRows="False" ShowGroupPanel="False">
                                 <telerik:RadGridView.Columns>
@@ -44,7 +44,7 @@
                                 </telerik:RadGridView.Columns>
                             </telerik:RadGridView>
                         </telerik:RadTabItem>
-                        <telerik:RadTabItem Header="Site Interne" IsSelected="False">
+                        <telerik:RadTabItem Header="Chambre d'appel" IsSelected="False">
                             <telerik:RadGridView ItemsSource="{Binding GenerationSiteInterne.CompteursGeneration}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
                     CanUserDeleteRows="False" CanUserGroupColumns="False" CanUserInsertRows="False" ShowGroupPanel="False">
                                 <telerik:RadGridView.Columns>

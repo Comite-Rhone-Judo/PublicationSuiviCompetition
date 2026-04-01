@@ -1,19 +1,15 @@
-﻿using KernelImpl.Noyau.Arbitrage;
-using System;
+﻿using FranceJudo.Metier.Noyau.Categories;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KernelImpl.Noyau.Categories
 {
     public class CategoriesSnapshot : ICategoriesData
     {
-        public IReadOnlyList<CategorieAge> CAges { get; private set; }
+        public IReadOnlyList<ICategorieAge> CAges { get; private set; }
 
-        public IReadOnlyList<CategoriePoids> CPoids { get; private set; }
+        public IReadOnlyList<ICategoriePoids> CPoids { get; private set; }
 
-        public IReadOnlyList<Ceintures> Grades { get; private set; }
+        public IReadOnlyList<ICeintures> Grades { get; private set; }
 
         public CategoriesSnapshot(DataCategories source)
         {

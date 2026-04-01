@@ -1,8 +1,6 @@
-﻿using KernelImpl;
-using KernelImpl.Noyau.Structures;
+﻿using FranceJudo.Core.Logging;
+using FranceJudo.Metier.Noyau;
 using System.Xml.Linq;
-using Tools.Export;
-using Tools.Logging;
 
 namespace AppPublication.Export
 {
@@ -44,7 +42,7 @@ namespace AppPublication.Export
         {
             if (doc?.Root == null) return;
 
-            XElement[] elementsToInject = { Clubs, Comites, Ligues, Secteurs, Pays, Ceintures };
+            XElement[] elementsToInject = [Clubs, Comites, Ligues, Secteurs, Pays, Ceintures];
 
             foreach (XElement element in elementsToInject)
             {

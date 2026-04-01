@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AppPublication</RootNamespace>
     <AssemblyName>AppPublication</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -35,6 +35,7 @@
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -145,10 +146,13 @@
     <Compile Include="Config\Publication\MiniSiteCollection.cs" />
     <Compile Include="Config\Publication\MiniSiteConfigElement.cs" />
     <Compile Include="Config\Publication\PublicationConfigSection.cs" />
+    <Compile Include="Export\ConfigurationExportSite.cs" />
+    <Compile Include="Export\ConfigurationExportSiteInterne.cs" />
     <Compile Include="Export\ExportSharedContextInterne.cs" />
     <Compile Include="Export\ExportSharedContext.cs" />
     <Compile Include="Export\ExportSharedContextBase.cs" />
     <Compile Include="Generation\GenerationScheduler.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Models\Publication\GestionSiteBase.cs" />
     <Compile Include="Models\Publication\GestionSiteInterne.cs" />
     <Compile Include="Models\Publication\GestionSitePublique.cs" />
@@ -175,10 +179,8 @@
     <Compile Include="Statistiques\StatMgrDonnees.cs" />
     <Compile Include="Statistiques\StatMgrGeneration.cs" />
     <Compile Include="Statistiques\StatMgrSynchronisation.cs" />
-    <Compile Include="Tools\ActionWatcher.cs" />
     <Compile Include="Tools\Converter\DeviceTypeConverter.cs" />
     <Compile Include="Tools\Converter\GroupementToLayoutConverter.cs" />
-    <Compile Include="Tools\Converter\ValueToBoolConverter.cs" />
     <Compile Include="Publication\EcransAppelRedirectModule.cs" />
     <Compile Include="ViewModels\Configuration\ConfigurationEcransViewModel.cs" />
     <Compile Include="Controles\SitePublicationCoordinator.cs" />
@@ -209,31 +211,19 @@
     <Compile Include="Statistiques\StatistiqueItem.cs" />
     <Compile Include="Statistiques\StatistiqueItemCompteur.cs" />
     <Compile Include="Statistiques\StatistiqueItemMoyenneur.cs" />
-    <Compile Include="Tools\AppInformation.cs" />
     <Compile Include="Tools\Converter\AppStatusTypeConverter.cs" />
     <Compile Include="Tools\Converter\AppStatusProgressConverter.cs" />
     <Compile Include="Tools\Converter\AppStatusConverter.cs" />
-    <Compile Include="Tools\Converter\ListIntToStringConverter.cs" />
-    <Compile Include="Tools\Converter\PassthroughConverter.cs" />
-    <Compile Include="Tools\Converter\BoolOperationConverter.cs" />
-    <Compile Include="Tools\Converter\BoolToVisibilityConverter.cs" />
     <Compile Include="Tools\Converter\DisplayURLStatusConverter.cs" />
     <Compile Include="Tools\Converter\StatGenerationConverter.cs" />
     <Compile Include="Tools\Converter\RunningStatusConverter.cs" />
-    <Compile Include="Tools\Converter\BoolNotConverter.cs" />
     <Compile Include="Tools\Converter\ClientConverter.cs" />
     <Compile Include="Tools\EchangeMarkup.cs" />
-    <Compile Include="Tools\FranceJudo\EntitePublicationFFJudo.cs" />
     <Compile Include="Tools\Enum\BusyStatusEnum.cs" />
     <Compile Include="Tools\Enum\TypePouleEnum.cs" />
-    <Compile Include="Tools\Files\FileTools.cs" />
-    <Compile Include="Tools\Files\FilteredFileInfo.cs" />
     <Compile Include="Generation\GenerationProgressInfo.cs" />
-    <Compile Include="Tools\FranceJudo\LectureStructures.cs" />
     <Compile Include="Statistiques\TaskExecutionInformation.cs" />
     <Compile Include="Generation\StatusGenerationSite.cs" />
-    <Compile Include="Tools\Streams\StreamTool.cs" />
-    <Compile Include="Tools\Struct\ExportStruct.cs" />
     <Page Include="Views\Configuration\ConfigurationPublicationSiteInterneView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -327,6 +317,18 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FranceJudo.Core\FranceJudo.Core.csproj">
+      <Project>{13cad1c5-1448-4b69-b2c9-de15aecce84b}</Project>
+      <Name>FranceJudo.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FranceJudo.Metier\FranceJudo.Metier.csproj">
+      <Project>{e49d2215-4d00-4340-b7d3-ccd85d49e60d}</Project>
+      <Name>FranceJudo.Metier</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FranceJudo.UI\FranceJudo.UI.csproj">
+      <Project>{bffdeefa-ccdc-4dc2-8af5-d6509d2f7619}</Project>
+      <Name>FranceJudo.UI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\JudoClient\JudoClient.csproj">
       <Project>{7536edc7-a7a2-404d-babd-e78fade367cc}</Project>
       <Name>JudoClient</Name>
@@ -334,10 +336,6 @@
     <ProjectReference Include="..\KernelImpl\KernelImpl.csproj">
       <Project>{392bddab-3d85-46c8-b419-0d8c81dc5146}</Project>
       <Name>KernelImpl</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Tools\Tools.csproj">
-      <Project>{319d52c2-081b-42af-bf17-57efd5dc0d9c}</Project>
-      <Name>Tools</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -356,8 +354,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf">
+      <Version>1.1.142</Version>
+    </PackageReference>
     <PackageReference Include="NLog">
-      <Version>6.0.7</Version>
+      <Version>6.1.2</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -372,4 +373,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="SpicNSpan" AfterTargets="Clean"> <!-- common vars https://msdn.microsoft.com/en-us/library/c02as0cs.aspx?f=255&MSPPError=-2147217396 -->
+	 <RemoveDir Directories="$(TargetDir)" /> <!-- bin -->
+	 <RemoveDir Directories="$(ProjectDir)$(BaseIntermediateOutputPath)" /> <!-- obj -->
+</Target>
 </Project>

@@ -1,17 +1,18 @@
 
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Categories;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.XML;
 
 namespace KernelImpl.Noyau.Categories
 {
     /// <summary>
     /// Description des Ceintures
     /// </summary>
-    public class Ceintures : IEntityWithKey<int>
+    public class Ceintures : ICeintures, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -32,7 +33,7 @@ namespace KernelImpl.Noyau.Categories
             this.couleur2 = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Ceinture_couleur2));
         }
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xceinture = new XElement(ConstantXML.Ceinture);
             xceinture.SetAttributeValue(ConstantXML.Ceinture_id, id.ToString());
@@ -52,7 +53,7 @@ namespace KernelImpl.Noyau.Categories
         /// <param name="MI">fonction d'info</param>
         /// <returns>les Ceintures</returns>
 
-        public static ICollection<Ceintures> LectureCeintures(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Ceintures> LectureCeintures(XElement xelement)
         {
             ICollection<Ceintures> ceintures = new List<Ceintures>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.Ceinture))

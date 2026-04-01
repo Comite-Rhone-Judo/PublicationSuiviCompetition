@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AppPublication.Generation
+﻿namespace AppPublication.Generation
 {
     public class GenerationProgressInfo
     {
@@ -49,7 +43,7 @@ namespace AppPublication.Generation
         {
             get
             {
-                return NbGeneration > 0 && Progress <= -1 ;
+                return NbGeneration > 0 && Progress <= -1;
             }
         }
 
@@ -77,6 +71,6 @@ namespace AppPublication.Generation
         /// <summary>
         /// Nombre de génération à réaliser
         /// </summary>
-        public int NbGeneration {  get; set; }
+        public int NbGeneration { get; set; }
     }
 }

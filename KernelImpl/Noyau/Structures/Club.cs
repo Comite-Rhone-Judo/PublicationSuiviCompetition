@@ -1,17 +1,18 @@
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Structures;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
-using KernelImpl.Noyau.Structures;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.XML;
+
 
 namespace KernelImpl.Noyau.Structures
 {
     /// <summary>
     /// Description des Club
     /// </summary>
-    public class Club : IEntityWithKey<string>
+    public class Club : IClub, IEntityWithKey<string>
     {
         string IEntityWithKey<string>.EntityKey => id;
 
@@ -34,7 +35,7 @@ namespace KernelImpl.Noyau.Structures
             //this.nomCourt = xinfo.Attribute(ConstantXML.Club_NomCourt) != null ? xinfo.Attribute(ConstantXML.Club_NomCourt).Value : "";
         }
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xclub = new XElement(ConstantXML.Club);
 
@@ -42,8 +43,7 @@ namespace KernelImpl.Noyau.Structures
             xclub.Add(new XElement(ConstantXML.Club_Nom, nom.ToString()));
             xclub.SetAttributeValue(ConstantXML.Club_ID, id.ToString());
 
-            int com = 0;
-            if (int.TryParse(comite, out com))
+            if (int.TryParse(comite, out int com))
             {
                 xclub.SetAttributeValue(ConstantXML.Club_Comite, com.ToString("00"));
             }
@@ -68,7 +68,7 @@ namespace KernelImpl.Noyau.Structures
         /// <param name="MI">fonction d'info</param>
         /// <returns>Clubs</returns>
 
-        public static ICollection<Club> LectureClubs(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Club> LectureClubs(XElement xelement)
         {
             ICollection<Club> clubs = new List<Club>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.Club))

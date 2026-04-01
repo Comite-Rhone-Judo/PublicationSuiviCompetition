@@ -52,7 +52,7 @@ namespace AppPublication.Models.EcransAppel
             Groupement = groupement;
             Disposition = disposition; // Initialisation
             DispositionCombat = dispositionCombat; // Initialisation
-            AjusteTailleTexte = ajusteTexte; 
+            AjusteTailleTexte = ajusteTexte;
         }
         #endregion
     }

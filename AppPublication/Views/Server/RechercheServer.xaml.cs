@@ -1,4 +1,8 @@
-﻿using JudoClient;
+﻿using FranceJudo.Core.Logging;
+using FranceJudo.Metier.Network;
+using FranceJudo.Metier.XML;
+using FranceJudo.UI.Wpf.Behaviors;
+using JudoClient;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -6,10 +10,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
 using Telerik.Windows.Controls;
-using Tools.Enum;
-using Tools.Logging;
-using Tools.Struct;
-using Tools.Outils;
+
 
 namespace AppPublication.Views.Server
 {
@@ -20,26 +21,26 @@ namespace AppPublication.Views.Server
     {
         private delegate void EmptyDelegate();
 
-        RechercheServeurJudo recherche;
-        BackgroundWorker recherche_Worker;
+        readonly RechercheServeurJudo recherche;
+        readonly BackgroundWorker recherche_Worker;
 
         public RechercheServer()
         {
             InitializeComponent();
-            OutilsTools.ShowInTaskbar(this);
+            WindowHelper.ShowInTaskbar(this);
 
             recherche_Worker = new BackgroundWorker();
-            recherche_Worker.DoWork += new DoWorkEventHandler(recherche_Worker_DoWork);
-            recherche_Worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(recherche_Worker_RunWorkerCompleted);
+            recherche_Worker.DoWork += new DoWorkEventHandler(RechercheWorkerDoWork);
+            recherche_Worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(RechercheWorkerRunWorkerCompleted);
             recherche_Worker.WorkerReportsProgress = false;
             recherche_Worker.WorkerSupportsCancellation = true;
 
             recherche = new RechercheServeurJudo();
-            recherche.onServerTrouve += recherche_onServerTrouve;
-            recherche.onTermine += recherche_onTermine;
+            recherche.OnServerTrouve += RechercheOnServerTrouve;
+            recherche.OnTermine += RechercheOnTermine;
         }
 
-        private void recherche_Worker_DoWork(object sender, DoWorkEventArgs args)
+        private void RechercheWorkerDoWork(object sender, DoWorkEventArgs args)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
             string text = ((args.Argument as object[]).ElementAt(0) as string);
@@ -52,7 +53,7 @@ namespace AppPublication.Views.Server
             recherche.DemarreRechecherche(text, worker);
         }
 
-        private void recherche_Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs args)
+        private void RechercheWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs args)
         {
             if (args.Cancelled)
             {
@@ -64,7 +65,7 @@ namespace AppPublication.Views.Server
             }
         }
 
-        void recherche_onTermine(object sender, int pings, int connecte)
+        void RechercheOnTermine(object sender, int pings, int connecte)
         {
             Dispatcher.Invoke(new Action(() =>
             {
@@ -76,18 +77,17 @@ namespace AppPublication.Views.Server
                     string message = "";
                     message = "La recherche de serveurs n\'a pas abouti. Les causes peuvent être les suivantes :\n";
                     message += "   - L\'application GESTION DES COMPETITION n\'est lancée sur aucune des machines.\n";
-                    message += "   - Le pare-feu (windows ou de l'anti-virus comme AVG) bloque les ports " + NetworkTools.PortServerMin + " à " + NetworkTools.PortServerMax + ".\n";
+                    message += "   - Le pare-feu (windows ou de l'anti-virus comme AVG) bloque les ports " + ConstantNetwork.PortServerMin + " à " + ConstantNetwork.PortServerMax + ".\n";
                     message += "   - Le réseau WIFI, sur lequel sont les machines, est paramétré en réseau PUBLIC alors qu'il doit être en réseau PRIVE.\n";
-                    string header = "Recherche Serveur";
 
-                    LogTools.Alert(message, header);
+                    LogTools.Alert(message);
                 }
             }));
         }
 
 
 
-        void recherche_onServerTrouve(object sender, System.Net.IPEndPoint serverEndPoint, string machine, string user, XElement xcompetition)
+        void RechercheOnServerTrouve(object sender, System.Net.IPEndPoint serverEndPoint, string machine, string user, XElement xcompetition)
         {
             string compet = xcompetition.Element(ConstantXML.Competition_Titre).Value;
             string adressSite = xcompetition.Attribute(ConstantXML.AddressSite).Value;
@@ -97,11 +97,11 @@ namespace AppPublication.Views.Server
                 new ServerFind
                 {
                     IEP = serverEndPoint,
-                    machine = machine,
-                    user = user,
-                    competition = compet,
-                    addressSite = adressSite,
-                    portSite = portSite,
+                    Machine = machine,
+                    User = user,
+                    Competition = compet,
+                    AddresseSite = adressSite,
+                    PortSite = portSite,
                 });
         }
 
@@ -144,8 +144,8 @@ namespace AppPublication.Views.Server
 
                 System.Net.IPEndPoint IEP = choice.IEP;
 
-                Controles.DialogControleur.Instance.Connection.IpAdress = choice.addressSite.ToString();
-                Controles.DialogControleur.Instance.Connection.Port = choice.portSite.ToString();
+                Controles.DialogControleur.Instance.Connection.IpAdress = choice.AddresseSite.ToString();
+                Controles.DialogControleur.Instance.Connection.Port = choice.PortSite.ToString();
                 Controles.DialogControleur.Instance.Connection.Client = new ClientJudo(IEP.Address.ToString(), IEP.Port);
 
                 LB1.Items.Clear();

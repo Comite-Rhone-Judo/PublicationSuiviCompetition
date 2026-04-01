@@ -1,14 +1,12 @@
+using FranceJudo.Metier.Noyau.Participants;
 using System;
 using System.Collections.Generic;
-using KernelImpl.Noyau.Participants;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
-
 
 namespace AppPublication.ExtensionNoyau.Engagement
 {
 
     // Comparateur de judokas pour trier les listes de judokas
-    class VueJudokaEqualityComparer : IEqualityComparer<vue_judoka>
+    class VueJudokaEqualityComparer : IEqualityComparer<IVueJudoka>
     {
         /// <summary>
         /// Les judokas sont egaux si nom et prenom sont egaux
@@ -16,14 +14,14 @@ namespace AppPublication.ExtensionNoyau.Engagement
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public bool Equals(vue_judoka x, vue_judoka y)
+        public bool Equals(IVueJudoka x, IVueJudoka y)
         {
 
             //Check whether the compared objects reference the same data.
             if (Object.ReferenceEquals(x, y)) return true;
 
             //Check whether any of the compared objects is null.
-            if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null))
+            if (x is null || y is null)
                 return false;
 
             //Check whether the products' properties are equal.
@@ -32,10 +30,10 @@ namespace AppPublication.ExtensionNoyau.Engagement
 
         // If Equals() returns true for a pair of objects
         // then GetHashCode() must return the same value for these objects.
-        public int GetHashCode(vue_judoka j)
+        public int GetHashCode(IVueJudoka j)
         {
             //Check whether the object is null
-            if (Object.ReferenceEquals(j, null)) return 0;
+            if (j is null) return 0;
 
             //Get hash code for the Name field if it is not null.
             int hashNom = j.nom == null ? 0 : j.nom.GetHashCode();

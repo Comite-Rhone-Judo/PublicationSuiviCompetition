@@ -1,10 +1,6 @@
 ﻿using AppPublication.Tools.Enum;
 using JudoClient;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppPublication.Controles
 {
@@ -50,7 +46,7 @@ namespace AppPublication.Controles
         /// Déclenché quand le client est prêt et configuré
         /// </summary>
         event EventHandler<ClientReadyEventArgs> ClientReady;
-        
+
         /// <summary>
         /// Déclenché quand le client se déconnecte
         /// </summary>

@@ -1,19 +1,20 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.XML;
 
 namespace KernelImpl.Noyau.Deroulement
 {
     /// <summary>
     /// Description des Rencontres
     /// </summary>
-    public class Rencontre : INotifyPropertyChanged, IEntityWithKey<int>
+    public class Rencontre : IRencontre, INotifyPropertyChanged, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -403,7 +404,7 @@ namespace KernelImpl.Noyau.Deroulement
             {*/
             //if (this.etatJ1 != (int)EtatCombattantEnum.HansokuMakeX && this.etatJ2 != (int)EtatCombattantEnum.HansokuMakeX &&
             //    this.etatJ1 != (int)EtatCombattantEnum.HansokuMakeH && this.etatJ2 != (int)EtatCombattantEnum.HansokuMakeH)
-                if (this.etatJ1 == (int)EtatCombattantEnum.Normal && this.etatJ2 == (int)EtatCombattantEnum.Normal)
+            if (this.etatJ1 == (int)EtatCombattantEnum.Normal && this.etatJ2 == (int)EtatCombattantEnum.Normal)
             {
                 if ((this.judoka1 == null && this.judoka2 == this.vainqueur) || (this.judoka2 == null && this.judoka1 == this.vainqueur))
                 {
@@ -426,7 +427,8 @@ namespace KernelImpl.Noyau.Deroulement
                 if (penP >= 3 && penV >= 3)
                 {
                     return scoreV / 10;
-                }else if (penP >= 3)
+                }
+                else if (penP >= 3)
                 {
                     return 100; // 10;
                     ////----return 0;
@@ -576,11 +578,11 @@ namespace KernelImpl.Noyau.Deroulement
 
             this.goldenScore = XMLTools.LectureBool(xrencontre.Attribute(ConstantXML.Rencontre_GoldenScore));
             this.isNewRencontre = XMLTools.LectureBool(xrencontre.Attribute(ConstantXML.Rencontre_IsNewRencontre));
-            
+
             this.estDecisif = XMLTools.LectureBool(xrencontre.Attribute(ConstantXML.Rencontre_EstDecisif));
         }
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xrencontre = new XElement(ConstantXML.Rencontre);
 
@@ -632,7 +634,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// <param name="MI">fonction d'info</param>
         /// <returns>les Rencontres</returns>
 
-        public static ICollection<Rencontre> LectureRencontres(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Rencontre> LectureRencontres(XElement xelement)
         {
             ICollection<Rencontre> rencontres = new List<Rencontre>();
 

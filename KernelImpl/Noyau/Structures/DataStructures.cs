@@ -1,9 +1,9 @@
 ﻿
+using FranceJudo.Metier.Noyau.Structures;
 using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Tools.Outils;
-using Tools.XML;
+
 
 namespace KernelImpl.Noyau.Structures
 {
@@ -17,25 +17,31 @@ namespace KernelImpl.Noyau.Structures
 
         // Accesseurs O(1)
         public IReadOnlyList<Club> Clubs { get { return _clubsCache.Cache; } }
-        public IReadOnlyList<Comite> Comites { get { return _comitesCache.Cache ; } }
+        public IReadOnlyList<Comite> Comites { get { return _comitesCache.Cache; } }
         public IReadOnlyList<Secteur> Secteurs { get { return _secteursCache.Cache; } }
         public IReadOnlyList<Ligue> Ligues { get { return _liguesCache.Cache; } }
         public IReadOnlyList<Pays> LesPays { get { return _paysCache.Cache; } }
+
+        IReadOnlyList<IClub> IStructuresData.Clubs => Clubs;
+        IReadOnlyList<IComite> IStructuresData.Comites => Comites;
+        IReadOnlyList<ISecteur> IStructuresData.Secteurs => Secteurs;
+        IReadOnlyList<ILigue> IStructuresData.Ligues => Ligues;
+        IReadOnlyList<IPays> IStructuresData.LesPays => LesPays;
 
         /// <summary>
         /// lecture des clubs
         /// </summary>
         /// <param name="element">element XML contenant les clubs</param>
         /// <param name="DC"></param>
-        public void lecture_clubs(XElement element)
+        public void ChargerClubs(XElement element)
         {
-            ICollection<Club> clubs = Club.LectureClubs(element, null);
+            ICollection<Club> clubs = Club.LectureClubs(element);
             _clubsCache.UpdateFullSnapshot(clubs);
         }
 
-        public ICollection<Club> LectureClubs(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public ICollection<Club> LectureClubs(XElement xelement)
         {
-            return Club.LectureClubs(xelement, MI);
+            return Club.LectureClubs(xelement);
         }
 
         /// <summary>
@@ -43,15 +49,15 @@ namespace KernelImpl.Noyau.Structures
         /// </summary>
         /// <param name="element">element XML contenant les comités</param>
         /// <param name="DC"></param>
-        public void lecture_comites(XElement element)
+        public void ChargerComites(XElement element)
         {
-            ICollection<Comite> comites = Comite.LectureComites(element, null);
-            _comitesCache.UpdateFullSnapshot(comites); 
+            ICollection<Comite> comites = Comite.LectureComites(element);
+            _comitesCache.UpdateFullSnapshot(comites);
         }
 
-        public ICollection<Secteur> LectureSecteurs(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public ICollection<Secteur> LectureSecteurs(XElement xelement)
         {
-            return Secteur.LectureSecteurs(xelement, MI);
+            return Secteur.LectureSecteurs(xelement);
         }
 
         /// <summary>
@@ -59,15 +65,15 @@ namespace KernelImpl.Noyau.Structures
         /// </summary>
         /// <param name="element">element XML contenant les comités</param>
         /// <param name="DC"></param>
-        public void lecture_secteurs(XElement element)
+        public void ChargerSecteurs(XElement element)
         {
-            ICollection<Secteur> secteurs = Secteur.LectureSecteurs(element, null);
-            _secteursCache.UpdateFullSnapshot(secteurs);      
+            ICollection<Secteur> secteurs = Secteur.LectureSecteurs(element);
+            _secteursCache.UpdateFullSnapshot(secteurs);
         }
 
-        public ICollection<Comite> LectureComites(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public ICollection<Comite> LectureComites(XElement xelement)
         {
-            return Comite.LectureComites(xelement, MI);
+            return Comite.LectureComites(xelement);
         }
 
 
@@ -76,15 +82,15 @@ namespace KernelImpl.Noyau.Structures
         /// </summary>
         /// <param name="element">element XML contenant les ligues</param>
         /// <param name="DC"></param>
-        public void lecture_ligues(XElement element)
+        public void ChargerLigues(XElement element)
         {
-            ICollection<Ligue> ligues = Ligue.LectureLigues(element, null);
+            ICollection<Ligue> ligues = Ligue.LectureLigues(element);
             _liguesCache.UpdateFullSnapshot(ligues);
         }
 
-        public ICollection<Ligue> LectureLigues(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public ICollection<Ligue> LectureLigues(XElement xelement)
         {
-            return Ligue.LectureLigues(xelement, MI);
+            return Ligue.LectureLigues(xelement);
         }
 
         /// <summary>
@@ -92,9 +98,9 @@ namespace KernelImpl.Noyau.Structures
         /// </summary>
         /// <param name="element">element XML contenant les ligues</param>
         /// <param name="DC"></param>
-        public void lecture_pays(XElement element)
+        public void ChargerPays(XElement element)
         {
-            ICollection<Pays> pays2 = Pays.LecturePays(element, null);
+            ICollection<Pays> pays2 = Pays.LecturePays(element);
             _paysCache.UpdateFullSnapshot(pays2);
         }
     }

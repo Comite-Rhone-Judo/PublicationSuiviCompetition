@@ -1,19 +1,18 @@
 ﻿using AppPublication.Config.Generation;
 using AppPublication.Models.EcransAppel;
+using FranceJudo.Core.Foundation;
+using FranceJudo.Core.Logging;
+using FranceJudo.UI.Wpf.Dialogs;
+using FranceJudo.UI.Wpf.Foundation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
-using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Tools.Framework;
-using Tools.Logging;
-using Tools.Windows;
-using Tools.Net.Scanner;
 using static AppPublication.Models.EcransAppel.EcranAppelModel;
 
 namespace AppPublication.ViewModels.Configuration
@@ -50,10 +49,7 @@ namespace AppPublication.ViewModels.Configuration
         {
             get
             {
-                if (_cmdOuvrirScanner == null)
-                {
-                    _cmdOuvrirScanner = new RelayCommand(OuvrirScannerAction);
-                }
+                _cmdOuvrirScanner ??= new RelayCommand(OuvrirScannerAction);
                 return _cmdOuvrirScanner;
             }
         }
@@ -75,7 +71,7 @@ namespace AppPublication.ViewModels.Configuration
 
             // Initialisation visuelle
             Hostname = string.IsNullOrEmpty(model.Hostname) ? string.Empty : model.Hostname;
-            AdresseIP = (model.AdresseIP == null || model.AdresseIP.Equals(IPAddress.None))  ? string.Empty : model.AdresseIP.ToString();
+            AdresseIP = (model.AdresseIP == null || model.AdresseIP.Equals(IPAddress.None)) ? string.Empty : model.AdresseIP.ToString();
 
             // On pré-remplit la saisie avec le Hostname ou l'IP existant
             _rawUserInput = (model.AdresseIP != null && !model.AdresseIP.Equals(IPAddress.None) ? model.AdresseIP.ToString()
@@ -119,7 +115,7 @@ namespace AppPublication.ViewModels.Configuration
                         _model.NbCombatsPage = value;
                         NotifyPropertyChanged();
                         var cfg = GetConfigElement();
-                        if (cfg != null) cfg.NbCombatsPage = value;
+                        cfg?.NbCombatsPage = value;
                     }
                 }
             }
@@ -142,7 +138,8 @@ namespace AppPublication.ViewModels.Configuration
         /// Indique si on doit ajuster automatiquement la taille du texte
         /// </summary>
         public bool AjusteTailleTexte
-        {             get => _model.AjusteTailleTexte;
+        {
+            get => _model.AjusteTailleTexte;
             set
             {
                 if (_model.AjusteTailleTexte != value)
@@ -150,7 +147,7 @@ namespace AppPublication.ViewModels.Configuration
                     _model.AjusteTailleTexte = value;
                     NotifyPropertyChanged();
                     var cfg = GetConfigElement();
-                    if (cfg != null) cfg.AjusteTexteAuto = value;
+                    cfg?.AjusteTexteAuto = value;
                 }
             }
         }
@@ -182,10 +179,7 @@ namespace AppPublication.ViewModels.Configuration
 
                     // SAUVEGARDE IMMEDIATE
                     var cfg = GetConfigElement();
-                    if (cfg != null)
-                    {
-                        cfg.Disposition = value;
-                    }
+                    cfg?.Disposition = value;
                 }
             }
         }
@@ -208,10 +202,7 @@ namespace AppPublication.ViewModels.Configuration
 
                     // SAUVEGARDE IMMEDIATE
                     var cfg = GetConfigElement();
-                    if (cfg != null)
-                    {
-                        cfg.DispositionCombat = value;
-                    }
+                    cfg?.DispositionCombat = value;
                 }
             }
         }
@@ -239,8 +230,7 @@ namespace AppPublication.ViewModels.Configuration
 
                     // SAUVEGARDE IMMEDIATE
                     var cfg = GetConfigElement();
-                    if (cfg != null) cfg.Groupement = value; // Déclenche le IsDirty automatique
-
+                    cfg?.Groupement = value; // Déclenche le IsDirty automatique
                 }
             }
         }
@@ -274,7 +264,7 @@ namespace AppPublication.ViewModels.Configuration
 
                     // SAUVEGARDE IMMEDIATE
                     var cfg = GetConfigElement();
-                    if (cfg != null) cfg.Description = value; // Déclenche le IsDirty automatique
+                    cfg?.Description = value; // Déclenche le IsDirty automatique
                 }
             }
         }
@@ -293,7 +283,7 @@ namespace AppPublication.ViewModels.Configuration
                     // SAUVEGARDE IMMEDIATE
                     _model.Hostname = value;
                     var cfg = GetConfigElement();
-                    if (cfg != null) cfg.Hostname = value;
+                    cfg?.Hostname = value;
                 }
             }
         }
@@ -319,7 +309,7 @@ namespace AppPublication.ViewModels.Configuration
 
                             // SAUVEGARDE IMMEDIATE
                             var cfg = GetConfigElement();
-                            if (cfg != null) cfg.AdresseIp = value;
+                            cfg?.AdresseIp = value;
                         }
                     }
                 }
@@ -498,10 +488,7 @@ namespace AppPublication.ViewModels.Configuration
 
             // Mise à jour Configuration
             var cfg = GetConfigElement();
-            if (cfg != null)
-            {
-                cfg.TapisIds = string.Join(";", ids);
-            }
+            cfg?.TapisIds = string.Join(";", ids);
         }
 
         /// <summary>
@@ -551,8 +538,8 @@ namespace AppPublication.ViewModels.Configuration
             }
 
             // Determine le type de recherche a effectuer et Vide le champ que l'on va rechercher
-            switch (type) 
-                            {
+            switch (type)
+            {
                 case TypeSaisieEnum.AddressIP:
                     IsRechercheHostnameEnCours = true;
                     Hostname = String.Empty;
@@ -593,8 +580,8 @@ namespace AppPublication.ViewModels.Configuration
                         }
                     }
                     catch (Exception ex)
-                    { 
-                        LogTools.Logger.Warn($"LancerRechercheComplementaire: Erreur lors de la recherche DNS pour '{saisie}': {ex.Message}");  
+                    {
+                        LogTools.Logger.Warn($"LancerRechercheComplementaire: Erreur lors de la recherche DNS pour '{saisie}': {ex.Message}");
                     }
                 }, token);
 

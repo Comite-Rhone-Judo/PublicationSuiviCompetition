@@ -1,22 +1,20 @@
-﻿using AppPublication.Controles;
+﻿using AppPublication.Export;
 using AppPublication.ExtensionNoyau;
 using AppPublication.ExtensionNoyau.Engagement;
-using AppPublication.Export;
-using KernelImpl;
-using KernelImpl.Noyau.Deroulement;
-using KernelImpl.Noyau.Organisation;
+using AppPublication.Publication;
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
+using FranceJudo.Core.Network;
+using FranceJudo.Core.Threading;
+using FranceJudo.Metier.IO;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.Noyau.Organisation;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Export;
-using Tools.Logging;
-using Tools.Threading;
-using Tools.Files;
-using Tools.Net;
-using AppPublication.Publication;
 
 
 namespace AppPublication.Generation
@@ -25,9 +23,9 @@ namespace AppPublication.Generation
     {
         #region MEMBRES
         // Les gestionnaires
-        private IJudoDataManager _judoDataManager;                  // Le gestionnaire de données interne
+        readonly private IJudoDataManager _judoDataManager;                  // Le gestionnaire de données interne
         private IJudoData _snapshot;                                // Le snapshot des données 
-        private ExtendedJudoData _extendedJudoData;
+        readonly private ExtendedJudoData _extendedJudoData;
         private MiniSite _site = null;                              // Le site a utilise pour le upload a distance
         private ExportSharedContext _currentContext = null;         // Le contexte de generation courant (a passer aux taches de generation)
 
@@ -58,11 +56,9 @@ namespace AppPublication.Generation
         /// </summary>
         public ConfigurationExportSite ConfigurationGeneration
         {
-            get {
-                if (_cfgExport == null)
-                {
-                    _cfgExport = new ConfigurationExportSite();
-                }
+            get
+            {
+                _cfgExport ??= new ConfigurationExportSite();
                 return _cfgExport;
             }
             private set { _cfgExport = value; }
@@ -98,7 +94,7 @@ namespace AppPublication.Generation
             try
             {
                 // Initialise le gestionnaire de taches paralleles
-                _taskBatcher = new ParallelTaskBatcher<OperationProgress, FileWithChecksum>(progressHandler, (f) => { return new OperationProgress(_etapeCourante, f);});
+                _taskBatcher = new ParallelTaskBatcher<OperationProgress, FileWithChecksum>(progressHandler, (f) => { return new OperationProgress(_etapeCourante, f); });
             }
             catch (Exception ex)
             {
@@ -128,7 +124,7 @@ namespace AppPublication.Generation
                     _site.NettoyerSite();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogTools.Logger.Error(ex, "Erreur lors du nettoyage initial du site");
                 return new ResultatOperation(EtapeGenerateurSiteEnum.CleanupInitial, false, true, -1);
@@ -154,7 +150,7 @@ namespace AppPublication.Generation
         public ResultatOperation PrepareGeneration()
         {
             _etapeCourante = EtapeGenerateurSiteEnum.PrepareGeneration;
-         
+
             // Commence par garantir que les données des caches sont consistantes
             bool dataConsistent = false;
             try
@@ -246,7 +242,7 @@ namespace AppPublication.Generation
 
                     if (_cfgExport.PublierEngagements)
                     {
-                        foreach (Competition comp in _snapshot.Organisation.Competitions)
+                        foreach (ICompetition comp in _snapshot.Organisation.Competitions)
                         {
                             // Recupere les groupes en fonction du type de groupement
                             List<EchelonEnum> typesGrp = _extendedJudoData.Engagement.TypesGroupes[comp.id];
@@ -272,7 +268,7 @@ namespace AppPublication.Generation
                         }
                     }
 
-                    foreach (Phase phase in _snapshot.Deroulement.Phases)
+                    foreach (IPhase phase in _snapshot.Deroulement.Phases)
                     {
                         _taskBatcher.AddWork(p =>
                         {
@@ -376,7 +372,7 @@ namespace AppPublication.Generation
                 XDocument doc = XDocument.Load(ChecksumFileName);
 
                 // Recherche la racine
-                List<XElement> rootElem = doc.Descendants(ConstantXML.checksums).ToList();
+                List<XElement> rootElem = doc.Descendants(FileWithChecksum.checksums).ToList();
 
                 if (rootElem.Count() >= 1)
                 {
@@ -398,11 +394,11 @@ namespace AppPublication.Generation
         {
             get
             {
-                string output = string.Empty;
+                string output;
                 // Normalement on ne devrait pas avoir de probleme d'exception ici avec la structure de repertoire
                 try
                 {
-                    output = Path.Combine(_siteUrlGenerator.PhysicalStructure.RepertoireRacine, ExportTools.getFileName(ExportEnum.Site_Checksum) + ConstantFile.ExtensionXML);
+                    output = Path.Combine(_siteUrlGenerator.PhysicalStructure.RepertoireRacine, AppDirectoryManager.ChecksumFile);
                 }
                 catch (Exception ex)
                 {
@@ -445,9 +441,9 @@ namespace AppPublication.Generation
             // Enregistre les checksums des fichiers generes
             XDocument doc = ExportXML.ExportChecksumFichiers(_checksumGenere);
 
-            if (doc != null && !File.Exists(ChecksumFileName) || !FileAndDirectTools.IsFileLocked(ChecksumFileName))
+            if (doc != null && !File.Exists(ChecksumFileName) || !FileSystemHelper.IsFileLocked(ChecksumFileName))
             {
-                FileAndDirectTools.NeedAccessFile(ChecksumFileName);
+                FileSystemHelper.NeedAccessFile(ChecksumFileName);
                 try
                 {
                     using (FileStream fs = new FileStream(ChecksumFileName, FileMode.Create))
@@ -461,10 +457,10 @@ namespace AppPublication.Generation
                 }
                 finally
                 {
-                    FileAndDirectTools.ReleaseFile(ChecksumFileName);
+                    FileSystemHelper.ReleaseFile(ChecksumFileName);
                 }
             }
-        }   
+        }
 
         #endregion
     }

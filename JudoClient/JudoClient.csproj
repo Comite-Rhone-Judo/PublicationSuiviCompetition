@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>JudoClient</RootNamespace>
     <AssemblyName>JudoClient</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>
     </SccProjectName>
@@ -20,7 +20,8 @@
     <SccProvider>
     </SccProvider>
     <TargetFrameworkProfile />
-	<LangVersion>latest</LangVersion>
+    <LangVersion>latest</LangVersion>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -71,6 +72,8 @@
     <Compile Include="Communication\Participants.cs" />
     <Compile Include="Communication\TraitementStructure.cs" />
     <Compile Include="Communication\Structure.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="MachineStruct.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RechercheServeurJudo.cs" />
   </ItemGroup>
@@ -78,15 +81,19 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Tools\Tools.csproj">
-      <Project>{319d52c2-081b-42af-bf17-57efd5dc0d9c}</Project>
-      <Name>Tools</Name>
-    </ProjectReference>
+    <PackageReference Include="NLog">
+      <Version>6.1.2</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NLog">
-      <Version>6.0.7</Version>
-    </PackageReference>
+    <ProjectReference Include="..\FranceJudo.Core\FranceJudo.Core.csproj">
+      <Project>{13cad1c5-1448-4b69-b2c9-de15aecce84b}</Project>
+      <Name>FranceJudo.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FranceJudo.Metier\FranceJudo.Metier.csproj">
+      <Project>{e49d2215-4d00-4340-b7d3-ccd85d49e60d}</Project>
+      <Name>FranceJudo.Metier</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

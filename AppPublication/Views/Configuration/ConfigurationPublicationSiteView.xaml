@@ -44,14 +44,14 @@
 
                 <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
                     <Label HorizontalAlignment="Right" Content="Actualisation du site:" Style="{StaticResource LabelStyle}" />
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en secondes entre 2 générations du site pour le grand public."/>
+                    <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en secondes entre 2 générations du site pour le grand public."/>
                     <telerik:RadNumericUpDown Value="{Binding GestionnaireSitePublique.DelaiGenerationSec}" Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="10 0 0 0"/>
                     <Label HorizontalAlignment="Right" Content="Sec." Style="{StaticResource LabelStyle}" />
                 </StackPanel>
 
                 <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="0 0 0 0">
                     <Label  HorizontalAlignment="Right" Content="Actualisation du client:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en secondes d'actualisation automatique du site coté client si l'utilisateur coche la case 'Actualiser'."/>
+                    <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en secondes d'actualisation automatique du site coté client si l'utilisateur coche la case 'Actualiser'."/>
                     <telerik:RadNumericUpDown  Value="{Binding GestionnaireSitePublique.DelaiActualisationClientSec}" Width="100" Height="20" Minimum="10" Maximum="600" SmallChange="10" CustomUnit="sec." HideTrailingZeros="True" Margin="10 0 0 0"/>
                     <Label HorizontalAlignment="Right" Content="Sec." Style="{StaticResource LabelStyle}" />
                 </StackPanel>
@@ -59,7 +59,7 @@
                 <StackPanel Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Orientation="Vertical">
                     <StackPanel Orientation="Horizontal">
                         <CheckBox   Content="Utiliser un intitulé de compétition commun" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionnaireSitePublique.UseIntituleCommun}"/>
-                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, en cas de gestion avec plusieurs compétitions simultanéement (ex. Districts),  utilise l'intitulé commun configuré au lieu du titre de la 1ère compétition."/>
+                        <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, en cas de gestion avec plusieurs compétitions simultanéement (ex. Districts),  utilise l'intitulé commun configuré au lieu du titre de la 1ère compétition."/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="30 -5 0 0" >
                         <TextBox Height="24" VerticalScrollBarVisibility="Auto" Margin="5 5 5 5" Width="300" Text = "{Binding Path=GestionnaireSitePublique.IntituleCommun}"/>
@@ -73,18 +73,18 @@
                     <StackPanel Orientation="Horizontal">
                         <CheckBox Content="Publier 'Prochains Combats'" Style="{StaticResource CheckboxStyle}"
                                                             IsChecked="{Binding Path=GestionnaireSitePublique.PublierProchainsCombats}"/>
-                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0" ToolTip="Si cochée, provoque l'ajout des menus 'Prochains Combats' qui liste les combats à venir par catégories et 'Se Prépare' qui liste les prochains combats sur chaque tapis selon la profondeur de la chambre d'appel."/>
+                        <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="5 0" ToolTip="Si cochée, provoque l'ajout des menus 'Prochains Combats' qui liste les combats à venir par catégories et 'Se Prépare' qui liste les prochains combats sur chaque tapis selon la profondeur de la chambre d'appel."/>
                     </StackPanel>
                     <StackPanel Orientation="Vertical" VerticalAlignment="Top">
                         <StackPanel Orientation="Horizontal" Margin="30 0 0 -5">
                             <Label HorizontalAlignment="Right" Content="Profondeur chambre d'appel:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
-                            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Nombres de combats à afficher dans la chambre d'appel."/>
+                            <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Nombres de combats à afficher dans la chambre d'appel."/>
                             <telerik:RadNumericUpDown  IsEnabled="{Binding Path=GestionnaireSitePublique.PublierProchainsCombats, Mode=OneWay}" Value="{Binding GestionnaireSitePublique.NbProchainsCombats}" Width="80" Height="20" Minimum="1" Maximum="99" SmallChange="1" HideTrailingZeros="True" Margin="5 0 5 0"/>
                         </StackPanel>
                         <StackPanel Orientation="Vertical" Margin="30 0 0 -5">
                             <StackPanel Orientation="Horizontal" >
                                 <Label HorizontalAlignment="Right" Content="Message d'avertissement:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
-                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Message d'avertissement affiché au début des pages 'Prochains combats' et 'Se prépare'."/>
+                                <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Message d'avertissement affiché au début des pages 'Prochains combats' et 'Se prépare'."/>
                             </StackPanel>
                             <TextBox  TextWrapping="Wrap" Height="24" VerticalScrollBarVisibility="Auto" Margin="5 5 5 5" MinWidth="300" Text = "{Binding Path=GestionnaireSitePublique.MsgProchainsCombats}"/>
                         </StackPanel>
@@ -97,7 +97,7 @@
                 <StackPanel Grid.Row="3" Grid.Column="2"  Orientation="Vertical" Visibility="{Binding Path=GestionnaireSitePublique.CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}">
                     <StackPanel  Orientation="Horizontal">
                         <CheckBox   Content="Publier 'Engagements'" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionnaireSitePublique.PublierEngagements}"/>
-                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, provoque l'ajout du menu 'Engagements' qui liste les engagés, leurs statuts et leurs combats à venir. Disponible uniquement en compétition Individuelle ou Shiai.&#x0a;ATTENTION, cette option augmente sensiblement le temps de génération et le nombre de fichiers a transférer."/>
+                        <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, provoque l'ajout du menu 'Engagements' qui liste les engagés, leurs statuts et leurs combats à venir. Disponible uniquement en compétition Individuelle ou Shiai.&#x0a;ATTENTION, cette option augmente sensiblement le temps de génération et le nombre de fichiers a transférer."/>
                     </StackPanel>
 
                     <StackPanel Orientation="Vertical" Margin="25 0 0 0">
@@ -107,28 +107,28 @@
                                                 IsChecked="{Binding Path=GestionnaireSitePublique.EngagementsAbsents}"
                                                 IsEnabled="{Binding Path=GestionnaireSitePublique.PublierEngagements, Mode=OneWay}"
                                                 Content="Inclure les absents"/>
-                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affichera les judokas absents."/>
+                                <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affichera les judokas absents."/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0 0 0 -5">
                                 <CheckBox Style="{StaticResource CheckboxStyle}"
                                                 IsChecked="{Binding Path=GestionnaireSitePublique.EngagementsTousCombats}"
                                                 IsEnabled="{Binding Path=GestionnaireSitePublique.PublierEngagements, Mode=OneWay}"
                                                 Content="Inclure tous les combats"/>
-                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affichera tous les combats des engagés, y compris ceux terminés."/>
+                                <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affichera tous les combats des engagés, y compris ceux terminés."/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0 0 0 -5">
                                 <CheckBox Style="{StaticResource CheckboxStyle}"
                                                 IsChecked="{Binding Path=GestionnaireSitePublique.ScoreEngagesGagnantPerdant}"
                                                 IsEnabled="{Binding Path=GestionnaireSitePublique.PublierEngagements, Mode=OneWay}"
                                               Content="Afficher les scores au format Gagnant/Perdant"/>
-                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, les résultats des combats seront affichés dans l'ordre Gagnant/Perdant, sinon, selon l'ordre 1er Judoka/2nd Judoka"/>
+                                <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, les résultats des combats seront affichés dans l'ordre Gagnant/Perdant, sinon, selon l'ordre 1er Judoka/2nd Judoka"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <CheckBox Style="{StaticResource CheckboxStyle}"
                                                 IsChecked="{Binding Path=GestionnaireSitePublique.AfficherPositionCombat}"
                                                 IsEnabled="{Binding Path=GestionnaireSitePublique.PublierEngagements, Mode=OneWay}"
                                               Content="Afficher la position des combats"/>
-                                <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affiche la position du combat dans l'ordre de déroulement sur le tapis."/>
+                                <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, affiche la position du combat dans l'ordre de déroulement sur le tapis."/>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
@@ -140,7 +140,7 @@
                                                             Visibility="{Binding Path=GestionnaireSitePublique.CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}">
                     </CheckBox>
                     <Image Visibility="{Binding Path=GestionnaireSitePublique.CanPublierAffectation, Converter={StaticResource BoolToVisibilityConverter}}"
-                                   Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0"
+                                   Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="5 0"
                                    ToolTip="Si cochée, provoque l'ajout du menu 'Affectations' qui liste les tapis assignés pour chaque catégorie. Disponible uniquement en compétition Individuelle ou Shiai."/>
                 </StackPanel>
 
@@ -149,7 +149,7 @@
                         <CheckBox   Content="Afficher les Poules en colonnes" Style="{StaticResource CheckboxStyle}"
                                             IsChecked="{Binding Path=GestionnaireSitePublique.PouleEnColonnes}">
                         </CheckBox>
-                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, les poules seront affichées en colonnes selon les critères de taille. Affichage en diagonale sinon."/>
+                        <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, les poules seront affichées en colonnes selon les critères de taille. Affichage en diagonale sinon."/>
                     </StackPanel >
                     <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal" Margin="30 -5 0 0">
                         <CheckBox Style="{StaticResource CheckboxStyle}"
@@ -158,7 +158,7 @@
                                     Margin="0 0 0 0"
                                     Content="taille max. poule en colonne:">
                         </CheckBox>
-                        <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/info-32.png" Height="20" Margin="0 0 0 0"
+                        <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0"
                                        ToolTip="Taille minimale de la poule au dessus de laquelle la disposition est en diagonale."/>
                         <telerik:RadNumericUpDown  Grid.Row="2" Grid.Column="3" Value="{Binding GestionnaireSitePublique.TailleMaxPouleColonnes}" Width="80" Height="20" Minimum="2" Maximum="999" SmallChange="1" HideTrailingZeros="True" Margin="5 0 5 0">
                             <telerik:RadNumericUpDown.IsEnabled>
@@ -177,7 +177,7 @@
         </Border>
 
         <!-- BLOC BOUTONS -->
-        <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Grid.Row="1" Margin="67,278,0,0" Grid.ColumnSpan="2" Grid.Column="1" Grid.RowSpan="2" >
+        <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Top" Orientation="Horizontal" Grid.Row="2" Margin="0,0,0,0" Grid.ColumnSpan="2" Grid.Column="0" >
             <telerik:RadButton x:Name="ButOk" Width="70" Height="30" telerik:StyleManager.Theme="Expression_Dark" Click="ButOk_Click">
                 <WrapPanel Orientation="Horizontal">
                     <Label x:Name="ButOkLabel"  Content="Ok" Foreground="White"/>

@@ -1,15 +1,18 @@
-﻿
+﻿using FranceJudo.Core.Utils;
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Arbitrage;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.XML;
+
 
 namespace KernelImpl.Noyau.Arbitrage
 {
-    public class Arbitre : IEntityWithKey<int>
+    public class Arbitre : IArbitre, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -17,7 +20,7 @@ namespace KernelImpl.Noyau.Arbitrage
         public string nom { get; set; }
         public string prenom { get; set; }
         public System.DateTime naissance { get; set; }
-                
+
         private bool _sexe;
         public bool sexe
         {
@@ -77,7 +80,7 @@ namespace KernelImpl.Noyau.Arbitrage
 
             this.naissance = XMLTools.LectureDate(xinfo.Attribute(ConstantXML.Arbitre_Naissance), "ddMMyyyy", DateTime.Now);
 
-            this.sexeEnum =  new EpreuveSexe(XMLTools.LectureString(xinfo.Attribute(ConstantXML.Arbitre_Sexe)));
+            this.sexeEnum = new EpreuveSexe(XMLTools.LectureString(xinfo.Attribute(ConstantXML.Arbitre_Sexe)));
 
             this.modification = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Arbitre_Modification));
             this.estResponsable = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Arbitre_EstResponsable));
@@ -87,13 +90,13 @@ namespace KernelImpl.Noyau.Arbitrage
         }
 
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xarbitre = new XElement(ConstantXML.Arbitre);
             xarbitre.SetAttributeValue(ConstantXML.Arbitre_ID, id);
             xarbitre.SetAttributeValue(ConstantXML.Arbitre_Licence, licence);
             xarbitre.SetAttributeValue(ConstantXML.Arbitre_Nom, nom.ToUpper());
-            xarbitre.SetAttributeValue(ConstantXML.Arbitre_Prenom, OutilsTools.FormatPrenom(prenom));
+            xarbitre.SetAttributeValue(ConstantXML.Arbitre_Prenom, prenom.FormatPrenom());
             xarbitre.SetAttributeValue(ConstantXML.Arbitre_Naissance, naissance.ToString("ddMMyyyy"));
             xarbitre.SetAttributeValue(ConstantXML.Arbitre_Sexe, sexeEnum.ToString());
             xarbitre.SetAttributeValue(ConstantXML.Arbitre_Modification, modification);
@@ -116,7 +119,7 @@ namespace KernelImpl.Noyau.Arbitrage
         /// <param name="MI">fonction d'info</param>
         /// <returns>les Categories Age</returns>
 
-        public static ICollection<Arbitre> LectureArbitre(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Arbitre> LectureArbitre(XElement xelement)
         {
             ICollection<Arbitre> arbitres = new List<Arbitre>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.Arbitre))

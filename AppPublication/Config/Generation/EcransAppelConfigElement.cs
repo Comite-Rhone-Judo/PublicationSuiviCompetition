@@ -1,6 +1,5 @@
-﻿using System;
+﻿using FranceJudo.Core.Configuration;
 using System.Configuration;
-using Tools.Configuration;
 using static AppPublication.Models.EcransAppel.EcranAppelModel;
 
 namespace AppPublication.Config.Generation
@@ -30,10 +29,7 @@ namespace AppPublication.Config.Generation
         /// </summary>
         protected override void NotifyParentOfModification()
         {
-            if (GenerationConfigSection.Instance != null)
-            {
-                GenerationConfigSection.Instance.NotifyChildModification();
-            }
+            GenerationConfigSection.Instance?.NotifyChildModification();
         }
         #endregion
 

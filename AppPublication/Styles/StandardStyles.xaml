@@ -108,7 +108,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Control">
                     <Image x:Name="PART_SpinImage"
-                           Source="pack://application:,,,/Tools;component/data/images/icons/black/refresh-32.png"
+                           Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/refresh-32.png"
                            RenderTransformOrigin="0.5, 0.5"
                            Visibility="Collapsed">
                         <Image.RenderTransform>
@@ -562,9 +562,9 @@
         <StackPanel Orientation="Horizontal">
             <Label Content="{Binding IEP}">
             </Label>
-            <Label Content="{Binding machine}"></Label>
-            <Label Content="{Binding user}"></Label>
-            <Label Content="{Binding competition}"></Label>
+            <Label Content="{Binding Machine}"></Label>
+            <Label Content="{Binding User}"></Label>
+            <Label Content="{Binding Competition}"></Label>
         </StackPanel>
     </DataTemplate>
 </ResourceDictionary>

@@ -1,18 +1,20 @@
-﻿using AppPublication.Tools.Enum;
+﻿using AppPublication.Controles;
+using AppPublication.Statistiques;
+using AppPublication.Tools.Enum;
+using FranceJudo.Core.Diagnostic;
+using FranceJudo.Core.Logging;
+using FranceJudo.Core.Threading;
+using FranceJudo.Metier.Network;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.XML;
 using JudoClient;
 using JudoClient.Communication;
 using KernelImpl;
-using KernelImpl.Enum;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Threading;
-using Tools.Logging;
-using AppPublication.Statistiques;
-using AppPublication.Controles;
 
 namespace AppPublication.Data
 {
@@ -62,7 +64,7 @@ namespace AppPublication.Data
         private static ConnectedJudoDataManager _instance = null;   // Singleton
         private readonly object _lock = new object();            // Pour les verrous
         private ClientJudoStatusEnum _status = ClientJudoStatusEnum.Idle;   // Le statut du client
-        SingleShotTimer _timerReponse = null;     // Timer d'attente d'une reponse la reponse
+        readonly SingleShotTimer _timerReponse = null;     // Timer d'attente d'une reponse la reponse
 
         private readonly object _lockDirty = new object();  // Objet de verrouillage pour garantir l'accès exclusif
         private bool _isCombatsCacheDirty = false; // Le flag d'état
@@ -73,7 +75,7 @@ namespace AppPublication.Data
         private StatMgrDonnees _statManager = null;
         private IClientProvider _clientProvider = null;
 
-        private ConcurrentDictionary<ServerCommandEnum, EchangeMarkup> _balisesEchanges;
+        readonly private ConcurrentDictionary<ServerCommandEnum, EchangeMarkup> _balisesEchanges;
 
         #endregion
 
@@ -86,7 +88,7 @@ namespace AppPublication.Data
 
         #region CONSTRUCTEUR
 
-        private ConnectedJudoDataManager(JudoData dataMgr, StatMgrDonnees statMgr, IClientProvider provider )
+        private ConnectedJudoDataManager(JudoData dataMgr, StatMgrDonnees statMgr, IClientProvider provider)
         {
             InternalDataManager = dataMgr;
             StatistiquesManager = statMgr;
@@ -146,7 +148,7 @@ namespace AppPublication.Data
         {
             get
             {
-                if(_clientProvider == null)
+                if (_clientProvider == null)
                 {
                     throw new InvalidOperationException("Le fournisseur de client n'a pas ete enregistre.");
                 }
@@ -155,12 +157,7 @@ namespace AppPublication.Data
 
             private set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(value), "Le fournisseur de client ne peut pas être null.");
-                }
-
-                _clientProvider = value;
+                _clientProvider = value ?? throw new ArgumentNullException(nameof(value), "Le fournisseur de client ne peut pas être null.");
                 _clientProvider.ClientReady += OnClientReady;
                 _clientProvider.ClientDisconnected += OnClientDisconnected;
             }
@@ -183,11 +180,7 @@ namespace AppPublication.Data
 
             set
             {
-                if(value == null)
-                {
-                    throw new ArgumentNullException(nameof(value), "Le gestionnaire de données ne peut pas être null.");
-                }
-                _dataManager = value;
+                _dataManager = value ?? throw new ArgumentNullException(nameof(value), "Le gestionnaire de données ne peut pas être null.");
             }
         }
 
@@ -205,11 +198,7 @@ namespace AppPublication.Data
 
             private set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(value), "Le gestionnaire de statistiques ne peut pas être null.");
-                }
-                _statManager = value;
+                _statManager = value ?? throw new ArgumentNullException(nameof(value), "Le gestionnaire de statistiques ne peut pas être null.");
             }
         }
 
@@ -239,7 +228,7 @@ namespace AppPublication.Data
                 }
             }
         }
-        
+
 
         /// <summary>
         /// Appelé quand un client est prêt et configuré
@@ -251,38 +240,38 @@ namespace AppPublication.Data
             var client = e.Client;
 
             // NOW subscribe to all ClientJudo events (moved from GestionConnection.setClient)
-            client.OnEndConnection += client_OnEndConnection;
+            client.OnEndConnection += Client_OnEndConnection;
 
-            client.TraitementConnexion.OnAcceptConnectionCOM += clientjudo_OnAcceptConnectionCOM;
+            client.TraitementConnexion.OnAcceptConnectionCOM += Client_OnAcceptConnectionCOM;
 
-            client.TraitementStructure.OnListeStructures += client_OnListeStructures;
-            client.TraitementStructure.OnUpdateStructures += client_OnUpdateStructures;
+            client.TraitementStructure.OnListeStructures += Client_OnListeStructures;
+            client.TraitementStructure.OnUpdateStructures += Client_OnUpdateStructures;
 
-            client.TraitementCategories.OnListeCategories += client_OnListeCategories;
-            client.TraitementCategories.OnUpdateCategories += client_OnUpdateCategories;
+            client.TraitementCategories.OnListeCategories += Client_OnListeCategories;
+            client.TraitementCategories.OnUpdateCategories += Client_OnUpdateCategories;
 
-            client.TraitementLogos.OnListeLogos += client_OnListeLogos;
-            client.TraitementLogos.OnUpdateLogos += client_OnUpdateLogos;
+            client.TraitementLogos.OnListeLogos += Client_OnListeLogos;
+            client.TraitementLogos.OnUpdateLogos += Client_OnUpdateLogos;
 
-            client.TraitementOrganisation.OnListeOrganisation += client_OnListeOrganisation;
-            client.TraitementOrganisation.OnUpdateOrganisation += client_OnUpdateOrganisation;
+            client.TraitementOrganisation.OnListeOrganisation += Client_OnListeOrganisation;
+            client.TraitementOrganisation.OnUpdateOrganisation += Client_OnUpdateOrganisation;
 
-            client.TraitementParticipants.OnListeEquipes += client_OnListeEquipes;
-            client.TraitementParticipants.OnUpdateEquipes += client_OnUpdateEquipes;
+            client.TraitementParticipants.OnListeEquipes += Client_OnListeEquipes;
+            client.TraitementParticipants.OnUpdateEquipes += Client_OnUpdateEquipes;
 
-            client.TraitementParticipants.OnListeJudokas += client_OnListeJudokas;
-            client.TraitementParticipants.OnUpdateJudokas += client_OnUpdateJudokas;
+            client.TraitementParticipants.OnListeJudokas += Client_OnListeJudokas;
+            client.TraitementParticipants.OnUpdateJudokas += Client_OnUpdateJudokas;
 
-            client.TraitementDeroulement.OnListePhases += client_OnListePhases;
-            client.TraitementDeroulement.OnUpdatePhases += client_OnUpdatePhases;
+            client.TraitementDeroulement.OnListePhases += Client_OnListePhases;
+            client.TraitementDeroulement.OnUpdatePhases += Client_OnUpdatePhases;
 
-            client.TraitementDeroulement.OnListeCombats += client_OnListeCombats;
-            client.TraitementDeroulement.OnUpdateCombats += client_OnUpdateCombats;
-            client.TraitementDeroulement.OnUpdateTapisCombats += client_OnUpdateTapisCombats;
-            client.TraitementDeroulement.OnUpdateRencontreReceived += client_onUpdateRencontres;
+            client.TraitementDeroulement.OnListeCombats += Client_OnListeCombats;
+            client.TraitementDeroulement.OnUpdateCombats += Client_OnUpdateCombats;
+            client.TraitementDeroulement.OnUpdateTapisCombats += Client_OnUpdateTapisCombats;
+            client.TraitementDeroulement.OnUpdateRencontreReceived += Client_onUpdateRencontres;
 
-            client.TraitementArbitrage.OnListeArbitrage += client_OnListeArbitrage;
-            client.TraitementArbitrage.OnUpdateArbitrage += client_OnUpdateArbitrage;
+            client.TraitementArbitrage.OnListeArbitrage += Client_OnListeArbitrage;
+            client.TraitementArbitrage.OnUpdateArbitrage += Client_OnUpdateArbitrage;
         }
 
         /// <summary>
@@ -310,7 +299,7 @@ namespace AppPublication.Data
         /// Arret de la connexion
         /// </summary>
         /// <param name="sender"></param>
-        public void client_OnEndConnection(object sender)
+        public void Client_OnEndConnection(object sender)
         {
             LogTools.Logger.Debug("Fin de connexion");
 
@@ -328,14 +317,14 @@ namespace AppPublication.Data
             {
                 LogTools.Logger.Error(ex, "Erreur lors de la gestion de la deconnexion");
             }
-        }     
+        }
 
         /// <summary>
         /// Reponse d'acception de la demande de connexion
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="element"></param>
-        public void clientjudo_OnAcceptConnectionCOM(object sender, XElement element)
+        public void Client_OnAcceptConnectionCOM(object sender, XElement element)
         {
             LogTools.Logger.Debug("clientjudo_OnAcceptConnectionCOM");
             LogTools.DebugLogData("clientjudo_OnAcceptConnectionCOM - Reception donnees: '{0}'", element);
@@ -376,11 +365,11 @@ namespace AppPublication.Data
         private void LectureDonneesStructures(XElement element)
         {
             var judoDataInstance = InternalDataManager;
-            judoDataInstance.Structures.lecture_clubs(element);
-            judoDataInstance.Structures.lecture_comites(element);
-            judoDataInstance.Structures.lecture_secteurs(element);
-            judoDataInstance.Structures.lecture_ligues(element);
-            judoDataInstance.Structures.lecture_pays(element);
+            judoDataInstance.Structures.ChargerClubs(element);
+            judoDataInstance.Structures.ChargerComites(element);
+            judoDataInstance.Structures.ChargerSecteurs(element);
+            judoDataInstance.Structures.ChargerLigues(element);
+            judoDataInstance.Structures.ChargerPays(element);
         }
 
         /// <summary>
@@ -388,24 +377,25 @@ namespace AppPublication.Data
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="element"></param>
-        public void client_OnListeStructures(object sender, XElement element)
+        public void Client_OnListeStructures(object sender, XElement element)
         {
             LogTools.Logger.Debug("client_OnListeStructures");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesStructures,
-                                                    (XElement elem) =>
+                                                    elem =>
                                                     {
                                                         EnregistrerFinEchange(ServerCommandEnum.DemandStructures);
-                                                        double delai = ActionWatcher.Execute( () => { LectureDonneesStructures(elem); });
+                                                        double delai = ActionWatcher.Execute(() => { LectureDonneesStructures(elem); });
                                                         NotifyDataUpdated(CategorieDonneesEnum.Structures);
                                                         // Enregistre la reception du snapshot complet dans les stats
                                                         _statManager?.EnregistrerSnapshotCompletRecu(delai);
                                                     },
                                                     BusyStatusEnum.DemandeDonneesCategories,
-                                                    () => {
+                                                    () =>
+                                                    {
                                                         EnregistrerDebutEchange(ServerCommandEnum.DemandCategories);
                                                         _clientProvider.Client.DemandeCategories();
-                                                        },
+                                                    },
                                                     element);
         }
 
@@ -414,13 +404,13 @@ namespace AppPublication.Data
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="element"></param>
-        public void client_OnUpdateStructures(object sender, XElement element)
+        public void Client_OnUpdateStructures(object sender, XElement element)
         {
             LogTools.Logger.Debug("client_OnUpdateStructures");
 
-            UpdateRequestDispatcher( (XElement elem) =>
+            UpdateRequestDispatcher(elem =>
                                         {
-                                            double delai = ActionWatcher.Execute( () => { LectureDonneesStructures(elem); });
+                                            double delai = ActionWatcher.Execute(() => { LectureDonneesStructures(elem); });
                                             _statManager?.EnregistrerSnapshotCompletRecu(delai);
                                         }
             , element);
@@ -434,9 +424,9 @@ namespace AppPublication.Data
         private void LectureDonneesCategories(XElement element)
         {
             var judoDataInstance = InternalDataManager;
-            judoDataInstance.Categories.lecture_cateages(element);
-            judoDataInstance.Categories.lecture_catepoids(element);
-            judoDataInstance.Categories.lecture_ceintures(element);
+            judoDataInstance.Categories.ChargeCategorieAges(element);
+            judoDataInstance.Categories.ChargeCategoriePoids(element);
+            judoDataInstance.Categories.ChargeCeintures(element);
         }
 
         /// <summary>
@@ -444,12 +434,12 @@ namespace AppPublication.Data
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="element"></param>
-        public void client_OnListeCategories(object sender, XElement element)
+        public void Client_OnListeCategories(object sender, XElement element)
         {
             LogTools.Logger.Debug("client_OnListeCategories");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesCategories,
-                                        (XElement elem) =>
+                                         elem =>
                                         {
                                             EnregistrerFinEchange(ServerCommandEnum.DemandCategories);
                                             double delai = ActionWatcher.Execute(() => { LectureDonneesCategories(elem); });
@@ -458,18 +448,19 @@ namespace AppPublication.Data
                                             _statManager?.EnregistrerSnapshotCompletRecu(delai);
                                         },
                                         BusyStatusEnum.DemandeDonneesLogos,
-                                        () => {
+                                        () =>
+                                        {
                                             EnregistrerDebutEchange(ServerCommandEnum.DemandLogos);
                                             _clientProvider.Client.DemandeLogos();
-                                            },
+                                        },
                                         element);
         }
 
-        public void client_OnUpdateCategories(object sender, XElement element)
+        public void Client_OnUpdateCategories(object sender, XElement element)
         {
             LogTools.Logger.Debug("client_OnUpdateCategories");
 
-            UpdateRequestDispatcher((XElement elem) =>
+            UpdateRequestDispatcher(elem =>
             {
                 double delai = ActionWatcher.Execute(() => { LectureDonneesCategories(elem); });
                 _statManager?.EnregistrerSnapshotCompletRecu(delai);
@@ -485,15 +476,15 @@ namespace AppPublication.Data
         private void LectureDonneesLogos(XElement element)
         {
             var judoDataInstance = InternalDataManager;
-            judoDataInstance.Logos.lecture_logos(element);
+            judoDataInstance.Logos.LectureLogos(element);
         }
 
-        public void client_OnListeLogos(object sender, XElement element)
+        public void Client_OnListeLogos(object sender, XElement element)
         {
             LogTools.Logger.Debug("client_OnListeLogos");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesLogos,
-                            (XElement elem) =>
+                            elem =>
                             {
                                 EnregistrerFinEchange(ServerCommandEnum.DemandLogos);
                                 double delai = ActionWatcher.Execute(() => { LectureDonneesLogos(elem); });
@@ -510,11 +501,11 @@ namespace AppPublication.Data
                             element);
         }
 
-        public void client_OnUpdateLogos(object sender, XElement element)
+        public void Client_OnUpdateLogos(object sender, XElement element)
         {
             LogTools.Logger.Debug("client_OnUpdateLogos");
-            
-            UpdateRequestDispatcher((XElement elem) =>
+
+            UpdateRequestDispatcher(elem =>
             {
                 double delai = ActionWatcher.Execute(() => { LectureDonneesLogos(elem); });
                 _statManager?.EnregistrerSnapshotCompletRecu(delai);
@@ -530,20 +521,20 @@ namespace AppPublication.Data
         private void LectureDonneesOrganisations(XElement element)
         {
             var judoDataInstance = InternalDataManager;
-            judoDataInstance.Organisation.lecture_competitions(element, judoDataInstance);
-            judoDataInstance.Organisation.lecture_epreuves_equipe(element, judoDataInstance);
-            judoDataInstance.Organisation.lecture_epreuves(element, judoDataInstance);
+            judoDataInstance.Organisation.ChargeCompetitions(element, judoDataInstance);
+            judoDataInstance.Organisation.ChargeEpreuvesEquipe(element, judoDataInstance);
+            judoDataInstance.Organisation.ChargeEpreuves(element, judoDataInstance);
         }
 
-        public void client_OnListeOrganisation(object sender, XElement element)
+        public void Client_OnListeOrganisation(object sender, XElement element)
         {
             LogTools.Logger.Debug("client_OnListeOrganisation");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesOrganisation,
-                            (XElement elem) =>
+                            elem =>
                             {
                                 EnregistrerFinEchange(ServerCommandEnum.DemandOrganisation);
-                                double delai = ActionWatcher.Execute( () => { LectureDonneesOrganisations(elem); });
+                                double delai = ActionWatcher.Execute(() => { LectureDonneesOrganisations(elem); });
                                 NotifyDataUpdated(CategorieDonneesEnum.Organisation);
                                 // Enregistre la reception du snapshot complet dans les stats
                                 _statManager?.EnregistrerSnapshotCompletRecu(delai);
@@ -566,15 +557,15 @@ namespace AppPublication.Data
                             element);
         }
 
-        public void client_OnUpdateOrganisation(object sender, XElement element)
+        public void Client_OnUpdateOrganisation(object sender, XElement element)
         {
             LogTools.Logger.Debug("client_OnUpdateOrganisation");
 
-            UpdateRequestDispatcher((XElement elem) =>
+            UpdateRequestDispatcher(elem =>
             {
                 double delai = ActionWatcher.Execute(() => { LectureDonneesOrganisations(elem); });
                 _statManager?.EnregistrerSnapshotCompletRecu(delai);
-                }, element);
+            }, element);
             NotifyDataUpdated(CategorieDonneesEnum.Organisation);
         }
 
@@ -585,20 +576,20 @@ namespace AppPublication.Data
         private void LectureDonneesEquipes(XElement element)
         {
             var judoDataInstance = InternalDataManager;
-            judoDataInstance.Participants.lecture_epreuves_judokas(element, judoDataInstance);
-            judoDataInstance.Participants.lecture_equipes(element);
-            judoDataInstance.Participants.lecture_judokas(element, judoDataInstance);
+            judoDataInstance.Participants.ChargeEpreuvesJudokas(element);
+            judoDataInstance.Participants.ChargeEquipes(element);
+            judoDataInstance.Participants.ChargeJudokas(element, judoDataInstance);
         }
 
-        public void client_OnListeEquipes(object sender, XElement element)
+        public void Client_OnListeEquipes(object sender, XElement element)
         {
             LogTools.Logger.Debug("client_OnListeEquipes");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesJudokas,
-                            (XElement elem) =>
+                            elem =>
                             {
                                 EnregistrerFinEchange(ServerCommandEnum.DemandEquipes);
-                                double delai = ActionWatcher.Execute( () => { LectureDonneesEquipes(elem); });
+                                double delai = ActionWatcher.Execute(() => { LectureDonneesEquipes(elem); });
                                 NotifyDataUpdated(CategorieDonneesEnum.Participants);
                                 // Enregistre la reception du snapshot complet dans les stats
                                 _statManager?.EnregistrerSnapshotCompletRecu(delai);
@@ -613,11 +604,11 @@ namespace AppPublication.Data
         }
 
 
-        public void client_OnUpdateEquipes(object sender, XElement element)
+        public void Client_OnUpdateEquipes(object sender, XElement element)
         {
             LogTools.Logger.Debug("client_OnUpdateEquipes");
 
-            UpdateRequestDispatcher((XElement elem) =>
+            UpdateRequestDispatcher(elem =>
             {
                 double delai = ActionWatcher.Execute(() => { LectureDonneesEquipes(elem); });
                 _statManager?.EnregistrerSnapshotCompletRecu(delai);
@@ -633,19 +624,19 @@ namespace AppPublication.Data
         private void LectureDonneesJudokas(XElement element)
         {
             var judoDataInstance = InternalDataManager;
-            judoDataInstance.Participants.lecture_epreuves_judokas(element, judoDataInstance);
-            judoDataInstance.Participants.lecture_judokas(element, judoDataInstance);
+            judoDataInstance.Participants.ChargeEpreuvesJudokas(element);
+            judoDataInstance.Participants.ChargeJudokas(element, judoDataInstance);
         }
 
-        public void client_OnListeJudokas(object sender, XElement element)
+        public void Client_OnListeJudokas(object sender, XElement element)
         {
             LogTools.Logger.Debug("client_OnListeJudokas");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesJudokas,
-                            (XElement elem) =>
+                            elem =>
                             {
                                 EnregistrerFinEchange(ServerCommandEnum.DemandJudokas);
-                                double delai = ActionWatcher.Execute( () => { LectureDonneesJudokas(elem); });
+                                double delai = ActionWatcher.Execute(() => { LectureDonneesJudokas(elem); });
                                 NotifyDataUpdated(CategorieDonneesEnum.Participants);
                                 // Enregistre la reception du snapshot complet dans les stats
                                 _statManager?.EnregistrerSnapshotCompletRecu(delai);
@@ -660,11 +651,11 @@ namespace AppPublication.Data
 
         }
 
-        public void client_OnUpdateJudokas(object sender, XElement element)
+        public void Client_OnUpdateJudokas(object sender, XElement element)
         {
             LogTools.Logger.Debug("client_OnUpdateJudokas");
 
-            UpdateRequestDispatcher((XElement elem) =>
+            UpdateRequestDispatcher(elem =>
             {
                 double delai = ActionWatcher.Execute(() => { LectureDonneesJudokas(elem); });
                 _statManager?.EnregistrerSnapshotCompletRecu(delai);
@@ -680,22 +671,22 @@ namespace AppPublication.Data
         {
             var judoDataInstance = InternalDataManager;
             // DC.ServerData.Deroulement.clear_deroulement();
-            judoDataInstance.Deroulement.lecture_phases(element);
-            judoDataInstance.Deroulement.lecture_participants(element);
-            judoDataInstance.Deroulement.lecture_decoupages(element);
-            judoDataInstance.Deroulement.lecture_poules(element);
-            judoDataInstance.Deroulement.lecture_groupes(element, judoDataInstance);
+            judoDataInstance.Deroulement.ChargePhases(element);
+            judoDataInstance.Deroulement.ChargeParticipants(element);
+            judoDataInstance.Deroulement.ChargeDecoupages(element);
+            judoDataInstance.Deroulement.ChargePoules(element);
+            judoDataInstance.Deroulement.ChargeGroupes(element, judoDataInstance);
         }
 
-        public void client_OnListePhases(object sender, XElement element)
+        public void Client_OnListePhases(object sender, XElement element)
         {
             LogTools.Logger.Debug("client_OnListePhases");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesPhases,
-                            (XElement elem) =>
+                            elem =>
                             {
                                 EnregistrerFinEchange(ServerCommandEnum.DemandPhases);
-                                double delai = ActionWatcher.Execute( () => { LectureDonneesPhases(elem); });
+                                double delai = ActionWatcher.Execute(() => { LectureDonneesPhases(elem); });
                                 NotifyDataUpdated(CategorieDonneesEnum.Deroulement);
                                 // Enregistre la reception du snapshot complet dans les stats
                                 _statManager?.EnregistrerSnapshotCompletRecu(delai);
@@ -709,11 +700,11 @@ namespace AppPublication.Data
                             element);
         }
 
-        public void client_OnUpdatePhases(object sender, XElement element)
+        public void Client_OnUpdatePhases(object sender, XElement element)
         {
             LogTools.Logger.Debug("client_OnUpdatePhases");
 
-            UpdateRequestDispatcher((XElement elem) =>
+            UpdateRequestDispatcher(elem =>
             {
                 double delai = ActionWatcher.Execute(() => { LectureDonneesPhases(elem); });
                 _statManager?.EnregistrerSnapshotCompletRecu(delai);
@@ -728,9 +719,9 @@ namespace AppPublication.Data
         private void LectureDonneesCombats(XElement element, bool isFull)
         {
             var judoDataInstance = InternalDataManager;
-            judoDataInstance.Deroulement.lecture_rencontres(element, isFull);
-            judoDataInstance.Deroulement.lecture_feuilles(element, isFull);
-            judoDataInstance.Deroulement.lecture_combats(element, judoDataInstance, isFull);
+            judoDataInstance.Deroulement.ChargeRencontres(element, isFull);
+            judoDataInstance.Deroulement.ChargeFeuilles(element, isFull);
+            judoDataInstance.Deroulement.ChargeCombats(element, judoDataInstance, isFull);
         }
 
 
@@ -744,7 +735,7 @@ namespace AppPublication.Data
             LectureDonneesCombats(element, false);
         }
 
-        public void client_OnListeCombats(object sender, XElement element)
+        public void Client_OnListeCombats(object sender, XElement element)
         {
             LogTools.Logger.Debug("client_OnListeCombats");
 
@@ -758,10 +749,10 @@ namespace AppPublication.Data
             if (isIdleContext)
             {
                 // Etape 1 : On intègre les données (Opération lourde)
-                UpdateRequestDispatcher( (XElement elem) =>
+                UpdateRequestDispatcher(elem =>
                 {
                     EnregistrerFinEchange(ServerCommandEnum.DemandCombats);
-                    double delai = ActionWatcher.Execute(() => { LectureDonneesCombatsFull(elem); } );
+                    double delai = ActionWatcher.Execute(() => { LectureDonneesCombatsFull(elem); });
                     _statManager?.EnregistrerSnapshotCompletRecu(delai);
                 },
                 element);
@@ -792,7 +783,7 @@ namespace AppPublication.Data
             {
                 // Logique d'initialisation standard (au démarrage de l'app)
                 InitializationRequestDispatcher(BusyStatusEnum.InitDonneesCombats,
-                                (XElement elem) =>
+                                elem =>
                                 {
                                     EnregistrerFinEchange(ServerCommandEnum.DemandCombats);
                                     double delai = ActionWatcher.Execute(() => { LectureDonneesCombatsFull(elem); });
@@ -810,7 +801,7 @@ namespace AppPublication.Data
             }
         }
 
-        public void client_OnUpdateTapisCombats(object sender, XElement element)
+        public void Client_OnUpdateTapisCombats(object sender, XElement element)
         {
             LogTools.Logger.Debug("client_OnUpdateTapisCombats, invalidation du cache");
 
@@ -830,7 +821,7 @@ namespace AppPublication.Data
 
         }
 
-        public void client_OnUpdateCombats(object sender, XElement element)
+        public void Client_OnUpdateCombats(object sender, XElement element)
         {
             LogTools.Logger.Debug("client_OnUpdateCombats");
 
@@ -849,7 +840,7 @@ namespace AppPublication.Data
             }
 
             // Si le cache est propre, on applique normalement
-            UpdateRequestDispatcher((XElement elem) =>
+            UpdateRequestDispatcher(elem =>
             {
                 double delai = ActionWatcher.Execute(() => { LectureDonneesCombatsDiff(elem); });
                 _statManager?.EnregistrerSnapshotDifferentielRecu(delai);
@@ -864,14 +855,14 @@ namespace AppPublication.Data
         private void LectureDonneesRencontres(XElement element)
         {
             var judoDataInstance = InternalDataManager;
-            judoDataInstance.Deroulement.lecture_rencontres(element, true);
+            judoDataInstance.Deroulement.ChargeRencontres(element, true);
         }
 
-        public void client_onUpdateRencontres(object sender, XElement element)
+        public void Client_onUpdateRencontres(object sender, XElement element)
         {
             LogTools.Logger.Debug("client_onUpdateRencontres");
 
-            UpdateRequestDispatcher((XElement elem) =>
+            UpdateRequestDispatcher(elem =>
             {
                 double delai = ActionWatcher.Execute(() => { LectureDonneesRencontres(elem); });
                 _statManager?.EnregistrerSnapshotCompletRecu(delai);
@@ -886,20 +877,20 @@ namespace AppPublication.Data
         private void LectureDonneesArbitrage(XElement element)
         {
             var judoDataInstance = InternalDataManager;
-            judoDataInstance.Arbitrage.lecture_arbitres(element);
-            judoDataInstance.Arbitrage.lecture_commissaires(element);
-            judoDataInstance.Arbitrage.lecture_delegues(element);
+            judoDataInstance.Arbitrage.ChargeArbitres(element);
+            judoDataInstance.Arbitrage.ChargeCommissaires(element);
+            judoDataInstance.Arbitrage.ChargeDelegues(element);
         }
 
-        public void client_OnListeArbitrage(object sender, XElement element)
+        public void Client_OnListeArbitrage(object sender, XElement element)
         {
             LogTools.Logger.Debug("client_OnListeArbitrage");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesArbitres,
-                                                   (XElement elem) =>
+                                                   elem =>
                                                    {
                                                        EnregistrerFinEchange(ServerCommandEnum.DemandArbitrage);
-                                                       double delai = ActionWatcher.Execute( () => { LectureDonneesArbitrage(elem); });
+                                                       double delai = ActionWatcher.Execute(() => { LectureDonneesArbitrage(elem); });
                                                        NotifyDataUpdated(CategorieDonneesEnum.Arbitrage);
                                                        // Enregistre la reception du snapshot complet dans les stats
                                                        _statManager?.EnregistrerSnapshotCompletRecu(delai);
@@ -909,15 +900,15 @@ namespace AppPublication.Data
                                                    element);
         }
 
-        public void client_OnUpdateArbitrage(object sender, XElement element)
+        public void Client_OnUpdateArbitrage(object sender, XElement element)
         {
             LogTools.Logger.Debug("client_OnUpdateArbitrage");
 
-            UpdateRequestDispatcher((XElement elem) =>
+            UpdateRequestDispatcher(elem =>
             {
                 double delai = ActionWatcher.Execute(() => { LectureDonneesArbitrage(elem); });
                 _statManager?.EnregistrerSnapshotCompletRecu(delai);
-                }, element);
+            }, element);
             NotifyDataUpdated(CategorieDonneesEnum.Arbitrage);
         }
 
@@ -972,8 +963,7 @@ namespace AppPublication.Data
         {
             try
             {
-                EchangeMarkup cTag;
-                if (_balisesEchanges.TryGetValue(categorie, out cTag))
+                if (_balisesEchanges.TryGetValue(categorie, out EchangeMarkup cTag))
                 {
                     double? delai = cTag.ReponseRecue();
                     if (delai.HasValue)
@@ -1000,7 +990,7 @@ namespace AppPublication.Data
             // Affiche un message d'erreur a l'utilisateur
             if (withMessage)
             {
-                LogTools.Alert("Une erreur est survenue lors du chargement initiale des données. Les données peuvent être incorrecte. Veuillez essayer de vous reconnecter au serveur", "Initialisation");
+                LogTools.Alert("Une erreur est survenue lors du chargement initiale des données. Les données peuvent être incorrecte. Veuillez essayer de vous reconnecter au serveur");
             }
         }
 
@@ -1039,28 +1029,28 @@ namespace AppPublication.Data
         {
             try
             {
-                client.OnEndConnection -= client_OnEndConnection;
-                client.TraitementConnexion.OnAcceptConnectionCOM -= clientjudo_OnAcceptConnectionCOM;
-                client.TraitementStructure.OnListeStructures -= client_OnListeStructures;
-                client.TraitementStructure.OnUpdateStructures -= client_OnUpdateStructures;
-                client.TraitementCategories.OnListeCategories -= client_OnListeCategories;
-                client.TraitementCategories.OnUpdateCategories -= client_OnUpdateCategories;
-                client.TraitementLogos.OnListeLogos -= client_OnListeLogos;
-                client.TraitementLogos.OnUpdateLogos -= client_OnUpdateLogos;
-                client.TraitementOrganisation.OnListeOrganisation -= client_OnListeOrganisation;
-                client.TraitementOrganisation.OnUpdateOrganisation -= client_OnUpdateOrganisation;
-                client.TraitementParticipants.OnListeEquipes -= client_OnListeEquipes;
-                client.TraitementParticipants.OnUpdateEquipes -= client_OnUpdateEquipes;
-                client.TraitementParticipants.OnListeJudokas -= client_OnListeJudokas;
-                client.TraitementParticipants.OnUpdateJudokas -= client_OnUpdateJudokas;
-                client.TraitementDeroulement.OnListePhases -= client_OnListePhases;
-                client.TraitementDeroulement.OnUpdatePhases -= client_OnUpdatePhases;
-                client.TraitementDeroulement.OnListeCombats -= client_OnListeCombats;
-                client.TraitementDeroulement.OnUpdateCombats -= client_OnUpdateCombats;
-                client.TraitementDeroulement.OnUpdateTapisCombats -= client_OnUpdateTapisCombats;
-                client.TraitementDeroulement.OnUpdateRencontreReceived -= client_onUpdateRencontres;
-                client.TraitementArbitrage.OnListeArbitrage -= client_OnListeArbitrage;
-                client.TraitementArbitrage.OnUpdateArbitrage -= client_OnUpdateArbitrage;
+                client.OnEndConnection -= Client_OnEndConnection;
+                client.TraitementConnexion.OnAcceptConnectionCOM -= Client_OnAcceptConnectionCOM;
+                client.TraitementStructure.OnListeStructures -= Client_OnListeStructures;
+                client.TraitementStructure.OnUpdateStructures -= Client_OnUpdateStructures;
+                client.TraitementCategories.OnListeCategories -= Client_OnListeCategories;
+                client.TraitementCategories.OnUpdateCategories -= Client_OnUpdateCategories;
+                client.TraitementLogos.OnListeLogos -= Client_OnListeLogos;
+                client.TraitementLogos.OnUpdateLogos -= Client_OnUpdateLogos;
+                client.TraitementOrganisation.OnListeOrganisation -= Client_OnListeOrganisation;
+                client.TraitementOrganisation.OnUpdateOrganisation -= Client_OnUpdateOrganisation;
+                client.TraitementParticipants.OnListeEquipes -= Client_OnListeEquipes;
+                client.TraitementParticipants.OnUpdateEquipes -= Client_OnUpdateEquipes;
+                client.TraitementParticipants.OnListeJudokas -= Client_OnListeJudokas;
+                client.TraitementParticipants.OnUpdateJudokas -= Client_OnUpdateJudokas;
+                client.TraitementDeroulement.OnListePhases -= Client_OnListePhases;
+                client.TraitementDeroulement.OnUpdatePhases -= Client_OnUpdatePhases;
+                client.TraitementDeroulement.OnListeCombats -= Client_OnListeCombats;
+                client.TraitementDeroulement.OnUpdateCombats -= Client_OnUpdateCombats;
+                client.TraitementDeroulement.OnUpdateTapisCombats -= Client_OnUpdateTapisCombats;
+                client.TraitementDeroulement.OnUpdateRencontreReceived -= Client_onUpdateRencontres;
+                client.TraitementArbitrage.OnListeArbitrage -= Client_OnListeArbitrage;
+                client.TraitementArbitrage.OnUpdateArbitrage -= Client_OnUpdateArbitrage;
             }
             catch (Exception ex)
             {
@@ -1142,7 +1132,7 @@ namespace AppPublication.Data
                     if (nextStatus != BusyStatusEnum.None && null != nextAction)
                     {
                         SetBusyStatus(nextStatus);
- 
+
                         // appel le callback suivant
                         nextAction?.Invoke();
 
@@ -1308,10 +1298,7 @@ namespace AppPublication.Data
         /// <param name="actionMiseAJour"></param>
         public void RunSafeDataUpdate(Action actionMiseAJour)
         {
-            if (InternalDataManager != null)
-            {
-                InternalDataManager.RunSafeDataUpdate(actionMiseAJour);
-            }
+            InternalDataManager?.RunSafeDataUpdate(actionMiseAJour);
         }
 
         #endregion

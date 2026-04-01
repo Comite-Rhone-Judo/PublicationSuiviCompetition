@@ -1,10 +1,6 @@
 ﻿
-using AppPublication.Tools.Files;
-using AppPublication.Tools.FranceJudo;
-using System;
-using System.Collections.Generic;
+using FranceJudo.Core.Configuration;
 using System.Configuration;
-using Tools.Configuration;
 
 namespace AppPublication.Config.Generation
 {
@@ -30,10 +26,7 @@ namespace AppPublication.Config.Generation
         /// </summary>
         protected override void NotifyParentOfModification()
         {
-            if (GenerationConfigSection.Instance != null)
-            {
-                GenerationConfigSection.Instance.NotifyChildModification();
-            }
+            GenerationConfigSection.Instance?.NotifyChildModification();
         }
         #endregion
 

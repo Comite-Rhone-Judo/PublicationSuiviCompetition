@@ -1,6 +1,4 @@
-﻿using KernelImpl.Internal;
-
-namespace KernelImpl.Internal
+﻿namespace KernelImpl.Internal
 {
     /// <summary>
     /// Cache générique pour tout type d'objet (Dictionnaire, Objet complexe).

@@ -1,17 +1,18 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Structures;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.XML;
 
 namespace KernelImpl.Noyau.Structures
 {
     /// <summary>
     /// Description des Comites
     /// </summary>
-    public class Comite : IEntityWithKey<string>
+    public class Comite : IComite, IEntityWithKey<string>
     {
         string IEntityWithKey<string>.EntityKey => _idCache;
         private string _idCache;
@@ -21,8 +22,7 @@ namespace KernelImpl.Noyau.Structures
         {
             get
             {
-                int com = 0;
-                if (int.TryParse(_id, out com))
+                if (int.TryParse(_id, out int com))
                 {
                     return com.ToString("00");
                 }
@@ -58,12 +58,11 @@ namespace KernelImpl.Noyau.Structures
             this.secteur = XMLTools.LectureString(xcomite.Attribute(ConstantXML.Comite_Secteur));
         }
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xcomite = new XElement(ConstantXML.Comite);
 
-            int com = 0;
-            if (int.TryParse(id, out com))
+            if (int.TryParse(id, out int com))
             {
                 xcomite.SetAttributeValue(ConstantXML.Comite_ID, com.ToString("00"));
             }
@@ -88,7 +87,7 @@ namespace KernelImpl.Noyau.Structures
         /// <param name="MI">fonction d'info</param>
         /// <returns>Comites</returns>
 
-        public static ICollection<Comite> LectureComites(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Comite> LectureComites(XElement xelement)
         {
             ICollection<Comite> comites = new List<Comite>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.Comite))
