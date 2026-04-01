@@ -10,7 +10,9 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace AppPublication.ViewModels.Configuration
@@ -75,8 +77,85 @@ namespace AppPublication.ViewModels.Configuration
 
 
         #region COMMANDES
-        public ICommand CmdLancerRecherche { get; }
-        public ICommand CmdAnnulerRecherche { get; }
+
+        private ICommand _cmdLancerRecherche;
+        public ICommand CmdLancerRecherche {
+            get
+            {
+                _cmdLancerRecherche ??= new RelayCommand(async (o) =>
+                {
+                    await LancerRechercheAsync();
+                },
+                (o) =>
+                {
+                    return !IsScanning && SelectedInterface != null;
+                });
+
+                return _cmdLancerRecherche;
+            }
+        }
+        
+        private ICommand _cmdAnnulerRecherche;
+        public ICommand CmdAnnulerRecherche
+        {
+            get
+            {
+                _cmdAnnulerRecherche ??= new RelayCommand( (o) =>
+                {
+                    AnnulerRecherche();
+                },
+                (o) =>
+                {
+                    return IsScanning;
+                });
+
+                return _cmdAnnulerRecherche;
+            }
+        }
+
+        private ICommand _cmdValider;
+        public ICommand CmdValider
+        {
+            get
+            {
+                _cmdValider ??= new RelayCommand(o =>
+                {
+                    if (o is Window window)
+                    {
+                        window.DialogResult = true;
+                        window.Close();
+                    }
+                },
+                o =>
+                {
+                    return SelectedDevice != null;
+                });
+
+                return _cmdValider;
+            }
+        }
+        private ICommand _cmdFermer; 
+        public ICommand CmdFermer
+        {
+            get
+            {
+                _cmdFermer ??= new RelayCommand(o =>
+                {
+                    if (o is Window window)
+                    {
+                        window.DialogResult = false;
+                        window.Close();
+                    }
+                },
+                o =>
+                {
+                    return true;
+                });
+
+                return _cmdFermer;
+            }
+        }
+        public ICommand CmdWindowClosing { get; }
 
         #endregion
 
@@ -84,9 +163,8 @@ namespace AppPublication.ViewModels.Configuration
         public NetworkScannerViewModel(NetworkScannerContext context)
         {
             _context = context;
-
-            CmdLancerRecherche = new RelayCommand(async (o) => await LancerRechercheAsync(), (o) => !IsScanning && SelectedInterface != null);
-            CmdAnnulerRecherche = new RelayCommand((o) => AnnulerRecherche(), (o) => IsScanning);
+            // Nouvelles commandes
+            CmdWindowClosing = new RelayCommand((o) => AnnulerRecherche());
 
             ChargerInterfacesReseau();
         }
