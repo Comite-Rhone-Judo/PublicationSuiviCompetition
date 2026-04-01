@@ -26,7 +26,7 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/list-32.png" Stretch="Fill" Height="24" Width="24" Margin="4,0,4,0" VerticalAlignment="Center"/>
+            <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/list-32.png" Stretch="Fill" Height="24" Width="24" Margin="4,0,4,0" VerticalAlignment="Center"/>
             <TextBlock Text="Liste des serveurs disponibles" Style="{StaticResource Header2TextStyle}"/>
         </StackPanel>
 
@@ -35,7 +35,7 @@
             <TextBox Name="TextIpAdress" Width="170" VerticalAlignment="Center"/>
             <telerik:RadButton  x:Name="ButSeConnecterServer"  IsDefault="True" Click="ButSeConnecterServer_Click_1" Margin="10 0 0 0" >
                 <WrapPanel Orientation="Horizontal">
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/search-32.png" Height="25" Margin="5 0"/>
+                    <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/search-32.png" Height="25" Margin="5 0"/>
                     <Label Content="Se connecter au serveur" />
                 </WrapPanel>
             </telerik:RadButton>
@@ -50,7 +50,7 @@
         <!--<WrapPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
             <telerik:RadButton  x:Name="ButServer"  IsDefault="True" Click="Button_Click" >
                 <WrapPanel Orientation="Horizontal">
-                    <Image Source="pack://application:,,,/Tools;component/data/images/icons/black/search-32.png" Height="25" Margin="5 0"/>
+                    <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/search-32.png" Height="25" Margin="5 0"/>
                     <Label Content="Trouver un serveur" />
                 </WrapPanel>
             </telerik:RadButton>

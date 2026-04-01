@@ -1,14 +1,16 @@
 ﻿using AppPublication.Config.Publication;
-using HttpServer.HttpModules;
-using KernelImpl.Noyau.Structures;
+using FranceJudo.Core.Logging;
+using FranceJudo.Core.Network;
+using FranceJudo.Core.Network.Http;
+using FranceJudo.Core.Network.Http.Context;
+using FranceJudo.Core.Network.Http.HttpServer.HttpModules;
+using FranceJudo.Core.Utils;
+using FranceJudo.UI.Wpf.Foundation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
-using Tools.Core;
-using Tools.Logging;
-using Tools.Net;
+using System.Windows;
 
 namespace AppPublication.Publication
 {
@@ -70,6 +72,21 @@ namespace AppPublication.Publication
         #endregion
 
         #region PROPERTIES
+
+        public override StatusMiniSite Status
+        {
+            get => base.Status;
+            protected set
+            {
+                // On intercepte la modification pour la rediriger sur le thread UI
+                Application.Current?.ExecOnUiThread(() =>
+                {
+                    // L'appel à la base va exécuter le code du Core (avec les NotifyPropertyChanged)
+                    // de manière totalement sécurisée !
+                    base.Status = value;
+                });
+            }
+        }
 
         private string _instanceName = string.Empty;
         /// <summary>
@@ -165,7 +182,7 @@ namespace AppPublication.Publication
             }
             set
             {
-                if(base.SiteFTPDistant != value)
+                if (base.SiteFTPDistant != value)
                 {
                     // Mise à jour de la valeur en mémoire
                     base.SiteFTPDistant = value;
@@ -190,7 +207,7 @@ namespace AppPublication.Publication
             }
             set
             {
-                if(base.LoginSiteFTPDistant != value)
+                if (base.LoginSiteFTPDistant != value)
                 {
                     // Mise à jour de la valeur en mémoire
                     base.LoginSiteFTPDistant = value;
@@ -215,7 +232,7 @@ namespace AppPublication.Publication
             }
             set
             {
-                if(base.ModeActifFTPDistant != value)
+                if (base.ModeActifFTPDistant != value)
                 {
                     // Mise à jour de la valeur en mémoire
                     base.ModeActifFTPDistant = value;
@@ -265,7 +282,7 @@ namespace AppPublication.Publication
             }
             set
             {
-                if(base.SynchroniseDifferences != value)
+                if (base.SynchroniseDifferences != value)
                 {
                     // Mise à jour de la valeur en mémoire
                     base.SynchroniseDifferences = value;

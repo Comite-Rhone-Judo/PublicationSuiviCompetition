@@ -1,14 +1,11 @@
-﻿using AppPublication.Config.Publication;
-using AppPublication.Export;
-using AppPublication.Generation;
+﻿
 using AppPublication.Statistiques;
+using FranceJudo.Core.Diagnostic;
+using FranceJudo.Core.Logging;
 using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Tools.Logging;
-using Tools.Net;
-
 
 namespace AppPublication.Generation
 {
@@ -48,9 +45,9 @@ namespace AppPublication.Generation
         #region MEMBRES
         private CancellationTokenSource _tokenSource;   // Token pour la gestion de la thread de lecture
         private Task _taskGeneration = null;            // La tache de generation
-        private StatMgrGeneration _statMgrGeneration = null;    // Pour le gestion des statistiques
-        private StatMgrSynchronisation _statMgrSynchronisation= null;    // Pour le gestion des statistiques
-        private IGenerateurSite _generateur;            // le generateur de site
+        readonly private StatMgrGeneration _statMgrGeneration = null;    // Pour le gestion des statistiques
+        readonly private StatMgrSynchronisation _statMgrSynchronisation = null;    // Pour le gestion des statistiques
+        readonly private IGenerateurSite _generateur;            // le generateur de site
 
         private long _generationCounter = 0;                        // Nombre de generation realisees depuis le demarrage
         // --- Événement unique pour tout _statMgr d'état (Interne ou Métier) ---
@@ -97,12 +94,8 @@ namespace AppPublication.Generation
         {
             get
             {
-                if (_statGeneration == null)
-                {
-                    _statGeneration = new TaskExecutionInformation();
-                }
+                _statGeneration ??= new TaskExecutionInformation();
                 return _statGeneration;
-
             }
             private set
             {
@@ -118,10 +111,7 @@ namespace AppPublication.Generation
         {
             get
             {
-                if (_statSync == null)
-                {
-                    _statSync = new TaskExecutionInformation();
-                }
+                _statSync ??= new TaskExecutionInformation();
                 return _statSync;
             }
             private set
@@ -271,7 +261,7 @@ namespace AppPublication.Generation
                     _generateur?.Demarrage();
 
                     // Lance la tache de fond de generation
-                    _taskGeneration = Task.Factory.StartNew( () => { GenerationRun(); }, _tokenSource.Token);
+                    _taskGeneration = Task.Factory.StartNew(() => { GenerationRun(); }, _tokenSource.Token);
                 }
                 catch (Exception ex)
                 {
@@ -351,15 +341,15 @@ namespace AppPublication.Generation
 
                                 // Lance la tache du generateyr en mesurant son temps de travail
                                 var genTime = ActionWatcher.Execute<ResultatOperation>(() => { return _generateur.ExecuteGeneration(); });
-                                
+
                                 // Recupere le resultat et les stats
                                 statGeneration.DelaiExecutionMs = genTime.DurationMs;
                                 statGeneration.IsSuccess = genTime.Result.IsSuccess;
                                 SiteGenere = genTime.Result.IsSuccess;
 
-                                _statMgrGeneration?.EnregistrerGeneration( (float) genTime.DurationMs / 1000F);
+                                _statMgrGeneration?.EnregistrerGeneration((float)genTime.DurationMs / 1000F);
 
-                                if(SiteGenere)
+                                if (SiteGenere)
                                 {
                                     try
                                     {

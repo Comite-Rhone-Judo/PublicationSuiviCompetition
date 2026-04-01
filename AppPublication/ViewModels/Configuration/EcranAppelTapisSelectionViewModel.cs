@@ -1,4 +1,4 @@
-﻿using Tools.Framework;
+﻿using FranceJudo.Core.Foundation;
 
 namespace AppPublication.ViewModels.Configuration
 {

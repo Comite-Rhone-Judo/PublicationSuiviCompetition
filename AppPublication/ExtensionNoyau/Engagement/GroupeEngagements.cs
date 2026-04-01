@@ -1,11 +1,7 @@
-﻿using KernelImpl.Noyau.Organisation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.XML;
 using System.Xml.Linq;
-using Tools.Enum;
+
 
 namespace AppPublication.ExtensionNoyau.Engagement
 {

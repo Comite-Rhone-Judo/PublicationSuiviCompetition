@@ -1,11 +1,13 @@
-﻿using System.Xml.Linq;
-using Tools.Enum;
+﻿using FranceJudo.Metier.XML;
+using System.Xml.Linq;
+
+
 
 namespace JudoClient.Communication
 {
     public class TraitementParticipants
     {
-        ClientJudo _client = null;
+        readonly ClientJudo _client = null;
 
         public TraitementParticipants(ClientJudo client)
         {
@@ -26,36 +28,24 @@ namespace JudoClient.Communication
 
         public void ListeJudokas(XElement element)
         {
-            if (OnListeJudokas != null)
-            {
-                OnListeJudokas(this, element);
-            }
+            OnListeJudokas?.Invoke(this, element);
         }
 
 
         public void ListeEquipes(XElement element)
         {
-            if (OnListeEquipes != null)
-            {
-                OnListeEquipes(_client, element);
-            }
+            OnListeEquipes?.Invoke(_client, element);
         }
 
         public void ListeLicencies(XElement element)
         {
-            if (OnListeLicencies != null)
-            {
-                OnListeLicencies(this, element);
-            }
+            OnListeLicencies?.Invoke(this, element);
         }
 
         private void InscriptionReceived(XElement element)
         {
             int judoka = int.Parse(element.Element(ConstantXML.Judoka).Value);
-            if (OnInscriptionReceived != null)
-            {
-                OnInscriptionReceived(_client, judoka);
-            }
+            OnInscriptionReceived?.Invoke(_client, judoka);
         }
 
 
@@ -67,18 +57,12 @@ namespace JudoClient.Communication
 
         public void UpdateJudokas(XElement element)
         {
-            if (OnUpdateJudokas != null)
-            {
-                OnUpdateJudokas(this, element);
-            }
+            OnUpdateJudokas?.Invoke(this, element);
         }
 
         public void UpdateEquipes(XElement element)
         {
-            if (OnUpdateEquipes != null)
-            {
-                OnUpdateEquipes(_client, element);
-            }
+            OnUpdateEquipes?.Invoke(_client, element);
         }
     }
 }

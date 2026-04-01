@@ -1,14 +1,15 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.XML;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class Phase_Decoupage : IEntityWithKey<int>
+    public class Phase_Decoupage : IPhase_Decoupage, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -27,7 +28,7 @@ namespace KernelImpl.Noyau.Deroulement
             this.decoupage_poule = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.PhaseDecoupage_Poule));
         }
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xdecoup = new XElement(ConstantXML.PhaseDecoupage);
 
@@ -49,7 +50,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// <param name="MI">fonction d'info</param>
         /// <returns>Feuilles</returns>
 
-        public static ICollection<Phase_Decoupage> LectureDecoupages(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Phase_Decoupage> LectureDecoupages(XElement xelement)
         {
             ICollection<Phase_Decoupage> decoupages = new List<Phase_Decoupage>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.PhaseDecoupage))

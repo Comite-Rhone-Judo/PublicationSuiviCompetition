@@ -1,9 +1,10 @@
-﻿using System;
-using Tools.Outils;
-using Tools.Export;
+﻿using FranceJudo.Core.Network.Url;
+using FranceJudo.Metier.Site;
+using System;
+
 
 namespace AppPublication.Publication
-{ 
+{
     /// <summary>
     /// Generateur d'URL du site interne
     /// </summary>
@@ -76,7 +77,7 @@ namespace AppPublication.Publication
         protected override void BuildCompetitionUrl(string competitionId, Uri rootDomain, out string urlPath, out Uri baseUri)
         {
             urlPath = _isolate
-                ? $"{OutilsTools.TraiteChaineURL(competitionId)}/"
+                ? $"{competitionId.TraiteChaineURL()}/"
                 : $"{kCourante}/";
 
             baseUri = new Uri(rootDomain, urlPath);

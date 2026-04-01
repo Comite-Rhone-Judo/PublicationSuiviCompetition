@@ -1,14 +1,16 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.XML;
+
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class Poule : IEntityWithKey<int>
+    public class Poule : IPoule, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -18,7 +20,7 @@ namespace KernelImpl.Noyau.Deroulement
         public int id { get; set; }
         public int nbparticipant { get; set; }
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xpoule = new XElement(ConstantXML.Poule);
 
@@ -44,7 +46,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// <param name="MI">fonction d'info</param>
         /// <returns>poules</returns>
 
-        public static ICollection<Poule> LecturePoules(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Poule> LecturePoules(XElement xelement)
         {
             ICollection<Poule> poules = new List<Poule>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.Poule))

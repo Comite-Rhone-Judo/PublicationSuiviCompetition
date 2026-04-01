@@ -1,17 +1,20 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.IO;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Structures;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Media.Imaging;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.XML;
+
 
 namespace KernelImpl.Noyau.Structures
 {
-    public class Pays : IEntityWithKey<int>
+    public class Pays : IPays, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -24,7 +27,7 @@ namespace KernelImpl.Noyau.Structures
 
         public BitmapImage GetFlag()
         {
-            string uri_flag = ConstantFile.MediaFlags_dir + @"" + this.abr3 + ".svg_800.png";
+            string uri_flag = AppDirectoryManager.MediaFlagsDir + @"" + this.abr3 + ".svg_800.png";
             if (File.Exists(uri_flag))
             {
                 return new BitmapImage(new Uri(uri_flag));
@@ -44,7 +47,7 @@ namespace KernelImpl.Noyau.Structures
             this.AbrF = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Pays_AbrF));
         }
 
-        public System.Xml.Linq.XElement ToXml()
+        public System.Xml.Linq.XElement ToXml(IJudoData DC = null)
         {
 
             XElement xpays = new System.Xml.Linq.XElement(ConstantXML.Pays);
@@ -65,7 +68,7 @@ namespace KernelImpl.Noyau.Structures
         /// <param name="MI">fonction d'info</param>
         /// <returns>Ligues</returns>
 
-        public static ICollection<Pays> LecturePays(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Pays> LecturePays(XElement xelement)
         {
             ICollection<Pays> _pays = new List<Pays>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.Pays))

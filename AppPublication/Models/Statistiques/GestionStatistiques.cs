@@ -1,9 +1,5 @@
-﻿using AppPublication.Generation;
-using AppPublication.Statistiques;
-using System.Collections.Generic;
-using Tools.Framework;
-using Tools.Logging;
-using Tools.Net;
+﻿using AppPublication.Statistiques;
+using FranceJudo.Core.Foundation;
 
 namespace AppPublication.Models.Statistiques
 {

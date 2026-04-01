@@ -1,15 +1,13 @@
 ﻿using AppPublication.Controles;
 using AppPublication.Views.Server;
-using KernelImpl.Noyau.Organisation;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.UI.Wpf.Dialogs;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Telerik.Windows.Controls;
-using Tools.Logging;
-using Tools.Export;
-using Tools.Windows;
 
 namespace AppPublication.Views.Main
 {
@@ -19,8 +17,8 @@ namespace AppPublication.Views.Main
     public partial class MainView : Window //, ICommissaireWindow
     {
 
-        private ObservableCollection<i_vue_epreuve_interface> _source1 = new ObservableCollection<i_vue_epreuve_interface>();
-        private ObservableCollection<Competition> _source2 = new ObservableCollection<Competition>();
+        readonly private ObservableCollection<i_vue_epreuve_interface> _source1 = new ObservableCollection<i_vue_epreuve_interface>();
+        readonly private ObservableCollection<ICompetition> _source2 = new ObservableCollection<ICompetition>();
 
         public MainView()
         {
@@ -32,21 +30,20 @@ namespace AppPublication.Views.Main
 
         private void MainWin_Closed_1(object sender, EventArgs e)
         {
-            if (DialogControleur.Instance.Connection.Client != null)
-            {
-                DialogControleur.Instance.Connection.Client.NetworkClient.Stop();
-            }
+            DialogControleur.Instance.Connection.Client?.NetworkClient.Stop();
 
             App.Current.Shutdown();
         }
 
         private void MainWindow1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            DialogParameters param = new DialogParameters();
-            param.OkButtonContent = "Oui";
-            param.CancelButtonContent = "Non";
-            param.Content = "Voulez-vous vraiment fermer l'application ?";
-            param.Header = "Fermeture de l'application";
+            DialogParameters param = new DialogParameters
+            {
+                OkButtonContent = "Oui",
+                CancelButtonContent = "Non",
+                Content = "Voulez-vous vraiment fermer l'application ?",
+                Header = "Fermeture de l'application"
+            };
 
             ConfirmWindow win = new ConfirmWindow(param);
             win.ShowDialog();
@@ -101,7 +98,7 @@ namespace AppPublication.Views.Main
         private void Window_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             // On doit configurer les mots de passe par defaut ici car le composant Password ne supporte pas le Binding sur cette propriete
-            if(e!= null && e.NewValue != null && e.NewValue.GetType() == typeof(DialogControleur) )
+            if (e != null && e.NewValue != null && e.NewValue.GetType() == typeof(DialogControleur))
             {
                 DialogControleur dc = (DialogControleur)e.NewValue;
                 this.AdvancedPwd.Password = dc.SiteCoordinator.GestionnaireSitePublique.SiteDistant.PasswordSiteFTPDistant;

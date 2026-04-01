@@ -1,15 +1,14 @@
-﻿using AppPublication.Config.Publication;
-using AppPublication.Generation;
+﻿using AppPublication.Generation;
 using AppPublication.Models.Statistiques;
 using AppPublication.Statistiques;
-using AppPublication.Tools.Files;
-using KernelImpl;
+using FranceJudo.Core.Foundation;
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
+using FranceJudo.Core.Network;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.UI.Wpf.Foundation;
 using System;
 using System.Net;
-using Tools.Framework;
-using Tools.Logging;
-using Tools.Net;
-using Tools.Threading;
 
 namespace AppPublication.Models.Publication
 {
@@ -32,7 +31,7 @@ namespace AppPublication.Models.Publication
         {
             get
             {
-                return (SiteLocal != null) ? !SiteLocal.IsActif && !IsGenerationActive : true;
+                return SiteLocal == null || !SiteLocal.IsActif && !IsGenerationActive;
             }
         }
 
@@ -159,10 +158,7 @@ namespace AppPublication.Models.Publication
                 {
                     _delaiGenerationSec = value;
                     // Configure le scheduler
-                    if (_schedulerSite != null)
-                    {
-                        _schedulerSite.DelaiGenerationSec = value;
-                    }
+                    _schedulerSite?.DelaiGenerationSec = value;
                     UpdateDelaiGenerationConfig(value); // Hook pour sauvegarder la bonne config
                     NotifyPropertyChanged();
                 }
@@ -182,10 +178,7 @@ namespace AppPublication.Models.Publication
                 {
                     _effacerAuDemarrage = value;
                     // Configure le scheduler
-                    if (_schedulerSite != null)
-                    {
-                        _schedulerSite.EffacerAuDemarrage = value;
-                    }
+                    _schedulerSite?.EffacerAuDemarrage = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -265,6 +258,8 @@ namespace AppPublication.Models.Publication
         protected abstract void OnIdCompetitionChanged(string newValue);
         #endregion
 
+        /// <summary>Force le recalcul et le rafraîchissement des URLs de publication pour l'interface</summary>
+        public abstract void ForceRefreshUrls();
         #region METHODES COMMUNES
 
         /// <summary>

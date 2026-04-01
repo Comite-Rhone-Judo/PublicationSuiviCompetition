@@ -1,5 +1,5 @@
-﻿using System.Configuration;
-using Tools.Configuration;
+﻿using FranceJudo.Core.Configuration;
+using System.Configuration;
 
 namespace AppPublication.Config.Publication
 {
@@ -21,10 +21,7 @@ namespace AppPublication.Config.Publication
         /// </summary>
         protected override void NotifyParentOfModification()
         {
-            if (PublicationConfigSection.Instance != null)
-            {
-                PublicationConfigSection.Instance.NotifyChildModification();
-            }
+            PublicationConfigSection.Instance?.NotifyChildModification();
         }
         #endregion
 

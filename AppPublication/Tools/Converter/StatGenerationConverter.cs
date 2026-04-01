@@ -1,8 +1,8 @@
-﻿using System;
+﻿using AppPublication.Statistiques;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
-using AppPublication.Statistiques;
 
 namespace AppPublication.Tools.Converter
 {

@@ -1,8 +1,7 @@
 ﻿using AppPublication.Generation;
+using FranceJudo.Core.Foundation;
+using FranceJudo.Core.Logging;
 using System.Collections.Generic;
-using Tools.Framework;
-using Tools.Logging;
-using Tools.Net; // Nécessaire pour ResultatOperation
 
 namespace AppPublication.Statistiques
 {

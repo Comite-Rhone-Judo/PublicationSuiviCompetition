@@ -1,23 +1,25 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Categories;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.XML;
 
 namespace KernelImpl.Noyau.Organisation
 {
     /// <summary>
     /// Description des Epreuves
     /// </summary>
-    public class Epreuve : IEntityWithKey<int>
+    public class Epreuve : IEpreuve, IEntityWithKey<int>
     {
 
         int IEntityWithKey<int>.EntityKey => id;
-        
+
         public int id { get; set; }
         public string nom { get; set; }
         public System.DateTime debut { get; set; }
@@ -46,8 +48,9 @@ namespace KernelImpl.Noyau.Organisation
             }
         }
 
-        private EpreuveSexe _sexeEnum; 
-        public EpreuveSexe sexeEnum {
+        private EpreuveSexe _sexeEnum;
+        public EpreuveSexe sexeEnum
+        {
             get
             {
                 return _sexeEnum;
@@ -91,9 +94,6 @@ namespace KernelImpl.Noyau.Organisation
 
 
             this.nom = name;
-            //(xinfo.Attribute(ConstantXML.Epreuve_CateAge_Nom) != null ? xinfo.Attribute(ConstantXML.Epreuve_CateAge_Nom).Value : "") + " " +
-            // (xinfo.Attribute(ConstantXML.Epreuve_CatePoids_Nom) != null ? xinfo.Attribute(ConstantXML.Epreuve_CatePoids_Nom).Value : "") + " " +
-            //xinfo.Attribute(ConstantXML.Epreuve_Sexe).Value;
             this.remoteID = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Epreuve_RemoteID));
             this.categoriePoids = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Epreuve_Categorie_Poids));
             this.competition = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Epreuve_Competition));
@@ -129,7 +129,7 @@ namespace KernelImpl.Noyau.Organisation
             //CateAge
             if (DC.Categories.CAges != null)
             {
-                Categories.CategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == categorieAge);
+                ICategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == categorieAge);
                 if (cateAge != null)
                 {
                     xepreuve.SetAttributeValue(ConstantXML.Epreuve_CateAge_Nom, cateAge.nom);
@@ -140,7 +140,7 @@ namespace KernelImpl.Noyau.Organisation
             if (DC.Categories.CPoids != null)
             {
                 //CatePoids
-                Categories.CategoriePoids catePoids = DC.Categories.CPoids.FirstOrDefault(o => o.id == categoriePoids);
+                ICategoriePoids catePoids = DC.Categories.CPoids.FirstOrDefault(o => o.id == categoriePoids);
                 if (catePoids != null)
                 {
                     xepreuve.SetAttributeValue(ConstantXML.Epreuve_CatePoids_Nom, catePoids.nom);
@@ -173,7 +173,7 @@ namespace KernelImpl.Noyau.Organisation
         /// <param name="MI">fonction d'info</param>
         /// <returns>les Epreuves</returns>
 
-        public static ICollection<Epreuve> LectureEpreuves(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Epreuve> LectureEpreuves(XElement xelement)
         {
             ICollection<Epreuve> epreuves = new List<Epreuve>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.Epreuve))

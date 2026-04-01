@@ -1,10 +1,9 @@
-﻿using AppPublication.Config.Generation;
-using AppPublication.Tools.Files;
-using AppPublication.Tools.FranceJudo;
+﻿using FranceJudo.Core.Configuration;
+using FranceJudo.Core.IO;
+using FranceJudo.Metier.Structures;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using Tools.Configuration;
 
 namespace AppPublication.Config.Publication
 {
@@ -39,10 +38,7 @@ namespace AppPublication.Config.Publication
         /// </summary>
         protected override void NotifyParentOfModification()
         {
-            if (PublicationConfigSection.Instance != null)
-            {
-                PublicationConfigSection.Instance.NotifyChildModification();
-            }
+            PublicationConfigSection.Instance?.NotifyChildModification();
         }
         #endregion
 

@@ -4,25 +4,22 @@ using AppPublication.Generation;
 using AppPublication.Models.Statistiques;
 using AppPublication.Publication;
 using AppPublication.Statistiques;
-using AppPublication.Tools.FranceJudo;
-using KernelImpl;
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
+using FranceJudo.Core.Network;
+using FranceJudo.Metier.IO;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Resources;
+using FranceJudo.Metier.Structures;
+using FranceJudo.Metier.XML;
+using FranceJudo.UI.Wpf.Dialogs;
+using FranceJudo.UI.Wpf.Foundation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using System.Threading.Tasks;
-using System.Xml;
-using Tools.Core;
-using Tools.Enum;
-using Tools.Export;
-using Tools.Files;
-using Tools.Logging;
-using Tools.Net;
-using Tools.Outils;
-using Tools.Windows;
-using Tools.Threading;
 
 namespace AppPublication.Models.Publication
 {
@@ -37,7 +34,7 @@ namespace AppPublication.Models.Publication
         #endregion
 
         #region MEMBRES
-        private GenerateurSite _generateurSite = null;                  // Le generateur Site
+        readonly private GenerateurSite _generateurSite = null;                  // Le generateur Site
         private SitePhysicalStructure _structureRepertoiresSite;          // La structure de repertoire d'export du site
         private SiteUrlGenerator _siteLocalUrlGenerator;                     // la structure d'export du site local
         private SiteUrlGenerator _siteDistantUrlGenerator;                   // la structure d'export du site distant
@@ -48,11 +45,11 @@ namespace AppPublication.Models.Publication
         private string _ftpEasyConfig = string.Empty;                   // Le serveur FTP EasyConfig
         private Uri _httpEasyConfig = null;                             // Le serveur http EasyConfig
 
-        private MiniSite _siteDistant = null;                           // Le site distant de base
-        private MiniSite _siteFranceJudo = null;                        // Le site distant France Judo
+        readonly private MiniSite _siteDistant = null;                           // Le site distant de base
+        readonly private MiniSite _siteFranceJudo = null;                        // Le site distant France Judo
 
         private string _localServerBaseUri = string.Empty;
-        private string _distantServerBaseUri = string.Empty;
+        readonly private string _distantServerBaseUri = string.Empty;
         #endregion
 
         #region CONSTRUCTEURS
@@ -101,7 +98,7 @@ namespace AppPublication.Models.Publication
         {
             get
             {
-                return (SiteDistantSelectionne != null) ? !SiteDistantSelectionne.IsActif && !SiteLocal.IsActif && !IsGenerationActive : true;
+                return SiteDistantSelectionne == null || !SiteDistantSelectionne.IsActif && !SiteLocal.IsActif && !IsGenerationActive;
             }
         }
 
@@ -389,16 +386,10 @@ namespace AppPublication.Models.Publication
             {
                 PublicationConfigSection.Instance.General.IsolerCompetition = (_isolerCompetition = value);
                 // Met a jour la structure d'export
-                if (_siteDistantUrlGenerator != null)
-                {
-                    _siteDistantUrlGenerator.CompetitionIsolee = _isolerCompetition;
-                }
+                _siteDistantUrlGenerator?.CompetitionIsolee = _isolerCompetition;
                 NotifyPropertyChanged();
                 URLDistantPublication = CalculURLSiteDistant();
-                if (SiteDistantSelectionne != null)
-                {
-                    SiteDistantSelectionne.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
-                }
+                SiteDistantSelectionne?.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
             }
         }
 
@@ -780,7 +771,7 @@ namespace AppPublication.Models.Publication
         protected override void OnRepertoireRacineChanged(string newValue)
         {
             // Met a jour la constante d'export
-            string tmp = OutilsTools.GetExportDir(newValue);
+            string tmp = AppDirectoryManager.GetExportDir(newValue);
             string siteRoot = Path.Combine(tmp, kSiteRepertoire);
 
             // Initialise les structures d'export
@@ -789,13 +780,12 @@ namespace AppPublication.Models.Publication
             _siteLocalUrlGenerator = new SiteUrlGenerator(_structureRepertoiresSite, _distantServerBaseUri);
 
             // Propage la valeur au generateur de site
-            if (_generateurSite != null)
-                _generateurSite.StructureSiteGenerator = _siteDistantUrlGenerator;
+            _generateurSite?.StructureSiteGenerator = _siteDistantUrlGenerator;
 
             // Met a jour les repertoires de l'application si on peut
             if (_structureRepertoiresSite != null && _structureRepertoiresSite.IsFullyConfigured)
             {
-                FileAndDirectTools.CreateDirectorie(_structureRepertoiresSite.RepertoireRacine);
+                FileSystemHelper.CreateDirectorie(_structureRepertoiresSite.RepertoireRacine);
             }
 
             // Initialise la racine du serveur Web local
@@ -805,8 +795,7 @@ namespace AppPublication.Models.Publication
         protected override void OnSelectedLogoChanged(string logoName)
         {
             // Propage la valeur au generateur de site
-            if (_generateurSite != null)
-                _generateurSite.ConfigurationGeneration.Logo = logoName;
+            _generateurSite?.ConfigurationGeneration.Logo = logoName;
         }
 
         protected override void OnInterfaceLocalPublicationChanged()
@@ -823,19 +812,10 @@ namespace AppPublication.Models.Publication
         protected override void OnIdCompetitionChanged(string newValue)
         {
             // Met a jour la structure d'export
-            if (_structureRepertoiresSite != null)
-            {
-                _structureRepertoiresSite.IdCompetition = newValue;
-            }
+            _structureRepertoiresSite?.IdCompetition = newValue;
 
-            // Recalcul les valeurs des URLs et répertoires distants
-            if (SiteDistantSelectionne != null)
-            {
-                SiteDistantSelectionne.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
-            }
-
-            URLDistantPublication = CalculURLSiteDistant();
-            URLLocalPublication = CalculURLSiteLocal();
+            // Appel de la méthode centralisée
+            ForceRefreshUrls();
 
             // Note: ici on devrait dans l'absolu utiliser le snapshot mais le traitement est rapide et a peu de chance de changer
             var DC = _judoDataManager.Data;
@@ -848,6 +828,18 @@ namespace AppPublication.Models.Publication
                 PouleEnColonnes = true;
                 PouleToujoursEnColonnes = true;
             }
+        }
+
+        /// <summary>
+        /// Force le recalcul explicite des URLs (Remplace le hack de réassignation d'ID)
+        /// </summary>
+        public override void ForceRefreshUrls()
+        {
+            // Recalcul les valeurs des URLs et répertoires distants
+            SiteDistantSelectionne?.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
+
+            URLDistantPublication = CalculURLSiteDistant();
+            URLLocalPublication = CalculURLSiteLocal();
         }
 
         protected override void OnSchedulerSiteStateChanged(object sender, SchedulerStateEventArgs evt)
@@ -865,6 +857,7 @@ namespace AppPublication.Models.Publication
                 }
             });
         }
+
         #endregion
 
         #region METHODES SPECIFIQUES
@@ -900,7 +893,7 @@ namespace AppPublication.Models.Publication
             {
                 // 1. Chargement avec LINQ to XML
                 XDocument doc;
-                using (var stream = ResourcesTools.GetAssembyResource(ConstantResource.PublicationFFJUDO))
+                using (var stream = MetierResources.GetPublicationFFJudoXml())
                 {
                     doc = XDocument.Load(stream);
                 }
@@ -1061,7 +1054,7 @@ namespace AppPublication.Models.Publication
         private string CalculRepertoireSiteDistant()
         {
             string output = string.Empty;
-            string repRoot = string.Empty;
+            string repRoot;
 
             try
             {
@@ -1076,7 +1069,7 @@ namespace AppPublication.Models.Publication
             {
                 try
                 {
-                    output = FileAndDirectTools.PathJoin(repRoot, _siteDistantUrlGenerator.UrlPathCompetition);
+                    output = FileSystemHelper.PathJoin(repRoot, _siteDistantUrlGenerator.UrlPathCompetition);
                 }
                 catch (Exception ex)
                 {
@@ -1102,11 +1095,8 @@ namespace AppPublication.Models.Publication
         /// </summary>
         public void StartNettoyage()
         {
-            if (SiteDistantSelectionne != null)
-            {
-                // Nettoyer le site distant
-                SiteDistantSelectionne.NettoyerSite();
-            }
+            // Nettoyer le site distant
+            SiteDistantSelectionne?.NettoyerSite();
         }
         #endregion
     }

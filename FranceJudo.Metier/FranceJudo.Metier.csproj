@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E49D2215-4D00-4340-B7D3-CCD85D49E60D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FranceJudo.Metier</RootNamespace>
+    <AssemblyName>FranceJudo.Metier</AssemblyName>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+    <LangVersion>latest</LangVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\VersionInfo.cs">
+      <Link>VersionInfo.cs</Link>
+    </Compile>
+    <Compile Include="Exceptions\JudoClientException.cs" />
+    <Compile Include="Exceptions\JudoServerException.cs" />
+    <Compile Include="Exceptions\ParametrageBalanceException.cs" />
+    <Compile Include="Export\ExportEnum.cs" />
+    <Compile Include="Export\SiteExportEngine.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="IO\AppDirectoryManager.cs" />
+    <Compile Include="IO\FileTools.cs" />
+    <Compile Include="Network\ServerFind.cs" />
+    <Compile Include="Noyau\Arbitrage\IArbitre.cs" />
+    <Compile Include="Noyau\Arbitrage\ICommissaire.cs" />
+    <Compile Include="Noyau\Arbitrage\IDelegue.cs" />
+    <Compile Include="Noyau\Arbitrage\IArbitrageData.cs" />
+    <Compile Include="Noyau\CategorieDonneesEnum.cs" />
+    <Compile Include="Noyau\Categories\ICategorieAge.cs" />
+    <Compile Include="Noyau\Categories\ICategoriePoids.cs" />
+    <Compile Include="Noyau\Categories\ICeintures.cs" />
+    <Compile Include="Noyau\Categories\ICategoriesData.cs" />
+    <Compile Include="Noyau\Deroulement\DataDeroulementExtension.cs" />
+    <Compile Include="Noyau\Deroulement\ICombat.cs" />
+    <Compile Include="Noyau\Deroulement\EtatCombatEnum.cs" />
+    <Compile Include="Noyau\Deroulement\EtatCombattantEnum.cs" />
+    <Compile Include="Noyau\Deroulement\EtatPhaseEnum.cs" />
+    <Compile Include="Noyau\Deroulement\IFeuille.cs" />
+    <Compile Include="Noyau\Deroulement\IGroupe_Combats.cs" />
+    <Compile Include="Noyau\Deroulement\IDeroulementData.cs" />
+    <Compile Include="Noyau\Deroulement\IParticipant.cs" />
+    <Compile Include="Noyau\Deroulement\IPhase.cs" />
+    <Compile Include="Noyau\Deroulement\IPhase_Decoupage.cs" />
+    <Compile Include="Noyau\Deroulement\IPoule.cs" />
+    <Compile Include="Noyau\Deroulement\IRencontre.cs" />
+    <Compile Include="Noyau\Deroulement\TypePhaseEnum.cs" />
+    <Compile Include="Noyau\Deroulement\IVueCombat.cs" />
+    <Compile Include="Noyau\Deroulement\IVueEpreuvePhase.cs" />
+    <Compile Include="Noyau\Deroulement\IVueGroupe.cs" />
+    <Compile Include="Noyau\IJudoData.cs" />
+    <Compile Include="Noyau\IJudoDataManager.cs" />
+    <Compile Include="Noyau\Logos\IlogosData.cs" />
+    <Compile Include="Noyau\Organisation\ICompetition.cs" />
+    <Compile Include="Noyau\Organisation\CompetitionDisciplineEnum.cs" />
+    <Compile Include="Noyau\Organisation\CompetitionTypeEnum.cs" />
+    <Compile Include="Noyau\Organisation\ConstantCouleur.cs" />
+    <Compile Include="Noyau\Organisation\DiplomeTypeEnum.cs" />
+    <Compile Include="Noyau\Organisation\EchelonEnum.cs" />
+    <Compile Include="Noyau\Organisation\IEpreuve.cs" />
+    <Compile Include="Noyau\Organisation\EpreuveEquipeTypeEnum.cs" />
+    <Compile Include="Noyau\Organisation\EpreuveSexeEnum.cs" />
+    <Compile Include="Noyau\Organisation\IEpreuve_Equipe.cs" />
+    <Compile Include="Noyau\Organisation\EtatEpreuveEnum.cs" />
+    <Compile Include="Noyau\Organisation\IOrganisationData.cs" />
+    <Compile Include="Noyau\Organisation\i_vue_epreuve_interface.cs" />
+    <Compile Include="Noyau\Organisation\ReglementEquipeEnum.cs" />
+    <Compile Include="Noyau\Organisation\TypeCSAEnum.cs" />
+    <Compile Include="Noyau\Organisation\IVueEpreuve.cs" />
+    <Compile Include="Noyau\Organisation\IVueEpreuveEquipe.cs" />
+    <Compile Include="Noyau\Participants\DataParticipantsExtension.cs" />
+    <Compile Include="Noyau\Participants\IEpreuveJudoka.cs" />
+    <Compile Include="Noyau\Participants\IEquipe.cs" />
+    <Compile Include="Noyau\Participants\EtatJudokaEnum.cs" />
+    <Compile Include="Noyau\Participants\IParticipantsData.cs" />
+    <Compile Include="Noyau\Participants\IJudoka.cs" />
+    <Compile Include="Noyau\Participants\QualifieEnum.cs" />
+    <Compile Include="Noyau\Participants\IVueJudoka.cs" />
+    <Compile Include="Noyau\Structures\IClub.cs" />
+    <Compile Include="Noyau\Structures\IComite.cs" />
+    <Compile Include="Noyau\Structures\IStructuresData.cs" />
+    <Compile Include="Noyau\Structures\ILigue.cs" />
+    <Compile Include="Noyau\Structures\IPays.cs" />
+    <Compile Include="Noyau\Structures\ISecteur.cs" />
+    <Compile Include="Regles\ScoresProLeague.cs" />
+    <Compile Include="Resources\MetierResources.cs" />
+    <Compile Include="Resources\Site\PhysicalStructureBase.cs" />
+    <Compile Include="Resources\Site\UrlGeneratorBase.cs" />
+    <Compile Include="Regles\ScoresJujitsu.cs" />
+    <Compile Include="Network\ConstantNetwork.cs" />
+    <Compile Include="Network\ServerCommandEnum.cs" />
+    <Compile Include="Network\ServerResponseEnum.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Structures\EntitePublicationFFJudo.cs" />
+    <Compile Include="XML\ConstantXML.cs" />
+    <Compile Include="Structures\LectureStructures.cs" />
+    <Compile Include="XML\IXMLSerializable.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Referentiels\c_ages.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Referentiels\c_poids.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Referentiels\g_temps.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Referentiels\grades.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Referentiels\PublicationFFJudo.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Referentiels\s_comites.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Referentiels\s_ligues.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Referentiels\structures.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Media\Images\France-Judo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Media\Images\France-Judo.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Media\Images\France-Judo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Arbitre1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Arbitre2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Arbitre3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Classement-final1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Classement-final2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Classement-poule1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Classement-poule2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Classement-tableau1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Classement-tableau2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Commissaires1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Commissaires2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Commissaires3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Epreuves1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Epreuves2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Exporte-XML.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Exporte-XML2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Exporte-XML3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Formule1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Formule2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Inscription1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Inscription2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Judoka1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Judoka2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Judoka3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Parametres1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Parametres2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Parametres3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Tirage-poule1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Tirage-poule2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Tirage-tableau1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Media\Icons\Tirage-tableau2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Media\Images\Tournoi_Judo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FranceJudo.Core\FranceJudo.Core.csproj">
+      <Project>{13cad1c5-1448-4b69-b2c9-de15aecce84b}</Project>
+      <Name>FranceJudo.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\img\checked_checkbox-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\img\unchecked_checkbox-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\img\badge-1st-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\img\down_circular-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\img\equal-sign-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\img\home-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\img\logo-France-Judo-Rhone.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\img\logo-France-Judo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\img\refresh-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\img\repeat-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\img\sablier.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\img\starter-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\img\up_circular-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\img\winner-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\js\site-animation.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\js\site-display.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\style\style-classement.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\style\style-common.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\style\style-ecran-appel.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\style\style-poule.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\style\style-tableau.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\style\w3.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\xslt\affectation_tapis_site.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\xslt\avancement_site.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\xslt\classement_final_site.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\xslt\classement_site.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\xslt\ecrans_appel_site.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\xslt\engagements_site.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\xslt\entete.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\xslt\feuille_competition_site.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\xslt\feuille_matchs_site.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\xslt\feuille_resultat_site.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\xslt\footer_script_site.xslt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\xslt\groupe_engagements_site.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\xslt\index_site.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\xslt\niveau_tour_combat.xslt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\xslt\panel_epreuve.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Site\xslt\prochains_combats_site.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.4</Version>
+    </PackageReference>
+    <PackageReference Include="NLog">
+      <Version>6.1.2</Version>
+    </PackageReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="GenerateLoggerResource" BeforeTargets="BeforeBuild">
+    <MakeDir Directories="$(IntermediateOutputPath)JsDist" />
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+      <LoggerJsContent>
+        window.Logger = {
+            log: function() { if (typeof console !== 'undefined') console.log.apply(console, arguments); },
+            warn: function() { if (typeof console !== 'undefined') console.warn.apply(console, arguments); },
+            error: function() { if (typeof console !== 'undefined') console.error.apply(console, arguments); }
+        };
+      </LoggerJsContent>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+      <LoggerJsContent>
+        window.Logger = {
+            log: function() {},
+            warn: function() {},
+            error: function() { if (typeof console !== 'undefined') console.error.apply(console, arguments); }
+        };
+      </LoggerJsContent>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(IntermediateOutputPath)JsDist\logger.js" Lines="$(LoggerJsContent)" Overwrite="true" />
+    <ItemGroup>
+      <EmbeddedResource Include="$(IntermediateOutputPath)JsDist\logger.js">
+        <LogicalName>FranceJudo.Metier.Resources.Site.js.site-logger.js</LogicalName>
+      </EmbeddedResource>
+    </ItemGroup>
+  </Target>
+</Project>

@@ -5,17 +5,16 @@ using AppPublication.Models.EcransAppel;
 using AppPublication.Models.Statistiques;
 using AppPublication.Publication;
 using AppPublication.ViewModels.Configuration;
-using KernelImpl;
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
+using FranceJudo.Metier.IO;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.UI.Wpf.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using Tools.Export;
-using Tools.Files;
-using Tools.Logging;
-using Tools.Outils;
-using Tools.Windows;
 
 namespace AppPublication.Models.Publication
 {
@@ -28,10 +27,10 @@ namespace AppPublication.Models.Publication
         #endregion
 
         #region MEMBRES
-        private GenerateurSiteInterne _generateurSite = null;                // Le generateur Site
+        readonly private GenerateurSiteInterne _generateurSite = null;                // Le generateur Site
         private SiteInternePhysicalStructure _structureRepertoiresSiteInterne;        // La structure de repertoire d'export du site prive
         private SiteInterneUrlGenerator _siteInterneUrlGenerator;                        // la structure d'export du site interne
-        private EcranCollectionManager _ecransAppel = new EcranCollectionManager(); // La configuration des écrans d'appels
+        readonly private EcranCollectionManager _ecransAppel = new EcranCollectionManager(); // La configuration des écrans d'appels
         private string _urlServerBase = string.Empty;
         #endregion
 
@@ -80,10 +79,7 @@ namespace AppPublication.Models.Publication
         {
             get
             {
-                if (_cfgEcransAppelViewModel == null)
-                {
-                    _cfgEcransAppelViewModel = new ConfigurationEcransViewModel(_ecransAppel, _nbTapis);
-                }
+                _cfgEcransAppelViewModel ??= new ConfigurationEcransViewModel(_ecransAppel, _nbTapis);
                 return _cfgEcransAppelViewModel;
             }
         }
@@ -171,7 +167,7 @@ namespace AppPublication.Models.Publication
                 DelaiGenerationSec = cfgPriv.DelaiGenerationSec;
                 DelaiDeroulementSec = GenerationConfigSection.Instance.GenerateurSiteInterne.DelaiDeroulementSec;
                 NbProchainsCombats = GenerationConfigSection.Instance.GenerateurSiteInterne.NbProchainsCombats;
-                    
+
                 // L'interface local de publication a ete chargee via la configuration du minisite, il faut juste s'assurer du bon calcul des URLs
                 URLLocalPublication = CalculURLSiteLocal();
 
@@ -187,7 +183,7 @@ namespace AppPublication.Models.Publication
         protected override void OnRepertoireRacineChanged(string newValue)
         {
             // Met a jour la constante d'export
-            string tmp = OutilsTools.GetExportDir(newValue);
+            string tmp = AppDirectoryManager.GetExportDir(newValue);
             string siteRootInterne = Path.Combine(tmp, kSiteRepertoire);
 
             // Initialise les structures d'export
@@ -195,13 +191,12 @@ namespace AppPublication.Models.Publication
             _siteInterneUrlGenerator = new SiteInterneUrlGenerator(_structureRepertoiresSiteInterne);
 
             // Propage la valeur au generateur de site
-            if (_generateurSite != null)
-                _generateurSite.StructureSiteGenerator = _siteInterneUrlGenerator;
+            _generateurSite?.StructureSiteGenerator = _siteInterneUrlGenerator;
 
             // Met a jour les repertoires de l'application (Interne)
             if (_structureRepertoiresSiteInterne != null)
             {
-                FileAndDirectTools.CreateDirectorie(_structureRepertoiresSiteInterne.RepertoireRacine);
+                FileSystemHelper.CreateDirectorie(_structureRepertoiresSiteInterne.RepertoireRacine);
             }
 
             // Initialise la racine du serveur Web local et On met a jour les contextes pour les modules HTTP
@@ -212,8 +207,7 @@ namespace AppPublication.Models.Publication
         protected override void OnSelectedLogoChanged(string logoName)
         {
             // Propage la valeur au generateur de site interne
-            if (_generateurSite != null)
-                _generateurSite.ConfigurationGeneration.Logo = logoName;
+            _generateurSite?.ConfigurationGeneration.Logo = logoName;
         }
 
         protected override void OnInterfaceLocalPublicationChanged()
@@ -229,7 +223,8 @@ namespace AppPublication.Models.Publication
 
         protected override void OnIdCompetitionChanged(string newValue)
         {
-            URLLocalPublication = CalculURLSiteLocal();
+            // Appel de la méthode centralisée
+            ForceRefreshUrls();
 
             // Note: ici on devrait dans l'absolu utiliser le snapshot mais le traitement est rapide et a peu de chance de changer
             var DC = _judoDataManager.Data;
@@ -239,6 +234,14 @@ namespace AppPublication.Models.Publication
                 // Le nombre de tapis peut avoir changé selon la compétition
                 NbTapis = DC.Organisation.Competition.nbTapis;
             }
+        }
+
+        /// <summary>
+        /// Force le recalcul explicite des URLs (Remplace le hack de réassignation d'ID)
+        /// </summary>
+        public override void ForceRefreshUrls()
+        {
+            URLLocalPublication = CalculURLSiteLocal();
         }
 
         #endregion

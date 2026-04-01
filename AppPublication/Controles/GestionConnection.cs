@@ -1,13 +1,11 @@
 ﻿using AppPublication.Tools.Enum;
+using FranceJudo.Core.Foundation;
+using FranceJudo.Core.Logging;
 using JudoClient;
 using JudoClient.Communication;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Numeric;
 using System;
-using System.Web.UI;
 using System.Windows.Threading;
 using System.Xml.Linq;
-using Tools.Framework;
-using Tools.Logging;
 
 namespace AppPublication.Controles
 {
@@ -27,10 +25,10 @@ namespace AppPublication.Controles
         #region MEMBERS
         private ClientJudo _client = null;
         private bool _isconnected = false;
-        private DispatcherTimer _timer = null;
+        private readonly DispatcherTimer _timer = null;
         private DateTime _reference = DateTime.Now;
         private int _nRetry = 0;
-        private object _lock = new object();
+        private readonly object _lock = new object();
         private volatile bool _isDisposing = false;
         private bool _hasErreurTransmission = false;
         #endregion
@@ -149,7 +147,7 @@ namespace AppPublication.Controles
         public GestionConnection()
         {
             _timer = new DispatcherTimer();
-            _timer.Tick += new EventHandler(dispatcherTimer_Tick);
+            _timer.Tick += new EventHandler(CispatcherTimer_OnTick);
             _timer.Interval = new TimeSpan(0, 0, 0, 1, 0);
         }
         #endregion
@@ -261,9 +259,9 @@ namespace AppPublication.Controles
             }
 
             // Only subscribe to connection test (internal to GestionConnection)
-            client.TraitementConnexion.OnAcceptConnectionTest += clientjudo_OnDemandeConnectionTest;
-            client.OnReceivedDataErrorOccured += client_OnReceivedDataErrorOccured;
-            client.OnReceivedDataSuccessOccured += client_OnReceivedDataSuccessOccured;
+            client.TraitementConnexion.OnAcceptConnectionTest += Clientjudo_OnDemandeConnectionTest;
+            client.OnReceivedDataErrorOccured += Client_OnReceivedDataErrorOccured;
+            client.OnReceivedDataSuccessOccured += Client_OnReceivedDataSuccessOccured;
 
 
             // Raise event so GestionEvent can subscribe to client events
@@ -295,7 +293,7 @@ namespace AppPublication.Controles
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="data"></param>
-        private void client_OnReceivedDataErrorOccured(object sender, string data)
+        private void Client_OnReceivedDataErrorOccured(object sender, string data)
         {
             // Lever le drapeau d'erreur de transmission
             HasErreurTransmission = true;
@@ -308,7 +306,7 @@ namespace AppPublication.Controles
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="data"></param>
-        private void client_OnReceivedDataSuccessOccured(object sender, string data)
+        private void Client_OnReceivedDataSuccessOccured(object sender, string data)
         {
             LogTools.Logger.Debug("Donnees recues avec succes signalee");
         }
@@ -318,7 +316,7 @@ namespace AppPublication.Controles
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="doc"></param>
-        private void clientjudo_OnDemandeConnectionTest(object sender, XElement doc)
+        private void Clientjudo_OnDemandeConnectionTest(object sender, XElement doc)
         {
             lock (_lock)
             {
@@ -336,7 +334,7 @@ namespace AppPublication.Controles
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void dispatcherTimer_Tick(object sender, EventArgs e)
+        private void CispatcherTimer_OnTick(object sender, EventArgs e)
         {
             ClientJudo currentClient;
             bool isConnected;

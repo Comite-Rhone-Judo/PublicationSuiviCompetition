@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using AppPublication.ViewModels.Configuration;
+﻿using AppPublication.ViewModels.Configuration;
 using Telerik.Windows.Controls;
 
 namespace AppPublication.Views.Configuration

@@ -1,13 +1,10 @@
-﻿using KernelImpl.Noyau.Deroulement;
+﻿using FranceJudo.Metier.Noyau.Deroulement;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppPublication.ExtensionNoyau.Engagement
 {
-    public class CombatEqualityComparer : IEqualityComparer<Combat>
+    public class CombatEqualityComparer : IEqualityComparer<ICombat>
     {
         /// <summary>
         /// Les combats sont egaux si ils ont le meme id
@@ -15,14 +12,14 @@ namespace AppPublication.ExtensionNoyau.Engagement
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public bool Equals(Combat x, Combat y)
+        public bool Equals(ICombat x, ICombat y)
         {
 
             //Check whether the compared objects reference the same data.
             if (Object.ReferenceEquals(x, y)) return true;
 
             //Check whether any of the compared objects is null.
-            if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null))
+            if (x is null || y is null)
                 return false;
 
             //Check whether the products' properties are equal.
@@ -31,10 +28,10 @@ namespace AppPublication.ExtensionNoyau.Engagement
 
         // If Equals() returns true for a pair of objects
         // then GetHashCode() must return the same value for these objects.
-        public int GetHashCode(Combat j)
+        public int GetHashCode(ICombat j)
         {
             //Check whether the object is null
-            if (Object.ReferenceEquals(j, null)) return 0;
+            if (j is null) return 0;
 
             //Calculate the hash code for the product.
             return j.id;

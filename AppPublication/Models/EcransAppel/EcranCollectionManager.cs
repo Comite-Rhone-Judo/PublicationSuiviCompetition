@@ -1,9 +1,4 @@
-﻿using AppPublication.Models; // Assurez-vous que ce namespace correspond à l'emplacement de EcranAppelModel
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace AppPublication.Models.EcransAppel
@@ -15,7 +10,7 @@ namespace AppPublication.Models.EcransAppel
         // Cache interne pour la valeur de l'ID le plus élevé
         private int _lastId;
 
-        private EcranAppelModel _default;
+        private readonly EcranAppelModel _default;
 
         #endregion
 
@@ -31,12 +26,14 @@ namespace AppPublication.Models.EcransAppel
 
         // Le nombre de tapis de la competition, utilisé pour la validation des écrans d'appel
         private int _nbTapis = 0;
-        public int NbTapis {
+        public int NbTapis
+        {
             get
             {
                 return _nbTapis;
             }
-            set {
+            set
+            {
                 if (_nbTapis != value)
                 {
                     if (_nbTapis >= 0)

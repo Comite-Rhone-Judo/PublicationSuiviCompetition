@@ -1,22 +1,11 @@
-﻿using AppPublication.ExtensionNoyau;
-using AppPublication.ExtensionNoyau.Engagement;
-using AppPublication.Generation;
-using AppPublication.Tools.Enum;
-using KernelImpl;
-using KernelImpl.Noyau.Deroulement;
-using KernelImpl.Noyau.Organisation;
+﻿using FranceJudo.Metier.Export;
+using FranceJudo.Metier.Site;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.Remoting.Contexts;
-using System.Web.UI.WebControls;
-using System.Xml;
-using System.Xml.Linq;
 using System.Xml.Xsl;
-using Tools.Enum;
-using Tools.Export;
-using Tools.Outils;
+
+
+
 
 namespace AppPublication.Export
 {
@@ -65,7 +54,7 @@ namespace AppPublication.Export
         /// <returns>Le chemin complet du fichier (sans l'extension)</returns>
         protected virtual string GetFileSavePath(string targetDirectory, ExportEnum exportType, string suffix = "")
         {
-            string filename = $"{ExportTools.getFileName(exportType).Replace("/", "_")}{(string.IsNullOrEmpty(suffix) ? "" : $"-{suffix}")}";
+            string filename = $"{SiteExportEngine.GetFileName(exportType).Replace("/", "_")}{(string.IsNullOrEmpty(suffix) ? "" : $"-{suffix}")}";
             return Path.Combine(targetDirectory, filename);
         }
 

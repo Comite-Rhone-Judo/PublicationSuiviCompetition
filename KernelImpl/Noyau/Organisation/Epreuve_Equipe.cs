@@ -1,18 +1,19 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.XML;
 
 namespace KernelImpl.Noyau.Organisation
 {
     /// <summary>
     /// Description des Epreuve Equipe
     /// </summary>
-    public class Epreuve_Equipe : IEntityWithKey<int>
+    public class Epreuve_Equipe : IEpreuve_Equipe, IEntityWithKey<int>
     {
 
         int IEntityWithKey<int>.EntityKey => id;
@@ -45,10 +46,10 @@ namespace KernelImpl.Noyau.Organisation
             this.anneeMin = XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Epreuve_Equipe_AnneeMin));
             this.anneeMax = XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Epreuve_Equipe_AnneeMax));
             this.epreuveRef = XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Epreuve_Equipe_EpreuveRef));
-            this.type = (EpreuveEquipeTypeEnum) XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Epreuve_Equipe_Type));
+            this.type = (EpreuveEquipeTypeEnum)XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Epreuve_Equipe_Type));
         }
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xrencontre = new XElement(ConstantXML.Epreuve_Equipe);
 
@@ -77,7 +78,7 @@ namespace KernelImpl.Noyau.Organisation
         /// <param name="MI">fonction d'info</param>
         /// <returns>les Epreuves</returns>
 
-        public static ICollection<Epreuve_Equipe> LectureEpreuveEquipes(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Epreuve_Equipe> LectureEpreuveEquipes(XElement xelement)
         {
             ICollection<Epreuve_Equipe> epreuves = new List<Epreuve_Equipe>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.Epreuve_Equipe))

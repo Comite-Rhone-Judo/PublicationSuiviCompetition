@@ -4,7 +4,7 @@ namespace JudoClient.Communication
 {
     public class TraitementOrganisation
     {
-        ClientJudo _client = null;
+        readonly ClientJudo _client = null;
 
         public TraitementOrganisation(ClientJudo client)
         {
@@ -26,34 +26,22 @@ namespace JudoClient.Communication
 
         public void ListeOrganisation(XElement element)
         {
-            if (OnListeOrganisation != null)
-            {
-                OnListeOrganisation(_client, element);
-            }
+            OnListeOrganisation?.Invoke(_client, element);
         }
 
         public void ListeCompetitions(XElement element)
         {
-            if (OnListeCompetitions != null)
-            {
-                OnListeCompetitions(_client, element);
-            }
+            OnListeCompetitions?.Invoke(_client, element);
         }
 
         public void ListeEpreuves(XElement element)
         {
-            if (OnListeEpreuves != null)
-            {
-                OnListeEpreuves(_client, element);
-            }
+            OnListeEpreuves?.Invoke(_client, element);
         }
 
         public void ListeTapis(XElement element)
         {
-            if (OnListeTapis != null)
-            {
-                OnListeTapis(_client, element);
-            }
+            OnListeTapis?.Invoke(_client, element);
         }
 
 
@@ -72,34 +60,22 @@ namespace JudoClient.Communication
 
         public void UpdateOrganisation(XElement element)
         {
-            if (OnUpdateOrganisation != null)
-            {
-                OnUpdateOrganisation(_client, element);
-            }
+            OnUpdateOrganisation?.Invoke(_client, element);
         }
 
         public void UpdateCompetitions(XElement element)
         {
-            if (OnUpdateCompetitions != null)
-            {
-                OnUpdateCompetitions(_client, element);
-            }
+            OnUpdateCompetitions?.Invoke(_client, element);
         }
 
         public void UpdateEpreuves(XElement element)
         {
-            if (OnUpdateEpreuves != null)
-            {
-                OnUpdateEpreuves(_client, element);
-            }
+            OnUpdateEpreuves?.Invoke(_client, element);
         }
 
         public void UpdateTapis(XElement element)
         {
-            if (OnUpdateTapis != null)
-            {
-                OnUpdateTapis(_client, element);
-            }
+            OnUpdateTapis?.Invoke(_client, element);
         }
     }
 }

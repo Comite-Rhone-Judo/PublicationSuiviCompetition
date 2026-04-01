@@ -1,15 +1,18 @@
 ﻿
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
+using FranceJudo.Core.Media.Images;
+using FranceJudo.Metier.IO;
+using FranceJudo.Metier.Noyau.Logos;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using System.Drawing;
-using Tools.Enum;
-using Tools.Files;
-using Tools.Logging;
-using Tools.Outils;
+
 
 namespace KernelImpl.Noyau.Logos
 {
@@ -30,13 +33,13 @@ namespace KernelImpl.Noyau.Logos
         /// </summary>
         /// <param name="element">element XML contenant les ligues</param>
         /// <param name="DC"></param>
-        public void lecture_logos(XElement element)
+        public void LectureLogos(XElement element)
         {
-            ICollection<string> allLogos = LectureLogosCommissaire(element, null);
+            ICollection<string> allLogos = LectureLogosCommissaire(element);
 
-            ICollection<string> logos = allLogos.Where(o => o.Contains(ConstantFile.Logo3_dir)).ToList();
-            ICollection<string> fede = allLogos.Where(o => o.Contains(ConstantFile.Logo1_dir)).ToList();
-            ICollection<string> ligues = allLogos.Where(o => o.Contains(ConstantFile.Logo2_dir)).ToList();
+            ICollection<string> logos = allLogos.Where(o => o.Contains(AppDirectoryManager.Logo3Dir)).ToList();
+            ICollection<string> fede = allLogos.Where(o => o.Contains(AppDirectoryManager.Logo1Dir)).ToList();
+            ICollection<string> ligues = allLogos.Where(o => o.Contains(AppDirectoryManager.Logo2Dir)).ToList();
 
             _logosCache.UpdateFullSnapshot(logos, o => o);
             _fedeCache.UpdateFullSnapshot(logos, o => o);
@@ -51,20 +54,20 @@ namespace KernelImpl.Noyau.Logos
         /// <param name="MI">fonction d'info</param>
         /// <returns>Ligues</returns>
 
-        public static ICollection<string> LectureLogosCommissaire(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<string> LectureLogosCommissaire(XElement xelement)
         {
             ICollection<string> urls = new List<string>();
 
             try
             {
-                FileAndDirectTools.DeleteDirectory(ConstantFile.Logo1_dir);
-                FileAndDirectTools.CreateDirectorie(ConstantFile.Logo1_dir);
+                FileSystemHelper.DeleteDirectory(AppDirectoryManager.Logo1Dir);
+                FileSystemHelper.CreateDirectorie(AppDirectoryManager.Logo1Dir);
 
-                FileAndDirectTools.DeleteDirectory(ConstantFile.Logo2_dir);
-                FileAndDirectTools.CreateDirectorie(ConstantFile.Logo2_dir);
+                FileSystemHelper.DeleteDirectory(AppDirectoryManager.Logo2Dir);
+                FileSystemHelper.CreateDirectorie(AppDirectoryManager.Logo2Dir);
 
-                FileAndDirectTools.DeleteDirectory(ConstantFile.Logo3_dir);
-                FileAndDirectTools.CreateDirectorie(ConstantFile.Logo3_dir);
+                FileSystemHelper.DeleteDirectory(AppDirectoryManager.Logo3Dir);
+                FileSystemHelper.CreateDirectorie(AppDirectoryManager.Logo3Dir);
 
             }
             catch (Exception ex)
@@ -73,9 +76,9 @@ namespace KernelImpl.Noyau.Logos
             }
             finally
             {
-                urls = urls.Concat(LectureElement(xelement, ConstantXML.LogoFede, ConstantFile.Logo1_dir)).ToList();
-                urls = urls.Concat(LectureElement(xelement, ConstantXML.LogoLigue, ConstantFile.Logo2_dir)).ToList();
-                urls = urls.Concat(LectureElement(xelement, ConstantXML.LogoSponsor, ConstantFile.Logo3_dir)).ToList();
+                urls = urls.Concat(LectureElement(xelement, ConstantXML.LogoFede, AppDirectoryManager.Logo1Dir)).ToList();
+                urls = urls.Concat(LectureElement(xelement, ConstantXML.LogoLigue, AppDirectoryManager.Logo2Dir)).ToList();
+                urls = urls.Concat(LectureElement(xelement, ConstantXML.LogoSponsor, AppDirectoryManager.Logo3Dir)).ToList();
             }
 
             return urls;
@@ -90,7 +93,7 @@ namespace KernelImpl.Noyau.Logos
                 string nom = xinfo.Element(ConstantXML.Logo_Nom) != null ? xinfo.Element(ConstantXML.Logo_Nom).Value : "";
                 if (!String.IsNullOrWhiteSpace(val))
                 {
-                    using (Image img = OutilsTools.StringToImage(val))
+                    using (Image img = ImageHelper.StringToImage(val))
                     {
                         int index = 0;
                         while (File.Exists(directory + nom))

@@ -1,6 +1,6 @@
-﻿using System.Configuration;
+﻿using FranceJudo.Core.Configuration;
+using System.Configuration;
 using System.Linq;
-using Tools.Configuration;
 
 namespace AppPublication.Config.Generation
 {
@@ -20,7 +20,7 @@ namespace AppPublication.Config.Generation
 
         public EcransAppelConfigElement GetElementById(int id)
         {
-            return (EcransAppelConfigElement) this.Cast<EcransAppelConfigElement>().FirstOrDefault(e => e.Id == id);
+            return (EcransAppelConfigElement)this.Cast<EcransAppelConfigElement>().FirstOrDefault(e => e.Id == id);
         }
     }
 }

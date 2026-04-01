@@ -1,6 +1,7 @@
-﻿using System;
-using Tools.Outils;
-using Tools.Export;
+﻿using FranceJudo.Core.Network.Url;
+using FranceJudo.Metier.Site;
+using System;
+
 
 namespace AppPublication.Publication
 {
@@ -22,7 +23,7 @@ namespace AppPublication.Publication
         /// </summary>
         protected override void BuildCompetitionUrl(string competitionId, Uri rootDomain, out string urlPath, out Uri baseUri)
         {
-            urlPath = $"{OutilsTools.TraiteChaineURL(competitionId)}/";
+            urlPath = $"{competitionId.TraiteChaineURL()}/";
             baseUri = new Uri(rootDomain, urlPath);
         }
         #endregion

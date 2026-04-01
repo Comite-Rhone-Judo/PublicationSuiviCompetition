@@ -1,0 +1,43 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace FranceJudo.Metier.Noyau.Deroulement
+{
+    public static class DataDeroulementExtension
+    {
+        public static IEnumerable<IParticipant> ListeParticipant1(this IDeroulementData dataContext, int epreuve)
+        {
+            IEnumerable<int> phases = dataContext.Phases.Where(o => o.epreuve == epreuve && o.suivant != 0).Select(o => o.id).Distinct();
+            return dataContext.Participants.Where(o => phases.Contains(o.phase));
+        }
+
+        public static IEnumerable<IParticipant> ListeParticipant2(this IDeroulementData dataContext, int epreuve)
+        {
+            IEnumerable<int> phases = dataContext.Phases.Where(o => o.epreuve == epreuve && o.suivant == 0).Select(o => o.id).Distinct();
+            return dataContext.Participants.Where(o => phases.Contains(o.phase));
+        }
+
+        public static int GetNbCombatJudoka(this IDeroulementData dataContext, string licence, IJudoData DC)
+        {
+            int result = 0;
+            foreach (Participants.IJudoka vj in DC.Participants.Judokas.Where(o => o.licence == licence))
+            {
+                result += dataContext.Combats.Count(o => o.vainqueur.HasValue && o.vainqueur > 0 && (o.participant1 == vj.id || o.participant2 == vj.id));
+            }
+            return result;
+        }
+
+        public static int GetNbPointJudoka(this IDeroulementData dataContext, string licence, IJudoData DC)
+        {
+            int result = 0;
+            foreach (Participants.IJudoka vj in DC.Participants.Judokas.Where(o => o.licence == licence))
+            {
+                foreach (IParticipant participant in dataContext.Participants.Where(o => o.judoka == vj.id))
+                {
+                    result += participant.cumulPointsGRCH;
+                }
+            }
+            return result;
+        }
+    }
+}

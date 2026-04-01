@@ -1,17 +1,19 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Structures;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.XML;
+
 
 namespace KernelImpl.Noyau.Structures
 {
     /// <summary>
     /// Description des Secteurs
     /// </summary>
-    public class Secteur : IEntityWithKey<string>
+    public class Secteur : ISecteur, IEntityWithKey<string>
     {
         string IEntityWithKey<string>.EntityKey => id;
 
@@ -26,7 +28,7 @@ namespace KernelImpl.Noyau.Structures
             this.nomCourt = XMLTools.LectureString(xsecteur.Element(ConstantXML.Secteur_NomCourt));
         }
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xsecteur = new XElement(ConstantXML.Secteur);
 
@@ -44,7 +46,7 @@ namespace KernelImpl.Noyau.Structures
         /// <param name="MI">fonction d'info</param>
         /// <returns>Secteurs</returns>
 
-        public static ICollection<Secteur> LectureSecteurs(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Secteur> LectureSecteurs(XElement xelement)
         {
             ICollection<Secteur> secteurs = new List<Secteur>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.Secteur))

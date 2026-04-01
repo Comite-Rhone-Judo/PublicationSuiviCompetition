@@ -1,12 +1,13 @@
 
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.XML;
 
 
 namespace KernelImpl.Noyau.Deroulement
@@ -14,7 +15,7 @@ namespace KernelImpl.Noyau.Deroulement
     /// <summary>
     /// Description des Feuilles (construction d'un tableau)
     /// </summary>
-    public class Feuille : IEntityWithKey<int>
+    public class Feuille : IFeuille, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -37,7 +38,7 @@ namespace KernelImpl.Noyau.Deroulement
 
 
 
-        public Combat Combat1(IJudoData DC)
+        public ICombat Combat1(IJudoData DC)
         {
             return DC.Deroulement.Combats.FirstOrDefault(o => o.id == this.combat);
         }
@@ -62,7 +63,7 @@ namespace KernelImpl.Noyau.Deroulement
             this.phase = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Feuille_Phase));
         }
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xfeuille = new XElement(ConstantXML.Feuille);
 
@@ -94,7 +95,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// <param name="MI">fonction d'info</param>
         /// <returns>Feuilles</returns>
 
-        public static ICollection<Feuille> LectureFeuilles(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Feuille> LectureFeuilles(XElement xelement)
         {
             ICollection<Feuille> feuilles = new List<Feuille>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.Feuille))
