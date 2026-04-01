@@ -7,10 +7,6 @@
             xmlns:local="clr-namespace:AppPublication.Views.Configuration"
             mc:Ignorable="d"
             Title="Configuration Générale" Height="280" Width="920" Background="Black">
-
-    <!-- TODO Revoir les paths vers les icones avec le retrait de Tools -->
-    
-    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
