@@ -238,6 +238,8 @@ namespace AppPublication.Controles
                                 };
                                 if (op.ShowDialog() == DialogResult.OK)
                                 {
+                                    FilteredFileInfo firstItem = null;
+
                                     foreach (string imgFile in op.FileNames)
                                     {
                                         try
@@ -256,6 +258,7 @@ namespace AppPublication.Controles
                                                     if (w <= 200 && h <= 200)
                                                     {
                                                         FilteredFileInfo newItem = new FilteredFileInfo(new FileInfo(imgFile), MetierResources.Folders.SiteImg);
+                                                        firstItem ??= newItem;
 
                                                         // Copy le fichier dans le répertoire de travail de l'application
                                                         File.Copy(newItem.FullName, Path.Combine(AppDirectoryManager.RessoucesImgDir, newItem.Name));
@@ -282,6 +285,9 @@ namespace AppPublication.Controles
                                             allFileOk = false;
                                         }
                                     }
+
+                                    // Sélectionne automatiquement le logo ajouté
+                                    if (firstItem != null) { SelectedLogo = firstItem; }
 
                                     if (!allFileOk)
                                     {

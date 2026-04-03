@@ -347,6 +347,7 @@ namespace AppPublication.Generation
             else
             {
                 LogTools.Logger.Debug("Site distant inactif, pas de upload FTP");
+                return new ResultatOperation(EtapeGenerateurSiteEnum.ExecuteSynchronisation, false);
             }
 
             _etapeCourante = EtapeGenerateurSiteEnum.None;

@@ -366,17 +366,22 @@ namespace AppPublication.Generation
                                         // Execute l'etape de synchronisation du generateur
                                         var postTime = ActionWatcher.Execute<ResultatOperation>(() => { return _generateur.ExecuteSynchronisation(); });
 
-                                        SiteSynchronise = postTime.Result.IsSuccess;
-                                        statSync.DelaiExecutionMs = postTime.DurationMs;
-                                        statSync.IsSuccess = postTime.Result.IsSuccess;
-
-                                        // Met a jour les informations de la tache
-                                        _statMgrSynchronisation?.EnregistrerSynchronisation((float)postTime.DurationMs / 1000F, postTime.Result);
-
-                                        if (SiteSynchronise)
+                                        // Verifie si la synchronisation est active et a reussi
+                                        if (postTime.Result.IsActive)
                                         {
-                                            DerniereSynchronisation = statSync;
-                                            RaiseState(StateGenerationEnum.Syncing, statSync);
+
+                                            SiteSynchronise = postTime.Result.IsSuccess;
+                                            statSync.DelaiExecutionMs = postTime.DurationMs;
+                                            statSync.IsSuccess = postTime.Result.IsSuccess;
+
+                                            // Met a jour les informations de la tache
+                                            _statMgrSynchronisation?.EnregistrerSynchronisation((float)postTime.DurationMs / 1000F, postTime.Result);
+
+                                            if (SiteSynchronise)
+                                            {
+                                                DerniereSynchronisation = statSync;
+                                                RaiseState(StateGenerationEnum.Syncing, statSync);
+                                            }
                                         }
                                     }
                                     catch (Exception ex)

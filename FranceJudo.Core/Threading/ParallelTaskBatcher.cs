@@ -50,7 +50,7 @@ namespace FranceJudo.Core.Threading
 
             LogTools.Logger.Debug($"Ajout d'une tache parallele au Batcher (ID: {taskId}) : {work.Method.Name}"); // Pour le debug
 
-            _tasksStates.TryAdd(taskId, new TaskState { Current = 0, Total = initialEstimate });
+            _tasksStates.TryAdd(taskId, new TaskState { Current = 0, Total = initialEstimate});
             RecalculateGlobalProgress();
 
             var taskReporter = new ProgressWrapper(info => HandleTaskReport(taskId, info));
@@ -149,6 +149,8 @@ namespace FranceJudo.Core.Threading
 
         private void HandleTaskReport(Guid taskId, BatchProgressInfo info)
         {
+            LogTools.Logger.Debug($"Task '{taskId}' report value = {info.Value}, type = {info.Type}");
+
             if (!_tasksStates.TryGetValue(taskId, out var state)) return;
 
             lock (state)
@@ -193,6 +195,8 @@ namespace FranceJudo.Core.Threading
             }
 
             if (totalGlobal == 0) totalGlobal = 1;
+
+            LogTools.Logger.Debug($"Global progress for # task = '{states.Count}', total = {currentGlobal}");
 
             float globalPercent = ((float)currentGlobal) / totalGlobal;
             if (globalPercent > 1.0) globalPercent = 1.0F;

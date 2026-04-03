@@ -91,16 +91,9 @@ namespace AppPublication.Generation
             set
             {
                 _progress = value;
-                NotifyPropertyChanged();
+                IsProgressUnknown = _progress <= -1;
 
-                if (_progress > -1)
-                {
-                    IsProgressUnknown = false;
-                }
-                else
-                {
-                    IsProgressUnknown = true;
-                }
+                NotifyPropertyChanged();
             }
         }
 

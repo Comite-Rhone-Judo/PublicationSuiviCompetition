@@ -229,7 +229,7 @@ namespace AppPublication.Generation
         {
             // Rien a faire dans ce generteur
             _etapeCourante = EtapeGenerateurSiteEnum.None;
-            return new ResultatOperation(EtapeGenerateurSiteEnum.ExecuteSynchronisation, true, true);
+            return new ResultatOperation(EtapeGenerateurSiteEnum.ExecuteSynchronisation, false);
         }
 
         #endregion

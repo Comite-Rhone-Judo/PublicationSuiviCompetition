@@ -41,6 +41,9 @@
         /// </summary>
         public EtapeGenerateurSiteEnum Etape { get; }
 
+        // Indique si l'etape de synchronisation a ete executee (ex. sync arretee)
+        public bool IsActive { get; }
+
         /// <summary>
         /// Etat final de la generation
         /// </summary>
@@ -60,8 +63,18 @@
         {
             Etape = etape;
             IsSuccess = isSuccess;
+            IsActive = true;
             IsComplete = isComplete;
             NbElements = nbElements;
+        }
+
+        public ResultatOperation(EtapeGenerateurSiteEnum etape, bool isActive)
+        {
+            Etape = etape;
+            IsSuccess = true;
+            IsActive = isActive;
+            IsComplete = true;
+            NbElements = -1;
         }
     }
 
