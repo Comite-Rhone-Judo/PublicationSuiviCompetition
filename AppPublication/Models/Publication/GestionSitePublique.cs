@@ -292,7 +292,10 @@ namespace AppPublication.Models.Publication
                 if (_pouleEnColonnes != value)
                 {
                     // Propage la valeur au generateur de site
-                    _generateurSite.ConfigurationGeneration.PouleEnColonnes = value;
+                    _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+                    {
+                        c.PouleEnColonnes = value;
+                    });
                     GenerationConfigSection.Instance.GenerateurSite.PouleEnColonnes = (_pouleEnColonnes = value);
                     NotifyPropertyChanged();
                 }
@@ -311,7 +314,10 @@ namespace AppPublication.Models.Publication
                 if (_pouleToujoursEnColonnes != value)
                 {
                     // Propage la valeur au generateur de site
-                    _generateurSite.ConfigurationGeneration.PouleToujoursEnColonnes = value;
+                    _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+                    {
+                        c.PouleToujoursEnColonnes = value;
+                    } );
                     GenerationConfigSection.Instance.GenerateurSite.PouleToujoursEnColonnes = (_pouleToujoursEnColonnes = value);
                     NotifyPropertyChanged();
                 }
@@ -330,7 +336,7 @@ namespace AppPublication.Models.Publication
                 if (_tailleMaxPouleColonnes != value)
                 {
                     // Propage la valeur au generateur de site
-                    _generateurSite.ConfigurationGeneration.TailleMaxPouleColonnes = value;
+                    _generateurSite?.ExportConfigurationManager?.Modifier( c => { c.TailleMaxPouleColonnes = value; });
                     GenerationConfigSection.Instance.GenerateurSite.TailleMaxPouleColonnes = (_tailleMaxPouleColonnes = value);
                     NotifyPropertyChanged();
                 }
@@ -405,7 +411,7 @@ namespace AppPublication.Models.Publication
                 if (_nbProchainsCombats != value)
                 {
                     // Propage la valeur au generateur de site
-                    _generateurSite.ConfigurationGeneration.NbProchainsCombats = value;
+                    _generateurSite?.ExportConfigurationManager?.Modifier(c => { c.NbProchainsCombats = value; });
                     GenerationConfigSection.Instance.GenerateurSite.NbProchainsCombats = (_nbProchainsCombats = value);
                     NotifyPropertyChanged();
                 }
@@ -424,7 +430,10 @@ namespace AppPublication.Models.Publication
                 if (_delaiActualisationClientSec != value)
                 {
                     // Propage au generateur de site
-                    _generateurSite.ConfigurationGeneration.DelaiActualisationClientSec = value;
+                    _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+                    {
+                        c.DelaiActualisationClientSec = value;
+                    } );
                     GenerationConfigSection.Instance.GenerateurSite.DelaiActualisationClientSec = (_delaiActualisationClientSec = value);
                     NotifyPropertyChanged();
                 }
@@ -443,7 +452,10 @@ namespace AppPublication.Models.Publication
                 if (_msgProchainsCombats != value)
                 {
                     // propage au generateur de site
-                    _generateurSite.ConfigurationGeneration.MsgProchainsCombats = value;
+                    _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+                    {
+                        c.MsgProchainsCombats = value;
+                    });
                     GenerationConfigSection.Instance.GenerateurSite.MsgProchainsCombats = (_msgProchainsCombats = value);
                     NotifyPropertyChanged();
                 }
@@ -524,7 +536,10 @@ namespace AppPublication.Models.Publication
             private set
             {
                 // Propage la valeur au generateur de site
-                _generateurSite.ConfigurationGeneration.PublierAffectationTapis = value && PublierAffectationTapis;
+                _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+                {
+                    c.PublierAffectationTapis = value && PublierAffectationTapis;
+                });
                 _canPublierAffectation = value;
                 NotifyPropertyChanged();
             }
@@ -540,7 +555,10 @@ namespace AppPublication.Models.Publication
             private set
             {
                 // Propage la valeur au generateur de site
-                _generateurSite.ConfigurationGeneration.PublierEngagements = value && PublierEngagements;
+                _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+                {
+                    c.PublierEngagements = value && PublierEngagements;
+                } );
                 _canPublierEngagements = value;
                 NotifyPropertyChanged();
             }
@@ -558,7 +576,7 @@ namespace AppPublication.Models.Publication
                 if (_publierProchainsCombats != value)
                 {
                     // Propage la valeur au generateur de site
-                    _generateurSite.ConfigurationGeneration.PublierProchainsCombats = value;
+                    _generateurSite?.ExportConfigurationManager?.Modifier(c => { c.PublierProchainsCombats = value; });
                     GenerationConfigSection.Instance.GenerateurSite.PublierProchainsCombats = (_publierProchainsCombats = value);
                     NotifyPropertyChanged();
                 }
@@ -577,7 +595,10 @@ namespace AppPublication.Models.Publication
                 if (_publierAffectationTapis != value)
                 {
                     // Propage la valeur au generateur de site
-                    _generateurSite.ConfigurationGeneration.PublierAffectationTapis = value && CanPublierAffectation;
+                    _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+                    {
+                        c.PublierAffectationTapis = value && CanPublierAffectation;
+                    } );
                     GenerationConfigSection.Instance.GenerateurSite.PublierAffectationTapis = (_publierAffectationTapis = value);
                     NotifyPropertyChanged();
                 }
@@ -596,7 +617,10 @@ namespace AppPublication.Models.Publication
                 if (_publierEngagements != value)
                 {
                     // Propage la valeur au generateur de site
-                    _generateurSite.ConfigurationGeneration.PublierEngagements = value && CanPublierEngagements;
+                    _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+                    {
+                        c.PublierEngagements = value && CanPublierEngagements;
+                    } );
                     GenerationConfigSection.Instance.GenerateurSite.PublierEngagements = (_publierEngagements = value);
                     NotifyPropertyChanged();
                 }
@@ -615,7 +639,10 @@ namespace AppPublication.Models.Publication
                 if (_engagementsAbsents != value)
                 {
                     // Propage la valeur au generateur de site
-                    _generateurSite.ConfigurationGeneration.EngagementsAbsents = value;
+                    _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+                    {
+                        c.EngagementsAbsents = value;
+                    } );
                     GenerationConfigSection.Instance.GenerateurSite.EngagementsAbsents = (_engagementsAbsents = value);
                     NotifyPropertyChanged();
                 }
@@ -634,7 +661,10 @@ namespace AppPublication.Models.Publication
                 if (_engagementsTousCombats != value)
                 {
                     // Propage la valeur au generateur de site
-                    _generateurSite.ConfigurationGeneration.EngagementsTousCombats = value;
+                    _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+                    {
+                        c.EngagementsTousCombats = value;
+                    } );
                     GenerationConfigSection.Instance.GenerateurSite.EngagementsTousCombats = (_engagementsTousCombats = value);
                     NotifyPropertyChanged();
                 }
@@ -653,7 +683,7 @@ namespace AppPublication.Models.Publication
                 if (_useIntituleCommun != value)
                 {
                     // propage la valeur au generateur de site
-                    _generateurSite.ConfigurationGeneration.UseIntituleCommun = value;
+                    _generateurSite?.ExportConfigurationManager?.Modifier(c => { c.UseIntituleCommun = value; }) ;
                     GenerationConfigSection.Instance.GenerateurSite.UseIntituleCommun = (_useIntituleCommun = value);
                     NotifyPropertyChanged();
                 }
@@ -672,7 +702,10 @@ namespace AppPublication.Models.Publication
                 if (_intituleCommun != value)
                 {
                     // propage la valeur au generateur de site
-                    _generateurSite.ConfigurationGeneration.IntituleCommun = value;
+                    _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+                    {
+                        c.IntituleCommun = value;
+                    } );
                     GenerationConfigSection.Instance.GenerateurSite.IntituleCommun = (_intituleCommun = value);
                     NotifyPropertyChanged();
                 }
@@ -688,7 +721,10 @@ namespace AppPublication.Models.Publication
                 if (_scoreEngagesGagnantPerdant != value)
                 {
                     // Propage la valeur au generateur de site
-                    _generateurSite.ConfigurationGeneration.EngagementsScoreGP = value;
+                    _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+                    {
+                        c.EngagementsScoreGP = value;
+                    }   );
                     GenerationConfigSection.Instance.GenerateurSite.ScoreEngagesGagnantPerdant = (_scoreEngagesGagnantPerdant = value);
                     NotifyPropertyChanged();
                 }
@@ -704,7 +740,10 @@ namespace AppPublication.Models.Publication
                 if (_afficherPositionCombat != value)
                 {
                     // Propage la valeur au generateur de site
-                    _generateurSite.ConfigurationGeneration.AfficherPositionCombat = value;
+                    _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+                    {
+                        c.AfficherPositionCombat = value;
+                    } );
                     GenerationConfigSection.Instance.GenerateurSite.AfficherPositionCombat = (_afficherPositionCombat = value);
                     NotifyPropertyChanged();
                 }
@@ -795,7 +834,10 @@ namespace AppPublication.Models.Publication
         protected override void OnSelectedLogoChanged(string logoName)
         {
             // Propage la valeur au generateur de site
-            _generateurSite?.ConfigurationGeneration.Logo = logoName;
+            _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+            {
+                c.Logo = logoName;
+            } );
         }
 
         protected override void OnInterfaceLocalPublicationChanged()

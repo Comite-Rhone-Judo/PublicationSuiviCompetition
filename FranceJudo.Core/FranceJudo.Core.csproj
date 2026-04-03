@@ -70,6 +70,7 @@
     <Compile Include="Exceptions\WebServicesException.cs" />
     <Compile Include="Exceptions\XmlFormatException.cs" />
     <Compile Include="Export\ExportHTML.cs" />
+    <Compile Include="Export\ThreadSafeConfigManager.cs" />
     <Compile Include="Foundation\NotificationBase.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IO\FileSystemHelper.cs" />
@@ -200,6 +201,7 @@
     <Compile Include="Threading\SingleShotTimer.cs" />
     <Compile Include="Threading\TimedLock.cs" />
     <Compile Include="Utils\ClassFactory.cs" />
+    <Compile Include="Utils\ICloneableConfig.cs" />
     <Compile Include="Utils\StringExtension.cs" />
     <Compile Include="XML\InAssemblyUrlResolver.cs" />
     <Compile Include="XML\XMLTools.cs" />

@@ -151,6 +151,9 @@
     <Compile Include="Export\ExportSharedContextInterne.cs" />
     <Compile Include="Export\ExportSharedContext.cs" />
     <Compile Include="Export\ExportSharedContextBase.cs" />
+    <Compile Include="Export\IConfigurableGenerateur.cs" />
+    <Compile Include="Export\IReadOnlyConfigurationExportSite.cs" />
+    <Compile Include="Export\IReadOnlyConfigurationExportSiteInterne.cs" />
     <Compile Include="Generation\GenerationScheduler.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Models\Publication\GestionSiteBase.cs" />
@@ -373,8 +376,11 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Target Name="SpicNSpan" AfterTargets="Clean"> <!-- common vars https://msdn.microsoft.com/en-us/library/c02as0cs.aspx?f=255&MSPPError=-2147217396 -->
-	 <RemoveDir Directories="$(TargetDir)" /> <!-- bin -->
-	 <RemoveDir Directories="$(ProjectDir)$(BaseIntermediateOutputPath)" /> <!-- obj -->
-</Target>
+  <Target Name="SpicNSpan" AfterTargets="Clean">
+    <!-- common vars https://msdn.microsoft.com/en-us/library/c02as0cs.aspx?f=255&MSPPError=-2147217396 -->
+    <RemoveDir Directories="$(TargetDir)" />
+    <!-- bin -->
+    <RemoveDir Directories="$(ProjectDir)$(BaseIntermediateOutputPath)" />
+    <!-- obj -->
+  </Target>
 </Project>

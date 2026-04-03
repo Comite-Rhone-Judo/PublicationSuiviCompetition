@@ -1,12 +1,13 @@
 ﻿using FranceJudo.Core.Environment;
 using FranceJudo.Metier.Resources;
 using FranceJudo.Metier.XML;
+using FranceJudo.Core.Utils;
 using System;
 using System.Xml.Linq;
 
 namespace AppPublication.Export
 {
-    public class ConfigurationExportSiteInterne
+    public class ConfigurationExportSiteInterne : IReadOnlyConfigurationExportSiteInterne, ICloneableObject<ConfigurationExportSiteInterne>
     {
         public ConfigurationExportSiteInterne(string pLogo = "", long pDelaiDeroulementSec = 10, int pNbProchainsCombats = 6)
         {
@@ -15,10 +16,16 @@ namespace AppPublication.Export
             NbProchainsCombats = pNbProchainsCombats;
         }
 
-        public string Logo = MetierResources.Files.DefaultLogo;
-        public long DelaiDeroulementSec = 10;
-        public int NbProchainsCombats = 6;
-        public string UrlRedirecteur = string.Empty;
+        public string Logo { get; set; } = MetierResources.Files.DefaultLogo;
+        public long DelaiDeroulementSec { get; set; } = 10;
+        public int NbProchainsCombats { get; set; } = 6;
+        public string UrlRedirecteur { get; set; } = string.Empty;
+
+        public ConfigurationExportSiteInterne Clone()
+        {
+            // Crée une copie indépendante de l'objet (parfait pour les types natifs et string)
+            return (ConfigurationExportSiteInterne) this.MemberwiseClone();
+        }
 
         public XElement ToXml()
         {
