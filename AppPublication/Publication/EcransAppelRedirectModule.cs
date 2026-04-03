@@ -106,6 +106,8 @@ namespace AppPublication.Publication
                 // Note: request.RemoteEndPoint peut nécessiter un cast selon ton implémentation de IHttpRequest
                 var clientIp = request.RemoteEndPoint.Address;
 
+                // TODO A voir ici car ce n'est pas forccement threasafe. _manager est stable (tj la meme mais Ecrans peut etre mise a jour par la configuration
+
                 // 2. Déterminer la cible en fonction de l'IP
                 var ecranToRedirect = _manager.Ecrans.FirstOrDefault(e => e.AdresseIP.MapToIPv4().Equals(clientIp.MapToIPv4()));
 

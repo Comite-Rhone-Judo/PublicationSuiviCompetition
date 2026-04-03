@@ -18,6 +18,8 @@ namespace AppPublication.Models.EcransAppel
         // La collection observable pour le binding UI
         public ObservableCollection<EcranAppelModel> Ecrans { get; private set; }
 
+        // TODO Il faut passer en Dictionnary ThreadSafe et ajouter le snapshot
+
         // Accès en lecture seule au Cache
         public int LastId => _lastId;
 

@@ -180,6 +180,8 @@ namespace AppPublication.Generation
 
                 snapshotConfig = ExportConfigurationManager.Snapshot;
 
+                // TODO Il faut ajouter ici le snapshot de la liste des écrans d'appels
+
                 // Initialise les donnees partagees de generation (ces donnees sont statiques et communes a toutes les taches)
                 _currentContext = ExportSharedContext.Create(_snapshot, _extendedJudoData, snapshotConfig);
 
