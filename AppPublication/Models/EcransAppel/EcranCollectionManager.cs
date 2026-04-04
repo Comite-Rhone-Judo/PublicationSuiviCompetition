@@ -44,7 +44,7 @@ namespace AppPublication.Models.EcransAppel
                 {
                     if (_nbTapis != value)
                     {
-                        if (_nbTapis >= 0)
+                        if (value >= 0)
                         {
                             _nbTapis = value;
                             // Actualise les tapis par défaut pour l'écran d'appel par défaut

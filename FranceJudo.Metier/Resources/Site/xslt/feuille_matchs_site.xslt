@@ -272,6 +272,25 @@
 		<xsl:variable name="comite2" select="//club[@ID = $club2]/@comite"/>
 		<xsl:variable name="ligue2" select="//club[@ID = $club2]/@ligue"/>
 
+				<!--
+		ECARTEMENT
+		Aucun = 1,
+        Club = 2,
+        Departement = 3,
+        Secteur = 9,
+        Ligue = 4,
+        National = 5,
+        International = 6,
+
+        Morphologique = 7,
+        PouleClassement = 8
+		
+		TYPE
+		        Equipe = 1
+        , Individuel = 2
+        , Shiai = 3
+		-->
+		
 		<!-- Extrait la couleur en fonction de la categorie-->
 		<xsl:variable name="firstrencontreclass">
 			<xsl:choose>
@@ -335,35 +354,44 @@
 								<xsl:variable name="ecartement1"
 									select="//phase[@id = $phase]/@ecartement"/>
 								<xsl:choose>
+									<!-- Departement -->
 									<xsl:when test="$ecartement1 = '3'">
 										<xsl:if test="$typeCompetition != '1'">
+											<!-- Individuel = {Nom Club} - {no comite} -->
 											<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
 											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
 											<xsl:value-of select="$comite1"/>
 										</xsl:if>
 										<xsl:if test="$typeCompetition = '1'">
+											<!-- Equipe = {no comite} -->
 											<xsl:value-of select="$comite1"/>
 										</xsl:if>
 
 									</xsl:when>
 
+									<!-- Ligue -->
 									<xsl:when test="$ecartement1 = '4'">
 										<xsl:if test="$typeCompetition != '1'">
+											<!-- Individuel = {Nom Club} - {nom Ligue} -->
 											<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
 											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
 											<xsl:value-of select="//ligue[@ID = $ligue1]/nomCourt"/>
 										</xsl:if>
 										<xsl:if test="$typeCompetition = '1'">
+											<!-- Equipe = {Nom Ligue} -->
 											<xsl:value-of select="//ligue[@ID = $ligue1]/nomCourt"/>
 										</xsl:if>
 									</xsl:when>
 
+									<!-- Club, Secteur, National, International -->
 									<xsl:otherwise>
 										<xsl:if test="$typeCompetition != '1'">
+											<!-- Individuel = {Nom Club} - {no comite} -->
 											<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
 											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
 											<xsl:value-of select="$comite1"/>
 										</xsl:if>
+											<!-- Equipe = {no comite} -->
 										<xsl:if test="$typeCompetition = '1'">
 											<xsl:value-of select="$comite1"/>
 										</xsl:if>

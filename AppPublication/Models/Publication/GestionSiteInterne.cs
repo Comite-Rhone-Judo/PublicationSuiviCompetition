@@ -320,14 +320,25 @@ namespace AppPublication.Models.Publication
             {
                 if (!string.IsNullOrEmpty(IdCompetition) && SiteLocal.ServerHTTP?.ListeningIpAddress != null && SiteLocal.ServerHTTP.Port > 0 && _siteInterneUrlGenerator != null)
                 {
-                    _urlServerBase = string.Format("http://{0}:{1}/", SiteLocal.ServerHTTP.ListeningIpAddress.ToString(), SiteLocal.ServerHTTP.Port);
+                    int portUsed = SiteLocal.ServerHTTP.Port;
+                    string ipUsed = SiteLocal.ServerHTTP.ListeningIpAddress.ToString();
+
+                    _urlServerBase = string.Format("http://{0}:{1}/", ipUsed, portUsed);
 
                     _siteInterneUrlGenerator.RootDomain = _urlServerBase;
 
                     output = _siteInterneUrlGenerator.UrlEcransAppelRedirecteur.AbsoluteUri;
 
-                    // Met a jour le contexte pour la generation
-                    _generateurSite?.ExportConfigurationManager?.Modifier(c => { c.UrlRedirecteur = output; });
+                    // 1. URL complète (Pour l'interface UI, le QR Code, la copie du lien)
+                    output = _siteInterneUrlGenerator.UrlEcransAppelRedirecteur.AbsoluteUri;
+
+                    // 2. Chemin absolu (Agnostique du port/IP, pour le script de redirection JS)
+                    string absolutePathForJs = _siteInterneUrlGenerator.UrlEcransAppelRedirecteur.AbsolutePath;
+
+                    LogTools.Logger.Debug($"[CalculURLSiteLocal] UI URL = {output} | JS Path = {absolutePathForJs}");
+
+                    // Met a jour le contexte pour la generation UNIQUEMENT avec le chemin absolu
+                    _generateurSite?.ExportConfigurationManager?.Modifier(c => { c.UrlRedirecteur = absolutePathForJs; });
                 }
             }
             catch (Exception ex)

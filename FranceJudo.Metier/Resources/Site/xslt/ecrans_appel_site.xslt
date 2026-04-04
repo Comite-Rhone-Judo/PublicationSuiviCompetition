@@ -41,6 +41,8 @@
 	<xsl:variable name="typeCompetition" select="/docroot/competition/@type" />
 	<xsl:variable name="TitreCompetition" select="/docroot/competition/titre"/>
 
+	<!-- TODO Vérifier le comportement plusieurs competition AffDetailCompetition -->
+	
 	<xsl:variable name="nbProchainsCombatsEff">
 		<xsl:choose>
 			<xsl:when test="$nbProchainsCombats > 0">
@@ -52,7 +54,7 @@
 
 	<xsl:variable name="maxCombatsPage">
 		<xsl:choose>
-			<xsl:when test="number($combatsParPageEff) > 10">10</xsl:when>
+			<xsl:when test="number($combatsParPageEff) > 12">12</xsl:when>
 			<xsl:when test="number($combatsParPageEff) > 0">
 				<xsl:value-of select="$combatsParPageEff"/>
 			</xsl:when>
@@ -419,7 +421,11 @@
 			</div>
 
 			<div class="grid-cell-cat">
-				<div class="w3-card w3-pale-yellow w3-round-small cat-box">
+				<div>
+					<xsl:attribute name="class">
+						<xsl:text>w3-card w3-pale-yellow w3-round-small cat-box</xsl:text>
+						<xsl:if test="$typeCompetition = 1"> cat-box-equipe</xsl:if>
+					</xsl:attribute>
 					<div class="dyn-txt-cat-titre">
 						<xsl:value-of select="$docPrincipal//epreuve[@ID = $epreuve]/@sexe"/>
 						<xsl:text>&#32;</xsl:text>
@@ -433,18 +439,29 @@
 						</xsl:call-template>)
 					</div>
 					<xsl:if test="$typeCompetition = 1">
-						<div class="w3-margin-top">
-							<xsl:attribute name="class">
-								<xsl:text>w3-tag w3-round-large w3-small </xsl:text>
-								<xsl:value-of select="$firstrencontreclass"/>
-							</xsl:attribute>
-							<img class="img" width="16">
-								<xsl:attribute name="src">
-									<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+						<div class="cartouche-equipe-wrapper">
+							<div>
+								<xsl:attribute name="class">
+									<xsl:text>cartouche-equipe w3-tag w3-round-large </xsl:text>
+									<xsl:value-of select="substring-before($firstrencontreclass, ' ')"/>
 								</xsl:attribute>
-							</img>
-							<xsl:text> </xsl:text>
-							<xsl:value-of select="$combat/@firstrencontrelib"/>
+
+								<div>
+									<xsl:attribute name="class">
+										<xsl:text>cartouche-icone-mask </xsl:text>
+										<xsl:value-of select="substring-after($firstrencontreclass, ' ')"/>
+									</xsl:attribute>
+									<img class="cartouche-icone">
+										<xsl:attribute name="src">
+											<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+										</xsl:attribute>
+									</img>
+								</div>
+
+								<div class="dyn-txt-cat-equipe">
+									<xsl:value-of select="$combat/@firstrencontrelib"/>
+								</div>
+							</div>
 						</div>
 					</xsl:if>
 				</div>
@@ -536,36 +553,64 @@
 		<xsl:param name="ligue"/>
 		<xsl:param name="ecartement"/>
 
+		<!--
+		ECARTEMENT
+		Aucun = 1,
+        Club = 2,
+        Departement = 3,
+        Secteur = 9,
+        Ligue = 4,
+        National = 5,
+        International = 6,
+
+        Morphologique = 7,
+        PouleClassement = 8
+		
+		TYPE
+		        Equipe = 1
+        , Individuel = 2
+        , Shiai = 3
+		-->
+		
 		<xsl:choose>
+			<!-- Departement -->
 			<xsl:when test="$ecartement = '3' or not($ecartement)">
 				<xsl:if test="$typeCompetition != '1'">
+					<!-- Individuel = {Nom Club} - {no comite} -->
 					<xsl:value-of select="$docPrincipal//club[@ID = $clubId]/nomCourt"/>
 					<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
 					<xsl:value-of select="$comite"/>
 				</xsl:if>
 				<xsl:if test="$typeCompetition = '1'">
+					<!-- Equipe = {no comite} -->
 					<xsl:value-of select="$comite"/>
 				</xsl:if>
 			</xsl:when>
 
+			<!-- Ligue -->
 			<xsl:when test="$ecartement = '4'">
 				<xsl:if test="$typeCompetition != '1'">
+					<!-- Individuel = {Nom Club} - {nom Ligue} -->
 					<xsl:value-of select="$docPrincipal//club[@ID = $clubId]/nomCourt"/>
 					<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
 					<xsl:value-of select="$docPrincipal//ligue[@ID = $ligue]/nomCourt"/>
 				</xsl:if>
 				<xsl:if test="$typeCompetition = '1'">
+					<!-- Equipe = {Nom Ligue} -->
 					<xsl:value-of select="$docPrincipal//ligue[@ID = $ligue]/nomCourt"/>
 				</xsl:if>
 			</xsl:when>
 
+			<!-- Club, Secteur, National, International -->
 			<xsl:otherwise>
 				<xsl:if test="$typeCompetition != '1'">
+					<!-- Club, Secteur, National, International -->
 					<xsl:value-of select="$docPrincipal//club[@ID = $clubId]/nomCourt"/>
 					<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
 					<xsl:value-of select="$comite"/>
 				</xsl:if>
 				<xsl:if test="$typeCompetition = '1'">
+					<!-- Equipe = {no comite} -->
 					<xsl:value-of select="$comite"/>
 				</xsl:if>
 			</xsl:otherwise>

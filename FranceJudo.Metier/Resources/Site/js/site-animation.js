@@ -78,11 +78,46 @@
             Logger.log(">> COLONNE -> Score Idéal: " + resultColonne.idealNomSize.toFixed(1) + "px | Taille Appliquée: " + resultColonne.nomSize.toFixed(1) + "px");
 
             // 3. Choix : On compare la taille IDÉALE (mathématique) pour savoir qui a vraiment le plus de place
-            var bestMode = (resultLigne.idealNomSize >= resultColonne.idealNomSize) ? 'ligne' : 'colonne';
-            var bestResult = (bestMode === 'ligne') ? resultLigne : resultColonne;
+            var bestMode = 'colonne'; // Fallback par défaut
+
+            // CRITÈRE 1 : La plus grande taille absolue l'emporte
+            if (resultLigne.idealNomSize !== resultColonne.idealNomSize) {
+                bestMode = (resultLigne.idealNomSize > resultColonne.idealNomSize) ? 'ligne' : 'colonne';
+                Logger.log(">> Victoire par Taille Absolue : " + bestMode.toUpperCase());
+            }
+            // CRITÈRE 2 : Égalité
+            else {
+                // Sous-critère A : Égalité AU PLANCHER (minNom)
+                if (resultLigne.idealNomSize === config.minFontSizeNom) {
+
+                    if (!resultLigne.isOverflowing && resultColonne.isOverflowing) {
+                        bestMode = 'ligne'; // Ligne tient parfaitement, Colonne est coupée
+                        Logger.log(">> Égalité au plancher - Victoire par non-débordement : LIGNE");
+                    }
+                    else if (resultLigne.isOverflowing && !resultColonne.isOverflowing) {
+                        bestMode = 'colonne'; // Colonne tient parfaitement, Ligne est coupée
+                        Logger.log(">> Égalité au plancher - Victoire par non-débordement : COLONNE");
+                    }
+                    else {
+                        // Les deux sont coupés, ou aucun n'est coupé -> Règle du Ratio
+                        var ratioL = resultLigne.idealNomSize / resultLigne.baseNom;
+                        var ratioC = resultColonne.idealNomSize / resultColonne.baseNom;
+                        bestMode = (ratioL >= ratioC) ? 'ligne' : 'colonne';
+                        Logger.log(">> Égalité au plancher & Débordement équivalent - Victoire par Ratio : " + bestMode.toUpperCase());
+                    }
+                }
+                // Sous-critère B : Égalité HORS PLANCHER
+                else {
+                    var ratioL = resultLigne.idealNomSize / resultLigne.baseNom;
+                    var ratioC = resultColonne.idealNomSize / resultColonne.baseNom;
+                    bestMode = (ratioL >= ratioC) ? 'ligne' : 'colonne';
+                    Logger.log(">> Égalité de taille pure - Victoire par Ratio : " + bestMode.toUpperCase());
+                }
+            }
 
             Logger.log(">> Disposition finale choisie : " + bestMode.toUpperCase());
             setLayoutMode(bestMode);
+            var bestResult = (bestMode === 'ligne') ? resultLigne : resultColonne;
 
             // 4. Application
             document.querySelectorAll('.dyn-txt-nom').forEach(function (el) { el.style.fontSize = bestResult.nomSize + 'px'; });
@@ -250,6 +285,16 @@
             Logger.log("      -> [RÉSOLU] Plafond verrouillé à : " + currentNom + "px");
         }
 
+        // --- NOUVEAU : Détection du débordement final ---
+        var isOverflowing = false;
+        for (var i = 0; i < containers.length; i++) {
+            var p = containers[i];
+            if (p.hasAttribute('data-dispo') && p.scrollWidth > parseFloat(p.getAttribute('data-dispo'))) {
+                isOverflowing = true;
+                break; // Dès qu'un seul judoka déborde, le layout est considéré comme overflow
+            }
+        }
+
         for (var i = 0; i < oldStyles.length; i++) {
             var s = oldStyles[i];
             s.p.style.display = s.oD;
@@ -264,20 +309,28 @@
             mode: mode,
             nomSize: Math.max(currentNom, minNom),
             clubSize: Math.max(currentClub, minClub),
-            idealNomSize: currentNom
+            idealNomSize: Math.max(currentNom, minNom), // On assure que idealNomSize plafonne bien au minNom
+            baseNom: baseNom,
+            isOverflowing: isOverflowing // On remonte l'information cruciale
         };
     }
 
+    // Ajustement des catégories (Calcul INDÉPENDANT avec lecture directe de l'Espace Interne)
     // Ajustement des catégories (Calcul INDÉPENDANT avec lecture directe de l'Espace Interne)
     function adjustCategorySizes() {
         var boxes = document.querySelectorAll('.cat-box');
         var titres = document.querySelectorAll('.dyn-txt-cat-titre');
         var subs = document.querySelectorAll('.dyn-txt-cat-sub');
+        var eqs = document.querySelectorAll('.cartouche-equipe'); // On cible le cartouche complet !
 
         if (!titres.length) return;
 
+        // VÉRIFICATION : Y a-t-il des combats par équipe à l'écran ?
+        var hasEq = eqs.length > 0;
+
         var baseTitre = parseFloat(window.getComputedStyle(titres[0]).fontSize) || 20;
         var baseSub = subs.length ? parseFloat(window.getComputedStyle(subs[0]).fontSize) || 15 : 15;
+        var baseEq = hasEq ? parseFloat(window.getComputedStyle(eqs[0]).fontSize) || 12 : 12;
 
         var minTitre = config.minFontSizeCatTitre || 12;
         var minSub = config.minFontSizeCatSub || 10;
@@ -285,22 +338,22 @@
 
         var currentTitre = Math.floor(baseTitre * boostRatio);
         var currentSub = Math.floor(baseSub * boostRatio);
+        var currentEq = hasEq ? Math.floor(baseEq * boostRatio) : 0;
 
         Logger.log("==================================================");
         Logger.log(">> DÉMARRAGE HYBRIDE [CATÉGORIE] (Moteur Padding Interne)");
-        Logger.log(">> Départ Titre=" + currentTitre + "px, Sub=" + currentSub + "px");
+        Logger.log(">> Départ Titre=" + currentTitre + "px, Sub=" + currentSub + "px" + (hasEq ? ", Equipe=" + currentEq + "px" : ""));
         Logger.log("==================================================");
 
-        // 1. PRÉPARATION : Mesure de l'espace interne et libération des enfants
+        // 1. PRÉPARATION
         var oldStyles = [];
         for (var i = 0; i < boxes.length; i++) {
             var box = boxes[i];
             if (box.clientWidth === 0) continue;
 
-            // Calcul EXACT de la place disponible pour le texte : ClientWidth - Padding Left - Padding Right
             var compStyle = window.getComputedStyle(box);
             var paddingX = parseFloat(compStyle.paddingLeft) + parseFloat(compStyle.paddingRight);
-            var espaceInterne = box.clientWidth - paddingX - 2; // -2px de marge de sécurité absolue
+            var espaceInterne = box.clientWidth - paddingX - 2;
 
             box.setAttribute('data-dispo', espaceInterne);
 
@@ -314,7 +367,6 @@
                     t: divs[d].style.textOverflow
                 });
 
-                // On transforme le texte en bloc autonome mesurable
                 divs[d].style.display = 'inline-block';
                 divs[d].style.width = 'max-content';
                 divs[d].style.flexShrink = '0';
@@ -325,8 +377,12 @@
 
         // 2. BOUCLE DE MESURE
         for (var i = 0; i < boxes.length; i++) {
-            if (currentTitre <= minTitre && currentSub <= minSub) {
-                Logger.log("   [STOP GLOBAL] Planchers Titre et Sub atteints.");
+            // Condition de sortie anticipée robuste (ignore l'équipe si absente)
+            var limitTitre = currentTitre <= minTitre;
+            var limitSub = currentSub <= minSub;
+            var limitEq = hasEq ? (currentEq <= minSub) : true;
+
+            if (limitTitre && limitSub && limitEq) {
                 break;
             }
 
@@ -335,62 +391,57 @@
 
             var tEl = box.querySelector('.dyn-txt-cat-titre');
             var sEl = box.querySelector('.dyn-txt-cat-sub');
-            var espaceDispo = parseFloat(box.getAttribute('data-dispo')); // L'espace SANS le padding !
-
-            var titreTexte = tEl ? tEl.innerText.replace(/\n/g, ' ').trim() : '';
-            var subTexte = sEl ? sEl.innerText.replace(/\n/g, ' ').trim() : '';
+            var eEl = box.querySelector('.cartouche-equipe'); // Le JS manipule le parent !
+            var espaceDispo = parseFloat(box.getAttribute('data-dispo'));
 
             // --- A. Ajustement du TITRE ---
             if (tEl && currentTitre > minTitre) {
                 tEl.style.fontSize = currentTitre + 'px';
-                var reqT = tEl.scrollWidth; // On mesure directement le texte
-
+                var reqT = tEl.scrollWidth;
                 if (reqT > espaceDispo) {
-                    Logger.log("   [DÉBORDEMENT TITRE] '" + titreTexte + "' -> Requis: " + reqT + "px > Dispo: " + espaceDispo + "px");
-
                     var scaleT = espaceDispo / reqT;
                     currentTitre = Math.max(Math.floor(currentTitre * scaleT), minTitre);
                     tEl.style.fontSize = currentTitre + 'px';
                     reqT = tEl.scrollWidth;
-
-                    var loops = 0;
                     while (reqT > espaceDispo && currentTitre > minTitre) {
-                        loops++;
                         currentTitre--;
                         tEl.style.fontSize = currentTitre + 'px';
                         reqT = tEl.scrollWidth;
-                        Logger.log("         - Titre iter " + loops + ": Baisse à " + currentTitre + "px (Texte pur: " + reqT + "px)");
                     }
-                    Logger.log("      -> [TITRE RÉSOLU] Plafond Titre fixé à : " + currentTitre + "px");
-                } else {
-                    Logger.log("   [OK TITRE] '" + titreTexte + "' passe à " + currentTitre + "px (Requis: " + reqT + " <= " + espaceDispo + ")");
                 }
             }
 
             // --- B. Ajustement du SOUS-TITRE ---
             if (sEl && currentSub > minSub) {
                 sEl.style.fontSize = currentSub + 'px';
-                var reqS = sEl.scrollWidth; // On mesure directement le texte
-
+                var reqS = sEl.scrollWidth;
                 if (reqS > espaceDispo) {
-                    Logger.log("   [DÉBORDEMENT SUB] '" + subTexte + "' -> Requis: " + reqS + "px > Dispo: " + espaceDispo + "px");
-
                     var scaleS = espaceDispo / reqS;
                     currentSub = Math.max(Math.floor(currentSub * scaleS), minSub);
                     sEl.style.fontSize = currentSub + 'px';
                     reqS = sEl.scrollWidth;
-
-                    var loops = 0;
                     while (reqS > espaceDispo && currentSub > minSub) {
-                        loops++;
                         currentSub--;
                         sEl.style.fontSize = currentSub + 'px';
                         reqS = sEl.scrollWidth;
-                        Logger.log("         - Sub iter " + loops + ": Baisse à " + currentSub + "px (Texte pur: " + reqS + "px)");
                     }
-                    Logger.log("      -> [SUB RÉSOLU] Plafond Sub fixé à : " + currentSub + "px");
-                } else {
-                    Logger.log("   [OK SUB] '" + subTexte + "' passe à " + currentSub + "px (Requis: " + reqS + " <= " + espaceDispo + ")");
+                }
+            }
+
+            // --- C. Ajustement du CARTOUCHE EQUIPE ---
+            if (hasEq && eEl && currentEq > minSub) {
+                eEl.style.fontSize = currentEq + 'px';
+                var reqE = eEl.scrollWidth;
+                if (reqE > espaceDispo) {
+                    var scaleE = espaceDispo / reqE;
+                    currentEq = Math.max(Math.floor(currentEq * scaleE), minSub);
+                    eEl.style.fontSize = currentEq + 'px';
+                    reqE = eEl.scrollWidth;
+                    while (reqE > espaceDispo && currentEq > minSub) {
+                        currentEq--;
+                        eEl.style.fontSize = currentEq + 'px';
+                        reqE = eEl.scrollWidth;
+                    }
                 }
             }
         }
@@ -407,10 +458,14 @@
             }
         }
 
+        // Application finale
         titres.forEach(function (t) { t.style.fontSize = currentTitre + 'px'; });
         subs.forEach(function (s) { s.style.fontSize = currentSub + 'px'; });
+        if (hasEq) {
+            eqs.forEach(function (e) { e.style.fontSize = currentEq + 'px'; });
+        }
 
-        Logger.log(">> BILAN FINAL [CATÉGORIE] -> Titre : " + currentTitre + "px | Sub : " + currentSub + "px");
+        Logger.log(">> BILAN FINAL [CATÉGORIE] -> Titre : " + currentTitre + "px | Sub : " + currentSub + "px" + (hasEq ? " | Equipe : " + currentEq + "px" : ""));
     }
 
     // --- Gestion du Timer et Barre de progression ---
@@ -471,8 +526,10 @@
 
                 // Redirection vers la page source pour réévaluer la configuration
                 if (config.urlRedirecteur && config.urlRedirecteur.trim() !== '') {
+                    Logger.log(">> Going back to  : '" + config.urlRedirecteur + "'");
                     window.location.href = config.urlRedirecteur;
                 } else {
+                    Logger.log(">> No redirect, reloading current");
                     window.location.reload(true); // Fallback
                 }
                 return true; // Cycle terminé

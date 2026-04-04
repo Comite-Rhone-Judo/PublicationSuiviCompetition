@@ -110,6 +110,8 @@ namespace AppPublication.Publication
                 // 2. Déterminer la cible en fonction de l'IP
                 var ecranToRedirect = currentSnapshot.Ecrans.FirstOrDefault(e => e.AdresseIP.MapToIPv4().Equals(clientIp.MapToIPv4()));
 
+                LogTools.Logger.Debug($"EcransAppelRedirectModule: Client IP {clientIp} redirige vers ecran {ecranToRedirect?.Id}");
+
                 // 3. Rediriger vers la page correspondante ou une page par défaut
                 ecranToRedirect ??= currentSnapshot.Default;
                 if (ecranToRedirect == null)

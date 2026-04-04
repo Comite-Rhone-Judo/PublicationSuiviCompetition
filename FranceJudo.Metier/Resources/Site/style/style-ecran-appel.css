@@ -385,12 +385,58 @@
     vertical-align: middle;
 }
 
-.colorized-img-white {
-    filter: brightness(0) invert(1);
+/* Ajustement vertical si présence du cartouche Equipe (3 lignes) */
+.cat-box-equipe .dyn-txt-cat-titre {
+    font-size: calc(var(--hauteur-un-combat) * 0.20);
 }
 
-.colorized-img-black {
-    filter: brightness(0);
+.cat-box-equipe .dyn-txt-cat-sub {
+    font-size: calc(var(--hauteur-un-combat) * 0.18);
+}
+/* Structure du cartouche Equipe */
+.cartouche-equipe-wrapper {
+    margin-top: 0.3vh;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    overflow: hidden;
+}
+
+.cartouche-equipe {
+    display: inline-flex !important;
+    flex-wrap: nowrap !important; /* INTERDIT le passage sur 2 lignes */
+    white-space: nowrap !important; /* INTERDIT la casse du texte */
+    align-items: center;
+    justify-content: center;
+    gap: 0.4em;
+    line-height: 1.1;
+    padding: 0.2vh 0.5vw;
+    max-width: 100%;
+    /* La police de base pour tout le cartouche (soumise au JS) */
+    font-size: calc(var(--hauteur-un-combat) * 0.22);
+}
+
+/* Le texte hérite simplement de la taille du parent */
+.dyn-txt-cat-equipe {
+    font-size: 1em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Fix du filtre CSS et protection contre l'écrasement */
+.cartouche-icone-mask {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+    overflow: hidden;
+    flex-shrink: 0; /* GARANTIT que l'icone ne sera jamais compressée */
+}
+
+/* L'image prend 1.6 fois la taille de la police du cartouche (Bien visible) */
+.cat-box img.cartouche-icone {
+    width: auto !important;
+    height: 1.0em !important;
 }
 
 /* ==========================================================================
