@@ -18,6 +18,7 @@ namespace AppPublication.Generation
         // Les gestionnaires
         readonly private IJudoDataManager _judoDataManager;                  // Le gestionnaire de données interne
         private IJudoData _snapshot;                                // Le snapshot des données 
+        private EcranCollectionSnapshot _ecransAppelSnapshot;
 
         EcranCollectionManager _ecransAppel;                        // La configuration des ecrans d'appel (pour les combats)
 
@@ -158,6 +159,8 @@ namespace AppPublication.Generation
 
                 // Initialise les donnees partagees de generation (ces donnees sont statiques et communes a toutes les taches)
                 _currentContext = ExportSharedContextInterne.Create(_snapshot, snapshotConfig);
+
+                _ecransAppelSnapshot = _ecransAppel?.Snapshot;   // Récupère une copie de la configuration des écrans d'appel (thread safe)
             }
             else
             {
@@ -188,7 +191,7 @@ namespace AppPublication.Generation
             }
 
             // Si pas de donnees, pas la peine de continuer
-            if (_snapshot.Organisation.Competitions.Count > 0 && _ecransAppel != null)
+            if (_snapshot.Organisation.Competitions.Count > 0 && _ecransAppelSnapshot != null)
             {
                 try
                 {
@@ -201,7 +204,7 @@ namespace AppPublication.Generation
                         return exporter.GenereWebSiteIndex(_snapshot, _currentContext, _siteInterneUrlGenerator, p);
                     });
 
-                    foreach (var ecran in _ecransAppel.Ecrans)
+                    foreach (var ecran in _ecransAppelSnapshot.Ecrans)
                     {
                         _taskBatcher.AddWork(p =>
                         {
@@ -212,7 +215,7 @@ namespace AppPublication.Generation
                     // et on ajoute le traitement par default
                     _taskBatcher.AddWork(p =>
                     {
-                        return exporter.GenereEcranAppel(_snapshot, _currentContext, _siteInterneUrlGenerator, _ecransAppel.Default, p);
+                        return exporter.GenereEcranAppel(_snapshot, _currentContext, _siteInterneUrlGenerator, _ecransAppelSnapshot.Default, p);
                     });
 
                     // Attend la fin de tous les batchs

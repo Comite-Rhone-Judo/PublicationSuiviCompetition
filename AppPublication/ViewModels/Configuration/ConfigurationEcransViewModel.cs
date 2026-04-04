@@ -86,7 +86,7 @@ namespace AppPublication.ViewModels.Configuration
             {
                 foreach (var model in _ecranManager.Ecrans)
                 {
-                    var vm = new EcranAppelConfigViewModel(model, _tapisDisponibles, _scannerContext)
+                    var vm = new EcranAppelConfigViewModel(model, _tapisDisponibles, _scannerContext, () => _ecranManager.InvalidateSnapshot())
                     {
                         DeleteCommand = new RelayCommand(SupprimerLigne)
                     };
@@ -108,7 +108,7 @@ namespace AppPublication.ViewModels.Configuration
                         foreach (var model in _ecranManager.Ecrans)
                         {
                             // La création lourde des sous-VM se fait ici
-                            var vm = new EcranAppelConfigViewModel(model, _tapisDisponibles, _scannerContext)
+                            var vm = new EcranAppelConfigViewModel(model, _tapisDisponibles, _scannerContext, () => _ecranManager.InvalidateSnapshot())
                             {
                                 DeleteCommand = new RelayCommand(SupprimerLigne)
                             };
@@ -145,7 +145,7 @@ namespace AppPublication.ViewModels.Configuration
             GenerationConfigSection.Instance?.Ecrans.Add(configElement);
 
             // 4. Création du ViewModel et ajout à l'interface
-            EcranAppelConfigViewModel vm = new EcranAppelConfigViewModel(nouveauModel, _tapisDisponibles, _scannerContext)
+            EcranAppelConfigViewModel vm = new EcranAppelConfigViewModel(nouveauModel, _tapisDisponibles, _scannerContext, () => _ecranManager.InvalidateSnapshot())
             {
                 DeleteCommand = new RelayCommand(SupprimerLigne)
             };

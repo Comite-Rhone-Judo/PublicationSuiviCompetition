@@ -9,8 +9,6 @@ namespace AppPublication.Export
         // Propriété spécifique à ce contexte conservée pour l'appelant
         public ConfigurationExportSite Config { get; private set; }
 
-        // TODO Il faut ajouter la liste des ecrans d'appel en snapshot
-
         // Constructeur privé pour obliger l'utilisation de la Factory 'Create'
         private ExportSharedContext() : base() { }
 

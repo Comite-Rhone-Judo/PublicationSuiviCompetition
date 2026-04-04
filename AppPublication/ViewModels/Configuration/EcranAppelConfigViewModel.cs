@@ -40,6 +40,7 @@ namespace AppPublication.ViewModels.Configuration
         private bool _isRechercheHostnameEnCours;
         private CancellationTokenSource _searchCts;
         private readonly NetworkScannerContext _scannerContext;
+        private readonly Action _onModelChanged;
         #endregion
 
         #region COMMANDES
@@ -64,10 +65,11 @@ namespace AppPublication.ViewModels.Configuration
         /// </summary>
         /// <param name="model"></param>
         /// <param name="tousLesTapis"></param>
-        public EcranAppelConfigViewModel(EcranAppelModel model, List<int> tousLesTapis, NetworkScannerContext scannerContext)
+        public EcranAppelConfigViewModel(EcranAppelModel model, List<int> tousLesTapis, NetworkScannerContext scannerContext, Action onModelChanged)
         {
             _model = model;
             _scannerContext = scannerContext; // Sauvegarde du contexte
+            _onModelChanged = onModelChanged;
 
             // Initialisation visuelle
             Hostname = string.IsNullOrEmpty(model.Hostname) ? string.Empty : model.Hostname;
@@ -116,6 +118,7 @@ namespace AppPublication.ViewModels.Configuration
                         NotifyPropertyChanged();
                         var cfg = GetConfigElement();
                         cfg?.NbCombatsPage = value;
+                        _onModelChanged?.Invoke();
                     }
                 }
             }
@@ -148,6 +151,7 @@ namespace AppPublication.ViewModels.Configuration
                     NotifyPropertyChanged();
                     var cfg = GetConfigElement();
                     cfg?.AjusteTexteAuto = value;
+                    _onModelChanged?.Invoke();
                 }
             }
         }
@@ -180,6 +184,8 @@ namespace AppPublication.ViewModels.Configuration
                     // SAUVEGARDE IMMEDIATE
                     var cfg = GetConfigElement();
                     cfg?.Disposition = value;
+
+                    _onModelChanged?.Invoke();
                 }
             }
         }
@@ -203,6 +209,7 @@ namespace AppPublication.ViewModels.Configuration
                     // SAUVEGARDE IMMEDIATE
                     var cfg = GetConfigElement();
                     cfg?.DispositionCombat = value;
+                    _onModelChanged?.Invoke();
                 }
             }
         }
@@ -231,6 +238,8 @@ namespace AppPublication.ViewModels.Configuration
                     // SAUVEGARDE IMMEDIATE
                     var cfg = GetConfigElement();
                     cfg?.Groupement = value; // Déclenche le IsDirty automatique
+
+                    _onModelChanged?.Invoke();
                 }
             }
         }
@@ -265,6 +274,8 @@ namespace AppPublication.ViewModels.Configuration
                     // SAUVEGARDE IMMEDIATE
                     var cfg = GetConfigElement();
                     cfg?.Description = value; // Déclenche le IsDirty automatique
+
+                    _onModelChanged?.Invoke();
                 }
             }
         }
@@ -284,6 +295,8 @@ namespace AppPublication.ViewModels.Configuration
                     _model.Hostname = value;
                     var cfg = GetConfigElement();
                     cfg?.Hostname = value;
+
+                    _onModelChanged?.Invoke();
                 }
             }
         }
@@ -310,6 +323,8 @@ namespace AppPublication.ViewModels.Configuration
                             // SAUVEGARDE IMMEDIATE
                             var cfg = GetConfigElement();
                             cfg?.AdresseIp = value;
+
+                            _onModelChanged?.Invoke();
                         }
                     }
                 }
@@ -489,6 +504,8 @@ namespace AppPublication.ViewModels.Configuration
             // Mise à jour Configuration
             var cfg = GetConfigElement();
             cfg?.TapisIds = string.Join(";", ids);
+
+            _onModelChanged?.Invoke();
         }
 
         /// <summary>

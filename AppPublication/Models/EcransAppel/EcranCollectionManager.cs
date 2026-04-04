@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AppPublication.Models.EcransAppel
@@ -6,19 +7,22 @@ namespace AppPublication.Models.EcransAppel
     public class EcranCollectionManager
     {
         #region MEMBRES
-
-        // Cache interne pour la valeur de l'ID le plus élevé
-        private int _lastId;
-
+        private int _lastId;    // Cache interne pour la valeur de l'ID le plus élevé
         private readonly EcranAppelModel _default;
-
+        private readonly List<EcranAppelModel> _ecrans;
+        private readonly object _dataLock = new object();
+        private volatile EcranCollectionSnapshot _currentSnapshot;  // --- GESTION DU SNAPSHOT ---
         #endregion
 
         #region PROPRIETES
-        // La collection observable pour le binding UI
-        public ObservableCollection<EcranAppelModel> Ecrans { get; private set; }
 
-        // TODO Il faut passer en Dictionnary ThreadSafe et ajouter le snapshot
+        /// <summary>
+        /// Accès en lecture seule pour initialiser l'UI 
+        /// </summary>
+        public IReadOnlyList<EcranAppelModel> Ecrans
+        {
+            get { lock (_dataLock) return _ecrans.ToList().AsReadOnly(); }
+        }
 
         // Accès en lecture seule au Cache
         public int LastId => _lastId;
@@ -36,21 +40,49 @@ namespace AppPublication.Models.EcransAppel
             }
             set
             {
-                if (_nbTapis != value)
+                lock (_dataLock)
                 {
-                    if (_nbTapis >= 0)
+                    if (_nbTapis != value)
                     {
-                        _nbTapis = value;
-                        // Actualise les tapis par défaut pour l'écran d'appel par défaut
-                        if (_default != null)
+                        if (_nbTapis >= 0)
                         {
-                            // Sur l'ecran par defaut, on est prudent: 1 tapis par page, et on affiche tous les tapis disponibles
-                            _default.Groupement = 1;
-                            _default.NbCombatsPage = 8;
-                            // Par defaut, on affiche tous les tapis
-                            _default.TapisIds = Enumerable.Range(1, _nbTapis).ToList();
+                            _nbTapis = value;
+                            // Actualise les tapis par défaut pour l'écran d'appel par défaut
+                            if (_default != null)
+                            {
+                                // Sur l'ecran par defaut, on est prudent: 1 tapis par page, et on affiche tous les tapis disponibles
+                                _default.Groupement = 1;
+                                _default.NbCombatsPage = 8;
+                                // Par defaut, on affiche tous les tapis
+                                _default.TapisIds = Enumerable.Range(1, _nbTapis).ToList();
+
+                                InvalidateSnapshot();
+                            }
                         }
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Retourne un snapshot du model
+        /// </summary>
+        public EcranCollectionSnapshot Snapshot
+        {
+            get
+            {
+                var snap = _currentSnapshot;
+                if (snap != null) return snap;
+
+                lock (_dataLock)
+                {
+                    if (_currentSnapshot == null)
+                    {
+                        var clonedEcrans = _ecrans.Select(e => e.Clone());
+                        var clonedDefault = _default?.Clone();
+                        _currentSnapshot = new EcranCollectionSnapshot(clonedEcrans, clonedDefault);
+                    }
+                    return _currentSnapshot;
                 }
             }
         }
@@ -60,7 +92,7 @@ namespace AppPublication.Models.EcransAppel
         #region CONSTRUCTEUR
         public EcranCollectionManager()
         {
-            Ecrans = new ObservableCollection<EcranAppelModel>();
+            _ecrans = new List<EcranAppelModel>();
 
             _lastId = 0;
             _default = new EcranAppelModel
@@ -82,22 +114,27 @@ namespace AppPublication.Models.EcransAppel
         #region METHODES PUBLIQUES
 
         /// <summary>
+        /// Marque le snapshot actuel comme obsolète, forçant sa recréation au prochain accès.
+        /// </summary>
+        public void InvalidateSnapshot()
+        {
+            _currentSnapshot = null;
+        }
+
+        /// <summary>
         /// Crée un nouvel écran, l'ajoute à la liste et met à jour le cache ID.
         /// </summary>
         public EcranAppelModel Add()
         {
-            var nouvelEcran = new EcranAppelModel
+            lock (_dataLock)
             {
-                Id = NextId, // Utilise la propriété calculée
-                Description = $"Ecran {NextId}"
-            };
+                var nouvelEcran = new EcranAppelModel { Id = NextId, Description = $"Ecran {NextId}" };
+                _ecrans.Add(nouvelEcran); // Utilisation de _ecrans
+                _lastId = nouvelEcran.Id;
 
-            Ecrans.Add(nouvelEcran);
-
-            // Mise à jour du cache vers le haut
-            _lastId = nouvelEcran.Id;
-
-            return nouvelEcran;
+                InvalidateSnapshot();
+                return nouvelEcran;
+            }
         }
 
         public EcranAppelModel Default
@@ -113,18 +150,24 @@ namespace AppPublication.Models.EcransAppel
         /// </summary>
         public void Add(EcranAppelModel ecran)
         {
-            // Gestion de collision basique : si l'ID est déjà pris, on le change
-            if (Ecrans.Any(e => e.Id == ecran.Id))
+            lock (_dataLock)
             {
-                ecran.Id = NextId;
-            }
+                // Gestion de collision basique : si l'ID est déjà pris, on le change
+                if (_ecrans.Any(e => e.Id == ecran.Id))
+                {
+                    ecran.Id = NextId; // NextId utilise _lastId, c'est thread-safe dans le lock
+                }
 
-            Ecrans.Add(ecran);
+                _ecrans.Add(ecran);
 
-            // Si on ajoute un ID plus grand que le cache actuel, on met à jour le cache
-            if (ecran.Id > _lastId)
-            {
-                _lastId = ecran.Id;
+                // Si on ajoute un ID plus grand que le cache actuel, on met à jour le cache
+                if (ecran.Id > _lastId)
+                {
+                    _lastId = ecran.Id;
+                }
+
+                // POINT D'INVALIDATION : La collection a changé, on invalide le cache
+                InvalidateSnapshot();
             }
         }
 
@@ -133,20 +176,34 @@ namespace AppPublication.Models.EcransAppel
         /// </summary>
         public void Remove(EcranAppelModel ecran)
         {
-            if (Ecrans.Contains(ecran))
+            lock (_dataLock)
             {
-                Ecrans.Remove(ecran);
-                RecalculateHighWatermark();
+                var itemToRemove = _ecrans.FirstOrDefault(e => e.Id == ecran.Id); // Utilisation de _ecrans
+                if (itemToRemove != null)
+                {
+                    _ecrans.Remove(itemToRemove); // Utilisation de _ecrans
+                    RecalculateHighWatermark();
+
+                    InvalidateSnapshot();
+                }
             }
         }
 
+        /// <summary>
+        /// Supprime un écran et recalcule le cache ID pour coller aux valeurs existantes.
+        /// </summary>
+        /// <param name="id"></param>
         public void Remove(int id)
         {
-            var ecran = Ecrans.FirstOrDefault(e => e.Id == id);
-            if (ecran != null)
+            lock (_dataLock)
             {
-                // Appelle la méthode principale pour bénéficier du recalcul
-                Remove(ecran);
+                var itemToRemove = _ecrans.FirstOrDefault(e => e.Id == id);
+                if (itemToRemove != null)
+                {
+                    _ecrans.Remove(itemToRemove);
+                    RecalculateHighWatermark();
+                    InvalidateSnapshot();
+                }
             }
         }
         #endregion
@@ -166,7 +223,7 @@ namespace AppPublication.Models.EcransAppel
             else
             {
                 // O(N) : Négligeable pour des listes d'écrans (< 1000 éléments)
-                _lastId = Ecrans.Max(e => e.Id);
+                _lastId = _ecrans.Max(e => e.Id);
             }
         }
 

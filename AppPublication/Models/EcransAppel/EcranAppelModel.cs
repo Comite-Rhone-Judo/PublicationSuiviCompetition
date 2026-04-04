@@ -42,7 +42,7 @@ namespace AppPublication.Models.EcransAppel
         #endregion
 
         #region CONSTRUCTEUR
-        public EcranAppelModel(int id = 0, string description = "Nouvel Écran", string hostname = "", IPAddress adresseIP = null, List<int> tapisIds = null, int groupement = 1, DispositionAffichage disposition = DispositionAffichage.Colonne, DispositionAffichage dispositionCombat = DispositionAffichage.Colonne, bool ajusteTexte = false)
+        public EcranAppelModel(int id = 0, string description = "Nouvel Écran", string hostname = "", IPAddress adresseIP = null, List<int> tapisIds = null, int groupement = 1, DispositionAffichage disposition = DispositionAffichage.Colonne, DispositionAffichage dispositionCombat = DispositionAffichage.Colonne, bool ajusteTexte = false, int nbCombatPage = 8)
         {
             Id = id;
             Description = description;
@@ -53,6 +53,26 @@ namespace AppPublication.Models.EcransAppel
             Disposition = disposition; // Initialisation
             DispositionCombat = dispositionCombat; // Initialisation
             AjusteTailleTexte = ajusteTexte;
+            NbCombatsPage = nbCombatPage;
+        }
+        #endregion
+
+        #region METHODES
+        public EcranAppelModel Clone()
+        {
+            return new EcranAppelModel
+            {
+                Id = this.Id,
+                Description = this.Description,
+                Hostname = this.Hostname,
+                AdresseIP = this.AdresseIP,
+                TapisIds = new List<int>(this.TapisIds ?? new List<int>()), // Clonage de la liste pour éviter les références partagées
+                Groupement = this.Groupement,
+                Disposition = this.Disposition,
+                DispositionCombat = this.DispositionCombat,
+                AjusteTailleTexte = this.AjusteTailleTexte,
+                NbCombatsPage = this.NbCombatsPage
+            };
         }
         #endregion
     }
