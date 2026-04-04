@@ -1029,7 +1029,8 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return !SiteCoordinator.IsGenerationActiveOne;
+                                return true;    // Desormais, on peut afficher le dialogue quand on veut, meme generation activee
+                                // return !SiteCoordinator.IsGenerationActiveOne;
                             });
                 return _cmdAfficherConfigurationGenerale;
             }
@@ -1051,7 +1052,8 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return !SiteCoordinator.GestionnaireSitePublique.IsGenerationActive;
+                                return true;    // Desormais, on peut afficher le dialogue quand on veut, meme generation activee
+                                // return !SiteCoordinator.GestionnaireSitePublique.IsGenerationActive;
                             });
                 return _cmdAfficherConfigurationSite;
             }
@@ -1073,7 +1075,8 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return !SiteCoordinator.GestionnaireSiteInterne.IsGenerationActive;
+                                return true;    // Desormais, on peut afficher le dialogue quand on veut, meme generation activee
+                                // return !SiteCoordinator.GestionnaireSiteInterne.IsGenerationActive;
                             });
                 return _cmdAfficherConfigurationSiteInterne;
             }

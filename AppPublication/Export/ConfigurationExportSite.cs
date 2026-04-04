@@ -1,13 +1,14 @@
 ﻿using FranceJudo.Core.Environment;
 using FranceJudo.Metier.Resources;
 using FranceJudo.Metier.XML;
+using FranceJudo.Core.Utils;
 using System;
 using System.Xml.Linq;
 
 
 namespace AppPublication.Export
 {
-    public class ConfigurationExportSite
+    public class ConfigurationExportSite : IReadOnlyConfigurationExportSite, ICloneableObject<ConfigurationExportSite>
     {
         public ConfigurationExportSite(bool pubPC = false, bool pubAT = true, bool pubP = true, bool partAbsent = false, bool partTC = false, bool scoreGP = false, bool affPosC = false, long delAC = 30, int nbPC = 6, string pMsg = "", string pLogo = "", bool pec = false, bool ptec = false, int maxpc = 5, bool pUseIC = false, string pIC = "")
         {
@@ -30,24 +31,30 @@ namespace AppPublication.Export
 
         }
 
-        public bool PublierProchainsCombats = false;
-        public bool PublierAffectationTapis = true;
-        public bool PublierEngagements = false;
-        public bool EngagementsAbsents = false;
-        public bool EngagementsTousCombats = false;
-        public bool EngagementsScoreGP = false;
-        public bool AfficherPositionCombat = false;
-        public long DelaiActualisationClientSec = 30;
-        public int NbProchainsCombats = 6;
-        public string MsgProchainsCombats = string.Empty;
-        public string Logo = MetierResources.Files.DefaultLogo;
+        public bool PublierProchainsCombats { get; set; } = false;
+        public bool PublierAffectationTapis { get; set; } = true;
+        public bool PublierEngagements { get; set; } = false;
+        public bool EngagementsAbsents { get; set; } = false;
+        public bool EngagementsTousCombats { get; set; } = false;
+        public bool EngagementsScoreGP { get; set; } = false;
+        public bool AfficherPositionCombat { get; set; } = false;
+        public long DelaiActualisationClientSec { get; set; } = 30;
+        public int NbProchainsCombats { get; set; } = 6;
+        public string MsgProchainsCombats { get; set; } = string.Empty;
+        public string Logo { get; set; } = MetierResources.Files.DefaultLogo;
 
-        public bool PouleEnColonnes = false;
-        public bool PouleToujoursEnColonnes = false;
-        public int TailleMaxPouleColonnes = 5;
+        public bool PouleEnColonnes { get; set; } = false;
+        public bool PouleToujoursEnColonnes { get; set; } = false;
+        public int TailleMaxPouleColonnes { get; set; } = 5;
 
-        public bool UseIntituleCommun = false;
-        public string IntituleCommun = string.Empty;
+        public bool UseIntituleCommun { get; set; } = false;
+        public string IntituleCommun { get; set; } = string.Empty;
+
+        public ConfigurationExportSite Clone()
+        {
+            // Crée une copie indépendante de l'objet (parfait pour les types natifs et string)
+            return (ConfigurationExportSite)this.MemberwiseClone();
+        }
 
         public XElement ToXml()
         {

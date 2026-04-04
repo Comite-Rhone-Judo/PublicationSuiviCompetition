@@ -2,6 +2,7 @@
 using AppPublication.Models.EcransAppel;
 using AppPublication.Publication;
 using FranceJudo.Core.IO;
+using FranceJudo.Core.Export;
 using FranceJudo.Core.Logging;
 using FranceJudo.Core.Threading;
 using FranceJudo.Metier.Noyau;
@@ -11,18 +12,21 @@ using System.Collections.Generic;
 
 namespace AppPublication.Generation
 {
-    public class GenerateurSiteInterne : IGenerateurSite
+    public class GenerateurSiteInterne : IGenerateurSite, IConfigurableGenerateur<ConfigurationExportSiteInterne>
     {
         #region MEMBRES
         // Les gestionnaires
         readonly private IJudoDataManager _judoDataManager;                  // Le gestionnaire de données interne
         private IJudoData _snapshot;                                // Le snapshot des données 
+        private EcranCollectionSnapshot _ecransAppelSnapshot;
 
         EcranCollectionManager _ecransAppel;                        // La configuration des ecrans d'appel (pour les combats)
 
         // La structure du site
         private SiteInterneUrlGenerator _siteInterneUrlGenerator;      // La structure de repertoire d'export du site
         private ExportSharedContextInterne _currentContext;             // Le contexte de generation partage (donnees statiques communes a toutes les taches)
+        private readonly ConfigurationExportSiteInterne _cfgExport;
+
 
         // Suivi des taches de generation
         private EtapeGenerateurSiteEnum _etapeCourante = EtapeGenerateurSiteEnum.None;
@@ -33,6 +37,20 @@ namespace AppPublication.Generation
         #region PROPERTIES PUBLIQUES
 
         /// <summary>
+        /// La configuration de l'export (version ReadOnly)
+        /// </summary>
+        public IReadOnlyConfigurationExportSiteInterne ConfigurationGeneration
+        {
+            get
+            {
+                return _cfgExport;
+            }
+        }
+
+        // Le gestionnaire est fortement typé, mais n'est exposé que via l'interface IConfigurableGenerateur
+        public ThreadSafeConfigManager<ConfigurationExportSiteInterne> ExportConfigurationManager { get; }
+
+        /// <summary>
         /// La structure de repertoire utilisee pour l'export du site
         /// </summary>
         public SiteInterneUrlGenerator StructureSiteGenerator
@@ -41,19 +59,7 @@ namespace AppPublication.Generation
             set { _siteInterneUrlGenerator = value; }
         }
 
-        private ConfigurationExportSiteInterne _cfgExport = new ConfigurationExportSiteInterne();     // Init par defaut
-        /// <summary>
-        /// La configuration de l'export (version simple)
-        /// </summary>
-        public ConfigurationExportSiteInterne ConfigurationGeneration
-        {
-            get
-            {
-                _cfgExport ??= new ConfigurationExportSiteInterne();
-                return _cfgExport;
-            }
-            private set { _cfgExport = value; }
-        }
+
 
         private EcranCollectionManager EcransAppel
         {
@@ -75,6 +81,8 @@ namespace AppPublication.Generation
         {
             _judoDataManager = dataManager ?? throw new ArgumentNullException(nameof(dataManager));
             _ecransAppel = ecransAppel;
+            _cfgExport = new ConfigurationExportSiteInterne();     // Init par defaut
+            ExportConfigurationManager = new ThreadSafeConfigManager<ConfigurationExportSiteInterne>(_cfgExport);
 
             try
             {
@@ -147,8 +155,12 @@ namespace AppPublication.Generation
                 // Recupere le snapshot des données (thread safe)
                 _snapshot = _judoDataManager.Snapshot;
 
+                ConfigurationExportSiteInterne snapshotConfig = ExportConfigurationManager.Snapshot;   // Récupère une copie de la configuration (thread safe)
+
                 // Initialise les donnees partagees de generation (ces donnees sont statiques et communes a toutes les taches)
-                _currentContext = ExportSharedContextInterne.Create(_snapshot, _cfgExport);
+                _currentContext = ExportSharedContextInterne.Create(_snapshot, snapshotConfig);
+
+                _ecransAppelSnapshot = _ecransAppel?.Snapshot;   // Récupère une copie de la configuration des écrans d'appel (thread safe)
             }
             else
             {
@@ -179,7 +191,7 @@ namespace AppPublication.Generation
             }
 
             // Si pas de donnees, pas la peine de continuer
-            if (_snapshot.Organisation.Competitions.Count > 0 && _ecransAppel != null)
+            if (_snapshot.Organisation.Competitions.Count > 0 && _ecransAppelSnapshot != null)
             {
                 try
                 {
@@ -192,7 +204,7 @@ namespace AppPublication.Generation
                         return exporter.GenereWebSiteIndex(_snapshot, _currentContext, _siteInterneUrlGenerator, p);
                     });
 
-                    foreach (var ecran in _ecransAppel.Ecrans)
+                    foreach (var ecran in _ecransAppelSnapshot.Ecrans)
                     {
                         _taskBatcher.AddWork(p =>
                         {
@@ -203,7 +215,7 @@ namespace AppPublication.Generation
                     // et on ajoute le traitement par default
                     _taskBatcher.AddWork(p =>
                     {
-                        return exporter.GenereEcranAppel(_snapshot, _currentContext, _siteInterneUrlGenerator, _ecransAppel.Default, p);
+                        return exporter.GenereEcranAppel(_snapshot, _currentContext, _siteInterneUrlGenerator, _ecransAppelSnapshot.Default, p);
                     });
 
                     // Attend la fin de tous les batchs
@@ -235,10 +247,6 @@ namespace AppPublication.Generation
         #endregion
 
         #region METHODES INTERNES
-
-
-
-
         /// <summary>
         /// Vide le contenu du repertoire de la competition
         /// </summary>

@@ -2,6 +2,7 @@
 using AppPublication.ExtensionNoyau;
 using AppPublication.ExtensionNoyau.Engagement;
 using AppPublication.Publication;
+using FranceJudo.Core.Export;
 using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
 using FranceJudo.Core.Network;
@@ -19,7 +20,7 @@ using System.Xml.Linq;
 
 namespace AppPublication.Generation
 {
-    public class GenerateurSite : IGenerateurSite
+    public class GenerateurSite : IGenerateurSite, IConfigurableGenerateur<ConfigurationExportSite>
     {
         #region MEMBRES
         // Les gestionnaires
@@ -28,6 +29,7 @@ namespace AppPublication.Generation
         readonly private ExtendedJudoData _extendedJudoData;
         private MiniSite _site = null;                              // Le site a utilise pour le upload a distance
         private ExportSharedContext _currentContext = null;         // Le contexte de generation courant (a passer aux taches de generation)
+        private readonly ConfigurationExportSite _cfgExport;
 
         // La structure du site
         private SiteUrlGenerator _siteUrlGenerator;      // La structure de repertoire d'export du site
@@ -42,26 +44,26 @@ namespace AppPublication.Generation
         #region PROPERTIES PUBLIQUES
 
         /// <summary>
+        /// La configuration de l'export (version ReadOnly)
+        /// </summary>
+        public IReadOnlyConfigurationExportSite ConfigurationGeneration
+        {
+            get
+            {
+                return _cfgExport;
+            }
+        }
+
+
+        public ThreadSafeConfigManager<ConfigurationExportSite> ExportConfigurationManager { get; }
+
+        /// <summary>
         /// La structure de repertoire utilisee pour l'export du site
         /// </summary>
         public SiteUrlGenerator StructureSiteGenerator
         {
             get { return _siteUrlGenerator; }
             set { _siteUrlGenerator = value; }
-        }
-
-        private ConfigurationExportSite _cfgExport = new ConfigurationExportSite();     // Init par defaut
-        /// <summary>
-        /// La configuration de l'export (version simple)
-        /// </summary>
-        public ConfigurationExportSite ConfigurationGeneration
-        {
-            get
-            {
-                _cfgExport ??= new ConfigurationExportSite();
-                return _cfgExport;
-            }
-            private set { _cfgExport = value; }
         }
 
         /// <summary>
@@ -90,6 +92,8 @@ namespace AppPublication.Generation
             _judoDataManager = dataManager ?? throw new ArgumentNullException(nameof(dataManager));
             _extendedJudoData = new ExtendedJudoData() ?? throw new NullReferenceException(nameof(_extendedJudoData));
             SiteProvider = siteDistant;
+            _cfgExport = new ConfigurationExportSite();
+            ExportConfigurationManager = new ThreadSafeConfigManager<ConfigurationExportSite>(_cfgExport);
 
             try
             {
@@ -171,8 +175,13 @@ namespace AppPublication.Generation
                 // Met a jour les données de l'extension
                 _extendedJudoData.SyncAll(_snapshot);
 
+                // Clone la configuration
+                ConfigurationExportSite snapshotConfig;
+
+                snapshotConfig = ExportConfigurationManager.Snapshot;
+
                 // Initialise les donnees partagees de generation (ces donnees sont statiques et communes a toutes les taches)
-                _currentContext = ExportSharedContext.Create(_snapshot, _extendedJudoData, _cfgExport);
+                _currentContext = ExportSharedContext.Create(_snapshot, _extendedJudoData, snapshotConfig);
 
                 // Charge le contenu du fichier de checksum
                 LoadChecksumFichiersGeneres();

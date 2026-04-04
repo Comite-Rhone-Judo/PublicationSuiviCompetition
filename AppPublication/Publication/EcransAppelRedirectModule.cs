@@ -105,12 +105,13 @@ namespace AppPublication.Publication
                 // 1. Récupérer l'identité du client (IP)
                 // Note: request.RemoteEndPoint peut nécessiter un cast selon ton implémentation de IHttpRequest
                 var clientIp = request.RemoteEndPoint.Address;
+                var currentSnapshot = _manager.Snapshot;
 
                 // 2. Déterminer la cible en fonction de l'IP
-                var ecranToRedirect = _manager.Ecrans.FirstOrDefault(e => e.AdresseIP.MapToIPv4().Equals(clientIp.MapToIPv4()));
+                var ecranToRedirect = currentSnapshot.Ecrans.FirstOrDefault(e => e.AdresseIP.MapToIPv4().Equals(clientIp.MapToIPv4()));
 
                 // 3. Rediriger vers la page correspondante ou une page par défaut
-                ecranToRedirect ??= _manager.Default;
+                ecranToRedirect ??= currentSnapshot.Default;
                 if (ecranToRedirect == null)
                 {
                     LogTools.Logger.Error("EcransAppelRedirectModule: Aucun écran d'appel trouvé pour l'IP {0} et aucun écran par défaut défini.", clientIp);
@@ -118,8 +119,6 @@ namespace AppPublication.Publication
                 }
 
                 // Construire l'URL de redirection
-                // output = (new Uri(new Uri(urlBase), _structureSiteInterne.UrlPathEcransAppelRedirecteur)).ToString();
-
                 string targetRedirect = _structInterne.GetUrlUnEcranAppel(ecranToRedirect.Id).AbsoluteUri;
 
                 // On ajoute un timestamp fictif pour forcer le by-pass du cache INDISPENDABLE SUR LES SMARTS TV    

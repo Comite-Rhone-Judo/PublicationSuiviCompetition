@@ -126,7 +126,8 @@ namespace AppPublication.Models.Publication
             {
                 if (_delaiDeroulementSec != value)
                 {
-                    _generateurSite.ConfigurationGeneration.DelaiDeroulementSec = (_delaiDeroulementSec = value);
+                    _delaiDeroulementSec = value;
+                    _generateurSite?.ExportConfigurationManager?.Modifier(c => { c.DelaiDeroulementSec = value; });
                     GenerationConfigSection.Instance.GenerateurSiteInterne.DelaiDeroulementSec = _delaiDeroulementSec;
                     NotifyPropertyChanged();
                 }
@@ -145,7 +146,10 @@ namespace AppPublication.Models.Publication
                 if (_nbProchainsCombats != value)
                 {
                     // Propage la valeur au generateur de site
-                    _generateurSite.ConfigurationGeneration.NbProchainsCombats = (_nbProchainsCombats = value);
+                    _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+                    {
+                        c.NbProchainsCombats = (_nbProchainsCombats = value);
+                    });
                     GenerationConfigSection.Instance.GenerateurSiteInterne.NbProchainsCombats = _nbProchainsCombats;
                     NotifyPropertyChanged();
                 }
@@ -207,7 +211,10 @@ namespace AppPublication.Models.Publication
         protected override void OnSelectedLogoChanged(string logoName)
         {
             // Propage la valeur au generateur de site interne
-            _generateurSite?.ConfigurationGeneration.Logo = logoName;
+            _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+            {
+                c.Logo = logoName;
+            } );
         }
 
         protected override void OnInterfaceLocalPublicationChanged()
@@ -320,10 +327,7 @@ namespace AppPublication.Models.Publication
                     output = _siteInterneUrlGenerator.UrlEcransAppelRedirecteur.AbsoluteUri;
 
                     // Met a jour le contexte pour la generation
-                    if (_generateurSite != null && _generateurSite.ConfigurationGeneration != null)
-                    {
-                        _generateurSite.ConfigurationGeneration.UrlRedirecteur = output;
-                    }
+                    _generateurSite?.ExportConfigurationManager?.Modifier(c => { c.UrlRedirecteur = output; });
                 }
             }
             catch (Exception ex)
