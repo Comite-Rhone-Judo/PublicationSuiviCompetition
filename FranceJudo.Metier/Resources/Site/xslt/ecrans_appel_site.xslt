@@ -41,8 +41,9 @@
 	<xsl:variable name="typeCompetition" select="/docroot/competition/@type" />
 	<xsl:variable name="TitreCompetition" select="/docroot/competition/titre"/>
 
-	<!-- TODO Vérifier le comportement plusieurs competition AffDetailCompetition -->
-	
+	<!-- En jujitsu, on affiche la discpline -->
+	<xsl:variable select="/docroot/competition/@discipline != 'C_COMPETITION'" name="affDiscipline"/>
+
 	<xsl:variable name="nbProchainsCombatsEff">
 		<xsl:choose>
 			<xsl:when test="$nbProchainsCombats > 0">
@@ -424,7 +425,7 @@
 				<div>
 					<xsl:attribute name="class">
 						<xsl:text>w3-card w3-pale-yellow w3-round-small cat-box</xsl:text>
-						<xsl:if test="$typeCompetition = 1"> cat-box-equipe</xsl:if>
+						<xsl:if test="$typeCompetition = 1 or $affDiscipline"> cat-box-equipe</xsl:if>
 					</xsl:attribute>
 					<div class="dyn-txt-cat-titre">
 						<xsl:value-of select="$docPrincipal//epreuve[@ID = $epreuve]/@sexe"/>
@@ -438,32 +439,49 @@
 							<xsl:with-param name="repechage" select="$combat/feuille/@repechage = 'true'"/>
 						</xsl:call-template>)
 					</div>
-					<xsl:if test="$typeCompetition = 1">
-						<div class="cartouche-equipe-wrapper">
-							<div>
-								<xsl:attribute name="class">
-									<xsl:text>cartouche-equipe w3-tag w3-round-large </xsl:text>
-									<xsl:value-of select="substring-before($firstrencontreclass, ' ')"/>
-								</xsl:attribute>
-
+					<xsl:choose>
+						<!-- Cas 1 : Compétition Equipe (On garde le vrai cartouche avec couleur) -->
+						<xsl:when test="$typeCompetition = 1">
+							<div class="cartouche-equipe-wrapper">
 								<div>
 									<xsl:attribute name="class">
-										<xsl:text>cartouche-icone-mask </xsl:text>
-										<xsl:value-of select="substring-after($firstrencontreclass, ' ')"/>
+										<xsl:text>cartouche-equipe w3-tag w3-round-large </xsl:text>
+										<xsl:value-of select="substring-before($firstrencontreclass, ' ')"/>
 									</xsl:attribute>
-									<img class="cartouche-icone">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
-										</xsl:attribute>
-									</img>
-								</div>
 
-								<div class="dyn-txt-cat-equipe">
-									<xsl:value-of select="$combat/@firstrencontrelib"/>
+									<div>
+										<xsl:attribute name="class">
+											<xsl:text>cartouche-icone-mask </xsl:text>
+											<xsl:value-of select="substring-after($firstrencontreclass, ' ')"/>
+										</xsl:attribute>
+										<img class="cartouche-icone">
+											<xsl:attribute name="src">
+												<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+											</xsl:attribute>
+										</img>
+									</div>
+
+									<div class="dyn-txt-cat-equipe">
+										<xsl:value-of select="$combat/@firstrencontrelib"/>
+									</div>
 								</div>
 							</div>
-						</div>
-					</xsl:if>
+						</xsl:when>
+						<!-- Cas 2 : Option discipline activée (Jujitsu) -->
+						<xsl:when test="$affDiscipline">
+							<div class="cartouche-equipe-wrapper">
+								<!-- L'utilisation de la classe "cartouche-equipe" connecte ce texte au redimensionnement auto JS -->
+								<div class="cartouche-equipe w3-text-dark-grey" style="font-weight: bold; opacity: 0.85;">
+									<xsl:choose>
+										<xsl:when test="$docPrincipal//epreuve[@ID = $epreuve]/@discipline_competition = 2">Combat</xsl:when>
+										<xsl:when test="$docPrincipal//epreuve[@ID = $epreuve]/@discipline_competition = 3">NeWaza</xsl:when>
+									</xsl:choose>
+									<xsl:text> - </xsl:text>
+									<xsl:value-of select="$docPrincipal//epreuve[@ID = $epreuve]/@nom_cateage"/>
+								</div>
+							</div>
+						</xsl:when>
+					</xsl:choose>
 				</div>
 			</div>
 

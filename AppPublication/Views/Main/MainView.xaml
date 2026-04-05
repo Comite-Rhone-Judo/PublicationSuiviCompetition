@@ -178,133 +178,154 @@
                         <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="White" Margin="10 0 10 0">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="auto"/>
+                                    <!-- Titre -->
+                                    <ColumnDefinition Width="150"/>
+                                    <!-- Etat -->
+                                    <ColumnDefinition Width="140"/>
+                                    <!-- Separateur -->
+                                    <ColumnDefinition Width="5"/>
+                                    <!-- Statut -->
+                                    <ColumnDefinition Width="230"/>
+                                    <!-- Separateur -->
+                                    <ColumnDefinition Width="5"/>
+                                    <!-- Mise a jour-->
+                                    <ColumnDefinition Width="400"/>
+                                    <!-- Bouton -->
+                                    <ColumnDefinition Width="auto"/>    
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="45"/>
                                     <RowDefinition Height="5"/>
-                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="45"/>
                                 </Grid.RowDefinitions>
+                                <!-- Titre -->
                                 <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
                                     <Line StrokeThickness="2" Stroke="LawnGreen" Margin="2 2 2 2" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                     <Label HorizontalAlignment="Left" Content="Site Coachs &amp; Public" Style="{StaticResource HeaderStyle}" Margin="0"/>
                                 </StackPanel>
+                                <!-- Etat -->
                                 <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
-                                    <StackPanel Orientation="Horizontal" >
-                                        <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
+                                    <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
                                         <Rectangle  Style="{StaticResource AnimatedStatusStyle}"
                                                     DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique}"
                                                     Tag="{Binding Path=IsGenerationActive, Converter={StaticResource ValueToBoolConverter}}"/>
-                                        <Label HorizontalAlignment="Left" Content="{Binding Path=SiteCoordinator.GestionnaireSitePublique.IsGenerationActive, Mode=OneWay, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
-                                    </StackPanel>
-                                    <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
-                                    <StackPanel Orientation="Horizontal" >
-                                        <Label HorizontalAlignment="Left" Content="Statut:" Style="{StaticResource LabelStyle}" />
+                                    <Label HorizontalAlignment="Left" Content="Démarré" Style="{StaticResource LabelStyleValue}" />
+                                </StackPanel>
+                                <!-- Separateur -->
+                                <Line Grid.Row="0" Grid.Column="2" StrokeThickness="1" Margin="0 2 0 2" Stroke="White" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
+                                <!-- Statut -->
+                                <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal">
+                                    <Label HorizontalAlignment="Left" Content="Statut:" Style="{StaticResource LabelStyle}" />
                                         <Ellipse Margin="0" Height="15" Width="15" Style="{StaticResource OperationStatusStyle}" DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique.Status, Mode=OneWay}"/>
                                         <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                                             <Label HorizontalAlignment="Left" Width="140" Content="{Binding SiteCoordinator.GestionnaireSitePublique.Status.Message, Mode=OneWay}" Style="{StaticResource LabelStyleValue}" />
-                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                <telerik:RadProgressBar Orientation="Horizontal" Width="100" Height="10" Margin="10 -10 0 0" Minimum="0" Maximum="100" Style="{StaticResource StatusProgressBarStyle}" DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique.Status, Mode=OneWay}" />
-                                                <Label Margin="0 -12 0 0" DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique.Status, Mode=OneWay}" Style="{StaticResource StatusGenerationSiteProgressLabelStyle}" />
-                                            </StackPanel>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <telerik:RadProgressBar Orientation="Horizontal" Width="100" Height="10" Margin="10 -10 0 0" Minimum="0" Maximum="100" Style="{StaticResource StatusProgressBarStyle}" DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique.Status, Mode=OneWay}" />
+                                            <Label Margin="0 -12 0 0" DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique.Status, Mode=OneWay}" Style="{StaticResource StatusGenerationSiteProgressLabelStyle}" />
                                         </StackPanel>
                                     </StackPanel>
-                                    <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
-                                    <StackPanel Orientation="Horizontal" >
-                                        <Label HorizontalAlignment="Left" Content="Mise à jour:" Style="{StaticResource LabelStyle}" />
-                                        <Label HorizontalAlignment="Left"  IsEnabled="{Binding SiteCoordinator.GestionnaireSitePublique.SiteGenere}" Style="{StaticResource LabelStyleValue}">
-                                            <Label.Content>
-                                                <MultiBinding Converter="{StaticResource StatGenerationConverter}" Mode="OneWay">
-                                                    <Binding Path="SiteCoordinator.GestionnaireSitePublique.DerniereGeneration" Mode="OneWay"/>
-                                                    <Binding Path="SiteCoordinator.GestionnaireSitePublique.SiteGenere" Mode="OneWay"/>
-                                                </MultiBinding>
-                                            </Label.Content>
-                                        </Label>
-                                    </StackPanel>
                                 </StackPanel>
-                                <Line Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Center" StrokeThickness="1" Stroke="White" Margin="10 0 10 0" X1="0" X2="1" Y1="0" Y2="0" Stretch="Fill"/>
-                                <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
-                                    <Line StrokeThickness="2" Stroke="DeepSkyBlue" Margin="2 2 2 2" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
-                                    <Label  HorizontalAlignment="Left" Content="Chambre d'appel" Style="{StaticResource HeaderStyle}" Margin="0"/>
-                                </StackPanel>
-                                
-                                <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
-                                    <StackPanel Orientation="Horizontal" >
-                                        <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
-                                        <Rectangle  Style="{StaticResource AnimatedStatusStyle}"
-                                                    DataContext="{Binding Path=SiteCoordinator.GestionnaireSiteInterne}"
-                                                    Tag="{Binding Path=IsGenerationActive, Converter={StaticResource ValueToBoolConverter}}"/>
-                                        <Label HorizontalAlignment="Left" Content="{Binding Path=SiteCoordinator.GestionnaireSiteInterne.IsGenerationActive, Mode=OneWay, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
-                                    </StackPanel>
-                                    <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
-                                    <StackPanel Orientation="Horizontal" >
-                                        <Label HorizontalAlignment="Left" Content="Statut:" Style="{StaticResource LabelStyle}" />
-                                        <Ellipse Margin="0" Height="15" Width="15" Style="{StaticResource OperationStatusStyle}" DataContext="{Binding Path=SiteCoordinator.GestionnaireSiteInterne.Status, Mode=OneWay}"/>
-                                        <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                                            <Label HorizontalAlignment="Left" Width="140" Content="{Binding SiteCoordinator.GestionnaireSiteInterne.Status.Message, Mode=OneWay}" Style="{StaticResource LabelStyleValue}" />
-                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                <telerik:RadProgressBar Orientation="Horizontal" Width="100" Height="10" Margin="10 -10 0 0" Minimum="0" Maximum="100" Style="{StaticResource StatusProgressBarStyle}" DataContext="{Binding Path=SiteCoordinator.GestionnaireSiteInterne.Status, Mode=OneWay}" />
-                                                <Label Margin="0 -12 0 0" DataContext="{Binding Path=SiteCoordinator.GestionnaireSiteInterne.Status, Mode=OneWay}" Style="{StaticResource StatusGenerationSiteProgressLabelStyle}" />
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </StackPanel>
-                                    <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
-                                    <StackPanel Orientation="Horizontal" >
+                                <!-- Separateur -->
+                                <Line Grid.Row="0" Grid.Column="4" StrokeThickness="1" Margin="0 2 0 2" Stroke="White" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
+                                <!-- Mise a jour-->
+                                <StackPanel Grid.Row="0" Grid.Column="5" Orientation="Horizontal">
                                         <Label HorizontalAlignment="Left" Content="Mise à jour:" Style="{StaticResource LabelStyle}" />
-                                        <Label HorizontalAlignment="Left"  IsEnabled="{Binding SiteCoordinator.GestionnaireSitePublique.SiteGenere}" Style="{StaticResource LabelStyleValue}">
-                                            <Label.Content>
-                                                <MultiBinding Converter="{StaticResource StatGenerationConverter}" Mode="OneWay">
-                                                    <Binding Path="SiteCoordinator.GestionnaireSitePublique.DerniereGeneration" Mode="OneWay"/>
-                                                    <Binding Path="SiteCoordinator.GestionnaireSitePublique.SiteGenere" Mode="OneWay"/>
-                                                </MultiBinding>
-                                            </Label.Content>
-                                        </Label>
-                                    </StackPanel>
+                                    <Label HorizontalAlignment="Left"  IsEnabled="{Binding SiteCoordinator.GestionnaireSitePublique.SiteGenere}" Style="{StaticResource LabelStyleValue}">
+                                        <Label.Content>
+                                            <MultiBinding Converter="{StaticResource StatGenerationConverter}" Mode="OneWay">
+                                                <Binding Path="SiteCoordinator.GestionnaireSitePublique.DerniereGeneration" Mode="OneWay"/>
+                                                <Binding Path="SiteCoordinator.GestionnaireSitePublique.SiteGenere" Mode="OneWay"/>
+                                            </MultiBinding>
+                                        </Label.Content>
+                                    </Label>
                                 </StackPanel>
                                 <!-- Boutons-->
-                                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10 5 10 5">
+                                <StackPanel Grid.Row="0" Grid.Column="6" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10 5 10 5">
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 15 0"
-                                                   Command="{Binding Path=CmdDemarrerGeneration}" Height="35">
+                   Command="{Binding Path=CmdDemarrerGeneration}" Height="35">
                                         <WrapPanel Orientation="Horizontal">
                                             <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/play-32.png" Height="25" Margin="5 0"/>
                                             <Label Content="Démarrer" Style="{StaticResource ButtonLabelStyle}" />
                                         </WrapPanel>
                                     </telerik:RadButton>
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="15 0 0 0" Height="35"
-                                                   Command="{Binding Path=CmdArreterGeneration}">
+                   Command="{Binding Path=CmdArreterGeneration}">
                                         <WrapPanel Orientation="Horizontal">
                                             <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/stop-32.png" Height="25" Margin="5 0"/>
                                             <Label Content="Arrêter" Style="{StaticResource ButtonLabelStyle}" />
                                         </WrapPanel>
                                     </telerik:RadButton>
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="10 0 10 0"
-                                                        Command="{Binding Path=CmdAfficherConfigurationSite}" Height="35">
+                        Command="{Binding Path=CmdAfficherConfigurationSite}" Height="35">
                                         <WrapPanel Orientation="Horizontal">
                                             <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/settings2-32.png" Height="25" Margin="5 0"/>
                                             <Label Content="Configurer ..." Style="{StaticResource ButtonLabelStyle}"/>
                                         </WrapPanel>
                                     </telerik:RadButton>
                                 </StackPanel>
-                                <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10 5 10 5">
+                                <!-- Separateur Horizontal -->
+                                <Line Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="7" VerticalAlignment="Center" StrokeThickness="1" Stroke="White" Margin="10 0 10 0" X1="0" X2="1" Y1="0" Y2="0" Stretch="Fill"/>
+
+                                <!-- Titre -->
+                                <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
+                                    <Line StrokeThickness="2" Stroke="DeepSkyBlue" Margin="2 2 2 2" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
+                                    <Label  HorizontalAlignment="Left" Content="Chambre d'appel" Style="{StaticResource HeaderStyle}" Margin="0"/>
+                                </StackPanel>
+
+                                <!-- Etat -->
+                                <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+                                    <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
+                                        <Rectangle  Style="{StaticResource AnimatedStatusStyle}"
+                                                    DataContext="{Binding Path=SiteCoordinator.GestionnaireSiteInterne}"
+                                                    Tag="{Binding Path=IsGenerationActive, Converter={StaticResource ValueToBoolConverter}}"/>
+                                        <Label HorizontalAlignment="Left" Content="{Binding Path=SiteCoordinator.GestionnaireSiteInterne.IsGenerationActive, Mode=OneWay, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
+                                    </StackPanel>
+                                <!-- Separateur -->
+                                <Line Grid.Row="2" Grid.Column="2" StrokeThickness="1" Margin="0 2 0 2" Stroke="White" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
+                                <!-- Statut -->
+                                <StackPanel Grid.Row="2" Grid.Column="3" Orientation="Horizontal" >
+                                    <Label HorizontalAlignment="Left" Content="Statut:" Style="{StaticResource LabelStyle}" />
+                                    <Ellipse Margin="0" Height="15" Width="15" Style="{StaticResource OperationStatusStyle}" DataContext="{Binding Path=SiteCoordinator.GestionnaireSiteInterne.Status, Mode=OneWay}"/>
+                                    <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                                        <Label HorizontalAlignment="Left" Width="140" Content="{Binding SiteCoordinator.GestionnaireSiteInterne.Status.Message, Mode=OneWay}" Style="{StaticResource LabelStyleValue}" />
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <telerik:RadProgressBar Orientation="Horizontal" Width="100" Height="10" Margin="10 -10 0 0" Minimum="0" Maximum="100" Style="{StaticResource StatusProgressBarStyle}" DataContext="{Binding Path=SiteCoordinator.GestionnaireSiteInterne.Status, Mode=OneWay}" />
+                                            <Label Margin="0 -12 0 0" DataContext="{Binding Path=SiteCoordinator.GestionnaireSiteInterne.Status, Mode=OneWay}" Style="{StaticResource StatusGenerationSiteProgressLabelStyle}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
+                                <!-- Separateur -->
+                                <Line Grid.Row="2" Grid.Column="4" StrokeThickness="1" Margin="0 2 0 2" Stroke="White" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
+                                <!-- Mise a jour-->
+                                <StackPanel Grid.Row="2" Grid.Column="5" Orientation="Horizontal" >
+                                    <Label HorizontalAlignment="Left" Content="Mise à jour:" Style="{StaticResource LabelStyle}" />
+                                    <Label HorizontalAlignment="Left"  IsEnabled="{Binding SiteCoordinator.GestionnaireSitePublique.SiteGenere}" Style="{StaticResource LabelStyleValue}">
+                                        <Label.Content>
+                                            <MultiBinding Converter="{StaticResource StatGenerationConverter}" Mode="OneWay">
+                                                <Binding Path="SiteCoordinator.GestionnaireSitePublique.DerniereGeneration" Mode="OneWay"/>
+                                                <Binding Path="SiteCoordinator.GestionnaireSitePublique.SiteGenere" Mode="OneWay"/>
+                                            </MultiBinding>
+                                        </Label.Content>
+                                    </Label>
+                                </StackPanel>
+                                <!-- Boutons-->
+                                <StackPanel Grid.Row="2" Grid.Column="6" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10 5 10 5">
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 15 0"
-                   Command="{Binding Path=CmdDemarrerGenerationInterne}" Height="35">
+                                        Command="{Binding Path=CmdDemarrerGenerationInterne}" Height="35">
                                         <WrapPanel Orientation="Horizontal">
                                             <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/play-32.png" Height="25" Margin="5 0"/>
                                             <Label Content="Démarrer" Style="{StaticResource ButtonLabelStyle}" />
                                         </WrapPanel>
                                     </telerik:RadButton>
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="15 0 0 0" Height="35"
-                   Command="{Binding Path=CmdArreterGenerationInterne}">
+                                        Command="{Binding Path=CmdArreterGenerationInterne}">
                                         <WrapPanel Orientation="Horizontal">
                                             <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/stop-32.png" Height="25" Margin="5 0"/>
                                             <Label Content="Arrêter" Style="{StaticResource ButtonLabelStyle}" />
                                         </WrapPanel>
                                     </telerik:RadButton>
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="10 0 10 0"
-     Command="{Binding Path=CmdAfficherConfigurationSiteInterne}" Height="35">
+                                        Command="{Binding Path=CmdAfficherConfigurationSiteInterne}" Height="35">
                                         <WrapPanel Orientation="Horizontal">
                                             <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/settings2-32.png" Height="25" Margin="5 0"/>
                                             <Label Content="Configurer ..." Style="{StaticResource ButtonLabelStyle}"/>
