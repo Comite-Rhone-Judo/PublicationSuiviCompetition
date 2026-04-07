@@ -76,6 +76,7 @@ namespace AppPublication.Publication
         #region METHODES PRIVEES
         protected override void BuildCompetitionUrl(string competitionId, Uri rootDomain, out string urlPath, out Uri baseUri)
         {
+            // TODO Verifier le comportement sur le site FFJudo (cf. retour de Eric)
             urlPath = _isolate
                 ? $"{competitionId.TraiteChaineURL()}/"
                 : $"{kCourante}/";
