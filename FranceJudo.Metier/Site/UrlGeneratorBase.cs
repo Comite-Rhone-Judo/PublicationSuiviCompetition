@@ -23,8 +23,8 @@ namespace FranceJudo.Metier.Site
         {
             get
             {
-                // On force la vérification avant de retourner la valeur
-                EnsureCacheSynchronization();
+                // On force la vérification avant de retourner la valeur. On ne 
+                EnsureCacheSynchronization(false);
                 return _urlPathCompetition; // Note: changez le setter en private sur le membre
             }
             protected set => _urlPathCompetition = value;
@@ -159,13 +159,13 @@ namespace FranceJudo.Metier.Site
         /// <summary>
         /// Assure la synchro des caches internes pour eviter le recalcul des URLs
         /// </summary>
-        protected void EnsureCacheSynchronization()
+        protected void EnsureCacheSynchronization(bool ensureFull = true)
         {
             var currentStruct = _physicalStructure;
 
             // LE GUARDRAIL RESTE UNIQUEMENT ICI !
             // Car c'est la porte d'entrée pour la génération d'URLs. Si on arrive ici, l'objet doit être configuré.
-            currentStruct.GuardRail();
+            currentStruct.GuardRail(ensureFull);
             string currentId = currentStruct.IdCompetition;
 
             if (_idCompetitionLast != currentId)

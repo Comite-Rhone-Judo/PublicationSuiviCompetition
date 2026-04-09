@@ -395,7 +395,10 @@ namespace AppPublication.Models.Publication
                 _siteDistantUrlGenerator?.CompetitionIsolee = _isolerCompetition;
                 NotifyPropertyChanged();
                 URLDistantPublication = CalculURLSiteDistant();
-                SiteDistantSelectionne?.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
+
+                // On met a jour les 2 Sites (en cas de bascule)
+                SiteDistant?.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant(useEasyConfig: false);
+                SiteFranceJudo?.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant(useEasyConfig: true);
             }
         }
 
@@ -521,7 +524,7 @@ namespace AppPublication.Models.Publication
                 {
                     PublicationConfigSection.Instance.General.RepertoireRacineSiteFTPDistant = (_ftpRepertoireRacineDistant = value);
                     NotifyPropertyChanged();
-                    SiteDistant.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();   // Ce parametre ne concerne pas le site FranceJudo
+                    SiteDistant?.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant(useEasyConfig: false);   // Ce parametre ne concerne pas le site FranceJudo
                 }
             }
         }
@@ -878,7 +881,10 @@ namespace AppPublication.Models.Publication
         public override void ForceRefreshUrls()
         {
             // Recalcul les valeurs des URLs et répertoires distants
-            SiteDistantSelectionne?.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
+            // Ici on ne peut pas se contenter du site selectionne, les 2 sites utilisent la competition dans le calcul de leur URL et repertoire distant, il faut donc forcer le recalcul pour les 2
+
+            SiteDistant?.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant(useEasyConfig: false);
+            SiteFranceJudo?.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant(useEasyConfig: true);
 
             URLDistantPublication = CalculURLSiteDistant();
             URLLocalPublication = CalculURLSiteLocal();
@@ -911,14 +917,14 @@ namespace AppPublication.Models.Publication
         private void GenereConfigFTPFranceJudo(EntitePublicationFFJudo entite)
         {
             // Configure le site France Judo
-            SiteFranceJudo.LoginSiteFTPDistant = entite.Login;
-            SiteFranceJudo.ModeActifFTPDistant = false;
-            SiteFranceJudo.SiteFTPDistant = _ftpEasyConfig;
-            SiteFranceJudo.SynchroniseDifferences = true;
-            SiteFranceJudo.MaxRetryFTP = 10;
+            SiteFranceJudo?.LoginSiteFTPDistant = entite.Login;
+            SiteFranceJudo?.ModeActifFTPDistant = false;
+            SiteFranceJudo?.SiteFTPDistant = _ftpEasyConfig;
+            SiteFranceJudo?.SynchroniseDifferences = true;
+            SiteFranceJudo?.MaxRetryFTP = 10;
 
             // Calcul le repertoire distant en fonction de la competition
-            SiteFranceJudo.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant();
+            SiteFranceJudo?.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant(useEasyConfig: true);
 
             // Recalcul l'URL distante
             URLDistantPublication = CalculURLSiteDistant();
@@ -1093,14 +1099,14 @@ namespace AppPublication.Models.Publication
         /// Calcul le repertoire sur le site distant en fonction de la configuration
         /// </summary>
         /// <returns></returns>
-        private string CalculRepertoireSiteDistant()
+        private string CalculRepertoireSiteDistant(bool useEasyConfig)
         {
             string output = string.Empty;
             string repRoot;
 
             try
             {
-                repRoot = (AdvancedConfig) ? RepertoireRacineSiteFTPDistant : EntitePublicationFFJudo.RacineFtp;
+                repRoot = (useEasyConfig) ?  EntitePublicationFFJudo.RacineFtp : RepertoireRacineSiteFTPDistant;
             }
             catch
             {

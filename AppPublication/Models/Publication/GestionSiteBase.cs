@@ -14,6 +14,13 @@ namespace AppPublication.Models.Publication
 {
     public abstract class GestionSiteBase : NotificationBase
     {
+        #region CONSTANTES
+
+        public const string kUnknownIdCompetition = "unkonw";
+
+        #endregion
+
+
         #region MEMBRES PROTEGES
         protected GestionStatistiques _statMgr = null;
         protected IJudoDataManager _judoDataManager;                // Le gestionnaire de données interne
@@ -23,6 +30,20 @@ namespace AppPublication.Models.Publication
         #endregion
 
         #region PROPRIETES COMMUNES
+
+        private bool _idCompetitionValide = false;
+        public bool IsIdCompetitionValide
+        {
+            get
+            {
+                return _idCompetitionValide;
+            }
+            private set
+            {
+                _idCompetitionValide = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         /// <summary>
         /// Indique si le gestionnaire est dans un état qui permet de changer les propriétés de configuration (true) ou si une generation est en cours et bloque les changements (false)
@@ -184,7 +205,7 @@ namespace AppPublication.Models.Publication
             }
         }
 
-        private string _idCompetition = string.Empty;
+        private string _idCompetition = kUnknownIdCompetition;
         /// <summary>
         /// ID de la competition en cours
         /// </summary>
@@ -195,6 +216,10 @@ namespace AppPublication.Models.Publication
             {
                 _idCompetition = value;
                 NotifyPropertyChanged();
+
+                // Actualise l'état de l'ID competition
+                IsIdCompetitionValide = (IdCompetition != kUnknownIdCompetition);
+
                 OnIdCompetitionChanged(value); // Hook pour recalculer les structures et URL
             }
         }

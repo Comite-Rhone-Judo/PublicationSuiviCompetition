@@ -12,6 +12,7 @@ namespace AppPublication.Publication
     {
         #region CONSTANTES
         public const string kCourante = "courante";
+        public const string kUnknownIdCompetition = "unknown";
         #endregion
 
         #region MEMBRES
@@ -77,7 +78,7 @@ namespace AppPublication.Publication
         protected override void BuildCompetitionUrl(string competitionId, Uri rootDomain, out string urlPath, out Uri baseUri)
         {
             // Si l'ID competition est vide, on va mettre "unknown" pour éviter les erreurs de niveau de répertoire
-            string compId = (string.IsNullOrEmpty(competitionId)) ? "unknown" : competitionId;
+            string compId = (string.IsNullOrEmpty(competitionId)) ? kUnknownIdCompetition : competitionId;
 
             urlPath = _isolate
                 ? $"{compId.TraiteChaineURL()}/"

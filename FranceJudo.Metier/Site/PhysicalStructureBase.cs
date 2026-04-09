@@ -9,7 +9,6 @@ using System.IO;
 
 namespace FranceJudo.Metier.Site
 {
-    // TODO Mauvais Folder
     /// <summary>
     /// Decrit la structure physique d'un site internet
     /// </summary>

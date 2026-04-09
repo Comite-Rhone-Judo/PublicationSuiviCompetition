@@ -118,8 +118,8 @@
     <Compile Include="Noyau\Structures\ISecteur.cs" />
     <Compile Include="Regles\ScoresProLeague.cs" />
     <Compile Include="Resources\MetierResources.cs" />
-    <Compile Include="Resources\Site\PhysicalStructureBase.cs" />
-    <Compile Include="Resources\Site\UrlGeneratorBase.cs" />
+    <Compile Include="Site\PhysicalStructureBase.cs" />
+    <Compile Include="Site\UrlGeneratorBase.cs" />
     <Compile Include="Regles\ScoresJujitsu.cs" />
     <Compile Include="Network\ConstantNetwork.cs" />
     <Compile Include="Network\ServerCommandEnum.cs" />
@@ -280,144 +280,144 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\img\checked_checkbox-32.png" />
+    <EmbeddedResource Include="Site\img\checked_checkbox-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\img\unchecked_checkbox-32.png" />
+    <EmbeddedResource Include="Site\img\unchecked_checkbox-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\img\badge-1st-32.png" />
+    <EmbeddedResource Include="Site\img\badge-1st-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\img\down_circular-32.png" />
+    <EmbeddedResource Include="Site\img\down_circular-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\img\equal-sign-32.png" />
+    <EmbeddedResource Include="Site\img\equal-sign-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\img\home-32.png" />
+    <EmbeddedResource Include="Site\img\home-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\img\logo-France-Judo-Rhone.png" />
+    <EmbeddedResource Include="Site\img\logo-France-Judo-Rhone.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\img\logo-France-Judo.png" />
+    <EmbeddedResource Include="Site\img\logo-France-Judo.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\img\refresh-32.png" />
+    <EmbeddedResource Include="Site\img\refresh-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\img\repeat-32.png" />
+    <EmbeddedResource Include="Site\img\repeat-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\img\sablier.png" />
+    <EmbeddedResource Include="Site\img\sablier.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\img\starter-32.png" />
+    <EmbeddedResource Include="Site\img\starter-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\img\up_circular-32.png" />
+    <EmbeddedResource Include="Site\img\up_circular-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\img\winner-32.png" />
+    <EmbeddedResource Include="Site\img\winner-32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\js\site-animation.js" />
+    <EmbeddedResource Include="Site\js\site-animation.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\js\site-display.js" />
+    <EmbeddedResource Include="Site\js\site-display.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\style\style-classement.css" />
+    <EmbeddedResource Include="Site\style\style-classement.css" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\style\style-common.css" />
+    <EmbeddedResource Include="Site\style\style-common.css" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\style\style-ecran-appel.css" />
+    <EmbeddedResource Include="Site\style\style-ecran-appel.css" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\style\style-poule.css" />
+    <EmbeddedResource Include="Site\style\style-poule.css" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\style\style-tableau.css" />
+    <EmbeddedResource Include="Site\style\style-tableau.css" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\style\w3.css" />
+    <EmbeddedResource Include="Site\style\w3.css" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\xslt\affectation_tapis_site.xslt">
+    <EmbeddedResource Include="Site\xslt\affectation_tapis_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\xslt\avancement_site.xslt">
+    <EmbeddedResource Include="Site\xslt\avancement_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\xslt\classement_final_site.xslt">
+    <EmbeddedResource Include="Site\xslt\classement_final_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\xslt\classement_site.xslt">
+    <EmbeddedResource Include="Site\xslt\classement_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\xslt\ecrans_appel_site.xslt">
+    <EmbeddedResource Include="Site\xslt\ecrans_appel_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\xslt\engagements_site.xslt">
+    <EmbeddedResource Include="Site\xslt\engagements_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\xslt\entete.xslt">
+    <EmbeddedResource Include="Site\xslt\entete.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\xslt\feuille_competition_site.xslt">
+    <EmbeddedResource Include="Site\xslt\feuille_competition_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\xslt\feuille_matchs_site.xslt">
+    <EmbeddedResource Include="Site\xslt\feuille_matchs_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\xslt\feuille_resultat_site.xslt">
+    <EmbeddedResource Include="Site\xslt\feuille_resultat_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\xslt\footer_script_site.xslt" />
+    <EmbeddedResource Include="Site\xslt\footer_script_site.xslt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\xslt\groupe_engagements_site.xslt">
+    <EmbeddedResource Include="Site\xslt\groupe_engagements_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\xslt\index_site.xslt">
+    <EmbeddedResource Include="Site\xslt\index_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\xslt\niveau_tour_combat.xslt" />
+    <EmbeddedResource Include="Site\xslt\niveau_tour_combat.xslt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\xslt\panel_epreuve.xslt">
+    <EmbeddedResource Include="Site\xslt\panel_epreuve.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\xslt\prochains_combats_site.xslt">
+    <EmbeddedResource Include="Site\xslt\prochains_combats_site.xslt">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

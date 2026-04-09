@@ -469,7 +469,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSitePublique.IdCompetition) && !SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsChanged;
+                                return SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && SiteCoordinator.GestionnaireSitePublique.IsIdCompetitionValide && !SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsChanged;
                             });
                 return _cmdDemarrerSiteLocal;
             }
@@ -522,7 +522,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null && !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSiteInterne.IdCompetition) && !SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsChanged;
+                                return SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null && SiteCoordinator.GestionnaireSiteInterne.IsIdCompetitionValide && !SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsChanged;
                             });
                 return _cmdDemarrerSiteInterne;
             }
@@ -608,7 +608,7 @@ namespace AppPublication.Controles
                                     return false;
 
                                 // Votre logique d'origine
-                                return SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif && !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSitePublique.IdCompetition);
+                                return SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif && SiteCoordinator.GestionnaireSitePublique.IsIdCompetitionValide;
                             });
                 return _cmdDemarrerSiteDistant;
             }
@@ -852,7 +852,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsLocal && !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSitePublique.IdCompetition);
+                                return SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsLocal && SiteCoordinator.GestionnaireSitePublique.IsIdCompetitionValide;
                             });
                 return _cmdAfficherSiteLocal;
             }
@@ -879,7 +879,7 @@ namespace AppPublication.Controles
                             o =>
                             {
                                 // on ne peut pas ouvrir l'URL si on n'est pas connecte a une competition
-                                return (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null) && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsLocal && SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif && !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSitePublique.IdCompetition);
+                                return (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null) && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsLocal && SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif && SiteCoordinator.GestionnaireSitePublique.IsIdCompetitionValide;
                             });
                 return _cmdAfficherSiteDistant;
             }
@@ -905,7 +905,7 @@ namespace AppPublication.Controles
                             o =>
                             {
                                 // on ne peut pas ouvrir l'URL si on n'est pas connecte a une competition
-                                return SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsLocal && !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSiteInterne.IdCompetition);
+                                return SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsLocal && SiteCoordinator.GestionnaireSiteInterne.IsIdCompetitionValide;
                             });
                 return _cmdAfficherSiteInterne;
             }
