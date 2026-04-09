@@ -654,7 +654,6 @@
                                                                              IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.IsActif, Converter={StaticResource BoolNotConverter}}"/>
                                             <Label Grid.Column="0" Grid.Row="2" Content="Mot de passe:" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right"/>
                                             <telerik:RadPasswordBox Name="EasyConfigPwd" Grid.Column="1" Grid.Row="2" TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
-                                                                Text = "{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.PasswordSiteFTPDistant}"
                                                                 WatermarkContent="Entrer votre mot de passe"
                                                                 ShowPasswordButtonVisibility="Auto"
                                                                 IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.IsActif, Converter={StaticResource BoolNotConverter}}"/>

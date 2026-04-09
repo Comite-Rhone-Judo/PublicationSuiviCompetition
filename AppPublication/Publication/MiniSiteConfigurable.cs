@@ -262,7 +262,7 @@ namespace AppPublication.Publication
                     // Mise à jour de la valeur en mémoire
                     base.PasswordSiteFTPDistant = value;
                     // Sauvegarde de la config si besoin
-                    if (CacheConfig)
+                    if (CachePassword)
                     {
                         MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
                         cfg.FtpPassword = CachePassword ? value : string.Empty;
