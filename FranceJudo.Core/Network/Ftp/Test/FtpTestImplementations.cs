@@ -1,7 +1,10 @@
 ﻿using FluentFTP;
+using FluentFTP.Helpers;
+using FranceJudo.Core.IO;
 using System;
 using System.Net;
 using System.Threading;
+using static System.Net.Mime.MediaTypeNames;
 
 
 namespace FranceJudo.Core.Network.Ftp.Test
@@ -80,14 +83,25 @@ namespace FranceJudo.Core.Network.Ftp.Test
 
         public override bool Execute(MiniSite site, FtpClient client, CancellationToken token)
         {
+            // Ici, il faut faire attention, le répertoire final peut ne pas exister avant le 1er upload de la competition
+            // donc on va tester l'existence du répertoire Parent dans lequel la compétition sera publiée
+
+            // Récupère le répertoire parent
+            string parentPath = site.RepertoireSiteFTPDistant.GetFtpDirectoryName();
+
+            // Si on ne peut pas extraire le parent, c'est qu'on est sans doute deja a la racine, on garde la path d'orgine
+            parentPath = (string.IsNullOrEmpty(parentPath)) ? site.RepertoireSiteFTPDistant : parentPath;
+
             try
             {
-                bool dirExists = client.DirectoryExists(site.RepertoireSiteFTPDistant);
+                bool dirExists = client.DirectoryExists(parentPath);
                 if (!dirExists)
-                    throw new Exception($"Le répertoire '{site.RepertoireSiteFTPDistant}' n'existe pas.");
+                {
+                    throw new Exception($"Le répertoire '{parentPath}' n'existe pas.");
+                }
 
-                var listing = client.GetListing(site.RepertoireSiteFTPDistant) ?? throw new Exception("Le serveur refuse de lister le contenu (droits insuffisants).");
-                SuccessMessage = $"Répertoire '/{site.RepertoireSiteFTPDistant}' trouvé";
+                var listing = client.GetListing(parentPath) ?? throw new Exception("Le serveur refuse de lister le contenu (droits insuffisants).");
+                SuccessMessage = $"Répertoire '{parentPath}' trouvé";
                 return true;
             }
             catch (Exception ex)
@@ -106,7 +120,15 @@ namespace FranceJudo.Core.Network.Ftp.Test
         {
             try
             {
-                string testFileName = $"{site.RepertoireSiteFTPDistant.TrimEnd('/')}/test_connexion_{Guid.NewGuid()}.txt";
+                // Récupère le répertoire parent
+                string parentPath = site.RepertoireSiteFTPDistant.GetFtpDirectoryName();
+
+                // Si on ne peut pas extraire le parent, c'est qu'on est sans doute deja a la racine, on garde la path d'orgine
+                parentPath = (string.IsNullOrEmpty(parentPath)) ? site.RepertoireSiteFTPDistant : parentPath;
+
+                string testFileName = FileSystemHelper.PathJoin(parentPath, $"test_connexion_{Guid.NewGuid()}.txt", unixStyle: true);
+                // string testFileName = $"{site.RepertoireSiteFTPDistant.TrimEnd('/')}/test_connexion_{Guid.NewGuid()}.txt";
+
                 byte[] testData = System.Text.Encoding.UTF8.GetBytes("Test publication");
 
                 var uploadStatus = client.UploadBytes(testData, testFileName, FtpRemoteExists.Overwrite, true);
@@ -115,7 +137,7 @@ namespace FranceJudo.Core.Network.Ftp.Test
 
                 client.DeleteFile(testFileName);
 
-                SuccessMessage = $"Transfert vers '/{site.RepertoireSiteFTPDistant}' réalisé";
+                SuccessMessage = $"Transfert vers '{parentPath}' réalisé";
                 return true;
             }
             catch (Exception ex)

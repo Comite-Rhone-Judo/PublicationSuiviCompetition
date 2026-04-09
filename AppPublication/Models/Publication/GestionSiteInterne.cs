@@ -140,7 +140,6 @@ namespace AppPublication.Models.Publication
         /// </summary>
         public int NbProchainsCombats
         {
-            // TODO Tester le cas profondeur < Nb combats a afficher
             get { return _nbProchainsCombats; }
             set
             {

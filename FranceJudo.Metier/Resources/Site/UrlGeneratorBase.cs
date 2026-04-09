@@ -19,7 +19,17 @@ namespace FranceJudo.Metier.Site
         private readonly ConcurrentDictionary<(string, string), string> _relativePathsCache = new ConcurrentDictionary<(string, string), string>();
         private readonly ConcurrentDictionary<string, Uri> _absoluteUrlsCache = new ConcurrentDictionary<string, Uri>(StringComparer.OrdinalIgnoreCase);
 
-        public string UrlPathCompetition { get; protected set; }
+        public string UrlPathCompetition
+        {
+            get
+            {
+                // On force la vérification avant de retourner la valeur
+                EnsureCacheSynchronization();
+                return _urlPathCompetition; // Note: changez le setter en private sur le membre
+            }
+            protected set => _urlPathCompetition = value;
+        }
+        private string _urlPathCompetition;
 
         #region RACCOURCIS URLS COMMUNES (CSS, JS, IMG)
 

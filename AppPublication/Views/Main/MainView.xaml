@@ -209,7 +209,7 @@
                                         <Rectangle  Style="{StaticResource AnimatedStatusStyle}"
                                                     DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique}"
                                                     Tag="{Binding Path=IsGenerationActive, Converter={StaticResource ValueToBoolConverter}}"/>
-                                    <Label HorizontalAlignment="Left" Content="Démarré" Style="{StaticResource LabelStyleValue}" />
+                                    <Label HorizontalAlignment="Left" Content="{Binding Path=SiteCoordinator.GestionnaireSitePublique.IsGenerationActive, Mode=OneWay, Converter={StaticResource RunningStatusConverter}}" Style="{StaticResource LabelStyleValue}" />
                                 </StackPanel>
                                 <!-- Separateur -->
                                 <Line Grid.Row="0" Grid.Column="2" StrokeThickness="1" Margin="0 2 0 2" Stroke="White" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
@@ -418,7 +418,7 @@
                                         <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 20 0" Command="{Binding Path=CmdDemarrerSiteLocal}">
                                             <WrapPanel Orientation="Horizontal">
                                                 <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/play-32.png" Height="25" Margin="5 0"/>
-                                                <Label Content="Démarrer" />
+                                                <Label Content="Démarrer" Style="{StaticResource ButtonLabelStyle}" />
                                             </WrapPanel>
                                         </telerik:RadButton>
                                         <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="20 0 0 0" Command="{Binding Path=CmdArreterSiteLocal}">
@@ -502,7 +502,7 @@
                                         <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  IsDefault="True" Margin="0 0 20 0" Command="{Binding Path=CmdDemarrerSiteInterne}">
                                             <WrapPanel Orientation="Horizontal">
                                                 <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/play-32.png" Height="25" Margin="5 0"/>
-                                                <Label Content="Démarrer" />
+                                                <Label Content="Démarrer" Style="{StaticResource ButtonLabelStyle}" />
                                             </WrapPanel>
                                         </telerik:RadButton>
                                         <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="20 0 0 0" Command="{Binding Path=CmdArreterSiteInterne}">
@@ -718,19 +718,19 @@
                                         </Button.CommandParameter>
                                         <WrapPanel Orientation="Horizontal">
                                             <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/play-32.png" Height="25" Margin="5 0"/>
-                                            <Label Content="Démarrer" />
+                                            <Label Content="Démarrer" Style="{StaticResource ButtonLabelStyle}" />
                                         </WrapPanel>
                                     </telerik:RadButton>
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="20 0 0 0" Command="{Binding Path=CmdArreterSiteDistant}">
                                         <WrapPanel Orientation="Horizontal">
                                             <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/stop-32.png" Height="25" Margin="5 0"/>
-                                            <Label Content="Arrêter" />
+                                            <Label Content="Arrêter"  Style="{StaticResource ButtonLabelStyle}"/>
                                         </WrapPanel>
                                     </telerik:RadButton>
                                     <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"   IsDefault="True" Margin="20 0 0 0" Command="{Binding Path=CmdNettoyerSiteDistant}">
                                         <WrapPanel Orientation="Horizontal">
                                             <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/trash-32.png" Height="25" Margin="5 0"/>
-                                            <Label Content="Nettoyer" />
+                                            <Label Content="Nettoyer" Style="{StaticResource ButtonLabelStyle}" />
                                         </WrapPanel>
                                     </telerik:RadButton>
                                 </StackPanel>

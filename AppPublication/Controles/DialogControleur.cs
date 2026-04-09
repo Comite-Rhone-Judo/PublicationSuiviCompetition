@@ -879,7 +879,7 @@ namespace AppPublication.Controles
                             o =>
                             {
                                 // on ne peut pas ouvrir l'URL si on n'est pas connecte a une competition
-                                return (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null) && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsLocal && !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSitePublique.IdCompetition);
+                                return (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null) && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsLocal && SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif && !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSitePublique.IdCompetition);
                             });
                 return _cmdAfficherSiteDistant;
             }

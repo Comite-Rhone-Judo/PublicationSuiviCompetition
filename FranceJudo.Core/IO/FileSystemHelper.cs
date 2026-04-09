@@ -216,7 +216,7 @@ namespace FranceJudo.Core.IO
         /// <param name="path1">Path de debut</param>
         /// <param name="path2">Path de fin</param>
         /// <returns></returns>
-        public static string PathJoin(string path1, string path2, bool endWithSeparator = false)
+        public static string PathJoin(string path1, string path2, bool endWithSeparator = false, bool unixStyle = false)
         {
             if (string.IsNullOrEmpty(path1))
             {
@@ -228,8 +228,9 @@ namespace FranceJudo.Core.IO
                 return path1;
             }
 
-            string temp = (path1.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar + path2.TrimStart(Path.DirectorySeparatorChar)).TrimEnd(Path.DirectorySeparatorChar);
+            char dirSep = unixStyle ? Path.AltDirectorySeparatorChar : Path.DirectorySeparatorChar;
 
+            string temp = (path1.TrimEnd(dirSep) + dirSep + path2.TrimStart(dirSep)).TrimEnd(dirSep);
 
             return endWithSeparator ? temp + Path.DirectorySeparatorChar : temp;
         }

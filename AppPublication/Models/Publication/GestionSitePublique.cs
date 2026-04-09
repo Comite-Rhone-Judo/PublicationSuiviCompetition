@@ -1111,7 +1111,14 @@ namespace AppPublication.Models.Publication
             {
                 try
                 {
-                    output = FileSystemHelper.PathJoin(repRoot, _siteDistantUrlGenerator.UrlPathCompetition);
+                    // L'URL de la competition n'existe pas forcement encore si pas connecte
+                    if (string.IsNullOrEmpty(_siteDistantUrlGenerator.UrlPathCompetition))
+                    {
+                        throw new ArgumentNullException("Le path de la competition ne doit pas etre null ou vide");
+                    }
+
+                    // Repertoire distant donc, c'est unix style
+                    output = FileSystemHelper.PathJoin(repRoot, _siteDistantUrlGenerator.UrlPathCompetition, unixStyle: true);
                 }
                 catch (Exception ex)
                 {

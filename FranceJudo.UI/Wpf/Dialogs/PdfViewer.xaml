@@ -25,22 +25,22 @@
 
         <telerik:RadToolBar DataContext="{Binding ElementName=pdfViewer, Path=CommandDescriptors}">
 
-            <telerik:RadButton Name="PDFButton"  HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="2" Padding="0" 
-                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center" 
-                                IsBackgroundVisible="False" Command="{Binding PrintCommandDescriptor.Command}">
+            <telerik:RadButton Name="PDFButton" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="2" Padding="0" 
+                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                               IsBackgroundVisible="False" Command="{Binding PrintCommandDescriptor.Command}">
                 <ToolTipService.ToolTip>
                     <TextBlock Text="Imprimer" />
                 </ToolTipService.ToolTip>
-                <Image Source="pack://application:,,,/FranceJudo.UI.Wpf;component/Resources/Media/Icons/black/print-32.png"  Stretch="Uniform"/>
+                <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/print-32.png"  Stretch="Uniform"/>
             </telerik:RadButton>
 
-            <telerik:RadButton Name="SaveButton"  HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="2" Padding="0" 
+            <telerik:RadButton Name="SaveButton" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="2" Padding="0" 
                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center" 
                                IsBackgroundVisible="False" Click="SaveButton_Click_1">
                 <ToolTipService.ToolTip>
                     <TextBlock Text="Sauvegarder" />
                 </ToolTipService.ToolTip>
-                <Image Source="pack://application:,,,/FranceJudo.UI.Wpf;component/Resources/Media/Icons/black/save-32.png"  Stretch="Uniform"/>
+                <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/save-32.png"  Stretch="Uniform"/>
             </telerik:RadButton>
 
             <telerik:RadToolBarSeparator/>
@@ -49,14 +49,14 @@
                 <ToolTipService.ToolTip>
                     <TextBlock Text="Page précédente" />
                 </ToolTipService.ToolTip>
-                <Image Source="pack://application:,,,/FranceJudo.UI.Wpf;component/Resources/Media/Icons/black/previous-32.png"  Stretch="Uniform" />
+                <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/previous-32.png"  Stretch="Uniform" />
             </telerik:RadButton>
 
             <telerik:RadButton Command="{Binding PageDownCommandDescriptor.Command}" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="2" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsBackgroundVisible="False">
                 <ToolTipService.ToolTip>
                     <TextBlock Text="Page suivante" />
                 </ToolTipService.ToolTip>
-                <Image Source="pack://application:,,,/FranceJudo.UI.Wpf;component/Resources/Media/Icons/black/next-32.png"  Stretch="Uniform" />
+                <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/next-32.png"  Stretch="Uniform" />
             </telerik:RadButton>
 
             <TextBox Width="30" Margin="2" Text="{Binding FixedDocumentViewer.CurrentPageNumber, Mode=TwoWay}" HorizontalContentAlignment="Center" x:Name="tbCurrentPage" KeyDown="tbCurrentPage_KeyDown"/>
@@ -68,14 +68,14 @@
                 <ToolTipService.ToolTip>
                     <TextBlock Text="Zoom +" />
                 </ToolTipService.ToolTip>
-                <Image Source="pack://application:,,,/FranceJudo.UI.Wpf;component/Resources/Media/Icons/black/zoom_in-32.png"  Stretch="Uniform" />
+                <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/zoom_in-32.png"  Stretch="Uniform" />
             </telerik:RadButton>
 
             <telerik:RadButton x:Name="PART_btnZoomOut" Command="{Binding ZoomOutCommandDescriptor.Command}" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="2" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsBackgroundVisible="False">
                 <ToolTipService.ToolTip>
                     <TextBlock Text="Zoom -" />
                 </ToolTipService.ToolTip>
-                <Image Source="pack://application:,,,/FranceJudo.UI.Wpf;component/Resources/Media/Icons/black/zoom_out-32.png"  Stretch="Uniform" />
+                <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/zoom_out-32.png"  Stretch="Uniform" />
             </telerik:RadButton>
 
        
@@ -91,14 +91,14 @@
                 <ToolTipService.ToolTip>
                     <TextBlock Text="Précécent" />
                 </ToolTipService.ToolTip>
-                <Image Source="pack://application:,,,/FranceJudo.UI.Wpf;component/Resources/Media/Icons/black/skip_to_start-32.png"  Stretch="Uniform" />
+                <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/skip_to_start-32.png"  Stretch="Uniform" />
             </telerik:RadButton>
 
             <telerik:RadButton x:Name="btnNext" Visibility="Collapsed" Command="{Binding FindCommandDescriptor.Command}" CommandParameter="{Binding ElementName=tbFind, Path=Text}" Margin="2" Padding="0" IsBackgroundVisible="False" HorizontalAlignment="Left" VerticalAlignment="Stretch">
                 <ToolTipService.ToolTip>
                     <TextBlock Text="Suivant" />
                 </ToolTipService.ToolTip>
-                <Image Source="pack://application:,,,/FranceJudo.UI.Wpf;component/Resources/Media/Icons/black/end-32.png"  Stretch="Uniform" />
+                <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/end-32.png"  Stretch="Uniform" />
             </telerik:RadButton>
         </telerik:RadToolBar>
 

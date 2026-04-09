@@ -76,9 +76,11 @@ namespace AppPublication.Publication
         #region METHODES PRIVEES
         protected override void BuildCompetitionUrl(string competitionId, Uri rootDomain, out string urlPath, out Uri baseUri)
         {
-            // TODO Verifier le comportement sur le site FFJudo (cf. retour de Eric)
+            // Si l'ID competition est vide, on va mettre "unknown" pour éviter les erreurs de niveau de répertoire
+            string compId = (string.IsNullOrEmpty(competitionId)) ? "unknown" : competitionId;
+
             urlPath = _isolate
-                ? $"{competitionId.TraiteChaineURL()}/"
+                ? $"{compId.TraiteChaineURL()}/"
                 : $"{kCourante}/";
 
             baseUri = new Uri(rootDomain, urlPath);
