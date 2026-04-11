@@ -116,9 +116,9 @@ namespace AppPublication.Controles
                 // Se désabonner de l'ancien client pour éviter les fuites de mémoire
                 if (_client != null)
                 {
-                    _client.TraitementConnexion.OnAcceptConnectionTest -= clientjudo_OnDemandeConnectionTest;
-                    _client.OnReceivedDataErrorOccured -= client_OnReceivedDataErrorOccured;
-                    _client.OnReceivedDataSuccessOccured -= client_OnReceivedDataSuccessOccured;
+                    _client.TraitementConnexion.OnAcceptConnectionTest -= Clientjudo_OnDemandeConnectionTest;
+                    _client.OnReceivedDataErrorOccured -= Client_OnReceivedDataErrorOccured;
+                    _client.OnReceivedDataSuccessOccured -= Client_OnReceivedDataSuccessOccured;
                 }
 
                 bool shouldSetup = false;

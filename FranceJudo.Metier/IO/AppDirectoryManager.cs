@@ -71,7 +71,6 @@ namespace FranceJudo.Metier.IO
             string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
             // 1. Définition et Enregistrement des chemins
-
             RessourcesDir = RegisterDirectory(dataPath, kDirRessources, createPhysicalFolder: true);
             RessoucesImgDir = RegisterDirectory(dataPath, kDirRessourcesImg, createPhysicalFolder: true);
 
