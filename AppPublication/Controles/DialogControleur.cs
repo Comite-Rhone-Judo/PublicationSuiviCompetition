@@ -715,7 +715,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSitePublique.IdCompetition) && !SiteCoordinator.GestionnaireSitePublique.IsGenerationActive;
+                                return SiteCoordinator.GestionnaireSitePublique.IsIdCompetitionValide && !SiteCoordinator.GestionnaireSitePublique.IsGenerationActive;
                             });
                 return _cmdDemarrerGeneration;
             }
@@ -782,7 +782,7 @@ namespace AppPublication.Controles
                             },
                             o =>
                             {
-                                return !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSiteInterne.IdCompetition) && !SiteCoordinator.GestionnaireSiteInterne.IsGenerationActive;
+                                return SiteCoordinator.GestionnaireSiteInterne.IsIdCompetitionValide && !SiteCoordinator.GestionnaireSiteInterne.IsGenerationActive;
                             });
                 return _cmdDemarrerGenerationInterne;
             }

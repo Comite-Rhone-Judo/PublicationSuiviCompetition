@@ -69,9 +69,8 @@ namespace AppPublication.ViewModels.Configuration
             _ecranManager = manager;
             _tapisDisponibles = Enumerable.Range(1, nbTapisToShow).ToList();
 
+            // Note: les ecrans sont charges en Async par la commande CmdOnLoaded
             EcransViewModels = new ObservableCollection<EcranAppelConfigViewModel>();
-
-            Task.Factory.StartNew(async () => { await LoadDataAsync(); });
         }
         #endregion
 
@@ -82,43 +81,30 @@ namespace AppPublication.ViewModels.Configuration
         {
             // Charger les ViewModels à partir de la collection Runtime de GestionSite
             // Cette collection a déjà été initialisée depuis la config au démarrage de GestionSite
-            if (_ecranManager != null && _ecranManager.Ecrans != null)
-            {
-                foreach (var model in _ecranManager.Ecrans)
-                {
-                    var vm = new EcranAppelConfigViewModel(model, _tapisDisponibles, _scannerContext, () => _ecranManager.InvalidateSnapshot())
-                    {
-                        DeleteCommand = new RelayCommand(SupprimerLigne)
-                    };
-                    EcransViewModels.Add(vm);
-                }
-            }
 
-            if (EcransViewModels.Count > 0) return; // Évite de recharger si déjà fait
+            // Si pas de gestionnaire ou si deja chargee
+            if (_ecranManager == null || EcransViewModels.Count > 0) return;
 
             try
             {
-                // 3. Travail lourd sur un thread secondaire (Task.Run)
+                // On récupère les modèles
+                var models = _ecranManager.Ecrans;
+
                 var listTemp = await Task.Run(() =>
                 {
                     var resultList = new List<EcranAppelConfigViewModel>();
-
-                    if (_ecranManager != null && _ecranManager.Ecrans != null)
+                    foreach (var model in models)
                     {
-                        foreach (var model in _ecranManager.Ecrans)
+                        var vm = new EcranAppelConfigViewModel(model, _tapisDisponibles, _scannerContext, () => _ecranManager.InvalidateSnapshot())
                         {
-                            // La création lourde des sous-VM se fait ici
-                            var vm = new EcranAppelConfigViewModel(model, _tapisDisponibles, _scannerContext, () => _ecranManager.InvalidateSnapshot())
-                            {
-                                DeleteCommand = new RelayCommand(SupprimerLigne)
-                            };
-                            resultList.Add(vm);
-                        }
+                            DeleteCommand = new RelayCommand(SupprimerLigne)
+                        };
+                        resultList.Add(vm);
                     }
                     return resultList;
                 });
 
-                // 4. Mise à jour de l'interface sur le Thread Principal
+                // Retour sur le thread UI pour remplir la collection liée à la vue
                 foreach (var vm in listTemp)
                 {
                     EcransViewModels.Add(vm);
@@ -126,7 +112,6 @@ namespace AppPublication.ViewModels.Configuration
             }
             catch (Exception ex)
             {
-                // Gérer les erreurs (logging, message utilisateur, etc.)
                 LogTools.Logger.Debug(ex, "Erreur lors du chargement des donnees de configuration des ecrans");
             }
         }

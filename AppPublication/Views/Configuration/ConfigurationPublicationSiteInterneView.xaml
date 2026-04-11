@@ -4,11 +4,16 @@
             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
             xmlns:local="clr-namespace:AppPublication.Views.Configuration"
             mc:Ignorable="d"
             Title="Configuration de la chambre d'appel" Height="540" Width="960" Background="Black">
-
-        <Grid>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding GestionnaireSiteInterne.ConfigurationEcransViewModel.CmdOnLoaded}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="auto"/>
@@ -90,7 +95,7 @@
                                      CanUserDeleteRows="False"
                                      EnableRowVirtualization="True" 
                                     ActionOnLostFocus="CommitEdit"
-                                    EnableColumnVirtualization="False"
+                                    EnableColumnVirtualization="True"
                                     GroupRenderMode="Flat"
                                                  Margin="10,10,0,10"
                                     ScrollViewer.VerticalScrollBarVisibility="Auto"

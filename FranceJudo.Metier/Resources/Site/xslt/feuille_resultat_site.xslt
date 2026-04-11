@@ -21,7 +21,7 @@
 
 	<xsl:key name="participants" match="participant" use="@poule"/>
 	
-	<xsl:variable name="typeCompetition" select="/competition/@type"/>
+	<xsl:variable name="typeCompetition" select="/docroot/competition/@type"/>
 
 	<xsl:variable select="/docroot/SiteConfiguration/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
@@ -301,7 +301,7 @@
 						  </xsl:attribute>
 					  </img>
 					  &nbsp;
-					  1ère catégorie:&nbsp;<xsl:value-of select="$poulefirstrencontre"/>
+					  1<sup>ère</sup> catégorie:&nbsp;<xsl:value-of select="$poulefirstrencontre"/>
 				  </div>
 			  </xsl:if>
 			  <table border="0" class="w3-centered tas-poule-combat">				
@@ -405,6 +405,51 @@
 					</xsl:apply-templates>
                 </tbody>
             </table>
+			  <xsl:if test="$dispositionPoule != 2">
+				  <div class="w3-container w3-padding-small w3-small w3-left-align">
+					  <strong>Ordre : </strong>
+					  <xsl:for-each select="//combat[ @niveau = $niveauCombat and @phase = $phase and @reference = $numeroPoule]">
+						  <xsl:sort select="@numero" data-type="number" order="ascending"/>
+
+						  <xsl:variable name="posj1">
+							  <xsl:choose>
+								  <xsl:when test="$typeCompetition = 1">
+									  <xsl:call-template name="positionEquipe">
+										  <xsl:with-param name="noPoule" select="$numeroPoule"/>
+										  <xsl:with-param name="idEquipe" select="./score[1]/@judoka"/>
+									  </xsl:call-template>
+								  </xsl:when>
+								  <xsl:otherwise>
+									  <xsl:call-template name="positionJudoka">
+										  <xsl:with-param name="noPoule" select="$numeroPoule"/>
+										  <xsl:with-param name="idJudoka" select="./score[1]/@judoka"/>
+									  </xsl:call-template>
+								  </xsl:otherwise>
+							  </xsl:choose>
+						  </xsl:variable>
+
+						  <xsl:variable name="posj2">
+							  <xsl:choose>
+								  <xsl:when test="$typeCompetition = 1">
+									  <xsl:call-template name="positionEquipe">
+										  <xsl:with-param name="noPoule" select="$numeroPoule"/>
+										  <xsl:with-param name="idEquipe" select="./score[2]/@judoka"/>
+									  </xsl:call-template>
+								  </xsl:when>
+								  <xsl:otherwise>
+									  <xsl:call-template name="positionJudoka">
+										  <xsl:with-param name="noPoule" select="$numeroPoule"/>
+										  <xsl:with-param name="idJudoka" select="./score[2]/@judoka"/>
+									  </xsl:call-template>
+								  </xsl:otherwise>
+							  </xsl:choose>
+						  </xsl:variable>
+
+						  <xsl:value-of select="concat($posj1, '-', $posj2)"/>
+						  <xsl:if test="position() != last()">, </xsl:if>
+					  </xsl:for-each>
+				  </div>
+			  </xsl:if>
         </div>
 	</xsl:template>
 	

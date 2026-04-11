@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace AppPublication.Models.EcransAppel
 {
@@ -21,6 +22,7 @@ namespace AppPublication.Models.EcransAppel
         /// </summary>
         public IReadOnlyList<EcranAppelModel> Ecrans
         {
+            // Pas de snapshot ici, sinon, on ne pourrait plus synchroniser avec le ViewModel (on resterait coince sur le 1er snapshot)
             get { lock (_dataLock) return _ecrans.ToList().AsReadOnly(); }
         }
 
@@ -178,10 +180,10 @@ namespace AppPublication.Models.EcransAppel
         {
             lock (_dataLock)
             {
-                var itemToRemove = _ecrans.FirstOrDefault(e => e.Id == ecran.Id); // Utilisation de _ecrans
-                if (itemToRemove != null)
+                int index = _ecrans.FindIndex(e => e.Id == ecran.Id);
+                if (index != -1)
                 {
-                    _ecrans.Remove(itemToRemove); // Utilisation de _ecrans
+                    _ecrans.RemoveAt(index);
                     RecalculateHighWatermark();
 
                     InvalidateSnapshot();
@@ -197,10 +199,10 @@ namespace AppPublication.Models.EcransAppel
         {
             lock (_dataLock)
             {
-                var itemToRemove = _ecrans.FirstOrDefault(e => e.Id == id);
-                if (itemToRemove != null)
+                int index = _ecrans.FindIndex(e => e.Id == id);
+                if (index != -1)
                 {
-                    _ecrans.Remove(itemToRemove);
+                    _ecrans.RemoveAt(index);
                     RecalculateHighWatermark();
                     InvalidateSnapshot();
                 }
@@ -216,7 +218,7 @@ namespace AppPublication.Models.EcransAppel
         /// </summary>
         private void RecalculateHighWatermark()
         {
-            if (Ecrans.Count == 0)
+            if (_ecrans.Count == 0)
             {
                 _lastId = 0;
             }

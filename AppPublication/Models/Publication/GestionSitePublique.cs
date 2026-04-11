@@ -1030,7 +1030,7 @@ namespace AppPublication.Models.Publication
             string output = "Indefinie";
             try
             {
-                if (!string.IsNullOrEmpty(IdCompetition) && SiteLocal.ServerHTTP?.ListeningIpAddress != null && SiteLocal.ServerHTTP.Port > 0 && _siteLocalUrlGenerator != null)
+                if (IsIdCompetitionValide && SiteLocal.ServerHTTP?.ListeningIpAddress != null && SiteLocal.ServerHTTP.Port > 0 && _siteLocalUrlGenerator != null)
                 {
                     _localServerBaseUri = string.Format("http://{0}:{1}/", SiteLocal.ServerHTTP.ListeningIpAddress.ToString(), SiteLocal.ServerHTTP.Port);
 

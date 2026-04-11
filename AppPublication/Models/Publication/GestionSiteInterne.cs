@@ -318,7 +318,7 @@ namespace AppPublication.Models.Publication
             string output = "Indefinie";
             try
             {
-                if (!string.IsNullOrEmpty(IdCompetition) && SiteLocal.ServerHTTP?.ListeningIpAddress != null && SiteLocal.ServerHTTP.Port > 0 && _siteInterneUrlGenerator != null)
+                if (IsIdCompetitionValide && SiteLocal.ServerHTTP?.ListeningIpAddress != null && SiteLocal.ServerHTTP.Port > 0 && _siteInterneUrlGenerator != null)
                 {
                     int portUsed = SiteLocal.ServerHTTP.Port;
                     string ipUsed = SiteLocal.ServerHTTP.ListeningIpAddress.ToString();
