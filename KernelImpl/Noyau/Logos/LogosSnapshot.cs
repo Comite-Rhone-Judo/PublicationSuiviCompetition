@@ -1,9 +1,5 @@
-﻿using KernelImpl.Noyau.Categories;
-using System;
+﻿using FranceJudo.Metier.Noyau.Logos;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KernelImpl.Noyau.Logos
 {
@@ -13,7 +9,7 @@ namespace KernelImpl.Noyau.Logos
         public IReadOnlyList<string> Ligue { get; private set; }
         public IReadOnlyList<string> Sponsors { get; private set; }
 
-        public LogosSnapshot(DataLogos   source)
+        public LogosSnapshot(DataLogos source)
         {
             if (source == null) return;
             Fede = source.Fede;

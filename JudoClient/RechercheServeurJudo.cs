@@ -1,4 +1,8 @@
-﻿using JudoClient.Communication;
+﻿using FranceJudo.Core.Network.Tcp.Client;
+using FranceJudo.Core.Threading;
+using FranceJudo.Metier.Network;
+using FranceJudo.Metier.XML;
+using JudoClient.Communication;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,10 +12,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
-using Tools.Struct;
-using Tools.TCP_Tools.Client;
+
 
 namespace JudoClient
 {
@@ -30,7 +31,7 @@ namespace JudoClient
         /// <param name="competition"></param>
         public delegate void ServerTrouveHandler(object sender, System.Net.IPEndPoint serverEndPoint,
             string machine, string user, XElement competition);
-        public event ServerTrouveHandler onServerTrouve;
+        public event ServerTrouveHandler OnServerTrouve;
 
         /// <summary>
         /// Fonction délégué de fin de recherche
@@ -39,9 +40,9 @@ namespace JudoClient
         /// <param name="pings"></param>
         /// <param name="connecte"></param>
         public delegate void TermineHandler(object sender, int pings, int connecte);
-        public event TermineHandler onTermine;
+        public event TermineHandler OnTermine;
 
-        private ObservableCollection<MachineStruct> _listeMachines = new ObservableCollection<MachineStruct>();
+        private readonly ObservableCollection<MachineStruct> _listeMachines = new ObservableCollection<MachineStruct>();
 
         private int _nbMachines = 0;
         private bool _recherche_en_cours = false;
@@ -105,11 +106,11 @@ namespace JudoClient
             }
 
             List<string> machines = GetListeMachine(ipAdressText);
-            _nbMachines = machines.Count * (NetworkTools.PortServerMax - NetworkTools.PortServerMin + 1);
+            _nbMachines = machines.Count * (ConstantNetwork.PortServerMax - ConstantNetwork.PortServerMin + 1);
 
             using (TimedLock.Lock((_listeMachines as ICollection).SyncRoot))
             {
-                _listeMachines.CollectionChanged -= new NotifyCollectionChangedEventHandler(liste_Changes);
+                _listeMachines.CollectionChanged -= new NotifyCollectionChangedEventHandler(Liste_OnChange);
                 _listeMachines.Clear();
             }
 
@@ -129,15 +130,15 @@ namespace JudoClient
 
                 using (TimedLock.Lock((_listeMachines as ICollection).SyncRoot))
                 {
-                    for (int port = NetworkTools.PortServerMin; port <= NetworkTools.PortServerMax; port++)
+                    for (int port = ConstantNetwork.PortServerMin; port <= ConstantNetwork.PortServerMax; port++)
                     {
-                        _listeMachines.Add(new MachineStruct { adresse = adresse + ":" + port, response = ServerResponseEnum.Aucun });
+                        _listeMachines.Add(new MachineStruct { Adresse = adresse + ":" + port, Response = ServerResponseEnum.Aucun });
                     }
                 }
                 //LogTools.Log("PING -> " + adresse);
 
                 Ping ping = new Ping();
-                ping.PingCompleted += ping_PingCompleted;
+                ping.PingCompleted += Ping_PingCompleted;
 
                 try
                 {
@@ -146,18 +147,18 @@ namespace JudoClient
                 catch (Exception ex)
                 {
                     ExceptionHelper.ShowException(ex);
-                    for (int port = NetworkTools.PortServerMin; port <= NetworkTools.PortServerMax; port++)
+                    for (int port = ConstantNetwork.PortServerMin; port <= ConstantNetwork.PortServerMax; port++)
                     {
                         AdresseTerminee(adresse, port, ServerResponseEnum.PingFAIL);
                     }
                 }
 
-                _listeMachines.CollectionChanged += new NotifyCollectionChangedEventHandler(liste_Changes);
+                _listeMachines.CollectionChanged += new NotifyCollectionChangedEventHandler(Liste_OnChange);
             }
         }
 
 
-        void ping_PingCompleted(object sender, PingCompletedEventArgs e)
+        void Ping_PingCompleted(object sender, PingCompletedEventArgs e)
         {
             string adresse = e.UserState.ToString();
             bool EnvoieConnection = false;
@@ -168,7 +169,7 @@ namespace JudoClient
                 ping.SendAsyncCancel();
 
 
-                for (int port = NetworkTools.PortServerMin; port <= NetworkTools.PortServerMax; port++)
+                for (int port = ConstantNetwork.PortServerMin; port <= ConstantNetwork.PortServerMax; port++)
                 {
 
                     try
@@ -179,7 +180,7 @@ namespace JudoClient
                         if (clientjudo.IsConnected)
                         {
                             EnvoieConnection = true;
-                            clientjudo.TraitementConnexion.OnAcceptConnectionTest += clientjudo_OnDemandeConnection;
+                            clientjudo.TraitementConnexion.OnAcceptConnectionTest += Clientjudo_OnDemandeConnection;
                             clientjudo.DemandConnectionTest();
                         }
                         else
@@ -202,7 +203,7 @@ namespace JudoClient
 
             if (!EnvoieConnection)
             {
-                for (int port = NetworkTools.PortServerMin; port <= NetworkTools.PortServerMax; port++)
+                for (int port = ConstantNetwork.PortServerMin; port <= ConstantNetwork.PortServerMax; port++)
                 {
                     //LogTools.Log("PING FAIL -> " + adresse);
                     AdresseTerminee(adresse, port, ServerResponseEnum.PingFAIL);
@@ -210,14 +211,14 @@ namespace JudoClient
             }
         }
 
-        void clientjudo_OnDemandeConnection(object sender, XElement xvaleur)
+        void Clientjudo_OnDemandeConnection(object sender, XElement xvaleur)
         {
             ClientJudo clientjudo = (ClientJudo)sender;
             //if (doc.Element(ConstantXML.ServerJudo) != null)
             //{
 
 
-            if (onServerTrouve != null)
+            if (OnServerTrouve != null)
             {
                 //XElement xvaleur = doc.Element(ConstantXML.ServerJudo);
 
@@ -228,7 +229,7 @@ namespace JudoClient
 
                 XElement xcompetition = xvaleur.Element(ConstantXML.Competition);
 
-                onServerTrouve(this, new System.Net.IPEndPoint(
+                OnServerTrouve(this, new System.Net.IPEndPoint(
                     System.Net.IPAddress.Parse(clientjudo.NetworkClient.IP), clientjudo.NetworkClient.Port), machine, user, xcompetition);
 
                 clientjudo.NetworkClient.Stop();
@@ -237,10 +238,11 @@ namespace JudoClient
             AdresseTerminee(clientjudo.NetworkClient.IP, clientjudo.NetworkClient.Port, ServerResponseEnum.ConnectionOK);
         }
 
-        void clientjudo_OnConnection(object sender)
+        /*
+         * void Clientjudo_OnConnection(object sender)
         {
             ClientGenerique clientjudo = (ClientGenerique)sender;
-        }
+        }*/
 
         void AdresseTerminee(string adresse, int port, ServerResponseEnum value)
         {
@@ -248,9 +250,9 @@ namespace JudoClient
             {
                 using (TimedLock.Lock((_listeMachines as ICollection).SyncRoot, TimeSpan.FromSeconds(30)))
                 {
-                    MachineStruct machine = _listeMachines.FirstOrDefault(o => o.adresse == adresse + ":" + port);
+                    MachineStruct machine = _listeMachines.FirstOrDefault(o => o.Adresse == adresse + ":" + port);
                     int index = _listeMachines.IndexOf(machine);
-                    _listeMachines[index] = new MachineStruct { adresse = machine.adresse, response = value };
+                    _listeMachines[index] = new MachineStruct { Adresse = machine.Adresse, Response = value };
                 }
             }
             catch (Exception ex)
@@ -259,15 +261,15 @@ namespace JudoClient
             }
         }
 
-        private void liste_Changes(object sender, NotifyCollectionChangedEventArgs e)
+        private void Liste_OnChange(object sender, NotifyCollectionChangedEventArgs e)
         {
-            int nb = _listeMachines.Count(o => o.response != ServerResponseEnum.Aucun);
+            int nb = _listeMachines.Count(o => o.Response != ServerResponseEnum.Aucun);
 
-            if (onTermine != null && nb == _nbMachines && _recherche_en_cours)
+            if (OnTermine != null && nb == _nbMachines && _recherche_en_cours)
             {
                 _recherche_en_cours = false;
-                _listeMachines.CollectionChanged -= new NotifyCollectionChangedEventHandler(liste_Changes);
-                onTermine(this, _listeMachines.Count, _listeMachines.Count(o => o.response == ServerResponseEnum.ConnectionOK));
+                _listeMachines.CollectionChanged -= new NotifyCollectionChangedEventHandler(Liste_OnChange);
+                OnTermine(this, _listeMachines.Count, _listeMachines.Count(o => o.Response == ServerResponseEnum.ConnectionOK));
             }
         }
 

@@ -1,16 +1,19 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Structures;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
+
 
 namespace KernelImpl.Noyau.Structures
 {
     /// <summary>
     /// Description des Ligues
     /// </summary>
-    public class Ligue : IEntityWithKey<string>
+    public class Ligue : ILigue, IEntityWithKey<string>
     {
         string IEntityWithKey<string>.EntityKey => id;
 
@@ -28,7 +31,7 @@ namespace KernelImpl.Noyau.Structures
             this.code = XMLTools.LectureString(xligue.Attribute(ConstantXML.Ligue_RemoteID));
         }
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xligue = new XElement(ConstantXML.Ligue);
 
@@ -47,7 +50,7 @@ namespace KernelImpl.Noyau.Structures
         /// <param name="MI">fonction d'info</param>
         /// <returns>Ligues</returns>
 
-        public static ICollection<Ligue> LectureLigues(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Ligue> LectureLigues(XElement xelement)
         {
             ICollection<Ligue> ligues = new List<Ligue>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.Ligue))

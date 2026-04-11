@@ -1,15 +1,18 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public class Groupe_Combats : IEntityWithKey<int>
+    public class Groupe_Combats : IGroupe_Combats, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -23,15 +26,15 @@ namespace KernelImpl.Noyau.Deroulement
         public bool verrouille { get; set; }
 
 
-        public Organisation.Epreuve GetEpreuve(IJudoData DC)
+        public IEpreuve GetEpreuve(IJudoData DC)
         {
-            Phase_Decoupage decoup = DC.Deroulement.Decoupages.FirstOrDefault(o => o.id == this.decoupage);
+            IPhase_Decoupage decoup = DC.Deroulement.Decoupages.FirstOrDefault(o => o.id == this.decoupage);
             if (decoup == null)
             {
                 return null;
             }
 
-            Phase phase = DC.Deroulement.Phases.FirstOrDefault(o => o.id == decoup.phase);
+            IPhase phase = DC.Deroulement.Phases.FirstOrDefault(o => o.id == decoup.phase);
             if (phase == null)
             {
                 return null;
@@ -40,15 +43,15 @@ namespace KernelImpl.Noyau.Deroulement
             return DC.Organisation.Epreuves.FirstOrDefault(o => o.id == phase.epreuve);
         }
 
-        public Phase GetPhase(IJudoData DC)
+        public IPhase GetPhase(IJudoData DC)
         {
-            Phase_Decoupage decoup = DC.Deroulement.Decoupages.FirstOrDefault(o => o.id == this.decoupage);
+            IPhase_Decoupage decoup = DC.Deroulement.Decoupages.FirstOrDefault(o => o.id == this.decoupage);
             if (decoup == null)
             {
                 return null;
             }
 
-            Phase phase = DC.Deroulement.Phases.FirstOrDefault(o => o.id == decoup.phase);
+            IPhase phase = DC.Deroulement.Phases.FirstOrDefault(o => o.id == decoup.phase);
             return phase;
         }
 
@@ -70,7 +73,7 @@ namespace KernelImpl.Noyau.Deroulement
             this.decoupage = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Groupe_Decoupage));
         }
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xgroupe = new XElement(ConstantXML.Groupe);
 
@@ -97,7 +100,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// <param name="MI">fonction d'info</param>
         /// <returns>Feuilles</returns>
 
-        public static ICollection<Groupe_Combats> LectureGroupes(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Groupe_Combats> LectureGroupes(XElement xelement)
         {
             ICollection<Groupe_Combats> groupes = new List<Groupe_Combats>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.Groupe))

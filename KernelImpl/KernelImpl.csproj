@@ -9,9 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>KernelImpl</RootNamespace>
     <AssemblyName>KernelImpl</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <LangVersion>latest</LangVersion>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,14 +36,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.5.3.4\lib\net46\NLog.dll</HintPath>
+    <Reference Include="NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.6.1.2\lib\net46\NLog.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
@@ -51,9 +54,8 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
-    <Compile Include="Enum\CategorieDonneesEnum.cs" />
-    <Compile Include="IJudoDataManager.cs" />
-    <Compile Include="IJudoData.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Noyau\CategorieDonneesEnum.cs" />
     <Compile Include="Internal\AtomicCachedBased.cs" />
     <Compile Include="Internal\CacheExtensions.cs" />
     <Compile Include="Internal\DeduplicatedDataCache.cs" />
@@ -63,28 +65,20 @@
     <Compile Include="Noyau\Arbitrage\ArbitrageSnapshot.cs" />
     <Compile Include="Noyau\Arbitrage\DataArbitrage.cs" />
     <Compile Include="Noyau\Arbitrage\Arbitre.cs" />
-    <Compile Include="Noyau\Arbitrage\IArbitrageData.cs" />
     <Compile Include="Noyau\Categories\CategoriesSnapshot.cs" />
     <Compile Include="Noyau\Categories\DataCategories.cs" />
     <Compile Include="Noyau\Categories\CategorieAge.cs" />
     <Compile Include="Noyau\Categories\CategoriePoids.cs" />
     <Compile Include="Noyau\Categories\Ceintures.cs" />
-    <Compile Include="Noyau\Categories\ICategoriesData.cs" />
     <Compile Include="Noyau\Deroulement\DataDeroulement.cs" />
     <Compile Include="Internal\IEntityWithKey.cs" />
-    <Compile Include="Noyau\Deroulement\DataDeroulementExtension.cs" />
     <Compile Include="Noyau\Deroulement\DeroulementSnapshot.cs" />
-    <Compile Include="Noyau\Deroulement\IDeroulementData.cs" />
     <Compile Include="Noyau\Logos\DataLogos.cs" />
-    <Compile Include="Noyau\Logos\IlogosData.cs" />
     <Compile Include="Noyau\Logos\LogosSnapshot.cs" />
     <Compile Include="Noyau\Organisation\DataOrganisation.cs" />
-    <Compile Include="Noyau\Organisation\IOrganisationData.cs" />
-    <Compile Include="Noyau\Organisation\i_vue_epreuve_interface.cs" />
+    <Compile Include="Noyau\Organisation\EtatEpreuveEnum.cs" />
     <Compile Include="Noyau\Organisation\OrganisationSnapshot.cs" />
     <Compile Include="Noyau\Participants\DataParticipants.cs" />
-    <Compile Include="Noyau\Participants\DataParticipantsExtension.cs" />
-    <Compile Include="Noyau\Participants\IParticipantsData.cs" />
     <Compile Include="Noyau\Participants\ParticipantsSnapshot.cs" />
     <Compile Include="Noyau\Structures\Club.cs" />
     <Compile Include="Noyau\Structures\DataStructures.cs" />
@@ -100,7 +94,6 @@
     <Compile Include="Noyau\Deroulement\Feuille.cs" />
     <Compile Include="Noyau\Deroulement\Groupe_Combats.cs" />
     <Compile Include="Noyau\Participants\Judoka.cs" />
-    <Compile Include="Noyau\Structures\IStructuresData.cs" />
     <Compile Include="Noyau\Structures\Secteur.cs" />
     <Compile Include="Noyau\Structures\Ligue.cs" />
     <Compile Include="Noyau\Deroulement\Participant.cs" />
@@ -109,12 +102,12 @@
     <Compile Include="Noyau\Deroulement\Phase_Decoupage.cs" />
     <Compile Include="Noyau\Deroulement\Poule.cs" />
     <Compile Include="Noyau\Deroulement\Rencontre.cs" />
-    <Compile Include="Noyau\Deroulement\vue_combat.cs" />
-    <Compile Include="Noyau\Organisation\vue_epreuve.cs" />
-    <Compile Include="Noyau\Organisation\vue_epreuve_equipe.cs" />
-    <Compile Include="Noyau\Deroulement\vue_epreuve_phase.cs" />
-    <Compile Include="Noyau\Deroulement\vue_groupe.cs" />
-    <Compile Include="Noyau\Participants\vue_judoka.cs" />
+    <Compile Include="Noyau\Deroulement\VueCombat.cs" />
+    <Compile Include="Noyau\Organisation\VueEpreuve.cs" />
+    <Compile Include="Noyau\Organisation\VueEpreuveEquipe.cs" />
+    <Compile Include="Noyau\Deroulement\VueEpreuvePhase.cs" />
+    <Compile Include="Noyau\Deroulement\VueGroupe.cs" />
+    <Compile Include="Noyau\Participants\VueJudoka.cs" />
     <Compile Include="Noyau\Structures\StructuresSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -122,9 +115,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Tools\Tools.csproj">
-      <Project>{319d52c2-081b-42af-bf17-57efd5dc0d9c}</Project>
-      <Name>Tools</Name>
+    <ProjectReference Include="..\FranceJudo.Core\FranceJudo.Core.csproj">
+      <Project>{13cad1c5-1448-4b69-b2c9-de15aecce84b}</Project>
+      <Name>FranceJudo.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FranceJudo.Metier\FranceJudo.Metier.csproj">
+      <Project>{e49d2215-4d00-4340-b7d3-ccd85d49e60d}</Project>
+      <Name>FranceJudo.Metier</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FranceJudo.UI\FranceJudo.UI.csproj">
+      <Project>{bffdeefa-ccdc-4dc2-8af5-d6509d2f7619}</Project>
+      <Name>FranceJudo.UI</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

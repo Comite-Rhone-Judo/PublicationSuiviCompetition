@@ -1,4 +1,8 @@
 ﻿using AppPublication.Controles;
+using FranceJudo.Core.Configuration;
+using FranceJudo.Core.Logging;
+using FranceJudo.UI.Wpf.Dialogs;
+using FranceJudo.UI.Wpf.Foundation;
 using KernelImpl;
 using System;
 using System.Globalization;
@@ -6,7 +10,6 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using Telerik.Windows.Controls;
-using Tools.Outils;
 
 namespace AppPublication
 { /// <summary>
@@ -14,11 +17,12 @@ namespace AppPublication
   /// </summary>
     public partial class App : Application
     {
+        ConfigurationService _configSvc = null;
+
         #region PROPERTIES
         // Accès global aux données si strictement nécessaire
         public JudoData DataManager { get; private set; }
         #endregion
-
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -29,9 +33,6 @@ namespace AppPublication
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
 
-            // Toute premiere trace !!
-            LogTools.LogStartup();
-
             StyleManager.ApplicationTheme = new Windows8Theme();
         }
 
@@ -39,25 +40,42 @@ namespace AppPublication
         {
             base.OnStartup(e);
 
+            // Demarrage et configure la couche de Logging
+            LogTools.LogStartup();
+            LogTools.OnCriticalErrorLogged += LogTools_OnCriticalErrorLogged;
+
+            // Démarrage du Service de Configuration (le worker commence ici)
+            _configSvc = ConfigurationService.CreateInstance();
+
             // Creation du gestionnaire de donnees. C'est le coeur de l'application
             LogTools.Logger.Debug("Creation du gestionnaire de donnees");
             DataManager = new JudoData();
 
             // Instanciation du controleur principal en lien avec le gestionnaire de donnees
             LogTools.Logger.Debug("Creation du controleur principal");
-            DialogControleur ctrl =  DialogControleur.CreateInstance(DataManager);
+            DialogControleur.CreateInstance(DataManager);
 
             // Assure que le logger est bien configure
             DialogControleur.Instance.CanManageTracesDebug = LogTools.IsConfigured;
 
+            // Configure la couche de notification des IHMs
+            // Avertir le CommandManager de WPF (sur le thread de l'interface graphique)
+            FranceJudo.Core.Foundation.NotificationBase.OnPropertyModifiedGlobally = () =>
+            {
+                Application.Current?.ExecOnUiThread(() => { System.Windows.Input.CommandManager.InvalidateRequerySuggested(); });
+            };
+
             // Demarre la fenetre principale et injecte le Dialog controleur en tant que DataContext
-            IHM.Commissaire.ExportWindow mainWin = new IHM.Commissaire.ExportWindow();
-            mainWin.DataContext = DialogControleur.Instance;
+            AppPublication.Views.Main.MainView mainWin = new AppPublication.Views.Main.MainView
+            {
+                DataContext = Controles.DialogControleur.Instance
+            };
             mainWin.Show();
         }
 
 
-        private static DispatcherOperationCallback exitFrameCallback = new DispatcherOperationCallback(ExitFrame);
+
+        private static readonly DispatcherOperationCallback exitFrameCallback = new DispatcherOperationCallback(ExitFrame);
 
         /// <summary> 
         /// Processes all UI messages currently in the message queue.
@@ -89,6 +107,26 @@ namespace AppPublication
             }
         }
 
+        protected override void OnExit(ExitEventArgs e)
+        {
+            // Arrêt propre du Service de Configuration
+            // Cela force l'arrêt du worker et une dernière sauvegarde synchrone sur disque.
+            if (ConfigurationService.Instance != null)
+            {
+                (ConfigurationService.Instance as IDisposable)?.Dispose();
+            }
+
+            // Arrete les loggers
+            LogTools.LogStop();
+            NLog.LogManager.Shutdown();
+
+            // DÉSABONNEMENT (Bonne pratique pour éviter les fuites de mémoire)
+            LogTools.OnCriticalErrorLogged -= LogTools_OnCriticalErrorLogged;
+
+
+            base.OnExit(e);
+        }
+
         private static Object ExitFrame(Object state)
         {
             DispatcherFrame frame = state as DispatcherFrame;
@@ -108,6 +146,22 @@ namespace AppPublication
             e.Handled = true;
         }
 
-
+        /// <summary>
+        /// Cette méthode est appelée automatiquement quand LogTools.LogFatal() est exécuté avec notifyUser = true
+        /// </summary>
+        private void LogTools_OnCriticalErrorLogged(object sender, ExceptionEventArgs e)
+        {
+            // Sécurité : On s'assure d'être sur le thread de l'interface graphique (UI Thread)
+            // C'est indispensable car l'erreur peut provenir d'un processus en arrière-plan (TCP, FTP, etc.)
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                // C'est SEULEMENT ici que l'on utilise WPF et vos fenêtres personnalisées
+                AlertWindow alert = new AlertWindow(
+                    header: "Une erreur critique est survenue",
+                    message: $"{e.Message}\n\nDétails techniques : {e.Exception?.Message}"
+                );
+                alert.ShowDialog();
+            });
+        }
     }
 }

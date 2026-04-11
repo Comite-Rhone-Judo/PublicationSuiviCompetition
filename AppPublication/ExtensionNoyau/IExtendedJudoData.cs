@@ -1,10 +1,5 @@
-﻿using KernelImpl;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AppPublication.ExtensionNoyau.Engagement;
+﻿using AppPublication.ExtensionNoyau.Engagement;
+using FranceJudo.Metier.Noyau;
 
 namespace AppPublication.ExtensionNoyau
 {
@@ -14,7 +9,7 @@ namespace AppPublication.ExtensionNoyau
         /// Retourne la section de donnees d'engagement
         /// </summary>
         DataEngagement Engagement { get; set; }
-        
+
         /// <summary>
         /// Synchronise les donnees etendue avec les donnees principales
         /// </summary>

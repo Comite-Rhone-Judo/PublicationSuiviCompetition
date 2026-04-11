@@ -1,12 +1,7 @@
-﻿
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Xml.Linq;
-using Tools.Outils;
+﻿using FranceJudo.Metier.Noyau.Arbitrage;
 using KernelImpl.Internal;
+using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace KernelImpl.Noyau.Arbitrage
 {
@@ -22,14 +17,19 @@ namespace KernelImpl.Noyau.Arbitrage
         public IReadOnlyList<Arbitre> Arbitres { get { return _arbitresCache.Cache; } }
         public IReadOnlyList<Delegue> Delegues { get { return _deleguesCache.Cache; } }
 
+        IReadOnlyList<ICommissaire> IArbitrageData.Commissaires => this.Commissaires;
+        IReadOnlyList<IArbitre> IArbitrageData.Arbitres => this.Arbitres;
+        IReadOnlyList<IDelegue> IArbitrageData.Delegues => this.Delegues;
+
+
         /// <summary>
         /// lecture des commissaires
         /// </summary>
         /// <param name="element">element XML contenant les commissaires</param>
         /// <param name="DC"></param>
-        public void lecture_commissaires(XElement element)
+        public void ChargeCommissaires(XElement element)
         {
-            ICollection<Commissaire> commissaires = Commissaire.LectureCommissaire(element, null);
+            ICollection<Commissaire> commissaires = Commissaire.LectureCommissaire(element);
             _commissairesCache.UpdateFullSnapshot(commissaires);
         }
 
@@ -38,10 +38,10 @@ namespace KernelImpl.Noyau.Arbitrage
         /// </summary>
         /// <param name="element">element XML contenant les arbitres</param>
         /// <param name="DC"></param>
-        public void lecture_arbitres(XElement element)
+        public void ChargeArbitres(XElement element)
         {
-            ICollection<Arbitre> arbitres = Arbitre.LectureArbitre(element, null);
-            _arbitresCache.UpdateFullSnapshot(arbitres); 
+            ICollection<Arbitre> arbitres = Arbitre.LectureArbitre(element);
+            _arbitresCache.UpdateFullSnapshot(arbitres);
         }
 
         /// <summary>
@@ -49,9 +49,9 @@ namespace KernelImpl.Noyau.Arbitrage
         /// </summary>
         /// <param name="element">element XML contenant les delegues</param>
         /// <param name="DC"></param>
-        public void lecture_delegues(XElement element)
+        public void ChargeDelegues(XElement element)
         {
-            ICollection<Delegue> delegues = Delegue.LectureDelegue(element, null);
+            ICollection<Delegue> delegues = Delegue.LectureDelegue(element);
             _deleguesCache.UpdateFullSnapshot(delegues);
         }
     }

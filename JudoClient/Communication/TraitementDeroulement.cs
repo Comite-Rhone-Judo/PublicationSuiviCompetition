@@ -1,11 +1,12 @@
-﻿using System.Xml.Linq;
-using Tools.Enum;
+﻿using FranceJudo.Metier.XML;
+using System.Xml.Linq;
+
 
 namespace JudoClient.Communication
 {
     public class TraitementDeroulement
     {
-        ClientJudo _client = null;
+        readonly ClientJudo _client = null;
 
         public TraitementDeroulement(ClientJudo client)
         {
@@ -31,44 +32,29 @@ namespace JudoClient.Communication
 
         public void ListePhases(XElement element)
         {
-            if (OnListePhases != null)
-            {
-                OnListePhases(_client, element);
-            }
+            OnListePhases?.Invoke(_client, element);
         }
 
         public void ListeCombats(XElement element)
         {
-            if (OnListeCombats != null)
-            {
-                OnListeCombats(_client, element);
-            }
+            OnListeCombats?.Invoke(_client, element);
         }
 
         public void CombatReceived(XElement element)
         {
             int combat = int.Parse(element.Element(ConstantXML.Combat).Value);
-            if (OnCombatReceived != null)
-            {
-                OnCombatReceived(_client, combat);
-            }
+            OnCombatReceived?.Invoke(_client, combat);
         }
 
         public void RencontreReceived(XElement element)
         {
             int rencontre = int.Parse(element.Element(ConstantXML.Rencontre).Value);
-            if (OnRencontreReceived != null)
-            {
-                OnRencontreReceived(_client, rencontre);
-            }
+            OnRencontreReceived?.Invoke(_client, rencontre);
         }
 
         public void UpdateRencontreReceived(XElement element)
         {
-            if (OnUpdateRencontreReceived != null)
-            {
-                OnUpdateRencontreReceived(_client, element);
-            }
+            OnUpdateRencontreReceived?.Invoke(_client, element);
         }
 
         public delegate void OnUpdatePhasesHandler(object sender, XElement xelements);
@@ -82,25 +68,16 @@ namespace JudoClient.Communication
 
         public void UpdatePhases(XElement element)
         {
-            if (OnUpdatePhases != null)
-            {
-                OnUpdatePhases(_client, element);
-            }
+            OnUpdatePhases?.Invoke(_client, element);
         }
 
         public void UpdateCombats(XElement element)
         {
-            if (OnUpdateCombats != null)
-            {
-                OnUpdateCombats(_client, element);
-            }
+            OnUpdateCombats?.Invoke(_client, element);
         }
         public void UpdateTapisCombats(XElement element)
         {
-            if (OnUpdateTapisCombats != null)
-            {
-                OnUpdateTapisCombats(_client, element);
-            }
+            OnUpdateTapisCombats?.Invoke(_client, element);
         }
     }
 }

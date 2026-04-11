@@ -4,7 +4,7 @@ namespace JudoClient.Communication
 {
     public class TraitementArbitrage
     {
-        ClientJudo _client = null;
+        readonly ClientJudo _client = null;
 
         public TraitementArbitrage(ClientJudo client)
         {
@@ -25,34 +25,22 @@ namespace JudoClient.Communication
 
         public void ListeArbitrage(XElement element)
         {
-            if (OnListeArbitrage != null)
-            {
-                OnListeArbitrage(_client, element);
-            }
+            OnListeArbitrage?.Invoke(_client, element);
         }
 
         public void ListeArbitres(XElement element)
         {
-            if (OnListeArbitres != null)
-            {
-                OnListeArbitres(_client, element);
-            }
+            OnListeArbitres?.Invoke(_client, element);
         }
 
         public void ListeCommissaires(XElement element)
         {
-            if (OnListeCommissaires != null)
-            {
-                OnListeCommissaires(_client, element);
-            }
+            OnListeCommissaires?.Invoke(_client, element);
         }
 
         public void ListeDelegues(XElement element)
         {
-            if (OnListeDelegues != null)
-            {
-                OnListeDelegues(_client, element);
-            }
+            OnListeDelegues?.Invoke(_client, element);
         }
 
 
@@ -70,34 +58,22 @@ namespace JudoClient.Communication
 
         public void UpdateArbitrage(XElement element)
         {
-            if (OnUpdateArbitrage != null)
-            {
-                OnUpdateArbitrage(_client, element);
-            }
+            OnUpdateArbitrage?.Invoke(_client, element);
         }
 
         public void UpdateArbitres(XElement element)
         {
-            if (OnUpdateArbitres != null)
-            {
-                OnUpdateArbitres(_client, element);
-            }
+            OnUpdateArbitres?.Invoke(_client, element);
         }
 
         public void UpdateCommissaires(XElement element)
         {
-            if (OnUpdateCommissaires != null)
-            {
-                OnUpdateCommissaires(_client, element);
-            }
+            OnUpdateCommissaires?.Invoke(_client, element);
         }
 
         public void UpdateDelegues(XElement element)
         {
-            if (OnUpdateDelegues != null)
-            {
-                OnUpdateDelegues(_client, element);
-            }
+            OnUpdateDelegues?.Invoke(_client, element);
         }
     }
 }

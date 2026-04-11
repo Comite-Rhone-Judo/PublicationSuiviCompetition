@@ -9,10 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AppPublication</RootNamespace>
     <AssemblyName>AppPublication</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
     <TargetFrameworkProfile />
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>C:\Users\dgarr\Documents\Sport\Judo\MDJ\Publish_Publication_Suivi_Competition\</PublishUrl>
@@ -34,6 +35,7 @@
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -85,6 +87,7 @@
     <Reference Include="EPPlus">
       <HintPath>..\packages\EPPlus.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />
@@ -122,7 +125,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
@@ -133,70 +135,132 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
-    <Compile Include="Controles\GestionStatistiques.cs" />
+    <Compile Include="Config\Generation\EcransAppelConfigElementCollection.cs" />
+    <Compile Include="Config\Generation\EcransAppelConfigElement.cs" />
+    <Compile Include="Config\Generation\GenerateurSiteInterneConfigElement.cs" />
+    <Compile Include="Config\Generation\GenerateurSiteConfigElement.cs" />
+    <Compile Include="Config\Publication\GeneralConfigElement.cs" />
+    <Compile Include="Config\Publication\SchedulerConfigElement.cs" />
+    <Compile Include="Config\Publication\SchedulerCollection.cs" />
+    <Compile Include="Config\Generation\GenerationConfigSection.cs" />
+    <Compile Include="Config\Publication\MiniSiteCollection.cs" />
+    <Compile Include="Config\Publication\MiniSiteConfigElement.cs" />
+    <Compile Include="Config\Publication\PublicationConfigSection.cs" />
+    <Compile Include="Export\ConfigurationExportSite.cs" />
+    <Compile Include="Export\ConfigurationExportSiteInterne.cs" />
+    <Compile Include="Export\ExportSharedContextInterne.cs" />
+    <Compile Include="Export\ExportSharedContext.cs" />
+    <Compile Include="Export\ExportSharedContextBase.cs" />
+    <Compile Include="Export\IConfigurableGenerateur.cs" />
+    <Compile Include="Export\IReadOnlyConfigurationExportSite.cs" />
+    <Compile Include="Export\IReadOnlyConfigurationExportSiteInterne.cs" />
+    <Compile Include="Generation\GenerationScheduler.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Models\EcransAppel\EcranCollectionSnapshot.cs" />
+    <Compile Include="Models\Publication\GestionSiteBase.cs" />
+    <Compile Include="Models\Publication\GestionSiteInterne.cs" />
+    <Compile Include="Models\Publication\GestionSitePublique.cs" />
+    <Compile Include="Models\Statistiques\GestionStatistiques.cs" />
     <Compile Include="Controles\IClientProvider.cs" />
-    <Compile Include="Controles\RelayCommand.cs" />
+    <Compile Include="Export\ExportSiteInterne.cs" />
+    <Compile Include="Export\ExportSite.cs" />
+    <Compile Include="Generation\GenerateurSiteInterne.cs" />
+    <Compile Include="Generation\GenerateurSite.cs" />
+    <Compile Include="Generation\IGenerateurSite.cs" />
     <Compile Include="ExtensionNoyau\Engagement\CombatEqualityComparer.cs" />
     <Compile Include="ExtensionNoyau\Engagement\DataEngagement.cs" />
     <Compile Include="ExtensionNoyau\Engagement\GroupeEngagements.cs" />
     <Compile Include="ExtensionNoyau\Engagement\IEngagementData.cs" />
-    <Compile Include="ExtensionNoyau\ExtendedJudoData.cs" />
     <Compile Include="ExtensionNoyau\Engagement\VueJudokaEqualityComparer.cs" />
+    <Compile Include="ExtensionNoyau\ExtendedJudoData.cs" />
     <Compile Include="ExtensionNoyau\IExtendedJudoData.cs" />
-    <Compile Include="IHM\Commissaire\ConfigurationPublication.xaml.cs">
-      <DependentUpon>ConfigurationPublication.xaml</DependentUpon>
+    <Compile Include="Models\EcransAppel\EcranAppelModel.cs" />
+    <Compile Include="Models\EcransAppel\EcranCollectionManager.cs" />
+    <Compile Include="Publication\SiteInternePhysicalStructure.cs" />
+    <Compile Include="Publication\SiteInterneUrlGenerator.cs" />
+    <Compile Include="Publication\SitePhysicalStructure.cs" />
+    <Compile Include="Publication\SiteUrlGenerator.cs" />
+    <Compile Include="Statistiques\StatMgrDonnees.cs" />
+    <Compile Include="Statistiques\StatMgrGeneration.cs" />
+    <Compile Include="Statistiques\StatMgrSynchronisation.cs" />
+    <Compile Include="Tools\Converter\DeviceTypeConverter.cs" />
+    <Compile Include="Tools\Converter\GroupementToLayoutConverter.cs" />
+    <Compile Include="Publication\EcransAppelRedirectModule.cs" />
+    <Compile Include="ViewModels\Configuration\ConfigurationEcransViewModel.cs" />
+    <Compile Include="Controles\SitePublicationCoordinator.cs" />
+    <Compile Include="ViewModels\Configuration\EcranAppelConfigViewModel.cs" />
+    <Compile Include="ViewModels\Configuration\EcranAppelTapisSelectionViewModel.cs" />
+    <Compile Include="ViewModels\Configuration\NetworkScannerContext.cs" />
+    <Compile Include="ViewModels\Configuration\NetworkScannerViewModel.cs" />
+    <Compile Include="ViewModels\Main\TestFtpViewModel.cs" />
+    <Compile Include="Views\Configuration\ConfigurationPublicationSiteInterneView.xaml.cs">
+      <DependentUpon>ConfigurationPublicationSiteInterneView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IHM\Commissaire\InformationsView.xaml.cs">
+    <Compile Include="Views\Configuration\ConfigurationGeneraleView.xaml.cs">
+      <DependentUpon>ConfigurationGeneraleView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Configuration\ConfigurationPublicationSiteView.xaml.cs">
+      <DependentUpon>ConfigurationPublicationSiteView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Configuration\NetworkScannerView.xaml.cs">
+      <DependentUpon>NetworkScannerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Infos\InformationsView.xaml.cs">
       <DependentUpon>InformationsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IHM\Commissaire\StatistiquesView.xaml.cs">
+    <Compile Include="Views\Infos\StatistiquesView.xaml.cs">
       <DependentUpon>StatistiquesView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Publication\MiniSiteConfigurable.cs" />
     <Compile Include="Statistiques\StatistiqueItem.cs" />
     <Compile Include="Statistiques\StatistiqueItemCompteur.cs" />
     <Compile Include="Statistiques\StatistiqueItemMoyenneur.cs" />
-    <Compile Include="Tools\ActionWatcher.cs" />
-    <Compile Include="Tools\AppInformation.cs" />
     <Compile Include="Tools\Converter\AppStatusTypeConverter.cs" />
     <Compile Include="Tools\Converter\AppStatusProgressConverter.cs" />
     <Compile Include="Tools\Converter\AppStatusConverter.cs" />
-    <Compile Include="Tools\Converter\PassthroughConverter.cs" />
-    <Compile Include="Tools\Converter\BoolOperationConverter.cs" />
-    <Compile Include="Tools\Converter\BoolToVisibilityConverter.cs" />
     <Compile Include="Tools\Converter\DisplayURLStatusConverter.cs" />
     <Compile Include="Tools\Converter\StatGenerationConverter.cs" />
     <Compile Include="Tools\Converter\RunningStatusConverter.cs" />
-    <Compile Include="Tools\Converter\BoolNotConverter.cs" />
     <Compile Include="Tools\Converter\ClientConverter.cs" />
     <Compile Include="Tools\EchangeMarkup.cs" />
-    <Compile Include="Tools\EntitePublicationFFJudo.cs" />
     <Compile Include="Tools\Enum\BusyStatusEnum.cs" />
     <Compile Include="Tools\Enum\TypePouleEnum.cs" />
-    <Compile Include="Tools\FileTools.cs" />
-    <Compile Include="Tools\FilteredFileInfo.cs" />
-    <Compile Include="Tools\GenerationProgressInfo.cs" />
-    <Compile Include="Tools\LectureFile\LectureStructures.cs" />
-    <Compile Include="Tools\StatExecution.cs" />
-    <Compile Include="Tools\StatusGenerationSite.cs" />
-    <Compile Include="Tools\StreamTool.cs" />
-    <Compile Include="Tools\Struct\ExportStruct.cs" />
-    <Page Include="IHM\Commissaire\ConfigurationPublication.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="IHM\Commissaire\ExportWindow.xaml">
+    <Compile Include="Generation\GenerationProgressInfo.cs" />
+    <Compile Include="Statistiques\TaskExecutionInformation.cs" />
+    <Compile Include="Generation\StatusGenerationSite.cs" />
+    <Page Include="Views\Configuration\ConfigurationPublicationSiteInterneView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="IHM\Commissaire\InformationsView.xaml">
+    <Page Include="Views\Configuration\ConfigurationGeneraleView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="IHM\Commissaire\StatistiquesView.xaml">
+    <Page Include="Views\Configuration\ConfigurationPublicationSiteView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Configuration\NetworkScannerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="IHM\Server\RechercheServer.xaml">
+    <Page Include="Views\Main\MainView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Infos\InformationsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Infos\StatistiquesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Main\TestFtpWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Server\RechercheServer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -206,15 +270,16 @@
     </Compile>
     <Compile Include="Controles\DialogControleur.cs" />
     <Compile Include="Controles\GestionConnection.cs" />
-    <Compile Include="Controles\GestionEvent.cs" />
-    <Compile Include="Controles\GestionSite.cs" />
-    <Compile Include="Controles\ICommissaireWindow.cs" />
-    <Compile Include="Export\ExportSite.cs" />
+    <Compile Include="Data\ConnectedJudoDataManager.cs" />
+    <Compile Include="Export\ExportSiteBase.cs" />
     <Compile Include="Export\ExportXML.cs" />
-    <Compile Include="IHM\Commissaire\ExportWindow.xaml.cs">
-      <DependentUpon>ExportWindow.xaml</DependentUpon>
+    <Compile Include="Views\Main\MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IHM\Server\RechercheServer.xaml.cs">
+    <Compile Include="Views\Main\TestFtpWindow.xaml.cs">
+      <DependentUpon>TestFtpWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Server\RechercheServer.xaml.cs">
       <DependentUpon>RechercheServer.xaml</DependentUpon>
     </Compile>
     <Page Include="Styles\ConverterStyles.xaml">
@@ -256,6 +321,18 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FranceJudo.Core\FranceJudo.Core.csproj">
+      <Project>{13cad1c5-1448-4b69-b2c9-de15aecce84b}</Project>
+      <Name>FranceJudo.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FranceJudo.Metier\FranceJudo.Metier.csproj">
+      <Project>{e49d2215-4d00-4340-b7d3-ccd85d49e60d}</Project>
+      <Name>FranceJudo.Metier</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FranceJudo.UI\FranceJudo.UI.csproj">
+      <Project>{bffdeefa-ccdc-4dc2-8af5-d6509d2f7619}</Project>
+      <Name>FranceJudo.UI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\JudoClient\JudoClient.csproj">
       <Project>{7536edc7-a7a2-404d-babd-e78fade367cc}</Project>
       <Name>JudoClient</Name>
@@ -263,10 +340,6 @@
     <ProjectReference Include="..\KernelImpl\KernelImpl.csproj">
       <Project>{392bddab-3d85-46c8-b419-0d8c81dc5146}</Project>
       <Name>KernelImpl</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Tools\Tools.csproj">
-      <Project>{319d52c2-081b-42af-bf17-57efd5dc0d9c}</Project>
-      <Name>Tools</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -285,13 +358,17 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Logo_AppPublication.ico" />
-  </ItemGroup>
-  <ItemGroup>
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf">
+      <Version>1.1.142</Version>
+    </PackageReference>
     <PackageReference Include="NLog">
-      <Version>5.3.4</Version>
+      <Version>6.1.2</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Logo_AppPublication.ico" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -300,4 +377,11 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="SpicNSpan" AfterTargets="Clean">
+    <!-- common vars https://msdn.microsoft.com/en-us/library/c02as0cs.aspx?f=255&MSPPError=-2147217396 -->
+    <RemoveDir Directories="$(TargetDir)" />
+    <!-- bin -->
+    <RemoveDir Directories="$(ProjectDir)$(BaseIntermediateOutputPath)" />
+    <!-- obj -->
+  </Target>
 </Project>

@@ -1,13 +1,18 @@
 ﻿
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
+using FranceJudo.Core.Media.Images;
+using FranceJudo.Metier.IO;
+using FranceJudo.Metier.Noyau.Logos;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
-using KernelImpl.Noyau.Deroulement;
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
+
 
 namespace KernelImpl.Noyau.Logos
 {
@@ -28,17 +33,84 @@ namespace KernelImpl.Noyau.Logos
         /// </summary>
         /// <param name="element">element XML contenant les ligues</param>
         /// <param name="DC"></param>
-        public void lecture_logos(XElement element)
+        public void LectureLogos(XElement element)
         {
-            ICollection<string> allLogos = XMLTools.LectureLogosCommissaire(element, null);
+            ICollection<string> allLogos = LectureLogosCommissaire(element);
 
-            ICollection<string> logos = allLogos.Where(o => o.Contains(ConstantFile.Logo3_dir)).ToList();
-            ICollection<string> fede = allLogos.Where(o => o.Contains(ConstantFile.Logo1_dir)).ToList();
-            ICollection<string> ligues = allLogos.Where(o => o.Contains(ConstantFile.Logo2_dir)).ToList();
+            ICollection<string> logos = allLogos.Where(o => o.Contains(AppDirectoryManager.Logo3Dir)).ToList();
+            ICollection<string> fede = allLogos.Where(o => o.Contains(AppDirectoryManager.Logo1Dir)).ToList();
+            ICollection<string> ligues = allLogos.Where(o => o.Contains(AppDirectoryManager.Logo2Dir)).ToList();
 
             _logosCache.UpdateFullSnapshot(logos, o => o);
             _fedeCache.UpdateFullSnapshot(logos, o => o);
             _ligueCache.UpdateFullSnapshot(logos, o => o);
         }
+
+        #region METHODES PRIVEES
+        /// <summary>
+        /// Lecture des Ligues
+        /// </summary>
+        /// <param name="xelement">élément décrivant les Ligues</param>
+        /// <param name="MI">fonction d'info</param>
+        /// <returns>Ligues</returns>
+
+        public static ICollection<string> LectureLogosCommissaire(XElement xelement)
+        {
+            ICollection<string> urls = new List<string>();
+
+            try
+            {
+                FileSystemHelper.DeleteDirectory(AppDirectoryManager.Logo1Dir);
+                FileSystemHelper.CreateDirectorie(AppDirectoryManager.Logo1Dir);
+
+                FileSystemHelper.DeleteDirectory(AppDirectoryManager.Logo2Dir);
+                FileSystemHelper.CreateDirectorie(AppDirectoryManager.Logo2Dir);
+
+                FileSystemHelper.DeleteDirectory(AppDirectoryManager.Logo3Dir);
+                FileSystemHelper.CreateDirectorie(AppDirectoryManager.Logo3Dir);
+
+            }
+            catch (Exception ex)
+            {
+                LogTools.Error(ex);
+            }
+            finally
+            {
+                urls = urls.Concat(LectureElement(xelement, ConstantXML.LogoFede, AppDirectoryManager.Logo1Dir)).ToList();
+                urls = urls.Concat(LectureElement(xelement, ConstantXML.LogoLigue, AppDirectoryManager.Logo2Dir)).ToList();
+                urls = urls.Concat(LectureElement(xelement, ConstantXML.LogoSponsor, AppDirectoryManager.Logo3Dir)).ToList();
+            }
+
+            return urls;
+        }
+
+        private static ICollection<string> LectureElement(XElement xelement, string element, string directory)
+        {
+            ICollection<string> urls = new List<string>();
+            foreach (XElement xinfo in xelement.Descendants(element))
+            {
+                string val = xinfo.Element(ConstantXML.Logo_Valeur) != null ? xinfo.Element(ConstantXML.Logo_Valeur).Value : "";
+                string nom = xinfo.Element(ConstantXML.Logo_Nom) != null ? xinfo.Element(ConstantXML.Logo_Nom).Value : "";
+                if (!String.IsNullOrWhiteSpace(val))
+                {
+                    using (Image img = ImageHelper.StringToImage(val))
+                    {
+                        int index = 0;
+                        while (File.Exists(directory + nom))
+                        {
+                            string filename = Path.GetFileNameWithoutExtension(directory + nom);
+                            string extension = Path.GetExtension(directory + nom);
+
+                            nom = filename + "_" + ++index + extension;
+                        }
+
+                        img.Save(directory + nom);
+                        urls.Add(directory + nom);
+                    }
+                }
+            }
+            return urls;
+        }
+        #endregion
     }
 }

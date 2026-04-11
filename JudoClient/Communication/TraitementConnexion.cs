@@ -4,7 +4,7 @@ namespace JudoClient.Communication
 {
     public class TraitementConnexion
     {
-        ClientJudo _client = null;
+        readonly ClientJudo _client = null;
 
         public TraitementConnexion(ClientJudo client)
         {
@@ -24,26 +24,17 @@ namespace JudoClient.Communication
 
         public void AcceptConnectionPesee(XElement doc)
         {
-            if (OnAcceptConnectionPesee != null)
-            {
-                OnAcceptConnectionPesee(_client, doc);
-            }
+            OnAcceptConnectionPesee?.Invoke(_client, doc);
         }
 
         public void AcceptConnectionCS(XElement doc)
         {
-            if (OnAcceptConnectionCS != null)
-            {
-                OnAcceptConnectionCS(_client, doc);
-            }
+            OnAcceptConnectionCS?.Invoke(_client, doc);
         }
 
         public void AcceptConnectionCOM(XElement doc)
         {
-            if (OnAcceptConnectionCOM != null)
-            {
-                OnAcceptConnectionCOM(_client, doc);
-            }
+            OnAcceptConnectionCOM?.Invoke(_client, doc);
         }
 
 
@@ -52,10 +43,7 @@ namespace JudoClient.Communication
 
         public void AcceptConnectionTest(XElement doc)
         {
-            if (OnAcceptConnectionTest != null)
-            {
-                OnAcceptConnectionTest(_client, doc);
-            }
+            OnAcceptConnectionTest?.Invoke(_client, doc);
         }
     }
 }

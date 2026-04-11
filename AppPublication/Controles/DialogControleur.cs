@@ -1,20 +1,27 @@
-﻿using AppPublication.Tools;
+﻿using AppPublication.Data;
+using AppPublication.Models.Statistiques;
 using AppPublication.Tools.Enum;
+using AppPublication.ViewModels.Configuration;
+using AppPublication.Views.Configuration;
+using FranceJudo.Core.Environment;
+using FranceJudo.Core.Foundation;
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
+using FranceJudo.Core.Network;
+using FranceJudo.Core.Reflection;
+using FranceJudo.Core.Security;
+using FranceJudo.Metier.IO;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.UI.Wpf.Dialogs;
+using FranceJudo.UI.Wpf.Foundation;
 using KernelImpl;
-using KernelImpl.Noyau.Deroulement;
-using KernelImpl.Noyau.Organisation;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Information;
 using System;
 using System.IO;
-using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Telerik.Windows.Controls;
-using Tools.Enum;
-using Tools.Export;
-using Tools.Outils;
-using Tools.Windows;
 
 namespace AppPublication.Controles
 {
@@ -24,12 +31,13 @@ namespace AppPublication.Controles
     public class DialogControleur : NotificationBase
     {
         #region MEMBRES
-        private static DialogControleur _instance = null;      // instance singletion
-        private AppPublication.IHM.Commissaire.StatistiquesView _statWindow = null;
-        private AppPublication.IHM.Commissaire.InformationsView _infoWindow = null;
+        private static DialogControleur _instance = null; // Instance unique du singleton
+        private AppPublication.Views.Infos.StatistiquesView _statWindow = null;
+        private AppPublication.Views.Infos.InformationsView _infoWindow = null;
         private PdfViewer _manuelViewer = null;
-        private AppPublication.IHM.Commissaire.ConfigurationPublication _cfgWindow = null;
         private readonly JudoData _serverData;
+        private bool _startSiteDistantEnCours = false;
+        private bool _nettoyageEnCours = false;
         #endregion
 
         #region CONSTRUCTEUR
@@ -39,7 +47,11 @@ namespace AppPublication.Controles
         {
             _serverData = data ?? throw new ArgumentNullException(nameof(data));
 
-            FileAndDirectTools.InitDataDirectories();
+
+            string dataPath = AppEnvironment.GetDataDirectory();
+            string appPath = AppEnvironment.GetAppDirectory();
+
+            AppDirectoryManager.Initialize(dataPath, appPath);
             InitControleur();
             AppInformation = AppInformation.Instance;
         }
@@ -48,18 +60,38 @@ namespace AppPublication.Controles
 
         #region PROPRIETES
 
-        private Competition _competition = null;
+        /// <summary>
+        /// Indique si un démarrage de site distant est en cours
+        /// </summary>
+        public bool StartSiteDistantEnCours
+        {
+            get { return _startSiteDistantEnCours; }
+            set { _startSiteDistantEnCours = value; NotifyPropertyChanged(); } // Invalide nativement les commandes
+        }
+
+
+        /// <summary>
+        /// Indique si un nettoyage du site FTP est en cours
+        /// </summary>
+        public bool NettoyageEnCours
+        {
+            get { return _nettoyageEnCours; }
+            set { _nettoyageEnCours = value; NotifyPropertyChanged(); } // Invalide nativement les commandes
+        }
+
+        private ICompetition _competition = null;
         /// <summary>
         /// On expose la competition courante pour liaison avec l'IHM (et la notification de changement)
         /// </summary>
-        public Competition Competition
+        public ICompetition Competition
         {
             get
             {
                 return _competition;
             }
 
-            private set { 
+            private set
+            {
                 _competition = value;
                 NotifyPropertyChanged();
             }
@@ -74,7 +106,8 @@ namespace AppPublication.Controles
             {
                 return _appInformation;
             }
-            private set { 
+            private set
+            {
                 _appInformation = value;
                 NotifyPropertyChanged();
             }
@@ -90,7 +123,7 @@ namespace AppPublication.Controles
             get
             {
                 if (_instance == null)
-                    throw new InvalidOperationException("DialogControleur non initialise ! Appelez DialogControleur.Initialiser() dans App.xaml.cs.");
+                    throw new InvalidOperationException("DialogControleur non initialise ! Appelez DialogControleur.CreateInstance()");
                 return _instance;
             }
         }
@@ -126,14 +159,14 @@ namespace AppPublication.Controles
         }
 
 
-        private GestionSite _site = null;
+        private SitePublicationCoordinator _siteCoord = null;
         /// <summary>
         /// Le gestionnaire des site de publication
         /// </summary>
-        public GestionSite GestionSite
+        public SitePublicationCoordinator SiteCoordinator
         {
-            get { return _site; }
-            private set { _site = value; }
+            get { return _siteCoord; }
+            private set { _siteCoord = value; }
         }
 
         private GestionStatistiques _stats = null;
@@ -174,7 +207,7 @@ namespace AppPublication.Controles
             }
         }
 
-        private bool _tracesDebugOn  =false;
+        private bool _tracesDebugOn = false;
         /// <summary>
         /// Indique si les traces avancees sont activees
         /// </summary>
@@ -229,7 +262,8 @@ namespace AppPublication.Controles
         public void UpdateCompetition()
         {
             Competition = ServerData.Organisation.Competition;  // Met a jour la competition courante pour l'IHM
-            GestionSite.IdCompetition = (ServerData.Organisation.Competition != null) ? ServerData.Organisation.Competition.remoteId : string.Empty;
+
+            SiteCoordinator.IdCompetition = (ServerData.Organisation.Competition != null) ? ServerData.Organisation.Competition.remoteId : string.Empty;
         }
 
         /// <summary>
@@ -251,13 +285,15 @@ namespace AppPublication.Controles
                     _connection.ClientDisconnected += OnClientDisconnected;
 
                     // Initialise le gestionnaire d'evenements
-                    var evtMgr = GestionEvent.CreateInstance(this.ServerData, _stats, _connection);
+                    var evtMgr = ConnectedJudoDataManager.CreateInstance(this.ServerData, _stats.Donnees, _connection);
                     // et on s'abonne aux evenements pour pouvoir mettre a jour l'IHM
                     evtMgr.BusyStatusChanged += OnBusyStatusChanged;
                     evtMgr.DataUpdated += OnDataUpdated;
 
-                    // Le gestionnaire de site de publication
-                    _site = new GestionSite(this.ServerData, _stats);
+                    // Le gestionnaire de site de publication. On passe EvtMgr comme gestionnaire de donnees car il gere la reception des donnees
+                    // et fait l'interface avec le noyau interne de donnees
+
+                    _siteCoord = new SitePublicationCoordinator(evtMgr, _stats);
                 }
                 catch (Exception ex)
                 {
@@ -270,6 +306,46 @@ namespace AppPublication.Controles
 
         #region COMMANDES
 
+
+        private ICommand _cmdAfficherTestFtp = null;
+
+        /// <summary>
+        /// Commande permettant d'afficher la fenetre de test de connexion FTP pour le site selectionne
+        /// </summary>
+        public ICommand CmdAfficherTestFtp
+        {
+            get
+            {
+                _cmdAfficherTestFtp ??= new RelayCommand(
+                        o =>
+                        {
+                            // Extrait le mode de passe des controles passes en parametres (1er = FranceJudo, 2nd = Advanced)
+                            ExtractPasswordFromParameters(o);
+
+                            // Lecture directe de la propriété courante du ViewModel
+                            MiniSite siteToTest = SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne;
+
+                            if (siteToTest != null)
+                            {
+                                var testViewModel = new TestFtpViewModel(siteToTest);
+                                var testWindow = new TestFtpWindow(testViewModel)
+                                {
+                                    Owner = App.Current.MainWindow
+                                };
+                                testWindow.ShowDialog();
+                            }
+                        },
+                        o =>
+                        {
+                            // Actif uniquement si on a un site sélectionné
+                            return SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null
+                                        && SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsFTPConfigPropertiesValid
+                                        && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif;
+                        });
+                return _cmdAfficherTestFtp;
+            }
+        }
+
         private ICommand _cmdAcquitterErreurCommunication = null;
 
         /// <summary>
@@ -279,9 +355,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdAcquitterErreurCommunication == null)
-                {
-                    _cmdAcquitterErreurCommunication = new RelayCommand(
+                _cmdAcquitterErreurCommunication ??= new RelayCommand(
                             o =>
                             {
                                 if (Connection != null && Connection.HasErreurTransmission)
@@ -294,7 +368,6 @@ namespace AppPublication.Controles
                             {
                                 return true;
                             });
-                }
                 return _cmdAcquitterErreurCommunication;
             }
         }
@@ -308,21 +381,20 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdCopyUrlLocal == null)
-                {
-                    _cmdCopyUrlLocal = new RelayCommand(
+                _cmdCopyUrlLocal ??= new RelayCommand(
                             o =>
                             {
-                                if (GestionSite.SiteLocal.IsActif)
+                                if (SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif)
                                 {
-                                    Clipboard.SetText(GestionSite.URLLocalPublication);
+                                    Clipboard.SetText(SiteCoordinator.GestionnaireSitePublique.URLLocalPublication);
                                 }
                             },
                             o =>
                             {
-                                return GestionSite.SiteLocal.IsActif;
+
+
+                                return SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif;
                             });
-                }
                 return _cmdCopyUrlLocal;
             }
         }
@@ -335,22 +407,43 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdCopyUrlDistant == null)
-                {
-                    _cmdCopyUrlDistant = new RelayCommand(
+                _cmdCopyUrlDistant ??= new RelayCommand(
                             o =>
                             {
-                                if (GestionSite.SiteDistantSelectionne != null && GestionSite.SiteDistantSelectionne.IsActif)
+                                if (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif)
                                 {
-                                    Clipboard.SetText(GestionSite.URLDistantPublication);
+                                    Clipboard.SetText(SiteCoordinator.GestionnaireSitePublique.URLDistantPublication);
                                 }
                             },
                             o =>
                             {
-                                return (GestionSite.SiteDistantSelectionne != null) ? GestionSite.SiteDistantSelectionne.IsActif : false;
+                                return (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null) && SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif;
                             });
-                }
                 return _cmdCopyUrlDistant;
+            }
+        }
+
+        private ICommand _cmdCopyUrlEcransAppel = null;
+        /// <summary>
+        /// Commande de copy de l'URL des ecrans d'appel dans la presse papier
+        /// </summary>
+        public ICommand CmdCopyUrlEcransAppel
+        {
+            get
+            {
+                _cmdCopyUrlEcransAppel ??= new RelayCommand(
+                            o =>
+                            {
+                                if (SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif)
+                                {
+                                    Clipboard.SetText(SiteCoordinator.GestionnaireSiteInterne.URLLocalPublication);
+                                }
+                            },
+                            o =>
+                            {
+                                return (SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null) && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif;
+                            });
+                return _cmdCopyUrlEcransAppel;
             }
         }
 
@@ -362,25 +455,22 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdDemarrerSiteLocal == null)
-                {
-                    _cmdDemarrerSiteLocal = new RelayCommand(
+                _cmdDemarrerSiteLocal ??= new RelayCommand(
                             o =>
                             {
-                                if (Instance.GestionSite.SiteLocal != null && !Instance.GestionSite.SiteLocal.IsActif)
+                                if (SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && !SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif)
                                 {
                                     // Demarre le site en local
-                                    Instance.GestionSite.SiteLocal.StartSite();
+                                    SiteCoordinator.GestionnaireSitePublique.SiteLocal.StartSite();
 
                                     // Force la mise a jour de l'URL
-                                    Instance.GestionSite.IdCompetition = Instance.GestionSite.IdCompetition;
+                                    SiteCoordinator.GestionnaireSitePublique.ForceRefreshUrls();
                                 }
                             },
                             o =>
                             {
-                                return !String.IsNullOrEmpty(Instance.GestionSite.IdCompetition) && !Instance.GestionSite.SiteLocal.IsActif && Instance.GestionSite.SiteLocal.IsChanged;
+                                return SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && SiteCoordinator.GestionnaireSitePublique.IsIdCompetitionValide && !SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsChanged;
                             });
-                }
                 return _cmdDemarrerSiteLocal;
             }
         }
@@ -393,23 +483,73 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdArreterSiteLocal == null)
-                {
-                    _cmdArreterSiteLocal = new RelayCommand(
+                _cmdArreterSiteLocal ??= new RelayCommand(
                             o =>
                             {
-                                if (Instance.GestionSite.SiteLocal != null && Instance.GestionSite.SiteLocal.IsActif)
+                                if (SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif)
                                 {
                                     // Demarre le site en local
-                                    Instance.GestionSite.SiteLocal.StopSite();
+                                    SiteCoordinator.GestionnaireSitePublique.SiteLocal.StopSite();
                                 }
                             },
                             o =>
                             {
-                                return Instance.GestionSite.SiteLocal.IsActif;
+                                return SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif;
                             });
-                }
                 return _cmdArreterSiteLocal;
+            }
+        }
+
+        private ICommand _cmdDemarrerSiteInterne = null;
+        /// <summary>
+        /// Command de demarrage du site des ecrans d'appel
+        /// </summary>
+        public ICommand CmdDemarrerSiteInterne
+        {
+            get
+            {
+                _cmdDemarrerSiteInterne ??= new RelayCommand(
+                            o =>
+                            {
+                                if (SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null && !SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif)
+                                {
+                                    // Demarre le site en local
+                                    SiteCoordinator.GestionnaireSiteInterne.SiteLocal.StartSite();
+
+                                    // Force la mise a jour de l'URL
+                                    SiteCoordinator.GestionnaireSiteInterne.ForceRefreshUrls();
+                                }
+                            },
+                            o =>
+                            {
+                                return SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null && SiteCoordinator.GestionnaireSiteInterne.IsIdCompetitionValide && !SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsChanged;
+                            });
+                return _cmdDemarrerSiteInterne;
+            }
+        }
+
+        private ICommand _cmdArreterSiteInterne = null;
+        /// <summary>
+        /// Commande d'arret du site des ecrans d'appel
+        /// </summary>
+        public ICommand CmdArreterSiteInterne
+        {
+            get
+            {
+                _cmdArreterSiteInterne ??= new RelayCommand(
+                            o =>
+                            {
+                                if (SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif)
+                                {
+                                    // Demarre le site en local
+                                    SiteCoordinator.GestionnaireSiteInterne.SiteLocal.StopSite();
+                                }
+                            },
+                            o =>
+                            {
+                                return SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif;
+                            });
+                return _cmdArreterSiteInterne;
             }
         }
 
@@ -421,37 +561,55 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdDemarrerSiteDistant == null)
-                {
-                    _cmdDemarrerSiteDistant = new RelayCommand(
-                            o =>
+                _cmdDemarrerSiteDistant ??= new RelayCommand(
+                            async o =>
                             {
-                                if (Instance.GestionSite.SiteDistantSelectionne != null && !Instance.GestionSite.SiteDistantSelectionne.IsActif)
+                                if (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif)
                                 {
-                                    // Extrait le mode de passe des controles passes en parametres (1er = FranceJudo, 2nd = Advanced)
-                                    if (o.GetType() == typeof(Tuple<object, object>))
+                                    // 2. On verrouille le bouton et on force WPF à mettre à jour l'IHM
+                                    StartSiteDistantEnCours = true;
+
+                                    try
                                     {
-                                        Tuple<object, object> tuple = (Tuple<object, object>)o;
+                                        // 3. LECTURE DES DONNÉES UI (Doit obligatoirement rester ici, hors du Task.Run)
+                                        ExtractPasswordFromParameters(o);
 
-                                        if(tuple.Item1 != null && tuple.Item1.GetType() == typeof(RadPasswordBox))
+                                        // 4. TRAITEMENT LONG EN ARRIÈRE-PLAN
+                                        // Demarre le site distant selectione sans figer l'interface
+                                        await Task.Run(() =>
                                         {
-                                            Instance.GestionSite.SiteFranceJudo.PasswordSiteFTPDistant = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item1).SecurePassword);
-                                        }
-                                        if (tuple.Item2 != null && tuple.Item2.GetType() == typeof(RadPasswordBox))
-                                        {
-                                            Instance.GestionSite.SiteDistant.PasswordSiteFTPDistant = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item2).SecurePassword);
-                                        }
+                                            SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.StartSite();
+                                        });
                                     }
-
-                                    // Demarre le site distant selectione
-                                    Instance.GestionSite.SiteDistantSelectionne.StartSite();
+                                    catch (Exception ex)
+                                    {
+                                        // Gérer l'erreur (Log + notification utilisateur)
+                                        LogTools.Logger.Error(ex, "Erreur lors du démarrage du site distant.");
+                                        Application.Current.Dispatcher.Invoke(() =>
+                                        {
+                                            AlertWindow win = new AlertWindow("Erreur", "Impossible de démarrer le site distant. Vérifiez les paramètres de connexion.")
+                                            {
+                                                Owner = App.Current.MainWindow
+                                            };
+                                            win.ShowDialog();
+                                        });
+                                    }
+                                    finally
+                                    {
+                                        // 5. On déverrouille le bouton quoi qu'il arrive (même en cas d'erreur de StartSite)
+                                        StartSiteDistantEnCours = false;
+                                    }
                                 }
                             },
                             o =>
                             {
-                                return (Instance.GestionSite.SiteDistantSelectionne == null) ? false : !Instance.GestionSite.SiteDistantSelectionne.IsActif && !String.IsNullOrEmpty(Instance.GestionSite.IdCompetition);
+                                // 6. Si on est en cours de démarrage, le bouton est inactif (CanExecute = false)
+                                if (StartSiteDistantEnCours)
+                                    return false;
+
+                                // Votre logique d'origine
+                                return SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif && SiteCoordinator.GestionnaireSitePublique.IsIdCompetitionValide;
                             });
-                }
                 return _cmdDemarrerSiteDistant;
             }
         }
@@ -464,22 +622,19 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdArreterSiteDistant == null)
-                {
-                    _cmdArreterSiteDistant = new RelayCommand(
+                _cmdArreterSiteDistant ??= new RelayCommand(
                             o =>
                             {
-                                if (Instance.GestionSite.SiteDistantSelectionne != null && Instance.GestionSite.SiteDistantSelectionne.IsActif)
+                                if (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif)
                                 {
                                     // Arrete le site concernee
-                                    Instance.GestionSite.SiteDistantSelectionne.StopSite();
+                                    SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.StopSite();
                                 }
                             },
                             o =>
                             {
-                                return (Instance.GestionSite.SiteDistantSelectionne != null) ?  Instance.GestionSite.SiteDistantSelectionne.IsActif : false;
+                                return (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null) && SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif;
                             });
-                }
                 return _cmdArreterSiteDistant;
             }
         }
@@ -492,18 +647,18 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdNettoyerSiteDistant == null)
-                {
-                    _cmdNettoyerSiteDistant = new RelayCommand(
-                            o =>
+                _cmdNettoyerSiteDistant ??= new RelayCommand(
+                            async o =>
                             {
-                                if ( Instance.GestionSite.SiteDistantSelectionne != null && !Instance.GestionSite.SiteDistantSelectionne.IsActif)
+                                if (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif)
                                 {
-                                    DialogParameters param = new DialogParameters();
-                                    param.OkButtonContent = "Oui";
-                                    param.CancelButtonContent = "Non";
-                                    param.Content = "Etes-vous sûr de vouloir supprimer le contenu du site distant ?";
-                                    param.Header = "Nettoyer site distant";
+                                    DialogParameters param = new DialogParameters
+                                    {
+                                        OkButtonContent = "Oui",
+                                        CancelButtonContent = "Non",
+                                        Content = $"Etes-vous sûr de vouloir supprimer le contenu de '{SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.RepertoireSiteFTPDistant}' sur le site distant ?",
+                                        Header = "Nettoyer site distant"
+                                    };
 
                                     ConfirmWindow win = new ConfirmWindow(param);
                                     win.ShowDialog();
@@ -511,20 +666,40 @@ namespace AppPublication.Controles
                                     if (win.DialogResult.HasValue && (bool)win.DialogResult)
                                     {
                                         // Nettoyer le site distant
-                                        // Instance.GestionSite.SiteDistant.NettoyerSite();
-                                        GestionSite.StartNettoyage();
+                                        try
+                                        {
+                                            // Monte le flag de nettoyage en cours
+                                            NettoyageEnCours = true;
+
+                                            // 2. Lance l'arrêt en arrière-plan et libère le thread UI pendant l'attente
+                                            await Task.Run(() =>
+                                            {
+                                                SiteCoordinator.GestionnaireSitePublique.StartNettoyage();
+                                            });
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            LogTools.Logger.Error(ex, "Erreur interceptée lors du nettoyage distant.");
+                                        }
+                                        finally
+                                        {
+                                            // Nettoyage terminé
+                                            NettoyageEnCours = false;
+                                        }
                                     }
                                 }
                             },
                             o =>
                             {
-                                return (Instance.GestionSite.SiteDistantSelectionne == null) ? false : !Instance.GestionSite.SiteDistantSelectionne.IsActif && !Instance.GestionSite.SiteDistantSelectionne.IsCleaning;
+                                // Bloque le bouton si le nettoyage est en cours
+                                if (NettoyageEnCours) { return false; }
+                                return SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsCleaning;
                             });
-                }
                 return _cmdNettoyerSiteDistant;
             }
         }
 
+        #region Site Publication
         private ICommand _cmdDemarrerGeneration = null;
         /// <summary>
         /// Comamnde de demarrage de la generation du site
@@ -533,21 +708,19 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdDemarrerGeneration == null)
-                {
-                    _cmdDemarrerGeneration = new RelayCommand(
+                _cmdDemarrerGeneration ??= new RelayCommand(
                             o =>
                             {
-                                Instance.GestionSite.StartGeneration();
+                                SiteCoordinator.GestionnaireSitePublique.StartGeneration();
                             },
                             o =>
                             {
-                                return !String.IsNullOrEmpty(Instance.GestionSite.IdCompetition) && !Instance.GestionSite.IsGenerationActive;
+                                return !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSitePublique.IdCompetition) && !SiteCoordinator.GestionnaireSitePublique.IsGenerationActive;
                             });
-                }
                 return _cmdDemarrerGeneration;
             }
         }
+
 
         private ICommand _cmdArreterGeneration = null;
         /// <summary>
@@ -557,43 +730,108 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdArreterGeneration == null)
-                {
-                    _cmdArreterGeneration = new RelayCommand(
-                            o =>
+                _cmdArreterGeneration ??= new RelayCommand(
+                            async o =>
                             {
-                                // Active le statut d'attente
-                                DialogControleur.Instance.BusyStatus = BusyStatusEnum.AttenteFinGeneration;
-                                DialogControleur.Instance.IsBusy = true;
-
-                                // Lance l'arret dans une tache pour liberer le thread courant (UI)
-                                Task<int> stopTask = Task.Factory.StartNew( () =>
+                                try
                                 {
-                                    Instance.GestionSite.StopGeneration();
-                                    return 1;
-                                });
+                                    // 1. Active le statut d'attente (sur le thread UI)
+                                    BusyStatus = BusyStatusEnum.AttenteFinGeneration;
+                                    IsBusy = true;
 
-                                // Indique de remettre le status en place a la fin de l'arret pour liberer l'IHM
-                                stopTask.ContinueWith(
-                                 (task) =>
-                                 {
-                                     // On remet l'etat d'occupation a None
-                                     System.Windows.Application.Current.ExecOnUiThread(new Action(() =>
-                                     {
-                                         DialogControleur.Instance.BusyStatus = BusyStatusEnum.None;
-                                         DialogControleur.Instance.IsBusy = false;
-                                     }));
-                                 });
-
-                                },
+                                    // 2. Lance l'arrêt en arrière-plan et libère le thread UI pendant l'attente
+                                    await Task.Run(() =>
+                                    {
+                                        SiteCoordinator.GestionnaireSitePublique.StopGeneration();
+                                    });
+                                }
+                                catch (Exception ex)
+                                {
+                                    LogTools.Logger.Error(ex, "Erreur lors de CmdArreterGeneration");
+                                }
+                                finally
+                                {
+                                    // 3. On remet l'état d'occupation à None
+                                    // Ceci s'exécute GARANTIE et AUTOMATIQUEMENT de retour sur le thread UI
+                                    BusyStatus = BusyStatusEnum.None;
+                                    IsBusy = false;
+                                }
+                            },
                             o =>
                             {
-                                return Instance.GestionSite.IsGenerationActive;
+                                return SiteCoordinator.GestionnaireSitePublique.IsGenerationActive;
                             });
-                }
                 return _cmdArreterGeneration;
             }
         }
+        #endregion
+
+        #region Site Interne
+        private ICommand _cmdDemarrerGenerationInterne = null;
+        /// <summary>
+        /// Comamnde de demarrage de la generation du site Interne
+        /// </summary>
+        public ICommand CmdDemarrerGenerationInterne
+        {
+            get
+            {
+                _cmdDemarrerGenerationInterne ??= new RelayCommand(
+                            o =>
+                            {
+                                SiteCoordinator.GestionnaireSiteInterne.StartGeneration();
+                            },
+                            o =>
+                            {
+                                return !String.IsNullOrEmpty(SiteCoordinator.GestionnaireSiteInterne.IdCompetition) && !SiteCoordinator.GestionnaireSiteInterne.IsGenerationActive;
+                            });
+                return _cmdDemarrerGenerationInterne;
+            }
+        }
+
+
+        private ICommand _cmdArreterGenerationInterne = null;
+        /// <summary>
+        /// Commande d'arret de la generation du site Interne
+        /// </summary>
+        public ICommand CmdArreterGenerationInterne
+        {
+            get
+            {
+                _cmdArreterGenerationInterne ??= new RelayCommand(
+                            async o =>
+                            {
+                                try
+                                {
+                                    // 1. Active le statut d'attente (sur le thread UI)
+                                    BusyStatus = BusyStatusEnum.AttenteFinGeneration;
+                                    IsBusy = true;
+
+                                    // 2. Lance l'arrêt en arrière-plan et libère le thread UI pendant l'attente
+                                    await Task.Run(() =>
+                                    {
+                                        SiteCoordinator.GestionnaireSiteInterne.StopGeneration();
+                                    });
+                                }
+                                catch (Exception ex)
+                                {
+                                    LogTools.Logger.Error(ex, "Erreur lors de CmdArreterGeneration");
+                                }
+                                finally
+                                {
+                                    // 3. On remet l'état d'occupation à None
+                                    // Ceci s'exécute GARANTIE et AUTOMATIQUEMENT de retour sur le thread UI
+                                    BusyStatus = BusyStatusEnum.None;
+                                    IsBusy = false;
+                                }
+                            },
+                            o =>
+                            {
+                                return SiteCoordinator.GestionnaireSiteInterne.IsGenerationActive;
+                            });
+                return _cmdArreterGenerationInterne;
+            }
+        }
+        #endregion
 
         private ICommand _cmdAfficherSiteLocal = null;
         /// <summary>
@@ -603,26 +841,19 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdAfficherSiteLocal == null)
-                {
-                    _cmdAfficherSiteLocal = new RelayCommand(
+                _cmdAfficherSiteLocal ??= new RelayCommand(
                             o =>
                             {
-                                if (GestionSite.SiteLocal.IsLocal && GestionSite.SiteLocal.IsActif)
+                                if (SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsLocal && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif)
                                 {
-                                    string url = GestionSite.URLLocalPublication;
-
-                                    if (Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
-                                    {
-                                        System.Diagnostics.Process.Start(url);
-                                    }
+                                    string url = SiteCoordinator.GestionnaireSitePublique.URLLocalPublication;
+                                    this.OpenUrlInDefaultBrowser(url);
                                 }
                             },
                             o =>
                             {
-                                return  GestionSite.SiteLocal.IsActif && GestionSite.SiteLocal.IsLocal;
+                                return SiteCoordinator.GestionnaireSitePublique.SiteLocal != null && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsActif && SiteCoordinator.GestionnaireSitePublique.SiteLocal.IsLocal && SiteCoordinator.GestionnaireSitePublique.IsIdCompetitionValide;
                             });
-                }
                 return _cmdAfficherSiteLocal;
             }
         }
@@ -635,48 +866,71 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdAfficherSiteDistant == null)
-                {
-                    _cmdAfficherSiteDistant = new RelayCommand(
+                _cmdAfficherSiteDistant ??= new RelayCommand(
                             o =>
                             {
-                                if ( (GestionSite.SiteDistantSelectionne != null) && !GestionSite.SiteDistantSelectionne.IsLocal)
+                                if ((SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null) && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsLocal)
                                 {
-                                    string url = GestionSite.URLDistantPublication;
+                                    string url = SiteCoordinator.GestionnaireSitePublique.URLDistantPublication;
 
-                                    if(Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
-                                    {
-                                        System.Diagnostics.Process.Start(url);
-                                    }
+                                    this.OpenUrlInDefaultBrowser(url);
                                 }
                             },
                             o =>
                             {
                                 // on ne peut pas ouvrir l'URL si on n'est pas connecte a une competition
-                                return (GestionSite.SiteDistantSelectionne != null) ? !GestionSite.SiteDistantSelectionne.IsLocal && !String.IsNullOrEmpty(Instance.GestionSite.IdCompetition) : false;
+                                return (SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne != null) && !SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsLocal && SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif && SiteCoordinator.GestionnaireSitePublique.IsIdCompetitionValide;
                             });
-                }
                 return _cmdAfficherSiteDistant;
             }
         }
+
+        private ICommand _cmdAfficherSiteInterne = null;
+        /// <summary>
+        /// Commande d'affichage du site interne
+        /// </summary>
+        public ICommand CmdAfficherSiteInterne
+        {
+            get
+            {
+                _cmdAfficherSiteInterne ??= new RelayCommand(
+                            o =>
+                            {
+                                if (SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsLocal && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif)
+                                {
+                                    string url = SiteCoordinator.GestionnaireSiteInterne.URLLocalPublication;
+                                    this.OpenUrlInDefaultBrowser(url);
+                                }
+                            },
+                            o =>
+                            {
+                                // on ne peut pas ouvrir l'URL si on n'est pas connecte a une competition
+                                return SiteCoordinator.GestionnaireSiteInterne.SiteLocal != null && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsActif && SiteCoordinator.GestionnaireSiteInterne.SiteLocal.IsLocal && SiteCoordinator.GestionnaireSiteInterne.IsIdCompetitionValide;
+                            });
+                return _cmdAfficherSiteInterne;
+            }
+        }
+
+
 
         private ICommand _cmdAfficherInformations = null;
         public ICommand CmdAfficherInformations
         {
             get
             {
-                if (_cmdAfficherInformations == null)
-                {
-                    _cmdAfficherInformations = new RelayCommand(
+                _cmdAfficherInformations ??= new RelayCommand(
                             o =>
                             {
                                 if (_infoWindow == null)
                                 {
-                                    _infoWindow = new AppPublication.IHM.Commissaire.InformationsView();
+                                    _infoWindow = new AppPublication.Views.Infos.InformationsView();
+                                    _infoWindow?.IsTopmost = true;
+                                    _infoWindow.Closed += (sender, args) => _infoWindow = null;
+                                    _infoWindow.Show();
                                 }
-                                if (_infoWindow != null)
+                                else
                                 {
-                                    _infoWindow.IsTopmost = true;
+                                    _infoWindow?.IsTopmost = true;
                                     _infoWindow.Show();
                                 }
                             },
@@ -684,7 +938,6 @@ namespace AppPublication.Controles
                             {
                                 return true;
                             });
-                }
                 return _cmdAfficherInformations;
             }
         }
@@ -694,24 +947,27 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdAfficherManuel == null)
-                {
-                    _cmdAfficherManuel = new RelayCommand(
+                _cmdAfficherManuel ??= new RelayCommand(
                             o =>
                             {
                                 if (_manuelViewer == null)
                                 {
-                                    System.IO.Stream manuelStream = ResourcesTools.GetAssembyResource("AppPublication.Documentation.ManuelUtilisateur.pdf", true);
-                                    if(manuelStream != null)
+                                    // Genere un dictionnaire de ressources pour l'assembly courant
+                                    AssemblyResourceDictionary appDict = new AssemblyResourceDictionary(typeof(DialogControleur).Assembly);
+
+                                    Stream manuelStream = appDict.GetStream("AppPublication.Documentation.ManuelUtilisateur.pdf");
+                                    if (manuelStream != null)
                                     {
                                         byte[] bytes = manuelStream.ReadAllBytes();
                                         // Fenetre de visualisation du manuel utilisateur (sans impression)
                                         _manuelViewer = new PdfViewer(bytes, "Manuel utilisateur", false, true);
+                                        _manuelViewer.Closed += (sender, args) => _manuelViewer = null;
+                                        _manuelViewer.Show();
+                                        _manuelViewer.BringToFront();
                                     }
                                 }
-                                if (_manuelViewer != null)
+                                else
                                 {
-                                    _manuelViewer.Show();
                                     _manuelViewer.BringToFront();
                                 }
                             },
@@ -719,7 +975,6 @@ namespace AppPublication.Controles
                             {
                                 return true;
                             });
-                }
                 return _cmdAfficherManuel;
             }
         }
@@ -732,19 +987,21 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdAfficherStatistiques == null)
-                {
-                    _cmdAfficherStatistiques = new RelayCommand(
+                _cmdAfficherStatistiques ??= new RelayCommand(
                             o =>
                             {
                                 if (_statWindow == null)
                                 {
-                                    _statWindow = new AppPublication.IHM.Commissaire.StatistiquesView(GestionStatistiques);
-                                }
-
-                                if (_statWindow != null)
-                                {
+                                    _statWindow = new AppPublication.Views.Infos.StatistiquesView(GestionStatistiques);
+                                    _statWindow.Closed += (sender, args) => _statWindow = null;
                                     _statWindow.Show();
+                                    _statWindow.BringToFront();
+                                }
+                                else
+                                {
+                                    if (_statWindow.WindowState == WindowState.Minimized)
+                                        _statWindow.WindowState = WindowState.Normal;
+
                                     _statWindow.BringToFront();
                                 }
                             },
@@ -752,40 +1009,76 @@ namespace AppPublication.Controles
                             {
                                 return true;
                             });
-                }
                 return _cmdAfficherStatistiques;
             }
         }
 
-        private ICommand _cmdAfficherConfiguration = null;
+        private ICommand _cmdAfficherConfigurationGenerale = null;
         /// <summary>
         /// Commande d'affichage de la configuration
         /// </summary>
-        public ICommand CmdAfficherConfiguration
+        public ICommand CmdAfficherConfigurationGenerale
         {
             get
             {
-                if (_cmdAfficherConfiguration == null)
-                {
-                    _cmdAfficherConfiguration = new RelayCommand(
+                _cmdAfficherConfigurationGenerale ??= new RelayCommand(
                             o =>
                             {
-                                if (_cfgWindow == null)
-                                {
-                                    _cfgWindow = new AppPublication.IHM.Commissaire.ConfigurationPublication(GestionSite);
-                                }
-                                if (_cfgWindow != null)
-                                {
-                                    _cfgWindow.ShowDialog();
-                                    _cfgWindow = null;
-                                }
+                                var cfgWindowGenerale = new AppPublication.Views.Configuration.ConfigurationGeneraleView(SiteCoordinator);
+                                cfgWindowGenerale?.ShowDialog();
                             },
                             o =>
                             {
-                                return !Instance.GestionSite.IsGenerationActive;
+                                return true;    // Desormais, on peut afficher le dialogue quand on veut, meme generation activee
+                                // return !SiteCoordinator.IsGenerationActiveOne;
                             });
-                }
-                return _cmdAfficherConfiguration;
+                return _cmdAfficherConfigurationGenerale;
+            }
+        }
+
+        private ICommand _cmdAfficherConfigurationSite = null;
+        /// <summary>
+        /// Commande d'affichage de la configuration
+        /// </summary>
+        public ICommand CmdAfficherConfigurationSite
+        {
+            get
+            {
+                _cmdAfficherConfigurationSite ??= new RelayCommand(
+                            o =>
+                            {
+                                var cfgWindowSite = new AppPublication.Views.Configuration.ConfigurationPublicationSiteView(SiteCoordinator);
+                                cfgWindowSite?.ShowDialog();
+                            },
+                            o =>
+                            {
+                                return true;    // Desormais, on peut afficher le dialogue quand on veut, meme generation activee
+                                // return !SiteCoordinator.GestionnaireSitePublique.IsGenerationActive;
+                            });
+                return _cmdAfficherConfigurationSite;
+            }
+        }
+
+        private ICommand _cmdAfficherConfigurationSiteInterne = null;
+        /// <summary>
+        /// Commande d'affichage de la configuration
+        /// </summary>
+        public ICommand CmdAfficherConfigurationSiteInterne
+        {
+            get
+            {
+                _cmdAfficherConfigurationSiteInterne ??= new RelayCommand(
+                            o =>
+                            {
+                                var cfgWindowSiteInterne = new AppPublication.Views.Configuration.ConfigurationPublicationSiteInterneView(SiteCoordinator);
+                                cfgWindowSiteInterne?.ShowDialog();
+                            },
+                            o =>
+                            {
+                                return true;    // Desormais, on peut afficher le dialogue quand on veut, meme generation activee
+                                // return !SiteCoordinator.GestionnaireSiteInterne.IsGenerationActive;
+                            });
+                return _cmdAfficherConfigurationSiteInterne;
             }
         }
 
@@ -797,9 +1090,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                if (_cmdGenererTracesIncident == null)
-                {
-                    _cmdGenererTracesIncident = new RelayCommand(
+                _cmdGenererTracesIncident ??= new RelayCommand(
                             o =>
                             {
                                 string msg = string.Empty;
@@ -809,7 +1100,7 @@ namespace AppPublication.Controles
                                     // Par defaut, on va generer le fichier sur le bureau
                                     string destDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 
-                                    string destZip = string.Format("LogAppPublication_{0:yyyyMMdd-HHmmss}.zip",DateTime.Now);
+                                    string destZip = string.Format("LogAppPublication_{0:yyyyMMdd-HHmmss}.zip", DateTime.Now);
 
                                     string fulldestZip = Path.Combine(destDir, destZip);
 
@@ -837,7 +1128,6 @@ namespace AppPublication.Controles
                             {
                                 return CanManageTracesDebug;
                             });
-                }
                 return _cmdGenererTracesIncident;
             }
         }
@@ -855,10 +1145,10 @@ namespace AppPublication.Controles
         {
             System.Windows.Application.Current.ExecOnUiThread(new Action(() =>
             {
-                DialogControleur.Instance.IsBusy = e.IsBusy;
+                IsBusy = e.IsBusy;
                 if (e.IsBusy)
                 {
-                    DialogControleur.Instance.BusyStatus = e.Status;
+                    BusyStatus = e.Status;
                 }
             }
             ));
@@ -873,7 +1163,7 @@ namespace AppPublication.Controles
         {
             LogTools.Logger.Debug("Donnees mises a jour pour la categorie: {0}", e.CategorieDonnee.ToString());
 
-            if (e.CategorieDonnee == KernelImpl.Enum.CategorieDonneesEnum.Organisation)
+            if (e.CategorieDonnee == CategorieDonneesEnum.Organisation)
             {
                 this.UpdateCompetition();
             }
@@ -904,6 +1194,45 @@ namespace AppPublication.Controles
                 this.BusyStatus = BusyStatusEnum.None;
             });
         }
+        #endregion
+
+        #region METHODES PRIVEES
+
+        /// <summary>
+        /// Ouvre une URL dans le navigateur par defaut
+        /// </summary>
+        /// <param name="url"></param>
+        private void OpenUrlInDefaultBrowser(string url)
+        {
+            if (Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url)
+                {
+                    UseShellExecute = true // <-- Indispensable pour ouvrir une URL dans le navigateur par defaut
+                });
+            }
+        }
+
+        /// <summary>
+        /// Extrait le mode de passe des controles passes en parametres (1er = FranceJudo, 2nd = Advanced)
+        /// </summary>
+        /// <param name="o"></param>
+        private void ExtractPasswordFromParameters(object o)
+        {
+            if (o != null && o.GetType() == typeof(Tuple<object, object>))
+            {
+                Tuple<object, object> tuple = (Tuple<object, object>)o;
+                if (tuple.Item1 != null && tuple.Item1.GetType() == typeof(RadPasswordBox))
+                {
+                    SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.PasswordSiteFTPDistant = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item1).SecurePassword);
+                }
+                if (tuple.Item2 != null && tuple.Item2.GetType() == typeof(RadPasswordBox))
+                {
+                    SiteCoordinator.GestionnaireSitePublique.SiteDistant.PasswordSiteFTPDistant = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item2).SecurePassword);
+                }
+            }
+        }
+
         #endregion
     }
 }

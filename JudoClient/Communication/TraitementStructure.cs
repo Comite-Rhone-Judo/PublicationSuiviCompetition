@@ -1,10 +1,11 @@
-﻿using System.Xml.Linq;
+﻿
+using System.Xml.Linq;
 
 namespace JudoClient.Communication
 {
     public class TraitementStructure
     {
-        ClientJudo _client = null;
+        readonly ClientJudo _client = null;
 
         public TraitementStructure(ClientJudo client)
         {
@@ -29,42 +30,27 @@ namespace JudoClient.Communication
 
         public void ListeStructures(XElement element)
         {
-            if (OnListeStructures != null)
-            {
-                OnListeStructures(_client, element);
-            }
+            OnListeStructures?.Invoke(_client, element);
         }
 
         public void ListePays(XElement element)
         {
-            if (OnListePays != null)
-            {
-                OnListePays(_client, element);
-            }
+            OnListePays?.Invoke(_client, element);
         }
 
         public void ListeLigues(XElement element)
         {
-            if (OnListeLigues != null)
-            {
-                OnListeLigues(_client, element);
-            }
+            OnListeLigues?.Invoke(_client, element);
         }
 
         public void ListeClubs(XElement element)
         {
-            if (OnListeClubs != null)
-            {
-                OnListeClubs(_client, element);
-            }
+            OnListeClubs?.Invoke(_client, element);
         }
 
         public void ListeComites(XElement element)
         {
-            if (OnListeComites != null)
-            {
-                OnListeComites(_client, element);
-            }
+            OnListeComites?.Invoke(_client, element);
         }
 
 
@@ -89,50 +75,32 @@ namespace JudoClient.Communication
 
         public void UpdateStructures(XElement element)
         {
-            if (OnUpdateStructures != null)
-            {
-                OnUpdateStructures(_client, element);
-            }
+            OnUpdateStructures?.Invoke(_client, element);
         }
 
         public void UpdatePays(XElement element)
         {
-            if (OnUpdatePays != null)
-            {
-                OnUpdatePays(_client, element);
-            }
+            OnUpdatePays?.Invoke(_client, element);
         }
 
         public void UpdateLigues(XElement element)
         {
-            if (OnUpdateLigues != null)
-            {
-                OnUpdateLigues(_client, element);
-            }
+            OnUpdateLigues?.Invoke(_client, element);
         }
 
         public void UpdateSecteurs(XElement element)
         {
-            if (OnUpdateSecteurs != null)
-            {
-                OnUpdateSecteurs(_client, element);
-            }
+            OnUpdateSecteurs?.Invoke(_client, element);
         }
 
         public void UpdateClubs(XElement element)
         {
-            if (OnUpdateClubs != null)
-            {
-                OnUpdateClubs(_client, element);
-            }
+            OnUpdateClubs?.Invoke(_client, element);
         }
 
         public void UpdateComites(XElement element)
         {
-            if (OnUpdateComites != null)
-            {
-                OnUpdateComites(_client, element);
-            }
+            OnUpdateComites?.Invoke(_client, element);
         }
     }
 }

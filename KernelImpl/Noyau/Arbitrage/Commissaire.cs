@@ -1,14 +1,18 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Arbitrage;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
+
 
 namespace KernelImpl.Noyau.Arbitrage
 {
-    public class Commissaire : IEntityWithKey<int>
+    public class Commissaire : ICommissaire, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -86,7 +90,7 @@ namespace KernelImpl.Noyau.Arbitrage
         }
 
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xcommissaire = new System.Xml.Linq.XElement(ConstantXML.Commissaire);
             xcommissaire.SetAttributeValue(ConstantXML.Commissaire_ID, id);
@@ -111,7 +115,7 @@ namespace KernelImpl.Noyau.Arbitrage
         /// <param name="MI">fonction d'info</param>
         /// <returns>les Categories Age</returns>
 
-        public static ICollection<Commissaire> LectureCommissaire(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Commissaire> LectureCommissaire(XElement xelement)
         {
             ICollection<Commissaire> commissaires = new List<Commissaire>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.Commissaire))

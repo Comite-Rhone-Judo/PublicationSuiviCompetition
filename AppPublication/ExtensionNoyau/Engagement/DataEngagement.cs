@@ -1,23 +1,17 @@
-﻿using KernelImpl;
-using KernelImpl.Noyau.Deroulement;
-using KernelImpl.Noyau.Organisation;
-using KernelImpl.Noyau.Participants;
-using KernelImpl.Noyau.Structures;
+﻿using FranceJudo.Core.Logging;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.Noyau.Participants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
 
 namespace AppPublication.ExtensionNoyau.Engagement
 {
     public class DataEngagement : IEngagementData
     {
         private List<GroupeEngagements> _groupesEngages = new List<GroupeEngagements>();
-        private Dictionary<int, List<EchelonEnum>> _typesGroupes = new Dictionary<int, List<EchelonEnum>>();
+        private readonly Dictionary<int, List<EchelonEnum>> _typesGroupes = new Dictionary<int, List<EchelonEnum>>();
 
         /// <summary>
         /// Contient la liste des groupes de engages (par rapport a la derniere generation Par GetGroupesEngagements) par echelon
@@ -57,7 +51,7 @@ namespace AppPublication.ExtensionNoyau.Engagement
             // Efface le precedent contenu
             _typesGroupes.Clear();
 
-            foreach (Competition comp in dataContext.Organisation.Competitions)
+            foreach (ICompetition comp in dataContext.Organisation.Competitions)
             {
                 List<EchelonEnum> listEchelon = new List<EchelonEnum>();
 
@@ -117,10 +111,10 @@ namespace AppPublication.ExtensionNoyau.Engagement
             // Vide la precedente liste
             _groupesEngages.Clear();
 
-            IList<Competition> competitions = DC.Organisation.Competitions.ToList();
+            IList<ICompetition> competitions = DC.Organisation.Competitions.ToList();
             string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-            foreach (Competition competition in competitions)
+            foreach (ICompetition competition in competitions)
             {
                 // Pas de groupement en equipe
                 if (competition.IsShiai() || competition.IsIndividuelle())
@@ -131,11 +125,11 @@ namespace AppPublication.ExtensionNoyau.Engagement
                         EpreuveSexe sexe = new EpreuveSexe(s);
 
                         // Recupere les epreuves de la competition pour ce sexe
-                        IList<Epreuve> epreuvesSexe = DC.Organisation.Epreuves.Where(ep => ep.competition == competition.id && ep.sexeEnum.Enum == s).ToList();
+                        IList<IEpreuve> epreuvesSexe = DC.Organisation.Epreuves.Where(ep => ep.competition == competition.id && ep.sexeEnum.Enum == s).ToList();
 
                         // Recupere tous les judokas participant a une des epreuves (présents ou non)
                         // on s'assure de ne pas avoir de doublon avec Distinct
-                        IList<vue_judoka> judokasParticipants = DC.Participants.Vuejudokas.Join(epreuvesSexe, vj => vj.idepreuve, ep => ep.id, (vj, ep) => vj).Distinct(new VueJudokaEqualityComparer()).ToList();
+                        IList<IVueJudoka> judokasParticipants = DC.Participants.Vuejudokas.Join(epreuvesSexe, vj => vj.idepreuve, ep => ep.id, (vj, ep) => vj).Distinct(new VueJudokaEqualityComparer()).ToList();
 
                         // Groupement par entite
                         Dictionary<EchelonEnum, List<string>> dictEntites = new Dictionary<EchelonEnum, List<string>>();
@@ -188,8 +182,8 @@ namespace AppPublication.ExtensionNoyau.Engagement
 
                         // Ajoute le Groupement par nom qui est toujours present
                         foreach (char c in alphabet)
-                        {  
-                            int nj = judokasParticipants.Count(o => !string.IsNullOrEmpty(o.nom) && Char.ToUpper(o.nom.First()) == c);
+                        {
+                            int nj = judokasParticipants.Count(o => Char.ToUpper(o.nom.First()) == c);
 
                             if (nj > 0)
                             {

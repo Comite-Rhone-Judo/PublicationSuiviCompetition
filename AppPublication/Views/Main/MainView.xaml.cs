@@ -1,0 +1,110 @@
+﻿using AppPublication.Controles;
+using AppPublication.Views.Server;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.UI.Wpf.Dialogs;
+using System;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Windows;
+using System.Windows.Media.Imaging;
+using Telerik.Windows.Controls;
+
+namespace AppPublication.Views.Main
+{
+    /// <summary>
+    /// Logique d'interaction pour IndividuelleWindow.xaml
+    /// </summary>
+    public partial class MainView : Window //, ICommissaireWindow
+    {
+
+        readonly private ObservableCollection<i_vue_epreuve_interface> _source1 = new ObservableCollection<i_vue_epreuve_interface>();
+        readonly private ObservableCollection<ICompetition> _source2 = new ObservableCollection<ICompetition>();
+
+        public MainView()
+        {
+            InitializeComponent();
+
+            NetworkConnecte.DataContext = DialogControleur.Instance;
+            NetworkNonConnecte.DataContext = DialogControleur.Instance;
+        }
+
+        private void MainWin_Closed_1(object sender, EventArgs e)
+        {
+            DialogControleur.Instance.Connection.Client?.NetworkClient.Stop();
+
+            App.Current.Shutdown();
+        }
+
+        private void MainWindow1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            DialogParameters param = new DialogParameters
+            {
+                OkButtonContent = "Oui",
+                CancelButtonContent = "Non",
+                Content = "Voulez-vous vraiment fermer l'application ?",
+                Header = "Fermeture de l'application"
+            };
+
+            ConfirmWindow win = new ConfirmWindow(param);
+            win.ShowDialog();
+
+            if (win.DialogResult.HasValue && !(bool)win.DialogResult)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void BoutonFindServer_Click_1(object sender, EventArgs e)
+        {
+            (new RechercheServer()).ShowDialog();
+        }
+
+        private void QRCodeLocalCopy_Click(object sender, RoutedEventArgs e)
+        {
+            string tmpFile = Path.GetTempFileName();
+            using (FileStream fs = new FileStream(tmpFile, FileMode.Create))
+            {
+                Telerik.Windows.Media.Imaging.ExportExtensions.ExportToImage(QRCodeLocal, fs, new PngBitmapEncoder());
+                fs.Close();
+            }
+            BitmapImage img = new BitmapImage(new Uri(tmpFile));
+            Clipboard.SetImage(img);
+        }
+
+        private void QRCodeEcransAppelCopy_Click(object sender, RoutedEventArgs e)
+        {
+            string tmpFile = Path.GetTempFileName();
+            using (FileStream fs = new FileStream(tmpFile, FileMode.Create))
+            {
+                Telerik.Windows.Media.Imaging.ExportExtensions.ExportToImage(QRCodeEcransAppel, fs, new PngBitmapEncoder());
+                fs.Close();
+            }
+            BitmapImage img = new BitmapImage(new Uri(tmpFile));
+            Clipboard.SetImage(img);
+        }
+
+        private void QRCodeDistantCopy_Click(object sender, RoutedEventArgs e)
+        {
+            string tmpFile = Path.GetTempFileName();
+            using (FileStream fs = new FileStream(tmpFile, FileMode.Create))
+            {
+                Telerik.Windows.Media.Imaging.ExportExtensions.ExportToImage(QRCodeDistant, fs, new PngBitmapEncoder());
+                fs.Close();
+            }
+            BitmapImage img = new BitmapImage(new Uri(tmpFile));
+            Clipboard.SetImage(img);
+        }
+
+        private void Window_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            // On doit configurer les mots de passe par defaut ici car le composant Password ne supporte pas le Binding sur cette propriete
+            if (e != null && e.NewValue != null && e.NewValue.GetType() == typeof(DialogControleur))
+            {
+                DialogControleur dc = (DialogControleur)e.NewValue;
+                this.AdvancedPwd.Password = dc.SiteCoordinator.GestionnaireSitePublique.SiteDistant.PasswordSiteFTPDistant;
+                this.EasyConfigPwd.Password = dc.SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.PasswordSiteFTPDistant;
+            }
+        }
+    }
+}
+

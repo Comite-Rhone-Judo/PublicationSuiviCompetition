@@ -1,0 +1,408 @@
+﻿using AppPublication.Config.Publication;
+using FranceJudo.Core.Logging;
+using FranceJudo.Core.Network;
+using FranceJudo.Core.Network.Http;
+using FranceJudo.Core.Network.Http.Context;
+using FranceJudo.Core.Network.Http.HttpServer.HttpModules;
+using FranceJudo.Core.Utils;
+using FranceJudo.UI.Wpf.Foundation;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Windows;
+
+namespace AppPublication.Publication
+{
+    public class MiniSiteConfigurable : MiniSite
+    {
+
+        #region CONSTRUCTEURS
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="local">Mode du minisite (local = true, distant = false)</param>
+        /// <param name="instanceName">Nom de l'instance</param>
+        /// <param name="cacheCfg">True pour activer la mise en cache de la configuration</param>
+        /// <param name="cachePwd">True pour activer la mise en cache du mot de passe</param>
+        protected MiniSiteConfigurable(bool local, IServeurHttp httpInstance, string instanceName = "", bool cacheCfg = true, bool cachePwd = true) : base(local, httpInstance)
+        {
+            // Initialise les caracteristiques du MiniSite
+            InstanceName = instanceName;
+            CacheConfig = cacheCfg;
+            CachePassword = cachePwd;
+
+            // Chargement initial de la configuration
+            LoadFromConfiguration();
+        }
+
+        /// <summary>
+        /// Factory de création d'une instance de MiniSiteConfigurable
+        /// </summary>
+        /// <param name="instanceName"></param>
+        /// <param name="cacheCfg"></param>
+        /// <param name="cachePwd"></param>
+        /// <returns></returns>
+        public static MiniSiteConfigurable CreateInstance(string instanceName = "", bool cacheCfg = true, bool cachePwd = true)
+        {
+            IServeurHttp httpInstance = null;
+
+            // Ici on force le nom de l'instance car on n'a pas encore d'instance initialisé donc InstanceName n'existe pas
+            MiniSiteConfigElement cfg = GetInstanceConfigElement(instanceName);
+
+            if (cfg.TypeLocal)
+            {
+                // On cherche le type d'instance Htttp
+                try
+                {
+                    httpInstance = ClassFactory.CreateInstance<IServeurHttp>(cfg.HttpServer);
+                }
+                catch (Exception ex)
+                {
+                    LogTools.Logger.Error($"Erreur lors de la creation de l'instance du serveur HTTP '{cfg.HttpServer}' pour le minisite '{instanceName}' : {ex.Message}");
+                    throw new NullReferenceException($"Impossible de creer l'instance du serveur HTTP '{cfg.HttpServer}' pour le minisite '{instanceName}'", ex);
+                }
+            }
+
+            // On appel le constructeur maintenant que l'on connait le type d'instance
+            return new MiniSiteConfigurable(cfg.TypeLocal, httpInstance, instanceName, cacheCfg, cachePwd);
+        }
+
+
+        #endregion
+
+        #region PROPERTIES
+
+        public override StatusMiniSite Status
+        {
+            get => base.Status;
+            protected set
+            {
+                // On intercepte la modification pour la rediriger sur le thread UI
+                Application.Current?.ExecOnUiThread(() =>
+                {
+                    // L'appel à la base va exécuter le code du Core (avec les NotifyPropertyChanged)
+                    // de manière totalement sécurisée !
+                    base.Status = value;
+                });
+            }
+        }
+
+        private string _instanceName = string.Empty;
+        /// <summary>
+        /// Indique le nom de l'instance du Minisite
+        /// </summary>
+        public string InstanceName
+        {
+            get
+            {
+                return _instanceName;
+            }
+            private set
+            {
+                _instanceName = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        bool _cacheConfig = false;
+        /// <summary>
+        /// Indique si les donnees de configuration doivent etre gardees en cache
+        /// </summary>
+        public bool CacheConfig
+        {
+            get
+            {
+                return _cacheConfig;
+            }
+            private set
+            {
+                _cacheConfig = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        bool _cachePassword = false;
+        /// <summary>
+        /// Indique si le mot de passe doit etre gardees en cache
+        /// </summary>
+        public bool CachePassword
+        {
+            get
+            {
+                return _cachePassword;
+            }
+            private set
+            {
+                _cachePassword = value;
+                NotifyPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region METHODES
+
+
+
+        /// <summary>
+        /// Interface (@IP) utilisée pour la publication du site en mode local
+        /// doit etre presente dans la liste InterfacesLocal
+        /// </summary>
+        public override IPAddress InterfaceLocalPublication
+        {
+            get
+            {
+                return base.InterfaceLocalPublication;
+            }
+            set
+            {
+                if (!Equals(base.InterfaceLocalPublication, value))
+                {
+                    // Mise à jour de la valeur en mémoire
+                    base.InterfaceLocalPublication = value;
+
+                    // Sauvegarde de la config si besoin
+                    if (CacheConfig && value != null)
+                    {
+                        MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
+                        cfg.InterfaceLocalPublication = value.ToString();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// L'adresse du site FTP distant
+        /// </summary>
+        public override string SiteFTPDistant
+        {
+            get
+            {
+                return base.SiteFTPDistant;
+            }
+            set
+            {
+                if (base.SiteFTPDistant != value)
+                {
+                    // Mise à jour de la valeur en mémoire
+                    base.SiteFTPDistant = value;
+                    // Sauvegarde de la config si besoin
+                    if (CacheConfig)
+                    {
+                        MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
+                        cfg.FtpSite = value;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Login sur le site FTP distant
+        /// </summary>
+        public override string LoginSiteFTPDistant
+        {
+            get
+            {
+                return base.LoginSiteFTPDistant;
+            }
+            set
+            {
+                if (base.LoginSiteFTPDistant != value)
+                {
+                    // Mise à jour de la valeur en mémoire
+                    base.LoginSiteFTPDistant = value;
+                    // Sauvegarde de la config si besoin
+                    if (CacheConfig)
+                    {
+                        MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
+                        cfg.FtpLogin = value;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Mode de fonctionnement FTP Actif (true) ou passif (false)
+        /// </summary>
+        public override bool ModeActifFTPDistant
+        {
+            get
+            {
+                return base.ModeActifFTPDistant;
+            }
+            set
+            {
+                if (base.ModeActifFTPDistant != value)
+                {
+                    // Mise à jour de la valeur en mémoire
+                    base.ModeActifFTPDistant = value;
+                    // Sauvegarde de la config si besoin
+                    if (CacheConfig)
+                    {
+                        MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
+                        cfg.FtpModeActif = value;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Mot de passe FTP au site FTP Distant
+        /// </summary>
+        public override string PasswordSiteFTPDistant
+        {
+            get
+            {
+                return base.PasswordSiteFTPDistant;
+            }
+            set
+            {
+                if (base.PasswordSiteFTPDistant != value)
+                {
+                    // Mise à jour de la valeur en mémoire
+                    base.PasswordSiteFTPDistant = value;
+                    // Sauvegarde de la config si besoin
+                    if (CachePassword)
+                    {
+                        MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
+                        cfg.FtpPassword = CachePassword ? value : string.Empty;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Synchronise uniquement les différences (True) sinon, transfere tous les fichier (False)
+        /// </summary>
+        public override bool SynchroniseDifferences
+        {
+            get
+            {
+                return base.SynchroniseDifferences;
+            }
+            set
+            {
+                if (base.SynchroniseDifferences != value)
+                {
+                    // Mise à jour de la valeur en mémoire
+                    base.SynchroniseDifferences = value;
+                    // Sauvegarde de la config si besoin
+                    if (CacheConfig)
+                    {
+                        MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
+                        cfg.SynchroniseDifferences = value;
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region METHODES PRIVEES
+
+        /// <summary>
+        /// Recherche l'element de sauvegarde de la configuration pour l'instance en cours
+        /// </summary>
+        private MiniSiteConfigElement GetCurrentInstanceConfigElement()
+        {
+            return MiniSiteConfigurable.GetInstanceConfigElement(InstanceName);
+        }
+
+        /// <summary>
+        /// Recherche l'element de sauvegarde de la configuration pour l'instance donnee, ou l'ajoute s'il n'existe pas
+        /// </summary>
+        private static MiniSiteConfigElement GetInstanceConfigElement(string instanceName)
+        {
+            // Sauvegarde de la config
+            MiniSiteConfigElement cfg = PublicationConfigSection.Instance.MiniSites[instanceName];
+            if (cfg == null)
+            {
+                // Pas de config trouvée, on crée une config vide par défaut
+                cfg = new MiniSiteConfigElement();
+                PublicationConfigSection.Instance.MiniSites.Add(cfg);
+            }
+
+            return cfg;
+        }
+
+        /// <summary>
+        /// Charge la configuration de l'instance courante
+        /// </summary>
+        private void LoadFromConfiguration()
+        {
+            MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
+
+            if (IsLocal)
+            {
+                // En local seul le parametre de l'interface réseau est pertinent
+
+                // Lecture de l'interface réseau préférée
+                if (InterfacesLocal != null && InterfacesLocal.Count > 0)
+                {
+                    SelectInterfaceOrDefault(cfg.InterfaceLocalPublication);
+                }
+
+                // Les ranges de recherche des ports du serveur HTTP
+                ServerHTTP.PortMin = cfg.PortMin;
+                ServerHTTP.PortMax = cfg.PortMax;
+
+                // On se charge maintenant des modules HTTP
+                // On cherche les modules HTTP à ajouter
+                List<string> moduleList = cfg.HttpModules.Split(';').ToList();
+                if (moduleList != null)
+                {
+                    foreach (string module in moduleList)
+                    {
+                        if (!string.IsNullOrEmpty(module))
+                        {
+                            try
+                            {
+                                // Création du module
+                                var moduleInstance = ClassFactory.CreateInstance<HttpModule>(module);
+
+                                if (moduleInstance != null)
+                                {
+                                    // 2. Injection : On passe notre objet _context dédié
+                                    if (moduleInstance is IContextAware contextAwareModule)
+                                    {
+                                        contextAwareModule.SetContext(_context);
+                                    }
+
+                                    // 3. Ajout
+                                    ServerHTTP.AddModule(moduleInstance);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                LogTools.Logger.Error($"Erreur lors de la creation le module ${module} du serveur HTTP '{cfg.HttpServer}' pour le minisite '{_instanceName}' : {ex.Message}");
+                                throw new NullReferenceException($"Impossible de creer le module ${module} du serveur HTTP '{cfg.HttpServer}' pour le minisite '{_instanceName}'", ex);
+                            }
+                        }
+                    }
+                }
+
+
+            }
+            else
+            {
+                // Pour le mode distant, on ne tient compte que des paramètres FTP
+
+                // Lecture de la config FTP
+                try
+                {
+                    // On set les propriétés de base directement
+                    SiteFTPDistant = cfg.FtpSite;
+                    LoginSiteFTPDistant = cfg.FtpLogin;
+                    PasswordSiteFTPDistant = cfg.FtpPassword;
+                    ModeActifFTPDistant = cfg.FtpModeActif;
+                    SynchroniseDifferences = cfg.SynchroniseDifferences;
+                }
+                catch
+                {
+                    LogTools.Logger.Error($"Erreur lors du chargement de la configuration FTP pour le minisite distant '{InstanceName}'");
+                }
+            }
+        }
+        #endregion
+    }
+}

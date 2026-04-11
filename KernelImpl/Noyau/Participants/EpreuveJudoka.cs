@@ -1,18 +1,20 @@
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.Noyau.Participants;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
-using KernelImpl.Noyau.Organisation;
-
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
+
 
 namespace KernelImpl.Noyau.Participants
 {
     /// <summary>
     /// Description des Epreuve auxquelles sont inscrit les Judokas
     /// </summary>
-    public class EpreuveJudoka : IEntityWithKey<int>
+    public class EpreuveJudoka : IEpreuveJudoka, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -26,16 +28,16 @@ namespace KernelImpl.Noyau.Participants
         public int observation { get; set; }
         public int points { get; set; }
 
-        public Epreuve Epreuve1(IJudoData DC)
+        public IEpreuve Epreuve1(IJudoData DC)
         {
             return DC.Organisation.Epreuves.FirstOrDefault(o => o.id == epreuve);
         }
-        public Judoka Judoka1(IJudoData DC)
+        public IJudoka Judoka1(IJudoData DC)
         {
             return DC.Participants.Judokas.FirstOrDefault(o => o.id == judoka);
         }
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xej = new XElement(ConstantXML.EpreuveJudoka);
             xej.SetAttributeValue(ConstantXML.EpreuveJudoka_ID, id.ToString());
@@ -72,7 +74,7 @@ namespace KernelImpl.Noyau.Participants
         /// <param name="MI">fonction d'info</param>
         /// <returns>les Epreuve des Judoka</returns>
 
-        public static ICollection<EpreuveJudoka> LectureEpreuveJudokas(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<EpreuveJudoka> LectureEpreuveJudokas(XElement xelement)
         {
             ICollection<EpreuveJudoka> ejs = new List<EpreuveJudoka>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.EpreuveJudoka))

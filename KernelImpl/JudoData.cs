@@ -1,4 +1,13 @@
-﻿using KernelImpl.Noyau.Arbitrage;
+﻿using FranceJudo.Core.Foundation;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Arbitrage;
+using FranceJudo.Metier.Noyau.Categories;
+using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.Noyau.Logos;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.Noyau.Participants;
+using FranceJudo.Metier.Noyau.Structures;
+using KernelImpl.Noyau.Arbitrage;
 using KernelImpl.Noyau.Categories;
 using KernelImpl.Noyau.Deroulement;
 using KernelImpl.Noyau.Logos;
@@ -6,12 +15,7 @@ using KernelImpl.Noyau.Organisation;
 using KernelImpl.Noyau.Participants;
 using KernelImpl.Noyau.Structures;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Threading;
-using Tools.Enum;
-using Tools.Outils;
 
 namespace KernelImpl
 {
@@ -37,20 +41,34 @@ namespace KernelImpl
 
         #region Implémentation IJudoDataManager
 
+        public IJudoData Data
+        {
+            get { return this; }
+        }
+
+        public bool EnsureDataConsistency()
+        {
+            // Par defaut, on considère que les données sont cohérentes
+            return true;
+        }
+
         /// <summary>
         /// Obtient un snapshot immuable et thread-safe.
         /// </summary>
-        public IJudoData GetSnapshot()
+        public IJudoData Snapshot
         {
-            _globalLock.EnterReadLock();
-            try
+            get
             {
-                // Crée le snapshot en copiant les références des listes actuelles
-                return new JudoDataSnapshot(this);
-            }
-            finally
-            {
-                _globalLock.ExitReadLock();
+                _globalLock.EnterReadLock();
+                try
+                {
+                    // Crée le snapshot en copiant les références des listes actuelles
+                    return new JudoDataSnapshot(this);
+                }
+                finally
+                {
+                    _globalLock.ExitReadLock();
+                }
             }
         }
 

@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using FranceJudo.Metier.Network;
+using FranceJudo.Metier.XML;
+using System.Collections.Generic;
 using System.Xml.Linq;
-using Tools.Enum;
+
 
 namespace JudoClient.Communication
 {

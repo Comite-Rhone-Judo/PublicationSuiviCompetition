@@ -1,0 +1,13 @@
+﻿namespace FranceJudo.Metier.Noyau.Organisation
+{
+    /// <summary>
+    /// Enumération des type de compétition
+    /// </summary>
+    public enum TypeCSAEnum
+    {
+        Aucun = 0,
+        CS = 1,
+        Minisite = 2,
+        Tous = 3
+    }
+}

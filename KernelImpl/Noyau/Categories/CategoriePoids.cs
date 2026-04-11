@@ -1,16 +1,20 @@
 
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Categories;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
+
 
 namespace KernelImpl.Noyau.Categories
 {
     /// <summary>
     /// Description des Categorie Poids
     /// </summary>
-    public class CategoriePoids : IEntityWithKey<int>
+    public class CategoriePoids : ICategoriePoids, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -66,7 +70,7 @@ namespace KernelImpl.Noyau.Categories
             this.discipline = XMLTools.LectureString(xinfo.Attribute(ConstantXML.CatePoids_discipline));
         }
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xcatepoids = new XElement(ConstantXML.CatePoids);
             xcatepoids.SetAttributeValue(ConstantXML.CatePoids_id, id.ToString());
@@ -90,7 +94,7 @@ namespace KernelImpl.Noyau.Categories
         /// <param name="MI">fonction d'info</param>
         /// <returns>les Categories Poids</returns>
 
-        public static ICollection<CategoriePoids> LectureCategoriePoids(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<CategoriePoids> LectureCategoriePoids(XElement xelement)
         {
             ICollection<CategoriePoids> catepoids = new List<CategoriePoids>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.CatePoids))

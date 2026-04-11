@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using KernelImpl.Noyau;
 
 namespace KernelImpl.Internal
 {

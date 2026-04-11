@@ -1,7 +1,6 @@
 ﻿using AppPublication.Tools.Enum;
 using System;
 using System.Globalization;
-using System.Linq;
 using System.Windows.Data;
 
 namespace AppPublication.Tools.Converter
@@ -14,7 +13,7 @@ namespace AppPublication.Tools.Converter
             bool output = true;
             if (value != null)
             {
-                Enum.BusyStatusEnum status = (Enum.BusyStatusEnum) value;
+                Enum.BusyStatusEnum status = (Enum.BusyStatusEnum)value;
 
                 switch (status)
                 {

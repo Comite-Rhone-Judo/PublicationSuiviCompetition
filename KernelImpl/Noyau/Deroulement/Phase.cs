@@ -1,18 +1,22 @@
 ﻿
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
+
 
 namespace KernelImpl.Noyau.Deroulement
 {
     /// <summary>
     /// Description des Phases
     /// </summary>
-    public class Phase : IEntityWithKey<int>
+    public class Phase : IPhase, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -43,9 +47,9 @@ namespace KernelImpl.Noyau.Deroulement
         public int niveauRepeches2 { get; set; }
 
 
-        public Organisation.i_vue_epreuve_interface GetVueEpreuve(IJudoData DC)
+        public i_vue_epreuve_interface GetVueEpreuve(IJudoData DC)
         {
-            Organisation.i_vue_epreuve_interface ep = null;
+            i_vue_epreuve_interface ep = null;
             if (DC.Organisation.Competition.IsEquipe())
             {
                 ep = DC.Organisation.VueEpreuveEquipes.FirstOrDefault(o => o.id == this.epreuve);
@@ -57,7 +61,7 @@ namespace KernelImpl.Noyau.Deroulement
             return ep;
         }
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             XElement xphase = new XElement(ConstantXML.Phase);
 
@@ -131,7 +135,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// <param name="MI">fonction d'info</param>
         /// <returns>les Phases</returns>
 
-        public static ICollection<Phase> LecturePhases(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Phase> LecturePhases(XElement xelement)
         {
             ICollection<Phase> phases = new List<Phase>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.Phase))

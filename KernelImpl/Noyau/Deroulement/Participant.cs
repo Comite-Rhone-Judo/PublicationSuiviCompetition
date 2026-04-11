@@ -1,19 +1,21 @@
-
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.Noyau.Participants;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
 
 namespace KernelImpl.Noyau.Deroulement
 {
     /// <summary>
     /// Description des Participants
     /// </summary>
-    public class Participant : INotifyPropertyChanged, IEntityWithKey<int>
+    public class Participant : IParticipant, INotifyPropertyChanged, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -249,12 +251,12 @@ namespace KernelImpl.Noyau.Deroulement
             }
         }
 
-        public Participants.Judoka Judoka1(IJudoData DC)
+        public IJudoka Judoka1(IJudoData DC)
         {
             return DC.Participants.Judokas.FirstOrDefault(o => o.id == this.judoka);
         }
 
-        public Participants.Equipe Equipe1(IJudoData DC)
+        public IEquipe Equipe1(IJudoData DC)
         {
             return DC.Participants.Equipes.FirstOrDefault(o => o.id == this.judoka);
         }
@@ -313,7 +315,7 @@ namespace KernelImpl.Noyau.Deroulement
         /// <param name="MI">fonction d'info</param>
         /// <returns>les Participants</returns>
 
-        public static ICollection<Participant> LectureParticipant(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<Participant> LectureParticipant(XElement xelement)
         {
             ICollection<Participant> participants = new List<Participant>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.Participant))

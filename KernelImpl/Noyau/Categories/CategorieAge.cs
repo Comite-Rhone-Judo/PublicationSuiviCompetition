@@ -1,16 +1,19 @@
 
+using FranceJudo.Core.XML;
+using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Categories;
+using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Tools.Enum;
-using Tools.Outils;
+
 
 namespace KernelImpl.Noyau.Categories
 {
     /// <summary>
     /// Description des Categorie Age
     /// </summary>
-    public class CategorieAge : IEntityWithKey<int>
+    public class CategorieAge : ICategorieAge, IEntityWithKey<int>
     {
         int IEntityWithKey<int>.EntityKey => id;
 
@@ -41,7 +44,7 @@ namespace KernelImpl.Noyau.Categories
         /// </summary>
         /// <returns></returns>
 
-        public XElement ToXml()
+        public XElement ToXml(IJudoData DC = null)
         {
             System.Xml.Linq.XElement xcateage = new System.Xml.Linq.XElement(ConstantXML.CateAge);
             xcateage.SetAttributeValue(ConstantXML.CateAge_id, id.ToString());
@@ -66,7 +69,7 @@ namespace KernelImpl.Noyau.Categories
         /// <param name="MI">fonction d'info</param>
         /// <returns>les Categories Age</returns>
 
-        public static ICollection<CategorieAge> LectureCategorieAge(XElement xelement, OutilsTools.MontreInformation1 MI)
+        public static ICollection<CategorieAge> LectureCategorieAge(XElement xelement)
         {
             ICollection<CategorieAge> cateages = new List<CategorieAge>();
             foreach (XElement xinfo in xelement.Descendants(ConstantXML.CateAge))
