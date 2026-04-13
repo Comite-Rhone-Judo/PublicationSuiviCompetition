@@ -32,10 +32,25 @@ namespace FranceJudo.Core.Network
     }
     #endregion
 
-    public abstract class MiniSite : NotificationBase
+    public abstract class MiniSite : NotificationBase, IFtpConfiguration
     {
         #region CONSTANTES
         private const int kMaxRetryFTP = 5;
+        #endregion
+
+        #region Interface IFtpConfiguration
+        // Implémentation de l'interface IFtpConfiguration
+        string IFtpConfiguration.Host => SiteFTPDistant; 
+        string IFtpConfiguration.Username => LoginSiteFTPDistant;
+        string IFtpConfiguration.Password => PasswordSiteFTPDistant; 
+        string IFtpConfiguration.RemotePath => RepertoireSiteFTPDistant;
+        bool IFtpConfiguration.UseActiveMode => ModeActifFTPDistant;
+        FtpProfile IFtpConfiguration.CurrentProfile => this.CurrentFtpProfile;
+        bool IFtpConfiguration.ResolveProfile(FtpClient client)
+        {
+            // On appelle VOTRE méthode métier d'origine
+            return this.CheckConfigurationSiteDistant(client);
+        }
         #endregion
 
         #region MEMBRES

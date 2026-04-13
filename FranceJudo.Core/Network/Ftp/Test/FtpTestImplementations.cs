@@ -4,7 +4,6 @@ using FranceJudo.Core.IO;
 using System;
 using System.Net;
 using System.Threading;
-using static System.Net.Mime.MediaTypeNames;
 
 
 namespace FranceJudo.Core.Network.Ftp.Test
@@ -13,16 +12,16 @@ namespace FranceJudo.Core.Network.Ftp.Test
     {
         public DnsResolutionTest() { Name = "Résolution du nom de domaine (DNS)"; }
 
-        public override bool Execute(MiniSite site, FtpClient client, CancellationToken token)
+        public override bool Execute(IFtpConfiguration site, FtpClient client, CancellationToken token)
         {
             try
             {
                 // Résolution synchrone
-                var addresses = Dns.GetHostAddresses(site.SiteFTPDistant);
+                var addresses = Dns.GetHostAddresses(site.Host);
                 if (addresses == null || addresses.Length == 0)
                     throw new Exception("Résolution DNS impossible.");
 
-                SuccessMessage = $"'{site.SiteFTPDistant}' trouvée";
+                SuccessMessage = $"'{site.Host}' trouvée";
                 return true;
             }
             catch (Exception ex)
@@ -37,13 +36,20 @@ namespace FranceJudo.Core.Network.Ftp.Test
     {
         public ProfileCheckTest() { Name = "Vérification du profil de configuration FTP"; }
 
-        public override bool Execute(MiniSite site, FtpClient client, CancellationToken token)
+        public override bool Execute(IFtpConfiguration site, FtpClient client, CancellationToken token)
         {
             try
             {
-                // Appel direct à votre méthode synchrone d'origine !
-                site.CheckConfigurationSiteDistant(client);
-                SuccessMessage = $"profil de '{client.Host}' trouvée";
+                // 1. On demande à la configuration d'exécuter SA logique d'auto-détection
+                bool isValid = site.ResolveProfile(client);
+
+                // 2. On vérifie que la configuration a bien généré un profil
+                if (!isValid || site.CurrentProfile == null)
+                {
+                    throw new Exception("La résolution du profil a échouée ou aucun profil compatible n'a été trouvé.");
+                }
+
+                SuccessMessage = $"profil de '{client.Host}' trouvé";
                 return true;
             }
             catch (Exception ex)
@@ -58,14 +64,28 @@ namespace FranceJudo.Core.Network.Ftp.Test
     {
         public ConnectionTest() { Name = "Connexion au serveur FTP"; }
 
-        public override bool Execute(MiniSite site, FtpClient client, CancellationToken token)
+        public override bool Execute(IFtpConfiguration site, FtpClient client, CancellationToken token)
         {
             try
             {
                 if (!client.IsConnected)
                 {
-                    client.Connect(); // Synchrone
+                    // On utilise le profil explicitement résolu à l'étape précédente pour garantir la fiabilité du test
+                    if (site.CurrentProfile != null)
+                    {
+                        client.Connect(site.CurrentProfile);
+                    }
+                    else
+                    {
+                        throw new Exception("Aucun profil FTP valide n'est défini pour le client.");
+                    }
                 }
+
+                if (!client.IsConnected)
+                {
+                    throw new Exception("Le serveur n'a pas renvoyé d'erreur, mais la connexion n'est pas établie.");
+                }
+
                 SuccessMessage = $"Login '{client.Credentials.UserName}' connecté";
                 return true;
             }
@@ -81,16 +101,16 @@ namespace FranceJudo.Core.Network.Ftp.Test
     {
         public RemoteDirectoryTest() { Name = "Vérification et lecture du répertoire distant"; }
 
-        public override bool Execute(MiniSite site, FtpClient client, CancellationToken token)
+        public override bool Execute(IFtpConfiguration site, FtpClient client, CancellationToken token)
         {
             // Ici, il faut faire attention, le répertoire final peut ne pas exister avant le 1er upload de la competition
             // donc on va tester l'existence du répertoire Parent dans lequel la compétition sera publiée
 
             // Récupère le répertoire parent
-            string parentPath = site.RepertoireSiteFTPDistant.GetFtpDirectoryName();
+            string parentPath = site.RemotePath.GetFtpDirectoryName();
 
             // Si on ne peut pas extraire le parent, c'est qu'on est sans doute deja a la racine, on garde la path d'orgine
-            parentPath = (string.IsNullOrEmpty(parentPath)) ? site.RepertoireSiteFTPDistant : parentPath;
+            parentPath = (string.IsNullOrEmpty(parentPath)) ? site.RemotePath : parentPath;
 
             try
             {
@@ -116,15 +136,15 @@ namespace FranceJudo.Core.Network.Ftp.Test
     {
         public FileTransferTest() { Name = "Transfert et suppression d'un fichier de test"; }
 
-        public override bool Execute(MiniSite site, FtpClient client, CancellationToken token)
+        public override bool Execute(IFtpConfiguration site, FtpClient client, CancellationToken token)
         {
             try
             {
                 // Récupère le répertoire parent
-                string parentPath = site.RepertoireSiteFTPDistant.GetFtpDirectoryName();
+                string parentPath = site.RemotePath.GetFtpDirectoryName();
 
                 // Si on ne peut pas extraire le parent, c'est qu'on est sans doute deja a la racine, on garde la path d'orgine
-                parentPath = (string.IsNullOrEmpty(parentPath)) ? site.RepertoireSiteFTPDistant : parentPath;
+                parentPath = (string.IsNullOrEmpty(parentPath)) ? site.RemotePath : parentPath;
 
                 string testFileName = FileSystemHelper.PathJoin(parentPath, $"test_connexion_{Guid.NewGuid()}.txt", unixStyle: true);
                 // string testFileName = $"{site.RepertoireSiteFTPDistant.TrimEnd('/')}/test_connexion_{Guid.NewGuid()}.txt";
@@ -152,7 +172,7 @@ namespace FranceJudo.Core.Network.Ftp.Test
     {
         public DisconnectTest() { Name = "Fermeture propre de la connexion"; }
 
-        public override bool Execute(MiniSite site, FtpClient client, CancellationToken token)
+        public override bool Execute(IFtpConfiguration site, FtpClient client, CancellationToken token)
         {
             try
             {

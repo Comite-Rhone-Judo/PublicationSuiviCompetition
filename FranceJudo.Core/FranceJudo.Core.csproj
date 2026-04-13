@@ -85,6 +85,7 @@
     <Compile Include="Network\Ftp\Test\FtpTestImplementations.cs" />
     <Compile Include="Network\Ftp\Test\FtpTestScheduler.cs" />
     <Compile Include="Network\Ftp\Test\FtpTestStepBase.cs" />
+    <Compile Include="Network\Ftp\Test\IFtpConfiguration.cs" />
     <Compile Include="Network\Http\Context\ContextProvider.cs" />
     <Compile Include="Network\Http\Context\IContextAware.cs" />
     <Compile Include="Network\Http\Context\IContextProvider.cs" />
