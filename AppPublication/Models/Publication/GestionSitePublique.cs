@@ -816,8 +816,8 @@ namespace AppPublication.Models.Publication
             string tmp = AppDirectoryManager.GetExportDir(newValue);
             string siteRoot = Path.Combine(tmp, kSiteRepertoire);
 
-            // Initialise les structures d'export
-            _structureRepertoiresSite = new SitePhysicalStructure(siteRoot, IdCompetition);
+            // Initialise les structures d'export (si l'ID de competition n'est pas encore connue, on passe NULL pour indiquer qu'on ne connait pas l'ID de competition
+            _structureRepertoiresSite = new SitePhysicalStructure(siteRoot, IsIdCompetitionValide ? IdCompetition : null);
             _siteDistantUrlGenerator = new SiteUrlGenerator(_structureRepertoiresSite, _localServerBaseUri);
             _siteLocalUrlGenerator = new SiteUrlGenerator(_structureRepertoiresSite, _distantServerBaseUri);
 

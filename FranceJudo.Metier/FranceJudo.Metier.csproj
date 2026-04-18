@@ -417,7 +417,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Site\xslt\niveau_tour_combat.xslt" />
+    <EmbeddedResource Include="Resources\Site\xslt\niveau_tour_combat.xslt">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Site\xslt\panel_epreuve.xslt">

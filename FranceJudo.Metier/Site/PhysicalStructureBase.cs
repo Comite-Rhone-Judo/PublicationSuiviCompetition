@@ -184,7 +184,10 @@ namespace FranceJudo.Metier.Site
         /// <returns></returns>
         protected virtual string GetRootCompetition()
         {
-            return Path.Combine(_rootDir, UrlHelper.TraiteChaineURL(_idCompetition.SafeSubstring(0, _maxLen)));
+            // On supprime la coupure de taille a 30 caracteres ... pas certain de quel utilite cela pouvait avoir
+            // C'est juste une prise de tete ...
+            // return Path.Combine(_rootDir, UrlHelper.TraiteChaineURL(_idCompetition.SafeSubstring(0, _maxLen)));
+            return Path.Combine(_rootDir, UrlHelper.TraiteChaineURL(_idCompetition));
         }
 
         /// <summary>

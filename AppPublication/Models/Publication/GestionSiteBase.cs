@@ -16,7 +16,7 @@ namespace AppPublication.Models.Publication
     {
         #region CONSTANTES
 
-        public const string kUnknownIdCompetition = "unkonw";
+        public const string kUnknownIdCompetition = "unknown";
 
         #endregion
 
