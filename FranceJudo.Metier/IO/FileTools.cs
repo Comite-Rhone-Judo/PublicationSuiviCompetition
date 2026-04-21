@@ -20,7 +20,7 @@ namespace FranceJudo.Metier.IO
             //    Directory.CreateDirectory(ConstantFile.SaveCOMDirectory);
             //}
 
-            using (TimedLock.Lock((notSave as ICollection).SyncRoot))
+            using (LegacyTimedLock.Lock((notSave as ICollection).SyncRoot))
             {
                 notSave.Remove(fileType);
                 notSave.Add(fileType, doc);

@@ -108,7 +108,7 @@ namespace JudoClient
             List<string> machines = GetListeMachine(ipAdressText);
             _nbMachines = machines.Count * (ConstantNetwork.PortServerMax - ConstantNetwork.PortServerMin + 1);
 
-            using (TimedLock.Lock((_listeMachines as ICollection).SyncRoot))
+            using (LegacyTimedLock.Lock((_listeMachines as ICollection).SyncRoot))
             {
                 _listeMachines.CollectionChanged -= new NotifyCollectionChangedEventHandler(Liste_OnChange);
                 _listeMachines.Clear();
@@ -128,7 +128,7 @@ namespace JudoClient
                     Thread.Sleep(100);
                 }
 
-                using (TimedLock.Lock((_listeMachines as ICollection).SyncRoot))
+                using (LegacyTimedLock.Lock((_listeMachines as ICollection).SyncRoot))
                 {
                     for (int port = ConstantNetwork.PortServerMin; port <= ConstantNetwork.PortServerMax; port++)
                     {
@@ -248,7 +248,7 @@ namespace JudoClient
         {
             try
             {
-                using (TimedLock.Lock((_listeMachines as ICollection).SyncRoot, TimeSpan.FromSeconds(30)))
+                using (LegacyTimedLock.Lock((_listeMachines as ICollection).SyncRoot, TimeSpan.FromSeconds(30)))
                 {
                     MachineStruct machine = _listeMachines.FirstOrDefault(o => o.Adresse == adresse + ":" + port);
                     int index = _listeMachines.IndexOf(machine);

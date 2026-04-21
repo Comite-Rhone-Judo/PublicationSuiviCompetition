@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FranceJudo.Core.Threading;
+using System;
 using System.Configuration;
 using System.Reflection;
 
@@ -35,7 +36,7 @@ namespace FranceJudo.Core.Configuration
                 // Double-Check Locking standard
                 if (_instance == null)
                 {
-                    lock (_singletonLock)
+                    using (TimedLock.Lock(_singletonLock))
                     {
                         if (_instance == null)
                         {
@@ -49,7 +50,7 @@ namespace FranceJudo.Core.Configuration
                             // "Si jamais on invalide le contexte, exécute ce code pour me remettre à null"
                             RegisterResetAction(() =>
                             {
-                                lock (_singletonLock)
+                                using (TimedLock.Lock(_singletonLock))
                                 {
                                     _instance = null;
                                 }

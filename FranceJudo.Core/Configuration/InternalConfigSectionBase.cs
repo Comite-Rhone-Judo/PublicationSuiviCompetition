@@ -1,4 +1,5 @@
 ﻿using FranceJudo.Core.Logging;
+using FranceJudo.Core.Threading;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -62,7 +63,7 @@ namespace FranceJudo.Core.Configuration
                 // La lecture peut être thread-safe sans verrou pour un bool volatile, 
                 // mais l'utilisation du verrou garantit que la lecture est stable
                 // si elle était utilisée dans une séquence plus complexe.
-                lock (_writeLock)
+                using (TimedLock.Lock(_writeLock))
                 {
                     return _isDirty;
                 }
@@ -94,7 +95,7 @@ namespace FranceJudo.Core.Configuration
         /// </summary>
         protected static TModel LoadSectionInstance<TModel>(string sectionName) where TModel : InternalConfigSectionBase
         {
-            lock (_sharedConfigLock)
+            using (TimedLock.Lock(_sharedConfigLock))
             {
                 // ouvre la configuration de l'application si pas déjà fait
                 _sharedConfig ??= ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
@@ -126,7 +127,7 @@ namespace FranceJudo.Core.Configuration
             bool notify = false;
 
             // 1. ACQUISITION DU VERROU LOCAL (RAPIDE)
-            lock (_writeLock)
+            using (TimedLock.Lock(_writeLock))
             {
                 // Utilise la lecture thread-safe des propriétés ConfigurationSection (this[propertyName])
                 // Note: Nous ne pouvons pas utiliser GetConfigValue ici sans avoir accès à la méthode parente.
@@ -161,7 +162,7 @@ namespace FranceJudo.Core.Configuration
         public void ClearDirtyFlag()
         {
             // ACQUISITION DU VERROU LOCAL PAR LE THREAD WORKER (correction clé)
-            lock (_writeLock)
+            using (TimedLock.Lock(_writeLock))
             {
                 _isDirty = false;
             }
@@ -256,7 +257,7 @@ namespace FranceJudo.Core.Configuration
         /// </summary>
         protected static void RegisterResetAction(Action resetAction)
         {
-            lock (_resetCacheActions)
+            using (TimedLock.Lock(_resetCacheActions))
             {
                 _resetCacheActions.Add(resetAction);
             }
@@ -366,7 +367,7 @@ namespace FranceJudo.Core.Configuration
         public static void InvalidateContext()
         {
             // 1. On lâche la référence vers le fichier de config (il sera rechargé au prochain appel)
-            lock (_sharedConfigLock)
+           lock(_sharedConfigLock)
             {
                 _sharedConfig = null;
             }

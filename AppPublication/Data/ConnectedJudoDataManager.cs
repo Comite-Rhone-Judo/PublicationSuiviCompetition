@@ -135,8 +135,20 @@ namespace AppPublication.Data
         /// </summary>
         public bool IsCombatsCacheDirty
         {
-            get { lock (_lockDirty) return _isCombatsCacheDirty; }
-            set { lock (_lockDirty) _isCombatsCacheDirty = value; }
+            get
+            {
+                using (TimedLock.Lock(_lockDirty))
+                {
+                    return _isCombatsCacheDirty;
+                }
+            }
+            set
+            {
+                using (TimedLock.Lock(_lockDirty))
+                {
+                    _isCombatsCacheDirty = value;
+                }
+            }
         }
 
         public int Timeout { get; set; } = kDefaultTimeoutMs;
@@ -218,7 +230,7 @@ namespace AppPublication.Data
         public void OnResponseTimeout(object state)
         {
             LogTools.Logger.Debug("Expiration du timer de reception de message");
-            lock (_lock)
+            using (TimedLock.Lock(_lock))
             {
                 // Demande l'arret du client si on est bien en phase d'init. Dans le cas contraire, on ignore le timer car cet evenement 
                 // ne doit pas arriver si on est deja connecté ou pas encore
@@ -281,7 +293,7 @@ namespace AppPublication.Data
         {
             LogTools.Logger.Debug("Client deconnecte a {0}", e.DisconnectionTime);
 
-            lock (_lock)
+            using (TimedLock.Lock(_lock))
             {
                 _status = ClientJudoStatusEnum.Disconnected;
             }
@@ -329,7 +341,7 @@ namespace AppPublication.Data
             LogTools.Logger.Debug("clientjudo_OnAcceptConnectionCOM");
             LogTools.DebugLogData("clientjudo_OnAcceptConnectionCOM - Reception donnees: '{0}'", element);
 
-            lock (_lock)
+            using (TimedLock.Lock(_lock))
             {
                 try
                 {
@@ -741,7 +753,7 @@ namespace AppPublication.Data
 
             // Détection sécurisée de l'état Idle
             bool isIdleContext = false;
-            lock (_lock)
+            using (TimedLock.Lock(_lock))
             {
                 isIdleContext = (_status == ClientJudoStatusEnum.Idle);
             }
@@ -759,7 +771,7 @@ namespace AppPublication.Data
                 NotifyDataUpdated(CategorieDonneesEnum.Deroulement);
 
                 // Etape 2 : Validation conditionnelle du cache
-                lock (_lockDirty)
+                using (TimedLock.Lock(_lockDirty))
                 {
                     if (_concurrentRequestReceived)
                     {
@@ -805,7 +817,7 @@ namespace AppPublication.Data
         {
             LogTools.Logger.Debug("client_OnUpdateTapisCombats, invalidation du cache");
 
-            lock (_lockDirty)
+            using (TimedLock.Lock(_lockDirty))
             {
                 // 1. On invalide le cache
                 IsCombatsCacheDirty = true;
@@ -825,7 +837,7 @@ namespace AppPublication.Data
         {
             LogTools.Logger.Debug("client_OnUpdateCombats");
 
-            lock (_lockDirty)
+            using (TimedLock.Lock(_lockDirty))
             {
                 if (IsCombatsCacheDirty)
                 {
@@ -1010,7 +1022,7 @@ namespace AppPublication.Data
             // (GestionConnection gère le lifecycle complet)
             _clientProvider?.DisposeClient(); // This will trigger ClientDisconnected event
 
-            lock (_lock)
+            using (TimedLock.Lock(_lock))
             {
                 _status = ClientJudoStatusEnum.Disconnected;
                 if (stopTimer)
@@ -1093,7 +1105,7 @@ namespace AppPublication.Data
             LogTools.Logger.Debug("Traitement Request initialisation");
             LogTools.DebugLogData("Traitement Request initialisation: '{0}'", element);
 
-            lock (_lock)
+            using (TimedLock.Lock(_lock))
             {
                 // Arrete le timer de reponse
                 _timerReponse.Stop();
@@ -1160,7 +1172,7 @@ namespace AppPublication.Data
             LogTools.DebugLogData("Traitement request update: '{0}'", element);
 
             // Verifie l'etat du gestionnaire (on ne peut pas recevoir ces donnees pendant une initialisation)
-            lock (_lock)
+            using (TimedLock.Lock(_lock))
             {
                 if (_status != ClientJudoStatusEnum.Idle)
                 {
@@ -1237,7 +1249,7 @@ namespace AppPublication.Data
         public bool EnsureDataConsistency()
         {
             // Verrou de réparation : Un seul thread peut piloter la réparation à la fois.
-            lock (_repairLock)
+            using (TimedLock.Lock(_repairLock))
             {
                 // Lecture thread-safe de la propriété (qui utilise _lockDirty en interne)
                 if (!IsCombatsCacheDirty) return true;
@@ -1251,7 +1263,7 @@ namespace AppPublication.Data
                     _combatsDonneesRecuesSignal.Reset();
 
                     // 2. Reset du détecteur d'interférence (On commence une nouvelle tentative propre)
-                    lock (_lockDirty)
+                    using (TimedLock.Lock(_lockDirty))
                     {
                         _concurrentRequestReceived = false;
                     }
@@ -1275,7 +1287,7 @@ namespace AppPublication.Data
                     // Le snapshot est arrivé et a été traité par client_OnListeCombats.
                     // Si une interférence a eu lieu pendant le transfert, IsCombatsCacheDirty sera encore à true.
                     bool isClean;
-                    lock (_lockDirty) { isClean = !IsCombatsCacheDirty; }
+                    using (TimedLock.Lock(_lockDirty)) { isClean = !IsCombatsCacheDirty; }
 
                     if (!isClean)
                     {

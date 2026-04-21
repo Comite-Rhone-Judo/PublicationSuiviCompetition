@@ -125,7 +125,7 @@ namespace FranceJudo.Core.Network.Tcp.Server
         public void Stop()
         {
             this.tcpListener.Stop();
-            using (TimedLock.Lock((this.clients as ICollection).SyncRoot))
+            using (LegacyTimedLock.Lock((this.clients as ICollection).SyncRoot))
             {
                 foreach (TcpClient client in clients)
                 {
@@ -244,7 +244,7 @@ namespace FranceJudo.Core.Network.Tcp.Server
 
 
 
-            using (TimedLock.Lock((sentData as ICollection).SyncRoot))
+            using (LegacyTimedLock.Lock((sentData as ICollection).SyncRoot))
             {
                 SentData sent = sentData.FirstOrDefault(o => o != null && o.Client == tcpClient);
                 if (sent == null)
@@ -297,7 +297,7 @@ namespace FranceJudo.Core.Network.Tcp.Server
                 NetworkStream networkStream = client.GetStream();
                 networkStream.EndWrite(ar);
 
-                using (TimedLock.Lock((sentData as ICollection).SyncRoot))
+                using (LegacyTimedLock.Lock((sentData as ICollection).SyncRoot))
                 {
                     SentData sent = sentData.FirstOrDefault(o => o != null && o.Client == client);
                     if (sent != null)

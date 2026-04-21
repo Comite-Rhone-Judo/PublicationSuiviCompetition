@@ -195,11 +195,14 @@
     <Compile Include="Reflection\ResourceExtractor.cs" />
     <Compile Include="Reflection\ResourcePath.cs" />
     <Compile Include="Security\Encryption.cs" />
+    <Compile Include="Threading\AsyncTimedLock.cs" />
     <Compile Include="Threading\BatchProgressInfo.cs" />
     <Compile Include="Threading\BlockingCounter.cs" />
     <Compile Include="Threading\LimitedConcurrencyLevel.cs" />
     <Compile Include="Threading\ParallelTaskBatcher.cs" />
     <Compile Include="Threading\SingleShotTimer.cs" />
+    <Compile Include="Threading\LegacyTimedLock.cs" />
+    <Compile Include="Threading\Synchronized.cs" />
     <Compile Include="Threading\TimedLock.cs" />
     <Compile Include="Utils\ClassFactory.cs" />
     <Compile Include="Utils\ICloneableConfig.cs" />

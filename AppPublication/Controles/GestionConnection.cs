@@ -1,6 +1,7 @@
 ﻿using AppPublication.Tools.Enum;
 using FranceJudo.Core.Foundation;
 using FranceJudo.Core.Logging;
+using FranceJudo.Core.Threading;
 using JudoClient;
 using JudoClient.Communication;
 using System;
@@ -59,7 +60,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                lock (_lock)
+                using (TimedLock.Lock(_lock))
                 {
                     return _isconnected;
                 }
@@ -73,7 +74,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                lock (_lock)
+                using (TimedLock.Lock(_lock))
                 {
                     return _hasErreurTransmission;
                 }
@@ -81,7 +82,7 @@ namespace AppPublication.Controles
             set
             {
                 bool changed = false;
-                lock (_lock)
+                using (TimedLock.Lock(_lock))
                 {
                     if (_hasErreurTransmission != value)
                     {
@@ -104,7 +105,7 @@ namespace AppPublication.Controles
         {
             get
             {
-                lock (_lock)
+                using (TimedLock.Lock(_lock))
                 {
                     return _client;
                 }
@@ -124,7 +125,7 @@ namespace AppPublication.Controles
                 bool shouldSetup = false;
                 ClientJudo clientToSetup = null;
 
-                lock (_lock)
+                using (TimedLock.Lock(_lock))
                 {
                     _client = value;
                     _isconnected = value != null;
@@ -157,7 +158,7 @@ namespace AppPublication.Controles
         public GestionConnection()
         {
             _timer = new DispatcherTimer();
-            _timer.Tick += new EventHandler(CispatcherTimer_OnTick);
+            _timer.Tick += new EventHandler(DispatcherTimer_OnTick);
             _timer.Interval = new TimeSpan(0, 0, 0, 1, 0);
         }
         #endregion
@@ -171,7 +172,7 @@ namespace AppPublication.Controles
         {
             ClientJudo clientToTest;
 
-            lock (_lock)
+            using (TimedLock.Lock(_lock))
             {
                 if (_isDisposing || _client == null)
                 {
@@ -202,7 +203,7 @@ namespace AppPublication.Controles
         {
             ClientJudo clientToDispose = null;
 
-            lock (_lock)
+            using (TimedLock.Lock(_lock))
             {
                 if (_isDisposing || _client == null)
                 {
@@ -240,7 +241,7 @@ namespace AppPublication.Controles
             // Réinitialiser le flag d'erreur via le setter
             HasErreurTransmission = false;
 
-            lock (_lock)
+            using (TimedLock.Lock(_lock))
             {
                 _isDisposing = false;
             }
@@ -259,7 +260,7 @@ namespace AppPublication.Controles
             }
 
             // Vérifier que le client est toujours valide
-            lock (_lock)
+            using (TimedLock.Lock(_lock))
             {
                 if (_isDisposing || _client != client)
                 {
@@ -328,7 +329,7 @@ namespace AppPublication.Controles
         /// <param name="doc"></param>
         private void Clientjudo_OnDemandeConnectionTest(object sender, XElement doc)
         {
-            lock (_lock)
+            using (TimedLock.Lock(_lock))
             {
                 if (!_isDisposing)
                 {
@@ -344,14 +345,14 @@ namespace AppPublication.Controles
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void CispatcherTimer_OnTick(object sender, EventArgs e)
+        private void DispatcherTimer_OnTick(object sender, EventArgs e)
         {
             ClientJudo currentClient;
             bool isConnected;
             DateTime reference;
             int nRetry;
 
-            lock (_lock)
+            using (TimedLock.Lock(_lock))
             {
                 if (_isDisposing || _client == null)
                 {

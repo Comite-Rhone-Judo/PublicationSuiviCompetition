@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using FranceJudo.Core.Threading;
 
 namespace FranceJudo.Metier.Site
 {
@@ -82,7 +83,7 @@ namespace FranceJudo.Metier.Site
                 {
                     BuildCompetitionUrl(newId, currentDomain, out string newPath, out Uri newBase);
 
-                    lock (_syncLock)
+                    using (TimedLock.Lock(_syncLock))
                     {
                         _physicalStructure = value;
                         _idCompetitionLast = newId;
@@ -94,7 +95,7 @@ namespace FranceJudo.Metier.Site
                 }
                 else
                 {
-                    lock (_syncLock)
+                    using (TimedLock.Lock(_syncLock))
                     {
                         _physicalStructure = value;
                         _idCompetitionLast = newId;
@@ -126,7 +127,7 @@ namespace FranceJudo.Metier.Site
                     string currentId = currentStruct.IdCompetition;
                     BuildCompetitionUrl(currentId, newUri, out string newPath, out Uri newBase);
 
-                    lock (_syncLock)
+                    using (TimedLock.Lock(_syncLock))
                     {
                         if (_rootDomainUri != newUri)
                         {
@@ -139,7 +140,7 @@ namespace FranceJudo.Metier.Site
                 }
                 else
                 {
-                    lock (_syncLock)
+                    using (TimedLock.Lock(_syncLock))
                     {
                         if (_rootDomainUri != newUri) _rootDomainUri = newUri;
                     }
@@ -174,7 +175,7 @@ namespace FranceJudo.Metier.Site
 
                 BuildCompetitionUrl(currentId, currentDomain, out string newPath, out Uri newBase);
 
-                lock (_syncLock)
+                using (TimedLock.Lock(_syncLock))
                 {
                     if (_idCompetitionLast != currentId)
                     {
@@ -207,7 +208,7 @@ namespace FranceJudo.Metier.Site
 
             BuildCompetitionUrl(currentId, currentDomain, out string newPath, out Uri newBase);
 
-            lock (_syncLock)
+            using (TimedLock.Lock(_syncLock))
             {
                 UrlPathCompetition = newPath;
                 _competitionBaseUri = newBase;

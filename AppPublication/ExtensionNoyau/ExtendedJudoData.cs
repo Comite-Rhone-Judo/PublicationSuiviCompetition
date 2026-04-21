@@ -1,9 +1,17 @@
-﻿using FranceJudo.Metier.Noyau;
+﻿using AppPublication.ExtensionNoyau.Engagement;
+using FranceJudo.Metier.Noyau;
+using System;
 
 namespace AppPublication.ExtensionNoyau
 {
     public class ExtendedJudoData : IExtendedJudoData
     {
+        #region MEMBRES
+        private readonly IJudoData _coreData;
+
+        // On encapsule les données calculées dans des objets Lazy
+        private readonly Lazy<DataEngagement> _engagement;
+        #endregion
 
         #region CONSTRUCTEURS
         public ExtendedJudoData()

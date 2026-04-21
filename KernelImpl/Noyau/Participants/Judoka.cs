@@ -476,7 +476,7 @@ namespace KernelImpl.Noyau.Participants
             xjudoka.SetAttributeValue(ConstantXML.Judoka_Equipe, equipe);
 
             IEpreuveJudoka judoka = null;
-            using (TimedLock.Lock((DC.Participants.EpreuveJudokas as ICollection).SyncRoot))
+            using (LegacyTimedLock.Lock((DC.Participants.EpreuveJudokas as ICollection).SyncRoot))
             {
                 judoka = DC.Participants.EpreuveJudokas.FirstOrDefault(o => o.judoka == this.id);
             }
@@ -489,7 +489,7 @@ namespace KernelImpl.Noyau.Participants
                 xjudoka.SetAttributeValue(ConstantXML.Judoka_Observation, judoka == null ? 0 : judoka.observation);
 
                 IVueEpreuve epreuve = null;
-                using (TimedLock.Lock((DC.Organisation.VueEpreuves as ICollection).SyncRoot))
+                using (LegacyTimedLock.Lock((DC.Organisation.VueEpreuves as ICollection).SyncRoot))
                 {
                     epreuve = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == judoka.epreuve);
                 }

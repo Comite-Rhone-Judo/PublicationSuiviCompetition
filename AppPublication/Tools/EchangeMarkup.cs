@@ -1,6 +1,7 @@
 ﻿// 1. LA CLASSE INTELLIGENTE
 // Elle contient les données ET la logique de protection.
 using System.Diagnostics;
+using FranceJudo.Core.Threading;    
 
 public class EchangeMarkup
 {
@@ -15,7 +16,7 @@ public class EchangeMarkup
     // Méthode appelée par le Thread d'Émission
     public void DemandeEmise()
     {
-        lock (_lock)
+        using (TimedLock.Lock(_lock))
         {
             _debutEchange = Stopwatch.GetTimestamp();
             _demandeEmise = true;
@@ -27,7 +28,7 @@ public class EchangeMarkup
     // Retourne la latence en ms si succès, ou null si échec/doublon
     public double? ReponseRecue()
     {
-        lock (_lock)
+        using (TimedLock.Lock(_lock))
         {
             // Vérifications de cohérence
             if (!_demandeEmise) return null; // Reçu sans avoir été envoyé (impossible logiquement mais sécurisé)
