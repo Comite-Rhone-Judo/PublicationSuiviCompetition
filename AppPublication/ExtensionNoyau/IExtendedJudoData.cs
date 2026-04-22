@@ -8,12 +8,6 @@ namespace AppPublication.ExtensionNoyau
         /// <summary>
         /// Retourne la section de donnees d'engagement
         /// </summary>
-        DataEngagement Engagement { get; set; }
-
-        /// <summary>
-        /// Synchronise les donnees etendue avec les donnees principales
-        /// </summary>
-        /// <param name="snapshot"></param>
-        void SyncAll(IJudoData snapshot);
+        DataEngagement Engagement { get; }
     }
 }

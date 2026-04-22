@@ -221,7 +221,7 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="DC"></param>
         /// <returns></returns>
-        public static XDocument CreateDocumentMenu(IJudoData DC, ExtendedJudoData EDC, SiteUrlGenerator siteStructure)
+        public static XDocument CreateDocumentMenu(IJudoData DC, IExtendedJudoData EDC, SiteUrlGenerator siteStructure)
         {
             // 1. On charge UNIQUEMENT ce qui est nécessaire en mémoire pour éviter le N+1
             var phasesInMem = DC.Deroulement.Phases.ToList();

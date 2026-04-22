@@ -827,7 +827,7 @@ namespace AppPublication.Models.Publication
             // Met a jour les repertoires de l'application si on peut
             if (_structureRepertoiresSite != null && _structureRepertoiresSite.IsFullyConfigured)
             {
-                FileSystemHelper.CreateDirectorie(_structureRepertoiresSite.RepertoireRacine);
+                FileSystemHelper.CreateDirectory(_structureRepertoiresSite.RepertoireRacine);
             }
 
             // Initialise la racine du serveur Web local

@@ -6,186 +6,128 @@ namespace FranceJudo.Core.Threading
 {
     public class SingleShotTimer : IDisposable
     {
-        #region MEMBRES
+        #region MEMBERS
+        private TimeSpan _lockTimeout;
+        private TimeSpan _disposeTimeout;
 
-        private TimeSpan _lockTimeout;       // Temps max pour acquerir un verrou
-        private TimeSpan _disposeTimeout;     // Temps max pour liberer le timer
-
-        private System.Threading.Timer _timer = null;   // Le timer en lui meme
-        private readonly object _lock = null;                    // Verrour interne pour la synchronisation
-        private bool _isRunning = false;                // Indique si le timer est actif
-
+        private System.Threading.Timer _timer = null;
+        private readonly object _lock = new object();
+        private bool _isRunning = false;
         #endregion
 
-        #region CONSTRUCTEURS
-
+        #region CONSTRUCTORS
         public SingleShotTimer(int disposalTimeooutMs = 10000)
         {
             TimeoutMs = disposalTimeooutMs;
-            _lock = new object();
-            _timer = null;
-            _isRunning = false;
         }
 
         #endregion
 
-        #region PROPRIETES
+        #region PROPERTIES
 
-        /// <summary>
-        /// La methode appelee lors de l'execution du timer
-        /// </summary>
         public event Action<object> Elapsed;
 
-        public bool IsRunning
-        {
-            get { return _isRunning; }
-        }
+        public bool IsRunning => _isRunning;
 
-        /// <summary>
-        /// Timeout unitaire pour l'acquisition du verrou
-        /// </summary>
         public int TimeoutMs
         {
             get { return _lockTimeout.Milliseconds; }
             set
             {
-                _disposeTimeout = new TimeSpan(0, 0, 0, 0, 3 * value);
-                _lockTimeout = new TimeSpan(0, 0, 0, 0, value);
+                _disposeTimeout = TimeSpan.FromMilliseconds(3 * value);
+                _lockTimeout = TimeSpan.FromMilliseconds(value);
             }
         }
-
         #endregion
 
-        /// <summary>
-        /// Demarre le timer
-        /// </summary>
-        /// <param name="durationMs">Delai avant le declenchement</param>
-        /// <param name="state">objet d'etat a passer en parametre au callback</param>
+        #region METHODES
         public void Start(long durationMs)
         {
-            lock (_lock)
+            // 1. On arrête le timer de manière sécurisée (gère ses propres verrous)
+            Stop();
+
+            // 2. On verrouille juste pour créer la nouvelle instance
+            using (TimedLock.Lock(_lock, _lockTimeout))
             {
-                try
-                {
-                    UnsafeStop();     // Pour le cas ou le timer serait deja actif
-                }
-                catch (TimeoutException)
-                {
-                    LogTools.Logger.Error("TimeoutException lors de la tentative d'arret du timer");
-                }
+                if (_timer != null) return; // Sécurité si un autre thread a appelé Start en même temps
 
-                // Si on n'a pas reussi a le stopper, on ne peut pas le redemarrer
-                if (null != _timer)
-                {
-                    return;
-                }
-
-                // Active le timer (sans recurrence)
                 _timer = new System.Threading.Timer(HandleTimerElapsed, null, durationMs, Timeout.Infinite);
                 _isRunning = true;
             }
         }
 
-        /// <summary>
-        /// Appel lors de l'execution du timer
-        /// <param name="state"></param>
-        private void HandleTimerElapsed(object state)
-        {
-            // Verifie l'etat du Timer, si ce dernier a ete supprime juste avant l'appel, on ignore tout simplement l'evenement
-            // Utilise un verrou avec timeout pour eviter un Deadlock sur le Dispose
-            try
-            {
-                if (Monitor.TryEnter(_lock, _lockTimeout))
-                {
-                    if (null == _timer)
-                    {
-                        return;
-                    }
-
-                    // Appel de l'evenement
-                    Elapsed?.Invoke(state);
-
-                    // On ne stop pas le timer car
-                    // 1 - il est prevu pour un single shot donc il ne se relancera pas
-                    // 2 - cela cree une situation de deadlock si appeler depuis le handler
-                    _isRunning = false;
-                }
-            }
-            finally
-            {
-                try
-                {
-                    Monitor.Exit(_lock);
-                }
-                catch (Exception ex)
-                {
-                    LogTools.Logger.Debug(ex, "Erreur lors de la liberation du verrou interne");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Arrete le timer
-        /// </summary>
-        /// <exception cref="TimeoutException">Impossible d'arreter le timer dans le temps imparti</exception>
         public void Stop()
         {
-            lock (_lock)
-            {
-                UnsafeStop();
-            }
-        }
+            ManualResetEvent waitHandle = null;
 
-        /// <summary>
-        /// Arrete le timer (sans verrou)
-        /// </summary>
-        /// <exception cref="TimeoutException"></exception>
-        private void UnsafeStop()
-        {
-            if (null == _timer)
+            // 1. Verrouillage ultra-court pour récupérer et détruire la référence
+            using (TimedLock.Lock(_lock, _lockTimeout))
             {
-                return;
-            }
+                if (_timer == null) return;
 
-            var waitHandle = new ManualResetEvent(false);
-            // Supprimer le timer
-            if (_timer.Dispose(waitHandle))
-            {
-                // Attend l'arret des eventuels appels en cours lances avant le Stop
-                if (waitHandle.WaitOne(_disposeTimeout))
+                waitHandle = new ManualResetEvent(false);
+
+                // Dispose(waitHandle) déclenchera le signal quand le dernier callback sera terminé
+                if (_timer.Dispose(waitHandle))
                 {
                     _timer = null;
-                    waitHandle.Dispose();
+                    _isRunning = false;
                 }
                 else
                 {
-                    // don't dispose the wait handle, because the timer might still use it.
-                    // Disposing it might cause an ObjectDisposedException on 
-                    // the timer thread - whereas not disposing it will 
-                    // result in the GC cleaning up the resources later
-                    throw new TimeoutException("Timeout waiting for timer to stop");
+                    // Cas rare où le timer était déjà disposé
+                    waitHandle.Dispose();
+                    waitHandle = null;
                 }
             }
 
-            _isRunning = false;
-
+            // 2. ATTENTE HORS DU VERROU (La clé de la résolution du problème !)
+            // Aucun deadlock croisé possible car le verrou _lock est déjà relâché.
+            if (waitHandle != null)
+            {
+                if (!waitHandle.WaitOne(_disposeTimeout))
+                {
+                    LogTools.Logger.Warn("Timeout lors de l'attente de l'arrêt complet du timer.");
+                }
+                waitHandle.Dispose();
+            }
         }
 
         public void Dispose()
         {
+            Stop();
+        }
+        #endregion
+
+        #region METHODES PRIVEES
+        private void HandleTimerElapsed(object state)
+        {
+            Action<object> callbackToFire = null;
+
             try
             {
-                UnsafeStop();
+                // 1. Verrouillage ultra-court (quelques nanosecondes)
+                using (TimedLock.Lock(_lock, _lockTimeout))
+                {
+                    if (_timer == null) return; // Le timer a été annulé juste avant
+
+                    // On capture le délégué pour l'exécuter HORS du verrou
+                    callbackToFire = Elapsed;
+                    _isRunning = false;
+                }
+
+                // 2. Exécution de la logique métier SANS GARDER LE VERROU.
+                // Ainsi, on ne gèle jamais la classe SingleShotTimer.
+                callbackToFire?.Invoke(state);
             }
-            catch (TimeoutException)
+            catch (Exception ex)
             {
-                LogTools.Logger.Error("TimeoutException lors de la tentative d'arret du timer");
-                throw;
-            }
-            finally
-            {
-                _timer = null;
+                // Un timer de ThreadPool qui lève une exception non gérée fait crasher l'app.
+                // Il faut toujours un catch global ici.
+                LogTools.Logger.Error(ex, "Erreur lors de l'exécution du callback du SingleShotTimer");
             }
         }
+
+        #endregion
     }
 }

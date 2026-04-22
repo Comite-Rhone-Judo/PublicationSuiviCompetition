@@ -9,8 +9,13 @@ namespace AppPublication.Export
         // Propriété spécifique à ce contexte conservée pour l'appelant
         public ConfigurationExportSite Config { get; private set; }
 
+        public IExtendedJudoData ExtendedDataContext { get; private set; }
+
         // Constructeur privé pour obliger l'utilisation de la Factory 'Create'
-        private ExportSharedContext() : base() { }
+        private ExportSharedContext(IJudoData DC, ExtendedJudoData EDC, ConfigurationExportSite config) : base(DC) {
+            Config = config;
+            ExtendedDataContext = EDC;
+        }
 
         /// <summary>
         /// Factory pour créer une instance initialisée des engagements
@@ -21,7 +26,7 @@ namespace AppPublication.Export
             if (EDC == null) throw new System.ArgumentNullException(nameof(EDC));
             if (config == null) throw new System.ArgumentNullException(nameof(config));
 
-            var context = new ExportSharedContext { Config = config };
+            var context = new ExportSharedContext(DC, EDC, config);
 
             // Génération du document spécifique aux engagements
             var docEngagements = ExportXML.CreateDocumentEngagements(DC, EDC);

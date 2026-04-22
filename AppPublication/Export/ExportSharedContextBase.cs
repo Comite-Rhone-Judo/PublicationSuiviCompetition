@@ -7,6 +7,9 @@ namespace AppPublication.Export
     public abstract class ExportSharedContextBase
     {
         #region PROPERTIES
+
+        public IJudoData DataContext { get; private set; }
+
         // Référentiels de base
         public XElement Clubs { get; private set; }
         public XElement Comites { get; private set; }
@@ -22,7 +25,10 @@ namespace AppPublication.Export
         public XDocument ExportDocument { get; protected set; }
         #endregion
 
-        protected ExportSharedContextBase() { }
+        protected ExportSharedContextBase(IJudoData DC)
+        {
+            DataContext = DC;
+        }
 
         #region METHODES PUBLIQUES D'ENRICHISSEMENT (API EXTERNE)
 

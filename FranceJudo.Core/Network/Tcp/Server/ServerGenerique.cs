@@ -66,8 +66,8 @@ namespace FranceJudo.Core.Network.Tcp.Server
         //protected System.Net.Sockets.Socket listener;
 
         private TcpListener tcpListener;
-        private readonly List<TcpClient> clients = new List<TcpClient>();
-        private readonly List<SentData> sentData = new List<SentData>();
+        private readonly Synchronized<List<TcpClient>> _clients = new Synchronized<List<TcpClient>>(new List<TcpClient>());
+        private readonly Synchronized<List<SentData>> _sentData = new Synchronized<List<SentData>>(new List<SentData>());
         //private string chaine = "";
         private readonly int _port = 0;
         private readonly string _endMsgTag;
@@ -98,23 +98,24 @@ namespace FranceJudo.Core.Network.Tcp.Server
         /// </summary>
         public void Start()
         {
-            foreach (TcpClient client in clients)
+            // On verrouille la liste des clients pour le nettoyage initial
+            _clients.SafeWriteAction(liste =>
             {
-                if (client != null)
+                foreach (TcpClient client in liste)
                 {
-                    if (client.Connected && client.GetStream() != null)
+                    if (client != null)
                     {
-                        client.GetStream().Close();
+                        if (client.Connected && client.GetStream() != null)
+                        {
+                            client.GetStream().Close();
+                        }
+                        client.Close();
                     }
-
-                    client.Close();
                 }
-            }
+                liste.Clear(); // Vidage sécurisé
+            });
 
-            clients.Clear();
-            //lstClientInfo.Clear();
-            //bindingSource1.Clear();
-
+            // Le reste de l'initialisation reste inchangé
             ListenerHelper.StartListening(ref tcpListener, _port, new AsyncCallback(DoAcceptTcpClientCallback));
         }
 
@@ -125,9 +126,10 @@ namespace FranceJudo.Core.Network.Tcp.Server
         public void Stop()
         {
             this.tcpListener.Stop();
-            using (LegacyTimedLock.Lock((this.clients as ICollection).SyncRoot))
+
+            _clients.SafeWriteAction(liste =>
             {
-                foreach (TcpClient client in clients)
+                foreach (TcpClient client in liste)
                 {
                     if (client != null)
                     {
@@ -136,13 +138,12 @@ namespace FranceJudo.Core.Network.Tcp.Server
                             client.GetStream().Dispose();
                             client.GetStream().Close();
                         }
-
                         client.Close();
                     }
                 }
-            }
+                liste.Clear();
+            });
 
-            clients.Clear();
             ListenerHelper.StopListening(ref tcpListener);
         }
 
@@ -184,7 +185,7 @@ namespace FranceJudo.Core.Network.Tcp.Server
         {
             LogHelper.ShowLog("", client, LogHelper.TypeLog.Connect);
 
-            clients.Add(client);
+            _clients.SafeWriteAction(liste => liste.Add(client));
 
             //Program.frmMainForm.delAddClient.Invoke(client);
 
@@ -221,17 +222,20 @@ namespace FranceJudo.Core.Network.Tcp.Server
         private void OnRemoteHostClose(ClientConnection sender)
         {
             LogHelper.ShowLog("", sender.Client, LogHelper.TypeLog.RemoteClose);
+            int currentClientCount = 0;
 
-            clients.Remove(sender.Client);
+            _clients.SafeWriteAction(liste =>
+            {
+                liste.Remove(sender.Client);
+                currentClientCount = liste.Count;
+            });
 
             OnEndConnection?.Invoke(tcpListener, sender.Client);
 
-            if (clients.Count == 0)
+            if (currentClientCount == 0)
             {
                 ListenerHelper.StartListening(ref tcpListener, _port, new AsyncCallback(DoAcceptTcpClientCallback));
             }
-
-            //Program.frmMainForm.delRemoveClient.Invoke(sender.Client);
         }
 
         /// <summary>
@@ -241,24 +245,18 @@ namespace FranceJudo.Core.Network.Tcp.Server
         /// <param name="data">The string to send.</param>
         public void Write(TcpClient tcpClient, string data)
         {
-
-
-
-            using (LegacyTimedLock.Lock((sentData as ICollection).SyncRoot))
+            _sentData.SafeWriteAction(liste =>
             {
-                SentData sent = sentData.FirstOrDefault(o => o != null && o.Client == tcpClient);
+                SentData sent = liste.FirstOrDefault(o => o != null && o.Client == tcpClient);
                 if (sent == null)
                 {
-                    sentData.Add(new SentData { Data = data, Client = tcpClient, Tentative = 1 });
+                    liste.Add(new SentData { Data = data, Client = tcpClient, Tentative = 1 });
                 }
                 else
                 {
-                    sentData.Add(new SentData { Data = data, Client = tcpClient, Tentative = sent.Tentative + 1 });
+                    liste.Add(new SentData { Data = data, Client = tcpClient, Tentative = sent.Tentative + 1 });
                 }
-            }
-
-            //if (tcpClient.Connected)
-            //{
+            });
 
             bool send = ListenerHelper.SendData(tcpClient, data, new AsyncCallback(DoSending));
 
@@ -268,7 +266,6 @@ namespace FranceJudo.Core.Network.Tcp.Server
             ulong rdat = (ulong)(_sent_data);
 
             LogHelper.ShowLog(len.SizeSuffix() + "  ---  " + rdat.SizeSuffix(), tcpClient, LogHelper.TypeLog.SentData);
-            //}
         }
 
         /// <summary>
@@ -277,7 +274,11 @@ namespace FranceJudo.Core.Network.Tcp.Server
         /// <param name="data">The string to send.</param>
         public void Write(string data)
         {
-            foreach (TcpClient client in this.clients)
+            // On prend un snapshot rapide de la liste (Lecture)
+            var snapshotClients = _clients.SafeReadAction(liste => liste.ToList());
+
+            // On envoie les données en dehors du verrou pour ne pas bloquer le serveur
+            foreach (TcpClient client in snapshotClients)
             {
                 Write(client, data);
             }
@@ -297,24 +298,17 @@ namespace FranceJudo.Core.Network.Tcp.Server
                 NetworkStream networkStream = client.GetStream();
                 networkStream.EndWrite(ar);
 
-                using (LegacyTimedLock.Lock((sentData as ICollection).SyncRoot))
+                _sentData.SafeWriteAction(liste =>
                 {
-                    SentData sent = sentData.FirstOrDefault(o => o != null && o.Client == client);
-                    if (sent != null)
-                    {
-                        sentData.Remove(sent);
-                    }
-                }
+                    liste.RemoveAll(o => o != null && o.Client == client);
+                });
 
                 OnDataSent?.Invoke(this, client);
-
-                //(new JudoClient.ClientHelper.ReceiveData(HandleReceive)).BeginInvoke(client, strReceiveData,
-                //        new AsyncCallback(ReceiveCallback), client);
             }
             catch (Exception ex)
             {
                 ExceptionHelper.ShowException(ex);
-                SentData sent = sentData.FirstOrDefault(o => o != null && o.Client == client);
+                SentData sent = _sentData.SafeReadAction(liste => liste.FirstOrDefault(o => o != null && o.Client == client));
                 if (sent == null)
                 {
                     Write(client, sent.Data);
@@ -330,207 +324,4 @@ namespace FranceJudo.Core.Network.Tcp.Server
         public TcpClient Client { get; set; }
         public int Tentative { get; set; }
     }
-
-    ///// <summary>
-    ///// Client Connection
-    ///// </summary>
-    //internal class ClientConnection
-    //{
-    //    public delegate void MessageReceive(ClientConnection sender, string Data);
-    //    public delegate void RemoteHostClose(ClientConnection sender);
-
-
-    //    #region field
-
-    //    const int READ_BUFFER_SIZE = 10240;
-    //    private byte[] readBuffer = new byte[READ_BUFFER_SIZE];
-
-    //    public event MessageReceive OnMessageReceived;
-    //    public event RemoteHostClose OnRemoteHostClosed;
-
-    //    private TcpClient _Client;
-    //    private string chaine = "";
-
-    //    public TcpClient Client
-    //    {
-    //        get
-    //        {
-    //            return _Client;
-    //        }
-    //    }
-
-    //    #endregion
-
-    //    #region method
-
-    //    public ClientConnection(TcpClient client)
-    //    {
-    //        try
-    //        {
-    //            _Client = client;
-
-    //            client.GetStream().BeginRead(readBuffer, 0, READ_BUFFER_SIZE,
-    //                new AsyncCallback(StreamReceiver), client);
-    //        }
-    //        catch (NullReferenceException ex)
-    //        {
-    //            ExceptionHelper.ShowException(ex);
-    //        }
-    //        catch (ObjectDisposedException ex)
-    //        {
-    //            client.Close();
-    //            ExceptionHelper.ShowException(ex);
-    //        }
-    //        catch (IOException ex)
-    //        {
-    //            client.Close();
-    //            ExceptionHelper.ShowException(ex);
-    //        }
-    //    }
-
-    //    private void StreamReceiver(IAsyncResult ar)
-    //    {
-    //        TcpClient client = null;
-    //        int intBytesRead = 0;
-    //        string strReceiveData = string.Empty;
-    //        NetworkStream objNetworkStream = null;
-
-    //        try
-    //        {
-    //            client = (TcpClient)ar.AsyncState;
-
-    //            if (!client.Connected)
-    //            {
-    //                client.Close();
-    //                LogHelper.ShowLog("", client, LogHelper.TypeLog.Close);
-
-    //                return;
-    //            }
-
-    //            try
-    //            {
-    //                objNetworkStream = client.GetStream();
-    //            }
-    //            catch (ObjectDisposedException ex)
-    //            {
-    //                client.Close();
-    //                ExceptionHelper.ShowException(ex);
-    //                return;
-    //            }
-    //            catch (InvalidOperationException ex)
-    //            {
-    //                client.Close();
-    //                ExceptionHelper.ShowException(ex);
-    //                return;
-    //            }
-
-    //            try
-    //            {
-    //                using (TimedLock.Lock(objNetworkStream)
-    //                {
-    //                    intBytesRead = objNetworkStream.EndRead(ar);
-    //                }
-    //            }
-    //            catch (IOException ex)
-    //            {
-    //                if (ex.InnerException is SocketException)
-    //                {
-    //                    client.Close();
-    //                    ExceptionHelper.ShowException(ex);
-
-    //                    return;
-    //                }
-    //                else
-    //                {
-    //                    client.Close();
-    //                    ExceptionHelper.ShowException(ex);
-    //                    return;
-    //                }
-    //            }
-
-    //            if (intBytesRead > 0)
-    //            {
-    //                strReceiveData = Encoding.UTF8.GetString(readBuffer, 0, intBytesRead);
-
-    //                //string data = Encoding.UTF8.GetString(client.Buffer, 0, read);
-    //                chaine += strReceiveData;
-
-    //                if (chaine.IndexOf("\n<EOF>") != -1 && OnMessageReceived != null)
-    //                {
-    //                    OnMessageReceived(this, TraiteChaineJudo(chaine));
-
-    //                    string[] s = chaine.Split(new string[] { "\n<EOF>" }, StringSplitOptions.RemoveEmptyEntries);
-    //                    if (s.Length > 1)
-    //                    {
-    //                        chaine = s.ElementAt(1);
-    //                    }
-    //                    else
-    //                    {
-    //                        chaine = "";
-    //                    }
-
-    //                    //OnMessageReceived(this, TraiteChaineJudo(chaine));
-    //                    //chaine = "";
-    //                }
-
-    //                //OnMessageReceived(this, strReceiveData);
-    //            }
-    //            else
-    //            {
-    //                OnRemoteHostClosed(this);
-
-    //                if (objNetworkStream != null)
-    //                {
-    //                    objNetworkStream.Close();
-    //                }
-
-    //                client.Close();
-    //                return;
-
-    //            }
-
-    //            if (!client.Connected)
-    //            {
-    //                client.Close();
-    //                LogHelper.ShowLog("", client, LogHelper.TypeLog.ClientClose);
-    //                //LogHelper.ShowLog("client close\t" + DateTime.Now.ToString() + "\t" + client.GetHashCode().ToString());
-    //                return;
-    //            }
-
-    //            try
-    //            {
-    //                using (TimedLock.Lock(objNetworkStream)
-    //                {
-    //                    objNetworkStream.BeginRead(readBuffer, 0, READ_BUFFER_SIZE,
-    //                        new AsyncCallback(StreamReceiver), client);
-    //                }
-    //            }
-    //            catch (ObjectDisposedException ex)
-    //            {
-    //                client.Close();
-    //                ExceptionHelper.ShowException(ex);
-    //            }
-    //            catch (IOException ex)
-    //            {
-    //                client.Close();
-    //                ExceptionHelper.ShowException(ex);
-    //            }
-
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            client.Close();
-    //            ExceptionHelper.ShowException(ex);
-    //        }
-    //    }
-
-    //    string TraiteChaineJudo(string s)
-    //    {
-    //        string chaine = s.Split(new string[] { "\n<EOF>" }, StringSplitOptions.RemoveEmptyEntries).First();
-    //        //string chaine = s.Replace("\n<EOF>", "");
-    //        return chaine;
-    //    }
-
-    //    #endregion
-    //}
 }

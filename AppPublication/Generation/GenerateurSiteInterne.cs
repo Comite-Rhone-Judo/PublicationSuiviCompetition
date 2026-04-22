@@ -201,21 +201,21 @@ namespace AppPublication.Generation
                     // La racine du site
                     _taskBatcher.AddWork(p =>
                     {
-                        return exporter.GenereWebSiteIndex(_snapshot, _currentContext, _siteInterneUrlGenerator, p);
+                        return exporter.GenereWebSiteIndex(_currentContext, _siteInterneUrlGenerator, p);
                     });
 
                     foreach (var ecran in _ecransAppelSnapshot.Ecrans)
                     {
                         _taskBatcher.AddWork(p =>
                         {
-                            return exporter.GenereEcranAppel(_snapshot, _currentContext, _siteInterneUrlGenerator, ecran, p);
+                            return exporter.GenereEcranAppel(_currentContext, _siteInterneUrlGenerator, ecran, p);
                         });
                     }
 
                     // et on ajoute le traitement par default
                     _taskBatcher.AddWork(p =>
                     {
-                        return exporter.GenereEcranAppel(_snapshot, _currentContext, _siteInterneUrlGenerator, _ecransAppelSnapshot.Default, p);
+                        return exporter.GenereEcranAppel(_currentContext, _siteInterneUrlGenerator, _ecransAppelSnapshot.Default, p);
                     });
 
                     // Attend la fin de tous les batchs

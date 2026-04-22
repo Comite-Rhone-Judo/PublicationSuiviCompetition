@@ -28,8 +28,9 @@ namespace AppPublication.Export
         /// <summary>
         /// Génère la page d'index du site, les scripts de mise à jour et exporte les ressources statiques.
         /// </summary>
-        public List<FileWithChecksum> GenereWebSiteIndex(IJudoData DC, ExportSharedContextInterne ctx, SiteInterneUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteIndex(ExportSharedContextInterne ctx, SiteInterneUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
+            IJudoData DC = ctx.DataContext;
             // Clone la structure de répertoires pour le contexte multi-thread
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
@@ -85,8 +86,9 @@ namespace AppPublication.Export
         /// <param name="ecran"></param>
         /// <param name="progress"></param>
         /// <returns></returns>
-        public List<FileWithChecksum> GenereEcranAppel(IJudoData DC, ExportSharedContextInterne ctx, SiteInterneUrlGenerator siteStructure, EcranAppelModel ecran, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereEcranAppel(ExportSharedContextInterne ctx, SiteInterneUrlGenerator siteStructure, EcranAppelModel ecran, IProgress<BatchProgressInfo> progress)
         {
+            IJudoData DC = ctx.DataContext;
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             var exportType = ExportEnum.Site_Interne_EcranAppel;

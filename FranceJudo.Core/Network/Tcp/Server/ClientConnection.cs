@@ -1,4 +1,5 @@
 ﻿using FranceJudo.Core.IO;
+using FranceJudo.Core.Threading;
 using System;
 using System.IO;
 using System.Net.Sockets;
@@ -26,6 +27,7 @@ namespace FranceJudo.Core.Network.Tcp.Server
 
         #region field
 
+        private readonly object _streamLock = new object();
         const int READ_BUFFER_SIZE = 10240;
         private readonly byte[] readBuffer = new byte[READ_BUFFER_SIZE];
 
@@ -141,7 +143,7 @@ namespace FranceJudo.Core.Network.Tcp.Server
 
                 try
                 {
-                    lock (objNetworkStream)
+                    using (TimedLock.Lock(_streamLock))
                     {
                         intBytesRead = objNetworkStream.EndRead(ar);
                     }
@@ -209,7 +211,7 @@ namespace FranceJudo.Core.Network.Tcp.Server
 
                 try
                 {
-                    lock (objNetworkStream)
+                    using (TimedLock.Lock(_streamLock))
                     {
                         objNetworkStream.BeginRead(readBuffer, 0, READ_BUFFER_SIZE,
                             new AsyncCallback(StreamReceiver), client);

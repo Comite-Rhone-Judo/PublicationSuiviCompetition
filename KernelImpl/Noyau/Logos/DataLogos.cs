@@ -61,13 +61,13 @@ namespace KernelImpl.Noyau.Logos
             try
             {
                 FileSystemHelper.DeleteDirectory(AppDirectoryManager.Logo1Dir);
-                FileSystemHelper.CreateDirectorie(AppDirectoryManager.Logo1Dir);
+                FileSystemHelper.CreateDirectory(AppDirectoryManager.Logo1Dir);
 
                 FileSystemHelper.DeleteDirectory(AppDirectoryManager.Logo2Dir);
-                FileSystemHelper.CreateDirectorie(AppDirectoryManager.Logo2Dir);
+                FileSystemHelper.CreateDirectory(AppDirectoryManager.Logo2Dir);
 
                 FileSystemHelper.DeleteDirectory(AppDirectoryManager.Logo3Dir);
-                FileSystemHelper.CreateDirectorie(AppDirectoryManager.Logo3Dir);
+                FileSystemHelper.CreateDirectory(AppDirectoryManager.Logo3Dir);
 
             }
             catch (Exception ex)

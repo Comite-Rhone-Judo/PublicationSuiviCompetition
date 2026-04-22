@@ -62,6 +62,7 @@
     <Compile Include="Configuration\ConfigurationService.cs" />
     <Compile Include="Configuration\InternalConfigSectionBase.cs" />
     <Compile Include="Diagnostic\ActionWatcher.cs" />
+    <Compile Include="Diagnostic\HealthMonitor.cs" />
     <Compile Include="Environment\AppInformation.cs" />
     <Compile Include="Exceptions\AppUpdateException.cs" />
     <Compile Include="Exceptions\ConnexionException.cs" />
@@ -197,11 +198,9 @@
     <Compile Include="Security\Encryption.cs" />
     <Compile Include="Threading\AsyncTimedLock.cs" />
     <Compile Include="Threading\BatchProgressInfo.cs" />
-    <Compile Include="Threading\BlockingCounter.cs" />
     <Compile Include="Threading\LimitedConcurrencyLevel.cs" />
     <Compile Include="Threading\ParallelTaskBatcher.cs" />
     <Compile Include="Threading\SingleShotTimer.cs" />
-    <Compile Include="Threading\LegacyTimedLock.cs" />
     <Compile Include="Threading\Synchronized.cs" />
     <Compile Include="Threading\TimedLock.cs" />
     <Compile Include="Utils\ClassFactory.cs" />

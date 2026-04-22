@@ -177,7 +177,7 @@ namespace FranceJudo.Metier.Export
 
             if (!Directory.Exists(targetDirectory))
             {
-                FileSystemHelper.CreateDirectorie(targetDirectory);
+                FileSystemHelper.CreateDirectory(targetDirectory);
                 string baseFolder = MetierResources.Dictionary.GetFullName(resourceFolder);
 
                 foreach (string resourceName in MetierResources.Dictionary.FindByFolder(resourceFolder))

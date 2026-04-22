@@ -26,7 +26,10 @@ namespace FranceJudo.Core.Threading
         /// Exécute une opération de LECTURE. 
         /// Plusieurs threads peuvent exécuter cette méthode exactement en même temps.
         /// </summary>
-        public TResult Read<TResult>(Func<T, TResult> query)
+        /// <typeparam name="TResult">Le type de résultat de l'opération de lecture.</typeparam>
+        /// <param name="query">La fonction à exécuter en lecture.</param>
+        /// <returns>Le résultat de l'opération de lecture.</returns>
+        public TResult SafeReadAction<TResult>(Func<T, TResult> query)
         {
             if (_isDisposed) throw new ObjectDisposedException(nameof(Synchronized<T>));
 
@@ -48,7 +51,8 @@ namespace FranceJudo.Core.Threading
         /// Exécute une opération d'ÉCRITURE (Modification).
         /// Bloque tous les autres lecteurs et écrivains pendant l'exécution.
         /// </summary>
-        public void Write(Action<T> action)
+        /// <param name="action">L'action à exécuter en écriture.</param>
+        public void SafeWriteAction(Action<T> action)
         {
             if (_isDisposed) throw new ObjectDisposedException(nameof(Synchronized<T>));
 

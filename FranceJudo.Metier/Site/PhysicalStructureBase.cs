@@ -130,7 +130,7 @@ namespace FranceJudo.Metier.Site
             // 3. On recrée immédiatement la racine vide pour être prêt pour la suite
             if (isDeleted)
             {
-                FileSystemHelper.CreateDirectorie(_rootCompetDir);
+                FileSystemHelper.CreateDirectory(_rootCompetDir);
             }
 
             return isDeleted;
@@ -199,7 +199,7 @@ namespace FranceJudo.Metier.Site
             if (!string.IsNullOrWhiteSpace(value) && _rootCompetDir != value)
             {
                 _rootCompetDir = value;
-                FileSystemHelper.CreateDirectorie(_rootCompetDir);
+                FileSystemHelper.CreateDirectory(_rootCompetDir);
             }
         }
 
@@ -220,7 +220,7 @@ namespace FranceJudo.Metier.Site
                 string path = isAbsolute ? folderName : Path.Combine(_rootCompetDir, folderName);
                 string sanitizedPath = UrlHelper.TraiteChaineURL(path);
 
-                FileSystemHelper.CreateDirectorie(sanitizedPath);
+                FileSystemHelper.CreateDirectory(sanitizedPath);
                 return sanitizedPath;
             });
         }

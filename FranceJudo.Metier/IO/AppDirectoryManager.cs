@@ -89,7 +89,7 @@ namespace FranceJudo.Metier.IO
             // 2. Création stricte des dossiers
             foreach (var directory in _directoriesToCreate)
             {
-                FileSystemHelper.CreateDirectorie(directory);
+                FileSystemHelper.CreateDirectory(directory);
             }
 
             ExtractResources();

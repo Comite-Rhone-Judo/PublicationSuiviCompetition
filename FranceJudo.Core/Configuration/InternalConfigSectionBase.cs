@@ -367,13 +367,13 @@ namespace FranceJudo.Core.Configuration
         public static void InvalidateContext()
         {
             // 1. On lâche la référence vers le fichier de config (il sera rechargé au prochain appel)
-           lock(_sharedConfigLock)
+           using (TimedLock.Lock(_sharedConfigLock))
             {
                 _sharedConfig = null;
             }
 
             // 2. On exécute les actions de nettoyage (mise à null des _instance static)
-            lock (_resetCacheActions)
+            using (TimedLock.Lock(_resetCacheActions))
             {
                 foreach (var action in _resetCacheActions)
                 {

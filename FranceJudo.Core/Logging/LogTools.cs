@@ -16,6 +16,7 @@ namespace FranceJudo.Core.Logging
         #region CONSTANTES
         private const string kloggingLevelVariable = "loggingLevel";
         private const string kDbgDataLoggerName = "dbgDataLogger";
+        private const string kHealthLoggerName = "healthLogger";
         private const string kDefaultLoggerName = "defaultLogger";
         #endregion
 
@@ -25,6 +26,7 @@ namespace FranceJudo.Core.Logging
         /// </summary>
         private static readonly Logger _logger = NLog.LogManager.GetLogger(kDefaultLoggerName);
         private static readonly Logger _dataLogger = NLog.LogManager.GetLogger(kDbgDataLoggerName);
+        private static readonly Logger _healthLogger = NLog.LogManager.GetLogger(kHealthLoggerName);
         private static Layout _previousLogLevel = null;
         // private static Logger Logger { get { return _logger; } }
 
@@ -52,6 +54,8 @@ namespace FranceJudo.Core.Logging
         // Access direct au Logger NLog
         public static Logger Logger { get { return _logger; } }
         public static Logger DataLogger { get { return _dataLogger; } }
+
+        public static Logger HealthLogger { get { return _healthLogger; } }
 
         public static void Error(string msg) { _logger.Error(msg); }
 

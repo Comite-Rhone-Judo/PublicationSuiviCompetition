@@ -11,50 +11,63 @@ namespace FranceJudo.Metier.IO
 {
     public static class FileTools
     {
-        private static readonly Dictionary<string, XDocument> notSave = new Dictionary<string, XDocument>();
+        // Encapsulation forte et sécurisée
+        private static readonly Synchronized<Dictionary<string, XDocument>> _notSave =
+            new Synchronized<Dictionary<string, XDocument>>(new Dictionary<string, XDocument>());
 
         public static void SaveFile(XDocument doc, string fileType)
         {
-            //if (!Directory.Exists(ConstantFile.SaveCOMDirectory))
-            //{
-            //    Directory.CreateDirectory(ConstantFile.SaveCOMDirectory);
-            //}
+            Dictionary<string, XDocument> snapshotToProcess = null;
 
-            using (LegacyTimedLock.Lock((notSave as ICollection).SyncRoot))
+            // 1. VERROUILLAGE ULTRA-COURT (RAM uniquement)
+            // On met à jour la mémoire et on prend une photo des données à traiter.
+            _notSave.SafeWriteAction(dict =>
             {
-                notSave.Remove(fileType);
-                notSave.Add(fileType, doc);
+                // Remplace ou ajoute le document (plus rapide que Remove + Add)
+                dict[fileType] = doc;
 
-                foreach (string file in notSave.Keys.ToList())
+                // Création du Snapshot pour travailler hors du verrou
+                snapshotToProcess = dict.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            });
+
+            // 2. TRAITEMENT I/O EN DEHORS DU VERROU
+            // Les autres threads peuvent continuer à appeler SaveFile sans être bloqués par le disque.
+            foreach (var kvp in snapshotToProcess)
+            {
+                string file = kvp.Key;
+                XDocument document = kvp.Value;
+                string filename = Path.Combine(AppDirectoryManager.SaveCOMDir, file + AppDirectoryManager.ExtensionXML);
+
+                bool saveSuccess = false;
+
+                if (!File.Exists(filename) || !FileSystemHelper.IsFileLocked(filename))
                 {
-                    XDocument document = notSave[file];
-                    string filename = Path.Combine(AppDirectoryManager.SaveCOMDir, file + AppDirectoryManager.ExtensionXML);
-                    if (!File.Exists(filename) || !FileSystemHelper.IsFileLocked(filename))
+                    FileSystemHelper.NeedAccessFile(filename);
+                    try
                     {
-                        FileSystemHelper.NeedAccessFile(filename);
-                        try
+                        using (FileStream fs = new FileStream(filename, FileMode.Create))
                         {
-                            using (FileStream fs = new FileStream(filename, FileMode.Create))
-                            {
-                                document.Save(fs);
-                            }
-                            notSave.Remove(file);
+                            document.Save(fs);
                         }
-                        catch { }
-                        finally
-                        {
-                            FileSystemHelper.ReleaseFile(filename);
-                        }
+                        saveSuccess = true; // L'écriture a réussi
+                    }
+                    catch
+                    {
+                        // Il serait pertinent de logguer l'erreur ici
+                    }
+                    finally
+                    {
+                        FileSystemHelper.ReleaseFile(filename);
                     }
                 }
-            }
 
-            //// Create the FileStream.
-            //string filename = ConstantFile.SaveCOMDirectory + "/" + fileType + ConstantFile.ExtensionXML;
-            //using (FileStream fs = new FileStream(filename, FileMode.Create))
-            //{
-            //    doc.Save(fs);
-            //}
+                // 3. NETTOYAGE DU CACHE (Micro-verrou)
+                // Si la sauvegarde a fonctionné, on retire le fichier de la file d'attente mémoire.
+                if (saveSuccess)
+                {
+                    _notSave.SafeWriteAction(dict => dict.Remove(file));
+                }
+            }
         }
     }
 }

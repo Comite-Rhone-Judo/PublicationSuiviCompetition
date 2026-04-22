@@ -26,7 +26,7 @@ namespace AppPublication.Generation
         // Les gestionnaires
         readonly private IJudoDataManager _judoDataManager;                  // Le gestionnaire de données interne
         private IJudoData _snapshot;                                // Le snapshot des données 
-        readonly private ExtendedJudoData _extendedJudoData;
+        private ExtendedJudoData _extendedJudoData;
         private MiniSite _site = null;                              // Le site a utilise pour le upload a distance
         private ExportSharedContext _currentContext = null;         // Le contexte de generation courant (a passer aux taches de generation)
         private readonly ConfigurationExportSite _cfgExport;
@@ -90,7 +90,7 @@ namespace AppPublication.Generation
         public GenerateurSite(IJudoDataManager dataManager, MiniSite siteDistant, IProgress<OperationProgress> progressHandler)
         {
             _judoDataManager = dataManager ?? throw new ArgumentNullException(nameof(dataManager));
-            _extendedJudoData = new ExtendedJudoData() ?? throw new NullReferenceException(nameof(_extendedJudoData));
+            _extendedJudoData = null;
             SiteProvider = siteDistant;
             _cfgExport = new ConfigurationExportSite();
             ExportConfigurationManager = new ThreadSafeConfigManager<ConfigurationExportSite>(_cfgExport);
@@ -172,8 +172,8 @@ namespace AppPublication.Generation
                 // Recupere le snapshot des données (thread safe)
                 _snapshot = _judoDataManager.Snapshot;
 
-                // Met a jour les données de l'extension
-                _extendedJudoData.SyncAll(_snapshot);
+                // Met a jour les données de l'extension (ces données sont calculées en differe)
+                _extendedJudoData =  new ExtendedJudoData(_snapshot);
 
                 // Clone la configuration
                 ConfigurationExportSite snapshotConfig;
@@ -224,19 +224,19 @@ namespace AppPublication.Generation
 
                     _taskBatcher.AddWork(p =>
                     {
-                        return exporter.GenereWebSiteIndex(_snapshot, _currentContext, _siteUrlGenerator, p);
+                        return exporter.GenereWebSiteIndex(_currentContext, _siteUrlGenerator, p);
                     });
 
                     _taskBatcher.AddWork(p =>
                     {
-                        return exporter.GenereWebSiteMenu(_snapshot, _extendedJudoData, _currentContext, _siteUrlGenerator, p);
+                        return exporter.GenereWebSiteMenu(_currentContext, _siteUrlGenerator, p);
                     });
 
                     if (_cfgExport.PublierAffectationTapis)
                     {
                         _taskBatcher.AddWork(p =>
                         {
-                            return exporter.GenereWebSiteAffectation(_snapshot, _currentContext, _siteUrlGenerator, p);
+                            return exporter.GenereWebSiteAffectation(_currentContext, _siteUrlGenerator, p);
                         });
                     }
 
@@ -245,7 +245,7 @@ namespace AppPublication.Generation
                     {
                         _taskBatcher.AddWork(p =>
                         {
-                            return exporter.GenereWebSiteAllTapis(_snapshot, _currentContext, _siteUrlGenerator, p);
+                            return exporter.GenereWebSiteAllTapis(_currentContext, _siteUrlGenerator, p);
                         });
                     }
 
@@ -265,7 +265,7 @@ namespace AppPublication.Generation
                                 // sans doute car le lancement de nombreuses Task est couteux mais il provoque une latence a la fin de la generation
                                 _taskBatcher.AddWork(p =>
                                 {
-                                    return exporter.GenereWebSiteEngagements(_snapshot, _extendedJudoData, groupesP, _currentContext, _siteUrlGenerator, p);
+                                    return exporter.GenereWebSiteEngagements(groupesP, _currentContext, _siteUrlGenerator, p);
                                 });
 
                                 // foreach (GroupeEngagements g in groupesP)
@@ -281,11 +281,11 @@ namespace AppPublication.Generation
                     {
                         _taskBatcher.AddWork(p =>
                         {
-                            return exporter.GenereWebSitePhase(_snapshot, phase, _currentContext, _siteUrlGenerator, p);
+                            return exporter.GenereWebSitePhase(phase, _currentContext, _siteUrlGenerator, p);
                         });
                         _taskBatcher.AddWork(p =>
                         {
-                            return exporter.GenereWebSiteClassement(_snapshot, phase.GetVueEpreuve(_snapshot), _currentContext, _siteUrlGenerator, p);
+                            return exporter.GenereWebSiteClassement(phase.GetVueEpreuve(_snapshot), _currentContext, _siteUrlGenerator, p);
                         });
                     }
 

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FranceJudo.Core.Threading
@@ -14,8 +15,11 @@ namespace FranceJudo.Core.Threading
     /// <typeparam name="TResultItem">Le type des items retournés par les tâches.</typeparam>
     public class ParallelTaskBatcher<TReport, TResultItem>
     {
+        #region MEMBERS
         private readonly List<Task> _tasks = new List<Task>();
         private readonly object _lockObject = new object();
+        private TaskScheduler _currentScheduler;
+        private int _concurrencyLevel;
 
         private readonly ConcurrentBag<IEnumerable<TResultItem>> _resultsBag
             = new ConcurrentBag<IEnumerable<TResultItem>>();
@@ -31,13 +35,46 @@ namespace FranceJudo.Core.Threading
             public int Current { get; set; }
             public int Total { get; set; }
         }
+        #endregion
 
-        public ParallelTaskBatcher(IProgress<TReport> globalProgressReporter, Func<float, TReport> converter)
+        #region PROPERTIES
+        /// <summary>
+        /// Définit ou obtient le niveau de concurrence des tâches.
+        /// -1 : Pas de limitation (Pool natif .NET)
+        ///  0 : Automatique (Nombre de coeurs - 1)
+        /// >=1 : Limite stricte
+        /// </summary>
+        public int ConcurrencyLevel
+        {
+            get
+            {
+                lock (_lockObject) return _concurrencyLevel;
+            }
+            set
+            {
+                lock (_lockObject)
+                {
+                    if (value < -1) throw new ArgumentOutOfRangeException(nameof(ConcurrencyLevel), "La valeur doit être >= -1");
+
+                    _concurrencyLevel = value;
+                    UpdateSchedulerConfiguration();
+                }
+            }
+        }
+        #endregion
+
+        #region CONSTRUCTEURS
+        public ParallelTaskBatcher(IProgress<TReport> globalProgressReporter, Func<float, TReport> converter, int concurrencyLevel = 0)
         {
             _globalProgressReporter = globalProgressReporter;
             _converter = converter ?? throw new ArgumentNullException(nameof(converter));
-        }
 
+            // On initialise le scheduler via la propriété pour centraliser la logique
+            ConcurrencyLevel = concurrencyLevel;
+        }
+        #endregion
+
+        #region METHODES PUBLIQUES
         /// <summary>
         /// Ajoute une tâche. Capture et logue les exceptions internes.
         /// </summary>
@@ -55,7 +92,15 @@ namespace FranceJudo.Core.Threading
 
             var taskReporter = new ProgressWrapper(info => HandleTaskReport(taskId, info));
 
-            Task t = Task.Run(() =>
+            // On récupère le scheduler actif de manière sécurisée
+            TaskScheduler schedulerToUse;
+            lock (_lockObject)
+            {
+                schedulerToUse = _currentScheduler;
+            }
+
+            // On utilise Task.Factory.StartNew pour pouvoir spécifier le TaskScheduler limite qui va gérer la concurrence. Important pour éviter de saturer le thread pool et l'UI.
+            Task t = Task.Factory.StartNew(() =>
             {
                 try
                 {
@@ -80,7 +125,10 @@ namespace FranceJudo.Core.Threading
                 {
                     CompleteTask(taskId);
                 }
-            });
+            },
+            CancellationToken.None,
+            TaskCreationOptions.DenyChildAttach,
+            schedulerToUse);
 
             lock (_lockObject)
             {
@@ -145,7 +193,9 @@ namespace FranceJudo.Core.Threading
             get { lock (_lockObject) return _tasks.Count > 0; }
         }
 
-        // --- Méthodes privées (Inchangées) ---
+        #endregion
+
+        #region METHODES PRIVEES
 
         private void HandleTaskReport(Guid taskId, BatchProgressInfo info)
         {
@@ -220,5 +270,34 @@ namespace FranceJudo.Core.Threading
             public ProgressWrapper(Action<BatchProgressInfo> handler) { _handler = handler; }
             public void Report(BatchProgressInfo value) => _handler(value);
         }
+
+        /// <summary>
+        /// Met à jour l'instance du TaskScheduler en fonction du niveau demandé.
+        /// (Doit être appelé à l'intérieur d'un lock sur _lockObject)
+        /// </summary>
+        private void UpdateSchedulerConfiguration()
+        {
+            if (_concurrencyLevel == -1)
+            {
+                LogTools.Logger.Info("No limit mode: using the default .NET thread pool");
+                // Pas de limite : on utilise le pool de threads par défaut de .NET
+                _currentScheduler = TaskScheduler.Default;
+            }
+            else if (_concurrencyLevel == 0)
+            {
+                // Mode automatique : Processeurs logiques - 1 (pour l'UI)
+                int maxConcurrency = Math.Max(1, System.Environment.ProcessorCount - 1);
+                LogTools.Logger.Info($"Automatic mode: using a limited concurrency level of {maxConcurrency}");
+                _currentScheduler = new LimitedConcurrencyLevel(maxConcurrency);
+            }
+            else
+            {
+                // Mode manuel : Valeur stricte
+                LogTools.Logger.Info($"Manual mode: using a limited concurrency level of {_concurrencyLevel}");
+                _currentScheduler = new LimitedConcurrencyLevel(_concurrencyLevel);
+            }
+        }
+
+        #endregion
     }
 }

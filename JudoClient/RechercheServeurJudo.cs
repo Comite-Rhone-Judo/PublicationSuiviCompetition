@@ -42,7 +42,7 @@ namespace JudoClient
         public delegate void TermineHandler(object sender, int pings, int connecte);
         public event TermineHandler OnTermine;
 
-        private readonly ObservableCollection<MachineStruct> _listeMachines = new ObservableCollection<MachineStruct>();
+        private readonly Synchronized<List<MachineStruct>> _listeMachines = new Synchronized<List<MachineStruct>>(new List<MachineStruct>());
 
         private int _nbMachines = 0;
         private bool _recherche_en_cours = false;
@@ -108,11 +108,8 @@ namespace JudoClient
             List<string> machines = GetListeMachine(ipAdressText);
             _nbMachines = machines.Count * (ConstantNetwork.PortServerMax - ConstantNetwork.PortServerMin + 1);
 
-            using (LegacyTimedLock.Lock((_listeMachines as ICollection).SyncRoot))
-            {
-                _listeMachines.CollectionChanged -= new NotifyCollectionChangedEventHandler(Liste_OnChange);
-                _listeMachines.Clear();
-            }
+
+            _listeMachines.SafeWriteAction(liste => liste.Clear());
 
             int index = 0;
             foreach (string adresse in machines)
@@ -128,14 +125,14 @@ namespace JudoClient
                     Thread.Sleep(100);
                 }
 
-                using (LegacyTimedLock.Lock((_listeMachines as ICollection).SyncRoot))
+                // 2. Ajout sécurisé par lots
+                _listeMachines.SafeWriteAction(liste =>
                 {
                     for (int port = ConstantNetwork.PortServerMin; port <= ConstantNetwork.PortServerMax; port++)
                     {
-                        _listeMachines.Add(new MachineStruct { Adresse = adresse + ":" + port, Response = ServerResponseEnum.Aucun });
+                        liste.Add(new MachineStruct { Adresse = adresse + ":" + port, Response = ServerResponseEnum.Aucun });
                     }
-                }
-                //LogTools.Log("PING -> " + adresse);
+                });
 
                 Ping ping = new Ping();
                 ping.PingCompleted += Ping_PingCompleted;
@@ -152,8 +149,6 @@ namespace JudoClient
                         AdresseTerminee(adresse, port, ServerResponseEnum.PingFAIL);
                     }
                 }
-
-                _listeMachines.CollectionChanged += new NotifyCollectionChangedEventHandler(Liste_OnChange);
             }
         }
 
@@ -238,22 +233,22 @@ namespace JudoClient
             AdresseTerminee(clientjudo.NetworkClient.IP, clientjudo.NetworkClient.Port, ServerResponseEnum.ConnectionOK);
         }
 
-        /*
-         * void Clientjudo_OnConnection(object sender)
-        {
-            ClientGenerique clientjudo = (ClientGenerique)sender;
-        }*/
-
         void AdresseTerminee(string adresse, int port, ServerResponseEnum value)
         {
             try
             {
-                using (LegacyTimedLock.Lock((_listeMachines as ICollection).SyncRoot, TimeSpan.FromSeconds(30)))
+                _listeMachines.SafeWriteAction(liste =>
                 {
-                    MachineStruct machine = _listeMachines.FirstOrDefault(o => o.Adresse == adresse + ":" + port);
-                    int index = _listeMachines.IndexOf(machine);
-                    _listeMachines[index] = new MachineStruct { Adresse = machine.Adresse, Response = value };
-                }
+                    // FindIndex est beaucoup plus performant qu'un FirstOrDefault suivi d'un IndexOf
+                    int index = liste.FindIndex(o => o.Adresse == adresse + ":" + port);
+                    if (index >= 0)
+                    {
+                        liste[index] = new MachineStruct { Adresse = liste[index].Adresse, Response = value };
+                    }
+                });
+
+                // On appelle la vérification explicitement, EN DEHORS du verrou.
+                CheckSiTermine();
             }
             catch (Exception ex)
             {
@@ -261,15 +256,23 @@ namespace JudoClient
             }
         }
 
-        private void Liste_OnChange(object sender, NotifyCollectionChangedEventArgs e)
+        private void CheckSiTermine()
         {
-            int nb = _listeMachines.Count(o => o.Response != ServerResponseEnum.Aucun);
+            // Optimisation : si la recherche est déjà déclarée finie, on sort tout de suite
+            if (!_recherche_en_cours) return;
 
-            if (OnTermine != null && nb == _nbMachines && _recherche_en_cours)
+            // On utilise le Read pour RETOURNER un objet contenant nos statistiques.
+            var stats = _listeMachines.SafeReadAction(liste => new
             {
-                _recherche_en_cours = false;
-                _listeMachines.CollectionChanged -= new NotifyCollectionChangedEventHandler(Liste_OnChange);
-                OnTermine(this, _listeMachines.Count, _listeMachines.Count(o => o.Response == ServerResponseEnum.ConnectionOK));
+                Total = liste.Count,
+                Repondus = liste.Count(o => o.Response != ServerResponseEnum.Aucun),
+                Connectes = liste.Count(o => o.Response == ServerResponseEnum.ConnectionOK)
+            });
+
+            if (OnTermine != null && stats.Repondus == _nbMachines && _recherche_en_cours)
+            {
+                _recherche_en_cours = false; // Agit comme un verrou logique
+                OnTermine(this, stats.Total, stats.Connectes);
             }
         }
 

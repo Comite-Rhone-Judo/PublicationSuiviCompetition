@@ -1,5 +1,6 @@
 ﻿using AppPublication.Controles;
 using FranceJudo.Core.Configuration;
+using FranceJudo.Core.Diagnostic;
 using FranceJudo.Core.Logging;
 using FranceJudo.UI.Wpf.Dialogs;
 using FranceJudo.UI.Wpf.Foundation;
@@ -43,6 +44,13 @@ namespace AppPublication
             // Demarrage et configure la couche de Logging
             LogTools.LogStartup();
             LogTools.OnCriticalErrorLogged += LogTools_OnCriticalErrorLogged;
+
+            // 1. Démarrer le monitoring global (RAM, GC) toutes les 60 secondes
+            HealthMonitor.StartSystemMonitoring(60);
+
+            // 2. Démarrer le Heartbeat sur le Thread UI (le Dispatcher de l'application)
+            // On le configure pour alerter si l'interface gèle plus de 2 secondes (2000 ms)
+            HealthMonitor.MonitorDispatcher(this.Dispatcher, "MainUI", 3000);
 
             // Démarrage du Service de Configuration (le worker commence ici)
             _configSvc = ConfigurationService.CreateInstance();
@@ -116,13 +124,15 @@ namespace AppPublication
                 (ConfigurationService.Instance as IDisposable)?.Dispose();
             }
 
+            // Arrêt propre des timers à la fermeture
+            HealthMonitor.StopAllMonitoring();
+
             // Arrete les loggers
             LogTools.LogStop();
             NLog.LogManager.Shutdown();
 
             // DÉSABONNEMENT (Bonne pratique pour éviter les fuites de mémoire)
             LogTools.OnCriticalErrorLogged -= LogTools_OnCriticalErrorLogged;
-
 
             base.OnExit(e);
         }

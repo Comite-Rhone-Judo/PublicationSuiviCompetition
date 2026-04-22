@@ -79,8 +79,10 @@ namespace AppPublication.Export
         /// Génère les fichiers HTML pour une phase spécifique (Poule ou Tableau) et optionnellement les prochains combats.
         /// Retourne la liste des fichiers générés avec leur checksum pour le suivi.
         /// </summary>
-        public List<FileWithChecksum> GenereWebSitePhase(IJudoData DC, IPhase phase, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSitePhase(IPhase phase, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
+            IJudoData DC = ctx.DataContext;
+
             LogTools.Logger.Debug("Phase ({1}) '{0}'", phase?.libelle, phase?.id);
 
             ConfigurationExportSite config = ctx.Config;
@@ -166,8 +168,10 @@ namespace AppPublication.Export
         /// <param name="structRep"></param>
         /// <param name="progress"></param>
         /// <returns></returns>
-        public List<FileWithChecksum> GenereWebSiteClassement(IJudoData DC, i_vue_epreuve_interface epreuve, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteClassement(i_vue_epreuve_interface epreuve, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
+            IJudoData DC = ctx.DataContext;
+
             LogTools.Logger.Debug("Epreuve ({1}) '{0}'", epreuve?.nom, epreuve?.id);
 
             List<FileWithChecksum> output = new List<FileWithChecksum>();
@@ -213,9 +217,10 @@ namespace AppPublication.Export
         /// <param name="structRep"></param>
         /// <param name="progress"></param>
         /// <returns></returns>
-        public List<FileWithChecksum> GenereWebSiteAllTapis(IJudoData DC, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteAllTapis(ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
-            List<FileWithChecksum> output = new List<FileWithChecksum>();
+            IJudoData DC = ctx.DataContext;
+            List <FileWithChecksum> output = new List<FileWithChecksum>();
 
             // Report the start of the task
             progress?.Report(BatchProgressInfo.Init(1));
@@ -264,8 +269,9 @@ namespace AppPublication.Export
         /// <summary>
         /// Génère la page d'index du site, les scripts de mise à jour et exporte les ressources statiques.
         /// </summary>
-        public List<FileWithChecksum> GenereWebSiteIndex(IJudoData DC, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteIndex(ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
+            IJudoData DC = ctx.DataContext;
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             progress?.Report(BatchProgressInfo.Init(2));
@@ -332,8 +338,11 @@ namespace AppPublication.Export
         /// <param name="structRep"></param>
         /// <param name="progress"></param>
         /// <returns></returns>
-        public List<FileWithChecksum> GenereWebSiteMenu(IJudoData DC, ExtendedJudoData EDC, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteMenu(ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
+            IJudoData DC = ctx.DataContext;
+            IExtendedJudoData EDC = ctx.ExtendedDataContext;
+
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             if (DC == null || EDC == null || ctx == null || siteStructure == null)
@@ -396,8 +405,9 @@ namespace AppPublication.Export
         /// <param name="structRep"></param>
         /// <param name="progress"></param>
         /// <returns></returns>
-        public List<FileWithChecksum> GenereWebSiteAffectation(IJudoData DC, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteAffectation(ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
+            IJudoData DC = ctx.DataContext;
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             progress?.Report(BatchProgressInfo.Init(1));
@@ -435,8 +445,10 @@ namespace AppPublication.Export
         /// <param name="DC"></param>
         /// <returns></returns>
         /// <summary>
-        public List<FileWithChecksum> GenereWebSiteEngagements(IJudoData DC, ExtendedJudoData EDC, List<GroupeEngagements> grps, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteEngagements(List<GroupeEngagements> grps, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
+            IJudoData DC = ctx.DataContext;
+            IExtendedJudoData EDC = ctx.ExtendedDataContext;
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             if (DC != null && EDC != null && grps != null && ctx != null && siteStructure != null)
