@@ -8,6 +8,7 @@ using FranceJudo.Core.Threading;
 using FranceJudo.Metier.Noyau;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 
 namespace AppPublication.Generation
@@ -177,7 +178,7 @@ namespace AppPublication.Generation
         /// </summary>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public ResultatOperation ExecuteGeneration()
+        public async Task<ResultatOperation> ExecuteGeneration()
         {
             _etapeCourante = EtapeGenerateurSiteEnum.ExecuteGeneration;
             // La liste de sortie
@@ -219,7 +220,7 @@ namespace AppPublication.Generation
                     });
 
                     // Attend la fin de tous les batchs
-                    output = _taskBatcher.WaitAllAndGetResults();
+                    output = await _taskBatcher.WaitAllAndGetResultsAsync();
                 }
                 catch (Exception ex)
                 {
@@ -237,11 +238,11 @@ namespace AppPublication.Generation
             return new ResultatOperation(EtapeGenerateurSiteEnum.ExecuteGeneration, _checksumGenere.Count > 0, true, _checksumGenere.Count);
         }
 
-        public ResultatOperation ExecuteSynchronisation()
+        public Task<ResultatOperation> ExecuteSynchronisation()
         {
             // Rien a faire dans ce generteur
             _etapeCourante = EtapeGenerateurSiteEnum.None;
-            return new ResultatOperation(EtapeGenerateurSiteEnum.ExecuteSynchronisation, false);
+            return Task.FromResult(new ResultatOperation(EtapeGenerateurSiteEnum.ExecuteSynchronisation, false));
         }
 
         #endregion

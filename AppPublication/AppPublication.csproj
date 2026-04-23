@@ -151,7 +151,7 @@
     <Compile Include="Export\ExportSharedContextInterne.cs" />
     <Compile Include="Export\ExportSharedContext.cs" />
     <Compile Include="Export\ExportSharedContextBase.cs" />
-    <Compile Include="Export\IConfigurableGenerateur.cs" />
+    <Compile Include="Generation\IConfigurableGenerateur.cs" />
     <Compile Include="Export\IReadOnlyConfigurationExportSite.cs" />
     <Compile Include="Export\IReadOnlyConfigurationExportSiteInterne.cs" />
     <Compile Include="Generation\GenerationScheduler.cs" />

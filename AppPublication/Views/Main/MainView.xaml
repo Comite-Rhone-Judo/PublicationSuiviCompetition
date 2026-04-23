@@ -299,11 +299,11 @@
                                 <!-- Mise a jour-->
                                 <StackPanel Grid.Row="2" Grid.Column="5" Orientation="Horizontal" >
                                     <Label HorizontalAlignment="Left" Content="Mise à jour:" Style="{StaticResource LabelStyle}" />
-                                    <Label HorizontalAlignment="Left"  IsEnabled="{Binding SiteCoordinator.GestionnaireSitePublique.SiteGenere}" Style="{StaticResource LabelStyleValue}">
+                                    <Label HorizontalAlignment="Left"  IsEnabled="{Binding SiteCoordinator.GestionnaireSiteInterne.SiteGenere}" Style="{StaticResource LabelStyleValue}">
                                         <Label.Content>
                                             <MultiBinding Converter="{StaticResource StatGenerationConverter}" Mode="OneWay">
-                                                <Binding Path="SiteCoordinator.GestionnaireSitePublique.DerniereGeneration" Mode="OneWay"/>
-                                                <Binding Path="SiteCoordinator.GestionnaireSitePublique.SiteGenere" Mode="OneWay"/>
+                                                <Binding Path="SiteCoordinator.GestionnaireSiteInterne.DerniereGeneration" Mode="OneWay"/>
+                                                <Binding Path="SiteCoordinator.GestionnaireSiteInterne.SiteGenere" Mode="OneWay"/>
                                             </MultiBinding>
                                         </Label.Content>
                                     </Label>

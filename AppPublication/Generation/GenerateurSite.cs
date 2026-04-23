@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
 
@@ -201,7 +202,7 @@ namespace AppPublication.Generation
         /// </summary>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public ResultatOperation ExecuteGeneration()
+        public async Task<ResultatOperation> ExecuteGeneration()
         {
             _etapeCourante = EtapeGenerateurSiteEnum.ExecuteGeneration;
             // La liste de sortie
@@ -290,7 +291,7 @@ namespace AppPublication.Generation
                     }
 
                     // Attend la fin de tous les batchs
-                    output = _taskBatcher.WaitAllAndGetResults();
+                    output = await _taskBatcher.WaitAllAndGetResultsAsync();
                 }
                 catch (Exception ex)
                 {
@@ -313,7 +314,7 @@ namespace AppPublication.Generation
         /// Execute la synchronisation du site distant avec les fichiers generes localement.
         /// </summary>
         /// <returns></returns>
-        public ResultatOperation ExecuteSynchronisation()
+        public async Task<ResultatOperation> ExecuteSynchronisation()
         {
             _etapeCourante = EtapeGenerateurSiteEnum.ExecuteSynchronisation;
             UploadStatus uploadOut = new UploadStatus();
@@ -325,27 +326,31 @@ namespace AppPublication.Generation
                 {
                     string localRoot = _siteUrlGenerator.PhysicalStructure.RepertoireCompetition;
 
-                    // Calcul les fichiers a prendre en compte
-                    List<FileInfo> filesToSync = null;
-                    if (_checksumCache != null && _checksumCache.Count > 0)
+                    uploadOut = await Task.Run(() =>
                     {
-                        // Extrait les fichiers generes qui sont differents du cache
-                        List<FileWithChecksum> chkToSync = _checksumGenere.Except(_checksumCache, new FileWithChecksumComparer()).ToList();
-                        filesToSync = chkToSync.Select(o => o.File).ToList();
+                        // Calcul les fichiers a prendre en compte
+                        List<FileInfo> filesToSync = null;
 
-                        // For Debug only
-                        if (filesToSync.Count <= 0)
+                        if (_checksumCache != null && _checksumCache.Count > 0)
                         {
-                            LogTools.Logger.Debug("Fichiers a synchroniser: {0}", string.Join(",", filesToSync.Select(f => f.Name)));
+                            // Extrait les fichiers generes qui sont differents du cache
+                            List<FileWithChecksum> chkToSync = _checksumGenere.Except(_checksumCache, new FileWithChecksumComparer()).ToList();
+                            filesToSync = chkToSync.Select(o => o.File).ToList();
+                            // For Debug only
+                            if (filesToSync.Count <= 0)
+                            {
+                                LogTools.Logger.Debug("Fichiers a synchroniser: {0}", string.Join(",", filesToSync.Select(f => f.Name)));
+                            }
                         }
-                    }
 
-                    // Synchronise le site FTP.
-                    uploadOut = _site.UploadSite(localRoot, filesToSync);
+                        // Synchronise le site FTP. On déporte l'appel FTP synchrone sur le ThreadPool pour ne pas bloquer le Scheduler
+                        return _site.UploadSite(localRoot, filesToSync);
+                    });
+
                     if (uploadOut.IsSuccess)
                     {
                         // Enregistre les checksums en cache maintenant qu'on sait que l'etat distant est synchrone
-                        SaveChecksumFichiersGeneres();
+                        await Task.Run(() => SaveChecksumFichiersGeneres());
                     }
                 }
                 catch (Exception ex)

@@ -29,12 +29,18 @@ namespace FranceJudo.Core.Threading
 
         private readonly IProgress<TReport> _globalProgressReporter;
         private readonly Func<float, TReport> _converter;
+        private long _throttlingIntervalTicks = 1000000; // 100ms en ticks
 
         private class TaskState
         {
             public int Current { get; set; }
             public int Total { get; set; }
         }
+
+        // NOUVEAU : Variables pour le suivi Lock-Free et le Throttling
+        private long _globalTotal = 0;
+        private long _globalCurrent = 0;
+        private long _lastReportTicks = 0;
         #endregion
 
         #region PROPERTIES
@@ -64,10 +70,11 @@ namespace FranceJudo.Core.Threading
         #endregion
 
         #region CONSTRUCTEURS
-        public ParallelTaskBatcher(IProgress<TReport> globalProgressReporter, Func<float, TReport> converter, int concurrencyLevel = 0)
+        public ParallelTaskBatcher(IProgress<TReport> globalProgressReporter, Func<float, TReport> converter, int concurrencyLevel = 0, long throttlingIntervalTicks = 1000000)
         {
             _globalProgressReporter = globalProgressReporter;
             _converter = converter ?? throw new ArgumentNullException(nameof(converter));
+            _throttlingIntervalTicks = throttlingIntervalTicks;
 
             // On initialise le scheduler via la propriété pour centraliser la logique
             ConcurrencyLevel = concurrencyLevel;
@@ -88,6 +95,8 @@ namespace FranceJudo.Core.Threading
             LogTools.Logger.Debug($"Ajout d'une tache parallele au Batcher (ID: {taskId}) : {work.Method.Name}"); // Pour le debug
 
             _tasksStates.TryAdd(taskId, new TaskState { Current = 0, Total = initialEstimate});
+            // On ajoute l'estimation initiale au total global
+            Interlocked.Add(ref _globalTotal, initialEstimate);
             RecalculateGlobalProgress();
 
             var taskReporter = new ProgressWrapper(info => HandleTaskReport(taskId, info));
@@ -134,6 +143,49 @@ namespace FranceJudo.Core.Threading
             {
                 _tasks.Add(t);
             }
+        }
+
+        /// <summary>
+        /// Attend de maniere Asynchrone la fin de toutes les tâches et retourne les résultats.
+        /// Capture les exceptions globales (AggregateException) et logue les erreurs individuelles.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<TResultItem>> WaitAllAndGetResultsAsync()
+        {
+            Task[] tasksToWait;
+            lock (_lockObject)
+            {
+                if (_tasks.Count == 0) return new List<TResultItem>();
+                tasksToWait = _tasks.ToArray();
+            }
+
+            // On déclare la liste ici
+            List<TResultItem> finalResult = new List<TResultItem>();
+
+            try
+            {
+                await Task.WhenAll(tasksToWait);
+            }
+            catch (AggregateException ae)
+            {
+                foreach (var innerEx in ae.Flatten().InnerExceptions)
+                {
+                    LogTools.Logger.Error(innerEx, "Erreur dans une tâche du Batcher");
+                }
+            }
+            catch (Exception ex)
+            {
+                LogTools.Logger.Error(ex, "Erreur globale dans l'attente du Batcher");
+            }
+            finally
+            {
+                // On peuple la liste finale et on nettoie DANS le finally pour que ce soit garanti
+                finalResult = _resultsBag.Where(list => list != null).SelectMany(x => x).ToList();
+                Reset();
+            }
+
+            // Le return est bien à l'EXTÉRIEUR !
+            return finalResult;
         }
 
         /// <summary>
@@ -197,22 +249,32 @@ namespace FranceJudo.Core.Threading
 
         #region METHODES PRIVEES
 
+        /// <summary>
+        /// Gestionnaire de callback pour les rapports de progression individuels des tâches.
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <param name="info"></param>
         private void HandleTaskReport(Guid taskId, BatchProgressInfo info)
         {
-            LogTools.Logger.Debug($"Task '{taskId}' report value = {info.Value}, type = {info.Type}");
-
             if (!_tasksStates.TryGetValue(taskId, out var state)) return;
 
+            // Le lock local est conservé pour la stricte équivalence de comportement
             lock (state)
             {
                 if (info.Type == BatchProgressType.Initialization)
                 {
-                    state.Total = info.Value > 0 ? info.Value : 1;
+                    int diffTotal = info.Value > 0 ? info.Value : 1;
+                    int delta = diffTotal - state.Total;
+                    state.Total = diffTotal;
+                    Interlocked.Add(ref _globalTotal, delta); // Poussée atomique instantanée
                 }
                 else if (info.Type == BatchProgressType.Progress)
                 {
-                    state.Current = info.Value;
-                    if (state.Current > state.Total) state.Current = state.Total;
+                    int newValue = info.Value;
+                    if (newValue > state.Total) newValue = state.Total;
+                    int delta = newValue - state.Current;
+                    state.Current = newValue;
+                    Interlocked.Add(ref _globalCurrent, delta); // Poussée atomique instantanée
                 }
             }
             RecalculateGlobalProgress();
@@ -222,34 +284,39 @@ namespace FranceJudo.Core.Threading
         {
             if (_tasksStates.TryGetValue(taskId, out var state))
             {
-                lock (state) state.Current = state.Total;
+                lock (state)
+                {
+                    // On calcule le delta manquant pour fermer la tâche à 100%
+                    int delta = state.Total - state.Current;
+                    state.Current = state.Total;
+                    Interlocked.Add(ref _globalCurrent, delta);
+                }
                 RecalculateGlobalProgress();
             }
         }
 
+        /// <summary>
+        /// Calcul l'avancement global en agrégeant les états individuels de chaque tâche et reporte vers l'UI.
+        /// </summary>
         private void RecalculateGlobalProgress()
         {
             if (_globalProgressReporter == null) return;
-
             var states = _tasksStates.Values.ToList();
-            long totalGlobal = 0;
-            long currentGlobal = 0;
 
-            foreach (var s in states)
-            {
-                lock (s)
-                {
-                    totalGlobal += s.Total;
-                    currentGlobal += s.Current;
-                }
-            }
+            // THROTTLING : Max 1 update toutes les 100ms vers l'UI pour éviter le gel
+            long currentTicks = DateTime.UtcNow.Ticks;
+            if (currentTicks - Interlocked.Read(ref _lastReportTicks) < _throttlingIntervalTicks) return;
+            Interlocked.Exchange(ref _lastReportTicks, currentTicks);
 
-            if (totalGlobal == 0) totalGlobal = 1;
+            // LECTURE LOCK-FREE : Plus de boucle, plus de goulot d'étranglement
+            long total = Interlocked.Read(ref _globalTotal);
+            long current = Interlocked.Read(ref _globalCurrent);
 
-            LogTools.Logger.Debug($"Global progress for # task = '{states.Count}', total = {currentGlobal}");
+            if (total <= 0) total = 1;
+            LogTools.Logger.Debug($"Global progress for # task = '{states.Count}', total = {current}");
 
-            float globalPercent = ((float)currentGlobal) / totalGlobal;
-            if (globalPercent > 1.0) globalPercent = 1.0F;
+            float globalPercent = ((float)current) / total;
+            if (globalPercent > 1.0f) globalPercent = 1.0f;
 
             _globalProgressReporter.Report(_converter(globalPercent));
         }
@@ -260,6 +327,8 @@ namespace FranceJudo.Core.Threading
             _tasksStates.Clear();
 
             while (_resultsBag.TryTake(out _)) { }
+            Interlocked.Exchange(ref _globalTotal, 0);
+            Interlocked.Exchange(ref _globalCurrent, 0);
 
             _globalProgressReporter?.Report(_converter(0));
         }

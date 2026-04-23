@@ -115,8 +115,13 @@ namespace FranceJudo.Core.Logging
         /// </summary>
         public static void LogStartup()
         {
-            _logger.Info("-----------------------------------------------------------------------------------------------------");
-            _logger.Info("App Publication is starting - Version " + AppEnvironment.GetVersionInformation().ToString());
+            string headline = "-----------------------------------------------------------------------------------------------------";
+            string logMsg = "App Publication is starting - Version " + AppEnvironment.GetVersionInformation().ToString();
+
+            _logger.Info(headline);
+            _logger.Info(logMsg);
+            _healthLogger.Info(headline);
+            _healthLogger.Info(logMsg);
         }
 
         /// <summary>
@@ -124,8 +129,13 @@ namespace FranceJudo.Core.Logging
         /// </summary>
         public static void LogStop()
         {
-            _logger.Info("App Publication is stopped");
-            _logger.Info("-----------------------------------------------------------------------------------------------------");
+            string headline = "-----------------------------------------------------------------------------------------------------";
+            string logMsg = "App Publication is stopped";
+
+            _logger.Info(logMsg);
+            _logger.Info(headline);
+            _healthLogger.Info(logMsg);
+            _healthLogger.Info(headline);
         }
 
         /// <summary>

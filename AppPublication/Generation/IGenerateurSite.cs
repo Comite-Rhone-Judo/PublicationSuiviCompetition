@@ -1,4 +1,6 @@
-﻿namespace AppPublication.Generation
+﻿using System.Threading.Tasks;
+
+namespace AppPublication.Generation
 {
     #region CLASSE ANNEXE
 
@@ -102,11 +104,11 @@
         /// <summary>
         /// Execute la generation. Retourne un ResultatGeneration contenant les informations sur la fin de la tache
         /// </summary>
-        ResultatOperation ExecuteGeneration();
+        Task<ResultatOperation> ExecuteGeneration();
 
         /// <summary>
         ///  Termine un cycle de generation. Retourne un ResultatGeneration contenant les informations sur la fin de la tache
         /// </summary>
-        ResultatOperation ExecuteSynchronisation();
+        Task<ResultatOperation> ExecuteSynchronisation();
     }
 }
