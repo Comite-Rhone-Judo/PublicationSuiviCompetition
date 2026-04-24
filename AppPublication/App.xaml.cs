@@ -48,10 +48,6 @@ namespace AppPublication
             // 1. Démarrer le monitoring global (RAM, GC) toutes les 60 secondes
             HealthMonitor.StartSystemMonitoring(60);
 
-            // 2. Démarrer le Heartbeat sur le Thread UI (le Dispatcher de l'application)
-            // On le configure pour alerter si l'interface gèle plus de 2 secondes (2000 ms)
-            HealthMonitor.MonitorDispatcher(this.Dispatcher, "MainUI", 3000);
-
             // Démarrage du Service de Configuration (le worker commence ici)
             _configSvc = ConfigurationService.CreateInstance();
 
@@ -78,6 +74,22 @@ namespace AppPublication
             {
                 DataContext = Controles.DialogControleur.Instance
             };
+
+            RoutedEventHandler loadedHandler = null;
+            loadedHandler = (s, ev) =>
+            {
+                mainWin.Loaded -= loadedHandler; // Nettoyage de l'événement ici
+
+                this.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    // 2. Démarrer le Heartbeat sur le Thread UI (le Dispatcher de l'application)
+                    // On le configure pour alerter si l'interface gèle plus de 3 secondes
+                    HealthMonitor.MonitorDispatcher(this.Dispatcher, "MainUI", 3000);
+                }), DispatcherPriority.ContextIdle);
+            };
+
+            mainWin.Loaded += loadedHandler;
+
             mainWin.Show();
         }
 
