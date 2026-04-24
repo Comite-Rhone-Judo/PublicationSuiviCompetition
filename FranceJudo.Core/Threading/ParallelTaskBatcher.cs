@@ -124,7 +124,7 @@ namespace FranceJudo.Core.Threading
                 catch (Exception ex)
                 {
                     // 1. TRACE : On capture l'erreur immédiate sur le thread secondaire
-                    LogTools.Logger.Error($"Erreur critique dans une tache parallele du Batcher (ID: {taskId})", ex);
+                    LogTools.Logger.Error(ex, $"Erreur critique dans une tache parallele du Batcher (ID: {taskId})");
 
                     // 2. RETHROW : Important pour que la Task soit marquée comme "Faulted"
                     // et que l'exception remonte jusqu'au WaitAll.

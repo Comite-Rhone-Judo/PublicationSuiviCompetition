@@ -185,7 +185,7 @@
 				<xsl:value-of select="$comite"/>
 			</td>
 			<td>
-				<xsl:value-of select="$RefData/structures/ligue[@ID=$ligue]/nomCourt"/>
+				<xsl:value-of select="$RefData/structures/ligues/ligue[@ID=$ligue]/nomCourt"/>
 			</td>
 			<td>&nbsp;</td>
 		</tr>

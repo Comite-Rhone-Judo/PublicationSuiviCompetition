@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FranceJudo.Core.Logging;
+using NLog.Targets;
+using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
@@ -11,8 +13,8 @@ namespace FranceJudo.Core.Export
     public class XmlSource : IDisposable
     {
         private XDocument _document;
-        private string _tempFilePath;
-        private FileStream _tempStream;
+        private readonly string _tempFilePath;
+        private bool _isFlushed = false;
 
         public XDocument Document => _document;
 
@@ -22,40 +24,66 @@ namespace FranceJudo.Core.Export
 
             if (flushToDisk)
             {
+                // On prépare le chemin temporaire uniquement si on flush
+                _tempFilePath = Path.GetTempFileName();
                 FlushToDisk();
             }
         }
 
         private void FlushToDisk()
         {
-            _tempFilePath = Path.GetTempFileName();
-            // FileOptions.DeleteOnClose : le fichier est supprimé par l'OS dès que le Stream est disposé
-            _tempStream = new FileStream(_tempFilePath, FileMode.Create, FileAccess.ReadWrite,
-                FileShare.None, 4096, FileOptions.DeleteOnClose);
+            LogTools.Logger.Debug($"Flush to disk: {_tempFilePath} document {_document.Root?.Attribute("type")?.Value}");
 
-            _document.Save(_tempStream);
-            _tempStream.Flush();
+            // 1. On écrit le fichier et ON LE FERME complètement.
+            // Cela libère le verrou exclusif et empêche les collisions de pointeurs entre threads.
+            using (var fs = new FileStream(_tempFilePath, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                _document.Save(fs);
+            }
 
-            // LIBÉRATION MÉMOIRE : On détruit l'objet XDocument pour le GC
+            // 2. LIBÉRATION MÉMOIRE : On détruit l'objet XDocument pour le GC (Gen 0)
             _document = null;
+            _isFlushed = true;
         }
 
         public XmlReader CreateReader()
         {
-            if (_document != null)
-                return _document.CreateReader();
+            // Les paramètres magiques pour l'optimisation mémoire
+            var settings = new XmlReaderSettings
+            {
+                NameTable = new NameTable(),
+                IgnoreWhitespace = true,
+                CloseInput = true // CRUCIAL : Demande au XmlReader de fermer le FileStream sous-jacent à la fin
+            };
 
-            _tempStream.Position = 0;
-            return XmlReader.Create(_tempStream);
+            // Cas A : Le document est resté en RAM (Petit fichier)
+            if (!_isFlushed)
+            {
+                return XmlReader.Create(_document.CreateReader(), settings);
+            }
+
+            // Cas B : Le document a été flushé sur le disque (Gros fichier partagé)
+            // On ouvre un NOUVEAU flux indépendant pour ce thread. 
+            // FileShare.Read autorise vos autres threads à l'ouvrir en même temps.
+            var fs = new FileStream(_tempFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+
+            return XmlReader.Create(fs, settings);
         }
 
         public void Dispose()
         {
-            _tempStream?.Dispose();
-            // Sécurité supplémentaire si DeleteOnClose n'a pas suffi
-            if (_tempFilePath != null && File.Exists(_tempFilePath))
+            // Comme nous avons retiré FileOptions.DeleteOnClose (pour gérer les flux multiples),
+            // c'est à nous de supprimer physiquement le fichier quand le batcher a terminé.
+            if (_isFlushed && _tempFilePath != null && File.Exists(_tempFilePath))
             {
-                try { File.Delete(_tempFilePath); } catch { /* Ignore */ }
+                try
+                {
+                    File.Delete(_tempFilePath);
+                }
+                catch
+                {
+                    // Sécurité : ignore l'erreur si l'OS n'a pas encore totalement relâché le fichier
+                }
             }
         }
     }

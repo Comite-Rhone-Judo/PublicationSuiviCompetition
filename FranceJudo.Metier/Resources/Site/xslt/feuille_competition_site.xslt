@@ -738,7 +738,7 @@
 													<xsl:if test="$typeCompetition != 1">
 														<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club1]/nomCourt"/>
 														<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-														<xsl:value-of select="$RefData/structures/ligues/ligue[@ID = $ligue1]/nomCourt"/>
+														<xsl:value-of select="$RefData/structures/ligues/ligues[@ID = $ligue1]/nomCourt"/>
 													</xsl:if>
 													<xsl:if test="$typeCompetition = 1">
 														<xsl:value-of
@@ -924,7 +924,7 @@
 													</xsl:if>
 													<xsl:if test="$typeCompetition = 1">
 														<xsl:value-of
-														select="$RefData/structures/ligues/ligue[@ID = $ligue2]/nomCourt"/>
+														select="$RefData/structures/ligues/ligues[@ID = $ligue2]/nomCourt"/>
 													</xsl:if>
 												</xsl:when>
 
@@ -1152,7 +1152,7 @@
 													</xsl:if>
 													<xsl:if test="$typeCompetition = 1">
 														<xsl:value-of
-														select="$RefData/structures/ligues/ligue[@ID = $ligue1]/nomCourt"/>
+														select="$RefData/structures/ligues/ligues[@ID = $ligue1]/nomCourt"/>
 													</xsl:if>
 												</xsl:when>
 
@@ -1351,7 +1351,7 @@
 													<xsl:if test="$typeCompetition != 1">
 														<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club2]/nomCourt"/>
 														<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-														<xsl:value-of select="$RefData/structures/clubs/ligue[@ID = $ligue2]/nomCourt"/>
+														<xsl:value-of select="$RefData/structures/ligues/ligue[@ID = $ligue2]/nomCourt"/>
 													</xsl:if>
 													<xsl:if test="$typeCompetition = 1">
 														<xsl:value-of

@@ -546,7 +546,7 @@
 											<xsl:when test="$niveau = 3">
 												<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club1]/nomCourt"/>
 												<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-												<xsl:value-of select="$RefData/structures/comitess/comite[@ID = $comite1]/nomCourt"/>
+												<xsl:value-of select="$RefData/structures/comites/comite[@ID = $comite1]/nomCourt"/>
 											</xsl:when>
 											<!-- Niveau Ligue 4 -->
 											<xsl:when test="$niveau = 4">
@@ -735,7 +735,7 @@
 										<xsl:when test="$niveau = 4">
 											<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club2]/nomCourt"/>
 											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="$RefData/structures/liguess/ligue[@ID = $ligue2]/nomCourt"/>
+											<xsl:value-of select="$RefData/structures/ligues/ligue[@ID = $ligue2]/nomCourt"/>
 										</xsl:when>
 										<!-- Niveau National 5 -->
 										<!-- Niveau International 6 -->

@@ -1,11 +1,12 @@
 ﻿using AppPublication.ExtensionNoyau;
-using FranceJudo.Core.Logging;
 using FranceJudo.Core.Export;
+using FranceJudo.Core.Logging;
 using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Deroulement;
 using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.Noyau.Participants;
 using FranceJudo.Metier.XML;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Web.UI.WebControls;
 using System.Xml.Linq;
@@ -34,6 +35,9 @@ namespace AppPublication.Export
 
         // Document principal généré (Unifie DocCombats et DocEngagements)
         public XmlSource ExportDocument { get; protected set; }
+
+        // Dictionnaire ultra-rapide et lock-free pour suivre l'état de generation des prochains combats (peu y avoir des conflits lors des poules/tableau)
+        public ConcurrentDictionary<int, bool> ProchainsCombatsGeneres { get; } = new ConcurrentDictionary<int, bool>();
         #endregion
 
         protected ExportSharedContextBase(IJudoData DC, IExtendedJudoData EDC = null)

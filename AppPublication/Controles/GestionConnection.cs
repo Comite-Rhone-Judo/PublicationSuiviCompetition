@@ -192,7 +192,7 @@ namespace AppPublication.Controles
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error("Erreur lors du test de connexion", ex);
+                LogTools.Logger.Error(ex, "Erreur lors du test de connexion");
             }
         }
 
@@ -231,7 +231,7 @@ namespace AppPublication.Controles
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Error("Erreur lors de la fermeture du client", ex);
+                    LogTools.Logger.Error(ex, "Erreur lors de la fermeture du client");
                 }
 
                 // Notify subscribers of disconnection

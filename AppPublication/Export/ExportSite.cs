@@ -140,24 +140,37 @@ namespace AppPublication.Export
                 // --- 2. PROCHAINS COMBATS ---
                 if (config.PublierProchainsCombats)
                 {
-                    ExportEnum exportType = ExportEnum.Site_FeuilleCombat;
-                    string savePath = GetFileSavePath(targetDirectory, exportType);
-
-                    var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, ("istapis", "epreuve"));
-
-                    var (outDoc, isLargeDoc) = ExportXML.CreateDocumentFeuilleCombat(ctx, phase, null);
-                    ctx.EnrichWithFullContext(outDoc);
-                    LogTools.DebugLogData(outDoc);
-
-                    using (var source = new XmlSource(outDoc, isLargeDoc))
+                    // On enregistre le fait qu'on va generer les prochains combats pour cette épreuve dans le contexte, afin d'éviter
+                    // les doublons si plusieurs phases de la même épreuve sont traitées (poule/tableau)
+                    if (ctx.ProchainsCombatsGeneres.TryAdd(vueEpreuve.id, true))
                     {
-                        SiteExportEngine.GenererHtmlSite(source, exportType, savePath, xsltArgs);
+                        LogTools.Logger.Debug("ProchainsCombats generes pour l'epreuve {0} (ID: {1}) - Phase ID:{2} {3}", vueEpreuve?.nom, vueEpreuve?.id, phase?.libelle, phase?.id);
+
+                        ExportEnum exportType = ExportEnum.Site_FeuilleCombat;
+                        string savePath = GetFileSavePath(targetDirectory, exportType);
+
+                        var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, ("istapis", "epreuve"));
+
+                        var (outDoc, isLargeDoc) = ExportXML.CreateDocumentFeuilleCombat(ctx, phase, null);
+                        ctx.EnrichWithFullContext(outDoc);
+                        LogTools.DebugLogData(outDoc);
+
+                        using (var source = new XmlSource(outDoc, isLargeDoc))
+                        {
+                            SiteExportEngine.GenererHtmlSite(source, exportType, savePath, xsltArgs);
+                        }
+
+                        output.Add(new FileWithChecksum($"{savePath}.html"));
+                        LogTools.Logger.Debug("ProchainsCombats = 1");
+
+                        progress?.Report(BatchProgressInfo.Step(2));
                     }
-
-                    output.Add(new FileWithChecksum($"{savePath}.html"));
-                    LogTools.Logger.Debug("ProchainsCombats = 1");
-
-                    progress?.Report(BatchProgressInfo.Step(2));
+                    else {
+                        // Un autre thread a déjà généré les prochains combats pour cette épreuve !
+                        // On signale juste l'avancement pour ne pas fausser la barre de progression
+                        progress?.Report(BatchProgressInfo.Step(2));
+                        LogTools.Logger.Debug("ProchainsCombats deja generes pour l'epreuve {0} (ID: {1}) - Phase ID:{2} {3} sauf de la generation", vueEpreuve?.nom, vueEpreuve?.id, phase?.libelle, phase?.id);
+                    }
                 }
             }
 

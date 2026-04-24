@@ -21,11 +21,11 @@ namespace AppPublication.Export
         /// <summary>
         /// Seuil de sécurité pour le flush sur disque des engagements (Judokas + Combats).
         /// </summary>
-        private const int kDocumentEngagementsFlushThreshold = 1200;
+        private const int kDocumentEngagementsFlushThreshold = 500;
         
         /// Seuil de sécurité pour le flush sur disque d'une épreuve unique.
         /// </summary>
-        private const int kDocumentEpreuveFlushThreshold = 800;
+        private const int kDocumentEpreuveFlushThreshold = 500;
 
         /// <summary>
         /// Seuil de sécurité pour le flush sur disque d'une phase unique.
@@ -240,6 +240,7 @@ namespace AppPublication.Export
             return (
                 new XDocument(
                     new XElement(ConstantXML.DocRoot,
+                        new XAttribute(ConstantXML.DocType, "DocumentIndex"),
                         new XElement(ConstantXML.Competitions,
                             // On stream directement depuis la base vers les éléments XML
                             DC.Organisation.Competitions
@@ -269,6 +270,7 @@ namespace AppPublication.Export
             // 2. Construction fonctionnelle globale de l'arbre
             return (new XDocument(
                 new XElement(ConstantXML.DocRoot,
+                    new XAttribute(ConstantXML.DocType, "DocumentMenu"),
                     new XElement(ConstantXML.Competitions,
 
                        // Boucle principale transformée en projection LINQ
@@ -363,6 +365,7 @@ namespace AppPublication.Export
 
             return (new XDocument(
                 new XElement(ConstantXML.DocRoot,
+                    new XAttribute(ConstantXML.DocType, "DocumentEngagements"),
                     new XElement(ConstantXML.Competitions,
 
                         // 1. On filtre DÈS LE DÉPART (on ne génère le XML que pour les compétitions valides)
@@ -450,6 +453,7 @@ namespace AppPublication.Export
             // 2. Construction fonctionnelle globale
             return (new XDocument(
                 new XElement(ConstantXML.DocRoot,
+                    new XAttribute(ConstantXML.DocType, "DocumentAffectationTapis"),
                     new XElement(ConstantXML.Competitions,
                         DC.Organisation.Competitions
                             .AsEnumerable()
@@ -535,7 +539,7 @@ namespace AppPublication.Export
             XElement xcompetition = competition.ToXml();
             xcompetition.Add(ExportEpreuve(DC, epreuve));
 
-            return (new XDocument(new XElement(ConstantXML.DocRoot, xcompetition)), isLarge);
+            return (new XDocument(new XElement(ConstantXML.DocRoot, new XAttribute(ConstantXML.DocType, "DocumentEpreuve"), xcompetition)), isLarge);
         }
 
         /// <summary>
@@ -562,7 +566,7 @@ namespace AppPublication.Export
             xepreuve.Add(ExportPhase(DC, phase)); // On délègue au sous-boss optimisé
             xcompetition.Add(xepreuve);
 
-            return (new XDocument(new XElement(ConstantXML.DocRoot, xcompetition)), isLarge);
+            return (new XDocument(new XElement(ConstantXML.DocRoot, new XAttribute(ConstantXML.DocType, "DocumentPhase"), xcompetition)), isLarge);
         }
 
         /// <summary>
@@ -767,7 +771,7 @@ namespace AppPublication.Export
             XElement xRoot = competition.ToXml();
             xRoot.Add(xTapisElements);
 
-            return (new XDocument(new XElement(ConstantXML.DocRoot, xRoot)), isLarge);
+            return (new XDocument(new XElement(ConstantXML.DocRoot, new XAttribute(ConstantXML.DocType, "DocumentFeuilleCombat"), xRoot)), isLarge);
         }
         #endregion
 

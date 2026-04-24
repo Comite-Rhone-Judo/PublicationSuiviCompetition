@@ -612,11 +612,11 @@
 					<!-- Individuel = {Nom Club} - {nom Ligue} -->
 					<xsl:value-of select="$RefData/structures/clubs/club[@ID = $clubId]/nomCourt"/>
 					<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-					<xsl:value-of select="$RefData/structures/ligue[@ID = $ligue]/nomCourt"/>
+					<xsl:value-of select="$RefData/structures/ligues/ligue[@ID = $ligue]/nomCourt"/>
 				</xsl:if>
 				<xsl:if test="$typeCompetition = '1'">
 					<!-- Equipe = {Nom Ligue} -->
-					<xsl:value-of select="$RefData/structures/ligue[@ID = $ligue]/nomCourt"/>
+					<xsl:value-of select="$RefData/structures/ligues/ligue[@ID = $ligue]/nomCourt"/>
 				</xsl:if>
 			</xsl:when>
 
