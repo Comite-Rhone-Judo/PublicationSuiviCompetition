@@ -23,10 +23,10 @@ namespace AppPublication.Export
             var context = new ExportSharedContextInterne(DC, config);
 
             // Génération du document spécifique aux combats (feuilles de combat)
-            var docCombats = ExportXML.CreateDocumentFeuilleCombat(context, null, null);
+            var (outDoc, isLargeDoc) = ExportXML.CreateDocumentFeuilleCombat(context, null, null);
 
             // Lancement du pipeline centralisé dans la classe mère
-            context.ExecuteExportPipeline(config.ToXml(), docCombats);
+            context.ExecuteExportPipeline(config.ToXml(), outDoc, isLargeDoc);
 
             return context;
         }

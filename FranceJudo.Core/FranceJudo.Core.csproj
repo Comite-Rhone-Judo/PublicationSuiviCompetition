@@ -72,6 +72,7 @@
     <Compile Include="Exceptions\XmlFormatException.cs" />
     <Compile Include="Export\ExportHTML.cs" />
     <Compile Include="Export\ThreadSafeConfigManager.cs" />
+    <Compile Include="Export\XmlSource.cs" />
     <Compile Include="Foundation\NotificationBase.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IO\FileSystemHelper.cs" />

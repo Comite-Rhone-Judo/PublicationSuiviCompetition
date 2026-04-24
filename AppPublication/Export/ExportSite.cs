@@ -2,6 +2,7 @@
 using AppPublication.ExtensionNoyau.Engagement;
 using AppPublication.Publication;
 using AppPublication.Tools.Enum;
+using FranceJudo.Core.Export;
 using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
 using FranceJudo.Core.Threading;
@@ -54,7 +55,7 @@ namespace AppPublication.Export
         /// <param name="siteStructure"></param>
         /// <param name="docMenu"></param>
         /// <returns></returns>
-        private FileWithChecksum GenerateMenuFile(ExportEnum exportType, string targetDirectory, SiteUrlGenerator siteStructure, XDocument docMenu)
+        private FileWithChecksum GenerateMenuFile(ExportEnum exportType, string targetDirectory, SiteUrlGenerator siteStructure, XmlSource docMenu)
         {
             // Utilisation de notre utilitaire universel
             string savePath = GetFileSavePath(targetDirectory, exportType);
@@ -122,12 +123,14 @@ namespace AppPublication.Export
                     // Utilisation de la fabrique (AddStructureArgument est inclus dedans)
                     var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, phaseParams.ToArray());
 
-                    XDocument xmlResultat = ExportXML.CreateDocumentPhase(ctx, vueEpreuve, phase);
-                    ctx.EnrichWithFullContext(xmlResultat);
-                    LogTools.DebugLogData(xmlResultat);
+                    var (outDoc, isLargeDoc) = ExportXML.CreateDocumentPhase(ctx, vueEpreuve, phase);
+                    ctx.EnrichWithFullContext(outDoc);
+                    LogTools.DebugLogData(outDoc);
 
-                    SiteExportEngine.GenererHtmlSite(xmlResultat, exportType, savePath, xsltArgs);
-
+                    using (var source = new XmlSource(outDoc, isLargeDoc))
+                    {
+                        SiteExportEngine.GenererHtmlSite(source, exportType, savePath, xsltArgs);
+                    }
                     output.Add(new FileWithChecksum($"{savePath}.html"));
                     LogTools.Logger.Debug("{0} = 1", isPoule ? "Poule" : "Tableau");
 
@@ -142,11 +145,14 @@ namespace AppPublication.Export
 
                     var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, ("istapis", "epreuve"));
 
-                    XDocument xmlFeuilleCombat = ExportXML.CreateDocumentFeuilleCombat(ctx, phase, null);
-                    ctx.EnrichWithFullContext(xmlFeuilleCombat);
-                    LogTools.DebugLogData(xmlFeuilleCombat);
+                    var (outDoc, isLargeDoc) = ExportXML.CreateDocumentFeuilleCombat(ctx, phase, null);
+                    ctx.EnrichWithFullContext(outDoc);
+                    LogTools.DebugLogData(outDoc);
 
-                    SiteExportEngine.GenererHtmlSite(xmlFeuilleCombat, exportType, savePath, xsltArgs);
+                    using (var source = new XmlSource(outDoc, isLargeDoc))
+                    {
+                        SiteExportEngine.GenererHtmlSite(source, exportType, savePath, xsltArgs);
+                    }
 
                     output.Add(new FileWithChecksum($"{savePath}.html"));
                     LogTools.Logger.Debug("ProchainsCombats = 1");
@@ -190,15 +196,18 @@ namespace AppPublication.Export
                 var xsltArgs = CreateAllXsltArgs(siteStructure, savePath);
 
                 // 1. Génération du document de base
-                XDocument xmlClassement = ExportXML.CreateDocumentEpreuve(ctx, epreuve);
+                var (outDoc, isLargeDoc) = ExportXML.CreateDocumentEpreuve(ctx, epreuve);
 
                 // 2. Enrichissement via le contexte (Porte la Config, les structures et les infos de publication)
-                ctx.EnrichWithFullContext(xmlClassement);
+                ctx.EnrichWithFullContext(outDoc);
 
-                LogTools.DebugLogData(xmlClassement);
+                LogTools.DebugLogData(outDoc);
 
                 // 3. Transformation HTML
-                SiteExportEngine.GenererHtmlSite(xmlClassement, exportType, savePath, xsltArgs);
+                using (var source = new XmlSource(outDoc, isLargeDoc))
+                {
+                    SiteExportEngine.GenererHtmlSite(source, exportType, savePath, xsltArgs);
+                }
 
                 output.Add(new FileWithChecksum($"{savePath}.html"));
             }
@@ -244,15 +253,18 @@ namespace AppPublication.Export
 
                 // 1. Génération du document (Utilise notre version optimisée de CreateDocumentFeuilleCombat)
                 // Les paramètres null, null indiquent qu'on veut tous les tapis et toutes les phases.
-                XDocument xmlAllTapis = ExportXML.CreateDocumentFeuilleCombat(ctx, null, null);
+                var (outDoc, isLargeDoc) = ExportXML.CreateDocumentFeuilleCombat(ctx, null, null);
 
                 // 2. Enrichissement via le contexte (PublicationInfo + Structures)
-                ctx.EnrichWithFullContext(xmlAllTapis);
+                ctx.EnrichWithFullContext(outDoc);
 
-                LogTools.DebugLogData(xmlAllTapis);
+                LogTools.DebugLogData(outDoc);
 
                 // 3. Transformation HTML
-                SiteExportEngine.GenererHtmlSite(xmlAllTapis, exportType, savePath, xsltArgs);
+                using (var source = new XmlSource(outDoc, isLargeDoc))
+                {
+                    SiteExportEngine.GenererHtmlSite(source, exportType, savePath, xsltArgs);
+                }
 
                 output.Add(new FileWithChecksum($"{savePath}.html"));
             }
@@ -279,13 +291,13 @@ namespace AppPublication.Export
             if (DC != null && ctx != null && siteStructure != null)
             {
                 // 1. Génération du document d'index de base
-                XDocument docIndex = ExportXML.CreateDocumentIndex(ctx);
+                var (outDoc, isLargeDoc) = ExportXML.CreateDocumentIndex(ctx);
 
                 // 2. Ajout de la CONFIGURATION uniquement (pas de structures de clubs/ligues)
                 // On suppose que cette méthode dans ctx injecte PublicationInfo et SiteConfiguration
-                ctx.EnrichWithConfiguration(docIndex);
+                ctx.EnrichWithConfiguration(outDoc);
 
-                LogTools.DebugLogData(docIndex);
+                LogTools.DebugLogData(outDoc);
 
                 // --- 3. GÉNÉRATION DE L'INDEX HTML ---
                 ExportEnum indexType = ExportEnum.Site_Index;
@@ -294,32 +306,36 @@ namespace AppPublication.Export
 
                 var indexArgs = CreateAllXsltArgs(siteStructure, indexSavePath);
 
-                SiteExportEngine.GenererHtmlSite(docIndex, indexType, indexSavePath, indexArgs);
-                output.Add(new FileWithChecksum($"{indexSavePath}.html"));
+                using (var source = new XmlSource(outDoc, isLargeDoc))
+                {
+                    SiteExportEngine.GenererHtmlSite(source, indexType, indexSavePath, indexArgs);
 
-                progress?.Report(BatchProgressInfo.Step(1));
+                    output.Add(new FileWithChecksum($"{indexSavePath}.html"));
 
-                // --- 4. RESSOURCES STATIQUES (CSS, JS, IMG) ---
-                // Export direct des styles et scripts
-                var staticFiles = SiteExportEngine.ExportEmbeddedStyleAndJS(true, siteStructure);
-                output.AddRange(staticFiles.Select(path => new FileWithChecksum(path)));
-                LogTools.Logger.Debug("GenereWebSiteIndex - Style/JS: {0} fichiers", staticFiles.Count);
+                    progress?.Report(BatchProgressInfo.Step(1));
 
-                // Export des images
-                var imageFiles = SiteExportEngine.ExportEmbeddedImg(true, true, siteStructure);
-                output.AddRange(imageFiles.Select(path => new FileWithChecksum(path)));
-                LogTools.Logger.Debug("GenereWebSiteIndex - Images: {0} fichiers", imageFiles.Count);
+                    // --- 4. RESSOURCES STATIQUES (CSS, JS, IMG) ---
+                    // Export direct des styles et scripts
+                    var staticFiles = SiteExportEngine.ExportEmbeddedStyleAndJS(true, siteStructure);
+                    output.AddRange(staticFiles.Select(path => new FileWithChecksum(path)));
+                    LogTools.Logger.Debug("GenereWebSiteIndex - Style/JS: {0} fichiers", staticFiles.Count);
 
-                // --- 5. GÉNÉRATION DU SCRIPT DE MISE À JOUR (FOOTER) ---
-                ExportEnum footerType = ExportEnum.Site_FooterScript;
-                string footerFilename = SiteExportEngine.GetFileName(footerType).Replace("/", "_");
-                string footerSavePath = Path.Combine(siteStructure.PhysicalStructure.RepertoireJs(), footerFilename);
+                    // Export des images
+                    var imageFiles = SiteExportEngine.ExportEmbeddedImg(true, true, siteStructure);
+                    output.AddRange(imageFiles.Select(path => new FileWithChecksum(path)));
+                    LogTools.Logger.Debug("GenereWebSiteIndex - Images: {0} fichiers", imageFiles.Count);
 
-                var footerArgs = CreateAllXsltArgs(siteStructure, footerSavePath);
+                    // --- 5. GÉNÉRATION DU SCRIPT DE MISE À JOUR (FOOTER) ---
+                    ExportEnum footerType = ExportEnum.Site_FooterScript;
+                    string footerFilename = SiteExportEngine.GetFileName(footerType).Replace("/", "_");
+                    string footerSavePath = Path.Combine(siteStructure.PhysicalStructure.RepertoireJs(), footerFilename);
 
-                // Utilisation du même docIndex pour générer le JS via XSLT
-                SiteExportEngine.GenererHtmlSite(docIndex, footerType, footerSavePath, footerArgs, "js");
-                output.Add(new FileWithChecksum($"{footerSavePath}.js"));
+                    var footerArgs = CreateAllXsltArgs(siteStructure, footerSavePath);
+
+                    // Utilisation du même docIndex pour générer le JS via XSLT
+                    SiteExportEngine.GenererHtmlSite(source, footerType, footerSavePath, footerArgs, "js");
+                    output.Add(new FileWithChecksum($"{footerSavePath}.js"));
+                }
 
                 LogTools.Logger.Debug("GenereWebSiteIndex Terminé - Total: {0} ressources", output.Count);
                 progress?.Report(BatchProgressInfo.Step(2));
@@ -360,35 +376,36 @@ namespace AppPublication.Export
             string targetDirectory = siteStructure.PhysicalStructure.RepertoireCommon();
 
             // 1. Création du document XML de base
-            XDocument docMenu = ExportXML.CreateDocumentMenu(ctx, siteStructure);
-
+            var (outDoc, isLargeDoc) = ExportXML.CreateDocumentMenu(ctx, siteStructure);
+            
+            
             // 2. Ajout de la configuration contextuelle (infos de publication, etc.)
-            ctx.EnrichWithConfiguration(docMenu);
-            LogTools.DebugLogData(docMenu);
+            ctx.EnrichWithConfiguration(outDoc);
 
-            output.Add(GenerateMenuFile(ExportEnum.Site_MenuClassement, targetDirectory, siteStructure, docMenu));
-            progress?.Report(BatchProgressInfo.Step(++currentStep));
+            LogTools.DebugLogData(outDoc);
 
-            // 3. Génération des menus de base (toujours présents)
-            output.Add(GenerateMenuFile(ExportEnum.Site_MenuAvancement, targetDirectory, siteStructure, docMenu));
-            progress?.Report(BatchProgressInfo.Step(++currentStep));
-
-            // 4. Génération du menu des prochains combats
-            if (config.PublierProchainsCombats)
+            using (var source = new XmlSource(outDoc, isLargeDoc))
             {
-                output.Add(GenerateMenuFile(ExportEnum.Site_MenuProchainCombats, targetDirectory, siteStructure, docMenu));
+                output.Add(GenerateMenuFile(ExportEnum.Site_MenuClassement, targetDirectory, siteStructure, source));
                 progress?.Report(BatchProgressInfo.Step(++currentStep));
-            }
 
-            // 5. Génération du menu des engagements
-            if (config.PublierEngagements)
-            {
-                // Enrichissement lourd (structures géographiques, clubs) uniquement pour ce dernier fichier
-                // afin de ne pas alourdir inutilement le XML des menus précédents
-                ctx.EnrichWithFullContext(docMenu);
-
-                output.Add(GenerateMenuFile(ExportEnum.Site_MenuEngagements, targetDirectory, siteStructure, docMenu));
+                // 3. Génération des menus de base (toujours présents)
+                output.Add(GenerateMenuFile(ExportEnum.Site_MenuAvancement, targetDirectory, siteStructure, source));
                 progress?.Report(BatchProgressInfo.Step(++currentStep));
+
+                // 4. Génération du menu des prochains combats
+                if (config.PublierProchainsCombats)
+                {
+                    output.Add(GenerateMenuFile(ExportEnum.Site_MenuProchainCombats, targetDirectory, siteStructure, source));
+                    progress?.Report(BatchProgressInfo.Step(++currentStep));
+                }
+
+                // 5. Génération du menu des engagements
+                if (config.PublierEngagements)
+                {
+                    output.Add(GenerateMenuFile(ExportEnum.Site_MenuEngagements, targetDirectory, siteStructure, source));
+                    progress?.Report(BatchProgressInfo.Step(++currentStep));
+                }
             }
 
             LogTools.Logger.Debug("Menu = {0}", output.Count);
@@ -423,12 +440,15 @@ namespace AppPublication.Export
                 var xsltArgs = CreateAllXsltArgs(siteStructure, savePath);
 
                 // Génération du document et enrichissement via le contexte
-                XDocument docAffectation = ExportXML.CreateDocumentAffectationTapis(ctx);
-                ctx.EnrichWithConfiguration(docAffectation);
+                var (outDoc, isLargeDoc) = ExportXML.CreateDocumentAffectationTapis(ctx);
+                ctx.EnrichWithConfiguration(outDoc);
 
-                LogTools.DebugLogData(docAffectation);
+                LogTools.DebugLogData(outDoc);
 
-                SiteExportEngine.GenererHtmlSite(docAffectation, exportType, savePath, xsltArgs);
+                using (var source = new XmlSource(outDoc, isLargeDoc))
+                {
+                    SiteExportEngine.GenererHtmlSite(source, exportType, savePath, xsltArgs);
+                }
 
                 output.Add(new FileWithChecksum($"{savePath}.html"));
             }
@@ -460,7 +480,7 @@ namespace AppPublication.Export
 
                 // On récupère le document des engagements depuis notre contexte unifié 
                 // au lieu d'utiliser une vieille variable globale de classe (_docEngagements)
-                XDocument docEngagements = ctx.ExportDocument;
+                var docEngagements = ctx.ExportDocument;
 
                 int currentStep = 0;
 

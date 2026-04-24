@@ -202,7 +202,7 @@ namespace FranceJudo.Metier.Export
         /// <summary>
         /// Point d'entrée métier pour générer le site HTML
         /// </summary>
-        public static void GenererHtmlSite(XDocument xml, ExportEnum export_type, string fileSave, XsltArgumentList argsList, string fileExtension = "html", bool useCache = true)
+        public static void GenererHtmlSite(XmlSource xml, ExportEnum export_type, string fileSave, XsltArgumentList argsList, string fileExtension = "html", bool useCache = true)
         {
             // 1. Logique métier : quel est le template XSLT à utiliser pour cet export ?
             string xslt = GetXsltResourcePath(export_type);

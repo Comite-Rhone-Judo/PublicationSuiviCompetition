@@ -26,10 +26,10 @@ namespace AppPublication.Export
             var context = new ExportSharedContext(DC, EDC, config);
 
             // Génération du document spécifique aux engagements
-            var docEngagements = ExportXML.CreateDocumentEngagements(context);
+            var (outDoc, isLargeDoc) = ExportXML.CreateDocumentEngagements(context);
 
             // Lancement du pipeline centralisé dans la classe mère
-            context.ExecuteExportPipeline(config.ToXml(), docEngagements);
+            context.ExecuteExportPipeline(config.ToXml(), outDoc, isLargeDoc);
 
             return context;
         }

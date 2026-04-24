@@ -19,12 +19,12 @@ namespace FranceJudo.Core.Export
         /// <summary>
         /// Realise un export HTML
         /// </summary>
-        /// <param name="xml"></param>
+        /// <param name="source"></param>
         /// <param name="fileSave"></param>
         /// <param name="argsList"></param>
         /// <param name="xslt_st"></param>
         /// <param name="fileExtension"></param>
-        public static void ToHTML(XDocument xml, string fileSave, XsltArgumentList argsList, string xslt_st, AssemblyResourceDictionary resDict, string fileExtension = "html", bool useCache = true)
+        public static void ToHTML(XmlSource source, string fileSave, XsltArgumentList argsList, string xslt_st, AssemblyResourceDictionary resDict, string fileExtension = "html", bool useCache = true)
         {
             XslCompiledTransform xslt = null;
 
@@ -48,7 +48,7 @@ namespace FranceJudo.Core.Export
                 using (FileStream fs = new FileStream(fileSaveWithExt, FileMode.Create))
                 {
                     // Utilisation d'un XmlReader pour lire le XDocument à la volée sans allocation mémoire
-                    using (XmlReader reader = xml.CreateReader())
+                    using (XmlReader reader = source.CreateReader())
                     {
                         // Execute the transformation.
                         xslt.Transform(reader, argsList, fs);

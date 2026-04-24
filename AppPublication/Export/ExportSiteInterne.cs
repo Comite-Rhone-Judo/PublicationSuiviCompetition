@@ -1,5 +1,6 @@
 ﻿using AppPublication.Models.EcransAppel;
 using AppPublication.Publication;
+using FranceJudo.Core.Export;
 using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
 using FranceJudo.Core.Threading;
@@ -39,13 +40,13 @@ namespace AppPublication.Export
             if (DC != null && ctx != null && siteStructure != null)
             {
                 // 1. Génération du document d'index de base
-                XDocument docIndex = ExportXML.CreateDocumentIndex(ctx);
+                var (outDoc, isLargeDoc) = ExportXML.CreateDocumentIndex(ctx);
 
                 // 2. Ajout de la CONFIGURATION uniquement (pas de structures de clubs/ligues)
                 // On suppose que cette méthode dans ctx injecte PublicationInfo et SiteConfiguration
-                ctx.EnrichWithConfiguration(docIndex);
+                ctx.EnrichWithConfiguration(outDoc);
 
-                LogTools.DebugLogData(docIndex);
+                LogTools.DebugLogData(outDoc);
 
                 // --- 4. RESSOURCES STATIQUES (CSS, JS, IMG) ---
                 // Export direct des styles et scripts
@@ -66,7 +67,10 @@ namespace AppPublication.Export
                 var footerArgs = CreateAllXsltArgs(siteStructure, footerSavePath);
 
                 // Utilisation du même docIndex pour générer le JS via XSLT
-                SiteExportEngine.GenererHtmlSite(docIndex, footerType, footerSavePath, footerArgs, "js");
+                using (var source = new XmlSource(outDoc, isLargeDoc))
+                {
+                    SiteExportEngine.GenererHtmlSite(source, footerType, footerSavePath, footerArgs, "js");
+                }
                 output.Add(new FileWithChecksum($"{footerSavePath}.js"));
 
                 LogTools.Logger.Debug("GenereWebSiteIndex Terminé - Total: {0} ressources", output.Count);

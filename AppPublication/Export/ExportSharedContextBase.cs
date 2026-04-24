@@ -1,12 +1,13 @@
 ﻿using AppPublication.ExtensionNoyau;
 using FranceJudo.Core.Logging;
+using FranceJudo.Core.Export;
 using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Deroulement;
 using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.Noyau.Participants;
 using FranceJudo.Metier.XML;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using System.Linq;
+using System.Web.UI.WebControls;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
@@ -32,7 +33,7 @@ namespace AppPublication.Export
         public XElement SiteConfiguration { get; protected set; }
 
         // Document principal généré (Unifie DocCombats et DocEngagements)
-        public XDocument ExportDocument { get; protected set; }
+        public XmlSource ExportDocument { get; protected set; }
         #endregion
 
         protected ExportSharedContextBase(IJudoData DC, IExtendedJudoData EDC = null)
@@ -80,23 +81,30 @@ namespace AppPublication.Export
             }
         }
 
+        public void Dispose()
+        {
+            // Nettoie le XmlSource (et donc le fichier temporaire si présent)
+            ExportDocument?.Dispose();
+        }
         #endregion
 
         #region METHODES PRIVEES
         /// <summary>
         /// Workflow centralisé garantissant l'ordre d'initialisation pour toutes les classes filles.
         /// </summary>
-        protected void ExecuteExportPipeline(XElement configXml, XDocument generatedDoc)
+        protected void ExecuteExportPipeline(XElement configXml, XDocument generatedDoc, bool isLargeDoc)
         {
             // 2. Assignation des spécificités transmises par l'enfant
             SiteConfiguration = configXml;
-            ExportDocument = generatedDoc;
-
+            
             // 3. Enrichissement automatique du document généré
-            EnrichWithFullContext(ExportDocument);
+            EnrichWithFullContext(generatedDoc);
 
             // 4. Log
-            LogTools.DebugLogData(ExportDocument);
+            LogTools.DebugLogData(generatedDoc);
+
+            // on le fait en dernier car sur un gros document, il peut etre flush sur disque
+            ExportDocument = new XmlSource(generatedDoc, isLargeDoc);
         }
 
         /// <summary>
