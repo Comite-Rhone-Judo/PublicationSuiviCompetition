@@ -1,14 +1,24 @@
-﻿using FranceJudo.Core.Logging;
+﻿using AppPublication.ExtensionNoyau;
+using FranceJudo.Core.Logging;
 using FranceJudo.Metier.Noyau;
+using FranceJudo.Metier.Noyau.Deroulement;
+using FranceJudo.Metier.Noyau.Organisation;
+using FranceJudo.Metier.Noyau.Participants;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace AppPublication.Export
 {
-    public abstract class ExportSharedContextBase
+    public abstract class ExportSharedContextBase : IReadOnlyExportContext
     {
         #region PROPERTIES
-
+        // Porte la source de donnees (snapshot contextuel)
         public IJudoData DataContext { get; private set; }
+
+        public IExtendedJudoData ExtendedDataContext { get; private set; }
+
+        // Caches pré-construits pour éviter les accès redondants et coûteux lors de l'enrichissement des documents
+        public CombatExportCaches Caches { get; private set; }
 
         // Référentiels de base
         public XElement Clubs { get; private set; }
@@ -25,12 +35,39 @@ namespace AppPublication.Export
         public XDocument ExportDocument { get; protected set; }
         #endregion
 
-        protected ExportSharedContextBase(IJudoData DC)
+        protected ExportSharedContextBase(IJudoData DC, IExtendedJudoData EDC = null)
         {
             DataContext = DC;
+            ExtendedDataContext = EDC;
+            // On initialise le cache dès la construction de l'objet de base, il pourront etre utilise pour creer les documents de base (combats et engagements) avant l'enrichissement final
+            InitCaches();
         }
 
         #region METHODES PUBLIQUES D'ENRICHISSEMENT (API EXTERNE)
+
+        // À appeler une seule fois au démarrage de la génération
+        public void InitCaches()
+        {
+            // Si DataContext est null, Caches vaudra null. S'il ne l'est pas, l'initialisation O(1) s'exécute.
+            if (DataContext == null) return;
+
+            this.Caches = new CombatExportCaches
+            {
+                PhasesDict = DataContext.Deroulement?.Phases?.GroupBy(p => p.id).ToDictionary(g => g.Key, g => g.First()),
+                EpreuvesDict = DataContext.Organisation?.VueEpreuves?.GroupBy(e => e.id).ToDictionary(g => g.Key, g => g.First()),
+                EpreuvesEqDict = DataContext.Organisation?.VueEpreuveEquipes?.GroupBy(e => e.id).ToDictionary(g => g.Key, g => g.First()),
+                JudokasDict = DataContext.Participants?.Judokas?.GroupBy(j => j.id).ToDictionary(g => g.Key, g => g.First()),
+                EquipesDict = DataContext.Participants?.Equipes?.GroupBy(e => e.id).ToDictionary(g => g.Key, g => g.First()),
+
+                JudokasByEquipe = DataContext.Participants?.Judokas?.Cast<IJudoka>().ToLookup(j => j.equipe),
+                RencontresByCombat = DataContext.Deroulement?.Rencontres?.Where(r => r.combat.HasValue).ToLookup(r => r.combat.Value),
+                PoulesByPhase = DataContext.Deroulement?.Poules?.Cast<IPoule>().ToLookup(p => p.phase),
+                ParticipantsByPhase = DataContext.Deroulement?.Participants?.Cast<IParticipant>().ToLookup(p => p.phase),
+                GroupesByTapis = DataContext.Deroulement?.VueGroupes?.Cast<IVueGroupe>().ToLookup(g => g.groupe_tapis),
+                EpreuvesByEquipe = DataContext.Organisation?.VueEpreuves?.Cast<IVueEpreuve>().ToLookup(e => e.id_epreuve_equipe),
+                InscriptionsByEpreuve = DataContext.Participants?.EpreuveJudokas?.Cast<IEpreuveJudoka>().ToLookup(ej => ej.epreuve)
+            };
+        }
 
         /// <summary>
         /// Enrichit le document avec toutes les informations (Structure de base + Configuration du site)
@@ -78,15 +115,15 @@ namespace AppPublication.Export
         /// <summary>
         /// Workflow centralisé garantissant l'ordre d'initialisation pour toutes les classes filles.
         /// </summary>
-        protected void ExecuteExportPipeline(IJudoData DC, XElement configXml, XDocument generatedDoc)
+        protected void ExecuteExportPipeline(XElement configXml, XDocument generatedDoc)
         {
             // 1. Chargement des référentiels
-            Clubs = ExportXML.GetClubs(DC);
-            Comites = ExportXML.GetComites(DC);
-            Secteurs = ExportXML.GetSecteurs(DC);
-            Ligues = ExportXML.GetLigues(DC);
-            Pays = ExportXML.GetPays(DC);
-            Ceintures = ExportXML.GetCeintures(DC);
+            Clubs = ExportXML.GetClubs(this);
+            Comites = ExportXML.GetComites(this);
+            Secteurs = ExportXML.GetSecteurs(this);
+            Ligues = ExportXML.GetLigues(this);
+            Pays = ExportXML.GetPays(this);
+            Ceintures = ExportXML.GetCeintures(this);
 
             // 2. Assignation des spécificités transmises par l'enfant
             SiteConfiguration = configXml;

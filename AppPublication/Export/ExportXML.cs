@@ -20,10 +20,11 @@ namespace AppPublication.Export
         /// <summary>
         /// Retourne la liste des comites en XML
         /// </summary>
-        /// <param name="DC"></param>
+        /// <param name="ctx"></param>
         /// <returns></returns>
-        public static XElement GetComites(IJudoData DC)
+        public static XElement GetComites(IReadOnlyExportContext ctx)
         {
+            IJudoData DC = ctx.DataContext;
             try
             {
                 // On utilise AsEnumerable() pour lire les données en flux continu 
@@ -43,10 +44,11 @@ namespace AppPublication.Export
         /// <summary>
         /// Retourne la liste des ligues en XML
         /// </summary>
-        /// <param name="DC"></param>
+        /// <param name="ctx"></param>
         /// <returns></returns>
-        public static XElement GetLigues(IJudoData DC)
+        public static XElement GetLigues(IReadOnlyExportContext ctx)
         {
+            IJudoData DC = ctx.DataContext;
             try
             {
                 // Lecture en flux et transformation directe via LINQ
@@ -65,10 +67,11 @@ namespace AppPublication.Export
         /// <summary>
         /// Retourne la liste des secteurs en XML
         /// </summary>
-        /// <param name="DC"></param>
+        /// <param name="ctx"></param>
         /// <returns></returns>
-        public static XElement GetSecteurs(IJudoData DC)
+        public static XElement GetSecteurs(IReadOnlyExportContext ctx)
         {
+            IJudoData DC = ctx.DataContext;
             try
             {
                 // On stream la lecture et on convertit à la volée
@@ -85,12 +88,13 @@ namespace AppPublication.Export
         }
 
         /// <summary>
-        /// Retourne la liste des ligues en XML
+        /// Retourne la liste des pays en XML
         /// </summary>
-        /// <param name="DC"></param>
+        /// <param name="ctx">Contexte en lecture seule pour l'export</param>
         /// <returns></returns>
-        public static XElement GetPays(IJudoData DC)
+        public static XElement GetPays(IReadOnlyExportContext ctx)
         {
+            IJudoData DC = ctx.DataContext;
             try
             {
                 return new XElement(ConstantXML.LesPays,
@@ -109,10 +113,11 @@ namespace AppPublication.Export
         /// <summary>
         /// Genere la liste des clubs en XML
         /// </summary>
-        /// <param name="DC"></param>
+        /// <param name="ctx">Contexte en lecture seule pour l'export</param>
         /// <returns></returns>
-        public static XElement GetClubs(IJudoData DC)
+        public static XElement GetClubs(IReadOnlyExportContext ctx)
         {
+            IJudoData DC = ctx.DataContext;
             try
             {
                 // 1. On prépare la requête pour les clubs ayant des judokas
@@ -143,11 +148,10 @@ namespace AppPublication.Export
         /// <summary>
         /// Ajout des grades à un document XML
         /// </summary>
-        /// <param name="doc">le document</param>
-        /// <param name="DC"></param>
-        public static XElement GetCeintures(IJudoData DC)
+        /// <param name="ctx">Contexte en lecture seule pour l'export</param>
+        public static XElement GetCeintures(IReadOnlyExportContext ctx)
         {
-
+            IJudoData DC = ctx.DataContext;
             try
             {
                 return new XElement(ConstantXML.Ceintures,
@@ -199,11 +203,11 @@ namespace AppPublication.Export
         /// <summary>
         /// Creation du document pour l'index
         /// </summary>
-        /// <param name="DC"></param>
-        /// <param name="siteStructure"></param>
+        /// <param name="ctx">Contexte en lecture seule pour l'export</param>
         /// <returns></returns>
-        public static XDocument CreateDocumentIndex(IJudoData DC) // J'ai supprimé siteStructure !
+        public static XDocument CreateDocumentIndex(IReadOnlyExportContext ctx)
         {
+            IJudoData DC = ctx.DataContext;
             // On construit l'arbre entier, la racine et les enfants en une seule passe
             return new XDocument(
                 new XElement(ConstantXML.DocRoot,
@@ -219,10 +223,14 @@ namespace AppPublication.Export
         /// <summary>
         /// Création du menu (pour le site)
         /// </summary>
-        /// <param name="DC"></param>
+        /// <param name="ctx">Contexte en lecture seule pour l'export</param>
+        /// <param name="siteStructure">Générateur d'URL pour le site</param>
         /// <returns></returns>
-        public static XDocument CreateDocumentMenu(IJudoData DC, IExtendedJudoData EDC, SiteUrlGenerator siteStructure)
+        public static XDocument CreateDocumentMenu(IReadOnlyExportContext ctx, SiteUrlGenerator siteStructure)
         {
+            IJudoData DC = ctx.DataContext;
+            IExtendedJudoData EDC = ctx.ExtendedDataContext;
+
             // 1. On charge UNIQUEMENT ce qui est nécessaire en mémoire pour éviter le N+1
             var phasesInMem = DC.Deroulement.Phases.ToList();
 
@@ -298,11 +306,13 @@ namespace AppPublication.Export
         /// <summary>
         /// Creation du document pour les engagements (pour le site)
         /// </summary>
-        /// <param name="DC"></param>
-        /// <param name="EDC"></param>
+        /// <param name="ctx">Contexte en lecture seule pour l'export</param>
         /// <returns></returns>
-        public static XDocument CreateDocumentEngagements(IJudoData DC, ExtendedJudoData EDC)
+        public static XDocument CreateDocumentEngagements(IReadOnlyExportContext ctx)
         {
+            IJudoData DC = ctx.DataContext;
+            IExtendedJudoData EDC = ctx.ExtendedDataContext;
+
             return new XDocument(
                 new XElement(ConstantXML.DocRoot,
                     new XElement(ConstantXML.Competitions,
@@ -385,10 +395,12 @@ namespace AppPublication.Export
 
         /// Document XML contenant les informations pour les generations des affectations de tapis
         /// </summary>
-        /// <param name="DC"></param>
+        /// <param name="ctx">Contexte en lecture seule pour l'export</param>
         /// <returns></returns>
-        public static XDocument CreateDocumentAffectationTapis(IJudoData DC)
+        public static XDocument CreateDocumentAffectationTapis(IReadOnlyExportContext ctx)
         {
+            IJudoData DC = ctx.DataContext;
+
             // 1. On charge les phases EN MÉMOIRE une seule fois
             var phasesInMem = DC.Deroulement.Phases.ToList();
 
@@ -464,11 +476,12 @@ namespace AppPublication.Export
         /// <summary>
         /// Creation d'un document XML pour une epreuve
         /// </summary>
-        /// <param name="DC"></param>
-        /// <param name="epreuve"></param>
+        /// <param name="ctx">Le contexte d'exportation contenant le DataContext.</param>
+        /// <param name="epreuve">L'épreuve à exporter.</param>
         /// <returns></returns>
-        public static XDocument CreateDocumentEpreuve(IJudoData DC, i_vue_epreuve_interface epreuve)
+        public static XDocument CreateDocumentEpreuve(IReadOnlyExportContext ctx, i_vue_epreuve_interface epreuve)
         {
+            IJudoData DC = ctx.DataContext;
             ICompetition competition = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
 
             // Sécurité : si la compétition n'existe pas, on renvoie un document vide pour éviter le crash
@@ -484,12 +497,13 @@ namespace AppPublication.Export
         /// <summary>
         /// Creation d'un document XML pour une phase
         /// </summary>
-        /// <param name="epreuve"></param>
-        /// <param name="phase"></param>
-        /// <param name="DC"></param>
+        /// <param name="ctx">Le contexte d'exportation contenant le DataContext.</param>
+        /// <param name="epreuve">L'épreuve à exporter.</param>
+        /// <param name="phase">La phase à exporter.</param>
         /// <returns></returns>
-        public static XDocument CreateDocumentPhase(i_vue_epreuve_interface epreuve, IPhase phase, IJudoData DC)
+        public static XDocument CreateDocumentPhase(IReadOnlyExportContext ctx, i_vue_epreuve_interface epreuve, IPhase phase)
         {
+            IJudoData DC = ctx.DataContext;
             ICompetition competition = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
             if (competition == null) return new XDocument(); // Sécurité
 
@@ -511,12 +525,13 @@ namespace AppPublication.Export
         /// Elle utilise des index en mémoire (Dictionary, Lookup) pour garantir un accès instantané aux données 
         /// et éviter le problème des requêtes N+1 ou des boucles O(N²) lors de la génération de l'arbre.
         /// </remarks>
-        /// <param name="DC">Le contexte de données (IJudoData) contenant l'accès à la base de données.</param>
+        /// <param name="ctx">Le contexte d'exportation contenant le DataContext.</param>
         /// <param name="_phase">La phase spécifique à générer (si null, génère pour toute la compétition).</param>
         /// <param name="tapis">Le numéro du tapis spécifique à générer (si null, boucle sur tous les tapis).</param>
         /// <returns>Un objet XDocument contenant la structure XML complète prête à être parsée ou sauvegardée.</returns>
-        public static XDocument CreateDocumentFeuilleCombat(IJudoData DC, IPhase _phase, int? tapis)
+        public static XDocument CreateDocumentFeuilleCombat(IReadOnlyExportContext ctx, IPhase _phase, int? tapis)
         {
+            IJudoData DC = ctx.DataContext;
             // =========================================================================
             // 1. DÉTERMINATION DE LA COMPÉTITION DE BASE
             // =========================================================================
@@ -541,19 +556,19 @@ namespace AppPublication.Export
             // 2. PRÉCHARGEMENT ET INDEXATION DES DONNÉES (Optimisation O(1))
             // =========================================================================
             // Utilisation de GroupBy().First() pour se prémunir contre d'éventuels doublons d'ID en base.
-            var phasesDict = DC.Deroulement.Phases.GroupBy(p => p.id).ToDictionary(g => g.Key, g => g.First());
-            var epreuvesDict = DC.Organisation.VueEpreuves.GroupBy(e => e.id).ToDictionary(g => g.Key, g => g.First());
-            var epreuvesEqDict = DC.Organisation.VueEpreuveEquipes.GroupBy(e => e.id).ToDictionary(g => g.Key, g => g.First());
-            var judokasDict = DC.Participants.Judokas.GroupBy(j => j.id).ToDictionary(g => g.Key, g => g.First());
-            var equipesDict = DC.Participants.Equipes.GroupBy(e => e.id).ToDictionary(g => g.Key, g => g.First());
+            var phasesDict = ctx.Caches.PhasesDict;
+            var epreuvesDict = ctx.Caches.EpreuvesDict;
+            var epreuvesEqDict = ctx.Caches.EpreuvesEqDict;
+            var judokasDict = ctx.Caches.JudokasDict;
+            var equipesDict = ctx.Caches.EquipesDict;
 
             // Utilisation de ToLookup pour les relations "Un-vers-Plusieurs" (évite les .Where() dans les boucles)
-            var judokasByEquipe = DC.Participants.Judokas.ToLookup(j => j.equipe);
-            var rencontresByCombat = DC.Deroulement.Rencontres.Where(r => r.combat.HasValue).ToLookup(r => r.combat.Value);
-            var poulesByPhase = DC.Deroulement.Poules.ToLookup(p => p.phase);
-            var participantsByPhase = DC.Deroulement.Participants.ToLookup(p => p.phase);
-            var groupesByTapis = DC.Deroulement.VueGroupes.ToLookup(g => g.groupe_tapis);
-            var epreuvesByEquipe = DC.Organisation.VueEpreuves.ToLookup(e => e.id_epreuve_equipe);
+            var judokasByEquipe = ctx.Caches.JudokasByEquipe;
+            var rencontresByCombat = ctx.Caches.RencontresByCombat;
+            var poulesByPhase = ctx.Caches.PoulesByPhase;
+            var participantsByPhase = ctx.Caches.ParticipantsByPhase;
+            var groupesByTapis = ctx.Caches.GroupesByTapis;
+            var epreuvesByEquipe = ctx.Caches.EpreuvesByEquipe;
 
             // Optimisation RAM : On ne rapatrie de la base de données QUE les vrais combats non terminés.
             var allCombats = DC.Deroulement.Combats

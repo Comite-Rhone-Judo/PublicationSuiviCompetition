@@ -39,7 +39,7 @@ namespace AppPublication.Export
             if (DC != null && ctx != null && siteStructure != null)
             {
                 // 1. Génération du document d'index de base
-                XDocument docIndex = ExportXML.CreateDocumentIndex(DC);
+                XDocument docIndex = ExportXML.CreateDocumentIndex(ctx);
 
                 // 2. Ajout de la CONFIGURATION uniquement (pas de structures de clubs/ligues)
                 // On suppose que cette méthode dans ctx injecte PublicationInfo et SiteConfiguration

@@ -122,7 +122,7 @@ namespace AppPublication.Export
                     // Utilisation de la fabrique (AddStructureArgument est inclus dedans)
                     var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, phaseParams.ToArray());
 
-                    XDocument xmlResultat = ExportXML.CreateDocumentPhase(vueEpreuve, phase, DC);
+                    XDocument xmlResultat = ExportXML.CreateDocumentPhase(ctx, vueEpreuve, phase);
                     ctx.EnrichWithFullContext(xmlResultat);
                     LogTools.DebugLogData(xmlResultat);
 
@@ -142,7 +142,7 @@ namespace AppPublication.Export
 
                     var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, ("istapis", "epreuve"));
 
-                    XDocument xmlFeuilleCombat = ExportXML.CreateDocumentFeuilleCombat(DC, phase, null);
+                    XDocument xmlFeuilleCombat = ExportXML.CreateDocumentFeuilleCombat(ctx, phase, null);
                     ctx.EnrichWithFullContext(xmlFeuilleCombat);
                     LogTools.DebugLogData(xmlFeuilleCombat);
 
@@ -190,7 +190,7 @@ namespace AppPublication.Export
                 var xsltArgs = CreateAllXsltArgs(siteStructure, savePath);
 
                 // 1. Génération du document de base
-                XDocument xmlClassement = ExportXML.CreateDocumentEpreuve(DC, epreuve);
+                XDocument xmlClassement = ExportXML.CreateDocumentEpreuve(ctx, epreuve);
 
                 // 2. Enrichissement via le contexte (Porte la Config, les structures et les infos de publication)
                 ctx.EnrichWithFullContext(xmlClassement);
@@ -244,7 +244,7 @@ namespace AppPublication.Export
 
                 // 1. Génération du document (Utilise notre version optimisée de CreateDocumentFeuilleCombat)
                 // Les paramètres null, null indiquent qu'on veut tous les tapis et toutes les phases.
-                XDocument xmlAllTapis = ExportXML.CreateDocumentFeuilleCombat(DC, null, null);
+                XDocument xmlAllTapis = ExportXML.CreateDocumentFeuilleCombat(ctx, null, null);
 
                 // 2. Enrichissement via le contexte (PublicationInfo + Structures)
                 ctx.EnrichWithFullContext(xmlAllTapis);
@@ -279,7 +279,7 @@ namespace AppPublication.Export
             if (DC != null && ctx != null && siteStructure != null)
             {
                 // 1. Génération du document d'index de base
-                XDocument docIndex = ExportXML.CreateDocumentIndex(DC);
+                XDocument docIndex = ExportXML.CreateDocumentIndex(ctx);
 
                 // 2. Ajout de la CONFIGURATION uniquement (pas de structures de clubs/ligues)
                 // On suppose que cette méthode dans ctx injecte PublicationInfo et SiteConfiguration
@@ -360,7 +360,7 @@ namespace AppPublication.Export
             string targetDirectory = siteStructure.PhysicalStructure.RepertoireCommon();
 
             // 1. Création du document XML de base
-            XDocument docMenu = ExportXML.CreateDocumentMenu(DC, EDC, siteStructure);
+            XDocument docMenu = ExportXML.CreateDocumentMenu(ctx, siteStructure);
 
             // 2. Ajout de la configuration contextuelle (infos de publication, etc.)
             ctx.EnrichWithConfiguration(docMenu);
@@ -423,7 +423,7 @@ namespace AppPublication.Export
                 var xsltArgs = CreateAllXsltArgs(siteStructure, savePath);
 
                 // Génération du document et enrichissement via le contexte
-                XDocument docAffectation = ExportXML.CreateDocumentAffectationTapis(DC);
+                XDocument docAffectation = ExportXML.CreateDocumentAffectationTapis(ctx);
                 ctx.EnrichWithConfiguration(docAffectation);
 
                 LogTools.DebugLogData(docAffectation);

@@ -7,7 +7,7 @@ namespace AppPublication.Export
         #region CONSTRUCTEURS
 
         // Constructeur privé pour obliger l'utilisation de la Factory 'Create'
-        private ExportSharedContextInterne(IJudoData DC, ConfigurationExportSiteInterne config) : base(DC)
+        private ExportSharedContextInterne(IJudoData DC, ConfigurationExportSiteInterne config) : base(DC, null)
         {
             Config = config;
         }
@@ -23,10 +23,10 @@ namespace AppPublication.Export
             var context = new ExportSharedContextInterne(DC, config);
 
             // Génération du document spécifique aux combats (feuilles de combat)
-            var docCombats = ExportXML.CreateDocumentFeuilleCombat(DC, null, null);
+            var docCombats = ExportXML.CreateDocumentFeuilleCombat(context, null, null);
 
             // Lancement du pipeline centralisé dans la classe mère
-            context.ExecuteExportPipeline(DC, config.ToXml(), docCombats);
+            context.ExecuteExportPipeline(config.ToXml(), docCombats);
 
             return context;
         }
