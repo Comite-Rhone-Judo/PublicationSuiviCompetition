@@ -75,8 +75,7 @@ namespace AppPublication
                 DataContext = Controles.DialogControleur.Instance
             };
 
-            RoutedEventHandler loadedHandler = null;
-            loadedHandler = (s, ev) =>
+            void loadedHandler(object s, RoutedEventArgs ev)
             {
                 mainWin.Loaded -= loadedHandler; // Nettoyage de l'événement ici
 
@@ -86,7 +85,7 @@ namespace AppPublication
                     // On le configure pour alerter si l'interface gèle plus de 3 secondes
                     HealthMonitor.MonitorDispatcher(this.Dispatcher, "MainUI", 3000);
                 }), DispatcherPriority.ContextIdle);
-            };
+            }
 
             mainWin.Loaded += loadedHandler;
 

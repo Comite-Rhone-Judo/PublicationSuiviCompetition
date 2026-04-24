@@ -55,6 +55,11 @@ namespace FranceJudo.Core.Export
                     }
                 }
             }
+            catch(TimeoutException tex)
+            {
+                // C'est frequent donc on ne va pas polluer en mode normal, on ne trace qu'en mode debug (au pire le fichier sera actualisa au coup suivant)
+                LogTools.Logger.Debug(tex, $"Le fichier '{fileSaveWithExt}' est actuellement utilisé par un autre processus et n'a pas pu être accédé dans le délai imparti.");
+            }
             catch (Exception ex)
             {
                 LogTools.Error(ex);

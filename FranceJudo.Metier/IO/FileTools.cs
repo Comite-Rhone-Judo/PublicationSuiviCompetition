@@ -1,5 +1,7 @@
 ﻿using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
 using FranceJudo.Core.Threading;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -51,9 +53,9 @@ namespace FranceJudo.Metier.IO
                         }
                         saveSuccess = true; // L'écriture a réussi
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        // Il serait pertinent de logguer l'erreur ici
+                        LogTools.Logger.Error(ex, $"Le fichier '{filename}' est actuellement utilisé par un autre processus et n'a pas pu être accédé dans le délai imparti.");
                     }
                     finally
                     {

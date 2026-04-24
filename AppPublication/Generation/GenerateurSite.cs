@@ -468,6 +468,8 @@ namespace AppPublication.Generation
                 }
                 catch (Exception ex)
                 {
+                    // Si le fichier est verrouille c'est bien une erreur car on a besoin de mettre a jour le cache de checksum pour la prochaine generation,
+                    // mais on ne peut pas faire grand chose de plus que logger l'erreur
                     LogTools.Error(ex);
                 }
                 finally
