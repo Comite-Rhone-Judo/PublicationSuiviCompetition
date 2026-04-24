@@ -14,6 +14,7 @@
 	<xsl:param name="cssPath"/>
 	<xsl:param name="commonPath"/>
 	<xsl:param name="competitionPath"/>
+	<xsl:param name="RefData" />
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 	
@@ -154,7 +155,7 @@
 		<xsl:variable name="j1" select="//participants/participant[@judoka=$participant1]/descendant::*[1]" />
 
 		<xsl:variable name="club" select="$j1/@club"/>
-		<xsl:variable name="clubN" select="//club[@ID=$club]"/>
+		<xsl:variable name="clubN" select="$RefData/structures/clubs/club[@ID=$club]"/>
 		<xsl:variable name="comite" select="$clubN/@comite"/>
 		<xsl:variable name="ligue" select="$clubN/@ligue"/>
 		<xsl:variable name="position" select="position()"/>
@@ -184,7 +185,7 @@
 				<xsl:value-of select="$comite"/>
 			</td>
 			<td>
-				<xsl:value-of select="//ligue[@ID=$ligue]/nomCourt"/>
+				<xsl:value-of select="$RefData/structures/ligue[@ID=$ligue]/nomCourt"/>
 			</td>
 			<td>&nbsp;</td>
 		</tr>

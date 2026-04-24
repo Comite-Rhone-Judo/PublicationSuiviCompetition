@@ -205,11 +205,11 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="ctx">Contexte en lecture seule pour l'export</param>
         /// <returns></returns>
-        public static XDocument CreateDocumentIndex(IReadOnlyExportContext ctx)
+        public static (XDocument outDoc, bool isLargeDoc) CreateDocumentIndex(IReadOnlyExportContext ctx)
         {
             IJudoData DC = ctx.DataContext;
             // On construit l'arbre entier, la racine et les enfants en une seule passe
-            return new XDocument(
+            return (new XDocument(
                 new XElement(ConstantXML.DocRoot,
                    new XElement(ConstantXML.Competitions,
                         // On stream directement depuis la base vers les éléments XML
@@ -217,7 +217,8 @@ namespace AppPublication.Export
                           .AsEnumerable()
                           .Select(competition => competition.ToXml())
                 )
-            ));
+            )),
+            false);
         }
 
         /// <summary>

@@ -19,6 +19,7 @@
 	<xsl:param name="cssPath"/>
 	<xsl:param name="commonPath"/>
 	<xsl:param name="competitionPath"/>
+	<xsl:param name="RefData"/>
 
 
 	<xsl:variable name="lowercase" select="'abcdefghijklmnopqrstuvwxyz'" />
@@ -132,24 +133,24 @@
 								</xsl:when>
 								<!-- Niveau Club 2 -->
 								<xsl:when test="$selectedGroupeEngagements/@type = 2">
-									<xsl:text disable-output-escaping="yes">Club</xsl:text>&nbsp;<xsl:value-of select="//club[@ID = $selectedGroupeEngagements/@entite]/nom"/>
+									<xsl:text disable-output-escaping="yes">Club</xsl:text>&nbsp;<xsl:value-of select="$RefData/structures/clubs/club[@ID = $selectedGroupeEngagements/@entite]/nom"/>
 								</xsl:when>
 								<!-- Niveau Departement 3 -->
 								<xsl:when test="$selectedGroupeEngagements/@type = 3">
-									<xsl:text disable-output-escaping="yes">Comité</xsl:text>&nbsp;<xsl:value-of select="//comite[@ID = $selectedGroupeEngagements/@entite]/nom"/>
+									<xsl:text disable-output-escaping="yes">Comité</xsl:text>&nbsp;<xsl:value-of select="$RefData/structures/comites/comite[@ID = $selectedGroupeEngagements/@entite]/nom"/>
 								</xsl:when>
 								<!-- Niveau Ligue 3 -->
 								<xsl:when test="$selectedGroupeEngagements/@type = 4">
-									<xsl:text disable-output-escaping="yes">Ligue</xsl:text>&nbsp;<xsl:value-of select="//ligue[@ID = $selectedGroupeEngagements/@entite]/nom"/>
+									<xsl:text disable-output-escaping="yes">Ligue</xsl:text>&nbsp;<xsl:value-of select="$RefData/structures/ligues/ligue[@ID = $selectedGroupeEngagements/@entite]/nom"/>
 								</xsl:when>
 								<!-- Niveau National 5 -->
 								<!-- Niveau International 6 -->
 								<xsl:when test="$selectedGroupeEngagements/@type = 5 or $selectedGroupeEngagements/@type = 6">
-									<xsl:value-of select="//pays[@ID = $selectedGroupeEngagements/@entite]/@nom"/>
+									<xsl:value-of select="$RefData/structures/lesPays/pays[@ID = $selectedGroupeEngagements/@entite]/@nom"/>
 								</xsl:when>
 								<!-- Par defaut, on prend le club -->
 								<xsl:otherwise>
-									<xsl:text disable-output-escaping="yes">Club</xsl:text>&nbsp;<xsl:value-of select="//club[@ID = $selectedGroupeEngagements/@entite]/nom"/>
+									<xsl:text disable-output-escaping="yes">Club</xsl:text>&nbsp;<xsl:value-of select="$RefData/structures/clubs/club[@ID = $selectedGroupeEngagements/@entite]/nom"/>
 								</xsl:otherwise>
 							</xsl:choose>
 						</h5>
@@ -539,28 +540,28 @@
 										<xsl:choose>
 											<!-- Niveau Club 2 -->
 											<xsl:when test="$niveau = 2">
-												<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
+												<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club1]/nomCourt"/>
 											</xsl:when>
 											<!-- Niveau Departement 3 -->
 											<xsl:when test="$niveau = 3">
-												<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
+												<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club1]/nomCourt"/>
 												<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-												<xsl:value-of select="//comite[@ID = $comite1]/nomCourt"/>
+												<xsl:value-of select="$RefData/structures/comitess/comite[@ID = $comite1]/nomCourt"/>
 											</xsl:when>
 											<!-- Niveau Ligue 4 -->
 											<xsl:when test="$niveau = 4">
-												<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
+												<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club1]/nomCourt"/>
 												<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-												<xsl:value-of select="//ligue[@ID = $ligue1]/nomCourt"/>
+												<xsl:value-of select="$RefData/structures/ligues/ligue[@ID = $ligue1]/nomCourt"/>
 											</xsl:when>
 											<!-- Niveau National 5 -->
 											<!-- Niveau International 6 -->
 											<xsl:when test="$niveau = 5 or $niveau = 6">
-												<xsl:value-of select="//pays[@ID = $pays1]/@abr3"/>
+												<xsl:value-of select="$RefData/structures/lesPays/pays[@ID = $pays1]/@abr3"/>
 											</xsl:when>
 											<!-- Par defaut, on prend le club -->
 											<xsl:otherwise>
-												<xsl:value-of select="//club[@ID = $club1]/nomCourt"/>
+												<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club1]/nomCourt"/>
 											</xsl:otherwise>
 										</xsl:choose>
 									</td>
@@ -722,28 +723,28 @@
 									<xsl:choose>
 										<!-- Niveau Club 2 -->
 										<xsl:when test="$niveau = 2">
-											<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
+											<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club2]/nomCourt"/>
 										</xsl:when>
 										<!-- Niveau Departement 3 -->
 										<xsl:when test="$niveau = 3">
-											<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
+											<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club2]/nomCourt"/>
 											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="//comite[@ID = $comite2]/nomCourt"/>
+											<xsl:value-of select="$RefData/structures/comites/comite[@ID = $comite2]/nomCourt"/>
 										</xsl:when>
 										<!-- Niveau Ligue 4 -->
 										<xsl:when test="$niveau = 4">
-											<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
+											<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club2]/nomCourt"/>
 											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="//ligue[@ID = $ligue2]/nomCourt"/>
+											<xsl:value-of select="$RefData/structures/liguess/ligue[@ID = $ligue2]/nomCourt"/>
 										</xsl:when>
 										<!-- Niveau National 5 -->
 										<!-- Niveau International 6 -->
 										<xsl:when test="$niveau = 5 or $niveau = 6">
-											<xsl:value-of select="//pays[@ID = $pays2]/@abr3"/>
+											<xsl:value-of select="$RefData/structures/lesPays/pays[@ID = $pays2]/@abr3"/>
 										</xsl:when>
 										<!-- Par defaut, on prend le club -->
 										<xsl:otherwise>
-											<xsl:value-of select="//club[@ID = $club2]/nomCourt"/>
+											<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club2]/nomCourt"/>
 										</xsl:otherwise>
 									</xsl:choose>
 								</td>

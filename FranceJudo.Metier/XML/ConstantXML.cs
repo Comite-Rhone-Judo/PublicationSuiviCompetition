@@ -75,6 +75,7 @@
         public const string Tapis_No = "no_tapis";
 
         //Structure 
+        public const string Structures = "structures";
         public const string Structure_ID = "ID";
         public const string Structure_RemoteID = "remoteID";
         public const string Structure_Nom = "nom";

@@ -14,6 +14,7 @@
 	<xsl:param name="cssPath"/>
 	<xsl:param name="commonPath"/>
 	<xsl:param name="competitionPath"/>
+	<xsl:param name="RefData"/>
 
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
@@ -349,7 +350,7 @@
 									</xsl:choose>
 								</xsl:attribute>
 								<xsl:apply-templates select="./groupeEngagements[@competition = $idcompetition and @sexe = $categorie]">
-									<xsl:sort order="ascending" select="//club[@ID = current()/@entite]/nom"/>
+									<xsl:sort order="ascending" select="$RefData/structures/clubs/club[@ID = current()/@entite]/nom"/>
 								</xsl:apply-templates>
 							</xsl:if>
 
@@ -398,7 +399,7 @@
 									</xsl:choose>
 								</xsl:attribute>
 								<xsl:apply-templates select="./groupeEngagements[@competition = $idcompetition and @sexe = $categorie]">
-									<xsl:sort order="ascending" select="//pays[@ID = current()/@entite]/@nom"/>
+									<xsl:sort order="ascending" select="$RefData/structures/lesPays/pays[@ID = current()/@entite]/@nom"/>
 								</xsl:apply-templates>
 							</xsl:if>
 						</div>
@@ -422,24 +423,24 @@
 				</xsl:when>
 				<!-- Niveau Club 2 -->
 				<xsl:when test="./@type = 2">
-					<xsl:value-of select="//club[@ID = $entiteId]/nom"/>
+					<xsl:value-of select="$RefData/structures/clubs/club[@ID = $entiteId]/nom"/>
 				</xsl:when>
 				<!-- Niveau Departement 3 -->
 				<xsl:when test="./@type = 3">
-					<xsl:value-of select="//comite[@ID = $entiteId]/nom"/>
+					<xsl:value-of select="$RefData/structures/comites/comite[@ID = $entiteId]/nom"/>
 				</xsl:when>
 				<!-- Niveau Ligue 3 -->
 				<xsl:when test="./@type = 4">
-					<xsl:value-of select="//ligue[@ID = $entiteId]/nom"/>
+					<xsl:value-of select="$RefData/structures/ligues/ligue[@ID = $entiteId]/nom"/>
 				</xsl:when>
 				<!-- Niveau National 5 -->
 				<!-- Niveau International 6 -->
 				<xsl:when test="./@type = 5 or ./@type = 6">
-					<xsl:value-of select="//pays[@ID = $entiteId]/@nom"/>
+					<xsl:value-of select="$RefData/structures/lesPays/pays[@ID = $entiteId]/@nom"/>
 				</xsl:when>
 				<!-- Par defaut, on prend le club -->
 				<xsl:otherwise>
-					<xsl:value-of select="//club[@ID = $entiteId]/nom"/>
+					<xsl:value-of select="$RefData/structures/clubs/club[@ID = $entiteId]/nom"/>
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
