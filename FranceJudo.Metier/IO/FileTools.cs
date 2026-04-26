@@ -67,7 +67,17 @@ namespace FranceJudo.Metier.IO
                 // Si la sauvegarde a fonctionné, on retire le fichier de la file d'attente mémoire.
                 if (saveSuccess)
                 {
-                    _notSave.SafeWriteAction(dict => dict.Remove(file));
+                    _notSave.SafeWriteAction(dict =>
+                    {
+                        // On vérifie si le dictionnaire contient toujours une entrée pour ce fichier
+                        // ET si l'objet en mémoire est exactement celui qu'on vient de sauvegarder.
+                        if (dict.TryGetValue(file, out XDocument currentInDict) && currentInDict == document)
+                        {
+                            dict.Remove(file);
+                        }
+                        // Si currentInDict != document, cela signifie qu'un autre thread a 
+                        // déposé une version plus récente. On ne supprime rien !
+                    });
                 }
             }
         }

@@ -10,9 +10,16 @@ namespace FranceJudo.Core.IO
 {
     public static class FileSystemHelper
     {
+        // Classe interne pour gérer le verrou et son compteur d'utilisation
+        private class FileLockEntry
+        {
+            public readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1, 1);
+            public int ReferenceCount = 0;
+        }
+
         // Remplacement du dictionnaire + Mutex buggé par un ConcurrentDictionary très performant
         // Gère nativement la concurrence sans avoir besoin d'un 'lock' global.
-        private static readonly ConcurrentDictionary<string, SemaphoreSlim> _fileLocks = new ConcurrentDictionary<string, SemaphoreSlim>(StringComparer.OrdinalIgnoreCase);
+        private static readonly ConcurrentDictionary<string, FileLockEntry> _fileLocks = new ConcurrentDictionary<string, FileLockEntry>(StringComparer.OrdinalIgnoreCase);
 
         // Champ statique encapsulé proprement
         public static Encoding TheEncoding { get; set; } = Encoding.UTF8;
@@ -22,28 +29,41 @@ namespace FranceJudo.Core.IO
         /// </summary>
         public static void NeedAccessFile(string file)
         {
-            // Récupère ou crée un verrou ultra-léger pour CE fichier précis
-            var fileLock = _fileLocks.GetOrAdd(file, _ => new SemaphoreSlim(1, 1));
+            FileLockEntry entry;
 
-            // Attend maximum 5 secondes pour obtenir l'accès interne
-            if (!fileLock.Wait(TimeSpan.FromSeconds(5)))
+            // ÉTAPE 1 : Récupérer ou créer l'entrée en incrémentant proprement le compteur
+            // On utilise un lock local ici pour garantir l'atomicité entre la création et l'incrément
+            lock (_fileLocks)
             {
-                LogTools.Logger.Debug("Impossible d'obtenir l'accès au verrou logique pour le fichier '{0}'", file);
-                throw new TimeoutException($"Le fichier {file} est verrouillé par un autre thread interne trop longtemps.");
+                entry = _fileLocks.GetOrAdd(file, _ => new FileLockEntry());
+                Interlocked.Increment(ref entry.ReferenceCount);
             }
 
-            // Attend que l'OS (Windows/Autre processus) libère le fichier physiquement si nécessaire
+            // ÉTAPE 2 : Attente du sémaphore (Logique inchangée)
+            if (!entry.Semaphore.Wait(TimeSpan.FromSeconds(5)))
+            {
+                // En cas d'échec, il ne faut pas oublier de décrémenter car on n'ira pas dans ReleaseFile
+                DecrementReference(file, entry);
+                LogTools.Logger.Debug("Impossible d'obtenir l'accès au verrou logique pour le fichier '{0}'", file);
+                throw new TimeoutException($"Le fichier {file} est verrouillé par un autre thread interne.");
+            }
+
             WaitForPhysicalFileRelease(file);
         }
+
 
         /// <summary>
         /// Libère l'accès au fichier pour les autres threads de l'application.
         /// </summary>
         public static void ReleaseFile(string file)
         {
-            if (_fileLocks.TryGetValue(file, out SemaphoreSlim fileLock))
+            if (_fileLocks.TryGetValue(file, out FileLockEntry entry))
             {
-                fileLock.Release();
+                // Libère le sémaphore pour le prochain thread
+                entry.Semaphore.Release();
+
+                // Décrémente et nettoie si nécessaire
+                DecrementReference(file, entry);
             }
         }
 
@@ -61,6 +81,21 @@ namespace FranceJudo.Core.IO
             }
         }
 
+        private static void DecrementReference(string file, FileLockEntry entry)
+        {
+            lock (_fileLocks)
+            {
+                if (Interlocked.Decrement(ref entry.ReferenceCount) == 0)
+                {
+                    // Si plus personne n'utilise ce fichier, on le retire du dictionnaire
+                    if (_fileLocks.TryRemove(file, out var removedEntry))
+                    {
+                        removedEntry.Semaphore.Dispose();
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Détermine l'encodage d'un fichier en toute sécurité.
         /// </summary>
@@ -68,20 +103,24 @@ namespace FranceJudo.Core.IO
         {
             if (!File.Exists(srcFile)) return Encoding.Default;
 
-            byte[] buffer = new byte[4]; // 4 bytes suffisent pour les BOM
+            byte[] buffer = new byte[4];
 
-            // L'utilisation de 'using' garantit que le fichier est libéré, MÊME EN CAS DE CRASH.
-            // FileShare.Read permet de lire l'encodage même si un autre outil l'a ouvert.
             using (var file = new FileStream(srcFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 file.Read(buffer, 0, 4);
             }
 
+            // UTF-8 avec BOM
             if (buffer[0] == 0xef && buffer[1] == 0xbb && buffer[2] == 0xbf) return Encoding.UTF8;
-            if (buffer[0] == 0xfe && buffer[1] == 0xff) return Encoding.Unicode;
+
+            // UTF-16 Big Endian (BE) - Correction ici
+            if (buffer[0] == 0xfe && buffer[1] == 0xff) return Encoding.BigEndianUnicode;
+
+            // UTF-16 Little Endian (LE)
+            if (buffer[0] == 0xff && buffer[1] == 0xfe) return Encoding.Unicode;
+
+            // UTF-32
             if (buffer[0] == 0 && buffer[1] == 0 && buffer[2] == 0xfe && buffer[3] == 0xff) return Encoding.UTF32;
-            if (buffer[0] == 0x2b && buffer[1] == 0x2f && buffer[2] == 0x76) return Encoding.UTF7;
-            if (buffer[0] == 0xFF && buffer[1] == 0xFE) return Encoding.GetEncoding(1200); // UTF-16
 
             return Encoding.Default;
         }

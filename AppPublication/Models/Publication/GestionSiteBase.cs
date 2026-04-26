@@ -9,6 +9,7 @@ using FranceJudo.Metier.Noyau;
 using FranceJudo.UI.Wpf.Foundation;
 using System;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace AppPublication.Models.Publication
 {
@@ -290,17 +291,17 @@ namespace AppPublication.Models.Publication
         /// <summary>
         /// Demarre le thread de generation du site
         /// </summary>
-        public void StartGeneration()
+        public Task StartGeneration()
         {
-            _schedulerSite?.StartGeneration();
+            return _schedulerSite?.StartGeneration() ?? Task.CompletedTask;
         }
 
         /// <summary>
         /// Arrete le thread de generation du site
         /// </summary>
-        public void StopGeneration()
+        public Task StopGeneration()
         {
-            _schedulerSite?.StopGeneration();
+            return _schedulerSite?.StopGeneration() ?? Task.CompletedTask;
         }
 
         /// <summary>

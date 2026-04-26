@@ -234,7 +234,7 @@ namespace AppPublication.Generation
         /// </summary>
         /// <param name="progressHandler">Gestionnaire de progression</param>
         /// <exception cref="Exception"></exception>
-        public  async void StartGeneration()
+        public  async Task StartGeneration()
         {
             // Passe en etat Idle mais on n'a pas encore d'information sur les temps
             await RaiseStateAsync(StateGenerationEnum.Idle);
@@ -286,7 +286,7 @@ namespace AppPublication.Generation
         /// <summary>
         /// Arrete le thread de generation du site
         /// </summary>
-        public async void StopGeneration()
+        public async Task StopGeneration()
         {
             if (_tokenSource != null)
             {

@@ -709,10 +709,17 @@ namespace AppPublication.Controles
             get
             {
                 _cmdDemarrerGeneration ??= new RelayCommand(
-                            o =>
+                            async o =>
                             {
-                                SiteCoordinator.GestionnaireSitePublique.StartGeneration();
-                            },
+                                try
+                                {
+                                    await SiteCoordinator.GestionnaireSitePublique.StartGeneration();
+                                }
+                                catch (Exception ex)
+                                {
+                                    LogTools.Logger.Error(ex, "Erreur au lancement de la génération");
+                                }
+                                },
                             o =>
                             {
                                 return SiteCoordinator.GestionnaireSitePublique.IsIdCompetitionValide && !SiteCoordinator.GestionnaireSitePublique.IsGenerationActive;
@@ -776,9 +783,16 @@ namespace AppPublication.Controles
             get
             {
                 _cmdDemarrerGenerationInterne ??= new RelayCommand(
-                            o =>
+                            async o =>
                             {
-                                SiteCoordinator.GestionnaireSiteInterne.StartGeneration();
+                                try
+                                {
+                                    await SiteCoordinator.GestionnaireSiteInterne.StartGeneration();
+                                }
+                                catch (Exception ex)
+                                {
+                                    LogTools.Logger.Error(ex, "Erreur au lancement de la generation du site interne");
+                                }
                             },
                             o =>
                             {
