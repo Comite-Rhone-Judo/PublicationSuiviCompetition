@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq; // Indispensable pour l'usage de XDocument
+using System.Xml.XPath;
 using System.Xml.Xsl;
 
 namespace FranceJudo.Core.Export
@@ -17,6 +18,25 @@ namespace FranceJudo.Core.Export
         private static readonly ConcurrentDictionary<string, Lazy<XslCompiledTransform>> _xsltCache = new ConcurrentDictionary<string, Lazy<XslCompiledTransform>>();
 
         /// <summary>
+        /// Réalise un export HTML à partir d'un XPathDocument.
+        /// </summary>
+        /// <param name="source">Le document source XPathDocument.</param>
+        /// <param name="fileSave">Le chemin du fichier de sortie.</param>
+        /// <param name="argsList">Les arguments XSLT.</param>
+        /// <param name="xslt_st">Le nom de la ressource XSLT.</param>
+        /// <param name="resDict">Le dictionnaire des ressources de l'assembly.</param>
+        /// <param name="fileExtension">L'extension du fichier de sortie.</param>
+        /// <param name="useCache">Indique si le cache doit être utilisé.</param>
+        public static void ToHTML(XPathDocument source, string fileSave, XsltArgumentList argsList, string xslt_st, AssemblyResourceDictionary resDict, string fileExtension = "html", bool useCache = true)
+        {
+            ExecuteTransform(fileSave, xslt_st, resDict, fileExtension, useCache, (xslt, fs) =>
+            {
+                // CreateNavigator() est la voie rapide native pour l'XSLT
+                xslt.Transform(source.CreateNavigator(), argsList, fs);
+            });
+        }
+
+        /// <summary>
         /// Realise un export HTML
         /// </summary>
         /// <param name="source"></param>
@@ -25,6 +45,21 @@ namespace FranceJudo.Core.Export
         /// <param name="xslt_st"></param>
         /// <param name="fileExtension"></param>
         public static void ToHTML(XmlSource source, string fileSave, XsltArgumentList argsList, string xslt_st, AssemblyResourceDictionary resDict, string fileExtension = "html", bool useCache = true)
+        {
+            ExecuteTransform(fileSave, xslt_st, resDict, fileExtension, useCache, (xslt, fs) =>
+            {
+                // Lecture optimisée à la volée
+                using (XmlReader reader = source.CreateReader())
+                {
+                    xslt.Transform(reader, argsList, fs);
+                }
+            });
+        }
+
+        /// <summary>
+        /// Méthode centrale commune : Gère le cache XSLT, les verrous système et les logs.
+        /// </summary>
+        private static void ExecuteTransform(string fileSave, string xslt_st, AssemblyResourceDictionary resDict, string fileExtension, bool useCache, Action<XslCompiledTransform, FileStream> transformAction)
         {
             XslCompiledTransform xslt = null;
 
@@ -41,24 +76,19 @@ namespace FranceJudo.Core.Export
 
             string fileSaveWithExt = Path.ChangeExtension(fileSave, fileExtension);
 
-            // Create the FileStream.
             try
             {
                 FileSystemHelper.NeedAccessFile(fileSaveWithExt);
                 using (FileStream fs = new FileStream(fileSaveWithExt, FileMode.Create))
                 {
-                    // Utilisation d'un XmlReader pour lire le XDocument à la volée sans allocation mémoire
-                    using (XmlReader reader = source.CreateReader())
-                    {
-                        // Execute the transformation.
-                        xslt.Transform(reader, argsList, fs);
-                    }
+                    // Exécute l'action spécifique (XmlSource ou XPathDocument)
+                    transformAction(xslt, fs);
                 }
             }
-            catch(TimeoutException tex)
+            catch (TimeoutException tex)
             {
-                // C'est frequent donc on ne va pas polluer en mode normal, on ne trace qu'en mode debug (au pire le fichier sera actualisa au coup suivant)
-                LogTools.Logger.Debug(tex, $"Le fichier '{fileSaveWithExt}' est actuellement utilisé par un autre processus et n'a pas pu être accédé dans le délai imparti.");
+                // C'est fréquent donc on ne va pas polluer en mode normal, on ne trace qu'en mode debug
+                LogTools.Logger.Debug(tex, $"Le fichier '{fileSaveWithExt}' est actuellement utilise par un autre processus et n'a pas pu etre accede dans le delai imparti.");
             }
             catch (Exception ex)
             {

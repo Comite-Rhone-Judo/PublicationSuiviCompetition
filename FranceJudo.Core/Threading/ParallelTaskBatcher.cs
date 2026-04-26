@@ -29,7 +29,10 @@ namespace FranceJudo.Core.Threading
 
         private readonly IProgress<TReport> _globalProgressReporter;
         private readonly Func<float, TReport> _converter;
-        private long _throttlingIntervalTicks = 1000000; // 100ms en ticks
+        private readonly long _throttlingIntervalTicks = 1000000; // 100ms en ticks
+
+        private float _maxReportedPercent = 0f;
+        private readonly object _reportLock = new object(); // Un petit verrou exclusif pour l'UI
 
         private class TaskState
         {
@@ -318,7 +321,16 @@ namespace FranceJudo.Core.Threading
             float globalPercent = ((float)current) / total;
             if (globalPercent > 1.0f) globalPercent = 1.0f;
 
-            _globalProgressReporter.Report(_converter(globalPercent));
+            // LA SÉCURITÉ ANTI-YOYO CENTRALE
+            // Le lock ici n'a aucun impact sur les perfs car il est protégé par le throttling (max 10 fois par seconde)
+            lock (_reportLock)
+            {
+                if (globalPercent > _maxReportedPercent)
+                {
+                    _maxReportedPercent = globalPercent;
+                    _globalProgressReporter.Report(_converter(_maxReportedPercent));
+                }
+            }
         }
 
         private void Reset()
@@ -329,6 +341,11 @@ namespace FranceJudo.Core.Threading
             while (_resultsBag.TryTake(out _)) { }
             Interlocked.Exchange(ref _globalTotal, 0);
             Interlocked.Exchange(ref _globalCurrent, 0);
+
+            lock (_reportLock)
+            {
+                _maxReportedPercent = 0f;
+            }
 
             _globalProgressReporter?.Report(_converter(0));
         }

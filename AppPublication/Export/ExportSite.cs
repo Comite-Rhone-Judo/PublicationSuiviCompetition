@@ -15,7 +15,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using System.Xml.Xsl;
 
 namespace AppPublication.Export
@@ -123,11 +125,11 @@ namespace AppPublication.Export
                     // Utilisation de la fabrique (AddStructureArgument est inclus dedans)
                     var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, phaseParams.ToArray());
 
-                    var (outDoc, isLargeDoc) = ExportXML.CreateDocumentPhase(ctx, vueEpreuve, phase);
+                    XDocument outDoc = ExportXML.CreateDocumentPhase(ctx, vueEpreuve, phase);
                     ctx.EnrichWithFullContext(outDoc);
                     LogTools.DebugLogData(outDoc);
 
-                    using (var source = new XmlSource(outDoc, isLargeDoc))
+                    using (var source = new XmlSource(outDoc))
                     {
                         SiteExportEngine.GenererHtmlSite(source, exportType, savePath, xsltArgs);
                     }
@@ -151,11 +153,11 @@ namespace AppPublication.Export
 
                         var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, ("istapis", "epreuve"));
 
-                        var (outDoc, isLargeDoc) = ExportXML.CreateDocumentFeuilleCombat(ctx, phase, null);
+                        XDocument outDoc = ExportXML.CreateDocumentFeuilleCombat(ctx, phase, null);
                         ctx.EnrichWithFullContext(outDoc);
                         LogTools.DebugLogData(outDoc);
 
-                        using (var source = new XmlSource(outDoc, isLargeDoc))
+                        using (var source = new XmlSource(outDoc))
                         {
                             SiteExportEngine.GenererHtmlSite(source, exportType, savePath, xsltArgs);
                         }
@@ -209,7 +211,7 @@ namespace AppPublication.Export
                 var xsltArgs = CreateAllXsltArgs(siteStructure, savePath);
 
                 // 1. Génération du document de base
-                var (outDoc, isLargeDoc) = ExportXML.CreateDocumentEpreuve(ctx, epreuve);
+                XDocument outDoc = ExportXML.CreateDocumentEpreuve(ctx, epreuve);
 
                 // 2. Enrichissement via le contexte (Porte la Config, les structures et les infos de publication)
                 ctx.EnrichWithFullContext(outDoc);
@@ -217,7 +219,7 @@ namespace AppPublication.Export
                 LogTools.DebugLogData(outDoc);
 
                 // 3. Transformation HTML
-                using (var source = new XmlSource(outDoc, isLargeDoc))
+                using (var source = new XmlSource(outDoc))
                 {
                     SiteExportEngine.GenererHtmlSite(source, exportType, savePath, xsltArgs);
                 }
@@ -266,7 +268,7 @@ namespace AppPublication.Export
 
                 // 1. Génération du document (Utilise notre version optimisée de CreateDocumentFeuilleCombat)
                 // Les paramètres null, null indiquent qu'on veut tous les tapis et toutes les phases.
-                var (outDoc, isLargeDoc) = ExportXML.CreateDocumentFeuilleCombat(ctx, null, null);
+                XDocument outDoc = ExportXML.CreateDocumentFeuilleCombat(ctx, null, null);
 
                 // 2. Enrichissement via le contexte (PublicationInfo + Structures)
                 ctx.EnrichWithFullContext(outDoc);
@@ -274,7 +276,7 @@ namespace AppPublication.Export
                 LogTools.DebugLogData(outDoc);
 
                 // 3. Transformation HTML
-                using (var source = new XmlSource(outDoc, isLargeDoc))
+                using (var source = new XmlSource(outDoc))
                 {
                     SiteExportEngine.GenererHtmlSite(source, exportType, savePath, xsltArgs);
                 }
@@ -304,7 +306,7 @@ namespace AppPublication.Export
             if (DC != null && ctx != null && siteStructure != null)
             {
                 // 1. Génération du document d'index de base
-                var (outDoc, isLargeDoc) = ExportXML.CreateDocumentIndex(ctx);
+                XDocument outDoc = ExportXML.CreateDocumentIndex(ctx);
 
                 // 2. Ajout de la CONFIGURATION uniquement (pas de structures de clubs/ligues)
                 // On suppose que cette méthode dans ctx injecte PublicationInfo et SiteConfiguration
@@ -319,7 +321,7 @@ namespace AppPublication.Export
 
                 var indexArgs = CreateAllXsltArgs(siteStructure, indexSavePath);
 
-                using (var source = new XmlSource(outDoc, isLargeDoc))
+                using (var source = new XmlSource(outDoc))
                 {
                     SiteExportEngine.GenererHtmlSite(source, indexType, indexSavePath, indexArgs);
 
@@ -389,7 +391,7 @@ namespace AppPublication.Export
             string targetDirectory = siteStructure.PhysicalStructure.RepertoireCommon();
 
             // 1. Création du document XML de base
-            var (outDoc, isLargeDoc) = ExportXML.CreateDocumentMenu(ctx, siteStructure);
+            XDocument outDoc = ExportXML.CreateDocumentMenu(ctx, siteStructure);
             
             
             // 2. Ajout de la configuration contextuelle (infos de publication, etc.)
@@ -397,7 +399,7 @@ namespace AppPublication.Export
 
             LogTools.DebugLogData(outDoc);
 
-            using (var source = new XmlSource(outDoc, isLargeDoc))
+            using (var source = new XmlSource(outDoc))
             {
                 output.Add(GenerateMenuFile(ExportEnum.Site_MenuClassement, targetDirectory, siteStructure, source));
                 progress?.Report(BatchProgressInfo.Step(++currentStep));
@@ -453,12 +455,12 @@ namespace AppPublication.Export
                 var xsltArgs = CreateAllXsltArgs(siteStructure, savePath);
 
                 // Génération du document et enrichissement via le contexte
-                var (outDoc, isLargeDoc) = ExportXML.CreateDocumentAffectationTapis(ctx);
+                XDocument outDoc = ExportXML.CreateDocumentAffectationTapis(ctx);
                 ctx.EnrichWithConfiguration(outDoc);
 
                 LogTools.DebugLogData(outDoc);
 
-                using (var source = new XmlSource(outDoc, isLargeDoc))
+                using (var source = new XmlSource(outDoc))
                 {
                     SiteExportEngine.GenererHtmlSite(source, exportType, savePath, xsltArgs);
                 }
@@ -491,9 +493,16 @@ namespace AppPublication.Export
 
                 ExportEnum exportType = ExportEnum.Site_Engagements;
 
-                // On récupère le document des engagements depuis notre contexte unifié 
-                // au lieu d'utiliser une vieille variable globale de classe (_docEngagements)
-                var docEngagements = ctx.ExportDocument;
+                // --- DÉBUT DE L'OPTIMISATION XPATH ---
+                XPathDocument xpathEngagements;
+
+                // On crée un lecteur optimisé avec NameTable depuis le XDocument du contexte
+                var settings = new XmlReaderSettings { NameTable = new NameTable(), IgnoreWhitespace = true };
+                using (var reader = XmlReader.Create(ctx.ExportDocument.CreateReader(), settings))
+                {
+                    // Compilation en RAM (zéro allocation future)
+                    xpathEngagements = new XPathDocument(reader);
+                }
 
                 int currentStep = 0;
 
@@ -510,7 +519,7 @@ namespace AppPublication.Export
                     );
 
                     // Transformation HTML à partir du document contextuel
-                    SiteExportEngine.GenererHtmlSite(docEngagements, exportType, savePath, xsltArgs);
+                    SiteExportEngine.GenererHtmlSite(xpathEngagements, exportType, savePath, xsltArgs);
 
                     output.Add(new FileWithChecksum($"{savePath}.html"));
 

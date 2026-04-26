@@ -7,6 +7,7 @@ using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
 using FranceJudo.Core.Network;
 using FranceJudo.Core.Threading;
+using FranceJudo.Core.Utils;
 using FranceJudo.Metier.IO;
 using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Deroulement;
@@ -17,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 
 namespace AppPublication.Generation
@@ -25,21 +27,23 @@ namespace AppPublication.Generation
     {
         #region MEMBRES
         // Les gestionnaires
-        readonly private IJudoDataManager _judoDataManager;                  // Le gestionnaire de données interne
-        private IJudoData _snapshot;                                // Le snapshot des données 
+        readonly private IJudoDataManager _judoDataManager;                                         // Le gestionnaire de données interne
+        private IJudoData _snapshot;                                                                // Le snapshot des données 
         private ExtendedJudoData _extendedJudoData;
-        private MiniSite _site = null;                              // Le site a utilise pour le upload a distance
-        private ExportSharedContext _currentContext = null;         // Le contexte de generation courant (a passer aux taches de generation)
+        private MiniSite _site = null;                                                              // Le site a utilise pour le upload a distance
+        private ExportSharedContext _currentContext = null;                                         // Le contexte de generation courant (a passer aux taches de generation)
         private readonly ConfigurationExportSite _cfgExport;
 
         // La structure du site
-        private SiteUrlGenerator _siteUrlGenerator;      // La structure de repertoire d'export du site
+        private SiteUrlGenerator _siteUrlGenerator;                                                 // La structure de repertoire d'export du site
 
         // Suivi des taches de generation
         private EtapeGenerateurSiteEnum _etapeCourante = EtapeGenerateurSiteEnum.None;
-        private readonly ParallelTaskBatcher<OperationProgress, FileWithChecksum> _taskBatcher;          // Le gestionnaire de taches paralleles
-        List<FileWithChecksum> _checksumCache = new List<FileWithChecksum>();                      // Les fichiers en cache pour le controle des checksums
-        List<FileWithChecksum> _checksumGenere = new List<FileWithChecksum>();                     // Les fichiers generes lors de la derniere generation  
+        private readonly ParallelTaskBatcher<OperationProgress, FileWithChecksum> _taskBatcher;     // Le gestionnaire de taches paralleles
+        List<FileWithChecksum> _checksumCache = new List<FileWithChecksum>();                       // Les fichiers en cache pour le controle des checksums
+        List<FileWithChecksum> _checksumGenere = new List<FileWithChecksum>();                      // Les fichiers generes lors de la derniere generation  
+
+        private readonly int _nbCoeurs = Environment.ProcessorCount;                                 // Constantes de découpage pour le batching (a ajuster en fonction du cout de generation des phases et des engagements)
         #endregion
 
         #region PROPERTIES PUBLIQUES
@@ -251,7 +255,7 @@ namespace AppPublication.Generation
                     }
 
                     if (_cfgExport.PublierEngagements)
-                    {
+                    {                      
                         foreach (ICompetition comp in _snapshot.Organisation.Competitions)
                         {
                             // Recupere les groupes en fonction du type de groupement
@@ -262,32 +266,59 @@ namespace AppPublication.Generation
                             {
                                 List<GroupeEngagements> groupesP = _extendedJudoData.Engagement.GroupesEngages.Where(g => g.Competition == comp.id && g.Type == (int)typeGrp).ToList();
 
-                                // Ce code est plus efficace qye celui qui cree une tache par groupe
-                                // sans doute car le lancement de nombreuses Task est couteux mais il provoque une latence a la fin de la generation
-                                _taskBatcher.AddWork(p =>
+                                int nbChunkEng = 0;
+                                int tailleChunkEngagement = Math.Max(20, groupesP.Count / (_nbCoeurs * 2)); ; // Ajuste la taille du chunk en fonction du nombre de groupes et du nombre de coeurs, avec un minimum de 1
+                                LogTools.Logger.Debug($"Taille de chunk pour Engagement Competition {comp.nom}, groupe {typeGrp} : {tailleChunkEngagement} sur {_nbCoeurs} coeurs");
+                                
+                                // On fait un decoupe de la liste en paquet de n groupes pour limiter le nombre de taches (et donc le cout de lancement des taches) tout en gardant une bonne granularite pour le progress
+                                foreach (List<GroupeEngagements> paquet in groupesP.Chunk(tailleChunkEngagement))
                                 {
-                                    return exporter.GenereWebSiteEngagements(groupesP, _currentContext, _siteUrlGenerator, p);
-                                });
-
-                                // foreach (GroupeEngagements g in groupesP)
-                                // {
-                                //   _nbTaskGeneration++;
-                                //  listTaskGeneration.Add(AddWork(SiteEnum.Engagements, null, null, cfg, new List<GroupeEngagements>(1) { g }));
-                                // }
+                                    LogTools.Logger.Debug($"Batching chunk Engagement Competition {comp.nom}, groupe {typeGrp}: #{nbChunkEng++} (size = {paquet.Count}");
+                                    
+                                    // Ce code est plus efficace qye celui qui cree une tache par groupe
+                                    // car le lancement de trop nombreuses Task est couteux
+                                    // Le paquet étant gros, on passe l'initialEstimate
+                                    _taskBatcher.AddWork(p =>
+                                    {
+                                        return exporter.GenereWebSiteEngagements(paquet, _currentContext, _siteUrlGenerator, p);
+                                    }, paquet.Count);
+                                }
                             }
                         }
                     }
 
-                    foreach (IPhase phase in _snapshot.Deroulement.Phases)
+                    // On découpe les phases en paquets de 10
+                    int tailleChunkPhase = Math.Max(5, _snapshot.Deroulement.Phases.Count / _nbCoeurs); ; // Ajuste la taille du chunk en fonction du nombre de groupes et du nombre de coeurs, avec un minimum
+                    var chunksPhases = _snapshot.Deroulement.Phases.Chunk(tailleChunkPhase);
+                    int nbChunkPhase = 0;
+                    LogTools.Logger.Debug($"Taille de chunk pour Phases : {tailleChunkPhase} sur {_nbCoeurs} coeurs");
+
+                    foreach (List<IPhase> paquet in chunksPhases)
                     {
+                        // TRÈS IMPORTANT : Chaque phase génère 2 éléments (Phase + Classement)
+                        // Donc l'estimation initiale pour ce paquet est : taille du paquet * 2
+                        int estimationsPourCePaquet = paquet.Count * 2;
+                        LogTools.Logger.Debug($"Batching chunk Phase #{nbChunkPhase++} (size = {paquet.Count}");
+
                         _taskBatcher.AddWork(p =>
                         {
-                            return exporter.GenereWebSitePhase(phase, _currentContext, _siteUrlGenerator, p);
-                        });
-                        _taskBatcher.AddWork(p =>
-                        {
-                            return exporter.GenereWebSiteClassement(phase.GetVueEpreuve(_snapshot), _currentContext, _siteUrlGenerator, p);
-                        });
+                            List<FileWithChecksum> resultatsThread = new List<FileWithChecksum>();
+
+                            // Le thread traite son lot de 10 phases de manière séquentielle
+                            foreach (IPhase phase in paquet)
+                            {
+                                // 1. Génération de la phase
+                                var fichiersPhase = exporter.GenereWebSitePhase(phase, _currentContext, _siteUrlGenerator, p);
+                                if (fichiersPhase != null) resultatsThread.AddRange(fichiersPhase);
+
+                                // 2. Génération du classement lié à cette phase
+                                var fichiersClassement = exporter.GenereWebSiteClassement(phase.GetVueEpreuve(_snapshot), _currentContext, _siteUrlGenerator, p);
+                                if (fichiersClassement != null) resultatsThread.AddRange(fichiersClassement);
+                            }
+
+                            return resultatsThread;
+
+                        }, estimationsPourCePaquet); // Le fameux initialEstimate qui garantit la fluidité !
                     }
 
                     // Attend la fin de tous les batchs

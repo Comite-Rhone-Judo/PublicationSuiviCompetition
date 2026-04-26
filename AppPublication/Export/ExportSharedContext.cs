@@ -1,5 +1,6 @@
 ﻿using AppPublication.ExtensionNoyau;
 using FranceJudo.Metier.Noyau;
+using System.Xml.Linq;
 
 
 namespace AppPublication.Export
@@ -26,10 +27,10 @@ namespace AppPublication.Export
             var context = new ExportSharedContext(DC, EDC, config);
 
             // Génération du document spécifique aux engagements
-            var (outDoc, isLargeDoc) = ExportXML.CreateDocumentEngagements(context);
+            XDocument outDoc = ExportXML.CreateDocumentEngagements(context);
 
             // Lancement du pipeline centralisé dans la classe mère
-            context.ExecuteExportPipeline(config.ToXml(), outDoc, isLargeDoc);
+            context.ExecuteExportPipeline(config.ToXml(), outDoc);
 
             return context;
         }

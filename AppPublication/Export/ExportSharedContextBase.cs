@@ -96,7 +96,7 @@ namespace AppPublication.Export
         /// <summary>
         /// Workflow centralisé garantissant l'ordre d'initialisation pour toutes les classes filles.
         /// </summary>
-        protected void ExecuteExportPipeline(XElement configXml, XDocument generatedDoc, bool isLargeDoc)
+        protected void ExecuteExportPipeline(XElement configXml, XDocument generatedDoc)
         {
             // 2. Assignation des spécificités transmises par l'enfant
             SiteConfiguration = configXml;
@@ -108,7 +108,7 @@ namespace AppPublication.Export
             LogTools.DebugLogData(generatedDoc);
 
             // on le fait en dernier car sur un gros document, il peut etre flush sur disque
-            ExportDocument = new XmlSource(generatedDoc, isLargeDoc);
+            ExportDocument = new XmlSource(generatedDoc);
         }
 
         /// <summary>

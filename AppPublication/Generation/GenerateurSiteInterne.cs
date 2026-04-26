@@ -1,12 +1,15 @@
 ﻿using AppPublication.Export;
 using AppPublication.Models.EcransAppel;
 using AppPublication.Publication;
-using FranceJudo.Core.IO;
 using FranceJudo.Core.Export;
+using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
 using FranceJudo.Core.Threading;
+using FranceJudo.Core.Utils;
 using FranceJudo.Metier.Noyau;
+using NLog;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,6 +18,7 @@ namespace AppPublication.Generation
 {
     public class GenerateurSiteInterne : IGenerateurSite, IConfigurableGenerateur<ConfigurationExportSiteInterne>
     {
+
         #region MEMBRES
         // Les gestionnaires
         readonly private IJudoDataManager _judoDataManager;                  // Le gestionnaire de données interne
@@ -33,6 +37,7 @@ namespace AppPublication.Generation
         private EtapeGenerateurSiteEnum _etapeCourante = EtapeGenerateurSiteEnum.None;
         private readonly ParallelTaskBatcher<OperationProgress, FileWithChecksum> _taskBatcher;          // Le gestionnaire de taches paralleles
         List<FileWithChecksum> _checksumGenere = new List<FileWithChecksum>();                     // Les fichiers generes lors de la derniere generation  
+        private readonly int _nbCoeurs = Environment.ProcessorCount;                                 // Constantes de découpage pour le batching (a ajuster en fonction du cout de generation des phases et des engagements)
         #endregion
 
         #region PROPERTIES PUBLIQUES
@@ -205,19 +210,30 @@ namespace AppPublication.Generation
                         return exporter.GenereWebSiteIndex(_currentContext, _siteInterneUrlGenerator, p);
                     });
 
-                    foreach (var ecran in _ecransAppelSnapshot.Ecrans)
+                    // --- OPTIMISATION : FUSION ET CHUNKING DES ÉCRANS ---
+
+                    // 1. On regroupe tous les écrans (configurés + défaut) dans une seule liste matérialisée
+                    List<EcranAppelModel> tousLesEcrans = new List<EcranAppelModel>(_ecransAppelSnapshot.Ecrans);
+                    if (_ecransAppelSnapshot.Default != null)
                     {
-                        _taskBatcher.AddWork(p =>
-                        {
-                            return exporter.GenereEcranAppel(_currentContext, _siteInterneUrlGenerator, ecran, p);
-                        });
+                        tousLesEcrans.Add(_ecransAppelSnapshot.Default);
                     }
 
-                    // et on ajoute le traitement par default
-                    _taskBatcher.AddWork(p =>
+                    int nbChunk = 0;
+                    int tailleChunk = Math.Max(5, tousLesEcrans.Count / _nbCoeurs); ; // Ajuste la taille du chunk en fonction du nombre de groupes et du nombre de coeurs, avec un minimum
+                    LogTools.Logger.Debug($"Taille de chunk pour Ecran Appel : {tailleChunk} sur {_nbCoeurs} coeurs");
+
+                    // 2. Découpage par lots
+                    foreach (List<EcranAppelModel> paquet in tousLesEcrans.Chunk(tailleChunk))
                     {
-                        return exporter.GenereEcranAppel(_currentContext, _siteInterneUrlGenerator, _ecransAppelSnapshot.Default, p);
-                    });
+                        LogTools.Logger.Debug($"Batching chunk Ecran Appel #{nbChunk++} (size = {paquet.Count}");
+                        // 3. On envoie le lot complet à la méthode "au pluriel" et passe la taille du paquet pour le reporting de progression
+                        _taskBatcher.AddWork(p =>
+                        {
+                            // Le thread utilisera son propre XPathDocument local pour traiter ces 10 écrans
+                            return exporter.GenereEcransAppel(_currentContext, _siteInterneUrlGenerator, paquet, p);
+                        }, paquet.Count);
+                    }
 
                     // Attend la fin de tous les batchs
                     output = await _taskBatcher.WaitAllAndGetResultsAsync();

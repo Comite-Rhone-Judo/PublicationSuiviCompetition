@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using System.Xml.Xsl; // Pour le moteur XSLT
 
 namespace FranceJudo.Metier.Export
@@ -202,13 +203,36 @@ namespace FranceJudo.Metier.Export
         /// <summary>
         /// Point d'entrée métier pour générer le site HTML
         /// </summary>
-        public static void GenererHtmlSite(XmlSource xml, ExportEnum export_type, string fileSave, XsltArgumentList argsList, string fileExtension = "html", bool useCache = true)
+        /// <param name="xml">Le document XML source.</param>
+        /// <param name="exportType">Le type d'export à réaliser.</param>
+        /// <param name="fileSave">Le chemin du fichier de sortie.</param>
+        /// <param name="argsList">Les arguments XSLT.</param>
+        /// <param name="fileExtension">L'extension du fichier de sortie.</param>
+        /// <param name="useCache">Indique si le cache doit être utilisé.</param>
+        public static void GenererHtmlSite(XmlSource xml, ExportEnum exportType, string fileSave, XsltArgumentList argsList, string fileExtension = "html", bool useCache = true)
         {
             // 1. Logique métier : quel est le template XSLT à utiliser pour cet export ?
-            string xslt = GetXsltResourcePath(export_type);
+            string xslt = GetXsltResourcePath(exportType);
 
             // 2. Appel à l'outil technique : génère le HTML
             ExportHTML.ToHTML(xml, fileSave, argsList, xslt, MetierResources.Dictionary, fileExtension, useCache);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="xml"></param>
+        /// <param name="exportType"></param>
+        /// <param name="savePath"></param>
+        /// <param name="xsltArgs"></param>
+        public static void GenererHtmlSite(XPathDocument xml, ExportEnum exportType, string savePath, XsltArgumentList xsltArgs, string fileExtension = "html", bool useCache = true)
+        {
+            // 1. Logique métier : quel est le template XSLT à utiliser pour cet export ?
+            string xslt = GetXsltResourcePath(exportType);
+
+            // On appelle la nouvelle surcharge de ToHTML
+            ExportHTML.ToHTML(xml, savePath, xsltArgs, xslt, MetierResources.Dictionary, fileExtension, useCache);
         }
         #endregion
     }

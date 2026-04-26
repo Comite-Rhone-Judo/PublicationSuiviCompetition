@@ -17,26 +17,6 @@ namespace AppPublication.Export
 {
     public static class ExportXML
     {
-        #region Constantes
-        /// <summary>
-        /// Seuil de sécurité pour le flush sur disque des engagements (Judokas + Combats).
-        /// </summary>
-        private const int kDocumentEngagementsFlushThreshold = 500;
-        
-        /// Seuil de sécurité pour le flush sur disque d'une épreuve unique.
-        /// </summary>
-        private const int kDocumentEpreuveFlushThreshold = 500;
-
-        /// <summary>
-        /// Seuil de sécurité pour le flush sur disque d'une phase unique.
-        /// </summary>
-        private const int kDocumentPhaseFlushThreshold = 500;
-
-        /// <summary>
-        /// Seuil de sécurité pour le flush sur disque des feuilles de combat (nombre de combats).
-        /// </summary>
-        private const int kDocumentFeuilleCombatFlushThreshold = 1000;
-        #endregion
 
         #region Generation XElement
         /// <summary>
@@ -233,12 +213,11 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="ctx">Contexte en lecture seule pour l'export</param>
         /// <returns>Tuple contenant le document XML et un indicateur si le document est volumineux</returns>
-        public static (XDocument outDoc, bool isLargeDoc) CreateDocumentIndex(IReadOnlyExportContext ctx)
+        public static XDocument CreateDocumentIndex(IReadOnlyExportContext ctx)
         {
             IJudoData DC = ctx.DataContext;
             // On construit l'arbre entier, la racine et les enfants en une seule passe
-            return (
-                new XDocument(
+            return new XDocument(
                     new XElement(ConstantXML.DocRoot,
                         new XAttribute(ConstantXML.DocType, "DocumentIndex"),
                         new XElement(ConstantXML.Competitions,
@@ -248,9 +227,7 @@ namespace AppPublication.Export
                               .Select(competition => competition.ToXml())
                         )   
                     )
-                ),
-                false
-            );
+                );
         }
 
         /// <summary>
@@ -259,7 +236,7 @@ namespace AppPublication.Export
         /// <param name="ctx">Contexte en lecture seule pour l'export</param>
         /// <param name="siteStructure">Générateur d'URL pour le site</param>
         /// <returns>Tuple contenant le document XML et un indicateur si le document est volumineux</returns>
-        public static (XDocument outDoc, bool isLargeDoc) CreateDocumentMenu(IReadOnlyExportContext ctx, SiteUrlGenerator siteStructure)
+        public static XDocument CreateDocumentMenu(IReadOnlyExportContext ctx, SiteUrlGenerator siteStructure)
         {
             IJudoData DC = ctx.DataContext;
             IExtendedJudoData EDC = ctx.ExtendedDataContext;
@@ -268,7 +245,7 @@ namespace AppPublication.Export
             var phasesByEpreuve = DC.Deroulement.Phases.ToLookup(p => p.epreuve);
 
             // 2. Construction fonctionnelle globale de l'arbre
-            return (new XDocument(
+            return new XDocument(
                 new XElement(ConstantXML.DocRoot,
                     new XAttribute(ConstantXML.DocType, "DocumentMenu"),
                     new XElement(ConstantXML.Competitions,
@@ -334,9 +311,7 @@ namespace AppPublication.Export
                             return xcompetition;
                         })
                     )
-            )),
-            // Le document structurel d'un menu ne saturera jamais la RAM
-            false);
+            ));
         }
 
 
@@ -345,16 +320,10 @@ namespace AppPublication.Export
         /// </summary>
         /// <param name="ctx">Contexte en lecture seule pour l'export</param>
         /// <returns>Tuple contenant le document XML et un indicateur si le document est volumineux</returns>
-        public static (XDocument outDoc, bool isLargeDoc) CreateDocumentEngagements(IReadOnlyExportContext ctx)
+        public static XDocument CreateDocumentEngagements(IReadOnlyExportContext ctx)
         {
             IJudoData DC = ctx.DataContext;
             IExtendedJudoData EDC = ctx.ExtendedDataContext;
-
-            // 1. ÉVALUATION INSTANTANÉE O(1)
-            // On estime le poids total de la compétition (Judokas + Combats)
-            int nbJudokas = DC.Participants.Vuejudokas?.Count() ?? 0;
-            int nbCombats = DC.Deroulement.Combats?.Count() ?? 0;
-            bool isLargeDoc = (nbJudokas + nbCombats) > kDocumentEngagementsFlushThreshold;
 
             // 2. CRÉATION DES INDEX EN MÉMOIRE (O(1))
             var judokasByCompet = DC.Participants.Vuejudokas.ToLookup(vj => vj.idcompet);
@@ -363,7 +332,7 @@ namespace AppPublication.Export
             var combatsByPhase = DC.Deroulement.Combats.ToLookup(c => c.phase);
             var groupesByCompet = EDC.Engagement.GroupesEngages.ToLookup(g => g.Competition);
 
-            return (new XDocument(
+            return new XDocument(
                 new XElement(ConstantXML.DocRoot,
                     new XAttribute(ConstantXML.DocType, "DocumentEngagements"),
                     new XElement(ConstantXML.Competitions,
@@ -424,15 +393,14 @@ namespace AppPublication.Export
                               return xcompetition;
                           })
                     )
-            )),
-            isLargeDoc);
+            ));
         }
 
         /// Document XML contenant les informations pour les generations des affectations de tapis
         /// </summary>
         /// <param name="ctx">Contexte en lecture seule pour l'export</param>
         /// <returns>Tuple contenant le document XML et un indicateur si le document est volumineux</returns>
-        public static (XDocument outDoc, bool isLargeDoc) CreateDocumentAffectationTapis(IReadOnlyExportContext ctx)
+        public static XDocument CreateDocumentAffectationTapis(IReadOnlyExportContext ctx)
         {
             IJudoData DC = ctx.DataContext;
 
@@ -451,7 +419,7 @@ namespace AppPublication.Export
                 .ToLookup(x => x.epreuve_id, x => x.combat_tapis);
 
             // 2. Construction fonctionnelle globale
-            return (new XDocument(
+            return new XDocument(
                 new XElement(ConstantXML.DocRoot,
                     new XAttribute(ConstantXML.DocType, "DocumentAffectationTapis"),
                     new XElement(ConstantXML.Competitions,
@@ -510,8 +478,7 @@ namespace AppPublication.Export
                                 return xcompetition;
                             })
                     )
-                )),
-                false);
+                ));
         }
 
         /// <summary>
@@ -520,26 +487,19 @@ namespace AppPublication.Export
         /// <param name="ctx">Le contexte d'exportation contenant le DataContext.</param>
         /// <param name="epreuve">L'épreuve à exporter.</param>
         /// <returns>Tuple contenant le document XML et un indicateur si le document est volumineux</returns>
-        public static (XDocument outDoc, bool isLargeDoc) CreateDocumentEpreuve(IReadOnlyExportContext ctx, i_vue_epreuve_interface epreuve)
+        public static XDocument CreateDocumentEpreuve(IReadOnlyExportContext ctx, i_vue_epreuve_interface epreuve)
         {
             IJudoData DC = ctx.DataContext;
             ICompetition competition = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
 
             // Sécurité : si la compétition n'existe pas, on renvoie un document vide pour éviter le crash
-            if (competition == null) return (new XDocument(), false);
-
-            // On estime la taille en combinant les inscrits et les combats de cette épreuve spécifique
-            int nbInscrits = DC.Participants.EpreuveJudokas?.Count(ej => ej.epreuve == epreuve.id) ?? 0;
-            int nbCombats = DC.Deroulement.Combats?.Count(c => c.epreuve == epreuve.id) ?? 0;
-
-            // Le flag est levé si la complexité de l'épreuve dépasse le seuil kDocumentEpreuveFlushThreshold
-            bool isLarge = (nbInscrits + nbCombats) > kDocumentEpreuveFlushThreshold;
+            if (competition == null) return new XDocument();
 
             // Construction directe en une passe
             XElement xcompetition = competition.ToXml();
             xcompetition.Add(ExportEpreuve(DC, epreuve));
 
-            return (new XDocument(new XElement(ConstantXML.DocRoot, new XAttribute(ConstantXML.DocType, "DocumentEpreuve"), xcompetition)), isLarge);
+            return new XDocument(new XElement(ConstantXML.DocRoot, new XAttribute(ConstantXML.DocType, "DocumentEpreuve"), xcompetition));
         }
 
         /// <summary>
@@ -549,16 +509,11 @@ namespace AppPublication.Export
         /// <param name="epreuve">L'épreuve à exporter.</param>
         /// <param name="phase">La phase à exporter.</param>
         /// <returns>Tuple contenant le document XML et un indicateur si le document est volumineux</returns>
-        public static (XDocument outDoc, bool isLargeDoc)  CreateDocumentPhase(IReadOnlyExportContext ctx, i_vue_epreuve_interface epreuve, IPhase phase)
+        public static XDocument CreateDocumentPhase(IReadOnlyExportContext ctx, i_vue_epreuve_interface epreuve, IPhase phase)
         {
             IJudoData DC = ctx.DataContext;
             ICompetition competition = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
-            if (competition == null) return (new XDocument(), false); // Sécurité
-
-            // On se base sur les données déjà filtrées par ExportPhase : les participants et combats de cette phase.
-            int nbParticipants = DC.Deroulement.Participants.Count(p => p.phase == phase.id);
-            int nbCombats = DC.Deroulement.Combats.Count(c => c.phase == phase.id);
-            bool isLarge = (nbParticipants + nbCombats) > kDocumentPhaseFlushThreshold;
+            if (competition == null) return new XDocument(); // Sécurité
 
             XElement xcompetition = competition.ToXml();
             XElement xepreuve = epreuve.ToXml(DC);
@@ -566,7 +521,7 @@ namespace AppPublication.Export
             xepreuve.Add(ExportPhase(DC, phase)); // On délègue au sous-boss optimisé
             xcompetition.Add(xepreuve);
 
-            return (new XDocument(new XElement(ConstantXML.DocRoot, new XAttribute(ConstantXML.DocType, "DocumentPhase"), xcompetition)), isLarge);
+            return new XDocument(new XElement(ConstantXML.DocRoot, new XAttribute(ConstantXML.DocType, "DocumentPhase"), xcompetition));
         }
 
         /// <summary>
@@ -582,7 +537,7 @@ namespace AppPublication.Export
         /// <param name="_phase">La phase spécifique à générer (si null, génère pour toute la compétition).</param>
         /// <param name="tapis">Le numéro du tapis spécifique à générer (si null, boucle sur tous les tapis).</param>
         /// <returns>Tuple contenant le document XML et un indicateur si le document est volumineux</returns>
-        public static (XDocument outDoc, bool isLargeDoc) CreateDocumentFeuilleCombat(IReadOnlyExportContext ctx, IPhase _phase, int? tapis)
+        public static XDocument CreateDocumentFeuilleCombat(IReadOnlyExportContext ctx, IPhase _phase, int? tapis)
         {
             IJudoData DC = ctx.DataContext;
 
@@ -604,7 +559,7 @@ namespace AppPublication.Export
 
             // Fallback : on prend la première compétition disponible si la résolution a échoué
             competition ??= DC.Organisation.Competitions.FirstOrDefault();
-            if (competition == null) return (new XDocument(), false);
+            if (competition == null) return new XDocument();
 
             // =========================================================================
             // 2. PRÉCHARGEMENT ET INDEXATION DES DONNÉES (Optimisation O(1))
@@ -628,9 +583,6 @@ namespace AppPublication.Export
             var allCombats = DC.Deroulement.Combats
                 .Where(o => !o.virtuel && (o.vainqueur == null || o.vainqueur == -1))
                 .ToList();
-
-            // On lève le drapeau si on génère "tout" (phase et tapis null) ET que le volume de combats dépasse le seuil.
-            bool isLarge = (_phase == null && !tapis.HasValue) && (allCombats.Count > kDocumentFeuilleCombatFlushThreshold);
 
             bool isCSA = (competition.afficheCSA == (int)TypeCSAEnum.Minisite) || (competition.afficheCSA == (int)TypeCSAEnum.Tous);
             int compType = competition.type;
@@ -771,7 +723,7 @@ namespace AppPublication.Export
             XElement xRoot = competition.ToXml();
             xRoot.Add(xTapisElements);
 
-            return (new XDocument(new XElement(ConstantXML.DocRoot, new XAttribute(ConstantXML.DocType, "DocumentFeuilleCombat"), xRoot)), isLarge);
+            return new XDocument(new XElement(ConstantXML.DocRoot, new XAttribute(ConstantXML.DocType, "DocumentFeuilleCombat"), xRoot));
         }
         #endregion
 
