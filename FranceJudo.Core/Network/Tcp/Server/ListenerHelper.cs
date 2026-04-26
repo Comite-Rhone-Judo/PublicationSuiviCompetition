@@ -106,13 +106,6 @@ namespace FranceJudo.Core.Network.Tcp.Server
                 data = FileSystemHelper.TheEncoding.GetBytes(sendMessage);
                 client.GetStream().BeginWrite(data, 0, data.Length, asyncCallback, client);
 
-                //using (TimedLock.Lock(client.GetStream())
-                //{
-                //    networkStream = client.GetStream();
-                //    networkStream.WriteTimeout = 500;
-                //    networkStream.Write(data, 0, data.Length);
-                //}
-
                 return true;
             }
             catch (Exception ex)

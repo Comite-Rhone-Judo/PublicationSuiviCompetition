@@ -129,11 +129,7 @@ namespace KernelImpl.Noyau.Deroulement
             combat_discipline = combat.discipline;
 
             // Ajout de la lecture des donnees de phase et d'epreuve
-            IPhase phase = null;
-            using (TimedLock.Lock((DC.Deroulement.Phases as ICollection).SyncRoot))
-            {
-                phase = DC.Deroulement.Phases.FirstOrDefault(o => o.id == combat.phase);
-            }
+            IPhase phase = DC.Deroulement.Phases.FirstOrDefault(o => o.id == combat.phase);
             if (phase != null)
             {
                 phase_id = phase.id;
@@ -141,11 +137,7 @@ namespace KernelImpl.Noyau.Deroulement
                 phase_type = phase.typePhase;
                 phase_etat = phase.etat;
 
-                IEpreuve epreuve = null;
-                using (TimedLock.Lock((DC.Organisation.Epreuves as ICollection).SyncRoot))
-                {
-                    epreuve = DC.Organisation.Epreuves.FirstOrDefault(o => o.id == phase.epreuve);
-                }
+                IEpreuve epreuve = DC.Organisation.Epreuves.FirstOrDefault(o => o.id == phase.epreuve);
                 if (epreuve != null)
                 {
                     epreuve_id = epreuve.id;
@@ -161,11 +153,7 @@ namespace KernelImpl.Noyau.Deroulement
 
             if ((CompetitionTypeEnum)DC.Organisation.Competition.type != CompetitionTypeEnum.Equipe)
             {
-                IJudoka judoka1 = null;
-                using (TimedLock.Lock((DC.Participants.Judokas as ICollection).SyncRoot))
-                {
-                    judoka1 = DC.Participants.Judokas.FirstOrDefault(o => o.id == combat.participant1);
-                }
+                IJudoka judoka1 = DC.Participants.Judokas.FirstOrDefault(o => o.id == combat.participant1);
                 if (judoka1 != null)
                 {
                     judoka1_id1 = judoka1.id;
@@ -175,11 +163,7 @@ namespace KernelImpl.Noyau.Deroulement
                     judoka1_club1 = judoka1.club;
                 }
 
-                IJudoka judoka2 = null;
-                using (TimedLock.Lock((DC.Participants.Judokas as ICollection).SyncRoot))
-                {
-                    judoka2 = DC.Participants.Judokas.FirstOrDefault(o => o.id == combat.participant2);
-                }
+                IJudoka judoka2 = DC.Participants.Judokas.FirstOrDefault(o => o.id == combat.participant2);
 
                 if (judoka2 != null)
                 {

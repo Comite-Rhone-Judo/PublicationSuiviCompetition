@@ -14,6 +14,7 @@
 	<xsl:param name="cssPath"/>
 	<xsl:param name="commonPath"/>
 	<xsl:param name="competitionPath"/>
+	<xsl:param name="RefData"/>
 	
 	<!-- Type de la poule: 1 = Diagonale, 2 = Colonnes, 3 = auto -->
 	<xsl:param name="typePoule"/>
@@ -476,7 +477,7 @@
 					</header>					 
                     <footer class="w3-tiny">
 						<xsl:variable name="club" select="$j1/@club"/>
-						<xsl:variable name="clubN" select="//club[@ID = $club]"/>
+						<xsl:variable name="clubN" select="$RefData/structures/clubs/club[@ID = $club]"/>
 						<xsl:variable name="comite" select="$clubN/@comite"/>
 						<xsl:variable name="ligue" select="$clubN/@ligue"/>
 

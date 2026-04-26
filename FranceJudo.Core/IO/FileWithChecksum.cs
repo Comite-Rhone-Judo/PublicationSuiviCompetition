@@ -60,13 +60,29 @@ namespace FranceJudo.Core.IO
 
         public static string ComputeHash(FileInfo fileInfo, HashAlgorithm hashAlgorithm = null)
         {
-            HashAlgorithm algo = hashAlgorithm ?? MD5.Create();
+            int retries = 3;
+            int delayMs = 50; // On attend 50ms entre chaque essai
 
-            using (var fs = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            HashAlgorithm algo = hashAlgorithm ?? MD5.Create();
+            while (true)
             {
-                var hash = algo.ComputeHash(fs);
-                algo.Dispose();
-                return BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant();
+                try
+                {
+                    using (var fs = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    {
+                        var hash = algo.ComputeHash(fs);
+                        algo.Dispose();
+                        return BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant();
+                    }
+                }
+                catch (IOException)
+                {
+                    if (--retries <= 0)
+                        throw; // On abandonne après 3 échecs
+
+                    // On met le thread en pause pour laisser l'antivirus ou l'autre thread relâcher le fichier
+                    System.Threading.Thread.Sleep(delayMs);
+                }
             }
         }
         public void LoadXml(XElement xinfo)

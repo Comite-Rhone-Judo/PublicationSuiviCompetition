@@ -1,4 +1,5 @@
 ﻿using FranceJudo.Core.Logging;
+using FranceJudo.Core.Threading;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -72,7 +73,7 @@ namespace FranceJudo.Core.Configuration
         /// </summary>
         private void HandleSectionDirty(InternalConfigSectionBase section)
         {
-            lock (_saveLock) // Protège l'accès à la liste _sectionsToSave
+            using (TimedLock.Lock(_saveLock)) // Protège l'accès à la liste _sectionsToSave
             {
                 if (!_sectionsToSave.Contains(section))
                 {
@@ -117,7 +118,7 @@ namespace FranceJudo.Core.Configuration
         /// </summary>
         public void CommitChangesSync()
         {
-            lock (_saveLock)
+            using (TimedLock.Lock(_saveLock))
             {
                 // Optimisation : Accès direct à la propriété Count (très rapide)
                 int count = _sectionsToSave.Count;

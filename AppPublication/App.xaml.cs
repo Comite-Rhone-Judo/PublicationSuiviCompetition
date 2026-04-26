@@ -1,5 +1,6 @@
 ﻿using AppPublication.Controles;
 using FranceJudo.Core.Configuration;
+using FranceJudo.Core.Diagnostic;
 using FranceJudo.Core.Logging;
 using FranceJudo.UI.Wpf.Dialogs;
 using FranceJudo.UI.Wpf.Foundation;
@@ -44,6 +45,9 @@ namespace AppPublication
             LogTools.LogStartup();
             LogTools.OnCriticalErrorLogged += LogTools_OnCriticalErrorLogged;
 
+            // 1. Démarrer le monitoring global (RAM, GC) toutes les 60 secondes
+            HealthMonitor.StartSystemMonitoring(60);
+
             // Démarrage du Service de Configuration (le worker commence ici)
             _configSvc = ConfigurationService.CreateInstance();
 
@@ -70,6 +74,21 @@ namespace AppPublication
             {
                 DataContext = Controles.DialogControleur.Instance
             };
+
+            void loadedHandler(object s, RoutedEventArgs ev)
+            {
+                mainWin.Loaded -= loadedHandler; // Nettoyage de l'événement ici
+
+                this.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    // 2. Démarrer le Heartbeat sur le Thread UI (le Dispatcher de l'application)
+                    // On le configure pour alerter si l'interface gèle plus de 3 secondes
+                    HealthMonitor.MonitorDispatcher(this.Dispatcher, "MainUI", 3000);
+                }), DispatcherPriority.ContextIdle);
+            }
+
+            mainWin.Loaded += loadedHandler;
+
             mainWin.Show();
         }
 
@@ -116,13 +135,15 @@ namespace AppPublication
                 (ConfigurationService.Instance as IDisposable)?.Dispose();
             }
 
+            // Arrêt propre des timers à la fermeture
+            HealthMonitor.StopAllMonitoring();
+
             // Arrete les loggers
             LogTools.LogStop();
             NLog.LogManager.Shutdown();
 
             // DÉSABONNEMENT (Bonne pratique pour éviter les fuites de mémoire)
             LogTools.OnCriticalErrorLogged -= LogTools_OnCriticalErrorLogged;
-
 
             base.OnExit(e);
         }

@@ -281,7 +281,7 @@ namespace AppPublication.Controles
                                         }
                                         catch (Exception ex)
                                         {
-                                            LogTools.Logger.Debug("Fichier '{0}' ignore - Exception lors de la lecture du format", imgFile, ex);
+                                            LogTools.Logger.Debug(ex, "Fichier '{0}' ignore - Exception lors de la lecture du format", imgFile);
                                             allFileOk = false;
                                         }
                                     }

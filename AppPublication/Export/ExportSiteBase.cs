@@ -33,6 +33,13 @@ namespace AppPublication.Export
             // On factorise l'appel systématique
             AddStructureArgument(args, siteStruct, savePath);
 
+            // 2. INJECTION DU RÉFÉRENTIEL
+            // On passe un Navigator (objet .NET standard) sous le nom "RefData"
+            if (_context.ReferenceData != null)
+            {
+                args.AddParam("RefData", "", _context.ReferenceData.CreateNavigator());
+            }
+
             // On ajoute les paramètres à la volée s'il y en a
             if (extraParams != null)
             {

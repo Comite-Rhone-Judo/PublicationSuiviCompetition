@@ -1,5 +1,6 @@
 ﻿using AppPublication.Models.EcransAppel;
 using AppPublication.Publication;
+using FranceJudo.Core.Export;
 using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
 using FranceJudo.Core.Threading;
@@ -10,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Xml.Xsl;
@@ -28,23 +30,24 @@ namespace AppPublication.Export
         /// <summary>
         /// Génère la page d'index du site, les scripts de mise à jour et exporte les ressources statiques.
         /// </summary>
-        public List<FileWithChecksum> GenereWebSiteIndex(IJudoData DC, ExportSharedContextInterne ctx, SiteInterneUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteIndex(ExportSharedContextInterne ctx, SiteInterneUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
+            IJudoData DC = ctx.DataContext;
             // Clone la structure de répertoires pour le contexte multi-thread
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
-            progress?.Report(BatchProgressInfo.Init(2));
+                
 
             if (DC != null && ctx != null && siteStructure != null)
             {
                 // 1. Génération du document d'index de base
-                XDocument docIndex = ExportXML.CreateDocumentIndex(DC);
+                XDocument outDoc = ExportXML.CreateDocumentIndex(ctx);
 
                 // 2. Ajout de la CONFIGURATION uniquement (pas de structures de clubs/ligues)
                 // On suppose que cette méthode dans ctx injecte PublicationInfo et SiteConfiguration
-                ctx.EnrichWithConfiguration(docIndex);
+                ctx.EnrichWithConfiguration(outDoc);
 
-                LogTools.DebugLogData(docIndex);
+                LogTools.DebugLogData(outDoc);
 
                 // --- 4. RESSOURCES STATIQUES (CSS, JS, IMG) ---
                 // Export direct des styles et scripts
@@ -65,7 +68,10 @@ namespace AppPublication.Export
                 var footerArgs = CreateAllXsltArgs(siteStructure, footerSavePath);
 
                 // Utilisation du même docIndex pour générer le JS via XSLT
-                SiteExportEngine.GenererHtmlSite(docIndex, footerType, footerSavePath, footerArgs, "js");
+                using (var source = new XmlSource(outDoc))
+                {
+                    SiteExportEngine.GenererHtmlSite(source, footerType, footerSavePath, footerArgs, "js");
+                }
                 output.Add(new FileWithChecksum($"{footerSavePath}.js"));
 
                 LogTools.Logger.Debug("GenereWebSiteIndex Terminé - Total: {0} ressources", output.Count);
@@ -85,48 +91,60 @@ namespace AppPublication.Export
         /// <param name="ecran"></param>
         /// <param name="progress"></param>
         /// <returns></returns>
-        public List<FileWithChecksum> GenereEcranAppel(IJudoData DC, ExportSharedContextInterne ctx, SiteInterneUrlGenerator siteStructure, EcranAppelModel ecran, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereEcransAppel(ExportSharedContextInterne ctx, SiteInterneUrlGenerator siteStructure, List<EcranAppelModel> ecrans, IProgress<BatchProgressInfo> progress)
         {
+            IJudoData DC = ctx.DataContext;
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
+            progress?.Report(BatchProgressInfo.Init(ecrans.Count));
             var exportType = ExportEnum.Site_Interne_EcranAppel;
             var targetDirectory = siteStructure.PhysicalStructure.RepertoireEcransAppel();
 
-            // Le fichier de destination
-            string savePath = GetFileSavePath(targetDirectory, exportType, (ecran.Id >= 0) ? $"{ecran.Id:00}" : "default");
-
-            var ecransParams = new List<(string, object)>();
-            ecransParams.Add(("idEcran", ecran.Id));                 // Le numero de l'ecran d'appel
-            ecransParams.Add(("tailleGroupe", ecran.Groupement));     // La taille du groupe
-            ecransParams.Add(("dispositionAffichage", ecran.Disposition.ToString().ToLower()));
+            // 1. COMPILATION XPATH (Zéro allocation pour le moteur XSLT)
+            XPathDocument xpathEcrans;
+            var settings = new XmlReaderSettings { NameTable = new NameTable(), IgnoreWhitespace = true };
+            using (var reader = XmlReader.Create(ctx.ExportDocument.CreateReader(), settings))
+            {
+                xpathEcrans = new XPathDocument(reader);
+            }
 
             // Ici on ne prend que les numeros de tapis qui sont dans la limite de la competition (cas ou on a plus de tapis configures que de tapis declarés)
             // On cherche le plus grand nombre de tapis si on a plusieurs competitions.
             int nbTapisMax = DC.Organisation.Competitions.Max(c => c.nbTapis);
+            int currentStep = 0;
 
-            XDocument docParams = new XDocument(
-                                        new XElement("tapisIds",
-                                        ecran.TapisIds.Where(num => (num <= nbTapisMax)).Select(num => new XElement("tapis",
-                                                                            new XAttribute("id", num)))));    // La liste des tapis doit etre passee sous forme d'un NodeSet
-            ecransParams.Add(("tapisAffiches", docParams.CreateNavigator().Select("/")));
+            foreach (var ecran in ecrans)
+            {
+                // Le fichier de destination
+                string savePath = GetFileSavePath(targetDirectory, exportType, (ecran.Id >= 0) ? $"{ecran.Id:00}" : "default");
 
-            ecransParams.Add(("combatsParPageEff", ecran.NbCombatsPage));
-            // On le garde au cas ou pour la suite, mais normalement, la disposition des combats est gere via la disposition d'affichage
-            ecransParams.Add(("isAffichageCombatLigne", ecran.DispositionCombat == DispositionAffichage.Ligne ? "true" : "false"));
+                var ecransParams = new List<(string, object)>();
+                ecransParams.Add(("idEcran", ecran.Id));                 // Le numero de l'ecran d'appel
+                ecransParams.Add(("tailleGroupe", ecran.Groupement));     // La taille du groupe
+                ecransParams.Add(("dispositionAffichage", ecran.Disposition.ToString().ToLower()));
 
-            // Option d'auto ajustement du texte en fonction de la taille du groupe
-            ecransParams.Add(("ajusteTexteAuto", ecran.AjusteTailleTexte ? "true" : "false"));
+                XDocument docParams = new XDocument(
+                                            new XElement("tapisIds",
+                                            ecran.TapisIds.Where(num => (num <= nbTapisMax)).Select(num => new XElement("tapis",
+                                                                                new XAttribute("id", num)))));    // La liste des tapis doit etre passee sous forme d'un NodeSet
+                ecransParams.Add(("tapisAffiches", docParams.CreateNavigator().Select("/")));
 
-            // Les arguments XSLT (inclut la structure du site et le chemin cible)
-            var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, ecransParams.ToArray());
+                ecransParams.Add(("combatsParPageEff", ecran.NbCombatsPage));
+                // On le garde au cas ou pour la suite, mais normalement, la disposition des combats est gere via la disposition d'affichage
+                ecransParams.Add(("isAffichageCombatLigne", ecran.DispositionCombat == DispositionAffichage.Ligne ? "true" : "false"));
 
-            progress?.Report(BatchProgressInfo.Init(1));
+                // Option d'auto ajustement du texte en fonction de la taille du groupe
+                ecransParams.Add(("ajusteTexteAuto", ecran.AjusteTailleTexte ? "true" : "false"));
 
-            SiteExportEngine.GenererHtmlSite(ctx.ExportDocument, exportType, savePath, xsltArgs);
+                // Les arguments XSLT (inclut la structure du site et le chemin cible)
+                var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, ecransParams.ToArray());
 
-            output.Add(new FileWithChecksum($"{savePath}.html"));
+                SiteExportEngine.GenererHtmlSite(xpathEcrans, exportType, savePath, xsltArgs);
 
-            progress?.Report(BatchProgressInfo.Step(1));
+                output.Add(new FileWithChecksum($"{savePath}.html"));
+
+                progress?.Report(BatchProgressInfo.Step(++currentStep));
+            }
 
             return output;
         }

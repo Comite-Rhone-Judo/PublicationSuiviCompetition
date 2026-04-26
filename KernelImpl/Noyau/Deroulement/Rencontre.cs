@@ -645,50 +645,6 @@ namespace KernelImpl.Noyau.Deroulement
                 rencontres.Add(rencontre);
             }
 
-            //foreach (XElement xinfo in xelement.Descendants(ConstantXML.Tapis))
-            //{
-            //    //if (tapis.HasValue && int.Parse(xinfo.Attribute(ConstantXML.Tapis).Value) != tapis)
-            //    //{
-            //    //    continue;
-            //    //}
-            //    int maximum = xelement.Descendants(ConstantXML.Rencontre).Count();
-            //    int index = 0;
-
-            //    Parallel.ForEach(xelement.Descendants(ConstantXML.Rencontre), xrencontre =>
-            //    {
-            //        if (MI != null)
-            //        {
-            //            using (TimedLock.Lock((rencontres as ICollection).SyncRoot))
-            //            {
-            //                Interlocked.Add(ref index, 1);
-            //            }
-            //            MI(index, maximum, "Importation des judokas");
-            //        }
-
-            //        Rencontre rencontre = new Rencontre();
-            //        rencontre.LoadXml(xrencontre);
-            //        using (TimedLock.Lock((rencontres as ICollection).SyncRoot))
-            //        {
-            //            rencontres.Add(rencontre);
-            //        }
-            //    });
-            //}
-
-
-            //foreach (XElement xinfo in xelement.Descendants(ConstantXML.Tapis))
-            //{
-            //    if (int.Parse(xinfo.Attribute(ConstantXML.Tapis).Value) != tapis)
-            //    {
-            //        continue;
-            //    }
-
-            //    foreach (XElement xrencontre in xelement.Descendants(ConstantXML.Rencontre))
-            //    {
-            //        Rencontre rencontre = new Rencontre();
-            //        rencontre.LoadXml(xrencontre);
-            //        rencontres.Add(rencontre);
-            //    }
-            //}
             return rencontres;
         }
     }

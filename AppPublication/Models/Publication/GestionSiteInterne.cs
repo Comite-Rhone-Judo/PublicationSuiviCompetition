@@ -200,7 +200,7 @@ namespace AppPublication.Models.Publication
             // Met a jour les repertoires de l'application (Interne)
             if (_structureRepertoiresSiteInterne != null)
             {
-                FileSystemHelper.CreateDirectorie(_structureRepertoiresSiteInterne.RepertoireRacine);
+                FileSystemHelper.CreateDirectory(_structureRepertoiresSiteInterne.RepertoireRacine);
             }
 
             // Initialise la racine du serveur Web local et On met a jour les contextes pour les modules HTTP

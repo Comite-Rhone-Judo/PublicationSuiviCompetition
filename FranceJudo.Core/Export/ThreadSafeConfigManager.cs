@@ -1,4 +1,5 @@
-﻿using FranceJudo.Core.Utils;
+﻿using FranceJudo.Core.Threading;
+using FranceJudo.Core.Utils;
 using System;
 
 namespace FranceJudo.Core.Export
@@ -25,7 +26,7 @@ namespace FranceJudo.Core.Export
         {
             get
             {
-                lock (_lock)
+                using (TimedLock.Lock(_lock))
                 {
                     return _configurationActive.Clone();
                 }
@@ -37,7 +38,7 @@ namespace FranceJudo.Core.Export
         /// </summary>
         public void Modifier(Action<T> actionModification)
         {
-            lock (_lock)
+            using (TimedLock.Lock(_lock))
             {
                 actionModification(_configurationActive);
             }
@@ -48,7 +49,7 @@ namespace FranceJudo.Core.Export
         /// </summary>
         public void SetConfiguration(T nouvelleConfiguration)
         {
-            lock (_lock)
+            using (TimedLock.Lock(_lock))
             {
                 _configurationActive = nouvelleConfiguration.Clone();
             }

@@ -17,13 +17,16 @@ namespace AppPublication.Export
 {
     public static class ExportXML
     {
+
+        #region Generation XElement
         /// <summary>
         /// Retourne la liste des comites en XML
         /// </summary>
-        /// <param name="DC"></param>
+        /// <param name="ctx"></param>
         /// <returns></returns>
-        public static XElement GetComites(IJudoData DC)
+        public static XElement GetComites(IReadOnlyExportContext ctx)
         {
+            IJudoData DC = ctx.DataContext;
             try
             {
                 // On utilise AsEnumerable() pour lire les données en flux continu 
@@ -43,10 +46,11 @@ namespace AppPublication.Export
         /// <summary>
         /// Retourne la liste des ligues en XML
         /// </summary>
-        /// <param name="DC"></param>
+        /// <param name="ctx"></param>
         /// <returns></returns>
-        public static XElement GetLigues(IJudoData DC)
+        public static XElement GetLigues(IReadOnlyExportContext ctx)
         {
+            IJudoData DC = ctx.DataContext;
             try
             {
                 // Lecture en flux et transformation directe via LINQ
@@ -65,10 +69,11 @@ namespace AppPublication.Export
         /// <summary>
         /// Retourne la liste des secteurs en XML
         /// </summary>
-        /// <param name="DC"></param>
+        /// <param name="ctx"></param>
         /// <returns></returns>
-        public static XElement GetSecteurs(IJudoData DC)
+        public static XElement GetSecteurs(IReadOnlyExportContext ctx)
         {
+            IJudoData DC = ctx.DataContext;
             try
             {
                 // On stream la lecture et on convertit à la volée
@@ -85,12 +90,13 @@ namespace AppPublication.Export
         }
 
         /// <summary>
-        /// Retourne la liste des ligues en XML
+        /// Retourne la liste des pays en XML
         /// </summary>
-        /// <param name="DC"></param>
+        /// <param name="ctx">Contexte en lecture seule pour l'export</param>
         /// <returns></returns>
-        public static XElement GetPays(IJudoData DC)
+        public static XElement GetPays(IReadOnlyExportContext ctx)
         {
+            IJudoData DC = ctx.DataContext;
             try
             {
                 return new XElement(ConstantXML.LesPays,
@@ -109,10 +115,11 @@ namespace AppPublication.Export
         /// <summary>
         /// Genere la liste des clubs en XML
         /// </summary>
-        /// <param name="DC"></param>
+        /// <param name="ctx">Contexte en lecture seule pour l'export</param>
         /// <returns></returns>
-        public static XElement GetClubs(IJudoData DC)
+        public static XElement GetClubs(IReadOnlyExportContext ctx)
         {
+            IJudoData DC = ctx.DataContext;
             try
             {
                 // 1. On prépare la requête pour les clubs ayant des judokas
@@ -143,11 +150,10 @@ namespace AppPublication.Export
         /// <summary>
         /// Ajout des grades à un document XML
         /// </summary>
-        /// <param name="doc">le document</param>
-        /// <param name="DC"></param>
-        public static XElement GetCeintures(IJudoData DC)
+        /// <param name="ctx">Contexte en lecture seule pour l'export</param>
+        public static XElement GetCeintures(IReadOnlyExportContext ctx)
         {
-
+            IJudoData DC = ctx.DataContext;
             try
             {
                 return new XElement(ConstantXML.Ceintures,
@@ -162,6 +168,9 @@ namespace AppPublication.Export
             }
         }
 
+        #endregion
+
+        #region Generation Fichiers Checksum
         /// <summary>
         /// Exporte une liste de fichiers avec Checksum en un objet XML
         /// </summary>
@@ -196,44 +205,54 @@ namespace AppPublication.Export
                            .ToList(); // On matérialise la liste finale d'un coup
         }
 
+        #endregion
+
+        #region Generation Documents XML pour le site
         /// <summary>
         /// Creation du document pour l'index
         /// </summary>
-        /// <param name="DC"></param>
-        /// <param name="siteStructure"></param>
-        /// <returns></returns>
-        public static XDocument CreateDocumentIndex(IJudoData DC) // J'ai supprimé siteStructure !
+        /// <param name="ctx">Contexte en lecture seule pour l'export</param>
+        /// <returns>Tuple contenant le document XML et un indicateur si le document est volumineux</returns>
+        public static XDocument CreateDocumentIndex(IReadOnlyExportContext ctx)
         {
+            IJudoData DC = ctx.DataContext;
             // On construit l'arbre entier, la racine et les enfants en une seule passe
             return new XDocument(
-                new XElement(ConstantXML.DocRoot,
-                   new XElement(ConstantXML.Competitions,
-                        // On stream directement depuis la base vers les éléments XML
-                        DC.Organisation.Competitions
-                          .AsEnumerable()
-                          .Select(competition => competition.ToXml())
-                )
-            ));
+                    new XElement(ConstantXML.DocRoot,
+                        new XAttribute(ConstantXML.DocType, "DocumentIndex"),
+                        new XElement(ConstantXML.Competitions,
+                            // On stream directement depuis la base vers les éléments XML
+                            DC.Organisation.Competitions
+                              .AsEnumerable()
+                              .Select(competition => competition.ToXml())
+                        )   
+                    )
+                );
         }
 
         /// <summary>
         /// Création du menu (pour le site)
         /// </summary>
-        /// <param name="DC"></param>
-        /// <returns></returns>
-        public static XDocument CreateDocumentMenu(IJudoData DC, ExtendedJudoData EDC, SiteUrlGenerator siteStructure)
+        /// <param name="ctx">Contexte en lecture seule pour l'export</param>
+        /// <param name="siteStructure">Générateur d'URL pour le site</param>
+        /// <returns>Tuple contenant le document XML et un indicateur si le document est volumineux</returns>
+        public static XDocument CreateDocumentMenu(IReadOnlyExportContext ctx, SiteUrlGenerator siteStructure)
         {
+            IJudoData DC = ctx.DataContext;
+            IExtendedJudoData EDC = ctx.ExtendedDataContext;
+
             // 1. On charge UNIQUEMENT ce qui est nécessaire en mémoire pour éviter le N+1
-            var phasesInMem = DC.Deroulement.Phases.ToList();
+            var phasesByEpreuve = DC.Deroulement.Phases.ToLookup(p => p.epreuve);
 
             // 2. Construction fonctionnelle globale de l'arbre
             return new XDocument(
                 new XElement(ConstantXML.DocRoot,
+                    new XAttribute(ConstantXML.DocType, "DocumentMenu"),
                     new XElement(ConstantXML.Competitions,
 
-                        // Boucle principale transformée en projection LINQ
-                        DC.Organisation.Competitions.ToList().Select(competition =>
-                        {
+                       // Boucle principale transformée en projection LINQ
+                       DC.Organisation.Competitions.AsEnumerable().Select(competition =>
+                       {
                             // On récupère l'élément racine de la compétition
                             XElement xcompetition = competition.ToXml();
 
@@ -253,7 +272,8 @@ namespace AppPublication.Export
                             xcompetition.Add(
                                 epreuves_compet
                                     // On filtre en utilisant la liste en MÉMOIRE (phasesInMem)
-                                    .Where(ep => phasesInMem.Any(o => o.epreuve == ep.id && o.etat > (int)EtatPhaseEnum.Cree))
+                                    // Utilisation de l'index ILookup (Recherche ultra-rapide)
+                                    .Where(ep => phasesByEpreuve[ep.id].Any(o => o.etat > (int)EtatPhaseEnum.Cree))
                                     .Select(ep =>
                                     {
                                         string webPathEpreuve = siteStructure.GetRelativeUrlEpreuveFromCompetition(ep.id.ToString(), ep.nom);
@@ -261,10 +281,10 @@ namespace AppPublication.Export
                                         xepreuve.SetAttributeValue(ConstantXML.Directory, webPathEpreuve);
 
                                         // Ajout de la balise Phases avec les données EN MÉMOIRE
+                                        // Utilisation de l'index ILookup pour l'extraction
                                         xepreuve.Add(new XElement(ConstantXML.Phases,
-                                            phasesInMem.Where(o => o.epreuve == ep.id)
-                                                       .Select(phase => phase.ToXml())
-                                        ));
+                                            phasesByEpreuve[ep.id].Select(phase => phase.ToXml())
+                                            ));
 
                                         return xepreuve;
                                     })
@@ -298,13 +318,23 @@ namespace AppPublication.Export
         /// <summary>
         /// Creation du document pour les engagements (pour le site)
         /// </summary>
-        /// <param name="DC"></param>
-        /// <param name="EDC"></param>
-        /// <returns></returns>
-        public static XDocument CreateDocumentEngagements(IJudoData DC, ExtendedJudoData EDC)
+        /// <param name="ctx">Contexte en lecture seule pour l'export</param>
+        /// <returns>Tuple contenant le document XML et un indicateur si le document est volumineux</returns>
+        public static XDocument CreateDocumentEngagements(IReadOnlyExportContext ctx)
         {
+            IJudoData DC = ctx.DataContext;
+            IExtendedJudoData EDC = ctx.ExtendedDataContext;
+
+            // 2. CRÉATION DES INDEX EN MÉMOIRE (O(1))
+            var judokasByCompet = DC.Participants.Vuejudokas.ToLookup(vj => vj.idcompet);
+            var epreuvesByCompet = DC.Organisation.Epreuves.ToLookup(ep => ep.competition);
+            var phasesByEpreuve = DC.Deroulement.Phases.ToLookup(p => p.epreuve);
+            var combatsByPhase = DC.Deroulement.Combats.ToLookup(c => c.phase);
+            var groupesByCompet = EDC.Engagement.GroupesEngages.ToLookup(g => g.Competition);
+
             return new XDocument(
                 new XElement(ConstantXML.DocRoot,
+                    new XAttribute(ConstantXML.DocType, "DocumentEngagements"),
                     new XElement(ConstantXML.Competitions,
 
                         // 1. On filtre DÈS LE DÉPART (on ne génère le XML que pour les compétitions valides)
@@ -324,8 +354,8 @@ namespace AppPublication.Export
                                           new XElement(ConstantXML.GroupeEngagements_groupes,
                                               new XAttribute(ConstantXML.GroupeEngagements_type, (int)typeGroupe),
 
-                                              EDC.Engagement.GroupesEngages
-                                                  .Where(g => g.Competition == competition.id && g.Type == (int)typeGroupe)
+                                              groupesByCompet[competition.id]
+                                                  .Where(g => g.Type == (int)typeGroupe)
                                                   .Select(groupe => groupe.ToXml())
                                           )
                                       )
@@ -335,47 +365,30 @@ namespace AppPublication.Export
                               // --- B. Ajout des Judokas ---
                               xcompetition.Add(
                                   new XElement(ConstantXML.GroupeEngagements_judokas,
-                                      DC.Participants.Vuejudokas
-                                          .Where(vj => vj.idcompet == competition.id)
-                                          .Select(vj => vj.ToXml())
-                                  )
-                              );
+                                        judokasByCompet[competition.id].Select(vj => vj.ToXml())
+                                    )
+                               );
 
                               // --- C. Ajout des Epreuves ---
                               // On matérialise la liste (ToList) car on va la réutiliser juste en dessous pour la jointure
-                              var epreuves = DC.Organisation.Epreuves
-                                               .Where(ep => ep.competition == competition.id)
-                                               .ToList();
-
+                              var epreuves = epreuvesByCompet[competition.id].ToList();
                               xcompetition.Add(
                                   new XElement(ConstantXML.GroupeEngagements_epreuves,
-                                      epreuves.Select(ep => ep.ToXml(DC))
-                                  )
-                              );
+                                        epreuves.Select(ep => ep.ToXml(DC))));
 
                               // --- D. Ajout des Phases ---
                               // On matérialise la liste des phases car on va la réutiliser pour la jointure des combats
-                              var phases = DC.Deroulement.Phases
-                                             .Join(epreuves, p => p.epreuve, e => e.id, (p, e) => p)
-                                             .ToList();
-
+                              var phases = epreuves.SelectMany(ep => phasesByEpreuve[ep.id]).ToList();
                               xcompetition.Add(
                                   new XElement(ConstantXML.Phases,
-                                      phases.Select(ph => ph.ToXml())
-                                  )
-                              );
+                                        phases.Select(ph => ph.ToXml())));
 
                               // --- E. Ajout des Combats ---
                               // On fait la jointure avec la liste en mémoire (phases), on dédoublonne, et on injecte.
-                              var combats = DC.Deroulement.Combats
-                                              .Join(phases, c => c.phase, p => p.id, (c, p) => c)
-                                              .Distinct(new CombatEqualityComparer());
-
+                              var combats = phases.SelectMany(ph => combatsByPhase[ph.id]).Distinct(new CombatEqualityComparer());
                               xcompetition.Add(
-                                  new XElement(ConstantXML.GroupeEngagements_combats,
-                                      combats.Select(c => c.ToXml(DC))
-                                  )
-                              );
+                                   new XElement(ConstantXML.GroupeEngagements_combats,
+                                        combats.Select(c => c.ToXml(DC))));
 
                               return xcompetition;
                           })
@@ -385,78 +398,85 @@ namespace AppPublication.Export
 
         /// Document XML contenant les informations pour les generations des affectations de tapis
         /// </summary>
-        /// <param name="DC"></param>
-        /// <returns></returns>
-        public static XDocument CreateDocumentAffectationTapis(IJudoData DC)
+        /// <param name="ctx">Contexte en lecture seule pour l'export</param>
+        /// <returns>Tuple contenant le document XML et un indicateur si le document est volumineux</returns>
+        public static XDocument CreateDocumentAffectationTapis(IReadOnlyExportContext ctx)
         {
-            // 1. On charge les phases EN MÉMOIRE une seule fois
-            var phasesInMem = DC.Deroulement.Phases.ToList();
+            IJudoData DC = ctx.DataContext;
+
+            // 1. Création de l'index des phases (Fin de la boucle O(N²))
+            var phasesByEpreuve = DC.Deroulement.Phases.ToLookup(p => p.epreuve);
+
+            // Indexation globale des Tapis actifs (Fin du N+1)
+            // Au lieu de requêter VueCombats pour CHAQUE épreuve dans la boucle, 
+            // on extrait tous les tapis actifs de la compétition en UNE SEULE passe.
+            var activeTapisByEpreuve = DC.Deroulement.VueCombats
+                .Where(o => o.combat_tapis > 0
+                         && o.phase_etat == (int)EtatPhaseEnum.TirageValide
+                         && o.combat_vaiqueur == null)
+                .Select(o => new { o.epreuve_id, o.combat_tapis })
+                .Distinct()
+                .ToLookup(x => x.epreuve_id, x => x.combat_tapis);
 
             // 2. Construction fonctionnelle globale
             return new XDocument(
                 new XElement(ConstantXML.DocRoot,
+                    new XAttribute(ConstantXML.DocType, "DocumentAffectationTapis"),
                     new XElement(ConstantXML.Competitions,
-                        DC.Organisation.Competitions.ToList().Select(competition =>
-                        {
-                            XElement xcompetition = competition.ToXml();
+                        DC.Organisation.Competitions
+                            .AsEnumerable()
+                            .Select(competition =>
+                            {
+                                XElement xcompetition = competition.ToXml();
 
-                            // --- A. Sélection des épreuves ---
-                            IEnumerable<i_vue_epreuve_interface> epreuves_compet = competition.IsEquipe()
-                                ? DC.Organisation.VueEpreuveEquipes.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>()
-                                : DC.Organisation.VueEpreuves.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>();
+                                // --- A. Sélection des épreuves ---
+                                IEnumerable<i_vue_epreuve_interface> epreuves_compet = competition.IsEquipe()
+                                    ? DC.Organisation.VueEpreuveEquipes.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>()
+                                    : DC.Organisation.VueEpreuves.Where(o => o.competition == competition.id).Cast<i_vue_epreuve_interface>();
 
-                            // --- B. Ajout des épreuves et de leurs enfants ---
-                            xcompetition.Add(
-                                epreuves_compet
-                                    // Remplacement du .Count() == 0 par un .Any() inversé (beaucoup plus rapide)
-                                    // Et on utilise phasesInMem au lieu de retourner taper la base !
-                                    .Where(ep => phasesInMem.Any(o => o.epreuve == ep.id && o.etat > (int)EtatPhaseEnum.Cree))
-                                    .Select(ep =>
-                                    {
-                                        XElement xepreuve = ep.ToXml(DC);
-
-                                        // Ajout des Phases (depuis la mémoire)
-                                        xepreuve.Add(
-                                            new XElement(ConstantXML.Phases,
-                                                phasesInMem.Where(o => o.epreuve == ep.id)
-                                                           .Select(phase => phase.ToXml())
-                                            )
-                                        );
-
-                                        // Ajout des Tapis (uniquement pour les compétitions individuelles)
-                                        if (competition.IsIndividuelle())
+                                // --- B. Ajout des épreuves et de leurs enfants ---
+                                xcompetition.Add(
+                                    epreuves_compet
+                                        // Utilisation de l'index des phases
+                                        .Where(ep => phasesByEpreuve[ep.id].Any(o => o.etat > (int)EtatPhaseEnum.Cree))
+                                        .Select(ep =>
                                         {
-                                            // On interroge la vue des combats pour déduire les tapis actifs
-                                            var tapisEpreuve = DC.Deroulement.VueCombats
-                                                .Where(o => o.epreuve_id == ep.id
-                                                         && o.combat_tapis > 0
-                                                         && o.phase_etat == (int)EtatPhaseEnum.TirageValide
-                                                         && o.combat_vaiqueur == null)
-                                                .Select(o => o.combat_tapis)
-                                                .Distinct()
-                                                .ToList();
+                                            XElement xepreuve = ep.ToXml(DC);
 
-                                            // S'il y a des tapis, on crée la balise et on les injecte
-                                            if (tapisEpreuve.Any())
+                                            // Ajout des Phases (depuis la mémoire)
+                                            xepreuve.Add(
+                                                new XElement(ConstantXML.Phases,
+                                                    phasesByEpreuve[ep.id].Select(phase => phase.ToXml())
+                                                )
+                                            );
+
+                                            // Ajout des Tapis (uniquement pour les compétitions individuelles)
+                                            if (competition.IsIndividuelle())
                                             {
-                                                xepreuve.Add(
-                                                    new XElement(ConstantXML.TapisEpreuve,
-                                                        tapisEpreuve.Select(noTapis =>
-                                                            new XElement(ConstantXML.Tapis,
-                                                                new XAttribute(ConstantXML.Tapis_No, noTapis)
+                                                // Accès immédiat aux tapis via l'index
+                                                var tapisEpreuve = activeTapisByEpreuve[ep.id].ToList();
+
+                                                // S'il y a des tapis, on crée la balise et on les injecte
+                                                if (tapisEpreuve.Any())
+                                                {
+                                                    xepreuve.Add(
+                                                        new XElement(ConstantXML.TapisEpreuve,
+                                                            tapisEpreuve.Select(noTapis =>
+                                                                new XElement(ConstantXML.Tapis,
+                                                                    new XAttribute(ConstantXML.Tapis_No, noTapis)
+                                                                )
                                                             )
                                                         )
-                                                    )
-                                                );
+                                                    );
+                                                }
                                             }
-                                        }
 
-                                        return xepreuve;
-                                    })
-                            );
+                                            return xepreuve;
+                                        })
+                                );
 
-                            return xcompetition;
-                        })
+                                return xcompetition;
+                            })
                     )
                 ));
         }
@@ -464,11 +484,12 @@ namespace AppPublication.Export
         /// <summary>
         /// Creation d'un document XML pour une epreuve
         /// </summary>
-        /// <param name="DC"></param>
-        /// <param name="epreuve"></param>
-        /// <returns></returns>
-        public static XDocument CreateDocumentEpreuve(IJudoData DC, i_vue_epreuve_interface epreuve)
+        /// <param name="ctx">Le contexte d'exportation contenant le DataContext.</param>
+        /// <param name="epreuve">L'épreuve à exporter.</param>
+        /// <returns>Tuple contenant le document XML et un indicateur si le document est volumineux</returns>
+        public static XDocument CreateDocumentEpreuve(IReadOnlyExportContext ctx, i_vue_epreuve_interface epreuve)
         {
+            IJudoData DC = ctx.DataContext;
             ICompetition competition = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
 
             // Sécurité : si la compétition n'existe pas, on renvoie un document vide pour éviter le crash
@@ -478,18 +499,19 @@ namespace AppPublication.Export
             XElement xcompetition = competition.ToXml();
             xcompetition.Add(ExportEpreuve(DC, epreuve));
 
-            return new XDocument(new XElement(ConstantXML.DocRoot, xcompetition));
+            return new XDocument(new XElement(ConstantXML.DocRoot, new XAttribute(ConstantXML.DocType, "DocumentEpreuve"), xcompetition));
         }
 
         /// <summary>
         /// Creation d'un document XML pour une phase
         /// </summary>
-        /// <param name="epreuve"></param>
-        /// <param name="phase"></param>
-        /// <param name="DC"></param>
-        /// <returns></returns>
-        public static XDocument CreateDocumentPhase(i_vue_epreuve_interface epreuve, IPhase phase, IJudoData DC)
+        /// <param name="ctx">Le contexte d'exportation contenant le DataContext.</param>
+        /// <param name="epreuve">L'épreuve à exporter.</param>
+        /// <param name="phase">La phase à exporter.</param>
+        /// <returns>Tuple contenant le document XML et un indicateur si le document est volumineux</returns>
+        public static XDocument CreateDocumentPhase(IReadOnlyExportContext ctx, i_vue_epreuve_interface epreuve, IPhase phase)
         {
+            IJudoData DC = ctx.DataContext;
             ICompetition competition = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
             if (competition == null) return new XDocument(); // Sécurité
 
@@ -499,7 +521,7 @@ namespace AppPublication.Export
             xepreuve.Add(ExportPhase(DC, phase)); // On délègue au sous-boss optimisé
             xcompetition.Add(xepreuve);
 
-            return new XDocument(new XElement(ConstantXML.DocRoot, xcompetition));
+            return new XDocument(new XElement(ConstantXML.DocRoot, new XAttribute(ConstantXML.DocType, "DocumentPhase"), xcompetition));
         }
 
         /// <summary>
@@ -511,12 +533,14 @@ namespace AppPublication.Export
         /// Elle utilise des index en mémoire (Dictionary, Lookup) pour garantir un accès instantané aux données 
         /// et éviter le problème des requêtes N+1 ou des boucles O(N²) lors de la génération de l'arbre.
         /// </remarks>
-        /// <param name="DC">Le contexte de données (IJudoData) contenant l'accès à la base de données.</param>
+        /// <param name="ctx">Le contexte d'exportation contenant le DataContext.</param>
         /// <param name="_phase">La phase spécifique à générer (si null, génère pour toute la compétition).</param>
         /// <param name="tapis">Le numéro du tapis spécifique à générer (si null, boucle sur tous les tapis).</param>
-        /// <returns>Un objet XDocument contenant la structure XML complète prête à être parsée ou sauvegardée.</returns>
-        public static XDocument CreateDocumentFeuilleCombat(IJudoData DC, IPhase _phase, int? tapis)
+        /// <returns>Tuple contenant le document XML et un indicateur si le document est volumineux</returns>
+        public static XDocument CreateDocumentFeuilleCombat(IReadOnlyExportContext ctx, IPhase _phase, int? tapis)
         {
+            IJudoData DC = ctx.DataContext;
+
             // =========================================================================
             // 1. DÉTERMINATION DE LA COMPÉTITION DE BASE
             // =========================================================================
@@ -541,19 +565,19 @@ namespace AppPublication.Export
             // 2. PRÉCHARGEMENT ET INDEXATION DES DONNÉES (Optimisation O(1))
             // =========================================================================
             // Utilisation de GroupBy().First() pour se prémunir contre d'éventuels doublons d'ID en base.
-            var phasesDict = DC.Deroulement.Phases.GroupBy(p => p.id).ToDictionary(g => g.Key, g => g.First());
-            var epreuvesDict = DC.Organisation.VueEpreuves.GroupBy(e => e.id).ToDictionary(g => g.Key, g => g.First());
-            var epreuvesEqDict = DC.Organisation.VueEpreuveEquipes.GroupBy(e => e.id).ToDictionary(g => g.Key, g => g.First());
-            var judokasDict = DC.Participants.Judokas.GroupBy(j => j.id).ToDictionary(g => g.Key, g => g.First());
-            var equipesDict = DC.Participants.Equipes.GroupBy(e => e.id).ToDictionary(g => g.Key, g => g.First());
+            var phasesDict = ctx.Caches.PhasesDict;
+            var epreuvesDict = ctx.Caches.EpreuvesDict;
+            var epreuvesEqDict = ctx.Caches.EpreuvesEqDict;
+            var judokasDict = ctx.Caches.JudokasDict;
+            var equipesDict = ctx.Caches.EquipesDict;
 
             // Utilisation de ToLookup pour les relations "Un-vers-Plusieurs" (évite les .Where() dans les boucles)
-            var judokasByEquipe = DC.Participants.Judokas.ToLookup(j => j.equipe);
-            var rencontresByCombat = DC.Deroulement.Rencontres.Where(r => r.combat.HasValue).ToLookup(r => r.combat.Value);
-            var poulesByPhase = DC.Deroulement.Poules.ToLookup(p => p.phase);
-            var participantsByPhase = DC.Deroulement.Participants.ToLookup(p => p.phase);
-            var groupesByTapis = DC.Deroulement.VueGroupes.ToLookup(g => g.groupe_tapis);
-            var epreuvesByEquipe = DC.Organisation.VueEpreuves.ToLookup(e => e.id_epreuve_equipe);
+            var judokasByEquipe = ctx.Caches.JudokasByEquipe;
+            var rencontresByCombat = ctx.Caches.RencontresByCombat;
+            var poulesByPhase = ctx.Caches.PoulesByPhase;
+            var participantsByPhase = ctx.Caches.ParticipantsByPhase;
+            var groupesByTapis = ctx.Caches.GroupesByTapis;
+            var epreuvesByEquipe = ctx.Caches.EpreuvesByEquipe;
 
             // Optimisation RAM : On ne rapatrie de la base de données QUE les vrais combats non terminés.
             var allCombats = DC.Deroulement.Combats
@@ -699,8 +723,9 @@ namespace AppPublication.Export
             XElement xRoot = competition.ToXml();
             xRoot.Add(xTapisElements);
 
-            return new XDocument(new XElement(ConstantXML.DocRoot, xRoot));
+            return new XDocument(new XElement(ConstantXML.DocRoot, new XAttribute(ConstantXML.DocType, "DocumentFeuilleCombat"), xRoot));
         }
+        #endregion
 
         #region METHODES PRIVEES
 

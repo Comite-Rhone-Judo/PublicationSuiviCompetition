@@ -3,70 +3,77 @@ using System.Threading;
 
 namespace FranceJudo.Core.Threading
 {
-    public readonly struct TimedLock : IDisposable
+    /// <summary>
+    /// Remplace le mot-clé 'lock' pour éviter les deadlocks (gels) infinis.
+    /// S'utilise avec un bloc 'using' classique.
+    /// ATTENTION : Ne jamais utiliser autour d'un code contenant 'await'.
+    /// </summary>
+    public readonly ref struct TimedLock
     {
-        public static TimedLock Lock(object o)
+        private readonly object _target;
+
+        // Constructeur privé pour forcer l'utilisation de la méthode de fabrique 'Lock'
+        private TimedLock(object target)
         {
-            return Lock(o, TimeSpan.FromSeconds(10));
+            _target = target;
         }
 
-        public static TimedLock Lock(object o, TimeSpan timeout)
+        /// <summary>
+        /// Tente d'obtenir un verrou exclusif sur l'objet spécifié pendant le délai de 10 secondes par defaut
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static TimedLock Lock(object obj, int TimeoutSec = 10)
         {
-            TimedLock tl = new TimedLock(o);
-            if (!Monitor.TryEnter(o, timeout))
+            return Lock(obj, TimeSpan.FromSeconds(TimeoutSec <= 0 ? 10 : TimeoutSec));
+        }
+
+        /// <summary>
+        /// Tente d'obtenir un verrou exclusif sur l'objet spécifié pendant le délai imparti.
+        /// </summary>
+        /// <param name="obj">L'objet servant de jeton de verrouillage (jamais this, jamais un type valeur)</param>
+        /// <param name="timeout">Le temps d'attente maximum</param>
+        /// <returns>Une structure jetable qui libérera le verrou à la fin du bloc using</returns>
+        /// <exception cref="ArgumentNullException">Si l'objet de verrouillage est nul</exception>
+        /// <exception cref="TimeoutException">Si le verrou n'est pas obtenu dans le temps imparti</exception>
+        public static TimedLock Lock(object obj, TimeSpan timeout)
+        {
+            if (obj == null)
+                throw new ArgumentNullException(nameof(obj), "L'objet de verrouillage ne peut pas être null.");
+
+            bool lockTaken = false;
+            try
             {
-#if DEBUG
-                System.GC.SuppressFinalize(tl.leakDetector);
-#endif
-                throw new LockTimeoutException();
+                // Surcharge atomique garantie par le framework .NET (Evite les fuites de verrou)
+                Monitor.TryEnter(obj, timeout, ref lockTaken);
+
+                if (!lockTaken)
+                {
+                    // Au lieu de geler l'application, on fait exploser une erreur traçable
+                    throw new TimeoutException($"Impossible d'obtenir le verrou après {timeout.TotalSeconds}s. Deadlock potentiel évité.");
+                }
+
+                return new TimedLock(obj);
             }
-
-            return tl;
-        }
-
-        private TimedLock(object o)
-        {
-            target = o;
-#if DEBUG
-            leakDetector = new Sentinel();
-#endif
-        }
-        private readonly object target;
-
-        public readonly void Dispose()
-        {
-            Monitor.Exit(target);
-
-            // It's a bad error if someone forgets to call Dispose,
-            // so in Debug builds, we put a finalizer in to detect
-            // the error. If Dispose is called, we suppress the
-            // finalizer.
-#if DEBUG
-            GC.SuppressFinalize(leakDetector);
-#endif
-        }
-
-#if DEBUG
-        // (In Debug mode, we make it a class so that we can add a finalizer
-        // in order to detect when the object is not freed.)
-        private class Sentinel
-        {
-            ~Sentinel()
+            catch
             {
-                // If this finalizer runs, someone somewhere failed to
-                // call Dispose, which means we've failed to leave
-                // a monitor!
-                System.Diagnostics.Debug.Fail("Undisposed lock");
+                // Sécurité absolue : si une erreur système survient juste après avoir pris le verrou, on le relâche
+                if (lockTaken)
+                    Monitor.Exit(obj);
+
+                throw;
             }
         }
-        private readonly Sentinel leakDetector;
-#endif
 
-    }
-    public class LockTimeoutException : ApplicationException
-    {
-        public LockTimeoutException() : base("Timeout waiting for lock")
+        /// <summary>
+        /// Libère le verrou. Appelée automatiquement à la fermeture de l'accolade du 'using'.
+        /// </summary>
+        public void Dispose()
         {
+            if (_target != null)
+            {
+                Monitor.Exit(_target);
+            }
         }
     }
 }

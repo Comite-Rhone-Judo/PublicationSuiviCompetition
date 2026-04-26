@@ -146,12 +146,14 @@
     <Compile Include="Config\Publication\MiniSiteCollection.cs" />
     <Compile Include="Config\Publication\MiniSiteConfigElement.cs" />
     <Compile Include="Config\Publication\PublicationConfigSection.cs" />
+    <Compile Include="Export\CombatExportCaches.cs" />
     <Compile Include="Export\ConfigurationExportSite.cs" />
     <Compile Include="Export\ConfigurationExportSiteInterne.cs" />
-    <Compile Include="Export\ExportSharedContextInterne.cs" />
     <Compile Include="Export\ExportSharedContext.cs" />
+    <Compile Include="Export\ExportSharedContextInterne.cs" />
     <Compile Include="Export\ExportSharedContextBase.cs" />
-    <Compile Include="Export\IConfigurableGenerateur.cs" />
+    <Compile Include="Export\IReadOnlyExportContext.cs" />
+    <Compile Include="Generation\IConfigurableGenerateur.cs" />
     <Compile Include="Export\IReadOnlyConfigurationExportSite.cs" />
     <Compile Include="Export\IReadOnlyConfigurationExportSiteInterne.cs" />
     <Compile Include="Generation\GenerationScheduler.cs" />

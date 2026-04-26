@@ -15,6 +15,7 @@
 	<xsl:param name="cssPath"/>
 	<xsl:param name="commonPath"/>
 	<xsl:param name="competitionPath"/>
+	<xsl:param name="RefData"/>
 
 	<xsl:param name="tailleGroupe"/>
 	<xsl:param name="idEcran"/>
@@ -297,14 +298,14 @@
 		<xsl:variable name="participant1" select="$combat/score[1]/@judoka"/>
 		<xsl:variable name="judoka1" select="$combat/ancestor::tapis[1]/participants/participant[@judoka = $participant1]/descendant::*[1]"/>
 		<xsl:variable name="club1" select="$judoka1/@club"/>
-		<xsl:variable name="comite1" select="$docPrincipal//club[@ID = $club1]/@comite"/>
-		<xsl:variable name="ligue1" select="$docPrincipal//club[@ID = $club1]/@ligue"/>
+		<xsl:variable name="comite1" select="$RefData/structures/clubs/club[@ID = $club1]/@comite"/>
+		<xsl:variable name="ligue1" select="$RefData/structures/clubs/club[@ID = $club1]/@ligue"/>
 
 		<xsl:variable name="participant2" select="$combat/score[2]/@judoka"/>
 		<xsl:variable name="judoka2" select="$combat/ancestor::tapis[1]/participants/participant[@judoka = $participant2]/descendant::*[1]"/>
 		<xsl:variable name="club2" select="$judoka2/@club"/>
-		<xsl:variable name="comite2" select="$docPrincipal//club[@ID = $club2]/@comite"/>
-		<xsl:variable name="ligue2" select="$docPrincipal//club[@ID = $club2]/@ligue"/>
+		<xsl:variable name="comite2" select="$RefData/structures/clubs/club[@ID = $club2]/@comite"/>
+		<xsl:variable name="ligue2" select="$RefData/structures/clubs/club[@ID = $club2]/@ligue"/>
 
 		<xsl:variable name="firstrencontreclass">
 			<xsl:choose>
@@ -595,7 +596,7 @@
 			<xsl:when test="$ecartement = '3' or not($ecartement)">
 				<xsl:if test="$typeCompetition != '1'">
 					<!-- Individuel = {Nom Club} - {no comite} -->
-					<xsl:value-of select="$docPrincipal//club[@ID = $clubId]/nomCourt"/>
+					<xsl:value-of select="$RefData/structures/clubs/club[@ID = $clubId]/nomCourt"/>
 					<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
 					<xsl:value-of select="$comite"/>
 				</xsl:if>
@@ -609,13 +610,13 @@
 			<xsl:when test="$ecartement = '4'">
 				<xsl:if test="$typeCompetition != '1'">
 					<!-- Individuel = {Nom Club} - {nom Ligue} -->
-					<xsl:value-of select="$docPrincipal//club[@ID = $clubId]/nomCourt"/>
+					<xsl:value-of select="$RefData/structures/clubs/club[@ID = $clubId]/nomCourt"/>
 					<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-					<xsl:value-of select="$docPrincipal//ligue[@ID = $ligue]/nomCourt"/>
+					<xsl:value-of select="$RefData/structures/ligues/ligue[@ID = $ligue]/nomCourt"/>
 				</xsl:if>
 				<xsl:if test="$typeCompetition = '1'">
 					<!-- Equipe = {Nom Ligue} -->
-					<xsl:value-of select="$docPrincipal//ligue[@ID = $ligue]/nomCourt"/>
+					<xsl:value-of select="$RefData/structures/ligues/ligue[@ID = $ligue]/nomCourt"/>
 				</xsl:if>
 			</xsl:when>
 
@@ -623,7 +624,7 @@
 			<xsl:otherwise>
 				<xsl:if test="$typeCompetition != '1'">
 					<!-- Club, Secteur, National, International -->
-					<xsl:value-of select="$docPrincipal//club[@ID = $clubId]/nomCourt"/>
+					<xsl:value-of select="$RefData/structures/clubs/club[@ID = $clubId]/nomCourt"/>
 					<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
 					<xsl:value-of select="$comite"/>
 				</xsl:if>

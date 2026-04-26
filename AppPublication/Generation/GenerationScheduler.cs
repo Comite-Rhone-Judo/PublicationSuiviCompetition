@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using static FranceJudo.Core.Diagnostic.ActionWatcher;
 
 namespace AppPublication.Generation
 {
@@ -233,10 +234,10 @@ namespace AppPublication.Generation
         /// </summary>
         /// <param name="progressHandler">Gestionnaire de progression</param>
         /// <exception cref="Exception"></exception>
-        public void StartGeneration()
+        public  async void StartGeneration()
         {
             // Passe en etat Idle mais on n'a pas encore d'information sur les temps
-            RaiseState(StateGenerationEnum.Idle);
+            await RaiseStateAsync(StateGenerationEnum.Idle);
 
             // Reset le token d'arret
             if (_tokenSource != null)
@@ -249,19 +250,25 @@ namespace AppPublication.Generation
             {
                 try
                 {
-                    // Nettoie si necessaire le repertoire avant de lancer la tache
-                    if (EffacerAuDemarrage)
-                    {
-                        RaiseState(StateGenerationEnum.Cleaning);
-                        _generateur?.CleanupInitial();
-                    }
-
-                    // Execute les taches de demarrage du generateur
-                    RaiseState(StateGenerationEnum.Starting);
-                    _generateur?.Demarrage();
-
                     // Lance la tache de fond de generation
-                    _taskGeneration = Task.Factory.StartNew(() => { GenerationRun(); }, _tokenSource.Token);
+                    _taskGeneration = Task.Factory.StartNew(async () =>
+                    {
+                        // Nettoie si necessaire le repertoire avant de lancer la tache
+                        if (EffacerAuDemarrage)
+                        {
+                            await RaiseStateAsync(StateGenerationEnum.Cleaning);
+                            _generateur?.CleanupInitial();
+                        }
+
+                        // Execute les taches de demarrage du generateur
+                        await RaiseStateAsync(StateGenerationEnum.Starting);
+                        _generateur?.Demarrage();
+
+                        await GenerationRun();
+                    },
+                        _tokenSource.Token,
+                        TaskCreationOptions.LongRunning,
+                        TaskScheduler.Default).Unwrap();
                 }
                 catch (Exception ex)
                 {
@@ -279,17 +286,35 @@ namespace AppPublication.Generation
         /// <summary>
         /// Arrete le thread de generation du site
         /// </summary>
-        public void StopGeneration()
+        public async void StopGeneration()
         {
             if (_tokenSource != null)
             {
-                // Arrete le thread de generation
+                // Demande l'arrêt (Ceci déclenche l'Exception dans le Task.Delay)
                 _tokenSource.Cancel();
-                _taskGeneration.Wait();
+
+                try
+                {
+                    if (_taskGeneration != null)
+                    {
+                        // On utilise 'await' au lieu de '.Wait()'
+                        await _taskGeneration;
+                    }
+                }
+                catch (OperationCanceledException ex)
+                {
+                    // Comportement normal et attendu : la tâche a bien obéi à l'annulation.
+                    LogTools.Logger.Debug(ex, "Arrêt de la génération");
+                }
+                catch (Exception ex)
+                {
+                    // Si une VRAIE erreur se produit au moment de l'arrêt
+                    LogTools.Logger.Error(ex, "Erreur inattendue lors de l'arrêt de la génération");
+                }
             }
 
-            // Etat de la generation
-            RaiseState(StateGenerationEnum.Stopped);
+            // Etat de la generation (utilise votre nouvelle méthode fluide)
+            await RaiseStateAsync(StateGenerationEnum.Stopped);
         }
 
         #region METHODES PRIVEES
@@ -305,12 +330,24 @@ namespace AppPublication.Generation
             StateChanged?.Invoke(this, new SchedulerStateEventArgs(state, statExec, delaiNextSec));
         }
 
+        /// <summary>
+        /// Signale le changement de statut et laisse le temps à l'UI de s'afficher
+        /// </summary>
+        private async Task RaiseStateAsync(StateGenerationEnum state, TaskExecutionInformation statExec = null, long delaiNextSec = -1)
+        {
+            RaiseState(state, statExec, delaiNextSec);
+
+            // On libère le thread de fond pendant 50ms à chaque changement d'état.
+            // L'UI a ainsi la garantie absolue de pouvoir se redessiner avant la suite des calculs.
+            await Task.Delay(50);
+        }
+
         #endregion
 
         /// <summary>
         /// Execute un Run de generation
         /// </summary>
-        private void GenerationRun()
+        private async Task GenerationRun()
         {
             DateTime wakeUpTime = DateTime.Now;
             int delaiScrutationMs = 1000;
@@ -325,7 +362,7 @@ namespace AppPublication.Generation
 
                     try
                     {
-                        RaiseState(StateGenerationEnum.Generating);
+                        await RaiseStateAsync(StateGenerationEnum.Generating);
                         SiteGenere = false; // Reset du flag de succès pour ce cycle
 
                         ResultatOperation generationPrete = _generateur.PrepareGeneration();
@@ -340,7 +377,10 @@ namespace AppPublication.Generation
                                 TaskExecutionInformation statGeneration = new TaskExecutionInformation();
 
                                 // Lance la tache du generateyr en mesurant son temps de travail
-                                var genTime = ActionWatcher.Execute<ResultatOperation>(() => { return _generateur.ExecuteGeneration(); });
+                                TimedResult<ResultatOperation> genTime = await ActionWatcher.ExecuteAsync(async () =>
+                                {
+                                    return await _generateur.ExecuteGeneration();
+                                });
 
                                 // Recupere le resultat et les stats
                                 statGeneration.DelaiExecutionMs = genTime.DurationMs;
@@ -355,16 +395,19 @@ namespace AppPublication.Generation
                                     {
                                         // Met a jour les dernieres info de generation puisque le site a ete traite
                                         DerniereGeneration = statGeneration;
-                                        RaiseState(StateGenerationEnum.Generating, statGeneration);
+                                        await RaiseStateAsync(StateGenerationEnum.Generating, statGeneration);
 
                                         // Signale le debut de la synchronisation
-                                        RaiseState(StateGenerationEnum.Syncing);
+                                        await RaiseStateAsync(StateGenerationEnum.Syncing);
 
                                         // Enregistre le demarrage de la generation via StatExecution
                                         TaskExecutionInformation statSync = new TaskExecutionInformation();
 
                                         // Execute l'etape de synchronisation du generateur
-                                        var postTime = ActionWatcher.Execute<ResultatOperation>(() => { return _generateur.ExecuteSynchronisation(); });
+                                        TimedResult<ResultatOperation> postTime = await ActionWatcher.ExecuteAsync(async () =>
+                                        {
+                                            return await _generateur.ExecuteSynchronisation();
+                                        });
 
                                         // Verifie si la synchronisation est active et a reussi
                                         if (postTime.Result.IsActive)
@@ -380,7 +423,7 @@ namespace AppPublication.Generation
                                             if (SiteSynchronise)
                                             {
                                                 DerniereSynchronisation = statSync;
-                                                RaiseState(StateGenerationEnum.Syncing, statSync);
+                                                await RaiseStateAsync(StateGenerationEnum.Syncing, statSync);
                                             }
                                         }
                                     }
@@ -419,7 +462,7 @@ namespace AppPublication.Generation
                         DerniereGeneration.DateProchaineGeneration = (wakeUpTime = DateTime.Now.AddMilliseconds(delaiThread));
 
                         // Dans tous les cas, on repasse Idle
-                        RaiseState(StateGenerationEnum.Idle, DerniereGeneration, (int)Math.Round(delaiThread / 1000.0));
+                        await RaiseStateAsync(StateGenerationEnum.Idle, DerniereGeneration, (int)Math.Round(delaiThread / 1000.0));
 
                         // Controle final si tout s'est bien passe
                         if (!SiteGenere)
@@ -432,8 +475,17 @@ namespace AppPublication.Generation
                     }
                 }
 
-                // Endort le thread pour le delai de scrutation
-                Thread.Sleep(delaiScrutationMs);
+                try
+                {
+                    // Attente coopérative
+                    await Task.Delay(delaiScrutationMs, _tokenSource.Token);
+                }
+                catch (OperationCanceledException)
+                {
+                    // La tâche a été annulée (StopGeneration a été appelé)
+                    // On sort proprement de la boucle while infinie
+                    break;
+                }
             }
         }
         #endregion      

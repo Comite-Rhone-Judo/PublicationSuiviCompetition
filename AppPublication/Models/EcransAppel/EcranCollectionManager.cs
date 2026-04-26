@@ -1,5 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using FranceJudo.Core.Threading;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -23,7 +24,13 @@ namespace AppPublication.Models.EcransAppel
         public IReadOnlyList<EcranAppelModel> Ecrans
         {
             // Pas de snapshot ici, sinon, on ne pourrait plus synchroniser avec le ViewModel (on resterait coince sur le 1er snapshot)
-            get { lock (_dataLock) return _ecrans.ToList().AsReadOnly(); }
+            get
+            {
+                using (TimedLock.Lock(_dataLock))
+                {
+                    return _ecrans.ToList().AsReadOnly();
+                }
+            }
         }
 
         // Accès en lecture seule au Cache
@@ -42,7 +49,7 @@ namespace AppPublication.Models.EcransAppel
             }
             set
             {
-                lock (_dataLock)
+                using (TimedLock.Lock(_dataLock))
                 {
                     if (_nbTapis != value)
                     {
@@ -76,7 +83,7 @@ namespace AppPublication.Models.EcransAppel
                 var snap = _currentSnapshot;
                 if (snap != null) return snap;
 
-                lock (_dataLock)
+                using (TimedLock.Lock(_dataLock))
                 {
                     if (_currentSnapshot == null)
                     {
@@ -128,7 +135,7 @@ namespace AppPublication.Models.EcransAppel
         /// </summary>
         public EcranAppelModel Add()
         {
-            lock (_dataLock)
+            using (TimedLock.Lock(_dataLock))
             {
                 var nouvelEcran = new EcranAppelModel { Id = NextId, Description = $"Ecran {NextId}" };
                 _ecrans.Add(nouvelEcran); // Utilisation de _ecrans
@@ -152,7 +159,7 @@ namespace AppPublication.Models.EcransAppel
         /// </summary>
         public void Add(EcranAppelModel ecran)
         {
-            lock (_dataLock)
+            using (TimedLock.Lock(_dataLock))
             {
                 // Gestion de collision basique : si l'ID est déjà pris, on le change
                 if (_ecrans.Any(e => e.Id == ecran.Id))
@@ -178,7 +185,7 @@ namespace AppPublication.Models.EcransAppel
         /// </summary>
         public void Remove(EcranAppelModel ecran)
         {
-            lock (_dataLock)
+            using (TimedLock.Lock(_dataLock))
             {
                 int index = _ecrans.FindIndex(e => e.Id == ecran.Id);
                 if (index != -1)
@@ -197,7 +204,7 @@ namespace AppPublication.Models.EcransAppel
         /// <param name="id"></param>
         public void Remove(int id)
         {
-            lock (_dataLock)
+            using (TimedLock.Lock(_dataLock))
             {
                 int index = _ecrans.FindIndex(e => e.Id == id);
                 if (index != -1)

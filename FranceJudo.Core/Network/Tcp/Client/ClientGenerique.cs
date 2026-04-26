@@ -1,9 +1,11 @@
 ﻿using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
+using FranceJudo.Core.Threading;
 using System;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace FranceJudo.Core.Network.Tcp.Client
 {
@@ -44,16 +46,17 @@ namespace FranceJudo.Core.Network.Tcp.Client
         public event OnEndConnectionHandler OnEndConnection;
         //public event OnErrorHandler OnError;
 
+        #region MEMBRES
         private const int READ_BUFFER_SIZE = 10240;
         private static readonly byte[] readBuffer = new byte[READ_BUFFER_SIZE];
-
-
         private string chaine = "";
         private readonly string _endMsgTag = string.Empty;
-
         private TcpClient objClient = null;
         private readonly int _port = 8484;
         private readonly string _ip = "127.0.0.1";
+        // Un cadenas dédié, invisible de l'extérieur, pour protéger les accès au flux TCP
+        private readonly object _networkLock = new object();
+        #endregion
 
         /// <summary>
         /// IP du server
@@ -191,7 +194,7 @@ namespace FranceJudo.Core.Network.Tcp.Client
 
                 if (client.Connected)
                 {
-                    lock (client.GetStream())
+                    using (TimedLock.Lock(_networkLock))
                     {
                         BytesRead = client.GetStream().EndRead(ar);
                     }
@@ -298,7 +301,7 @@ namespace FranceJudo.Core.Network.Tcp.Client
 
                 if (client.Connected)
                 {
-                    lock (client.GetStream())
+                    using (TimedLock.Lock(_networkLock))
                     {
                         client.GetStream().BeginRead(readBuffer, 0,
                             READ_BUFFER_SIZE, new AsyncCallback(DoReading), client);
