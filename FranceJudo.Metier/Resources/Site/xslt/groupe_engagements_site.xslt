@@ -898,17 +898,61 @@
 		<xsl:variable name="kinzasecond">
 			<xsl:value-of select="$combat/score[2]/@kinza"/>
 		</xsl:variable>
+
 		<xsl:variable name="scorepremier">
-			<xsl:value-of select="$combat/score[1]/@score"/>
+			<xsl:choose>
+				<xsl:when test="$combat/@vainqueur = $hikiwake">
+					<xsl:value-of select="$combat/score[1]/@score"/>
+				</xsl:when>
+				<xsl:when test="$combat/score[1]/@judoka = $combat/@vainqueur">
+					<xsl:value-of select="$combat/@scorevainqueur"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$combat/@scoreperdant"/>
+				</xsl:otherwise>
+			</xsl:choose>
 		</xsl:variable>
+
 		<xsl:variable name="scoresecond">
-			<xsl:value-of select="$combat/score[2]/@score"/>
+			<xsl:choose>
+				<xsl:when test="$combat/@vainqueur = $hikiwake">
+					<xsl:value-of select="$combat/score[2]/@score"/>
+				</xsl:when>
+				<xsl:when test="$combat/score[2]/@judoka = $combat/@vainqueur">
+					<xsl:value-of select="$combat/@scorevainqueur"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$combat/@scoreperdant"/>
+				</xsl:otherwise>
+			</xsl:choose>
 		</xsl:variable>
+
 		<xsl:variable name="penalitepremier">
-			<xsl:value-of select="$combat/score[1]/@penalite"/>
+			<xsl:choose>
+				<xsl:when test="$combat/@vainqueur = $hikiwake">
+					<xsl:value-of select="$combat/score[1]/@penalite"/>
+				</xsl:when>
+				<xsl:when test="$combat/score[1]/@judoka = $combat/@vainqueur">
+					<xsl:value-of select="$combat/@penvainqueur"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$combat/@penperdant"/>
+				</xsl:otherwise>
+			</xsl:choose>
 		</xsl:variable>
+
 		<xsl:variable name="penalitesecond">
-			<xsl:value-of select="$combat/score[2]/@penalite"/>
+			<xsl:choose>
+				<xsl:when test="$combat/@vainqueur = $hikiwake">
+					<xsl:value-of select="$combat/score[2]/@penalite"/>
+				</xsl:when>
+				<xsl:when test="$combat/score[2]/@judoka = $combat/@vainqueur">
+					<xsl:value-of select="$combat/@penvainqueur"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$combat/@penperdant"/>
+				</xsl:otherwise>
+			</xsl:choose>
 		</xsl:variable>
 
 		<div class="w3-center tas-resultat">
