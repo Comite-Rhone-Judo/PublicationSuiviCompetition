@@ -32,7 +32,7 @@ OutputDir=.
 OutputBaseFilename={#InstallerName}
 Compression=lzma
 SolidCompression=yes
-WizardStyle=modern
+WizardStyle=modern dynamic
 
 [Languages]
 Name: "french"; MessagesFile: "compiler:Languages\French.isl"
