@@ -1,134 +1,23 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E49D2215-4D00-4340-B7D3-CCD85D49E60D}</ProjectGuid>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FranceJudo.Metier</RootNamespace>
-    <AssemblyName>FranceJudo.Metier</AssemblyName>
-    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <LangVersion>latest</LangVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <TargetFrameworkProfile />
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Configurations>CD_ROM;Debug;DVD-5;Release;SingleImage</Configurations>
+    <AssemblyTitle>FranceJudo.Metier</AssemblyTitle>
+    <Product>FranceJudo.Metier</Product>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
   <ItemGroup>
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
-    <Compile Include="Exceptions\JudoClientException.cs" />
-    <Compile Include="Exceptions\JudoServerException.cs" />
-    <Compile Include="Exceptions\ParametrageBalanceException.cs" />
-    <Compile Include="Export\ExportEnum.cs" />
-    <Compile Include="Export\SiteExportEngine.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="IO\AppDirectoryManager.cs" />
-    <Compile Include="IO\FileTools.cs" />
-    <Compile Include="Network\ServerFind.cs" />
-    <Compile Include="Noyau\Arbitrage\IArbitre.cs" />
-    <Compile Include="Noyau\Arbitrage\ICommissaire.cs" />
-    <Compile Include="Noyau\Arbitrage\IDelegue.cs" />
-    <Compile Include="Noyau\Arbitrage\IArbitrageData.cs" />
-    <Compile Include="Noyau\CategorieDonneesEnum.cs" />
-    <Compile Include="Noyau\Categories\ICategorieAge.cs" />
-    <Compile Include="Noyau\Categories\ICategoriePoids.cs" />
-    <Compile Include="Noyau\Categories\ICeintures.cs" />
-    <Compile Include="Noyau\Categories\ICategoriesData.cs" />
-    <Compile Include="Noyau\Deroulement\DataDeroulementExtension.cs" />
-    <Compile Include="Noyau\Deroulement\ICombat.cs" />
-    <Compile Include="Noyau\Deroulement\EtatCombatEnum.cs" />
-    <Compile Include="Noyau\Deroulement\EtatCombattantEnum.cs" />
-    <Compile Include="Noyau\Deroulement\EtatPhaseEnum.cs" />
-    <Compile Include="Noyau\Deroulement\IFeuille.cs" />
-    <Compile Include="Noyau\Deroulement\IGroupe_Combats.cs" />
-    <Compile Include="Noyau\Deroulement\IDeroulementData.cs" />
-    <Compile Include="Noyau\Deroulement\IParticipant.cs" />
-    <Compile Include="Noyau\Deroulement\IPhase.cs" />
-    <Compile Include="Noyau\Deroulement\IPhase_Decoupage.cs" />
-    <Compile Include="Noyau\Deroulement\IPoule.cs" />
-    <Compile Include="Noyau\Deroulement\IRencontre.cs" />
-    <Compile Include="Noyau\Deroulement\TypePhaseEnum.cs" />
-    <Compile Include="Noyau\Deroulement\IVueCombat.cs" />
-    <Compile Include="Noyau\Deroulement\IVueEpreuvePhase.cs" />
-    <Compile Include="Noyau\Deroulement\IVueGroupe.cs" />
-    <Compile Include="Noyau\IJudoData.cs" />
-    <Compile Include="Noyau\IJudoDataManager.cs" />
-    <Compile Include="Noyau\Logos\IlogosData.cs" />
-    <Compile Include="Noyau\Organisation\ICompetition.cs" />
-    <Compile Include="Noyau\Organisation\CompetitionDisciplineEnum.cs" />
-    <Compile Include="Noyau\Organisation\CompetitionTypeEnum.cs" />
-    <Compile Include="Noyau\Organisation\ConstantCouleur.cs" />
-    <Compile Include="Noyau\Organisation\DiplomeTypeEnum.cs" />
-    <Compile Include="Noyau\Organisation\EchelonEnum.cs" />
-    <Compile Include="Noyau\Organisation\IEpreuve.cs" />
-    <Compile Include="Noyau\Organisation\EpreuveEquipeTypeEnum.cs" />
-    <Compile Include="Noyau\Organisation\EpreuveSexeEnum.cs" />
-    <Compile Include="Noyau\Organisation\IEpreuve_Equipe.cs" />
-    <Compile Include="Noyau\Organisation\EtatEpreuveEnum.cs" />
-    <Compile Include="Noyau\Organisation\IOrganisationData.cs" />
-    <Compile Include="Noyau\Organisation\i_vue_epreuve_interface.cs" />
-    <Compile Include="Noyau\Organisation\ReglementEquipeEnum.cs" />
-    <Compile Include="Noyau\Organisation\TypeCSAEnum.cs" />
-    <Compile Include="Noyau\Organisation\IVueEpreuve.cs" />
-    <Compile Include="Noyau\Organisation\IVueEpreuveEquipe.cs" />
-    <Compile Include="Noyau\Participants\DataParticipantsExtension.cs" />
-    <Compile Include="Noyau\Participants\IEpreuveJudoka.cs" />
-    <Compile Include="Noyau\Participants\IEquipe.cs" />
-    <Compile Include="Noyau\Participants\EtatJudokaEnum.cs" />
-    <Compile Include="Noyau\Participants\IParticipantsData.cs" />
-    <Compile Include="Noyau\Participants\IJudoka.cs" />
-    <Compile Include="Noyau\Participants\QualifieEnum.cs" />
-    <Compile Include="Noyau\Participants\IVueJudoka.cs" />
-    <Compile Include="Noyau\Structures\IClub.cs" />
-    <Compile Include="Noyau\Structures\IComite.cs" />
-    <Compile Include="Noyau\Structures\IStructuresData.cs" />
-    <Compile Include="Noyau\Structures\ILigue.cs" />
-    <Compile Include="Noyau\Structures\IPays.cs" />
-    <Compile Include="Noyau\Structures\ISecteur.cs" />
-    <Compile Include="Regles\ScoresProLeague.cs" />
-    <Compile Include="Resources\MetierResources.cs" />
-    <Compile Include="Site\PhysicalStructureBase.cs" />
-    <Compile Include="Site\UrlGeneratorBase.cs" />
-    <Compile Include="Regles\ScoresJujitsu.cs" />
-    <Compile Include="Network\ConstantNetwork.cs" />
-    <Compile Include="Network\ServerCommandEnum.cs" />
-    <Compile Include="Network\ServerResponseEnum.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Structures\EntitePublicationFFJudo.cs" />
-    <Compile Include="XML\ConstantXML.cs" />
-    <Compile Include="Structures\LectureStructures.cs" />
-    <Compile Include="XML\IXMLSerializable.cs" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="NLog" Version="6.1.3" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Referentiels\c_ages.xml">
@@ -274,18 +163,7 @@
     <Resource Include="Resources\Media\Images\Tournoi_Judo.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FranceJudo.Core\FranceJudo.Core.csproj">
-      <Project>{13cad1c5-1448-4b69-b2c9-de15aecce84b}</Project>
-      <Name>FranceJudo.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.4</Version>
-    </PackageReference>
-    <PackageReference Include="NLog">
-      <Version>6.1.2</Version>
-    </PackageReference>
+    <ProjectReference Include="..\FranceJudo.Core\FranceJudo.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Site\img\badge-1st-32.png" />
@@ -431,7 +309,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateLoggerResource" BeforeTargets="BeforeBuild">
     <MakeDir Directories="$(IntermediateOutputPath)JsDist" />
     <PropertyGroup Condition="'$(Configuration)' == 'Debug'">

@@ -9,10 +9,11 @@ namespace FranceJudo.Metier.Noyau.Participants
         {
             // On matérialise instantanément les IDs dans un HashSet.
             // La recherche (Contains) sera désormais ultra-rapide (O(1)).
-            HashSet<int> judokasIds = dataContext.EpreuveJudokas
-                                                 .Where(o => o.epreuve == epreuve)
-                                                 .Select(o => o.judoka)
-                                                 .ToHashSet();
+            HashSet<int> judokasIds = new HashSet<int>(
+                dataContext.EpreuveJudokas
+                           .Where(o => o.epreuve == epreuve)
+                           .Select(o => o.judoka)
+            );
 
             return dataContext.Judokas.Where(o => judokasIds.Contains(o.id));
         }

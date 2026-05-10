@@ -1,9 +1,9 @@
 ﻿using AppPublication.ViewModels.Configuration;
-using Telerik.Windows.Controls;
+using HandyControl.Controls;
 
 namespace AppPublication.Views.Configuration
 {
-    public partial class TestFtpWindow : RadWindow
+    public partial class TestFtpWindow : Window
     {
         public TestFtpWindow(TestFtpViewModel viewModel)
         {
@@ -11,7 +11,7 @@ namespace AppPublication.Views.Configuration
             this.DataContext = viewModel;
         }
 
-        private void RadWindow_Closed(object sender, WindowClosedEventArgs e)
+        private void Window_Closed(object sender, System.EventArgs e)
         {
             if (this.DataContext as TestFtpViewModel is TestFtpViewModel vm)
             {

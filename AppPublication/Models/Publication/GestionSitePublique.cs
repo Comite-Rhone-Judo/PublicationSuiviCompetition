@@ -1,4 +1,5 @@
-﻿using AppPublication.Config.Generation;
+﻿using AppPublication.Config;
+using AppPublication.Config.Generation;
 using AppPublication.Config.Publication;
 using AppPublication.Generation;
 using AppPublication.Models.Statistiques;
@@ -132,7 +133,7 @@ namespace AppPublication.Models.Publication
                 if (SiteDistantSelectionne == null || !SiteDistantSelectionne.IsActif)
                 {
                     // Enregistre la valeur en cache
-                    PublicationConfigSection.Instance.General.EasyConfig = (_easyConfig = value);
+                    AppConfigRoot.Instance.Publication.General.EasyConfig = (_easyConfig = value);
                     NotifyPropertyChanged();
                     // Met a jour le site distant selectionne
                     SiteDistantSelectionne = CalculSiteDistantSelectionne();
@@ -222,7 +223,7 @@ namespace AppPublication.Models.Publication
                     {
                         // Garde en memoire la derniere valeur sauvegardee pour ce niveau
                         _allEntitePublicationFFJudo[_niveauPublicationFFJudo] = value;
-                        PublicationConfigSection.Instance.General.EntitePublicationFFJudo = _entitePublicationFFJudo.Nom;
+                        AppConfigRoot.Instance.Publication.General.EntitePublicationFFJudo = _entitePublicationFFJudo.Nom;
                         // On Calcul les parametres FTP en fonction de l'entite selectionne
                         GenereConfigFTPFranceJudo(value);
                     }
@@ -258,7 +259,7 @@ namespace AppPublication.Models.Publication
             {
                 if (_niveauPublicationFFJudo != value)
                 {
-                    PublicationConfigSection.Instance.General.NiveauPublicationFFJudo = (_niveauPublicationFFJudo = value);
+                    AppConfigRoot.Instance.Publication.General.NiveauPublicationFFJudo = (_niveauPublicationFFJudo = value);
                     // Ajuste la liste des entites et restaure le dernier element selectionne pour ce niveau
                     ObservableCollection<EntitePublicationFFJudo> ent = null;
                     try
@@ -296,7 +297,7 @@ namespace AppPublication.Models.Publication
                     {
                         c.PouleEnColonnes = value;
                     });
-                    GenerationConfigSection.Instance.GenerateurSite.PouleEnColonnes = (_pouleEnColonnes = value);
+                    AppConfigRoot.Instance.Generation.GenerateurSite.PouleEnColonnes = (_pouleEnColonnes = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -318,7 +319,7 @@ namespace AppPublication.Models.Publication
                     {
                         c.PouleToujoursEnColonnes = value;
                     } );
-                    GenerationConfigSection.Instance.GenerateurSite.PouleToujoursEnColonnes = (_pouleToujoursEnColonnes = value);
+                    AppConfigRoot.Instance.Generation.GenerateurSite.PouleToujoursEnColonnes = (_pouleToujoursEnColonnes = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -337,7 +338,7 @@ namespace AppPublication.Models.Publication
                 {
                     // Propage la valeur au generateur de site
                     _generateurSite?.ExportConfigurationManager?.Modifier( c => { c.TailleMaxPouleColonnes = value; });
-                    GenerationConfigSection.Instance.GenerateurSite.TailleMaxPouleColonnes = (_tailleMaxPouleColonnes = value);
+                    AppConfigRoot.Instance.Generation.GenerateurSite.TailleMaxPouleColonnes = (_tailleMaxPouleColonnes = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -390,7 +391,7 @@ namespace AppPublication.Models.Publication
             get { return _isolerCompetition; }
             set
             {
-                PublicationConfigSection.Instance.General.IsolerCompetition = (_isolerCompetition = value);
+                AppConfigRoot.Instance.Publication.General.IsolerCompetition = (_isolerCompetition = value);
                 // Met a jour la structure d'export
                 _siteDistantUrlGenerator?.CompetitionIsolee = _isolerCompetition;
                 NotifyPropertyChanged();
@@ -415,7 +416,7 @@ namespace AppPublication.Models.Publication
                 {
                     // Propage la valeur au generateur de site
                     _generateurSite?.ExportConfigurationManager?.Modifier(c => { c.NbProchainsCombats = value; });
-                    GenerationConfigSection.Instance.GenerateurSite.NbProchainsCombats = (_nbProchainsCombats = value);
+                    AppConfigRoot.Instance.Generation.GenerateurSite.NbProchainsCombats = (_nbProchainsCombats = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -437,7 +438,7 @@ namespace AppPublication.Models.Publication
                     {
                         c.DelaiActualisationClientSec = value;
                     } );
-                    GenerationConfigSection.Instance.GenerateurSite.DelaiActualisationClientSec = (_delaiActualisationClientSec = value);
+                    AppConfigRoot.Instance.Generation.GenerateurSite.DelaiActualisationClientSec = (_delaiActualisationClientSec = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -459,7 +460,7 @@ namespace AppPublication.Models.Publication
                     {
                         c.MsgProchainsCombats = value;
                     });
-                    GenerationConfigSection.Instance.GenerateurSite.MsgProchainsCombats = (_msgProchainsCombats = value);
+                    AppConfigRoot.Instance.Generation.GenerateurSite.MsgProchainsCombats = (_msgProchainsCombats = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -476,7 +477,7 @@ namespace AppPublication.Models.Publication
             {
                 if (_urlDistant != value)
                 {
-                    PublicationConfigSection.Instance.General.URLDistant = (_urlDistant = value);
+                    AppConfigRoot.Instance.Publication.General.URLDistant = (_urlDistant = value);
                     NotifyPropertyChanged();
                     URLDistantPublication = CalculURLSiteDistant();
                 }
@@ -522,7 +523,7 @@ namespace AppPublication.Models.Publication
             {
                 if (_ftpRepertoireRacineDistant != value)
                 {
-                    PublicationConfigSection.Instance.General.RepertoireRacineSiteFTPDistant = (_ftpRepertoireRacineDistant = value);
+                    AppConfigRoot.Instance.Publication.General.RepertoireRacineSiteFTPDistant = (_ftpRepertoireRacineDistant = value);
                     NotifyPropertyChanged();
                     SiteDistant?.RepertoireSiteFTPDistant = CalculRepertoireSiteDistant(useEasyConfig: false);   // Ce parametre ne concerne pas le site FranceJudo
                 }
@@ -580,7 +581,7 @@ namespace AppPublication.Models.Publication
                 {
                     // Propage la valeur au generateur de site
                     _generateurSite?.ExportConfigurationManager?.Modifier(c => { c.PublierProchainsCombats = value; });
-                    GenerationConfigSection.Instance.GenerateurSite.PublierProchainsCombats = (_publierProchainsCombats = value);
+                    AppConfigRoot.Instance.Generation.GenerateurSite.PublierProchainsCombats = (_publierProchainsCombats = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -602,7 +603,7 @@ namespace AppPublication.Models.Publication
                     {
                         c.PublierAffectationTapis = value && CanPublierAffectation;
                     } );
-                    GenerationConfigSection.Instance.GenerateurSite.PublierAffectationTapis = (_publierAffectationTapis = value);
+                    AppConfigRoot.Instance.Generation.GenerateurSite.PublierAffectationTapis = (_publierAffectationTapis = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -624,7 +625,7 @@ namespace AppPublication.Models.Publication
                     {
                         c.PublierEngagements = value && CanPublierEngagements;
                     } );
-                    GenerationConfigSection.Instance.GenerateurSite.PublierEngagements = (_publierEngagements = value);
+                    AppConfigRoot.Instance.Generation.GenerateurSite.PublierEngagements = (_publierEngagements = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -646,7 +647,7 @@ namespace AppPublication.Models.Publication
                     {
                         c.EngagementsAbsents = value;
                     } );
-                    GenerationConfigSection.Instance.GenerateurSite.EngagementsAbsents = (_engagementsAbsents = value);
+                    AppConfigRoot.Instance.Generation.GenerateurSite.EngagementsAbsents = (_engagementsAbsents = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -668,7 +669,7 @@ namespace AppPublication.Models.Publication
                     {
                         c.EngagementsTousCombats = value;
                     } );
-                    GenerationConfigSection.Instance.GenerateurSite.EngagementsTousCombats = (_engagementsTousCombats = value);
+                    AppConfigRoot.Instance.Generation.GenerateurSite.EngagementsTousCombats = (_engagementsTousCombats = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -687,7 +688,7 @@ namespace AppPublication.Models.Publication
                 {
                     // propage la valeur au generateur de site
                     _generateurSite?.ExportConfigurationManager?.Modifier(c => { c.UseIntituleCommun = value; }) ;
-                    GenerationConfigSection.Instance.GenerateurSite.UseIntituleCommun = (_useIntituleCommun = value);
+                    AppConfigRoot.Instance.Generation.GenerateurSite.UseIntituleCommun = (_useIntituleCommun = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -709,7 +710,7 @@ namespace AppPublication.Models.Publication
                     {
                         c.IntituleCommun = value;
                     } );
-                    GenerationConfigSection.Instance.GenerateurSite.IntituleCommun = (_intituleCommun = value);
+                    AppConfigRoot.Instance.Generation.GenerateurSite.IntituleCommun = (_intituleCommun = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -728,7 +729,7 @@ namespace AppPublication.Models.Publication
                     {
                         c.EngagementsScoreGP = value;
                     }   );
-                    GenerationConfigSection.Instance.GenerateurSite.ScoreEngagesGagnantPerdant = (_scoreEngagesGagnantPerdant = value);
+                    AppConfigRoot.Instance.Generation.GenerateurSite.ScoreEngagesGagnantPerdant = (_scoreEngagesGagnantPerdant = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -747,7 +748,7 @@ namespace AppPublication.Models.Publication
                     {
                         c.AfficherPositionCombat = value;
                     } );
-                    GenerationConfigSection.Instance.GenerateurSite.AfficherPositionCombat = (_afficherPositionCombat = value);
+                    AppConfigRoot.Instance.Generation.GenerateurSite.AfficherPositionCombat = (_afficherPositionCombat = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -765,42 +766,41 @@ namespace AppPublication.Models.Publication
                 // Charge les valeurs pour la publication FFJudo
                 if (EasyConfigDisponible)
                 {
-                    EasyConfig = PublicationConfigSection.Instance.General.EasyConfig;
+                    EasyConfig = AppConfigRoot.Instance.Publication.General.EasyConfig;
 
                     // On charge le nom de l'entite en 1er car sinon, en initialisant la liste des niveaux, on fait un reset de la valeur de l'entite a la 1ere de la liste du niveau
-                    string tmp = PublicationConfigSection.Instance.General.EntitePublicationFFJudo;
+                    string tmp = AppConfigRoot.Instance.Publication.General.EntitePublicationFFJudo;
 
                     // Charge le niveau selectionne
-                    NiveauPublicationFFJudo = PublicationConfigSection.Instance.General.GetNiveauPublicationFFJudo(ListeNiveauxPublicationFFJudo, o => o);
+                    NiveauPublicationFFJudo = AppConfigRoot.Instance.Publication.General.GetNiveauPublicationFFJudo(ListeNiveauxPublicationFFJudo, o => o);
 
                     // Recherche l'entite a partir de la valeur initiale lue
-                    EntitePublicationFFJudo = PublicationConfigSection.Instance.General.GetEntitePublicationFFJudo(ListeEntitesPublicationFFJudo, o => o.Nom, tmp);
+                    EntitePublicationFFJudo = AppConfigRoot.Instance.Publication.General.GetEntitePublicationFFJudo(ListeEntitesPublicationFFJudo, o => o.Nom, tmp);
                 }
 
                 // Les autres parametres peuvent suivre
-                URLDistant = PublicationConfigSection.Instance.General.URLDistant;
-                IsolerCompetition = PublicationConfigSection.Instance.General.IsolerCompetition;
-                RepertoireRacineSiteFTPDistant = PublicationConfigSection.Instance.General.RepertoireRacineSiteFTPDistant;
+                URLDistant = AppConfigRoot.Instance.Publication.General.URLDistant;
+                IsolerCompetition = AppConfigRoot.Instance.Publication.General.IsolerCompetition;
+                RepertoireRacineSiteFTPDistant = AppConfigRoot.Instance.Publication.General.RepertoireRacineSiteFTPDistant;
 
-                SchedulerConfigElement cfgPub = PublicationConfigSection.GetInstanceConfigElement(kCfgSitePublicInstanceName);
+                var cfgPub = AppConfigRoot.Instance.Publication.GetScheduler(kCfgSitePublicInstanceName);
                 DelaiGenerationSec = cfgPub.DelaiGenerationSec;
 
-                PublierProchainsCombats = GenerationConfigSection.Instance.GenerateurSite.PublierProchainsCombats;
-                NbProchainsCombats = GenerationConfigSection.Instance.GenerateurSite.NbProchainsCombats;
-                PublierAffectationTapis = GenerationConfigSection.Instance.GenerateurSite.PublierAffectationTapis;
-                PublierEngagements = GenerationConfigSection.Instance.GenerateurSite.PublierEngagements;
-                EngagementsAbsents = GenerationConfigSection.Instance.GenerateurSite.EngagementsAbsents;
-                EngagementsTousCombats = GenerationConfigSection.Instance.GenerateurSite.EngagementsTousCombats;
-                DelaiActualisationClientSec = GenerationConfigSection.Instance.GenerateurSite.DelaiActualisationClientSec;
-                MsgProchainsCombats = GenerationConfigSection.Instance.GenerateurSite.MsgProchainsCombats;
-                PouleEnColonnes = GenerationConfigSection.Instance.GenerateurSite.PouleEnColonnes;
-                PouleToujoursEnColonnes = GenerationConfigSection.Instance.GenerateurSite.PouleToujoursEnColonnes;
-                TailleMaxPouleColonnes = GenerationConfigSection.Instance.GenerateurSite.TailleMaxPouleColonnes;
-                UseIntituleCommun = GenerationConfigSection.Instance.GenerateurSite.UseIntituleCommun;
-                IntituleCommun = GenerationConfigSection.Instance.GenerateurSite.IntituleCommun;
-                ScoreEngagesGagnantPerdant = GenerationConfigSection.Instance.GenerateurSite.ScoreEngagesGagnantPerdant;
-                AfficherPositionCombat = GenerationConfigSection.Instance.GenerateurSite.AfficherPositionCombat;
-
+                PublierProchainsCombats = AppConfigRoot.Instance.Generation.GenerateurSite.PublierProchainsCombats;
+                NbProchainsCombats = AppConfigRoot.Instance.Generation.GenerateurSite.NbProchainsCombats;
+                PublierAffectationTapis = AppConfigRoot.Instance.Generation.GenerateurSite.PublierAffectationTapis;
+                PublierEngagements = AppConfigRoot.Instance.Generation.GenerateurSite.PublierEngagements;
+                EngagementsAbsents = AppConfigRoot.Instance.Generation.GenerateurSite.EngagementsAbsents;
+                EngagementsTousCombats = AppConfigRoot.Instance.Generation.GenerateurSite.EngagementsTousCombats;
+                DelaiActualisationClientSec = AppConfigRoot.Instance.Generation.GenerateurSite.DelaiActualisationClientSec;
+                MsgProchainsCombats = AppConfigRoot.Instance.Generation.GenerateurSite.MsgProchainsCombats;
+                PouleEnColonnes = AppConfigRoot.Instance.Generation.GenerateurSite.PouleEnColonnes;
+                PouleToujoursEnColonnes = AppConfigRoot.Instance.Generation.GenerateurSite.PouleToujoursEnColonnes;
+                TailleMaxPouleColonnes = AppConfigRoot.Instance.Generation.GenerateurSite.TailleMaxPouleColonnes;
+                UseIntituleCommun = AppConfigRoot.Instance.Generation.GenerateurSite.UseIntituleCommun;
+                IntituleCommun = AppConfigRoot.Instance.Generation.GenerateurSite.IntituleCommun;
+                ScoreEngagesGagnantPerdant = AppConfigRoot.Instance.Generation.GenerateurSite.ScoreEngagesGagnantPerdant;
+                AfficherPositionCombat = AppConfigRoot.Instance.Generation.GenerateurSite.AfficherPositionCombat;
                 // L'interface local de publication a ete chargee via la configuration du minisite, il faut juste s'assurer du bon calcul des URLs
                 URLLocalPublication = CalculURLSiteLocal();
             }
@@ -850,7 +850,8 @@ namespace AppPublication.Models.Publication
 
         protected override void UpdateDelaiGenerationConfig(int newValue)
         {
-            SchedulerConfigElement cfg = PublicationConfigSection.GetInstanceConfigElement(kCfgSitePublicInstanceName);
+            // On cible le scheduler "public" dans le JSON
+            var cfg = AppConfigRoot.Instance.Publication.GetScheduler(kCfgSitePublicInstanceName);
             cfg.DelaiGenerationSec = newValue;
         }
 

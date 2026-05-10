@@ -15,3 +15,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Style", "IDE0290:Use primary constructor", Justification = "<Pending>", Scope = "module")]
 [assembly: SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>", Scope = "module")]
 [assembly: SuppressMessage("Style", "IDE0306:Simplifier l'initialisation des collections", Justification = "<En attente>", Scope = "module")]
+[assembly: SuppressMessage("Performance", "CA1822:Marquer les membres comme étant static", Justification = "<En attente>", Scope = "module")]

@@ -257,7 +257,7 @@ namespace AppPublication.Export
                 // Construction du chemin pour le répertoire commun
                 string savePath = GetFileSavePath(targetDirectory, exportType);
 
-                bool useIntituleCommun = DC.Organisation.Competitions.Count() > 1
+                bool useIntituleCommun = DC.Organisation.Competitions.Count > 1
                          && ctx.Config.UseIntituleCommun
                          && !string.IsNullOrEmpty(ctx.Config.IntituleCommun);
 
@@ -480,7 +480,7 @@ namespace AppPublication.Export
         /// <param name="DC"></param>
         /// <returns></returns>
         /// <summary>
-        public List<FileWithChecksum> GenereWebSiteEngagements(List<GroupeEngagements> grps, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereWebSiteEngagements(IReadOnlyCollection<GroupeEngagements> grps, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
             IJudoData DC = ctx.DataContext;
             IExtendedJudoData EDC = ctx.ExtendedDataContext;

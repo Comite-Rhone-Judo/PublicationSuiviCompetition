@@ -1,15 +1,13 @@
 ﻿using FranceJudo.Core.Logging;
 using FranceJudo.Metier.Network;
 using FranceJudo.Metier.XML;
-using FranceJudo.UI.Wpf.Behaviors;
 using JudoClient;
+using HandyControl.Controls;
 using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
-using Telerik.Windows.Controls;
 
 
 namespace AppPublication.Views.Server
@@ -17,7 +15,7 @@ namespace AppPublication.Views.Server
     /// <summary>
     /// Logique d'interaction pour RechercheServer.xaml
     /// </summary>
-    public partial class RechercheServer : RadWindow, IDisposable
+    public partial class RechercheServer : Window, IDisposable
     {
         private delegate void EmptyDelegate();
 
@@ -27,7 +25,6 @@ namespace AppPublication.Views.Server
         public RechercheServer()
         {
             InitializeComponent();
-            WindowHelper.ShowInTaskbar(this);
 
             recherche_Worker = new BackgroundWorker();
             recherche_Worker.DoWork += new DoWorkEventHandler(RechercheWorkerDoWork);
@@ -81,6 +78,9 @@ namespace AppPublication.Views.Server
                     message += "   - Le réseau WIFI, sur lequel sont les machines, est paramétré en réseau PUBLIC alors qu'il doit être en réseau PRIVE.\n";
 
                     LogTools.Alert(message);
+                    LogTools.Logger.Error(message);
+
+
                 }
             }));
         }
@@ -114,7 +114,7 @@ namespace AppPublication.Views.Server
             }));
         }
 
-        private void ButSeConnecterServer_Click_1(object sender, RoutedEventArgs e)
+        private void ButSeConnecterServer_Click_1(object sender, System.Windows.RoutedEventArgs e)
         {
             Busy.Visibility = System.Windows.Visibility.Visible;
 
@@ -156,14 +156,54 @@ namespace AppPublication.Views.Server
             }
         }
 
-        private void UI_Closed(object sender, WindowClosedEventArgs e)
+        private void UI_Closed(object sender, System.EventArgs e)
         {
-            recherche_Worker.Dispose();
+            // Appelle la méthode Dispose correctement
+            Dispose();
+        }
+
+        // --- DEBUT DU PATTERN IDISPOSABLE (Résout CA1816) ---
+
+        private bool _disposedValue = false; // Pour détecter les appels redondants
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    // 1. Libérer les ressources managées (objets implémentant IDisposable)
+                    if (recherche_Worker != null)
+                    {
+                        // On se désabonne des événements pour éviter les fuites de mémoire
+                        recherche_Worker.DoWork -= RechercheWorkerDoWork;
+                        recherche_Worker.RunWorkerCompleted -= RechercheWorkerRunWorkerCompleted;
+
+                        // On libère le worker
+                        recherche_Worker.Dispose();
+                    }
+
+                    // 2. Nettoyer les autres événements
+                    if (recherche != null)
+                    {
+                        recherche.OnServerTrouve -= RechercheOnServerTrouve;
+                        recherche.OnTermine -= RechercheOnTermine;
+                    }
+                }
+
+                _disposedValue = true;
+            }
         }
 
         public void Dispose()
         {
-            this.Dispose();
+            // Ne modifiez pas ce code. Placez le code de nettoyage dans la méthode 'Dispose(bool disposing)'.
+            Dispose(disposing: true);
+
+            // C'est CETTE ligne qui supprime l'avertissement CA1816 :
+            // Elle dit au Garbage Collector qu'il n'a pas besoin d'appeler le destructeur (finaliseur) 
+            // de cette classe car nous avons déjà fait le ménage manuellement.
+            GC.SuppressFinalize(this);
         }
     }
 }

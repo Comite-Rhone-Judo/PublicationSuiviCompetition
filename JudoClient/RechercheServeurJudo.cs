@@ -73,7 +73,9 @@ namespace JudoClient
                 {
                     foreach (UnicastIPAddressInformation uni in uniCast)
                     {
-                        if (uni.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork && uni.IsDnsEligible)
+                        bool isDnsEligible = !OperatingSystem.IsWindows() || uni.IsDnsEligible;
+
+                        if (uni.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork && isDnsEligible)
                         {
                             UInt32 mask = ParseIp(uni.IPv4Mask.ToString());
                             UInt32 ip = ParseIp(uni.Address.ToString());

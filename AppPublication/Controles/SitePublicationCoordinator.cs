@@ -1,4 +1,5 @@
-﻿using AppPublication.Config.Publication;
+﻿using AppPublication.Config;
+using AppPublication.Config.Publication;
 using AppPublication.Models.Publication;
 using AppPublication.Models.Statistiques;
 using FranceJudo.Core.Foundation;
@@ -152,7 +153,7 @@ namespace AppPublication.Controles
 
                     // Sauvegarde la valeur
                     string logoName = (value != null) ? value.Name : string.Empty;
-                    PublicationConfigSection.Instance.General.Logo = logoName;
+                    AppConfigRoot.Instance.Publication.General.Logo = logoName;
 
                     // Propage le logo selectionne dans les gestionnaires de site
                     _gestionSite.SelectedLogo = value;
@@ -177,7 +178,7 @@ namespace AppPublication.Controles
             {
                 if (value != _repertoireRacine)
                 {
-                    PublicationConfigSection.Instance.General.RepertoireRacine = (_repertoireRacine = value);
+                    AppConfigRoot.Instance.Publication.General.RepertoireRacine = (_repertoireRacine = value);
                     NotifyPropertyChanged();
 
                     // Propage le repertoire racine dans les gestionnaires de site
@@ -200,7 +201,7 @@ namespace AppPublication.Controles
                 if (_effacerAuDemarrage != value)
                 {
                     _effacerAuDemarrage = value;
-                    PublicationConfigSection.Instance.General.EffacerAuDemarrage = value;
+                    AppConfigRoot.Instance.Publication.General.EffacerAuDemarrage = value;
                     NotifyPropertyChanged();
 
                     GestionnaireSiteInterne.EffacerAuDemarrage = value;
@@ -348,8 +349,8 @@ namespace AppPublication.Controles
         public void InitFromConfigFile()
         {
             // Recupere les donnees mutualisee
-            RepertoireRacine = PublicationConfigSection.Instance.General.RepertoireRacine;
-            SelectedLogo = PublicationConfigSection.Instance.General.GetLogo(FichiersLogo.ToList(), o => o.Name);
+            RepertoireRacine = AppConfigRoot.Instance.Publication.General.RepertoireRacine;
+            SelectedLogo = AppConfigRoot.Instance.Publication.General.GetLogo(FichiersLogo.ToList(), o => o.Name);
 
             // Propage la lecture du fichier de configuration dans les gestionnaires de site
             _gestionSite.InitFromConfigFile();

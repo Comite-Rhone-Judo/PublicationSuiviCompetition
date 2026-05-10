@@ -5,11 +5,9 @@ using FranceJudo.Core.Export;
 using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
 using FranceJudo.Core.Threading;
-using FranceJudo.Core.Utils;
 using FranceJudo.Metier.Noyau;
-using NLog;
 using System;
-using System.CodeDom;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -224,15 +222,15 @@ namespace AppPublication.Generation
                     LogTools.Logger.Debug($"Taille de chunk pour Ecran Appel : {tailleChunk} sur {_nbCoeurs} coeurs");
 
                     // 2. Découpage par lots
-                    foreach (List<EcranAppelModel> paquet in tousLesEcrans.Chunk(tailleChunk))
+                    foreach (var paquet in tousLesEcrans.Chunk(tailleChunk))
                     {
-                        LogTools.Logger.Debug($"Batching chunk Ecran Appel #{nbChunk++} (size = {paquet.Count}");
+                        LogTools.Logger.Debug($"Batching chunk Ecran Appel #{nbChunk++} (size = {paquet.Length}");
                         // 3. On envoie le lot complet à la méthode "au pluriel" et passe la taille du paquet pour le reporting de progression
                         _taskBatcher.AddWork(p =>
                         {
                             // Le thread utilisera son propre XPathDocument local pour traiter ces 10 écrans
                             return exporter.GenereEcransAppel(_currentContext, _siteInterneUrlGenerator, paquet, p);
-                        }, paquet.Count);
+                        }, paquet.Length);
                     }
 
                     // Attend la fin de tous les batchs

@@ -1,5 +1,5 @@
-﻿<Window x:Class="AppPublication.Views.Configuration.ConfigurationGeneraleView"
-            xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+﻿<hc:Window x:Class="AppPublication.Views.Configuration.ConfigurationGeneraleView"
+            xmlns:hc="https://handyorg.github.io/handycontrol"
             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -47,14 +47,14 @@
                     <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Logo à afficher dans le bandeau d'entête du site"/>
                 </StackPanel>
                 <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
-                    <telerik:RadComboBox ItemsSource="{Binding FichiersLogo}" Height="20" Width="130" DisplayMemberPath="Name" Name="LogoList" Margin="10 0 0 0" IsSynchronizedWithCurrentItem="True" SelectedItem="{Binding SelectedLogo}"/>
-                    <telerik:RadButton ToolTip="Ajouter un logo: Format: png, taille max.: 200x200. le fichier doit contenir 'logo' dans son nom" telerik:StyleManager.Theme="Expression_Dark" Height="32" Width="32"
-                            Focusable="False" Tag="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/add_image-32.png" Margin="5 0 0 0"
+                    <ComboBox ItemsSource="{Binding FichiersLogo}" Height="20" Width="130" DisplayMemberPath="Name" Name="LogoList" Margin="10 0 0 0" IsSynchronizedWithCurrentItem="True" SelectedItem="{Binding SelectedLogo}"/>
+                    <Button ToolTip="Ajouter un logo: Format: png, taille max.: 200x200. le fichier doit contenir 'logo' dans son nom" Height="28" Width="28" Padding="0 0 0 0"
+                            Focusable="False" Margin="5 0 0 0"
                             Command="{Binding Path=CmdAjouterLogo}">
-                        <WrapPanel Orientation="Horizontal">
-                            <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/add_image-32.png" Height="20" Margin="0 0 0 0"/>
-                        </WrapPanel>
-                    </telerik:RadButton>
+                        <Grid>
+                            <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/add_image-32.png" Height="20" Width="20"/>
+                        </Grid>
+                    </Button>
                 </StackPanel>
                 <Border Grid.Column="1" Grid.Row="0" Grid.RowSpan="23" Background="LightGray" Width="120" Margin="0 10 0 0" VerticalAlignment="Center">
                     <Image  Source="{Binding ElementName=LogoList, Path=SelectedItem.FullName}" Width="120" Height="120"/>
@@ -65,11 +65,11 @@
                     <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Répertoire racine dans lequel les données du site sont générées et publiées"/>
                 </StackPanel>
                 <TextBox Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="2" Height="20" Margin="5 -10 5 5" Text = "{Binding Path=RepertoireRacine}" IsEnabled="False"/>
-                <telerik:RadButton Grid.Row="4" Grid.Column="3" Width="95" Height="30" telerik:StyleManager.Theme="Expression_Dark" Command="{Binding CmdGetRepertoireRacine}" Margin="-70 0 0 0">
-                    <WrapPanel Orientation="Horizontal">
-                        <Label Content="Sélectionner ..." Style="{StaticResource ButtonLabelStyle}"/>
-                    </WrapPanel>
-                </telerik:RadButton>
+                <Button Grid.Row="4" Grid.Column="3" Width="105" Height="30" Command="{Binding CmdGetRepertoireRacine}" Margin="-70 0 0 0">
+                    <Grid>
+                        <TextBlock Text="Sélectionner ..." Style="{StaticResource ButtonLabelStyle}"/>
+                    </Grid>
+                </Button>
 
                 <StackPanel Grid.Row="2" Grid.Column="4" Orientation="Horizontal" Margin="0 -5 0 0">
                     <CheckBox Style="{StaticResource CheckboxStyle}"
@@ -84,11 +84,11 @@
 
         <!-- BLOC BOUTONS -->
         <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Grid.Row="4" Margin="0,0,0,0" Grid.ColumnSpan="3" Grid.Column="0" >
-            <telerik:RadButton x:Name="ButOk" Width="70" Height="30" telerik:StyleManager.Theme="Expression_Dark" Click="ButOk_Click">
-                <WrapPanel Orientation="Horizontal">
-                    <Label x:Name="ButOkLabel"  Content="Ok" Foreground="White"/>
-                </WrapPanel>
-            </telerik:RadButton>
+            <Button x:Name="ButOk" Width="70" Click="ButOk_Click">
+                <Grid>
+                    <TextBlock x:Name="ButOkLabel" Style="{StaticResource ButtonLabelStyle}"  Text="Ok" Foreground="White"/>
+                </Grid>
+            </Button>
         </WrapPanel>
     </Grid>
-</Window>
+</hc:Window>

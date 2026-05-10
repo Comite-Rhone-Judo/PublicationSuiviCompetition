@@ -1,139 +1,31 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{392BDDAB-3D85-46C8-B419-0D8C81DC5146}</ProjectGuid>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>KernelImpl</RootNamespace>
-    <AssemblyName>KernelImpl</AssemblyName>
-    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
     <LangVersion>latest</LangVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWPF>true</UseWPF>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+    <Configurations>CD_ROM;Debug;DVD-5;Release;SingleImage</Configurations>
+    <AssemblyTitle>KernelImpl</AssemblyTitle>
+    <Product>KernelImpl</Product>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.6.1.2\lib\net46\NLog.dll</HintPath>
-    </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="NLog" Version="6.1.3" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.7" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Noyau\CategorieDonneesEnum.cs" />
-    <Compile Include="Internal\AtomicCachedBased.cs" />
-    <Compile Include="Internal\CacheExtensions.cs" />
-    <Compile Include="Internal\DeduplicatedDataCache.cs" />
-    <Compile Include="Internal\SimpleCachedData.cs" />
-    <Compile Include="JudoData.cs" />
-    <Compile Include="JudoDataSnapshot.cs" />
-    <Compile Include="Noyau\Arbitrage\ArbitrageSnapshot.cs" />
-    <Compile Include="Noyau\Arbitrage\DataArbitrage.cs" />
-    <Compile Include="Noyau\Arbitrage\Arbitre.cs" />
-    <Compile Include="Noyau\Categories\CategoriesSnapshot.cs" />
-    <Compile Include="Noyau\Categories\DataCategories.cs" />
-    <Compile Include="Noyau\Categories\CategorieAge.cs" />
-    <Compile Include="Noyau\Categories\CategoriePoids.cs" />
-    <Compile Include="Noyau\Categories\Ceintures.cs" />
-    <Compile Include="Noyau\Deroulement\DataDeroulement.cs" />
-    <Compile Include="Internal\IEntityWithKey.cs" />
-    <Compile Include="Noyau\Deroulement\DeroulementSnapshot.cs" />
-    <Compile Include="Noyau\Logos\DataLogos.cs" />
-    <Compile Include="Noyau\Logos\LogosSnapshot.cs" />
-    <Compile Include="Noyau\Organisation\DataOrganisation.cs" />
-    <Compile Include="Noyau\Organisation\EtatEpreuveEnum.cs" />
-    <Compile Include="Noyau\Organisation\OrganisationSnapshot.cs" />
-    <Compile Include="Noyau\Participants\DataParticipants.cs" />
-    <Compile Include="Noyau\Participants\ParticipantsSnapshot.cs" />
-    <Compile Include="Noyau\Structures\Club.cs" />
-    <Compile Include="Noyau\Structures\DataStructures.cs" />
-    <Compile Include="Noyau\Deroulement\Combat.cs" />
-    <Compile Include="Noyau\Structures\Comite.cs" />
-    <Compile Include="Noyau\Arbitrage\Commissaire.cs" />
-    <Compile Include="Noyau\Organisation\Competition.cs" />
-    <Compile Include="Noyau\Arbitrage\Delegue.cs" />
-    <Compile Include="Noyau\Organisation\Epreuve.cs" />
-    <Compile Include="Noyau\Participants\EpreuveJudoka.cs" />
-    <Compile Include="Noyau\Organisation\Epreuve_Equipe.cs" />
-    <Compile Include="Noyau\Participants\Equipe.cs" />
-    <Compile Include="Noyau\Deroulement\Feuille.cs" />
-    <Compile Include="Noyau\Deroulement\Groupe_Combats.cs" />
-    <Compile Include="Noyau\Participants\Judoka.cs" />
-    <Compile Include="Noyau\Structures\Secteur.cs" />
-    <Compile Include="Noyau\Structures\Ligue.cs" />
-    <Compile Include="Noyau\Deroulement\Participant.cs" />
-    <Compile Include="Noyau\Structures\Pays.cs" />
-    <Compile Include="Noyau\Deroulement\Phase.cs" />
-    <Compile Include="Noyau\Deroulement\Phase_Decoupage.cs" />
-    <Compile Include="Noyau\Deroulement\Poule.cs" />
-    <Compile Include="Noyau\Deroulement\Rencontre.cs" />
-    <Compile Include="Noyau\Deroulement\VueCombat.cs" />
-    <Compile Include="Noyau\Organisation\VueEpreuve.cs" />
-    <Compile Include="Noyau\Organisation\VueEpreuveEquipe.cs" />
-    <Compile Include="Noyau\Deroulement\VueEpreuvePhase.cs" />
-    <Compile Include="Noyau\Deroulement\VueGroupe.cs" />
-    <Compile Include="Noyau\Participants\VueJudoka.cs" />
-    <Compile Include="Noyau\Structures\StructuresSnapshot.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\FranceJudo.Core\FranceJudo.Core.csproj" />
+    <ProjectReference Include="..\FranceJudo.Metier\FranceJudo.Metier.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FranceJudo.Core\FranceJudo.Core.csproj">
-      <Project>{13cad1c5-1448-4b69-b2c9-de15aecce84b}</Project>
-      <Name>FranceJudo.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FranceJudo.Metier\FranceJudo.Metier.csproj">
-      <Project>{e49d2215-4d00-4340-b7d3-ccd85d49e60d}</Project>
-      <Name>FranceJudo.Metier</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FranceJudo.UI\FranceJudo.UI.csproj">
-      <Project>{bffdeefa-ccdc-4dc2-8af5-d6509d2f7619}</Project>
-      <Name>FranceJudo.UI</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

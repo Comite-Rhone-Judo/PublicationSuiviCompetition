@@ -1,15 +1,15 @@
-﻿<telerik:RadWindow x:Class="AppPublication.Views.Infos.InformationsView"
-       xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+﻿<hc:Window x:Class="AppPublication.Views.Infos.InformationsView"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AppPublication.Views.Infos"
         mc:Ignorable="d"
-        Header="Informations" Height="400" Width="620"
+        Title="Informations" Height="420" Width="620"
         WindowStartupLocation="CenterScreen" 
-        CanClose="True" CanMove="True" ResizeMode="NoResize" 
-        WindowState="Normal" Name="UI" Background="Black" SizeToContent="True">
+        ResizeMode="NoResize" 
+        WindowState="Normal" Name="UI" Background="Black">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -60,19 +60,23 @@
             <Label HorizontalAlignment="Right" Style="{StaticResource LabelStyle}" Content="Données de diagnostiques:"/>
             <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="-5 0 0 0"
                    ToolTip="Permet de générer une archive Zip sur le bureau contenant les fichiers de traces de l'application pour permettre un diagnostique du comportement. A utiliser pour compléter le signalement d'un incident."/>
-            <telerik:RadButton telerik:StyleManager.Theme="Expression_Dark"  Width="120" IsDefault="True" Margin="20 0 0 0" Command="{Binding Path=CmdGenererTracesIncident}">
-                <WrapPanel Orientation="Horizontal">
-                    <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/archive-32.png" Height="25" Margin="5 0"/>
-                    <Label Content="Générer" />
-                </WrapPanel>
-            </telerik:RadButton>
+            <Button Width="120" IsDefault="True" Margin="20 0 0 0" Command="{Binding Path=CmdGenererTracesIncident}">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/archive-32.png" Height="20" Margin="5 0"/>
+                    <TextBlock Text="Générer" Style="{StaticResource ButtonLabelStyle}"/>
+                </StackPanel>
+            </Button>
             <CheckBox Content="Activer les traces détaillées" IsChecked="{Binding Path=TracesDebugOn}" IsEnabled="{Binding Path=CanManageTracesDebug}" Style="{StaticResource CheckboxStyle}" Margin="20 0 0 0"/>
             <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="5 0 0 0"
                    ToolTip="Si cocher, permet d'activer les traces les plus détaillées de l'application. Attention, cette option peut ralentir l'application du fait des nombreuses informations écrites sur disques. A utiliser uniquement à des fin de diagnostique."/>
 
         </StackPanel>
 
-        <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" HorizontalAlignment="Center" Visibility="{Binding Path=CanManageTracesDebug, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Not}" Foreground="RosyBrown" FontStyle="Italic" Content="Configuration incorrecte, la gestion des données de diagnostique n'est pos disponible"/>
+        <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3"
+               HorizontalAlignment="Center"
+               Visibility="{Binding Path=CanManageTracesDebug, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Not}"
+               Style="{StaticResource LabelErrorStyle}"
+               Content="Configuration incorrecte, la gestion des données de diagnostique n'est pos disponible"/>
 
     </Grid>
-</telerik:RadWindow>
+</hc:Window>

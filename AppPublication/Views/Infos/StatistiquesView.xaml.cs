@@ -1,12 +1,12 @@
 ﻿using AppPublication.Models.Statistiques;
-using Telerik.Windows.Controls;
+using HandyControl.Controls;
 
 namespace AppPublication.Views.Infos
 {
     /// <summary>
     /// Logique d'interaction pour Statistiques.xaml
     /// </summary>
-    public partial class StatistiquesView : RadWindow
+    public partial class StatistiquesView : Window
     {
         public StatistiquesView(GestionStatistiques statDataContext)
         {

@@ -1070,15 +1070,15 @@ namespace FranceJudo.Core.Network
             if (!string.IsNullOrEmpty(localFileName) && !string.IsNullOrEmpty(localDirectoryName))
             {
                 // Aligne les noms des repertoires pour n'avoir que des '/' au lieu de '\'
-                string cleanLocalFileName = FluentFTP.Helpers.PathSanitizer.SanitizeFtpPath(localFileName);
-                string cleanLocalDirName = FluentFTP.Helpers.PathSanitizer.SanitizeFtpPath(localDirectoryName);
-                string cleanDistantDirName = FluentFTP.Helpers.PathSanitizer.SanitizeFtpPath(RepertoireSiteFTPDistant);
+                string cleanLocalFileName = FluentFTP.Helpers.SanitizerModule.SanitizePath(null, localFileName);
+                string cleanLocalDirName = FluentFTP.Helpers.SanitizerModule.SanitizePath(null, localDirectoryName);
+                string cleanDistantDirName = FluentFTP.Helpers.SanitizerModule.SanitizePath(null, RepertoireSiteFTPDistant);
 
                 // Remplace le repertoire racine local dans le nom du fichier local par le repertoire racine FTP
                 string ftpDestination = cleanLocalFileName.Replace(cleanLocalDirName, cleanDistantDirName);
 
                 // Nettoie  le chemin
-                output = FluentFTP.Helpers.PathSanitizer.SanitizeFtpPath(ftpDestination);
+                output = FluentFTP.Helpers.SanitizerModule.SanitizePath(null, ftpDestination);
             }
 
             return output;

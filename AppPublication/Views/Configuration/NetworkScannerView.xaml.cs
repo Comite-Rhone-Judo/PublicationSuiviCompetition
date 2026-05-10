@@ -1,5 +1,5 @@
 ﻿using AppPublication.ViewModels.Configuration;
-using System.Windows;
+using HandyControl.Controls;
 
 namespace AppPublication.Views.Configuration
 {

@@ -6,7 +6,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Templates
     /// <summary>
     /// Interface for template rendering engines
     /// </summary>
-    public interface TemplateEngine
+    public interface ITemplateEngine
     {
         /// <summary>
         /// Render the template

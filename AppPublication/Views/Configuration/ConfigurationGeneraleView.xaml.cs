@@ -1,5 +1,5 @@
 ﻿using AppPublication.Controles;
-using System.Windows;
+using HandyControl.Controls;
 
 namespace AppPublication.Views.Configuration
 {
@@ -18,7 +18,7 @@ namespace AppPublication.Views.Configuration
             InitializeComponent();
         }
 
-        private void ButOk_Click(object sender, RoutedEventArgs e)
+        private void ButOk_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             DialogResult = true;
         }

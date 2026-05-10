@@ -1,4 +1,5 @@
-﻿using AppPublication.Config.Generation;
+﻿using AppPublication.Config;
+using AppPublication.Config.Generation;
 using AppPublication.Models.EcransAppel;
 using FranceJudo.Core.Foundation;
 using FranceJudo.Core.Logging;
@@ -452,12 +453,12 @@ namespace AppPublication.ViewModels.Configuration
         }
 
         // --- Helpers Configuration ---
-        private EcransAppelConfigElement GetConfigElement()
+        private EcranAppelParams GetConfigElement()
         {
             // On va chercher l'élément correspondant dans la config globale
-            if (GenerationConfigSection.Instance != null && GenerationConfigSection.Instance.Ecrans != null)
+            if (AppConfigRoot.Instance?.Generation != null && AppConfigRoot.Instance.Generation.Ecrans != null)
             {
-                return GenerationConfigSection.Instance.Ecrans.GetElementById(Id);
+                return AppConfigRoot.Instance.Generation.GetEcranById(Id);
             }
             return null;
         }

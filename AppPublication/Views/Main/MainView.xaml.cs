@@ -1,13 +1,12 @@
 ﻿using AppPublication.Controles;
 using AppPublication.Views.Server;
 using FranceJudo.Metier.Noyau.Organisation;
-using FranceJudo.UI.Wpf.Dialogs;
+using FranceJudo.UI.Wpf.Behaviors;
+using HandyControl.Controls;
 using System;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Windows;
-using System.Windows.Media.Imaging;
-using Telerik.Windows.Controls;
+
+
 
 namespace AppPublication.Views.Main
 {
@@ -37,20 +36,24 @@ namespace AppPublication.Views.Main
 
         private void MainWindow1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            DialogParameters param = new DialogParameters
-            {
-                OkButtonContent = "Oui",
-                CancelButtonContent = "Non",
-                Content = "Voulez-vous vraiment fermer l'application ?",
-                Header = "Fermeture de l'application"
-            };
+            // 1. Instanciation de votre fenêtre personnalisée avec le titre et le message
+            var confirmDialog = new FranceJudo.UI.Wpf.Dialogs.ConfirmWindow(
+                "Fermeture de l'application",
+                "Voulez-vous vraiment fermer l'application ?"
+            );
 
-            ConfirmWindow win = new ConfirmWindow(param);
-            win.ShowDialog();
+            // 2. On lie la boîte de dialogue à la fenêtre principale. 
+            // Cela empêche l'utilisateur de cliquer derrière et garantit le centrage.
+            confirmDialog.Owner = this;
 
-            if (win.DialogResult.HasValue && !(bool)win.DialogResult)
+            // 3. Affichage modal (bloque le code ici tant que l'utilisateur n'a pas répondu)
+            bool? result = confirmDialog.ShowDialog();
+
+            // 4. Vérification du résultat. 
+            // Votre ConfirmWindow met DialogResult à true uniquement sur le bouton OK.
+            if (result != true)
             {
-                e.Cancel = true;
+                e.Cancel = true; // On annule la fermeture
             }
         }
 
@@ -59,50 +62,29 @@ namespace AppPublication.Views.Main
             (new RechercheServer()).ShowDialog();
         }
 
-        private void QRCodeLocalCopy_Click(object sender, RoutedEventArgs e)
+        private void QRCodeLocalCopy_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            string tmpFile = Path.GetTempFileName();
-            using (FileStream fs = new FileStream(tmpFile, FileMode.Create))
-            {
-                Telerik.Windows.Media.Imaging.ExportExtensions.ExportToImage(QRCodeLocal, fs, new PngBitmapEncoder());
-                fs.Close();
-            }
-            BitmapImage img = new BitmapImage(new Uri(tmpFile));
-            Clipboard.SetImage(img);
+            WindowHelper.CopyVisualToClipboard(QRCodeLocalImage);
         }
 
-        private void QRCodeEcransAppelCopy_Click(object sender, RoutedEventArgs e)
+        private void QRCodeEcransAppelCopy_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            string tmpFile = Path.GetTempFileName();
-            using (FileStream fs = new FileStream(tmpFile, FileMode.Create))
-            {
-                Telerik.Windows.Media.Imaging.ExportExtensions.ExportToImage(QRCodeEcransAppel, fs, new PngBitmapEncoder());
-                fs.Close();
-            }
-            BitmapImage img = new BitmapImage(new Uri(tmpFile));
-            Clipboard.SetImage(img);
+            WindowHelper.CopyVisualToClipboard(QRCodeEcransAppelImage);
         }
 
-        private void QRCodeDistantCopy_Click(object sender, RoutedEventArgs e)
+        private void QRCodeDistantCopy_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            string tmpFile = Path.GetTempFileName();
-            using (FileStream fs = new FileStream(tmpFile, FileMode.Create))
-            {
-                Telerik.Windows.Media.Imaging.ExportExtensions.ExportToImage(QRCodeDistant, fs, new PngBitmapEncoder());
-                fs.Close();
-            }
-            BitmapImage img = new BitmapImage(new Uri(tmpFile));
-            Clipboard.SetImage(img);
+            WindowHelper.CopyVisualToClipboard(QRCodeDistantImage);
         }
 
-        private void Window_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void Window_DataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
         {
             // On doit configurer les mots de passe par defaut ici car le composant Password ne supporte pas le Binding sur cette propriete
-            if (e != null && e.NewValue != null && e.NewValue.GetType() == typeof(DialogControleur))
+            if (e.NewValue != null && e.NewValue.GetType() == typeof(DialogControleur))
             {
                 DialogControleur dc = (DialogControleur)e.NewValue;
-                this.AdvancedPwd.Password = dc.SiteCoordinator.GestionnaireSitePublique.SiteDistant.PasswordSiteFTPDistant;
-                this.EasyConfigPwd.Password = dc.SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.PasswordSiteFTPDistant;
+                AdvancedPwd.Password = dc.SiteCoordinator.GestionnaireSitePublique.SiteDistant.PasswordSiteFTPDistant;
+                EasyConfigPwd.Password = dc.SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.PasswordSiteFTPDistant;
             }
         }
     }

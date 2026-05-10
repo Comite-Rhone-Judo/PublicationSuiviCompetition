@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Deployment.Application;
 using System.Reflection;
 
 namespace FranceJudo.Core.Environment
@@ -13,24 +12,17 @@ namespace FranceJudo.Core.Environment
 
         public static String GetVersionInformation()
         {
-            if (ApplicationDeployment.IsNetworkDeployed)
+            Assembly assembly = Assembly.GetExecutingAssembly();
+
+            String version = assembly.GetName().Version.ToString();
+
+            var myAttr = Attribute.GetCustomAttribute(assembly, typeof(AssemblyVersionBeta)) as AssemblyVersionBeta;
+            if (myAttr.Value > 0)
             {
-                return ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
+                version += String.Format("-beta{0:00}", myAttr.Value);
             }
-            else
-            {
-                Assembly assembly = Assembly.GetExecutingAssembly();
 
-                String version = assembly.GetName().Version.ToString();
-
-                var myAttr = Attribute.GetCustomAttribute(assembly, typeof(AssemblyVersionBeta)) as AssemblyVersionBeta;
-                if (myAttr.Value > 0)
-                {
-                    version += String.Format("-beta{0:00}", myAttr.Value);
-                }
-
-                return version; // assembly.GetName().Version;
-            }
+            return version; // assembly.GetName().Version;
         }
 
         public static string GetCompanyInformation()
@@ -88,14 +80,7 @@ namespace FranceJudo.Core.Environment
 
         public static string GetDataDirectory()
         {
-            if (ApplicationDeployment.IsNetworkDeployed)
-            {
-                return ApplicationDeployment.CurrentDeployment.DataDirectory + "/";
-            }
-            else
-            {
-                return AppDomain.CurrentDomain.BaseDirectory.Replace(@"\", "/");
-            }
+            return AppDomain.CurrentDomain.BaseDirectory.Replace(@"\", "/");
         }
 
         /// <summary>

@@ -18,8 +18,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
-
 
 namespace AppPublication.Generation
 {
@@ -271,9 +269,9 @@ namespace AppPublication.Generation
                                 LogTools.Logger.Debug($"Taille de chunk pour Engagement Competition {comp.nom}, groupe {typeGrp} : {tailleChunkEngagement} sur {_nbCoeurs} coeurs");
                                 
                                 // On fait un decoupe de la liste en paquet de n groupes pour limiter le nombre de taches (et donc le cout de lancement des taches) tout en gardant une bonne granularite pour le progress
-                                foreach (List<GroupeEngagements> paquet in groupesP.Chunk(tailleChunkEngagement))
+                                foreach (var paquet in groupesP.Chunk(tailleChunkEngagement))
                                 {
-                                    LogTools.Logger.Debug($"Batching chunk Engagement Competition {comp.nom}, groupe {typeGrp}: #{nbChunkEng++} (size = {paquet.Count}");
+                                    LogTools.Logger.Debug($"Batching chunk Engagement Competition {comp.nom}, groupe {typeGrp}: #{nbChunkEng++} (size = {paquet.Length}");
                                     
                                     // Ce code est plus efficace qye celui qui cree une tache par groupe
                                     // car le lancement de trop nombreuses Task est couteux
@@ -281,7 +279,7 @@ namespace AppPublication.Generation
                                     _taskBatcher.AddWork(p =>
                                     {
                                         return exporter.GenereWebSiteEngagements(paquet, _currentContext, _siteUrlGenerator, p);
-                                    }, paquet.Count);
+                                    }, paquet.Length);
                                 }
                             }
                         }
@@ -293,12 +291,12 @@ namespace AppPublication.Generation
                     int nbChunkPhase = 0;
                     LogTools.Logger.Debug($"Taille de chunk pour Phases : {tailleChunkPhase} sur {_nbCoeurs} coeurs");
 
-                    foreach (List<IPhase> paquet in chunksPhases)
+                    foreach (var paquet in chunksPhases)
                     {
                         // TRÈS IMPORTANT : Chaque phase génère 2 éléments (Phase + Classement)
                         // Donc l'estimation initiale pour ce paquet est : taille du paquet * 2
-                        int estimationsPourCePaquet = paquet.Count * 2;
-                        LogTools.Logger.Debug($"Batching chunk Phase #{nbChunkPhase++} (size = {paquet.Count}");
+                        int estimationsPourCePaquet = paquet.Length * 2;
+                        LogTools.Logger.Debug($"Batching chunk Phase #{nbChunkPhase++} (size = {paquet.Length}");
 
                         _taskBatcher.AddWork(p =>
                         {
@@ -420,7 +418,7 @@ namespace AppPublication.Generation
                 // Recherche la racine
                 List<XElement> rootElem = doc.Descendants(FileWithChecksum.checksums).ToList();
 
-                if (rootElem.Count() >= 1)
+                if (rootElem.Count >= 1)
                 {
                     output = ExportXML.ImportChecksumFichiers(rootElem.First());
                 }

@@ -91,7 +91,7 @@ namespace AppPublication.Export
         /// <param name="ecran"></param>
         /// <param name="progress"></param>
         /// <returns></returns>
-        public List<FileWithChecksum> GenereEcransAppel(ExportSharedContextInterne ctx, SiteInterneUrlGenerator siteStructure, List<EcranAppelModel> ecrans, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereEcransAppel(ExportSharedContextInterne ctx, SiteInterneUrlGenerator siteStructure, IReadOnlyCollection<EcranAppelModel> ecrans, IProgress<BatchProgressInfo> progress)
         {
             IJudoData DC = ctx.DataContext;
             List<FileWithChecksum> output = new List<FileWithChecksum>();

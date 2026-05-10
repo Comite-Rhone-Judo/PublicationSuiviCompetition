@@ -1,7 +1,6 @@
 ﻿using FranceJudo.UI.Wpf.Behaviors;
 using System.Windows;
 using System.Windows.Input;
-using Telerik.Windows.Controls;
 
 
 namespace FranceJudo.UI.Wpf.Dialogs
@@ -9,17 +8,16 @@ namespace FranceJudo.UI.Wpf.Dialogs
     /// <summary>
     /// Logique d'interaction pour ChangeLogWindow.xaml
     /// </summary>
-    public partial class ChangeLogWindow : RadWindow
+    public partial class ChangeLogWindow : HandyControl.Controls.Window
     {
-        public static readonly RoutedUICommand OKButton = new RoutedUICommand("OK", "OK", typeof(RadWindow));
+        public static readonly RoutedUICommand OKButton = new RoutedUICommand("OK", "OK", typeof(HandyControl.Controls.Window));
 
 
         public ChangeLogWindow(string header, string message)
         {
             InitializeComponent();
-            WindowHelper.ShowInTaskbar(this);
 
-            this.Header = header;
+            this.Title = header;
             LabelMessage.Text = message;
 
             InitCommand();

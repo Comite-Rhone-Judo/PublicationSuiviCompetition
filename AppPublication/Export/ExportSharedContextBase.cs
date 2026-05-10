@@ -8,7 +8,6 @@ using FranceJudo.Metier.Noyau.Participants;
 using FranceJudo.Metier.XML;
 using System.Collections.Concurrent;
 using System.Linq;
-using System.Web.UI.WebControls;
 using System.Xml.Linq;
 using System.Xml.XPath;
 

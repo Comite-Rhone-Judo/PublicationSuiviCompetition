@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace FranceJudo.Core.Network.Tcp.Client
 {
@@ -48,7 +49,7 @@ namespace FranceJudo.Core.Network.Tcp.Client
 
         #region MEMBRES
         private const int READ_BUFFER_SIZE = 10240;
-        private static readonly byte[] readBuffer = new byte[READ_BUFFER_SIZE];
+        private readonly byte[] readBuffer = new byte[READ_BUFFER_SIZE];
         private string chaine = "";
         private readonly string _endMsgTag = string.Empty;
         private TcpClient objClient = null;
@@ -233,8 +234,19 @@ namespace FranceJudo.Core.Network.Tcp.Client
                     }
                     finally
                     {
-                        (new FranceJudo.Core.Network.Tcp.Client.ClientHelper.ReceiveData(HandleReceive)).BeginInvoke(client, strReceiveData,
-                                                new AsyncCallback(ReceiveCallback), client);
+                        // SOLUTION .NET 10 : Remplacement du BeginInvok_ par Task.Run
+                        // On exécute le logging (HandleReceive) sur le ThreadPool.
+                        // C'est asynchrone, performant et indépendant de WPF.
+                        _ = Task.Run(() => HandleReceive(client, strReceiveData));
+
+                        // Relance immédiate de la lecture pour ne pas saturer le buffer TCP
+                        if (client != null && client.Connected)
+                        {
+                            using (TimedLock.Lock(_networkLock))
+                            {
+                                client.GetStream().BeginRead(readBuffer, 0, READ_BUFFER_SIZE, new AsyncCallback(DoReading), client);
+                            }
+                        }
                     }
                 }
                 else
@@ -271,52 +283,10 @@ namespace FranceJudo.Core.Network.Tcp.Client
             try
             {
                 client = (TcpClient)ar.AsyncState;
-
-                //bool etat = client.Client.Poll(10, SelectMode.SelectRead);
-                //bool isConnected = client.Client.Available == 0;
-
                 NetworkStream networkStream = client.GetStream();
                 networkStream.EndWrite(ar);
 
                 OnDataSent?.Invoke(this);
-
-                //(new JudoClient.ClientHelper.ReceiveData(HandleReceive)).BeginInvoke(client, strReceiveData,
-                //        new AsyncCallback(ReceiveCallback), client);
-            }
-            catch (Exception ex)
-            {
-                client.Close();
-                ExceptionHelper.ShowException(ex);
-            }
-        }
-        #endregion
-
-        #region ReceiveCallback
-        private void ReceiveCallback(IAsyncResult ar)
-        {
-            TcpClient client = null;
-            try
-            {
-                client = (TcpClient)ar.AsyncState;
-
-                if (client.Connected)
-                {
-                    using (TimedLock.Lock(_networkLock))
-                    {
-                        client.GetStream().BeginRead(readBuffer, 0,
-                            READ_BUFFER_SIZE, new AsyncCallback(DoReading), client);
-                    }
-                }
-            }
-            catch (IOException ex)
-            {
-                client.Close();
-                ExceptionHelper.ShowException(ex);
-            }
-            catch (ObjectDisposedException ex)
-            {
-                client.Close();
-                ExceptionHelper.ShowException(ex);
             }
             catch (Exception ex)
             {

@@ -1,3 +1,4 @@
+using AppPublication.Config;
 using AppPublication.Config.Generation;
 using AppPublication.Models.EcransAppel;
 using FranceJudo.Core.Foundation;
@@ -10,7 +11,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Telerik.Windows.Controls;
 
 namespace AppPublication.ViewModels.Configuration
 {
@@ -122,12 +122,12 @@ namespace AppPublication.ViewModels.Configuration
             var nouveauModel = _ecranManager.Add();
 
             // 3. Ajout à la Configuration (Sauvegarde Disque immédiate)
-            var configElement = new EcransAppelConfigElement
+            var configElement = new EcranAppelParams
             {
                 Id = nouveauModel.Id,
                 Description = nouveauModel.Description
             };
-            GenerationConfigSection.Instance?.Ecrans.Add(configElement);
+            AppConfigRoot.Instance?.Generation?.Ecrans?.Add(configElement);
 
             // 4. Création du ViewModel et ajout à l'interface
             EcranAppelConfigViewModel vm = new EcranAppelConfigViewModel(nouveauModel, _tapisDisponibles, _scannerContext, () => _ecranManager.InvalidateSnapshot())
@@ -166,7 +166,11 @@ namespace AppPublication.ViewModels.Configuration
                     _ecranManager.Remove(vm.Id);
 
                     // 3. Supprimer de la Configuration (Disque)
-                    GenerationConfigSection.Instance?.Ecrans.Remove(vm.Id);
+                    var ecranToRemove = AppConfigRoot.Instance.Generation.GetEcranById(vm.Id);
+                    if (ecranToRemove != null)
+                    {
+                        AppConfigRoot.Instance.Generation.Ecrans.Remove(ecranToRemove);
+                    }
                 }
             }
         }

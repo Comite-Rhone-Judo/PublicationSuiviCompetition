@@ -1,19 +1,18 @@
 ﻿using FranceJudo.UI.Wpf.Behaviors;
 using System.Windows;
 using System.Windows.Input;
-using Telerik.Windows.Controls;
 
 namespace FranceJudo.UI.Wpf.Dialogs
 {
     /// <summary>
     /// Logique d'interaction pour AlertWindow.xaml
     /// </summary>
-    public partial class AlertWindow : RadWindow
+    public partial class AlertWindow : HandyControl.Controls.Window
     {
         /// <summary>
         /// Command OK
         /// </summary>
-        public static readonly RoutedUICommand OKButton = new RoutedUICommand("OK", "OK", typeof(RadWindow));
+        public static readonly RoutedUICommand OKButton = new RoutedUICommand("OK", "OK", typeof(HandyControl.Controls.Window));
 
         /// <summary>
         /// Constructor
@@ -24,11 +23,10 @@ namespace FranceJudo.UI.Wpf.Dialogs
         public AlertWindow(string header, string message)
         {
             InitializeComponent();
-            WindowHelper.ShowInTaskbar(this);
 
-            this.Header = header;
+            this.Title = header;
             LabelMessage.Text = message;
-            ButOkLabel.Content = "OK";
+            ButOkLabel.Text = "OK";
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
             InitCommand();

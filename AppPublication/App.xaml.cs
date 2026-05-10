@@ -2,15 +2,17 @@
 using FranceJudo.Core.Configuration;
 using FranceJudo.Core.Diagnostic;
 using FranceJudo.Core.Logging;
+using FranceJudo.UI.Wpf.Diagnostic;
 using FranceJudo.UI.Wpf.Dialogs;
 using FranceJudo.UI.Wpf.Foundation;
+using HandyControl.Tools;
 using KernelImpl;
+using NLog;
 using System;
 using System.Globalization;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
-using Telerik.Windows.Controls;
 
 namespace AppPublication
 { /// <summary>
@@ -33,13 +35,20 @@ namespace AppPublication
             CultureInfo culture = new CultureInfo("fr");
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
-
-            StyleManager.ApplicationTheme = new Windows8Theme();
         }
 
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            // 1. Initialisation explicite de NLog
+            // Charge la configuration depuis le fichier nlog.config autonome.
+            // Cela peuple LogManager.Configuration et active les logs.
+            LogManager.Setup().LoadConfigurationFromFile("nlog.config");
+
+            // HandyControl va automatiquement chercher et lier 
+            // le dictionnaire du package HandyControl.Lang.fr
+            ConfigHelper.Instance.SetLang("fr");
 
             // Demarrage et configure la couche de Logging
             LogTools.LogStartup();
@@ -47,6 +56,7 @@ namespace AppPublication
 
             // 1. Démarrer le monitoring global (RAM, GC) toutes les 60 secondes
             HealthMonitor.StartSystemMonitoring(60);
+            WpfHealthMonitor.StartWpfMonitoring(60);
 
             // Démarrage du Service de Configuration (le worker commence ici)
             _configSvc = ConfigurationService.CreateInstance();
@@ -75,19 +85,15 @@ namespace AppPublication
                 DataContext = Controles.DialogControleur.Instance
             };
 
-            void loadedHandler(object s, RoutedEventArgs ev)
+            // Modernisation du handler Loaded avec InvokeAsync
+            mainWin.Loaded += async (s, ev) =>
             {
-                mainWin.Loaded -= loadedHandler; // Nettoyage de l'événement ici
-
-                this.Dispatcher.BeginInvoke(new Action(() =>
+                // En .NET 10, on peut directement utiliser await sur le Dispatcher
+                await this.Dispatcher.InvokeAsync(() =>
                 {
-                    // 2. Démarrer le Heartbeat sur le Thread UI (le Dispatcher de l'application)
-                    // On le configure pour alerter si l'interface gèle plus de 3 secondes
-                    HealthMonitor.MonitorDispatcher(this.Dispatcher, "MainUI", 3000);
-                }), DispatcherPriority.ContextIdle);
-            }
-
-            mainWin.Loaded += loadedHandler;
+                    WpfHealthMonitor.MonitorDispatcher(this.Dispatcher, "MainUI", 3000);
+                }, DispatcherPriority.ContextIdle);
+            };
 
             mainWin.Show();
         }
@@ -106,46 +112,47 @@ namespace AppPublication
 
             DispatcherFrame nestedFrame = new DispatcherFrame();
 
-            // Dispatch a callback to the current message queue, when getting called,
-            // this callback will end the nested message loop.
-            // note that the priority of this callback should be lower than the that of UI event messages.
-
-            DispatcherOperation exitOperation = Dispatcher.CurrentDispatcher.BeginInvoke(
-            DispatcherPriority.Background, exitFrameCallback, nestedFrame);
-
-            // pump the nested message loop, the nested message loop will
-            // immediately process the messages left inside the message queue.
+            // Remplacement de BeginInvok_ par InvokeAsync
+            // On n'a plus besoin de stocker l'opération pour l'avorter manuellement 
+            // car InvokeAsync est plus robuste avec le cycle de vie des Frames.
+            _ = Dispatcher.CurrentDispatcher.InvokeAsync(() =>
+            {
+                nestedFrame.Continue = false;
+            }, DispatcherPriority.Background);
 
             Dispatcher.PushFrame(nestedFrame);
-
-            // If the "exitFrame" callback doesn't get finished, Abort it.
-
-            if (exitOperation.Status != DispatcherOperationStatus.Completed)
-            {
-                exitOperation.Abort();
-            }
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
-            // Arrêt propre du Service de Configuration
-            // Cela force l'arrêt du worker et une dernière sauvegarde synchrone sur disque.
-            if (ConfigurationService.Instance != null)
+            try
             {
-                (ConfigurationService.Instance as IDisposable)?.Dispose();
+                // Arrêt propre du service de config (Flush synchrone)
+                AppPublication.Config.AppConfigRoot.Stop();
+
+                // Arrêt propre des timers à la fermeture
+                HealthMonitor.StopAllMonitoring();
+                WpfHealthMonitor.StopAllMonitoring();
             }
+            catch (Exception ex)
+            {
+                LogTools.Error(ex);
+            }
+            finally
+            {
+                // Arrete les loggers
+                LogTools.LogStop();
+                NLog.LogManager.Shutdown();
 
-            // Arrêt propre des timers à la fermeture
-            HealthMonitor.StopAllMonitoring();
+                // DÉSABONNEMENT (Bonne pratique pour éviter les fuites de mémoire)
+                LogTools.OnCriticalErrorLogged -= LogTools_OnCriticalErrorLogged;
 
-            // Arrete les loggers
-            LogTools.LogStop();
-            NLog.LogManager.Shutdown();
+                // Bonne pratique sous .NET moderne : on s'assure que tous les logs 
+                // en attente (asynchrones) sont écrits avant la fermeture définitive.
+                LogManager.Shutdown();
 
-            // DÉSABONNEMENT (Bonne pratique pour éviter les fuites de mémoire)
-            LogTools.OnCriticalErrorLogged -= LogTools_OnCriticalErrorLogged;
-
-            base.OnExit(e);
+                base.OnExit(e);
+            }
         }
 
         private static Object ExitFrame(Object state)

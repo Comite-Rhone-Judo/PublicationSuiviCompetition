@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 
 namespace FranceJudo.Core.Network.Tcp.Server
 {
@@ -174,8 +175,10 @@ namespace FranceJudo.Core.Network.Tcp.Server
 
             OnConnection?.Invoke(this, client);
 
-            new ListenerHelper.ReceiveData(HandleReceive).BeginInvoke(client,
-                new AsyncCallback(ReceiveCallback), objListenerAndClient.Listener);
+            // --- CORRECTION .NET 10 ---
+            // On remplace le délégué.BeginInvoke par Task.Run
+            // Cela exécute l'initialisation du client (HandleReceive) en arrière-plan
+            _ = Task.Run(() => HandleReceive(client));
 
             objListenerAndClient.Listener.BeginAcceptTcpClient(
              new AsyncCallback(DoAcceptTcpClientCallback), objListenerAndClient);
@@ -192,12 +195,6 @@ namespace FranceJudo.Core.Network.Tcp.Server
             ClientConnection objClientConnection = new ClientConnection(client, _endMsgTag);
             objClientConnection.OnMessageReceived += new ClientConnection.MessageReceive(OnReceive);
             objClientConnection.OnRemoteHostClosed += new ClientConnection.RemoteHostClose(OnRemoteHostClose);
-        }
-
-        private static void ReceiveCallback(IAsyncResult ar)
-        {
-            //do nothing
-            //TcpListener listener = (TcpListener)ar.AsyncState;
         }
 
         private void OnReceive(ClientConnection sender, string data)

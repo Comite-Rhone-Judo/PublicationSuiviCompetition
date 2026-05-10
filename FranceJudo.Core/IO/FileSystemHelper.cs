@@ -222,30 +222,6 @@ namespace FranceJudo.Core.IO
             return endWithSeparator ? temp + Path.DirectorySeparatorChar : temp;
         }
 
-        public static string GetMimeType(this FileInfo fileInfo)
-        {
-            string mimeType = "application/octet-stream";
-
-            try
-            {
-                // Attention : Ce code est 100% couplé à Windows.
-                using (RegistryKey regKey = Registry.ClassesRoot.OpenSubKey(fileInfo.Extension.ToLower()))
-                {
-                    if (regKey != null)
-                    {
-                        object contentType = regKey.GetValue("Content Type");
-                        if (contentType != null) mimeType = contentType.ToString();
-                    }
-                }
-            }
-            catch
-            {
-                // Fallback silencieux si on n'a pas les droits sur le registre ou si on n'est pas sur Windows
-            }
-
-            return mimeType;
-        }
-
         private static readonly string[] _sizeSuffixes = { "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
 
         public static string SizeSuffix(this ulong value)

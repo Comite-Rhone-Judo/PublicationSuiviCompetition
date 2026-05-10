@@ -21,7 +21,6 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Telerik.Windows.Controls;
 
 namespace AppPublication.Controles
 {
@@ -938,13 +937,13 @@ namespace AppPublication.Controles
                                 if (_infoWindow == null)
                                 {
                                     _infoWindow = new AppPublication.Views.Infos.InformationsView();
-                                    _infoWindow?.IsTopmost = true;
+                                    _infoWindow?.Topmost = true;
                                     _infoWindow.Closed += (sender, args) => _infoWindow = null;
                                     _infoWindow.Show();
                                 }
                                 else
                                 {
-                                    _infoWindow?.IsTopmost = true;
+                                    _infoWindow?.Topmost = true;
                                     _infoWindow.Show();
                                 }
                             },
@@ -977,12 +976,12 @@ namespace AppPublication.Controles
                                         _manuelViewer = new PdfViewer(bytes, "Manuel utilisateur", false, true);
                                         _manuelViewer.Closed += (sender, args) => _manuelViewer = null;
                                         _manuelViewer.Show();
-                                        _manuelViewer.BringToFront();
+                                        _manuelViewer.Activate();
                                     }
                                 }
                                 else
                                 {
-                                    _manuelViewer.BringToFront();
+                                    _manuelViewer.Activate();
                                 }
                             },
                             o =>
@@ -1009,14 +1008,14 @@ namespace AppPublication.Controles
                                     _statWindow = new AppPublication.Views.Infos.StatistiquesView(GestionStatistiques);
                                     _statWindow.Closed += (sender, args) => _statWindow = null;
                                     _statWindow.Show();
-                                    _statWindow.BringToFront();
+                                    _statWindow.Activate();
                                 }
                                 else
                                 {
                                     if (_statWindow.WindowState == WindowState.Minimized)
                                         _statWindow.WindowState = WindowState.Normal;
 
-                                    _statWindow.BringToFront();
+                                    _statWindow.Activate();
                                 }
                             },
                             o =>
@@ -1133,7 +1132,7 @@ namespace AppPublication.Controles
                                     if (win != null)
                                     {
                                         // On doit la mettre TopMost car la fenêtre appelante l'est deja et pourrait la masquer.
-                                        win.IsTopmost = true;
+                                        win.Topmost = true;
                                         win.ShowDialog();
                                     }
                                 }
@@ -1233,16 +1232,21 @@ namespace AppPublication.Controles
         /// <param name="o"></param>
         private void ExtractPasswordFromParameters(object o)
         {
-            if (o != null && o.GetType() == typeof(Tuple<object, object>))
+            // On vérifie directement si 'o' est un Tuple, et on l'assigne à la variable 'tuple' si c'est le cas
+            if (o is Tuple<object, object> tuple)
             {
-                Tuple<object, object> tuple = (Tuple<object, object>)o;
-                if (tuple.Item1 != null && tuple.Item1.GetType() == typeof(RadPasswordBox))
+                // On vérifie si l'Item1 est bien le PasswordBox de HandyControl
+                if (tuple.Item1 is HandyControl.Controls.PasswordBox easyPwdBox)
                 {
-                    SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.PasswordSiteFTPDistant = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item1).SecurePassword);
+                    SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.PasswordSiteFTPDistant =
+                        Encryption.ToInsecureString(easyPwdBox.SecurePassword);
                 }
-                if (tuple.Item2 != null && tuple.Item2.GetType() == typeof(RadPasswordBox))
+
+                // On vérifie si l'Item2 est bien le PasswordBox de HandyControl
+                if (tuple.Item2 is HandyControl.Controls.PasswordBox advancedPwdBox)
                 {
-                    SiteCoordinator.GestionnaireSitePublique.SiteDistant.PasswordSiteFTPDistant = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item2).SecurePassword);
+                    SiteCoordinator.GestionnaireSitePublique.SiteDistant.PasswordSiteFTPDistant =
+                        Encryption.ToInsecureString(advancedPwdBox.SecurePassword);
                 }
             }
         }

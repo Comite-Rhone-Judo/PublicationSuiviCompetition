@@ -1,4 +1,5 @@
-﻿using AppPublication.Config.Generation;
+﻿using AppPublication.Config;
+using AppPublication.Config.Generation;
 using AppPublication.Config.Publication;
 using AppPublication.Generation;
 using AppPublication.Models.EcransAppel;
@@ -128,7 +129,7 @@ namespace AppPublication.Models.Publication
                 {
                     _delaiDeroulementSec = value;
                     _generateurSite?.ExportConfigurationManager?.Modifier(c => { c.DelaiDeroulementSec = value; });
-                    GenerationConfigSection.Instance.GenerateurSiteInterne.DelaiDeroulementSec = _delaiDeroulementSec;
+                    AppConfigRoot.Instance.Generation.GenerateurSiteInterne.DelaiDeroulementSec = _delaiDeroulementSec;
                     NotifyPropertyChanged();
                 }
             }
@@ -150,7 +151,7 @@ namespace AppPublication.Models.Publication
                     {
                         c.NbProchainsCombats = (_nbProchainsCombats = value);
                     });
-                    GenerationConfigSection.Instance.GenerateurSiteInterne.NbProchainsCombats = _nbProchainsCombats;
+                    AppConfigRoot.Instance.Generation.GenerateurSiteInterne.NbProchainsCombats = _nbProchainsCombats;
                     NotifyPropertyChanged();
                 }
             }
@@ -167,10 +168,11 @@ namespace AppPublication.Models.Publication
                 // Note: le repertoire racine et le logo sont lus par l'orchestrateur
                 // Les autres parametres peuvent suivre
                 // Lecture des donnees specifiques de l'instance
-                SchedulerConfigElement cfgPriv = PublicationConfigSection.GetInstanceConfigElement(kCfgSiteLocalInstanceName);
+
+                var cfgPriv = AppConfigRoot.Instance.Publication.GetScheduler(kCfgSiteLocalInstanceName);
                 DelaiGenerationSec = cfgPriv.DelaiGenerationSec;
-                DelaiDeroulementSec = GenerationConfigSection.Instance.GenerateurSiteInterne.DelaiDeroulementSec;
-                NbProchainsCombats = GenerationConfigSection.Instance.GenerateurSiteInterne.NbProchainsCombats;
+                DelaiDeroulementSec = AppConfigRoot.Instance.Generation.GenerateurSiteInterne.DelaiDeroulementSec;
+                NbProchainsCombats = AppConfigRoot.Instance.Generation.GenerateurSiteInterne.NbProchainsCombats;
 
                 // L'interface local de publication a ete chargee via la configuration du minisite, il faut juste s'assurer du bon calcul des URLs
                 URLLocalPublication = CalculURLSiteLocal();
@@ -224,7 +226,9 @@ namespace AppPublication.Models.Publication
 
         protected override void UpdateDelaiGenerationConfig(int newValue)
         {
-            SchedulerConfigElement cfg = PublicationConfigSection.GetInstanceConfigElement(kCfgSiteLocalInstanceName);
+            // On récupère le paramètre depuis le JSON et on le modifie.
+            // L'affectation déclenche 'SetValue' dans le POCO, ce qui lance la sauvegarde automatique sur disque.
+            var cfg = AppConfigRoot.Instance.Publication.GetScheduler(kCfgSiteLocalInstanceName);
             cfg.DelaiGenerationSec = newValue;
         }
 
@@ -265,9 +269,9 @@ namespace AppPublication.Models.Publication
                 // Chargement des Ecrans depuis la Config vers le Modèle Runtime
                 if (_ecransAppel == null) throw new ArgumentNullException("La liste des ecrans d'appel est null");
 
-                if (GenerationConfigSection.Instance?.Ecrans != null)
+                if (AppConfigRoot.Instance?.Generation?.Ecrans != null)
                 {
-                    foreach (EcransAppelConfigElement cfg in GenerationConfigSection.Instance.Ecrans)
+                    foreach (var cfg in AppConfigRoot.Instance.Generation.Ecrans)
                     {
                         // Parsing des IDs de tapis "1;2;3" -> List<int>
                         List<int> tapisIds = new List<int>();

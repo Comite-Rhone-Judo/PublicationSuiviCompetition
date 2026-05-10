@@ -15,9 +15,9 @@ using System.Reflection;
 // Vous pouvez spécifier toutes les valeurs ou indiquer les numéros de build et de révision par défaut 
 // en utilisant '*', comme indiqué ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyFileVersion("2.0.0.0")]
-[assembly: AssemblyVersion("2.0.0.0")]
-[assembly: AssemblyVersionBeta(0)]
+[assembly: AssemblyFileVersion("2.1.0.0")]
+[assembly: AssemblyVersion("2.1.0.0")]
+[assembly: AssemblyVersionBeta(1)]
 
 [assembly: AssemblyCompany("FRANCE JUDO - Fédération Française de Judo et Disciplines Associées - RHONE")]
 [assembly: AssemblyCopyright("Copyright © FRANCE JUDO RHONE 2023 / D. GARRIVIER - Tous droits réservés")]
