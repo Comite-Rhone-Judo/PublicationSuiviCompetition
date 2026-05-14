@@ -78,7 +78,7 @@ namespace AppPublication.Generation
             catch (Exception ex)
             {
                 // on se contente de logger l'erreur et de relancer l'exception dans la classe de base
-                LogTools.Logger.Error(ex, "Erreur lors de l'initialisation du scheduler de generation");
+                LogTools.Logger?.Error(ex, "Erreur lors de l'initialisation du scheduler de generation");
                 throw new Exception("Erreur lors de l'initialisation du scheduler de generation", ex);
             }
         }
@@ -272,13 +272,13 @@ namespace AppPublication.Generation
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Error(ex, "Erreur lors du lancement de la generation");
+                    LogTools.Logger?.Error(ex, "Erreur lors du lancement de la generation");
                     throw new Exception("Erreur lors du lancement de la generation", ex);
                 }
             }
             else
             {
-                LogTools.Logger.Error("Une tache de generation est deja en cours d'execution");
+                LogTools.Logger?.Error("Une tache de generation est deja en cours d'execution");
                 throw new Exception("Une tache de generation est deja en cours d'execution");
             }
         }
@@ -304,12 +304,12 @@ namespace AppPublication.Generation
                 catch (OperationCanceledException ex)
                 {
                     // Comportement normal et attendu : la tâche a bien obéi à l'annulation.
-                    LogTools.Logger.Debug(ex, "Arrêt de la génération");
+                    LogTools.Logger?.Debug(ex, "Arrêt de la génération");
                 }
                 catch (Exception ex)
                 {
                     // Si une VRAIE erreur se produit au moment de l'arrêt
-                    LogTools.Logger.Error(ex, "Erreur inattendue lors de l'arrêt de la génération");
+                    LogTools.Logger?.Error(ex, "Erreur inattendue lors de l'arrêt de la génération");
                 }
             }
 
@@ -429,26 +429,26 @@ namespace AppPublication.Generation
                                     }
                                     catch (Exception ex)
                                     {
-                                        LogTools.Logger.Error(ex, "Une erreur est survenue pendant la tentative de synchronisation");
+                                        LogTools.Logger?.Error(ex, "Une erreur est survenue pendant la tentative de synchronisation");
                                         SiteSynchronise = false;
                                     }
                                 }
                                 else
                                 {
                                     // Juste le log debug
-                                    LogTools.Logger.Debug("Site non genere");
+                                    LogTools.Logger?.Debug("Site non genere");
                                 }
                             }
                             catch (Exception ex)
                             {
-                                LogTools.Logger.Error(ex, "Une erreur est survenue durant la sequence de generation du site");
+                                LogTools.Logger?.Error(ex, "Une erreur est survenue durant la sequence de generation du site");
                                 SiteGenere = false;
                             }
                         }
                         else
                         {
                             // Le controle d'integrite a echoue
-                            LogTools.Logger.Warn("Impossible de valider l'integrite des donnees combats (Timeout ou deconnexion).");
+                            LogTools.Logger?.Warn("Impossible de valider l'integrite des donnees combats (Timeout ou deconnexion).");
                         }
                     }
                     finally

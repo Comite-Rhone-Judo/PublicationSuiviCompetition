@@ -78,7 +78,7 @@ namespace AppPublication.Views.Server
                     message += "   - Le réseau WIFI, sur lequel sont les machines, est paramétré en réseau PUBLIC alors qu'il doit être en réseau PRIVE.\n";
 
                     LogTools.Alert(message);
-                    LogTools.Logger.Error(message);
+                    LogTools.Logger?.Error(message);
 
 
                 }

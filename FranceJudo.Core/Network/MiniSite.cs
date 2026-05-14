@@ -453,7 +453,7 @@ namespace FranceJudo.Core.Network
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Error(ex);
+                    LogTools.Logger?.Error(ex);
                     throw ex;
                 }
             }
@@ -526,7 +526,7 @@ namespace FranceJudo.Core.Network
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Debug(ex, "Erreur lors de la selection de l'interface locale pour le MiniSite.");
+                    LogTools.Logger?.Debug(ex, "Erreur lors de la selection de l'interface locale pour le MiniSite.");
                 }
             }
         }
@@ -614,7 +614,7 @@ namespace FranceJudo.Core.Network
             {
                 lStatusMsg = "Erreur au demarrage";
                 lStatusDetail = ex.Message;
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
 
             // Met a jour les status du minisite
@@ -639,7 +639,7 @@ namespace FranceJudo.Core.Network
             catch (Exception ex)
             {
                 Status = new StatusMiniSite(StateMiniSiteEnum.Stopped, "Erreur lors de l'arrêt");
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
         }
 
@@ -716,7 +716,7 @@ namespace FranceJudo.Core.Network
             catch (Exception ex)
             {
                 cStatus = new StatusMiniSite(cStatus.State, "Erreur FTP", ex.Message);
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
             finally
             {
@@ -805,7 +805,7 @@ namespace FranceJudo.Core.Network
                                 retry++;
                                 if (fileUploadOut != FtpStatus.Success)
                                 {
-                                    LogTools.Logger.Debug("Erreur lors du transfert du fichier {0} vers {1}, essai {2}", localFileInfo.FullName, ftpTmpFile, retry);
+                                    LogTools.Logger?.Debug("Erreur lors du transfert du fichier {0} vers {1}, essai {2}", localFileInfo.FullName, ftpTmpFile, retry);
                                     Thread.Sleep(100);  // Attend 100ms avant de reessayer
                                 }
                             }
@@ -822,7 +822,7 @@ namespace FranceJudo.Core.Network
                                     retry++;
                                     if (!moved)
                                     {
-                                        LogTools.Logger.Debug("Erreur lors du deplacement du fichier {0} vers {1}, essai {2}", ftpTmpFile, ftpFileName, retry);
+                                        LogTools.Logger?.Debug("Erreur lors du deplacement du fichier {0} vers {1}, essai {2}", ftpTmpFile, ftpFileName, retry);
                                         Thread.Sleep(100);  // Attend 100ms avant de reessayer
                                     }
                                 }
@@ -836,7 +836,7 @@ namespace FranceJudo.Core.Network
                                 else
                                 {
                                     done = false;
-                                    LogTools.Logger.Debug("Erreur lors deplacement du fichier {0} vers {1}", ftpTmpFile, ftpFileName);
+                                    LogTools.Logger?.Debug("Erreur lors deplacement du fichier {0} vers {1}", ftpTmpFile, ftpFileName);
                                 }
                             }
                             else
@@ -891,7 +891,7 @@ namespace FranceJudo.Core.Network
                 output.IsSuccess = false;
                 string msg = (ex.InnerException != null) ? String.Format("{0} ({1})", ex.Message, ex.InnerException.Message) : ex.Message;
                 cStatus = new StatusMiniSite(cStatus.State, "Erreur FTP", msg);
-                LogTools.Logger.Error(ex, "Erreur lors de upload FTP");
+                LogTools.Logger?.Error(ex, "Erreur lors de upload FTP");
             }
             finally
             {
@@ -968,7 +968,7 @@ namespace FranceJudo.Core.Network
             }
             catch (Exception ex)
             {
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
         }
 
@@ -1023,7 +1023,7 @@ namespace FranceJudo.Core.Network
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors de la suppression recursive des fichiers FTP dans le repertoire {0}", repertoire);
+                LogTools.Logger?.Error(ex, "Erreur lors de la suppression recursive des fichiers FTP dans le repertoire {0}", repertoire);
                 throw new Exception("Erreur lors de la suppression recursive des fichiers FTP", ex);
             }
         }

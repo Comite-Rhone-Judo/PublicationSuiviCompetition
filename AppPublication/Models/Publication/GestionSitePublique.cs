@@ -84,7 +84,7 @@ namespace AppPublication.Models.Publication
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Fatal(ex, "Impossible d'initialiser le ViewModel principal. Impossible de continuer");
+                LogTools.Logger?.Fatal(ex, "Impossible d'initialiser le ViewModel principal. Impossible de continuer");
                 AlertWindow win = new AlertWindow("Erreur fatale", "Impossible de démarrer un composant interne, l'application doit s'arrêter. Veuillez contacter le support.");
                 win?.ShowDialog();
                 // Emergency shutdown
@@ -806,7 +806,7 @@ namespace AppPublication.Models.Publication
             }
             catch (Exception ex)
             {
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
         }
 
@@ -1016,7 +1016,7 @@ namespace AppPublication.Models.Publication
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Désactivation du mode EasyConfig - Configuration absente ou incorrecte");
+                LogTools.Logger?.Error(ex, "Désactivation du mode EasyConfig - Configuration absente ou incorrecte");
                 EasyConfig = false;
                 EasyConfigDisponible = false;
             }
@@ -1044,7 +1044,7 @@ namespace AppPublication.Models.Publication
             catch (Exception ex)
             {
                 output = string.Empty;
-                LogTools.Logger.Error(ex, "Impossible de calculer l'URL du site local");
+                LogTools.Logger?.Error(ex, "Impossible de calculer l'URL du site local");
             }
             return output;
         }
@@ -1091,7 +1091,7 @@ namespace AppPublication.Models.Publication
             catch (Exception ex)
             {
                 output = string.Empty;
-                LogTools.Logger.Debug(ex, "Impossible de calculer l'URL du site distant");
+                LogTools.Logger?.Debug(ex, "Impossible de calculer l'URL du site distant");
             }
             return output;
         }
@@ -1129,7 +1129,7 @@ namespace AppPublication.Models.Publication
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Debug(ex, "Erreur lors du calcul UrlPathCompetition");
+                    LogTools.Logger?.Debug(ex, "Erreur lors du calcul UrlPathCompetition");
                     // on a essayer de traiter une structure non configuree sans doute
                     output = repRoot;   // par défaut, on reste sur le répertoire racine configuré
                 }

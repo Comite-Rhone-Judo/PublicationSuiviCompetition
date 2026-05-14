@@ -62,11 +62,11 @@ namespace AppPublication
             _configSvc = ConfigurationService.CreateInstance();
 
             // Creation du gestionnaire de donnees. C'est le coeur de l'application
-            LogTools.Logger.Debug("Creation du gestionnaire de donnees");
+            LogTools.Logger?.Debug("Creation du gestionnaire de donnees");
             DataManager = new JudoData();
 
             // Instanciation du controleur principal en lien avec le gestionnaire de donnees
-            LogTools.Logger.Debug("Creation du controleur principal");
+            LogTools.Logger?.Debug("Creation du controleur principal");
             DialogControleur.CreateInstance(DataManager);
 
             // Assure que le logger est bien configure
@@ -136,7 +136,7 @@ namespace AppPublication
             }
             catch (Exception ex)
             {
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
             finally
             {
@@ -168,7 +168,7 @@ namespace AppPublication
         void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             // Process unhandled exception
-            LogTools.Logger.Error(e.Exception, "Exception non geree ayant atteint le gestionnaire general:");
+            LogTools.Logger?.Error(e.Exception, "Exception non geree ayant atteint le gestionnaire general:");
 
             // Prevent default unhandled exception processing
             e.Handled = true;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 // Les informations présentes dans ce fichier sont partagees et propagees dans tous les assemblys de la solution
 // En cas d'ajout d'un nouveau projet, il convient de modifier le fichier AssemblyInfos.cs pour retirer
@@ -23,6 +24,7 @@ using System.Reflection;
 [assembly: AssemblyCopyright("Copyright © FRANCE JUDO RHONE 2023 / D. GARRIVIER - Tous droits réservés")]
 [assembly: AssemblyTrademark("FRANCE JUDO - RHONE METROPOLE LYON JUDO")]
 
+[assembly: InternalsVisibleTo("FranceJudo.Core.Tests")]
 
 [AttributeUsage(AttributeTargets.Assembly)]
 internal class AssemblyVersionBeta : Attribute

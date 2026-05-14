@@ -51,31 +51,11 @@ namespace FranceJudo.Core.Logging
 
         #region PROXY vers le Logger
 
-        // Access direct au Logger NLog
         public static Logger Logger { get { return _logger; } }
+
         public static Logger DataLogger { get { return _dataLogger; } }
 
         public static Logger HealthLogger { get { return _healthLogger; } }
-
-        public static void Error(string msg) { _logger.Error(msg); }
-
-        public static void Error(Exception ex) { _logger.Error(ex); }
-
-        public static void Warning(string msg) { _logger.Warn(msg); }
-
-        public static void Warning(Exception ex) { _logger.Warn(ex); }
-
-        public static void Info(string msg) { _logger.Info(msg); }
-
-        public static void Info(Exception ex) { _logger.Info(ex); }
-
-        public static void Fatal(string msg) { _logger.Fatal(msg); }
-
-        public static void Fatal(Exception ex) { _logger.Fatal(ex); }
-
-        public static void Debug(string msg) { _logger.Debug(msg); }
-
-        public static void Debug(Exception ex) { _logger.Debug(ex); }
 
         #endregion
 
@@ -240,7 +220,7 @@ namespace FranceJudo.Core.Logging
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Impossible de creer l'archive Zip contenant les fichiers de trace de l'application vers '{0}'", targetArchiveName);
+                LogTools.Logger?.Error(ex, "Impossible de creer l'archive Zip contenant les fichiers de trace de l'application vers '{0}'", targetArchiveName);
                 throw new Exception("Impossible de creer l'archive Zip contenant les fichiers de trace de l'application", ex);
             }
         }

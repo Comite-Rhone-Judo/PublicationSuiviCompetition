@@ -26,7 +26,7 @@ namespace FranceJudo.UI.Wpf.Diagnostic
 
             _isMonitoringSystem = true;
 
-            LogTools.Logger.Info($"Monitoring WPF demarre (Intervalle : {intervalSeconds}s).");
+            LogTools.Logger?.Info($"Monitoring WPF demarre (Intervalle : {intervalSeconds}s).");
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace FranceJudo.UI.Wpf.Diagnostic
 
             if (_heartbeatTimers.ContainsKey(threadId))
             {
-                LogTools.Logger.Warn($"Le dispatcher '{name}' (Thread {threadId}) est deja surveille.");
+                LogTools.Logger?.Warn($"Le dispatcher '{name}' (Thread {threadId}) est deja surveille.");
                 return;
             }
 
@@ -76,7 +76,7 @@ namespace FranceJudo.UI.Wpf.Diagnostic
             if (_heartbeatTimers.TryAdd(threadId, heartbeatTimer))
             {
                 heartbeatTimer.Start();
-                LogTools.Logger.Info($"[HEALTH] Monitoring du Dispatcher '{name}' demarre (Seuil : {maxFreezeThresholdMs}ms).");
+                LogTools.Logger?.Info($"[HEALTH] Monitoring du Dispatcher '{name}' demarre (Seuil : {maxFreezeThresholdMs}ms).");
             }
         }
 
@@ -93,7 +93,7 @@ namespace FranceJudo.UI.Wpf.Diagnostic
             }
             _heartbeatTimers.Clear();
 
-            LogTools.Logger.Info("[HEALTH] Tous les monitorings ont ete arretes.");
+            LogTools.Logger?.Info("[HEALTH] Tous les monitorings ont ete arretes.");
         }
     }
 }

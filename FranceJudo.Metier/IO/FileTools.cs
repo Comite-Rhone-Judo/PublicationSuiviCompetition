@@ -55,7 +55,7 @@ namespace FranceJudo.Metier.IO
                     }
                     catch (Exception ex)
                     {
-                        LogTools.Logger.Error(ex, $"Le fichier '{filename}' est actuellement utilisé par un autre processus et n'a pas pu être accédé dans le délai imparti.");
+                        LogTools.Logger?.Error(ex, $"Le fichier '{filename}' est actuellement utilisé par un autre processus et n'a pas pu être accédé dans le délai imparti.");
                     }
                     finally
                     {

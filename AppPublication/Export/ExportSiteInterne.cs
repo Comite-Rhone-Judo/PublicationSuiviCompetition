@@ -53,12 +53,12 @@ namespace AppPublication.Export
                 // Export direct des styles et scripts
                 var staticFiles = SiteExportEngine.ExportEmbeddedStyleAndJS(true, siteStructure);
                 output.AddRange(staticFiles.Select(path => new FileWithChecksum(path)));
-                LogTools.Logger.Debug("GenereWebSiteIndex - Style/JS: {0} fichiers", staticFiles.Count);
+                LogTools.Logger?.Debug("GenereWebSiteIndex - Style/JS: {0} fichiers", staticFiles.Count);
 
                 // Export des images
                 var imageFiles = SiteExportEngine.ExportEmbeddedImg(true, true, siteStructure);
                 output.AddRange(imageFiles.Select(path => new FileWithChecksum(path)));
-                LogTools.Logger.Debug("GenereWebSiteIndex - Images: {0} fichiers", imageFiles.Count);
+                LogTools.Logger?.Debug("GenereWebSiteIndex - Images: {0} fichiers", imageFiles.Count);
 
                 // --- 5. GÉNÉRATION DU SCRIPT DE MISE À JOUR (FOOTER) ---
                 ExportEnum footerType = ExportEnum.Site_FooterScript;
@@ -74,7 +74,7 @@ namespace AppPublication.Export
                 }
                 output.Add(new FileWithChecksum($"{footerSavePath}.js"));
 
-                LogTools.Logger.Debug("GenereWebSiteIndex Terminé - Total: {0} ressources", output.Count);
+                LogTools.Logger?.Debug("GenereWebSiteIndex Terminé - Total: {0} ressources", output.Count);
                 progress?.Report(BatchProgressInfo.Step(2));
             }
 

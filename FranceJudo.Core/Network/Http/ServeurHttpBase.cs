@@ -112,7 +112,7 @@ namespace FranceJudo.Core.Network.Http
             }
             catch (Exception ex)
             {
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
         }
         #endregion
@@ -145,7 +145,7 @@ namespace FranceJudo.Core.Network.Http
             catch (Exception ex)
             {
                 _isStart = false;
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
         }
 
@@ -161,7 +161,7 @@ namespace FranceJudo.Core.Network.Http
             }
             catch (Exception ex)
             {
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
         }
 
@@ -223,7 +223,7 @@ namespace FranceJudo.Core.Network.Http
                     listener.Stop();
 
                     freePort = true;
-                    LogTools.Logger.Debug($"Port d'ecoute disponible: {port}");
+                    LogTools.Logger?.Debug($"Port d'ecoute disponible: {port}");
                 }
                 catch /*(Exception ex)*/
                 {
@@ -235,7 +235,7 @@ namespace FranceJudo.Core.Network.Http
 
             if (!freePort)
             {
-                LogTools.Logger.Error("Impossible de trouver un port disponible");
+                LogTools.Logger?.Error("Impossible de trouver un port disponible");
                 throw new ArgumentOutOfRangeException("Impossible de trouver un port disponible");
             }
 

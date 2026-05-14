@@ -60,7 +60,7 @@ namespace AppPublication.Publication
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Error($"Erreur lors de la creation de l'instance du serveur HTTP '{cfg.HttpServer}' pour le minisite '{instanceName}' : {ex.Message}");
+                    LogTools.Logger?.Error($"Erreur lors de la creation de l'instance du serveur HTTP '{cfg.HttpServer}' pour le minisite '{instanceName}' : {ex.Message}");
                     throw new NullReferenceException($"Impossible de creer l'instance du serveur HTTP '{cfg.HttpServer}' pour le minisite '{instanceName}'", ex);
                 }
             }
@@ -378,7 +378,7 @@ namespace AppPublication.Publication
                             }
                             catch (Exception ex)
                             {
-                                LogTools.Logger.Error($"Erreur lors de la creation le module ${module} du serveur HTTP '{cfg.HttpServer}' pour le minisite '{_instanceName}' : {ex.Message}");
+                                LogTools.Logger?.Error($"Erreur lors de la creation le module ${module} du serveur HTTP '{cfg.HttpServer}' pour le minisite '{_instanceName}' : {ex.Message}");
                                 throw new NullReferenceException($"Impossible de creer le module ${module} du serveur HTTP '{cfg.HttpServer}' pour le minisite '{_instanceName}'", ex);
                             }
                         }
@@ -403,7 +403,7 @@ namespace AppPublication.Publication
                 }
                 catch
                 {
-                    LogTools.Logger.Error($"Erreur lors du chargement de la configuration FTP pour le minisite distant '{InstanceName}'");
+                    LogTools.Logger?.Error($"Erreur lors du chargement de la configuration FTP pour le minisite distant '{InstanceName}'");
                 }
             }
         }

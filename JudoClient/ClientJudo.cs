@@ -429,7 +429,7 @@ namespace JudoClient
             }
             catch (Exception ex)
             {
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
 
                 // Appelle le callback d'erreur
                 OnReceivedDataErrorOccured?.Invoke(this, donnees);

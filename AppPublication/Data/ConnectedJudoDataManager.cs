@@ -229,7 +229,7 @@ namespace AppPublication.Data
         /// <param name="state"></param>
         public void OnResponseTimeout(object state)
         {
-            LogTools.Logger.Debug("Expiration du timer de reception de message");
+            LogTools.Logger?.Debug("Expiration du timer de reception de message");
             using (TimedLock.Lock(_lock))
             {
                 // Demande l'arret du client si on est bien en phase d'init. Dans le cas contraire, on ignore le timer car cet evenement 
@@ -247,7 +247,7 @@ namespace AppPublication.Data
         /// </summary>
         private void OnClientReady(object sender, ClientReadyEventArgs e)
         {
-            LogTools.Logger.Debug("Client pret, abonnement aux evenements du serveur");
+            LogTools.Logger?.Debug("Client pret, abonnement aux evenements du serveur");
 
             var client = e.Client;
 
@@ -291,7 +291,7 @@ namespace AppPublication.Data
         /// </summary>
         private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
         {
-            LogTools.Logger.Debug("Client deconnecte a {0}", e.DisconnectionTime);
+            LogTools.Logger?.Debug("Client deconnecte a {0}", e.DisconnectionTime);
 
             using (TimedLock.Lock(_lock))
             {
@@ -313,7 +313,7 @@ namespace AppPublication.Data
         /// <param name="sender"></param>
         public void Client_OnEndConnection(object sender)
         {
-            LogTools.Logger.Debug("Fin de connexion");
+            LogTools.Logger?.Debug("Fin de connexion");
 
             try
             {
@@ -327,7 +327,7 @@ namespace AppPublication.Data
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors de la gestion de la deconnexion");
+                LogTools.Logger?.Error(ex, "Erreur lors de la gestion de la deconnexion");
             }
         }
 
@@ -338,7 +338,7 @@ namespace AppPublication.Data
         /// <param name="element"></param>
         public void Client_OnAcceptConnectionCOM(object sender, XElement element)
         {
-            LogTools.Logger.Debug("clientjudo_OnAcceptConnectionCOM");
+            LogTools.Logger?.Debug("clientjudo_OnAcceptConnectionCOM");
             LogTools.DebugLogData("clientjudo_OnAcceptConnectionCOM - Reception donnees: '{0}'", element);
 
             using (TimedLock.Lock(_lock))
@@ -363,7 +363,7 @@ namespace AppPublication.Data
                 catch (Exception ex)
                 {
                     // Trace l'erreur et arrete le client
-                    LogTools.Logger.Error(ex, "Erreur lors de la demande d'initialisation");
+                    LogTools.Logger?.Error(ex, "Erreur lors de la demande d'initialisation");
                     StopOnError(true);
                 }
             }
@@ -391,7 +391,7 @@ namespace AppPublication.Data
         /// <param name="element"></param>
         public void Client_OnListeStructures(object sender, XElement element)
         {
-            LogTools.Logger.Debug("client_OnListeStructures");
+            LogTools.Logger?.Debug("client_OnListeStructures");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesStructures,
                                                     elem =>
@@ -418,7 +418,7 @@ namespace AppPublication.Data
         /// <param name="element"></param>
         public void Client_OnUpdateStructures(object sender, XElement element)
         {
-            LogTools.Logger.Debug("client_OnUpdateStructures");
+            LogTools.Logger?.Debug("client_OnUpdateStructures");
 
             UpdateRequestDispatcher(elem =>
                                         {
@@ -448,7 +448,7 @@ namespace AppPublication.Data
         /// <param name="element"></param>
         public void Client_OnListeCategories(object sender, XElement element)
         {
-            LogTools.Logger.Debug("client_OnListeCategories");
+            LogTools.Logger?.Debug("client_OnListeCategories");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesCategories,
                                          elem =>
@@ -470,7 +470,7 @@ namespace AppPublication.Data
 
         public void Client_OnUpdateCategories(object sender, XElement element)
         {
-            LogTools.Logger.Debug("client_OnUpdateCategories");
+            LogTools.Logger?.Debug("client_OnUpdateCategories");
 
             UpdateRequestDispatcher(elem =>
             {
@@ -493,7 +493,7 @@ namespace AppPublication.Data
 
         public void Client_OnListeLogos(object sender, XElement element)
         {
-            LogTools.Logger.Debug("client_OnListeLogos");
+            LogTools.Logger?.Debug("client_OnListeLogos");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesLogos,
                             elem =>
@@ -515,7 +515,7 @@ namespace AppPublication.Data
 
         public void Client_OnUpdateLogos(object sender, XElement element)
         {
-            LogTools.Logger.Debug("client_OnUpdateLogos");
+            LogTools.Logger?.Debug("client_OnUpdateLogos");
 
             UpdateRequestDispatcher(elem =>
             {
@@ -540,7 +540,7 @@ namespace AppPublication.Data
 
         public void Client_OnListeOrganisation(object sender, XElement element)
         {
-            LogTools.Logger.Debug("client_OnListeOrganisation");
+            LogTools.Logger?.Debug("client_OnListeOrganisation");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesOrganisation,
                             elem =>
@@ -571,7 +571,7 @@ namespace AppPublication.Data
 
         public void Client_OnUpdateOrganisation(object sender, XElement element)
         {
-            LogTools.Logger.Debug("client_OnUpdateOrganisation");
+            LogTools.Logger?.Debug("client_OnUpdateOrganisation");
 
             UpdateRequestDispatcher(elem =>
             {
@@ -595,7 +595,7 @@ namespace AppPublication.Data
 
         public void Client_OnListeEquipes(object sender, XElement element)
         {
-            LogTools.Logger.Debug("client_OnListeEquipes");
+            LogTools.Logger?.Debug("client_OnListeEquipes");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesJudokas,
                             elem =>
@@ -618,7 +618,7 @@ namespace AppPublication.Data
 
         public void Client_OnUpdateEquipes(object sender, XElement element)
         {
-            LogTools.Logger.Debug("client_OnUpdateEquipes");
+            LogTools.Logger?.Debug("client_OnUpdateEquipes");
 
             UpdateRequestDispatcher(elem =>
             {
@@ -642,7 +642,7 @@ namespace AppPublication.Data
 
         public void Client_OnListeJudokas(object sender, XElement element)
         {
-            LogTools.Logger.Debug("client_OnListeJudokas");
+            LogTools.Logger?.Debug("client_OnListeJudokas");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesJudokas,
                             elem =>
@@ -665,7 +665,7 @@ namespace AppPublication.Data
 
         public void Client_OnUpdateJudokas(object sender, XElement element)
         {
-            LogTools.Logger.Debug("client_OnUpdateJudokas");
+            LogTools.Logger?.Debug("client_OnUpdateJudokas");
 
             UpdateRequestDispatcher(elem =>
             {
@@ -692,7 +692,7 @@ namespace AppPublication.Data
 
         public void Client_OnListePhases(object sender, XElement element)
         {
-            LogTools.Logger.Debug("client_OnListePhases");
+            LogTools.Logger?.Debug("client_OnListePhases");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesPhases,
                             elem =>
@@ -714,7 +714,7 @@ namespace AppPublication.Data
 
         public void Client_OnUpdatePhases(object sender, XElement element)
         {
-            LogTools.Logger.Debug("client_OnUpdatePhases");
+            LogTools.Logger?.Debug("client_OnUpdatePhases");
 
             UpdateRequestDispatcher(elem =>
             {
@@ -749,7 +749,7 @@ namespace AppPublication.Data
 
         public void Client_OnListeCombats(object sender, XElement element)
         {
-            LogTools.Logger.Debug("client_OnListeCombats");
+            LogTools.Logger?.Debug("client_OnListeCombats");
 
             // Détection sécurisée de l'état Idle
             bool isIdleContext = false;
@@ -778,13 +778,13 @@ namespace AppPublication.Data
                         // Une mise à jour a été rejetée PENDANT que nous traitions ce snapshot.
                         // Ce snapshot est valide structurellement, mais il lui manque des données récentes.
                         // ON LAISSE IsCombatsCacheDirty = true.
-                        LogTools.Logger.Debug("Snapshot integre, mais des modifications concurrentes ont ete detectees. Le cache reste 'Dirty'.");
+                        LogTools.Logger?.Debug("Snapshot integre, mais des modifications concurrentes ont ete detectees. Le cache reste 'Dirty'.");
                     }
                     else
                     {
                         // Tout est calme, le snapshot est l'image exacte du serveur.
                         IsCombatsCacheDirty = false;
-                        LogTools.Logger.Debug("Snapshot integre avec succes. Cache valide.");
+                        LogTools.Logger?.Debug("Snapshot integre avec succes. Cache valide.");
                     }
                 }
 
@@ -815,7 +815,7 @@ namespace AppPublication.Data
 
         public void Client_OnUpdateTapisCombats(object sender, XElement element)
         {
-            LogTools.Logger.Debug("client_OnUpdateTapisCombats, invalidation du cache");
+            LogTools.Logger?.Debug("client_OnUpdateTapisCombats, invalidation du cache");
 
             using (TimedLock.Lock(_lockDirty))
             {
@@ -835,7 +835,7 @@ namespace AppPublication.Data
 
         public void Client_OnUpdateCombats(object sender, XElement element)
         {
-            LogTools.Logger.Debug("client_OnUpdateCombats");
+            LogTools.Logger?.Debug("client_OnUpdateCombats");
 
             using (TimedLock.Lock(_lockDirty))
             {
@@ -846,7 +846,7 @@ namespace AppPublication.Data
                     // Cela forcera EnsureDataConstistency à redemander un snapshot complet qui contiendra cette donnée.
                     _concurrentRequestReceived = true;
                     _statManager.EnregistrerSnapshotIgnore();
-                    LogTools.Logger.Warn("UpdateCombat ignore (Cache Dirty). Flag d'interference leve pour rechargement futur.");
+                    LogTools.Logger?.Warn("UpdateCombat ignore (Cache Dirty). Flag d'interference leve pour rechargement futur.");
                     return;
                 }
             }
@@ -872,7 +872,7 @@ namespace AppPublication.Data
 
         public void Client_onUpdateRencontres(object sender, XElement element)
         {
-            LogTools.Logger.Debug("client_onUpdateRencontres");
+            LogTools.Logger?.Debug("client_onUpdateRencontres");
 
             UpdateRequestDispatcher(elem =>
             {
@@ -896,7 +896,7 @@ namespace AppPublication.Data
 
         public void Client_OnListeArbitrage(object sender, XElement element)
         {
-            LogTools.Logger.Debug("client_OnListeArbitrage");
+            LogTools.Logger?.Debug("client_OnListeArbitrage");
 
             InitializationRequestDispatcher(BusyStatusEnum.InitDonneesArbitres,
                                                    elem =>
@@ -914,7 +914,7 @@ namespace AppPublication.Data
 
         public void Client_OnUpdateArbitrage(object sender, XElement element)
         {
-            LogTools.Logger.Debug("client_OnUpdateArbitrage");
+            LogTools.Logger?.Debug("client_OnUpdateArbitrage");
 
             UpdateRequestDispatcher(elem =>
             {
@@ -963,7 +963,7 @@ namespace AppPublication.Data
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Debug(ex, "Erreur lors de l'enregistrement du debut d'echange pour la categorie {0}", categorie.ToString());
+                LogTools.Logger?.Debug(ex, "Erreur lors de l'enregistrement du debut d'echange pour la categorie {0}", categorie.ToString());
             }
         }
 
@@ -985,12 +985,12 @@ namespace AppPublication.Data
                 }
                 else
                 {
-                    LogTools.Logger.Debug("Reponse recu pour un echange inconnu {0}", categorie.ToString());
+                    LogTools.Logger?.Debug("Reponse recu pour un echange inconnu {0}", categorie.ToString());
                 }
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Debug(ex, "Erreur lors de l'enregistrement de la fin d'echange pour la categorie {0}", categorie.ToString());
+                LogTools.Logger?.Debug(ex, "Erreur lors de l'enregistrement de la fin d'echange pour la categorie {0}", categorie.ToString());
             }
         }
 
@@ -1067,7 +1067,7 @@ namespace AppPublication.Data
             catch (Exception ex)
             {
                 // Log but don't throw - we're in cleanup mode
-                LogTools.Logger.Warn(ex, "Erreur lors du desabonnement des evenements client");
+                LogTools.Logger?.Warn(ex, "Erreur lors du desabonnement des evenements client");
             }
         }
 
@@ -1102,7 +1102,7 @@ namespace AppPublication.Data
         /// <param name="element">Les donnees recues</param>
         private void InitializationRequestDispatcher(BusyStatusEnum currentStatus, Action<XElement> dataAction, BusyStatusEnum nextStatus, Action nextAction, XElement element)
         {
-            LogTools.Logger.Debug("Traitement Request initialisation");
+            LogTools.Logger?.Debug("Traitement Request initialisation");
             LogTools.DebugLogData("Traitement Request initialisation: '{0}'", element);
 
             using (TimedLock.Lock(_lock))
@@ -1160,7 +1160,7 @@ namespace AppPublication.Data
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Error(ex, "Erreur lors de la lecture des donnees recues");
+                    LogTools.Logger?.Error(ex, "Erreur lors de la lecture des donnees recues");
                     StopOnError(true);      // Arrete le gestionnaire d'evenement sur une erreur
                 }
             }
@@ -1168,7 +1168,7 @@ namespace AppPublication.Data
 
         private void UpdateRequestDispatcher(Action<XElement> action, XElement element)
         {
-            LogTools.Logger.Debug("Traitement request update");
+            LogTools.Logger?.Debug("Traitement request update");
             LogTools.DebugLogData("Traitement request update: '{0}'", element);
 
             // Verifie l'etat du gestionnaire (on ne peut pas recevoir ces donnees pendant une initialisation)
@@ -1203,7 +1203,7 @@ namespace AppPublication.Data
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors de la mise a jour des donnees");
+                LogTools.Logger?.Error(ex, "Erreur lors de la mise a jour des donnees");
             }
         }
 
@@ -1254,7 +1254,7 @@ namespace AppPublication.Data
                 // Lecture thread-safe de la propriété (qui utilise _lockDirty en interne)
                 if (!IsCombatsCacheDirty) return true;
 
-                LogTools.Logger.Debug("Cache Dirty detecte. Demarrage de la procedure de reparation...");
+                LogTools.Logger?.Debug("Cache Dirty detecte. Demarrage de la procedure de reparation...");
 
                 var client = _clientProvider.Client;
                 if (client != null)
@@ -1279,7 +1279,7 @@ namespace AppPublication.Data
 
                     if (!received)
                     {
-                        LogTools.Logger.Error("Timeout en attendant le snapshot complet.");
+                        LogTools.Logger?.Error("Timeout en attendant le snapshot complet.");
                         return false;
                     }
 
@@ -1291,7 +1291,7 @@ namespace AppPublication.Data
 
                     if (!isClean)
                     {
-                        LogTools.Logger.Debug("Le snapshot a ete reçu mais des donnees concurrentes ont empeche la validation du cache.");
+                        LogTools.Logger?.Debug("Le snapshot a ete reçu mais des donnees concurrentes ont empeche la validation du cache.");
                         // On retourne TRUE car on a chargé un snapshot valide (le "moins pire" disponible).
                         // La génération se fera, et au prochain cycle, EnsureDataConstistency verra que c'est toujours Dirty et recommencera.
                         return true;

@@ -112,7 +112,7 @@ namespace AppPublication.ViewModels.Configuration
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Debug(ex, "Erreur lors du chargement des donnees de configuration des ecrans");
+                LogTools.Logger?.Debug(ex, "Erreur lors du chargement des donnees de configuration des ecrans");
             }
         }
 

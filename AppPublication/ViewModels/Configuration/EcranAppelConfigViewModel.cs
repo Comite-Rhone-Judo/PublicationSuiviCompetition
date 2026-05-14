@@ -551,7 +551,7 @@ namespace AppPublication.ViewModels.Configuration
 
             if (string.IsNullOrWhiteSpace(saisie) || type == TypeSaisieEnum.Inconnu)
             {
-                LogTools.Logger.Debug("LancerRechercheComplementaire: saisie vide ou inconnue, pas de recherche lancee.");
+                LogTools.Logger?.Debug("LancerRechercheComplementaire: saisie vide ou inconnue, pas de recherche lancee.");
                 return;
             }
 
@@ -599,7 +599,7 @@ namespace AppPublication.ViewModels.Configuration
                     }
                     catch (Exception ex)
                     {
-                        LogTools.Logger.Warn($"LancerRechercheComplementaire: Erreur lors de la recherche DNS pour '{saisie}': {ex.Message}");
+                        LogTools.Logger?.Warn($"LancerRechercheComplementaire: Erreur lors de la recherche DNS pour '{saisie}': {ex.Message}");
                     }
                 }, token);
 
@@ -618,7 +618,7 @@ namespace AppPublication.ViewModels.Configuration
             catch (OperationCanceledException) { /* Ignoré lors de l'annulation */ }
             catch (Exception ex)
             {
-                LogTools.Logger.Warn(ex, $"Erreur DNS : {ex.Message}");
+                LogTools.Logger?.Warn(ex, $"Erreur DNS : {ex.Message}");
             }
             finally
             {

@@ -113,7 +113,7 @@ namespace FranceJudo.Core.Network.Tcp.Client
                 }
                 catch
                 {
-                    LogTools.Logger.Debug("ClientGenerique IsConnected - Exception sur la verification de la connection");
+                    LogTools.Logger?.Debug("ClientGenerique IsConnected - Exception sur la verification de la connection");
                     return false;
                 }
             }

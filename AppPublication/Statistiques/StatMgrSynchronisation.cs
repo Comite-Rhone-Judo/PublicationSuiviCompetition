@@ -56,7 +56,7 @@ namespace AppPublication.Statistiques
             }
             catch (System.Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors de l'initialisation des statistiques synchronisation");
+                LogTools.Logger?.Error(ex, "Erreur lors de l'initialisation des statistiques synchronisation");
             }
         }
 
@@ -99,7 +99,7 @@ namespace AppPublication.Statistiques
             }
             catch (System.Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors de l'enregistrement d'une synchronisation");
+                LogTools.Logger?.Error(ex, "Erreur lors de l'enregistrement d'une synchronisation");
             }
         }
 

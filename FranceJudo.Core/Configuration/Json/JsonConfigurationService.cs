@@ -55,7 +55,7 @@ namespace FranceJudo.Core.Configuration.Json
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Error(ex, $"Erreur lors du chargement JSON : {_filePath}");
+                    LogTools.Logger?.Error(ex, $"Erreur lors du chargement JSON : {_filePath}");
                     Root = new T();
                 }
             }
@@ -100,11 +100,11 @@ namespace FranceJudo.Core.Configuration.Json
                 {
                     string json = JsonConvert.SerializeObject(Root, _settings);
                     File.WriteAllText(_filePath, json);
-                    LogTools.Logger.Debug($"Config sauvée (Newtonsoft) : {_filePath}");
+                    LogTools.Logger?.Debug($"Config sauvée (Newtonsoft) : {_filePath}");
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Error(ex, "Erreur d'écriture de la configuration JSON.");
+                    LogTools.Logger?.Error(ex, "Erreur d'écriture de la configuration JSON.");
                 }
             }
         }

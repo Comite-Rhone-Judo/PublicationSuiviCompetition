@@ -38,7 +38,7 @@ namespace AppPublication.Export
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Debug(ex);
+                LogTools.Logger?.Debug(ex);
                 return new XElement(ConstantXML.Comites); // On retourne une liste vide en cas d'erreur, comme votre code d'origine
             }
         }
@@ -61,7 +61,7 @@ namespace AppPublication.Export
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Debug(ex);
+                LogTools.Logger?.Debug(ex);
                 return new XElement(ConstantXML.Ligues); // Retour sécurisé d'une liste vide en cas de plantage
             }
         }
@@ -84,7 +84,7 @@ namespace AppPublication.Export
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Debug(ex);
+                LogTools.Logger?.Debug(ex);
                 return new XElement(ConstantXML.Secteurs); // En cas d'erreur, on renvoie une liste vide pour éviter un NullReferenceException plus haut
             }
         }
@@ -106,7 +106,7 @@ namespace AppPublication.Export
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Debug(ex);
+                LogTools.Logger?.Debug(ex);
                 return new XElement(ConstantXML.LesPays);
             }
         }
@@ -142,7 +142,7 @@ namespace AppPublication.Export
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Debug(ex);
+                LogTools.Logger?.Debug(ex);
                 return new XElement(ConstantXML.Clubs);
             }
         }
@@ -163,7 +163,7 @@ namespace AppPublication.Export
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Debug(ex);
+                LogTools.Logger?.Debug(ex);
                 return new XElement(ConstantXML.Ceintures);
             }
         }

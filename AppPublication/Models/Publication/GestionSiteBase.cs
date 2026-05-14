@@ -309,7 +309,7 @@ namespace AppPublication.Models.Publication
         /// </summary>
         protected virtual void OnGenerationSiteProgressReport(OperationProgress valueReported)
         {
-            LogTools.Logger.Debug($"Progress {valueReported.ProgressPercent} signale par le generateur");
+            LogTools.Logger?.Debug($"Progress {valueReported.ProgressPercent} signale par le generateur");
 
             // on doit juste s'assurer que tout est bien execute dans le UI Thread
             System.Windows.Application.Current.ExecOnUiThread(() =>
@@ -331,7 +331,7 @@ namespace AppPublication.Models.Publication
         /// </summary>
         protected virtual void OnSchedulerSiteStateChanged(object sender, SchedulerStateEventArgs evt)
         {
-            LogTools.Logger.Debug($"Event {evt.State} signale par le scheduler");
+            LogTools.Logger?.Debug($"Event {evt.State} signale par le scheduler");
 
             // on doit juste s'assurer que tout est bien execute dans le UI Thread
             System.Windows.Application.Current.ExecOnUiThread(() =>

@@ -87,7 +87,7 @@ namespace FranceJudo.Core.Threading
             {
                 if (!waitHandle.WaitOne(_disposeTimeout))
                 {
-                    LogTools.Logger.Warn("Timeout lors de l'attente de l'arrêt complet du timer.");
+                    LogTools.Logger?.Warn("Timeout lors de l'attente de l'arrêt complet du timer.");
                 }
                 waitHandle.Dispose();
             }
@@ -124,7 +124,7 @@ namespace FranceJudo.Core.Threading
             {
                 // Un timer de ThreadPool qui lève une exception non gérée fait crasher l'app.
                 // Il faut toujours un catch global ici.
-                LogTools.Logger.Error(ex, "Erreur lors de l'exécution du callback du SingleShotTimer");
+                LogTools.Logger?.Error(ex, "Erreur lors de l'exécution du callback du SingleShotTimer");
             }
         }
 

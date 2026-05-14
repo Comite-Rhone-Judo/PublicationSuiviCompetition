@@ -383,7 +383,7 @@ namespace FranceJudo.Core.Configuration
                 _resetCacheActions.Clear();
             }
 
-            LogTools.Logger.Info("Contexte de configuration invalide et réinitialise.");
+            LogTools.Logger?.Info("Contexte de configuration invalide et réinitialise.");
         }
 
         // ... (Le reste de LoadSectionInstance reste inchangé, cf plus bas pour l'intégration) ...

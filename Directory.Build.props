@@ -1,0 +1,12 @@
+<Project>
+  <PropertyGroup>
+    <Version>2.1.0.0</Version>
+    <Company>FRANCE JUDO - Fédération Française de Judo et Disciplines Associées - RHONE</Company>
+    <Copyright>Copyright © FRANCE JUDO RHONE 2023 / D. GARRIVIER - Tous droits réservés</Copyright>
+    <Trademark>FRANCE JUDO - RHONE METROPOLE LYON JUDO</Trademark>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyMetadata Include="VersionBeta" Value="1" />
+  </ItemGroup>
+</Project>

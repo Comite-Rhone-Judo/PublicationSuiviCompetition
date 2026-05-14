@@ -47,7 +47,7 @@ namespace AppPublication.Controles
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors de l'initialisation du Controleur, impossible de continuer");
+                LogTools.Logger?.Error(ex, "Erreur lors de l'initialisation du Controleur, impossible de continuer");
                 throw new InvalidOperationException("Erreur lors de l'initialisation du Controleur");
             }
         }
@@ -269,20 +269,20 @@ namespace AppPublication.Controles
                                                     }
                                                     else
                                                     {
-                                                        LogTools.Logger.Debug("Fichier '{0}' ignore - taille {1}x{2} incorrecte", imgFile, w, h);
+                                                        LogTools.Logger?.Debug("Fichier '{0}' ignore - taille {1}x{2} incorrecte", imgFile, w, h);
                                                         allFileOk = false;
                                                     }
                                                 }
                                             }
                                             else
                                             {
-                                                LogTools.Logger.Debug("Fichier '{0}' ignore - Nom ne contient pas 'logo'", imgFile);
+                                                LogTools.Logger?.Debug("Fichier '{0}' ignore - Nom ne contient pas 'logo'", imgFile);
                                                 allFileOk = false;
                                             }
                                         }
                                         catch (Exception ex)
                                         {
-                                            LogTools.Logger.Debug(ex, "Fichier '{0}' ignore - Exception lors de la lecture du format", imgFile);
+                                            LogTools.Logger?.Debug(ex, "Fichier '{0}' ignore - Exception lors de la lecture du format", imgFile);
                                             allFileOk = false;
                                         }
                                     }

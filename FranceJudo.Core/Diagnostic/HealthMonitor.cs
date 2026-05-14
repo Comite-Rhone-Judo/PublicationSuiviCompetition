@@ -24,7 +24,7 @@ namespace FranceJudo.Core.Diagnostic
             _systemTimer = new Timer(LogSystemHealth, null, TimeSpan.Zero, TimeSpan.FromSeconds(intervalSeconds));
             _isMonitoringSystem = true;
 
-            LogTools.Logger.Info($"Monitoring systeme demarre (Intervalle : {intervalSeconds}s).");
+            LogTools.Logger?.Info($"Monitoring systeme demarre (Intervalle : {intervalSeconds}s).");
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace FranceJudo.Core.Diagnostic
                 _isMonitoringSystem = false;
             }
 
-            LogTools.Logger.Info("[HEALTH] Tous les monitorings ont ete arretes.");
+            LogTools.Logger?.Info("[HEALTH] Tous les monitorings ont ete arretes.");
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace FranceJudo.Core.Diagnostic
             catch (Exception ex)
             {
                 // Ne jamais faire crasher l'appli depuis un timer de fond
-                LogTools.Logger.Error(ex, "[HEALTH] Erreur lors de la lecture des compteurs systeme.");
+                LogTools.Logger?.Error(ex, "[HEALTH] Erreur lors de la lecture des compteurs systeme.");
             }
         }
     }

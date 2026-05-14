@@ -15,7 +15,7 @@ namespace FranceJudo.Core.Network.Tcp.Client
         /// <param name="ex"></param>
         public static void ShowException(Exception ex)
         {
-            LogTools.Error(new TcpClientException(ex.Message, ex));
+            LogTools.Logger?.Error(new TcpClientException(ex.Message, ex));
         }
     }
 }

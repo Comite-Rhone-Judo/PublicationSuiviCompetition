@@ -92,7 +92,7 @@ namespace FranceJudo.Core.Network.Ftp
             }
             catch (Exception ex)
             {
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
             finally
             {
@@ -122,7 +122,7 @@ namespace FranceJudo.Core.Network.Ftp
             {
                 FtpWebResponse response = (FtpWebResponse)ex.Response;
                 response.Close();
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
         }
     }

@@ -44,7 +44,7 @@ namespace FranceJudo.Core.IO
             {
                 // En cas d'échec, il ne faut pas oublier de décrémenter car on n'ira pas dans ReleaseFile
                 DecrementReference(file, entry);
-                LogTools.Logger.Debug("Impossible d'obtenir l'accès au verrou logique pour le fichier '{0}'", file);
+                LogTools.Logger?.Debug("Impossible d'obtenir l'accès au verrou logique pour le fichier '{0}'", file);
                 throw new TimeoutException($"Le fichier {file} est verrouillé par un autre thread interne.");
             }
 
@@ -74,7 +74,7 @@ namespace FranceJudo.Core.IO
             {
                 if (++index > 20)
                 {
-                    LogTools.Logger.Debug("Le système d'exploitation bloque le fichier '{0}'", file);
+                    LogTools.Logger?.Debug("Le système d'exploitation bloque le fichier '{0}'", file);
                     throw new UnauthorizedAccessException($"L'accès au fichier {file} est refusé par l'OS.");
                 }
                 Thread.Sleep(100);
@@ -130,10 +130,11 @@ namespace FranceJudo.Core.IO
         /// </summary>
         public static bool IsFileLocked(string filename)
         {
+            // Si le fichier n'existe pas, il n'est techniquement pas verrouillé
+            if (!File.Exists(filename)) return false;
+
             try
             {
-                // Un using est obligatoire ici aussi pour éviter de verrouiller le fichier
-                // si la vérification réussit !
                 using (var stream = new FileInfo(filename).Open(FileMode.Open, FileAccess.Read, FileShare.None))
                 {
                     return false;
@@ -141,6 +142,7 @@ namespace FranceJudo.Core.IO
             }
             catch (IOException)
             {
+                // Ici, on sait que le fichier existe mais qu'on ne peut pas l'ouvrir
                 return true;
             }
         }
@@ -161,7 +163,7 @@ namespace FranceJudo.Core.IO
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Warn(ex, $"Erreur lors de la suppression de {filename}");
+                LogTools.Logger?.Warn(ex, $"Erreur lors de la suppression de {filename}");
                 return false;
             }
         }
@@ -191,7 +193,7 @@ namespace FranceJudo.Core.IO
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, $"Erreur lors de la suppression du dossier {directoryname}");
+                LogTools.Logger?.Error(ex, $"Erreur lors de la suppression du dossier {directoryname}");
                 return false;
             }
         }
@@ -206,7 +208,7 @@ namespace FranceJudo.Core.IO
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Fatal(ex, $"Impossible de créer le répertoire {directory}");
+                    LogTools.Logger?.Fatal(ex, $"Impossible de créer le répertoire {directory}");
                 }
             }
         }
@@ -231,7 +233,9 @@ namespace FranceJudo.Core.IO
             int mag = (int)Math.Log(value, 1024);
             decimal adjustedSize = (decimal)value / (1L << (mag * 10));
 
-            return string.Format("{0:n1} {1}", adjustedSize, _sizeSuffixes[mag]);
+            // On force InvariantCulture pour garantir le point '.' comme séparateur,
+            // peu importe la langue du Windows de l'utilisateur.
+            return string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0:n1} {1}", adjustedSize, _sizeSuffixes[mag]);
         }
     }
 }

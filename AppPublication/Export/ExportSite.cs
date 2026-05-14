@@ -86,7 +86,7 @@ namespace AppPublication.Export
         {
             IJudoData DC = ctx.DataContext;
 
-            LogTools.Logger.Debug("Phase ({1}) '{0}'", phase?.libelle, phase?.id);
+            LogTools.Logger?.Debug("Phase ({1}) '{0}'", phase?.libelle, phase?.id);
 
             ConfigurationExportSite config = ctx.Config;
 
@@ -134,7 +134,7 @@ namespace AppPublication.Export
                         SiteExportEngine.GenererHtmlSite(source, exportType, savePath, xsltArgs);
                     }
                     output.Add(new FileWithChecksum($"{savePath}.html"));
-                    LogTools.Logger.Debug("{0} = 1", isPoule ? "Poule" : "Tableau");
+                    LogTools.Logger?.Debug("{0} = 1", isPoule ? "Poule" : "Tableau");
 
                     progress?.Report(BatchProgressInfo.Step(1));
                 }
@@ -146,7 +146,7 @@ namespace AppPublication.Export
                     // les doublons si plusieurs phases de la même épreuve sont traitées (poule/tableau)
                     if (ctx.ProchainsCombatsGeneres.TryAdd(vueEpreuve.id, true))
                     {
-                        LogTools.Logger.Debug("ProchainsCombats generes pour l'epreuve {0} (ID: {1}) - Phase ID:{2} {3}", vueEpreuve?.nom, vueEpreuve?.id, phase?.libelle, phase?.id);
+                        LogTools.Logger?.Debug("ProchainsCombats generes pour l'epreuve {0} (ID: {1}) - Phase ID:{2} {3}", vueEpreuve?.nom, vueEpreuve?.id, phase?.libelle, phase?.id);
 
                         ExportEnum exportType = ExportEnum.Site_FeuilleCombat;
                         string savePath = GetFileSavePath(targetDirectory, exportType);
@@ -163,7 +163,7 @@ namespace AppPublication.Export
                         }
 
                         output.Add(new FileWithChecksum($"{savePath}.html"));
-                        LogTools.Logger.Debug("ProchainsCombats = 1");
+                        LogTools.Logger?.Debug("ProchainsCombats = 1");
 
                         progress?.Report(BatchProgressInfo.Step(2));
                     }
@@ -171,7 +171,7 @@ namespace AppPublication.Export
                         // Un autre thread a déjà généré les prochains combats pour cette épreuve !
                         // On signale juste l'avancement pour ne pas fausser la barre de progression
                         progress?.Report(BatchProgressInfo.Step(2));
-                        LogTools.Logger.Debug("ProchainsCombats deja generes pour l'epreuve {0} (ID: {1}) - Phase ID:{2} {3} sauf de la generation", vueEpreuve?.nom, vueEpreuve?.id, phase?.libelle, phase?.id);
+                        LogTools.Logger?.Debug("ProchainsCombats deja generes pour l'epreuve {0} (ID: {1}) - Phase ID:{2} {3} sauf de la generation", vueEpreuve?.nom, vueEpreuve?.id, phase?.libelle, phase?.id);
                     }
                 }
             }
@@ -193,7 +193,7 @@ namespace AppPublication.Export
         {
             IJudoData DC = ctx.DataContext;
 
-            LogTools.Logger.Debug("Epreuve ({1}) '{0}'", epreuve?.nom, epreuve?.id);
+            LogTools.Logger?.Debug("Epreuve ({1}) '{0}'", epreuve?.nom, epreuve?.id);
 
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
@@ -227,7 +227,7 @@ namespace AppPublication.Export
                 output.Add(new FileWithChecksum($"{savePath}.html"));
             }
 
-            LogTools.Logger.Debug("Classement = {0}", output.Count);
+            LogTools.Logger?.Debug("Classement = {0}", output.Count);
             progress?.Report(BatchProgressInfo.Step(1));
 
             return output;
@@ -284,7 +284,7 @@ namespace AppPublication.Export
                 output.Add(new FileWithChecksum($"{savePath}.html"));
             }
 
-            LogTools.Logger.Debug("ProchainsCombats Tapis = {0}", output.Count);
+            LogTools.Logger?.Debug("ProchainsCombats Tapis = {0}", output.Count);
 
             // Report the end of the task
             progress?.Report(BatchProgressInfo.Step(1));
@@ -333,12 +333,12 @@ namespace AppPublication.Export
                     // Export direct des styles et scripts
                     var staticFiles = SiteExportEngine.ExportEmbeddedStyleAndJS(true, siteStructure);
                     output.AddRange(staticFiles.Select(path => new FileWithChecksum(path)));
-                    LogTools.Logger.Debug("GenereWebSiteIndex - Style/JS: {0} fichiers", staticFiles.Count);
+                    LogTools.Logger?.Debug("GenereWebSiteIndex - Style/JS: {0} fichiers", staticFiles.Count);
 
                     // Export des images
                     var imageFiles = SiteExportEngine.ExportEmbeddedImg(true, true, siteStructure);
                     output.AddRange(imageFiles.Select(path => new FileWithChecksum(path)));
-                    LogTools.Logger.Debug("GenereWebSiteIndex - Images: {0} fichiers", imageFiles.Count);
+                    LogTools.Logger?.Debug("GenereWebSiteIndex - Images: {0} fichiers", imageFiles.Count);
 
                     // --- 5. GÉNÉRATION DU SCRIPT DE MISE À JOUR (FOOTER) ---
                     ExportEnum footerType = ExportEnum.Site_FooterScript;
@@ -352,7 +352,7 @@ namespace AppPublication.Export
                     output.Add(new FileWithChecksum($"{footerSavePath}.js"));
                 }
 
-                LogTools.Logger.Debug("GenereWebSiteIndex Terminé - Total: {0} ressources", output.Count);
+                LogTools.Logger?.Debug("GenereWebSiteIndex Terminé - Total: {0} ressources", output.Count);
                 progress?.Report(BatchProgressInfo.Step(2));
             }
 
@@ -423,7 +423,7 @@ namespace AppPublication.Export
                 }
             }
 
-            LogTools.Logger.Debug("Menu = {0}", output.Count);
+            LogTools.Logger?.Debug("Menu = {0}", output.Count);
 
             return output;
         }
@@ -468,7 +468,7 @@ namespace AppPublication.Export
                 output.Add(new FileWithChecksum($"{savePath}.html"));
             }
 
-            LogTools.Logger.Debug("Affectation = {0}", output.Count);
+            LogTools.Logger?.Debug("Affectation = {0}", output.Count);
             progress?.Report(BatchProgressInfo.Step(1));
 
             return output;
@@ -527,7 +527,7 @@ namespace AppPublication.Export
                 }
             }
 
-            LogTools.Logger.Debug("Engagements = {0}", output.Count);
+            LogTools.Logger?.Debug("Engagements = {0}", output.Count);
 
             return output;
         }

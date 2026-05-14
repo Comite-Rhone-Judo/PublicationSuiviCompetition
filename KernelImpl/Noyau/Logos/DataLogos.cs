@@ -72,7 +72,7 @@ namespace KernelImpl.Noyau.Logos
             }
             catch (Exception ex)
             {
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
             finally
             {

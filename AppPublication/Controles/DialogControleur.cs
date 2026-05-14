@@ -296,7 +296,7 @@ namespace AppPublication.Controles
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Error(ex);
+                    LogTools.Logger?.Error(ex);
                 }
             }));
         }
@@ -359,7 +359,7 @@ namespace AppPublication.Controles
                             {
                                 if (Connection != null && Connection.HasErreurTransmission)
                                 {
-                                    LogTools.Logger.Info("Erreur de transmission acquittee par l'utilisateur.");
+                                    LogTools.Logger?.Info("Erreur de transmission acquittee par l'utilisateur.");
                                     Connection.HasErreurTransmission = false;
                                 }
                             },
@@ -583,7 +583,7 @@ namespace AppPublication.Controles
                                     catch (Exception ex)
                                     {
                                         // Gérer l'erreur (Log + notification utilisateur)
-                                        LogTools.Logger.Error(ex, "Erreur lors du démarrage du site distant.");
+                                        LogTools.Logger?.Error(ex, "Erreur lors du démarrage du site distant.");
                                         Application.Current.Dispatcher.Invoke(() =>
                                         {
                                             AlertWindow win = new AlertWindow("Erreur", "Impossible de démarrer le site distant. Vérifiez les paramètres de connexion.")
@@ -678,7 +678,7 @@ namespace AppPublication.Controles
                                         }
                                         catch (Exception ex)
                                         {
-                                            LogTools.Logger.Error(ex, "Erreur interceptée lors du nettoyage distant.");
+                                            LogTools.Logger?.Error(ex, "Erreur interceptée lors du nettoyage distant.");
                                         }
                                         finally
                                         {
@@ -716,7 +716,7 @@ namespace AppPublication.Controles
                                 }
                                 catch (Exception ex)
                                 {
-                                    LogTools.Logger.Error(ex, "Erreur au lancement de la génération");
+                                    LogTools.Logger?.Error(ex, "Erreur au lancement de la génération");
                                 }
                                 },
                             o =>
@@ -753,7 +753,7 @@ namespace AppPublication.Controles
                                 }
                                 catch (Exception ex)
                                 {
-                                    LogTools.Logger.Error(ex, "Erreur lors de CmdArreterGeneration");
+                                    LogTools.Logger?.Error(ex, "Erreur lors de CmdArreterGeneration");
                                 }
                                 finally
                                 {
@@ -790,7 +790,7 @@ namespace AppPublication.Controles
                                 }
                                 catch (Exception ex)
                                 {
-                                    LogTools.Logger.Error(ex, "Erreur au lancement de la generation du site interne");
+                                    LogTools.Logger?.Error(ex, "Erreur au lancement de la generation du site interne");
                                 }
                             },
                             o =>
@@ -827,7 +827,7 @@ namespace AppPublication.Controles
                                 }
                                 catch (Exception ex)
                                 {
-                                    LogTools.Logger.Error(ex, "Erreur lors de CmdArreterGeneration");
+                                    LogTools.Logger?.Error(ex, "Erreur lors de CmdArreterGeneration");
                                 }
                                 finally
                                 {
@@ -1123,7 +1123,7 @@ namespace AppPublication.Controles
                                 }
                                 catch (Exception ex)
                                 {
-                                    LogTools.Logger.Error(ex, "Impossible de creer l'archive de trace de l'application '{0}'", o);
+                                    LogTools.Logger?.Error(ex, "Impossible de creer l'archive de trace de l'application '{0}'", o);
                                     msg = string.Format("Impossibles de créer l'archive des traces de l'application. Consultez le fichier de trace ou contacter le support technique.");
                                 }
                                 finally
@@ -1174,7 +1174,7 @@ namespace AppPublication.Controles
         /// <param name="e"></param>
         private void OnDataUpdated(object sender, DataUpdateEventArgs e)
         {
-            LogTools.Logger.Debug("Donnees mises a jour pour la categorie: {0}", e.CategorieDonnee.ToString());
+            LogTools.Logger?.Debug("Donnees mises a jour pour la categorie: {0}", e.CategorieDonnee.ToString());
 
             if (e.CategorieDonnee == CategorieDonneesEnum.Organisation)
             {
@@ -1189,7 +1189,7 @@ namespace AppPublication.Controles
         /// <param name="e"></param>
         private void OnClientReady(object sender, ClientReadyEventArgs e)
         {
-            LogTools.Logger.Info("Client connecte et pret: {0}", e.Client.NetworkClient.IP);
+            LogTools.Logger?.Info("Client connecte et pret: {0}", e.Client.NetworkClient.IP);
         }
 
         /// <summary>
@@ -1199,7 +1199,7 @@ namespace AppPublication.Controles
         /// <param name="e"></param>
         private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
         {
-            LogTools.Logger.Info("Client deconnecte a {0}", e.DisconnectionTime);
+            LogTools.Logger?.Info("Client deconnecte a {0}", e.DisconnectionTime);
 
             Application.Current.ExecOnUiThread(() =>
             {

@@ -4,15 +4,11 @@
     <OutputType>Library</OutputType>
     <LangVersion>latest</LangVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Configurations>CD_ROM;Debug;DVD-5;Release;SingleImage</Configurations>
     <AssemblyTitle>FranceJudo.Metier</AssemblyTitle>
     <Product>FranceJudo.Metier</Product>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\VersionInfo.cs">
-      <Link>VersionInfo.cs</Link>
-    </Compile>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="NLog" Version="6.1.3" />

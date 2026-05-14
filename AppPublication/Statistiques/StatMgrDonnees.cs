@@ -52,7 +52,7 @@ namespace AppPublication.Statistiques
             }
             catch (System.Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors de l'initialisation des statistiques données");
+                LogTools.Logger?.Error(ex, "Erreur lors de l'initialisation des statistiques données");
             }
         }
 
@@ -71,11 +71,11 @@ namespace AppPublication.Statistiques
             {
                 StatistiqueItem item = _compteursDonnees[CompteurDonneesEnum.DelaiIntegrationSnapshotComplet];
                 item?.EnregistrerValeur((float)delai);
-                LogTools.Logger.Debug("delai integration snapshot complet: {0} ms", delai);
+                LogTools.Logger?.Debug("delai integration snapshot complet: {0} ms", delai);
             }
             catch (System.Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors de l'enregistrement du delai d'integration du snapshot complet");
+                LogTools.Logger?.Error(ex, "Erreur lors de l'enregistrement du delai d'integration du snapshot complet");
             }
         }
 
@@ -85,11 +85,11 @@ namespace AppPublication.Statistiques
             {
                 StatistiqueItem item = _compteursDonnees[CompteurDonneesEnum.DelaiIntegrationSnapshotDifferentiel];
                 item?.EnregistrerValeur((float)delai);
-                LogTools.Logger.Debug("delai integration snapshot differentiel: {0} ms", delai);
+                LogTools.Logger?.Debug("delai integration snapshot differentiel: {0} ms", delai);
             }
             catch (System.Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors de l'enregistrement du delai d'integration du snapshot differentiel");
+                LogTools.Logger?.Error(ex, "Erreur lors de l'enregistrement du delai d'integration du snapshot differentiel");
             }
         }
 
@@ -124,11 +124,11 @@ namespace AppPublication.Statistiques
             {
                 StatistiqueItem item = _compteursDonnees[CompteurDonneesEnum.DelaiEchange];
                 item?.EnregistrerValeur((float)delai);
-                LogTools.Logger.Debug("delai d'echange: {0} ms", delai);
+                LogTools.Logger?.Debug("delai d'echange: {0} ms", delai);
             }
             catch (System.Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors de l'enregistrement du delai d'echange");
+                LogTools.Logger?.Error(ex, "Erreur lors de l'enregistrement du delai d'echange");
             }
         }
 
@@ -148,7 +148,7 @@ namespace AppPublication.Statistiques
             }
             catch (System.Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors de l'enregistrement du compteur de donnees : " + idCpt.ToString());
+                LogTools.Logger?.Error(ex, "Erreur lors de l'enregistrement du compteur de donnees : " + idCpt.ToString());
             }
         }
 

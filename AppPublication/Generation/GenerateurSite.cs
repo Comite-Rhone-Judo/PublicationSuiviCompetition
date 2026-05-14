@@ -105,7 +105,7 @@ namespace AppPublication.Generation
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Fatal(ex, "Impossible d'initialiser le generateur de Site interne. Impossible de continuer");
+                LogTools.Logger?.Fatal(ex, "Impossible d'initialiser le generateur de Site interne. Impossible de continuer");
                 throw new NotSupportedException("Impossible d'initialiser le generateur de Site interne. Impossible de continuer", ex);
             }
         }
@@ -133,7 +133,7 @@ namespace AppPublication.Generation
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors du nettoyage initial du site");
+                LogTools.Logger?.Error(ex, "Erreur lors du nettoyage initial du site");
                 return new ResultatOperation(EtapeGenerateurSiteEnum.CleanupInitial, false, true, -1);
             }
 
@@ -167,7 +167,7 @@ namespace AppPublication.Generation
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Exception lors du controle de la consistance donnees recues.");
+                LogTools.Logger?.Error(ex, "Exception lors du controle de la consistance donnees recues.");
             }
 
             if (dataConsistent)
@@ -192,7 +192,7 @@ namespace AppPublication.Generation
             else
             {
                 // Le controle d'integrite a echoue
-                LogTools.Logger.Warn("Impossible de valider l'integrite des donnees combats (Timeout ou deconnexion).");
+                LogTools.Logger?.Warn("Impossible de valider l'integrite des donnees combats (Timeout ou deconnexion).");
             }
 
             _etapeCourante = EtapeGenerateurSiteEnum.None;
@@ -213,7 +213,7 @@ namespace AppPublication.Generation
             // Si un taskbatcher en toujours en cours, ce n'est pas normal. plutot un exception que Silent car ce cas ne devrait pas arriver
             if (_taskBatcher.HasPendingWork)
             {
-                LogTools.Logger.Debug("Batch precedent toujours en cours, exception levee");
+                LogTools.Logger?.Debug("Batch precedent toujours en cours, exception levee");
                 throw new InvalidOperationException("Batch precedent toujours en cours");
             }
 
@@ -266,12 +266,12 @@ namespace AppPublication.Generation
 
                                 int nbChunkEng = 0;
                                 int tailleChunkEngagement = Math.Max(20, groupesP.Count / (_nbCoeurs * 2)); ; // Ajuste la taille du chunk en fonction du nombre de groupes et du nombre de coeurs, avec un minimum de 1
-                                LogTools.Logger.Debug($"Taille de chunk pour Engagement Competition {comp.nom}, groupe {typeGrp} : {tailleChunkEngagement} sur {_nbCoeurs} coeurs");
+                                LogTools.Logger?.Debug($"Taille de chunk pour Engagement Competition {comp.nom}, groupe {typeGrp} : {tailleChunkEngagement} sur {_nbCoeurs} coeurs");
                                 
                                 // On fait un decoupe de la liste en paquet de n groupes pour limiter le nombre de taches (et donc le cout de lancement des taches) tout en gardant une bonne granularite pour le progress
                                 foreach (var paquet in groupesP.Chunk(tailleChunkEngagement))
                                 {
-                                    LogTools.Logger.Debug($"Batching chunk Engagement Competition {comp.nom}, groupe {typeGrp}: #{nbChunkEng++} (size = {paquet.Length}");
+                                    LogTools.Logger?.Debug($"Batching chunk Engagement Competition {comp.nom}, groupe {typeGrp}: #{nbChunkEng++} (size = {paquet.Length}");
                                     
                                     // Ce code est plus efficace qye celui qui cree une tache par groupe
                                     // car le lancement de trop nombreuses Task est couteux
@@ -289,14 +289,14 @@ namespace AppPublication.Generation
                     int tailleChunkPhase = Math.Max(5, _snapshot.Deroulement.Phases.Count / _nbCoeurs); ; // Ajuste la taille du chunk en fonction du nombre de groupes et du nombre de coeurs, avec un minimum
                     var chunksPhases = _snapshot.Deroulement.Phases.Chunk(tailleChunkPhase);
                     int nbChunkPhase = 0;
-                    LogTools.Logger.Debug($"Taille de chunk pour Phases : {tailleChunkPhase} sur {_nbCoeurs} coeurs");
+                    LogTools.Logger?.Debug($"Taille de chunk pour Phases : {tailleChunkPhase} sur {_nbCoeurs} coeurs");
 
                     foreach (var paquet in chunksPhases)
                     {
                         // TRÈS IMPORTANT : Chaque phase génère 2 éléments (Phase + Classement)
                         // Donc l'estimation initiale pour ce paquet est : taille du paquet * 2
                         int estimationsPourCePaquet = paquet.Length * 2;
-                        LogTools.Logger.Debug($"Batching chunk Phase #{nbChunkPhase++} (size = {paquet.Length}");
+                        LogTools.Logger?.Debug($"Batching chunk Phase #{nbChunkPhase++} (size = {paquet.Length}");
 
                         _taskBatcher.AddWork(p =>
                         {
@@ -324,12 +324,12 @@ namespace AppPublication.Generation
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Error(ex, "Erreur lors de la generation");
+                    LogTools.Logger?.Error(ex, "Erreur lors de la generation");
                 }
             }
             else
             {
-                LogTools.Logger.Debug("Aucune competition presente dans le snapshot, generation avortee");
+                LogTools.Logger?.Debug("Aucune competition presente dans le snapshot, generation avortee");
             }
 
             _checksumGenere = output;
@@ -368,7 +368,7 @@ namespace AppPublication.Generation
                             // For Debug only
                             if (filesToSync.Count <= 0)
                             {
-                                LogTools.Logger.Debug("Fichiers a synchroniser: {0}", string.Join(",", filesToSync.Select(f => f.Name)));
+                                LogTools.Logger?.Debug("Fichiers a synchroniser: {0}", string.Join(",", filesToSync.Select(f => f.Name)));
                             }
                         }
 
@@ -384,12 +384,12 @@ namespace AppPublication.Generation
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Error(ex, "Une erreur est survenue pendant la tentative de synchronisation");
+                    LogTools.Logger?.Error(ex, "Une erreur est survenue pendant la tentative de synchronisation");
                 }
             }
             else
             {
-                LogTools.Logger.Debug("Site distant inactif, pas de upload FTP");
+                LogTools.Logger?.Debug("Site distant inactif, pas de upload FTP");
                 return new ResultatOperation(EtapeGenerateurSiteEnum.ExecuteSynchronisation, false);
             }
 
@@ -425,7 +425,7 @@ namespace AppPublication.Generation
             }
             catch (Exception ex)
             {
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
 
             _checksumCache = output;
@@ -447,7 +447,7 @@ namespace AppPublication.Generation
                 catch (Exception ex)
                 {
                     output = string.Empty;
-                    LogTools.Logger.Error(ex, "Impossible de calculer le nom du fichier Checksum");
+                    LogTools.Logger?.Error(ex, "Impossible de calculer le nom du fichier Checksum");
                 }
 
                 return output;
@@ -464,7 +464,7 @@ namespace AppPublication.Generation
                 // On délègue totalement le nettoyage (disque + cache) à la structure physique
                 if (!_siteUrlGenerator.PhysicalStructure.EffacerRepertoireCompetition())
                 {
-                    LogTools.Logger.Error("Erreur lors de l'effacement du contenu de '{0}'", _siteUrlGenerator.PhysicalStructure.RepertoireCompetition);
+                    LogTools.Logger?.Error("Erreur lors de l'effacement du contenu de '{0}'", _siteUrlGenerator.PhysicalStructure.RepertoireCompetition);
                 }
 
                 // Charge le contenu du fichier de checksum
@@ -499,7 +499,7 @@ namespace AppPublication.Generation
                 {
                     // Si le fichier est verrouille c'est bien une erreur car on a besoin de mettre a jour le cache de checksum pour la prochaine generation,
                     // mais on ne peut pas faire grand chose de plus que logger l'erreur
-                    LogTools.Error(ex);
+                    LogTools.Logger?.Error(ex);
                 }
                 finally
                 {

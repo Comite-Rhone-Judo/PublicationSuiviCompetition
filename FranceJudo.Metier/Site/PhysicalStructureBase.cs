@@ -167,13 +167,13 @@ namespace FranceJudo.Metier.Site
             if (full && !_isFullyConfigured)
             {
                 // Sans accents pour les logs
-                LogTools.Logger.Debug("Tentative d'acces a une structure physique non configuree");
+                LogTools.Logger?.Debug("Tentative d'acces a une structure physique non configuree");
                 throw new InvalidOperationException("La structure physique n'est pas completement configuree.");
             }
             if (!full && !_hasRootDir)
             {
                 // Sans accents pour les logs
-                LogTools.Logger.Debug("Tentative d'acces a une structure sans racine");
+                LogTools.Logger?.Debug("Tentative d'acces a une structure sans racine");
                 throw new InvalidOperationException("La structure physique n'a pas de repertoire racine configure.");
             }
         }

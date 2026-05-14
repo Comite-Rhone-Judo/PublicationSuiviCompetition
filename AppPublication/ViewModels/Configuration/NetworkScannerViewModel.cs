@@ -228,7 +228,7 @@ namespace AppPublication.ViewModels.Configuration
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors de la lecture des cartes reseau.");
+                LogTools.Logger?.Error(ex, "Erreur lors de la lecture des cartes reseau.");
             }
         }
 
@@ -269,7 +269,7 @@ namespace AppPublication.ViewModels.Configuration
             catch (OperationCanceledException) { }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur inattendue lors du scan reseau.");
+                LogTools.Logger?.Error(ex, "Erreur inattendue lors du scan reseau.");
             }
             finally
             {

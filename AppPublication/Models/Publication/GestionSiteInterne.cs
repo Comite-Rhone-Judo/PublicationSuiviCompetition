@@ -61,7 +61,7 @@ namespace AppPublication.Models.Publication
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Fatal(ex, "Impossible d'initialiser le ViewModel principal. Impossible de continuer");
+                LogTools.Logger?.Fatal(ex, "Impossible d'initialiser le ViewModel principal. Impossible de continuer");
                 AlertWindow win = new AlertWindow("Erreur fatale", "Impossible de démarrer un composant interne, l'application doit s'arrêter. Veuillez contacter le support.");
                 win?.ShowDialog();
                 // Emergency shutdown
@@ -182,7 +182,7 @@ namespace AppPublication.Models.Publication
             }
             catch (Exception ex)
             {
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
         }
 
@@ -309,7 +309,7 @@ namespace AppPublication.Models.Publication
             }
             catch (Exception ex)
             {
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
         }
 
@@ -339,7 +339,7 @@ namespace AppPublication.Models.Publication
                     // 2. Chemin absolu (Agnostique du port/IP, pour le script de redirection JS)
                     string absolutePathForJs = _siteInterneUrlGenerator.UrlEcransAppelRedirecteur.AbsolutePath;
 
-                    LogTools.Logger.Debug($"[CalculURLSiteLocal] UI URL = {output} | JS Path = {absolutePathForJs}");
+                    LogTools.Logger?.Debug($"[CalculURLSiteLocal] UI URL = {output} | JS Path = {absolutePathForJs}");
 
                     // Met a jour le contexte pour la generation UNIQUEMENT avec le chemin absolu
                     _generateurSite?.ExportConfigurationManager?.Modifier(c => { c.UrlRedirecteur = absolutePathForJs; });
@@ -348,7 +348,7 @@ namespace AppPublication.Models.Publication
             catch (Exception ex)
             {
                 output = string.Empty;
-                LogTools.Logger.Error(ex, "Impossible de calculer l'URL du site des ecrans d'appel");
+                LogTools.Logger?.Error(ex, "Impossible de calculer l'URL du site des ecrans d'appel");
             }
             return output;
         }

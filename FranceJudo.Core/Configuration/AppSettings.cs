@@ -149,7 +149,7 @@ namespace FranceJudo.Core.Configuration
                 {
                     // la valeur lue n'existe pas dans la liste source, on prend la valeur par defaut (1er element)
                     output = sourceList.First();
-                    LogTools.Debug(ex);
+                    LogTools.Logger?.Debug(ex);
                 }
             }
 

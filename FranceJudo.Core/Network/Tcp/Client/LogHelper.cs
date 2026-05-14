@@ -13,7 +13,7 @@ namespace FranceJudo.Core.Network.Tcp.Client
         /// <param name="mes"></param>
         public static void ShowLog(string mes)
         {
-            LogTools.Logger.Debug(mes);
+            LogTools.Logger?.Debug(mes);
         }
     }
 }

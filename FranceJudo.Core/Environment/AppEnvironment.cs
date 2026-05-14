@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 
 namespace FranceJudo.Core.Environment
@@ -13,16 +14,18 @@ namespace FranceJudo.Core.Environment
         public static String GetVersionInformation()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
+            String version = assembly.GetName().Version?.ToString() ?? "";
 
-            String version = assembly.GetName().Version.ToString();
+            // On cherche la métadonnée "VersionBeta" injectée par Directory.Build.props
+            var metadataAttributes = assembly.GetCustomAttributes<AssemblyMetadataAttribute>();
+            var betaAttr = metadataAttributes.FirstOrDefault(a => a.Key == "VersionBeta");
 
-            var myAttr = Attribute.GetCustomAttribute(assembly, typeof(AssemblyVersionBeta)) as AssemblyVersionBeta;
-            if (myAttr.Value > 0)
+            if (betaAttr != null && int.TryParse(betaAttr.Value, out int betaValue) && betaValue > 0)
             {
-                version += String.Format("-beta{0:00}", myAttr.Value);
+                version += String.Format("-beta{0:00}", betaValue);
             }
 
-            return version; // assembly.GetName().Version;
+            return version;
         }
 
         public static string GetCompanyInformation()
