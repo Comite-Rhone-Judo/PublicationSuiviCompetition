@@ -142,21 +142,47 @@
 
     </Style>
 
-    <DataTemplate x:Key="StatHeaderTemplate">
-        <Grid Background="Transparent">
-            <StackPanel Margin="10,4" IsHitTestVisible="False">
-                <TextBlock x:Name="TabTitle" Text="{Binding}" Foreground="DimGray"/>
-                <Border x:Name="Liseret" Height="2" Background="White" Visibility="Collapsed" Margin="0,2,0,0"/>
-            </StackPanel>
-        </Grid>
-        <DataTemplate.Triggers>
-            <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
-                <Setter TargetName="TabTitle" Property="Foreground" Value="White"/>
-                <Setter TargetName="TabTitle" Property="FontWeight" Value="Bold"/>
-                <Setter TargetName="Liseret" Property="Visibility" Value="Visible"/>
-            </DataTrigger>
-        </DataTemplate.Triggers>
-    </DataTemplate>
+    <Style x:Key="StatTabItemStyle" TargetType="TabItem">
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Background" Value="{DynamicResource RegionBrush}"/>
+        <Setter Property="Foreground" Value="DimGray"/>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabItem">
+                    <Grid Background="{TemplateBinding Background}" MinWidth="120" MinHeight="35">
+
+                        <TextBlock Text="{TemplateBinding Header}" 
+                               Foreground="{TemplateBinding Foreground}"
+                               FontWeight="{TemplateBinding FontWeight}"
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center"/>
+
+                        <Border x:Name="Liseret" Height="2" Background="White" 
+                            VerticalAlignment="Bottom" Visibility="Collapsed"/>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource RegionBrush}"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter TargetName="Liseret" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                                <Condition Property="IsSelected" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" Value="#333333"/>
+                            <Setter Property="Foreground" Value="LightGray"/>
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <Style x:Key="EpreuveBorder2" TargetType="{x:Type Border}">
         <Setter Property="BorderBrush" Value="Black" />

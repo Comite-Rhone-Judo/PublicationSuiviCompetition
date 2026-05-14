@@ -26,11 +26,12 @@
         <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" BorderBrush="White" Margin="10 0 10 10">
             <StackPanel Orientation="Vertical">
                 <Label HorizontalAlignment="Left" Content="Création des fichiers" Style="{StaticResource HeaderStyle}"/>
-                <hc:TabControl Margin="10 10 10 10" Width="410"
+                <TabControl Margin="10 10 10 10" Width="410"
                                    BorderThickness="0" BorderBrush="White" Background="{DynamicResource RegionBrush}"
                                    FontWeight="DemiBold">
-                    <hc:TabControl.Items>
-                        <hc:TabItem Header="Site Coachs &amp; Public" HeaderTemplate="{StaticResource StatHeaderTemplate}" >
+                    <TabControl.Items>
+                        <TabItem Header="Site Coachs &amp; Public" Style="{StaticResource StatTabItemStyle}">
+                            <Grid>
                             <Border Background="{DynamicResource RegionBrush}" BorderThickness="1" >
                                 <DataGrid ItemsSource="{Binding GenerationSite.CompteursGeneration}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
                                             CanUserDeleteRows="False" CanUserAddRows="False">
@@ -43,8 +44,10 @@
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </Border>
-                        </hc:TabItem>
-                        <hc:TabItem Header="Chambre d'appel" HeaderTemplate="{StaticResource StatHeaderTemplate}">
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="Chambre d'appel" Style="{StaticResource StatTabItemStyle}">
+                            <Grid>
                             <Border Background="{DynamicResource RegionBrush}" BorderThickness="1" >
                                 <DataGrid ItemsSource="{Binding GenerationSiteInterne.CompteursGeneration}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
                                             CanUserDeleteRows="False" CanUserAddRows="False">
@@ -57,9 +60,10 @@
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </Border>
-                        </hc:TabItem>
-                    </hc:TabControl.Items>
-                </hc:TabControl>
+                            </Grid>
+                        </TabItem>
+                    </TabControl.Items>
+                </TabControl>
 
                 <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="1" Y1="0" Y2="0" Stretch="Fill"/>
                 <Label HorizontalAlignment="Left" Content="Réception des données" Style="{StaticResource HeaderStyle}" />
