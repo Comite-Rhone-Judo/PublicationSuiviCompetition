@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 
 namespace FranceJudo.Core.Network.Tcp.Client
 {
+    // TODO Prévoir un refactoring avec les nouveaux modèles await/async et les améliorations de .NET 10, notamment pour la gestion des threads et des tâches asynchrones.
+
     /// <summary>
     /// ClientGenerique : classe générique de communication TCP (client)
     /// </summary>

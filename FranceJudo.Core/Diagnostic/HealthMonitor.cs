@@ -34,11 +34,18 @@ namespace FranceJudo.Core.Diagnostic
         {
             if (_systemTimer != null)
             {
-                _systemTimer.Dispose();
+                // On crée un handle d'attente
+                using (var waitHandle = new ManualResetEvent(false))
+                {
+                    // Dispose(waitHandle) signale le handle quand TOUS les callbacks sont finis
+                    if (_systemTimer.Dispose(waitHandle))
+                    {
+                        waitHandle.WaitOne(TimeSpan.FromSeconds(2));
+                    }
+                }
                 _systemTimer = null;
                 _isMonitoringSystem = false;
             }
-
             LogTools.Logger?.Info("[HEALTH] Tous les monitorings ont ete arretes.");
         }
 

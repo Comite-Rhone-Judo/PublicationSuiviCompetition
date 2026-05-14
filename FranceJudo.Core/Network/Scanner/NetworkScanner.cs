@@ -1,6 +1,7 @@
 ﻿using FranceJudo.Core.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace FranceJudo.Core.Network.Scanner
 {
+    [ExcludeFromCodeCoverage]
     public static class NetworkScanner
     {
         [DllImport("iphlpapi.dll", ExactSpelling = true)]

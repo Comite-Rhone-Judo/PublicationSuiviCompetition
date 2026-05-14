@@ -1,30 +1,34 @@
-﻿using System.Net;
+﻿#nullable enable
+using System.Net;
 using System.Net.Sockets;
 
 namespace FranceJudo.Core.Network.Tcp
 {
     public static class TcpClientExtension
     {
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="client"></param>
-        /// <returns></returns>
-        public static string GetAddressClient(this TcpClient client)
+        public static string GetAddressClient(this TcpClient? client)
         {
-            try
+            var remoteEndPoint = client?.Client?.RemoteEndPoint;
+            if (remoteEndPoint == null)
             {
-                // return ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
-                // Ajoute le remote port pour pouvoir distinguer deux clients lancés sur le meme poste
-                string ipAddr = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
-                string port = ((IPEndPoint)client.Client.RemoteEndPoint).Port.ToString();
-                return string.Format("{0}_{1}", ipAddr, port);
+                return "Unknown_0";
             }
-            catch
+
+            if (remoteEndPoint is IPEndPoint ipEndPoint)
             {
-                return client.Client.RemoteEndPoint.ToString();
+                var ip = ipEndPoint.Address;
+
+                // CORRECTION : Si l'adresse est un IPv4 encapsulé dans un IPv6 (ex: ::ffff:192.168.1.10)
+                // On la convertit en IPv4 pur pour la lisibilité des logs.
+                if (ip.IsIPv4MappedToIPv6)
+                {
+                    ip = ip.MapToIPv4();
+                }
+
+                return $"{ip}_{ipEndPoint.Port}";
             }
+
+            return remoteEndPoint.ToString() ?? "Unknown_0";
         }
     }
 }

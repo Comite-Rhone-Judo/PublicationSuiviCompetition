@@ -85,11 +85,19 @@ namespace FranceJudo.Core.Threading
             // Aucun deadlock croisé possible car le verrou _lock est déjà relâché.
             if (waitHandle != null)
             {
-                if (!waitHandle.WaitOne(_disposeTimeout))
+                // On attend que le timer confirme la fin de ses activités
+                if (waitHandle.WaitOne(_disposeTimeout))
                 {
-                    LogTools.Logger?.Warn("Timeout lors de l'attente de l'arrêt complet du timer.");
+                    // On ne dispose QUE si le signal a été reçu (WaitOne = true)
+                    waitHandle.Dispose();
                 }
-                waitHandle.Dispose();
+                else
+                {
+                    // En cas de timeout, on ne dispose PAS le handle. 
+                    // On le laisse "fuiter" en mémoire (le GC s'en chargera).
+                    // C'est infiniment mieux qu'un crash du processus.
+                    LogTools.Logger?.Warn("Timeout lors de l'attente de l'arrêt complet du timer. Le handle sera libéré par le GC pour éviter un crash.");
+                }
             }
         }
 

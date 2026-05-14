@@ -114,13 +114,20 @@ namespace FranceJudo.Core.Configuration.Json
         /// </summary>
         public void Dispose()
         {
-            // 1. On annule le timer de sauvegarde différée s'il est en cours
-            _debounceToken?.Cancel();
+            // 1. On récupère une référence locale pour éviter les race conditions
+            var tokenSource = _debounceToken;
 
-            // 2. On exécute une sauvegarde synchrone immédiate pour sécuriser les données
+            // 2. On annule d'abord
+            tokenSource?.Cancel();
+
+            // 3. On exécute la sauvegarde synchrone
             SaveToDisk();
 
-            _debounceToken?.Dispose();
+            // 4. On ne dispose le token que si on est sûr qu'on ne l'utilise plus
+            // Dans ton cas, il vaut mieux laisser le GC s'en charger ou s'assurer 
+            // que la Task.Run est terminée.
+            _debounceToken = null;
+            tokenSource?.Dispose();
         }
     }
 }
