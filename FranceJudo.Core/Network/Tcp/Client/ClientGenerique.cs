@@ -1,6 +1,6 @@
-﻿using FranceJudo.Core.IO;
+﻿using FranceJudo.Core.Exceptions;
+using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
-using FranceJudo.Core.Threading;
 using System;
 using System.IO;
 using System.Linq;
@@ -10,11 +10,6 @@ using System.Threading.Tasks;
 
 namespace FranceJudo.Core.Network.Tcp.Client
 {
-    // TODO Prévoir un refactoring avec les nouveaux modèles await/async et les améliorations de .NET 10, notamment pour la gestion des threads et des tâches asynchrones.
-
-    /// <summary>
-    /// ClientGenerique : classe générique de communication TCP (client)
-    /// </summary>
     public class ClientGenerique
     {
         public delegate void OnConnectionHandler(object sender);
@@ -22,112 +17,40 @@ namespace FranceJudo.Core.Network.Tcp.Client
         public delegate void OnDataSentHandler(object sender);
         public delegate void OnEndConnectionHandler(object sender);
 
-        /// <summary>
-        /// Evenement de connection
-        /// </summary>
-        /// <param name="sender"></param>
-
         public event OnConnectionHandler OnConnection;
-
-        /// <summary>
-        /// Evenement de réception de données
-        /// </summary>
-        /// <param name="sender"></param>
-
         public event OnDataRecieveHandler OnDataRecieve;
-
-        /// <summary>
-        /// Evenement d'envoie de données
-        /// </summary>
-        /// <param name="sender"></param>
         public event OnDataSentHandler OnDataSent;
-
-        /// <summary>
-        /// Evenement de fin de connection
-        /// </summary>
-        /// <param name="sender"></param>
         public event OnEndConnectionHandler OnEndConnection;
-        //public event OnErrorHandler OnError;
 
-        #region MEMBRES
         private const int READ_BUFFER_SIZE = 10240;
-        private readonly byte[] readBuffer = new byte[READ_BUFFER_SIZE];
-        private string chaine = "";
-        private readonly string _endMsgTag = string.Empty;
-        private TcpClient objClient = null;
-        private readonly int _port = 8484;
-        private readonly string _ip = "127.0.0.1";
-        // Un cadenas dédié, invisible de l'extérieur, pour protéger les accès au flux TCP
-        private readonly object _networkLock = new object();
-        #endregion
+        private string _chaine = string.Empty;
+        private TcpClient _objClient;
+        private CancellationTokenSource _cts;
+        private readonly string _endMsgTag;
+        private readonly int _port;
+        private readonly string _ip;
 
-        /// <summary>
-        /// IP du server
-        /// </summary>
-        public string IP
-        {
-            get
-            {
-                return _ip;
-            }
-        }
+        public string IP => _ip;
+        public int Port => _port;
+        public string EndMsgFlag => _endMsgTag;
+        public System.Net.IPEndPoint EndPoint => (System.Net.IPEndPoint)_objClient?.Client?.RemoteEndPoint;
 
-        /// <summary>
-        /// Port de com du server
-        /// </summary>
-        public int Port
-        {
-            get
-            {
-                return _port;
-            }
-        }
-
-        /// <summary>
-        /// Flag marquant la fin d'un message
-        /// </summary>
-        public string EndMsgFlag
-        {
-            get { return _endMsgTag; }
-        }
-
-        /// <summary>
-        /// EndPoint du client
-        /// </summary>
-        public System.Net.IPEndPoint EndPoint
-        {
-            get
-            {
-                return (System.Net.IPEndPoint)objClient.Client.RemoteEndPoint;
-            }
-        }
-
-        /// <summary>
-        /// Client est connecté au server
-        /// </summary>
         public bool IsConnected
         {
             get
             {
                 try
                 {
-                    return objClient.Client != null && objClient.Client.Connected;
+                    return _objClient?.Client != null && _objClient.Connected;
                 }
                 catch
                 {
-                    LogTools.Logger?.Debug("ClientGenerique IsConnected - Exception sur la verification de la connection");
+                    Log("ClientGenerique IsConnected - Exception sur la verification de la connection");
                     return false;
                 }
             }
         }
 
-
-        /// <summary>
-        /// Construct a new client where the address or host name of
-        /// the server is known.
-        /// </summary>
-        /// <param name="hostNameOrAddress">The host name or address of the server</param>
-        /// <param name="port">The port of the server</param>
         public ClientGenerique(string hostNameOrAddress, int port, string endMsgTag)
         {
             _ip = hostNameOrAddress;
@@ -135,183 +58,149 @@ namespace FranceJudo.Core.Network.Tcp.Client
             _endMsgTag = endMsgTag;
         }
 
-        /// <summary>
-        /// Connection à un server
-        /// </summary>
         public void Connect()
         {
-            ClientHelper.ConnectSocket(ref objClient, _ip, _port, new AsyncCallback(DoConnecting));
+            _cts = new CancellationTokenSource();
+            _ = ConnectAsync(_cts.Token);
         }
 
-        /// <summary>
-        /// Met fin à la connection au server
-        /// </summary>
         public void Stop()
         {
-            ClientHelper.Close(objClient);
+            _cts?.Cancel();
+            CloseClient();
         }
 
-        /// <summary>
-        /// Ecrit un message au server
-        /// </summary>
-        /// <param name="data"></param>
         public void Write(string data)
         {
-            ClientHelper.SendData(objClient, data, new AsyncCallback(DoSending));
+            if (IsConnected)
+            {
+                _ = WriteAsync(data, _cts.Token);
+            }
         }
 
-
-        #region DoConnecting
-        private void DoConnecting(IAsyncResult ar)
+        private async Task ConnectAsync(CancellationToken token)
         {
+            _objClient = new TcpClient
+            {
+                NoDelay = true,
+                LingerState = new LingerOption(true, 20)
+            };
+
             try
             {
-                TcpClient client = (TcpClient)ar.AsyncState;
+                var connectTask = _objClient.ConnectAsync(_ip, _port);
+                var timeoutTask = Task.Delay(1000, token); // Timeout de 1 sec
 
-                if (client.Client != null && client.Client.Connected)
+                if (await Task.WhenAny(connectTask, timeoutTask) == timeoutTask)
                 {
-                    client.EndConnect(ar);
+                    CloseClient();
+                    throw new TimeoutException($"Connection to {_ip}:{_port} timed out.");
+                }
 
+                await connectTask; // Surface les exceptions potentielles
+
+                Log($"Create Client\t{DateTime.Now}\t{_objClient.GetHashCode()}");
+
+                if (_objClient.Connected)
+                {
                     OnConnection?.Invoke(this);
-
-                    client.GetStream().BeginRead(readBuffer, 0, READ_BUFFER_SIZE, new AsyncCallback(DoReading), client);
+                    _ = ReadLoopAsync(token);
                 }
             }
             catch (Exception ex)
             {
-                ExceptionHelper.ShowException(ex);
+                LogError(ex);
             }
         }
-        #endregion
 
-        #region DoReading
-        private void DoReading(IAsyncResult ar)
+        private async Task ReadLoopAsync(CancellationToken token)
         {
-            int BytesRead = 0;
-            string strReceiveData = string.Empty;
-            TcpClient client = null;
-
             try
             {
-                client = (TcpClient)ar.AsyncState;
+                var stream = _objClient.GetStream();
+                byte[] buffer = new byte[READ_BUFFER_SIZE];
 
-                if (client.Connected)
+                while (!token.IsCancellationRequested)
                 {
-                    using (TimedLock.Lock(_networkLock))
+                    int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, token);
+
+                    if (bytesRead == 0) break;
+
+                    string strReceiveData = FileSystemHelper.TheEncoding.GetString(buffer, 0, bytesRead);
+                    _chaine += strReceiveData;
+
+                    if (_chaine.Contains("\n<EOF>"))
                     {
-                        BytesRead = client.GetStream().EndRead(ar);
+                        ProcessReceivedData();
                     }
+
+                    _ = Task.Run(() => Log($"Receive\t\t{DateTime.Now}\t{_objClient?.GetHashCode()}\t{strReceiveData}"), token);
                 }
+            }
+            catch (OperationCanceledException) { }
+            catch (Exception ex)
+            {
+                LogError(ex);
+            }
+            finally
+            {
+                OnEndConnection?.Invoke(this);
+                CloseClient();
+                Log($"Connect Closed\t{DateTime.Now}\t{_objClient?.GetHashCode()}");
+            }
+        }
 
-                if (BytesRead > 0)
+        private void ProcessReceivedData()
+        {
+            if (OnDataRecieve == null) return;
+
+            string tmp = string.Empty;
+            foreach (string data in _chaine.Split(new[] { "\n<EOF>" }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (data.EndsWith(_endMsgTag))
                 {
-                    try
-                    {
-                        strReceiveData = FileSystemHelper.TheEncoding.GetString(readBuffer, 0, BytesRead);
-
-                        chaine += strReceiveData;
-
-                        if (chaine.IndexOf("\n<EOF>") != -1 && OnDataRecieve != null)
-                        {
-                            string tmp = "";
-                            foreach (string data in chaine.Split(new string[] { "\n<EOF>" }, StringSplitOptions.RemoveEmptyEntries))
-                            {
-                                // if (data.EndsWith("</" + ConstantXML.ServerJudo + ">"))
-                                if (data.EndsWith(EndMsgFlag))
-                                {
-                                    OnDataRecieve(this, data);
-                                }
-                                else
-                                {
-                                    tmp = data;
-                                }
-                            }
-
-                            chaine = tmp;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        ExceptionHelper.ShowException(ex);
-                    }
-                    finally
-                    {
-                        // SOLUTION .NET 10 : Remplacement du BeginInvok_ par Task.Run
-                        // On exécute le logging (HandleReceive) sur le ThreadPool.
-                        // C'est asynchrone, performant et indépendant de WPF.
-                        _ = Task.Run(() => HandleReceive(client, strReceiveData));
-
-                        // Relance immédiate de la lecture pour ne pas saturer le buffer TCP
-                        if (client != null && client.Connected)
-                        {
-                            using (TimedLock.Lock(_networkLock))
-                            {
-                                client.GetStream().BeginRead(readBuffer, 0, READ_BUFFER_SIZE, new AsyncCallback(DoReading), client);
-                            }
-                        }
-                    }
+                    OnDataRecieve(this, data);
                 }
                 else
                 {
-                    OnEndConnection?.Invoke(this);
-
-                    client.Close();
-
-                    LogHelper.ShowLog("Connect Closed\t" + DateTime.Now.ToString() + "\t" +
-                        client.GetHashCode().ToString());
-
-                    return;
+                    tmp = data;
                 }
             }
-            catch (IOException ex)
-            {
-                OnEndConnection?.Invoke(this);
-
-                client.Close();
-                ExceptionHelper.ShowException(ex);
-            }
-            catch (Exception ex)
-            {
-                client.Close();
-                ExceptionHelper.ShowException(ex);
-            }
+            _chaine = tmp;
         }
-        #endregion
 
-        #region DoSending
-        private void DoSending(IAsyncResult ar)
+        private async Task WriteAsync(string data, CancellationToken token)
         {
-            TcpClient client = null;
             try
             {
-                client = (TcpClient)ar.AsyncState;
-                NetworkStream networkStream = client.GetStream();
-                networkStream.EndWrite(ar);
+                string finalMessage = data + "\n<EOF>";
+                byte[] bytes = FileSystemHelper.TheEncoding.GetBytes(finalMessage);
+
+                var stream = _objClient.GetStream();
+                await stream.WriteAsync(bytes, 0, bytes.Length, token);
+                await stream.FlushAsync(token);
 
                 OnDataSent?.Invoke(this);
             }
             catch (Exception ex)
             {
-                client.Close();
-                ExceptionHelper.ShowException(ex);
+                CloseClient();
+                LogError(ex);
             }
         }
-        #endregion
 
-        #region HandleReceive
-        private static void HandleReceive(TcpClient client, string data)
+        private void CloseClient()
         {
-            LogHelper.ShowLog("Receive\t\t" + DateTime.Now.ToString() + "\t" +
-                client.GetHashCode().ToString() + "\t" + data);
+            if (_objClient == null) return;
+            try
+            {
+                if (_objClient.Connected) _objClient.GetStream()?.Close();
+            }
+            catch (Exception ex) { LogError(ex); }
+            finally { _objClient.Close(); }
         }
-        #endregion
 
-
-        private string TraiteChaineJudo(string s)
-        {
-            string chaine = s.Split(new string[] { "\n<EOF>" }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
-            //string chaine = s.Replace("\n<EOF>", "");
-            return chaine;
-        }
+        private void Log(string message) => LogTools.Logger?.Debug(message);
+        private void LogError(Exception ex) => LogTools.Logger?.Error(new TcpClientException(ex.Message, ex));
     }
 }

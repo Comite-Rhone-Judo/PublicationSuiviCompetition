@@ -252,5 +252,80 @@ namespace FranceJudo.Core.Tests.Logging
         }
 
         #endregion
+
+        #region Tests - Proxies et Cycle de vie (Startup/Stop)
+
+        [Fact]
+        public void ProxyLoggers_ProprietesGetters_NeSontPasNuls()
+        {
+            // Act & Assert
+            // Ces appels simples font monter la couverture sur les accesseurs
+            LogTools.Logger.Should().NotBeNull();
+            LogTools.DataLogger.Should().NotBeNull();
+            LogTools.HealthLogger.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void LogStartup_EcritLesTracesDeDemarrageDansLesLoggers()
+        {
+            // Act
+            // Note : Si AppEnvironment.GetVersionInformation() nécessite une initialisation
+            // dans ton projet, assure-toi de le faire dans le constructeur du test, 
+            // sinon cette méthode pourrait lever une exception.
+            LogTools.LogStartup();
+
+            // Assert
+            _memoryTarget.Logs.Should().ContainMatch("*App Publication is starting*",
+                "Le message de démarrage doit être envoyé à NLog.");
+        }
+
+        [Fact]
+        public void LogStop_EcritLesTracesDArretDansLesLoggers()
+        {
+            // Act
+            LogTools.LogStop();
+
+            // Assert
+            _memoryTarget.Logs.Should().ContainMatch("*App Publication is stopped*",
+                "Le message d'arrêt doit être envoyé à NLog.");
+        }
+
+        #endregion
+
+        #region Tests - Gestion des exceptions internes (Catch blocks)
+
+        [Fact]
+        public void ConfigureDebugLevel_ConfigurationNulle_AttrapeExceptionEtNePlantePas()
+        {
+            // Arrange
+            // On sabote intentionnellement NLog pour forcer le passage dans le bloc 'catch'
+            LogManager.Configuration = null;
+
+            // Act
+            Action act = () => LogTools.ConfigureDebugLevel(true);
+
+            // Assert
+            act.Should().NotThrow("L'erreur doit être attrapée dans le catch et logguée silencieusement sans faire crasher l'application.");
+        }
+
+        [Fact]
+        public void GetLogDirectory_ErreurInterneNLog_AttrapeExceptionEtRetourneChaineVide()
+        {
+            // Arrange
+            // 1. On purge le cache interne du répertoire pour forcer le recalcul
+            typeof(LogTools).GetField("_logDirectory", BindingFlags.Static | BindingFlags.NonPublic)
+                            ?.SetValue(null, null);
+
+            // 2. On sabote NLog (LogManager.Configuration = null force NullReferenceException dans FindTargetByName)
+            LogManager.Configuration = null;
+
+            // Act
+            string directory = LogTools.LogDirectory;
+
+            // Assert
+            directory.Should().BeEmpty("L'exception interne doit être gérée par le catch et la méthode doit retourner une chaîne vide en fallback.");
+        }
+
+        #endregion
     }
 }

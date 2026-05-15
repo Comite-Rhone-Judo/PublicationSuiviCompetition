@@ -11,6 +11,65 @@ namespace FranceJudo.Core.Tests.Threading
 {
     public class ParallelTaskBatcherTests
     {
+        [Fact]
+        public void WaitAllAndGetResults_AttendToutesLesTachesEtRetourneResultats()
+        {
+            // Arrange
+            var globalProgress = new Progress<string>();
+            static string progressMapper(float percent) => $"Progression : {percent}%";
+
+            // CORRECTION CS1674 : Retrait du 'using'
+            var batcher = new ParallelTaskBatcher<string, string>(globalProgress, progressMapper, 2, 5000);
+
+            batcher.AddWork((taskProgress) =>
+            {
+                System.Threading.Thread.Sleep(50);
+                return new[] { "Travail 1" };
+            }, 1);
+
+            batcher.AddWork((taskProgress) =>
+            {
+                System.Threading.Thread.Sleep(50);
+                return new[] { "Travail 2" };
+            }, 1);
+
+            // Act
+            var results = batcher.WaitAllAndGetResults();
+
+            // Assert
+            results.Should().NotBeNull();
+            results.Should().Contain(new[] { "Travail 1", "Travail 2" });
+            batcher.HasPendingWork.Should().BeFalse("Toutes les tâches doivent être terminées.");
+        }
+
+        [Fact]
+        public void ConcurrencyLevel_Set_ModifieLaConcurrenceEnCoursDeRoute()
+        {
+            // Arrange
+            var globalProgress = new Progress<string>();
+            var batcher = new ParallelTaskBatcher<string, string>(globalProgress, p => "", 1, 5000);
+
+            batcher.AddWork((taskProgress) =>
+            {
+                System.Threading.Thread.Sleep(100);
+                return new[] { "Test 1" };
+            }, 1);
+
+            // Act
+            Action act = () =>
+            {
+                // C'est le setter public qui doit appeler ta méthode privée UpdateSchedulerConfiguration
+                batcher.ConcurrencyLevel = 4;
+            };
+
+            // Assert
+            act.Should().NotThrow("La modification du niveau de concurrence via la propriété publique ne doit pas planter.");
+
+            // On s'assure que le batcher n'a pas été corrompu par ce changement à la volée
+            var results = batcher.WaitAllAndGetResults();
+            results.Should().Contain(new[] { "Test 1" }, "Le batcher doit terminer son travail même si sa configuration a changé en cours de route.");
+        }
+
         #region Bouchon de Test (Stub)
 
         // Un reporter synchrone et Thread-Safe pour capter les mises à jour sans délai asynchrone

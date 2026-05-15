@@ -10,6 +10,21 @@ namespace FranceJudo.Core.Tests.Threading
     public class LimitedConcurrencyLevelTests
     {
         [Fact]
+        public void TryExecuteTaskInline_ForceExecutionSurLeMemeThread_NePlantePas()
+        {
+            // Arrange
+            // CORRECTION CS1674 : Retrait du 'using' (TaskScheduler n'est pas IDisposable)
+            var scheduler = new LimitedConcurrencyLevel(2);
+            var inlineTask = new System.Threading.Tasks.Task(() => { /* dummy work */ });
+
+            // Act
+            Action act = () => inlineTask.RunSynchronously(scheduler);
+
+            // Assert
+            act.Should().NotThrow("L'exécution inline doit être supportée par LimitedConcurrencyLevel sans lever d'exception.");
+        }
+
+        [Fact]
         public void Constructeur_NiveauZeroOuNegatif_LeveArgumentOutOfRangeException()
         {
             // Act

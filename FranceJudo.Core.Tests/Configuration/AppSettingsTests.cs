@@ -74,5 +74,56 @@ namespace FranceJudo.Core.Tests.Configuration
             valeurBruteFichier.Should().NotBe(valeurClaire, "La valeur écrite physiquement doit être chiffrée.");
             resultatDechiffre.Should().Be(valeurClaire, "La lecture doit déchiffrer correctement la chaîne.");
         }
+
+        [Fact]
+        public void ReadSetting_BoolEtInt_ParsingInvalide_RetourneDefaut()
+        {
+            // Arrange
+            AppSettings.SaveSetting("TestInt", "PasUnChiffre");
+            AppSettings.SaveSetting("TestBool", "PasUnBool");
+
+            // Act
+            int resInt = AppSettings.ReadSetting("TestInt", 99);
+            bool resBool = AppSettings.ReadSetting("TestBool", true);
+
+            // Assert
+            resInt.Should().Be(99, "Si le parsing Int échoue, on doit retourner la valeur par défaut.");
+            resBool.Should().BeTrue("Si le parsing Bool échoue, on doit retourner la valeur par défaut.");
+        }
+
+        [Fact]
+        public void FindSetting_RechercheDansListe_RetourneMatchOuDefaut()
+        {
+            // Arrange
+            var liste = new[] { "Alpha", "Beta", "Gamma" };
+            static string predicate(string s) => s; // Le prédicat renvoie simplement la chaîne
+
+            // Act & Assert
+            // 1. Cas nominal : la valeur existe
+            AppSettings.FindSetting("Beta", liste, predicate).Should().Be("Beta");
+
+            // 2. Cas fallback : la valeur n'existe pas, doit attraper l'exception (First() sur IEnumerable vide ou Where vide)
+            // et retourner le tout premier élément de la liste ("Alpha").
+            AppSettings.FindSetting("Omega", liste, predicate).Should().Be("Alpha");
+
+            // 3. Cas sécurité : liste vide
+            AppSettings.FindSetting("Alpha", Array.Empty<string>(), predicate).Should().BeNull("Une liste vide doit retourner null.");
+            AppSettings.FindSetting("Alpha", null!, (Func<string, string>)predicate).Should().BeNull();
+        }
+
+        [Fact]
+        public void ReadRawSetting_TypeGenerique_LitEnBaseEtChercheDansListe()
+        {
+            // Arrange
+            string cle = "TestGenKey";
+            AppSettings.SaveSetting(cle, "Beta");
+            var liste = new[] { "Alpha", "Beta", "Gamma" };
+
+            // Act
+            var result = AppSettings.ReadRawSetting(cle, liste, s => s);
+
+            // Assert
+            result.Should().Be("Beta", "La méthode doit lire 'Beta' dans le fichier et le trouver dans la liste.");
+        }
     }
 }

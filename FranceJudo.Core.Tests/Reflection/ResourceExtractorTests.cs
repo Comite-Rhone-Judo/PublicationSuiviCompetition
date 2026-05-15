@@ -6,7 +6,7 @@ using FluentAssertions;
 using FranceJudo.Core.Export;
 using FranceJudo.Core.Reflection;
 
-namespace FranceJudo.Core.Tests.Export
+namespace FranceJudo.Core.Tests.Reflection
 {
     public class ResourceExtractorTests : IDisposable
     {
@@ -29,6 +29,68 @@ namespace FranceJudo.Core.Tests.Export
             {
                 Directory.Delete(_tempDirectory, true);
             }
+        }
+
+        [Fact]
+        public void ExtractToFile_DictionaryNull_LeveException()
+        {
+            // Arrange
+            string targetFile = Path.Combine(_tempDirectory, "output.xslt");
+
+            // Act
+            Action act = () => ResourceExtractor.ExtractToFile(null!, "resource", targetFile);
+
+            // Assert
+            act.Should().Throw<NullReferenceException>("L'absence de vérification null du dictionnaire doit lever cette exception native.");
+        }
+
+        [Fact]
+        public void ExtractToFile_ExtractionValide_CreeDossierEtFichier()
+        {
+            // Arrange
+            // Astuce : On récupère le premier assembly chargé en mémoire qui possède au moins une ressource
+            var assemblyAvecRessource = System.Linq.Enumerable.FirstOrDefault(
+                AppDomain.CurrentDomain.GetAssemblies(),
+                a => !a.IsDynamic && a.GetManifestResourceNames().Length > 0);
+
+            if (assemblyAvecRessource == null) return; // Sécurité
+
+            var dict = new AssemblyResourceDictionary(assemblyAvecRessource);
+            string resourceToExtract = dict.AllResources.First();
+
+            // On force un sous-dossier qui n'existe pas pour tester Directory.CreateDirectory
+            string targetFile = Path.Combine(_tempDirectory, "NouveauDossier", "extract.bin");
+
+            // Act
+            bool result = ResourceExtractor.ExtractToFile(dict, resourceToExtract, targetFile);
+
+            // Assert
+            result.Should().BeTrue();
+            File.Exists(targetFile).Should().BeTrue("Le fichier doit avoir été créé physiquement sur le disque.");
+        }
+
+        [Fact]
+        public void ExtractToFile_ErreurEcriture_AttrapeExceptionEtRetourneFalse()
+        {
+            // Arrange
+            var assemblyAvecRessource = System.Linq.Enumerable.FirstOrDefault(
+                AppDomain.CurrentDomain.GetAssemblies(),
+                a => !a.IsDynamic && a.GetManifestResourceNames().Length > 0);
+
+            if (assemblyAvecRessource == null) return;
+
+            var dict = new AssemblyResourceDictionary(assemblyAvecRessource);
+            string resourceToExtract = dict.AllResources.First();
+
+            // Astuce pour déclencher le bloc 'catch' : 
+            // On essaie d'écrire dans un répertoire (UnauthorizedAccessException) au lieu d'un fichier.
+            string targetFile = _tempDirectory;
+
+            // Act
+            bool result = ResourceExtractor.ExtractToFile(dict, resourceToExtract, targetFile);
+
+            // Assert
+            result.Should().BeFalse("L'exception de droits ou d'accès disque doit être attrapée et retourner false.");
         }
 
         [Fact]

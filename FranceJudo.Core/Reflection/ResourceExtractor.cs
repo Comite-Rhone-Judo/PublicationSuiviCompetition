@@ -4,7 +4,7 @@ using FranceJudo.Core.Reflection;
 using System;
 using System.IO;
 
-namespace FranceJudo.Core.Export
+namespace FranceJudo.Core.Reflection
 {
     public static class ResourceExtractor
     {

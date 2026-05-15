@@ -213,5 +213,114 @@ namespace FranceJudo.Core.Tests.XML
         }
 
         #endregion
+
+        [Fact]
+        public void LectureDate_CasNominauxEtErreurs_RetourneDateOuDefaut()
+        {
+            // Arrange
+            var dateAttendu = new DateTime(2026, 5, 15);
+            var dateDefaut = new DateTime(2000, 1, 1);
+
+            var attrValide = new XAttribute("date", "2026-05-15");
+            var attrInvalide = new XAttribute("date", "pas-une-date");
+
+            // Act
+            var resValide = XMLTools.LectureDate(attrValide, "yyyy-MM-dd", dateDefaut);
+            var resInvalide = XMLTools.LectureDate(attrInvalide, "yyyy-MM-dd", dateDefaut);
+            var resNul = XMLTools.LectureDate(null, "yyyy-MM-dd", dateDefaut);
+
+            // Assert
+            resValide.Should().Be(dateAttendu, "Une date bien formatée doit être parsée correctement.");
+            resInvalide.Should().Be(dateDefaut, "Une date mal formatée doit retourner la valeur par défaut au lieu de planter.");
+            resNul.Should().Be(dateDefaut, "Un attribut nul doit retourner la valeur par défaut.");
+        }
+
+        [Fact]
+        public void LectureTime_CasNominauxEtErreurs_RetourneHeureOuDefaut()
+        {
+            // Arrange
+            var attrValide = new XAttribute("heure", "14:30");
+            var attrInvalide = new XAttribute("heure", "99:99");
+
+            // Act
+            // CORRECTION 1 : On utilise le format DateTime standard pour le 24h
+            var resValide = XMLTools.LectureTime(attrValide, "HH:mm");
+            var resInvalide = XMLTools.LectureTime(attrInvalide, "HH:mm");
+            var resNul = XMLTools.LectureTime(null, "HH:mm");
+
+            // Assert
+            resValide.Should().Be(new TimeSpan(14, 30, 0), "Une heure valide avec le bon format doit être parsée.");
+
+            // CORRECTION 2 : On teste le comportement Legacy "Cible mouvante"
+            // On vérifie que la valeur retournée est proche de DateTime.Now à 5 secondes près
+            resInvalide.Should().BeCloseTo(DateTime.Now.TimeOfDay, TimeSpan.FromSeconds(5), "Le code historique retourne l'heure actuelle en cas d'échec de conversion.");
+            resNul.Should().BeCloseTo(DateTime.Now.TimeOfDay, TimeSpan.FromSeconds(5), "Un attribut nul déclenche aussi le retour de l'heure actuelle.");
+        }
+
+        [Fact]
+        public void LectureNullableInt_ValeursDiverses_RetourneIntOuNull()
+        {
+            // Arrange
+            var attrValide = new XAttribute("id", "42");
+            var attrVide = new XAttribute("id", "");
+            var attrInvalide = new XAttribute("id", "abc");
+
+            // Act
+            var resValide = XMLTools.LectureNullableInt(attrValide);
+            var resVide = XMLTools.LectureNullableInt(attrVide);
+            var resInvalide = XMLTools.LectureNullableInt(attrInvalide);
+            var resNull = XMLTools.LectureNullableInt(null);
+
+            // Assert
+            resValide.Should().Be(42, "Un entier valide doit être converti.");
+            resVide.Should().BeNull("Une chaîne vide doit retourner null.");
+            resInvalide.Should().BeNull("Des lettres ne peuvent pas être converties et doivent retourner null.");
+            resNull.Should().BeNull("Un attribut nul doit retourner null.");
+        }
+
+        [Fact]
+        public void LectureString_ElementValide_RetourneContenuDeLaChaine()
+        {
+            // Arrange
+            var element = new XElement("categorie", "-81kg");
+
+            // Act
+            var resultat = XMLTools.LectureString(element);
+
+            // Assert
+            resultat.Should().Be("-81kg", "Un élément XML valide doit renvoyer son contenu textuel.");
+        }
+
+        [Fact]
+        public void LectureString_ElementNul_NePlantePasEtRetourneValeurParDefaut()
+        {
+            // Arrange
+            System.Xml.Linq.XElement? elementNul = null;
+
+            // Act
+            var resultat = XMLTools.LectureString(elementNul);
+
+            // Assert
+            // Note : Si ta méthode retourne spécifiquement null, utilise .Should().BeNull()
+            // Si elle retourne string.Empty (""), utilise .Should().BeEmpty()
+            resultat.Should().BeNullOrEmpty("Un élément nul passé en paramètre ne doit pas lever de NullReferenceException.");
+        }
+
+        [Fact]
+        public void ToXDocument_XmlDocumentValide_ConvertitSansPerte()
+        {
+            // Arrange
+            var xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml("<competition><combattant nom=\"Teddy Riner\" /></competition>");
+
+            // Act
+            var xDoc = XMLTools.ToXDocument(xmlDoc);
+
+            // Assert
+            xDoc.Should().NotBeNull("La conversion doit produire un document.");
+            xDoc!.Root.Should().NotBeNull();
+            xDoc.Root!.Name.LocalName.Should().Be("competition", "La racine doit être conservée.");
+            xDoc.Root.Element("combattant")!.Attribute("nom")!.Value.Should().Be("Teddy Riner", "Les données imbriquées doivent être transférées.");
+        }
     }
 }

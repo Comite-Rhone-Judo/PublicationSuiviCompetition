@@ -171,7 +171,10 @@ namespace FranceJudo.Core.Configuration
             string valCache = AppSettings.ReadRawSetting(key, prefix);
 
             bool val = defaultValue;
-            bool.TryParse(valCache, out val);
+            if(bool.TryParse(valCache, out bool parsedVal))
+            {
+                val = parsedVal;
+            }
             return (valCache == null) ? defaultValue : val;
         }
 
@@ -212,7 +215,10 @@ namespace FranceJudo.Core.Configuration
             string valCache = AppSettings.ReadRawSetting(key, prefix);
 
             int val = defaultValue;
-            int.TryParse(valCache, out val);
+            if(int.TryParse(valCache, out int parsedVal))
+            {
+                val = parsedVal;
+            }
             return (valCache == null) ? defaultValue : val;
         }
 

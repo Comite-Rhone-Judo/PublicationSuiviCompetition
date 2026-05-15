@@ -1,244 +1,117 @@
-﻿using FranceJudo.Core.IO;
-using FranceJudo.Core.Threading;
+﻿using FranceJudo.Core.Exceptions;
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
 using System;
 using System.IO;
 using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace FranceJudo.Core.Network.Tcp.Server
 {
-    /// <summary>
-    /// Classe de connection de client TCP
-    /// </summary>
     public class ClientConnection
     {
-        /// <summary>
-        /// Fonction délégué de reception de données
-        /// </summary>
-        /// <param name="sender">sender</param>
-        /// <param name="Data">Données reçues </param>
         public delegate void MessageReceive(ClientConnection sender, string Data);
-
-        /// <summary>
-        /// Fonction délégué de fermeture de connection
-        /// </summary>
-        /// <param name="sender"></param>
         public delegate void RemoteHostClose(ClientConnection sender);
 
-
-        #region field
-
-        private readonly object _streamLock = new object();
-        const int READ_BUFFER_SIZE = 10240;
-        private readonly byte[] readBuffer = new byte[READ_BUFFER_SIZE];
-
-        /// <summary>
-        /// événement de réception de données
-        /// </summary>
         public event MessageReceive OnMessageReceived;
-
-        /// <summary>
-        /// événement de fermeture de connection client
-        /// </summary>
         public event RemoteHostClose OnRemoteHostClosed;
 
+        private const int READ_BUFFER_SIZE = 10240;
         private readonly TcpClient _Client;
-        private string chaine = "";
-        private readonly string _endMsgTag = string.Empty;
+        private string _chaine = "";
+        private readonly string _endMsgTag;
+        private readonly CancellationTokenSource _cts;
 
-        /// <summary>
-        /// Le client
-        /// </summary>
-        public TcpClient Client
-        {
-            get
-            {
-                return _Client;
-            }
-        }
+        public TcpClient Client => _Client;
+        public string EndMsgFlag => _endMsgTag;
 
-        /// <summary>
-        /// Flag marquant la fin d'un message
-        /// </summary>
-        public string EndMsgFlag
-        {
-            get { return _endMsgTag; }
-        }
-
-        #endregion
-
-        #region method
-
-        /// <summary>
-        /// Constructeur
-        /// </summary>
-        /// <param name="client">client</param>
         public ClientConnection(TcpClient client, string endMsgTag)
         {
+            _Client = client;
+            _endMsgTag = endMsgTag;
+            _cts = new CancellationTokenSource();
+        }
+
+        public void StartRead()
+        {
+            _ = ReadLoopAsync(_cts.Token);
+        }
+
+        public void Stop()
+        {
+            _cts.Cancel();
+            CloseConnection();
+        }
+
+        private async Task ReadLoopAsync(CancellationToken token)
+        {
+            byte[] readBuffer = new byte[READ_BUFFER_SIZE];
+
             try
             {
-                _Client = client;
-                _endMsgTag = endMsgTag;
+                if (!_Client.Connected)
+                {
+                    CloseConnection();
+                    return;
+                }
 
-                client.GetStream().BeginRead(readBuffer, 0, READ_BUFFER_SIZE,
-                    new AsyncCallback(StreamReceiver), client);
+                var stream = _Client.GetStream();
+
+                while (!token.IsCancellationRequested)
+                {
+                    // CORRECTION ICI : Retour à la surcharge compatible .NET Standard 2.0 (4 arguments)
+                    int bytesRead = await stream.ReadAsync(readBuffer, 0, READ_BUFFER_SIZE, token).ConfigureAwait(false);
+
+                    if (bytesRead == 0) break;
+
+                    string strReceiveData = FileSystemHelper.TheEncoding.GetString(readBuffer, 0, bytesRead);
+                    _chaine += strReceiveData;
+
+                    if (_chaine.Contains("\n<EOF>"))
+                    {
+                        ProcessData();
+                    }
+                }
             }
-            catch (NullReferenceException ex)
+            catch (OperationCanceledException) { }
+            catch (Exception ex)
             {
-                ExceptionHelper.ShowException(ex);
+                LogError(ex);
             }
-            catch (ObjectDisposedException ex)
+            finally
             {
-                client.Close();
-                ExceptionHelper.ShowException(ex);
-            }
-            catch (IOException ex)
-            {
-                client.Close();
-                ExceptionHelper.ShowException(ex);
+                CloseConnection();
             }
         }
 
-        /// <summary>
-        /// StreamReceiver
-        /// </summary>
-        /// <param name="ar">object</param>
-        private void StreamReceiver(IAsyncResult ar)
+        private void ProcessData()
         {
-            TcpClient client = null;
-            int intBytesRead = 0;
-            string strReceiveData = string.Empty;
-            NetworkStream objNetworkStream = null;
+            if (OnMessageReceived == null) return;
 
-            try
+            string tmp = "";
+            foreach (string data in _chaine.Split(new[] { "\n<EOF>" }, StringSplitOptions.RemoveEmptyEntries))
             {
-                client = (TcpClient)ar.AsyncState;
-
-                if (!client.Connected)
+                if (data.EndsWith(_endMsgTag))
                 {
-                    OnRemoteHostClosed(this);
-                    client.Close();
-                    LogHelper.ShowLog("", client, LogHelper.TypeLog.Close);
-
-                    return;
-                }
-
-                try
-                {
-                    objNetworkStream = client.GetStream();
-                }
-                catch (ObjectDisposedException ex)
-                {
-                    OnRemoteHostClosed(this);
-                    client.Close();
-                    ExceptionHelper.ShowException(ex);
-                    return;
-                }
-                catch (InvalidOperationException ex)
-                {
-                    OnRemoteHostClosed(this);
-                    client.Close();
-                    ExceptionHelper.ShowException(ex);
-                    return;
-                }
-
-                try
-                {
-                    using (TimedLock.Lock(_streamLock))
-                    {
-                        intBytesRead = objNetworkStream.EndRead(ar);
-                    }
-                }
-                catch (IOException ex)
-                {
-                    OnRemoteHostClosed(this);
-                    client.Close();
-                    ExceptionHelper.ShowException(ex);
-                    return;
-
-                }
-
-                if (intBytesRead > 0)
-                {
-                    try
-                    {
-                        strReceiveData = FileSystemHelper.TheEncoding.GetString(readBuffer, 0, intBytesRead);
-
-                        //string data = Encoding.UTF8.GetString(client.Buffer, 0, read);
-                        chaine += strReceiveData;
-
-                        if (chaine.IndexOf("\n<EOF>") != -1 && OnMessageReceived != null)
-                        {
-                            string tmp = "";
-                            foreach (string data in chaine.Split(new string[] { "\n<EOF>" }, StringSplitOptions.RemoveEmptyEntries))
-                            {
-                                // if (data.EndsWith("</" + ConstantXML.ServerJudo + ">"))
-                                if (data.EndsWith(EndMsgFlag))
-                                {
-                                    OnMessageReceived(this, data);
-                                }
-                                else
-                                {
-                                    tmp = data;
-                                }
-                            }
-                            chaine = tmp;
-                        }
-                    }
-                    catch (IOException ex)
-                    {
-                        ExceptionHelper.ShowException(ex);
-                    }
+                    _ = Task.Run(() => OnMessageReceived.Invoke(this, data));
                 }
                 else
                 {
-                    OnRemoteHostClosed(this);
-
-                    objNetworkStream?.Close();
-
-                    client.Close();
-                    return;
-
+                    tmp = data;
                 }
-
-                if (!client.Connected)
-                {
-                    OnRemoteHostClosed(this);
-                    client.Close();
-                    LogHelper.ShowLog("", client, LogHelper.TypeLog.ClientClose);
-                    //LogHelper.ShowLog("client close\t" + DateTime.Now.ToString() + "\t" + client.GetHashCode().ToString());
-                    return;
-                }
-
-                try
-                {
-                    using (TimedLock.Lock(_streamLock))
-                    {
-                        objNetworkStream.BeginRead(readBuffer, 0, READ_BUFFER_SIZE,
-                            new AsyncCallback(StreamReceiver), client);
-                    }
-                }
-                catch (ObjectDisposedException ex)
-                {
-                    OnRemoteHostClosed(this);
-                    client.Close();
-                    ExceptionHelper.ShowException(ex);
-                }
-                catch (IOException ex)
-                {
-                    OnRemoteHostClosed(this);
-                    client.Close();
-                    ExceptionHelper.ShowException(ex);
-                }
-
             }
-            catch (Exception ex)
-            {
-                OnRemoteHostClosed(this);
-                client.Close();
-                ExceptionHelper.ShowException(ex);
-            }
+            _chaine = tmp;
         }
 
-        #endregion
+        private void CloseConnection()
+        {
+            OnRemoteHostClosed?.Invoke(this);
+            _Client?.Close();
+            LogEvent("Client Close\r\n");
+        }
+
+        private void LogEvent(string message) => LogTools.Logger?.Debug(message);
+        private void LogError(Exception ex) => LogTools.Logger?.Error(new ServerException(ex.Message, ex));
     }
 }

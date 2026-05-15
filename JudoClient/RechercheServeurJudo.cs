@@ -1,4 +1,5 @@
-﻿using FranceJudo.Core.Network.Tcp.Client;
+﻿using FranceJudo.Core.Logging;
+using FranceJudo.Core.Network.Tcp.Client;
 using FranceJudo.Core.Threading;
 using FranceJudo.Metier.Network;
 using FranceJudo.Metier.XML;
@@ -145,7 +146,7 @@ namespace JudoClient
                 }
                 catch (Exception ex)
                 {
-                    ExceptionHelper.ShowException(ex);
+                    LogTools.Logger.Error(ex, "Erreur lors de la tentative de ping sur {0}", adresse);
                     for (int port = ConstantNetwork.PortServerMin; port <= ConstantNetwork.PortServerMax; port++)
                     {
                         AdresseTerminee(adresse, port, ServerResponseEnum.PingFAIL);
@@ -188,7 +189,7 @@ namespace JudoClient
                     }
                     catch (Exception ex)
                     {
-                        ExceptionHelper.ShowException(ex);
+                        LogTools.Logger.Error(ex, "Erreur lors de la tentative de connexion sur {0}:{1}", adresse, port);
                         AdresseTerminee(adresse, port, ServerResponseEnum.PingOK);
                     }
 
@@ -254,7 +255,7 @@ namespace JudoClient
             }
             catch (Exception ex)
             {
-                ExceptionHelper.ShowException(ex);
+                LogTools.Logger.Error(ex, "Erreur lors de la tentative de mise à jour de l'état de la machine {0}:{1}", adresse, port);
             }
         }
 

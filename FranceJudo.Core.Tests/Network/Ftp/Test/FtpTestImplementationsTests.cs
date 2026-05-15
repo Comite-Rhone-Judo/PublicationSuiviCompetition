@@ -22,7 +22,7 @@ namespace FranceJudo.Core.Tests.Network.Ftp.Test
 
             public bool ProfileResolveResult { get; set; } = true;
 
-            public bool ResolveProfile(FtpClient client) => ProfileResolveResult;
+            public bool ResolveProfile(IFtpClient client) => ProfileResolveResult;
         }
 
         [Fact]

@@ -48,5 +48,64 @@ namespace FranceJudo.Core.Tests.Configuration.Json
             // Assert 2
             notificationCount.Should().Be(2, "La modification d'un élément enfant doit remonter jusqu'à la racine.");
         }
+
+        [Fact]
+        public void SetupCollectionSync_CollectionNull_FaitUnRetourAnticipeSansPlantage()
+        {
+            // Arrange
+            var section = new DummySection();
+
+            // Act : On utilise la réflexion car SetupCollectionSync est protected
+            // et la collection de notre DummySection est instanciée en dur.
+            var methodInfo = typeof(JsonConfigSection).GetMethod("SetupCollectionSync", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            var genericMethod = methodInfo!.MakeGenericMethod(typeof(DummyItem));
+
+            Action act = () => genericMethod.Invoke(section, new object[] { null!, (Action)(() => { }) });
+
+            // Assert
+            act.Should().NotThrow("La méthode doit gérer les collections nulles gracieusement via son return anticipé.");
+        }
+
+        [Fact]
+        public void SetupCollectionSync_ElementsDejaPresents_SontAbonnesInitialement()
+        {
+            // Arrange
+            var section = new DummySection();
+            var itemInitial = new DummyItem();
+
+            // On ajoute l'élément AVANT de lier la synchronisation (simule un chargement depuis le disque)
+            section.Items.Add(itemInitial);
+
+            int notificationCount = 0;
+
+            // Act
+            section.InitializeSync(() => notificationCount++);
+
+            // Assert
+            itemInitial.OnChanged.Should().NotBeNull("La boucle foreach finale doit abonner les éléments préexistants.");
+
+            // Preuve que l'abonnement fonctionne
+            itemInitial.OnChanged.Invoke();
+            notificationCount.Should().Be(1, "La modification d'un élément préexistant doit notifier le parent.");
+        }
+
+        [Fact]
+        public void SetupCollectionSync_SuppressionElement_DeclencheNotificationSansChercherDeNouveauxElements()
+        {
+            // Arrange
+            var section = new DummySection();
+            var itemASupprimer = new DummyItem();
+            section.Items.Add(itemASupprimer);
+
+            int notificationCount = 0;
+            section.InitializeSync(() => notificationCount++);
+
+            // Act : Une suppression génère un événement où e.NewItems est null
+            section.Items.Remove(itemASupprimer);
+
+            // Assert
+            notificationCount.Should().Be(1, "La modification de structure (suppression) doit appeler notifyAction.");
+            // Si la méthode ne gérait pas le (e.NewItems != null), elle lèverait une NullReferenceException ici.
+        }
     }
 }

@@ -16,6 +16,59 @@ namespace FranceJudo.Core.Tests.Reflection
         }
 
         [Fact]
+        public void AllResources_RetourneLaListeCompleteDesRessources()
+        {
+            // Arrange
+            var dict = new AssemblyResourceDictionary(_testAssembly);
+
+            // Act
+            var resources = dict.AllResources;
+
+            // Assert
+            resources.Should().NotBeNull("La liste des ressources ne doit jamais être nulle.");
+        }
+
+        [Fact]
+        public void GetFullName_CheminVideOuNul_RetourneLeNamespaceDeBase()
+        {
+            // Arrange
+            var dict = new AssemblyResourceDictionary(_testAssembly, "FranceJudo.Base");
+
+            // Act & Assert
+            dict.GetFullName(null!).Should().Be("FranceJudo.Base", "Un chemin nul doit retourner le root namespace.");
+            dict.GetFullName(string.Empty).Should().Be("FranceJudo.Base", "Un chemin vide doit retourner le root namespace.");
+        }
+
+        [Fact]
+        public void Exists_RessourceInexistante_RetourneFalse()
+        {
+            // Arrange
+            var dict = new AssemblyResourceDictionary(_testAssembly);
+
+            // Act
+            var result = dict.Exists("FichierFantome.txt");
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void FindByFolder_RajouteLePointEtFiltreCorrectement()
+        {
+            // Arrange
+            var dict = new AssemblyResourceDictionary(_testAssembly);
+
+            // Act
+            // Même si le dossier n'existe pas, cela couvre la logique de formatage (ajout du '.') et le LINQ Where
+            var resultSansPoint = dict.FindByFolder("DossierInexistant");
+            var resultAvecPoint = dict.FindByFolder("DossierInexistant.");
+
+            // Assert
+            resultSansPoint.Should().BeEmpty();
+            resultAvecPoint.Should().BeEmpty();
+        }
+
+        [Fact]
         public void Constructeur_AssemblyNull_LeveArgumentNullException()
         {
             // Act

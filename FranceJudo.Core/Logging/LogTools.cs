@@ -261,17 +261,6 @@ namespace FranceJudo.Core.Logging
             return output;
         }
 
-
-        /// <summary>
-        /// Méthode interne sécurisée pour déclencher l'événement
-        /// </summary>
-        /// <param name="ex"></param>
-        /// <param name="message"></param>
-        private static void RaiseCriticalError(Exception ex, string message)
-        {
-            // Le ?. permet de vérifier que quelqu'un est bien abonné à l'événement avant de l'appeler
-            OnCriticalErrorLogged?.Invoke(null, new ExceptionEventArgs(ex, message));
-        }
         #endregion
     }
 }

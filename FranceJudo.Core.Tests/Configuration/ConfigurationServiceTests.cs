@@ -20,10 +20,7 @@ namespace FranceJudo.Core.Tests.Configuration
 
         public void Dispose()
         {
-            if (ConfigurationService.Instance != null)
-            {
-                ConfigurationService.Instance.Dispose();
-            }
+            ConfigurationService.Instance?.Dispose();
         }
 
         [Fact]
@@ -71,6 +68,54 @@ namespace FranceJudo.Core.Tests.Configuration
 
             // Assert
             section.IsDirty.Should().BeFalse("Le service doit avoir appelé ClearDirtyFlag() après la sauvegarde réussie sur le disque.");
+        }
+
+        [Fact]
+        public void HandleSectionDirty_AppelsSuccessifs_N_AjouteLaSectionQuUneSeuleFois()
+        {
+            // Arrange
+            var service = ConfigurationService.CreateInstance();
+            var section = ConfigComponentsTests.StubSection.Instance;
+
+            // On récupère le délégué statique pour l'invoquer manuellement comme si plusieurs enfants criaient "Je suis modifié !"
+            var eventDelegate = typeof(InternalConfigSectionBase).GetField("SectionBecameDirty", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            var handler = (MulticastDelegate)eventDelegate!.GetValue(null)!;
+
+            // Act
+            handler.DynamicInvoke(section);
+            handler.DynamicInvoke(section);
+            handler.DynamicInvoke(section);
+
+            // Assert
+            // On vérifie la liste privée du service pour s'assurer qu'il a bien dédoublonné
+            var listField = typeof(ConfigurationService).GetField("_sectionsToSave", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            var list = (System.Collections.IList)listField!.GetValue(service)!;
+
+            list.Count.Should().Be(1, "Le service possède un _sectionsToSave.Contains() qui doit éviter les doublons.");
+        }
+
+        [Fact]
+        public void PerformFallbackSave_ClonageEtSauvegarde_S_ExecuteSansPlanter()
+        {
+            // Note de l'Architecte : Forcer une ConfigurationErrorsException native depuis le code est hasardeux
+            // (blocage de fichier). On va donc directement tester la solidité de la méthode de secours (le Fallback) via Réflexion.
+
+            // Arrange
+            var service = ConfigurationService.CreateInstance();
+            var section = ConfigComponentsTests.StubSection.Instance;
+            section.Title = "SauvegardeFallback_" + Guid.NewGuid();
+
+            var list = new System.Collections.Generic.List<InternalConfigSectionBase> { section };
+            var method = typeof(ConfigurationService).GetMethod("PerformFallbackSave", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+
+            // Act
+            Action act = () => method!.Invoke(service, new object[] { list });
+
+            // Assert
+            act.Should().NotThrow("La méthode de secours (création d'instance via Activator + DeepCopyRecursive + Save) doit s'exécuter jusqu'au bout.");
+
+            // Cleanup
+            InternalConfigSectionBase.InvalidateContext(); // Laisse le contexte propre
         }
     }
 }

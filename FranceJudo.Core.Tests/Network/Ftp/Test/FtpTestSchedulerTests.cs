@@ -34,7 +34,7 @@ namespace FranceJudo.Core.Tests.Network.Ftp.Test
                 _willSucceed = willSucceed;
             }
 
-            public override bool Execute(IFtpConfiguration site, FtpClient client, CancellationToken token)
+            public override bool Execute(IFtpConfiguration site, IFtpClient client, CancellationToken token)
             {
                 return _willSucceed;
             }
@@ -43,7 +43,7 @@ namespace FranceJudo.Core.Tests.Network.Ftp.Test
         // Un Step factice qui attend d'être annulé pour tester la Cancellation
         private class LongRunningTestStep : FtpTestStepBase
         {
-            public override bool Execute(IFtpConfiguration site, FtpClient client, CancellationToken token)
+            public override bool Execute(IFtpConfiguration site, IFtpClient client, CancellationToken token)
             {
                 // Boucle qui simule un long travail réseau
                 while (!token.IsCancellationRequested)

@@ -2,6 +2,7 @@
 using FluentFTP.Model.Functions;
 using FranceJudo.Core.Foundation;
 using FranceJudo.Core.Logging;
+using FranceJudo.Core.Network.Ftp;
 using FranceJudo.Core.Network.Http;
 using FranceJudo.Core.Network.Http.Context;
 using System;
@@ -46,7 +47,7 @@ namespace FranceJudo.Core.Network
         string IFtpConfiguration.RemotePath => RepertoireSiteFTPDistant;
         bool IFtpConfiguration.UseActiveMode => ModeActifFTPDistant;
         FtpProfile IFtpConfiguration.CurrentProfile => this.CurrentFtpProfile;
-        bool IFtpConfiguration.ResolveProfile(FtpClient client)
+        bool IFtpConfiguration.ResolveProfile(IFtpClient client)
         {
             // On appelle VOTRE méthode métier d'origine
             return this.CheckConfigurationSiteDistant(client);
@@ -63,6 +64,7 @@ namespace FranceJudo.Core.Network
 
         private long _totalDeleteCount = 0;
         private long _currentDeleteCount = 0;
+        private readonly IFtpClientFactory _ftpFactory;     // La factory pour creer les clients
         #endregion
 
         #region CONSTRUCTEURS
@@ -72,12 +74,14 @@ namespace FranceJudo.Core.Network
         /// </summary>
         /// <param name="local">Mode du minisite (local = true, distant = false)</param>
         /// <param name="instanceName">Nom de l'instance</param>
-        public MiniSite(bool local, IServeurHttp instance = null)
+        public MiniSite(bool local, IServeurHttp instance = null, IFtpClientFactory ftpFactory = null)
         {
             if (local && instance == null) throw new ArgumentNullException("instance", "Le serveur HTTP local ne peut pas être null en mode local");
 
             if (local)
             {
+                // Pas de factory en mode local
+                _ftpFactory = null;
                 // Configure un site web local
                 ServerHTTP = instance;
 
@@ -86,6 +90,8 @@ namespace FranceJudo.Core.Network
             }
             else
             {
+                _ftpFactory = ftpFactory ?? new DefaultFtpClientFactory();
+
                 // Initialise le callback de tracking
                 _ftpProgressCallback = new Action<FtpProgress>(p =>
                 {
@@ -425,7 +431,7 @@ namespace FranceJudo.Core.Network
         /// Attention, ne release pas le client a la fin !!
         /// </summary>
         /// <returns></returns>
-        public bool CheckConfigurationSiteDistant(FtpClient ftpClient)
+        public bool CheckConfigurationSiteDistant(IFtpClient ftpClient)
         {
             bool output = false;
             if (IsFTPConfigPropertiesValid && !string.IsNullOrEmpty(PasswordSiteFTPDistant))
@@ -465,11 +471,12 @@ namespace FranceJudo.Core.Network
         /// Retourne une instance de client FTP initialisee
         /// </summary>
         /// <returns></returns>
-        public FtpClient GetAndConfigureFtpClient()
+        public IFtpClient GetAndConfigureFtpClient()
         {
-            // Le client FTP pour la connection
-            FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
-            // Autorise l'utilisation de n'importe quel certificat
+            // La factory crée l'instance (Vraie ou Mock)
+            IFtpClient ftpClient = _ftpFactory.CreateClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
+
+            // On applique TA configuration (qui reste dans MiniSite)
             ftpClient.Config.EncryptionMode = FtpEncryptionMode.Auto;
             ftpClient.Config.ValidateAnyCertificate = true;
 
@@ -578,7 +585,7 @@ namespace FranceJudo.Core.Network
                 }
                 else
                 {
-                    FtpClient ftpClient = null;
+                    IFtpClient ftpClient = null;
 
                     // Serveur distant
                     try
@@ -651,7 +658,7 @@ namespace FranceJudo.Core.Network
         {
             UploadStatus output = new UploadStatus();
             StatusMiniSite cStatus = Status;  // Recupere le status courant pour le restaurer apres les operations
-            FtpClient ftpClient = null;
+            IFtpClient ftpClient = null;
 
             if (IsLocal || IsActif)
             {
@@ -763,7 +770,7 @@ namespace FranceJudo.Core.Network
 
             // Le client FTP pour la connection
             // FtpClient ftpClient = new FtpClient(SiteFTPDistant, LoginSiteFTPDistant, PasswordSiteFTPDistant);
-            FtpClient ftpClient = GetAndConfigureFtpClient();
+            IFtpClient ftpClient = GetAndConfigureFtpClient();
 
             try
             {
@@ -983,7 +990,7 @@ namespace FranceJudo.Core.Network
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="Exception"></exception>
-        private void InternalFtpRecursiveDeleteDirectory(string repertoire, FtpClient ftpClient, bool onlyContent = true)
+        private void InternalFtpRecursiveDeleteDirectory(string repertoire, IFtpClient ftpClient, bool onlyContent = true)
         {
             if (ftpClient == null || !ftpClient.IsConnected) { throw new ArgumentException("Le client FTP doit etre connecte"); }
 

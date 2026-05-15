@@ -11,5 +11,5 @@ public interface IFtpConfiguration
     FtpProfile CurrentProfile { get; }
 
     // Délègue la responsabilité de l'auto-configuration à l'implémenteur
-    bool ResolveProfile(FtpClient client);
+    bool ResolveProfile(IFtpClient client);
 }

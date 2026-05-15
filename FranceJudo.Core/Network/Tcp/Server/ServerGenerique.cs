@@ -1,11 +1,13 @@
-﻿using FranceJudo.Core.IO;
+﻿using FranceJudo.Core.Exceptions;
+using FranceJudo.Core.IO;
+using FranceJudo.Core.Logging;
 using FranceJudo.Core.Threading;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FranceJudo.Core.Network.Tcp.Server
@@ -15,304 +17,198 @@ namespace FranceJudo.Core.Network.Tcp.Server
         public static ulong _sent_data = 0;
         public static ulong _receive_data = 0;
 
-        /// <summary>
-        /// Fonction déléguée de début de connection
-        /// </summary>
-        /// <param name="sender">sender</param>
-        /// <param name="client">le client</param>
         public delegate void OnConnectionHandler(object sender, TcpClient client);
-
-        /// <summary>
-        /// Fonction déléguée d'envoie de donnée
-        /// </summary>
-        /// <param name="sender">sender</param>
-        /// <param name="client">le client</param>
         public delegate void OnDataSentHandler(object sender, TcpClient client);
-
-        /// <summary>
-        /// Fonction déléguée de réception de données
-        /// </summary>
-        /// <param name="sender">sender</param>
-        /// <param name="client">le client</param>
-        /// <param name="donnees">données</param>
         public delegate void OnDataRecieveHandler(object sender, TcpClient client, string donnees);
-
-        /// <summary>
-        /// Fonction déléguée de fin de connection
-        /// </summary>
-        /// <param name="sender">sender</param>
-        /// <param name="client">le client</param>
         public delegate void OnEndConnectionHandler(object sender, TcpClient client);
 
-        /// <summary>
-        /// Événement de connection d'un client
-        /// </summary>
         public event OnConnectionHandler OnConnection;
-
-        /// <summary>
-        /// Événement de réception de données à un client
-        /// </summary>
         public event OnDataRecieveHandler OnDataRecieve;
-
-        /// <summary>
-        /// Événement d'envoie de données à un client
-        /// </summary>
         public event OnDataSentHandler OnDataSent;
-
-        /// <summary>
-        /// Événement de fin de connection d'un client
-        /// </summary>
         public event OnEndConnectionHandler OnEndConnection;
 
-        //protected System.Net.Sockets.Socket listener;
-
-        private TcpListener tcpListener;
+        private TcpListener _tcpListener;
         private readonly Synchronized<List<TcpClient>> _clients = new Synchronized<List<TcpClient>>(new List<TcpClient>());
         private readonly Synchronized<List<SentData>> _sentData = new Synchronized<List<SentData>>(new List<SentData>());
-        //private string chaine = "";
-        private readonly int _port = 0;
+        private readonly int _port;
+        private readonly IPAddress _localaddr;
         private readonly string _endMsgTag;
+        private CancellationTokenSource _serverCts;
 
-        /// <summary>
-        /// Balise de fin de message
-        /// </summary>
-        public string EndMsgTag
-        {
-            get { return _endMsgTag; }
-        }
+        public string EndMsgTag => _endMsgTag;
 
-        /// <summary>
-        /// Constructor for a new server using an IPAddress and Port
-        /// </summary>
-        /// <param name="localaddr">The Local IP Address for the server.</param>
-        /// <param name="port">The port for the server.</param>
         public ServerGenerique(IPAddress localaddr, int port, string endMsgTag)
         {
+            _localaddr = localaddr;
             _port = port;
-            tcpListener = new TcpListener(localaddr, port);
             _endMsgTag = endMsgTag;
         }
 
-
-        /// <summary>
-        /// Starts the TCP Server listening for new clients.
-        /// </summary>
         public void Start()
         {
-            // On verrouille la liste des clients pour le nettoyage initial
-            _clients.SafeWriteAction(liste =>
-            {
-                foreach (TcpClient client in liste)
-                {
-                    if (client != null)
-                    {
-                        if (client.Connected && client.GetStream() != null)
-                        {
-                            client.GetStream().Close();
-                        }
-                        client.Close();
-                    }
-                }
-                liste.Clear(); // Vidage sécurisé
-            });
+            _serverCts = new CancellationTokenSource();
 
-            // Le reste de l'initialisation reste inchangé
-            ListenerHelper.StartListening(ref tcpListener, _port, new AsyncCallback(DoAcceptTcpClientCallback));
+            ClearAllClients();
+
+            _tcpListener = new TcpListener(_localaddr, _port);
+            _tcpListener.Start();
+
+            // Boucle asynchrone non-bloquante pour accepter les clients
+            _ = AcceptLoopAsync(_serverCts.Token);
         }
 
-        /// <summary>
-        /// Stops the TCP Server listening for new clients and disconnects
-        /// any currently connected clients.
-        /// </summary>
         public void Stop()
         {
-            this.tcpListener.Stop();
-
-            _clients.SafeWriteAction(liste =>
-            {
-                foreach (TcpClient client in liste)
-                {
-                    if (client != null)
-                    {
-                        if (client.Connected && client.GetStream() != null)
-                        {
-                            client.GetStream().Dispose();
-                            client.GetStream().Close();
-                        }
-                        client.Close();
-                    }
-                }
-                liste.Clear();
-            });
-
-            ListenerHelper.StopListening(ref tcpListener);
+            _serverCts?.Cancel();
+            _tcpListener?.Stop();
+            ClearAllClients();
         }
 
-
-        private void DoAcceptTcpClientCallback(IAsyncResult ar)
+        private async Task AcceptLoopAsync(CancellationToken token)
         {
-            ListenerHelper.ListenerAndClient objListenerAndClient = (
-                ListenerHelper.ListenerAndClient)ar.AsyncState;
-            TcpClient client = null;
-
-
-
             try
             {
-                client = objListenerAndClient.Listener.EndAcceptTcpClient(ar);
-                objListenerAndClient.Client = client;
+                while (!token.IsCancellationRequested)
+                {
+                    // En .NET Standard 2.0, AcceptTcpClientAsync ne prend pas de CancellationToken.
+                    // L'arrêt est géré par la levée d'une exception lors du _tcpListener.Stop()
+                    TcpClient client = await _tcpListener.AcceptTcpClientAsync().ConfigureAwait(false);
+
+                    OnConnection?.Invoke(this, client);
+
+                    // On délègue le traitement initial au ThreadPool pour ne pas bloquer l'acceptation
+                    _ = Task.Run(() => HandleReceive(client), token);
+                }
             }
-            catch (ObjectDisposedException ex)
+            catch (ObjectDisposedException) { /* Arrêt via Stop(), comportement normal */ }
+            catch (SocketException ex) when (ex.SocketErrorCode == SocketError.OperationAborted || ex.SocketErrorCode == SocketError.Interrupted) { }
+            catch (Exception ex)
             {
-                //Stop Listening 
-
-                objListenerAndClient.Client?.Close();
-
-                ExceptionHelper.ShowException(ex);
-
-                return;
+                LogError(ex);
             }
-
-            OnConnection?.Invoke(this, client);
-
-            // --- CORRECTION .NET 10 ---
-            // On remplace le délégué.BeginInvoke par Task.Run
-            // Cela exécute l'initialisation du client (HandleReceive) en arrière-plan
-            _ = Task.Run(() => HandleReceive(client));
-
-            objListenerAndClient.Listener.BeginAcceptTcpClient(
-             new AsyncCallback(DoAcceptTcpClientCallback), objListenerAndClient);
         }
 
         private void HandleReceive(TcpClient client)
         {
-            LogHelper.ShowLog("", client, LogHelper.TypeLog.Connect);
+            LogEvent("Receive connect\r\n");
 
             _clients.SafeWriteAction(liste => liste.Add(client));
 
-            //Program.frmMainForm.delAddClient.Invoke(client);
-
             ClientConnection objClientConnection = new ClientConnection(client, _endMsgTag);
-            objClientConnection.OnMessageReceived += new ClientConnection.MessageReceive(OnReceive);
-            objClientConnection.OnRemoteHostClosed += new ClientConnection.RemoteHostClose(OnRemoteHostClose);
+
+            // 1. D'abord on s'abonne ! (Fix de la Race Condition)
+            objClientConnection.OnMessageReceived += OnReceive;
+            objClientConnection.OnRemoteHostClosed += OnRemoteHostClose;
+
+            // 2. Ensuite on lance la boucle de lecture réseau
+            objClientConnection.StartRead();
         }
 
         private void OnReceive(ClientConnection sender, string data)
         {
             try
             {
-                OnDataRecieve?.Invoke(tcpListener, sender.Client, data);
+                OnDataRecieve?.Invoke(_tcpListener, sender.Client, data);
 
                 _receive_data += (ulong)data.Length;
 
-                ulong len = (ulong)(data.Length);
-                ulong rdat = (ulong)(_receive_data);
-                LogHelper.ShowLog(len.SizeSuffix() + "  ---  " + rdat.SizeSuffix(), sender.Client, LogHelper.TypeLog.ReceiveData);
-                //LogHelper.ShowLog((data.Length / 1000) + "Ko" + "  ---  " + _receive_data / 1000 + "Ko", sender.Client, LogHelper.TypeLog.ReceiveData);
+                LogEvent($"Receive {((ulong)data.Length).SizeSuffix()}  ---  {_receive_data.SizeSuffix()}");
             }
             catch (Exception ex)
             {
-                ExceptionHelper.ShowException(ex);
+                LogError(ex);
             }
         }
 
         private void OnRemoteHostClose(ClientConnection sender)
         {
-            LogHelper.ShowLog("", sender.Client, LogHelper.TypeLog.RemoteClose);
-            int currentClientCount = 0;
+            LogEvent("Remote Close\r\n");
 
-            _clients.SafeWriteAction(liste =>
-            {
-                liste.Remove(sender.Client);
-                currentClientCount = liste.Count;
-            });
-
-            OnEndConnection?.Invoke(tcpListener, sender.Client);
-
-            if (currentClientCount == 0)
-            {
-                ListenerHelper.StartListening(ref tcpListener, _port, new AsyncCallback(DoAcceptTcpClientCallback));
-            }
+            _clients.SafeWriteAction(liste => liste.Remove(sender.Client));
+            OnEndConnection?.Invoke(_tcpListener, sender.Client);
         }
 
-        /// <summary>
-        /// Writes a string to a client connected.
-        /// </summary>        
-        /// <param name="tcpClient">the client</param>
-        /// <param name="data">The string to send.</param>
         public void Write(TcpClient tcpClient, string data)
         {
             _sentData.SafeWriteAction(liste =>
             {
-                SentData sent = liste.FirstOrDefault(o => o != null && o.Client == tcpClient);
+                SentData sent = liste.FirstOrDefault(o => o?.Client == tcpClient);
                 if (sent == null)
-                {
                     liste.Add(new SentData { Data = data, Client = tcpClient, Tentative = 1 });
-                }
                 else
-                {
-                    liste.Add(new SentData { Data = data, Client = tcpClient, Tentative = sent.Tentative + 1 });
-                }
+                    sent.Tentative += 1;
             });
 
-            bool send = ListenerHelper.SendData(tcpClient, data, new AsyncCallback(DoSending));
-
-            _sent_data += (ulong)data.Length;
-
-            ulong len = (ulong)(data.Length);
-            ulong rdat = (ulong)(_sent_data);
-
-            LogHelper.ShowLog(len.SizeSuffix() + "  ---  " + rdat.SizeSuffix(), tcpClient, LogHelper.TypeLog.SentData);
+            _ = WriteAsync(tcpClient, data);
         }
 
-        /// <summary>
-        /// Writes a string to all clients connected.
-        /// </summary>
-        /// <param name="data">The string to send.</param>
         public void Write(string data)
         {
-            // On prend un snapshot rapide de la liste (Lecture)
             var snapshotClients = _clients.SafeReadAction(liste => liste.ToList());
-
-            // On envoie les données en dehors du verrou pour ne pas bloquer le serveur
             foreach (TcpClient client in snapshotClients)
             {
                 Write(client, data);
             }
         }
 
-        #region DoSending
-        /// <summary>
-        /// Attends l'envoie de données 
-        /// </summary>
-        /// <param name="ar"></param>
-        public void DoSending(IAsyncResult ar)
+        private async Task WriteAsync(TcpClient client, string data)
         {
-            TcpClient client = null;
+            if (client == null || !client.Connected)
+            {
+                HandleWriteFailure(client);
+                return;
+            }
+
             try
             {
-                client = (TcpClient)ar.AsyncState;
-                NetworkStream networkStream = client.GetStream();
-                networkStream.EndWrite(ar);
+                string finalMessage = data + "\n<EOF>";
+                byte[] bytes = FileSystemHelper.TheEncoding.GetBytes(finalMessage);
 
-                _sentData.SafeWriteAction(liste =>
-                {
-                    liste.RemoveAll(o => o != null && o.Client == client);
-                });
+                var stream = client.GetStream();
+
+                // Utilisation stricte de la surcharge .NET Standard 2.0 (sans Memory ni Span)
+                await stream.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
+                await stream.FlushAsync().ConfigureAwait(false);
+
+                _sentData.SafeWriteAction(liste => liste.RemoveAll(o => o?.Client == client));
+
+                _sent_data += (ulong)data.Length;
 
                 OnDataSent?.Invoke(this, client);
+                LogEvent($"Sent {((ulong)data.Length).SizeSuffix()}  ---  {_sent_data.SizeSuffix()}");
             }
             catch (Exception ex)
             {
-                ExceptionHelper.ShowException(ex);
-                SentData sent = _sentData.SafeReadAction(liste => liste.FirstOrDefault(o => o != null && o.Client == client));
-                if (sent == null)
-                {
-                    Write(client, sent.Data);
-                }
+                LogError(ex);
+                HandleWriteFailure(client);
             }
         }
-        #endregion
+
+        private void HandleWriteFailure(TcpClient client)
+        {
+            SentData sent = _sentData.SafeReadAction(liste => liste.FirstOrDefault(o => o?.Client == client));
+            // Limitation des retry à 3 pour éviter une boucle infinie de relance asynchrone
+            if (sent != null && sent.Tentative < 3)
+            {
+                Write(client, sent.Data);
+            }
+        }
+
+        private void ClearAllClients()
+        {
+            _clients.SafeWriteAction(liste =>
+            {
+                foreach (TcpClient client in liste)
+                {
+                    if (client?.Connected == true) client.GetStream()?.Close();
+                    client?.Close();
+                }
+                liste.Clear();
+            });
+        }
+
+        private void LogEvent(string message) => LogTools.Logger?.Debug(message);
+        private void LogError(Exception ex) => LogTools.Logger?.Error(new ServerException(ex.Message, ex));
     }
 
     internal class SentData
