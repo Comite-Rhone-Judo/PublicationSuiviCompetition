@@ -4,7 +4,7 @@ using Xunit;
 using FluentAssertions;
 using FranceJudo.Metier.Structures;
 
-namespace FranceJudo.Core.Tests.Metier.Structures
+namespace FranceJudo.Metier.Tests.Structures
 {
     public class EntitePublicationFFJudoTests
     {

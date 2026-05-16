@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FranceJudo.Metier\FranceJudo.Metier.csproj" />
+    <ProjectReference Include="..\KernelImpl\KernelImpl.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Network\" />
+    <Folder Include="Noyau\" />
   </ItemGroup>
 
 </Project>

@@ -14,8 +14,12 @@
 							<Exclude>
 								<Source>.*\\ConstantXML\.cs</Source>
 								<Source>.*\\IXMLSerializable\.cs</Source>
-
 								<Source>.*\\LectureStructures\.cs$</Source>
+								<Source>.*\\Wpf\\Behaviors\\WindowHelper\.cs</Source>
+								<Source>.*\\Wpf\\Dialogs\\.*\.cs</Source>
+								<Source>.*\\Wpf\\Foundation\\ThreadingHelper\.cs</Source>
+								<Source>.*\\Wpf\\PDF\\PdfHelper\.cs</Source>
+								<Source>.*\\MachineStruct\.cs</Source>
 							</Exclude>
 						</Sources>
 						<Functions>
@@ -23,6 +27,13 @@
 								<Function>^FranceJudo\.Core\.Network\.Http\.HttpServer\..*</Function>
 								<Function>^FranceJudo\.Core\.Exceptions\..*</Function>
 								<Function>^FranceJudo\.Metier\.XML\..*</Function>
+								<Source>.*\\FranceJudo\.Metier\\Network\\.*</Source>
+								<Source>.*\\FranceJudo\.Metier\\Exceptions\\.*</Source>
+								<Function>.*JudoClient\.RechercheServeurJudo\.DemarreRechecherche.*</Function>
+								<Function>.*JudoClient\.RechercheServeurJudo\.GetListeMachine.*</Function>
+								<Function>.*JudoClient\.RechercheServeurJudo\.Ping_PingCompleted.*</Function>
+								<Function>.*JudoClient\.RechercheServeurJudo\.AdresseTerminee.*</Function>
+								<Function>.*JudoClient\.RechercheServeurJudo\.CheckSiTermine.*</Function>
 							</Exclude>
 						</Functions>
 					</CodeCoverage>

@@ -19,6 +19,7 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.8" />
   </ItemGroup>
   <ItemGroup>
+  <InternalsVisibleTo Include="KernelImpl.Tests" />
     <ProjectReference Include="..\FranceJudo.Core\FranceJudo.Core.csproj" />
     <ProjectReference Include="..\FranceJudo.Metier\FranceJudo.Metier.csproj" />
   </ItemGroup>

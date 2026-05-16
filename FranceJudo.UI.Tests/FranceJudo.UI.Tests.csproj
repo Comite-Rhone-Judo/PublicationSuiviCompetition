@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FranceJudo.Metier\FranceJudo.Metier.csproj" />
+    <ProjectReference Include="..\FranceJudo.UI\FranceJudo.UI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Network\" />
+    <Folder Include="Wpf\PDF\" />
   </ItemGroup>
 
 </Project>

@@ -2,20 +2,14 @@
 using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
 using System;
-using System.IO;
-using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace FranceJudo.Core.Network.Tcp.Client
 {
-    public class ClientGenerique
+    public class ClientGenerique : IClientGenerique
     {
-        public delegate void OnConnectionHandler(object sender);
-        public delegate void OnDataRecieveHandler(object sender, string donnees);
-        public delegate void OnDataSentHandler(object sender);
-        public delegate void OnEndConnectionHandler(object sender);
 
         public event OnConnectionHandler OnConnection;
         public event OnDataRecieveHandler OnDataRecieve;

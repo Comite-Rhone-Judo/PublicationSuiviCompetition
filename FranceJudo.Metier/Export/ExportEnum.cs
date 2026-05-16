@@ -1,4 +1,5 @@
-﻿namespace FranceJudo.Metier.Export
+﻿
+namespace FranceJudo.Metier.Export
 {
     /// <summary>
     /// Enumération des type d'export

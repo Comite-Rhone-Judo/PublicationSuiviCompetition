@@ -13,13 +13,13 @@ namespace JudoClient
 
     public class ClientJudo
     {
-        private readonly ClientGenerique _client = null;
+        private readonly IClientGenerique _client = null;
 
         public event OnEndConnectionHandler OnEndConnection;
         public event OnReceivedDataEventOccured OnReceivedDataErrorOccured;
         public event OnReceivedDataEventOccured OnReceivedDataSuccessOccured;
 
-        public ClientGenerique NetworkClient { get { return _client; } }
+        public IClientGenerique NetworkClient { get { return _client; } }
 
 
         private readonly TraitementArbitrage _traitement_arb = null;
@@ -64,7 +64,19 @@ namespace JudoClient
             }
         }
 
+
+        /// <summary>
+        /// Constructeur principal du client Judo, qui initialise la connexion au serveur de judo et les différents traitements associés.
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <param name="port"></param>
         public ClientJudo(string ip, int port)
+            : this(new ClientGenerique(ip, port, "</" + ConstantXML.ServerJudo + ">")) {}
+
+        // ---------------------------------------------------------
+        // 1. CONSTRUCTEUR POUR LES TESTS UNITAIRES (INJECTION)
+        // ---------------------------------------------------------
+        public ClientJudo(IClientGenerique clientInjecte)
         {
             _traitement_arb = new TraitementArbitrage(this);
             _traitement_cate = new TraitementCategories(this);
@@ -75,8 +87,7 @@ namespace JudoClient
             _traitement_part = new TraitementParticipants(this);
             _traitement_struc = new TraitementStructure(this);
 
-            string endTag = "</" + ConstantXML.ServerJudo + ">";
-            _client = new ClientGenerique(ip, port, endTag);
+            _client = clientInjecte;
 
             _client.OnConnection += Client_OnConnection;
             _client.OnDataRecieve += Client_OnDataRecieve;

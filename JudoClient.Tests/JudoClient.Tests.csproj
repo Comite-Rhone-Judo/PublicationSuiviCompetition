@@ -24,15 +24,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FranceJudo.Metier\FranceJudo.Metier.csproj" />
+    <ProjectReference Include="..\JudoClient\JudoClient.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="Xunit" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Network\" />
   </ItemGroup>
 
 </Project>

@@ -28,7 +28,7 @@ namespace JudoClient.Communication
 
         public void ListeJudokas(XElement element)
         {
-            OnListeJudokas?.Invoke(this, element);
+            OnListeJudokas?.Invoke(_client, element);
         }
 
 
@@ -39,7 +39,7 @@ namespace JudoClient.Communication
 
         public void ListeLicencies(XElement element)
         {
-            OnListeLicencies?.Invoke(this, element);
+            OnListeLicencies?.Invoke(_client, element);
         }
 
         private void InscriptionReceived(XElement element)
@@ -57,7 +57,7 @@ namespace JudoClient.Communication
 
         public void UpdateJudokas(XElement element)
         {
-            OnUpdateJudokas?.Invoke(this, element);
+            OnUpdateJudokas?.Invoke(_client, element);
         }
 
         public void UpdateEquipes(XElement element)

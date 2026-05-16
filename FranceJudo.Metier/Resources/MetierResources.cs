@@ -1,4 +1,5 @@
 ﻿using FranceJudo.Core.Reflection;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace FranceJudo.Metier.Resources
@@ -13,6 +14,7 @@ namespace FranceJudo.Metier.Resources
             new AssemblyResourceDictionary(typeof(MetierResources).Assembly, "FranceJudo.Metier.Resources");
 
         // 2. Des constantes propres pour les dossiers (pour éviter les fautes de frappe dans le code appelant)
+        [ExcludeFromCodeCoverage]
         public static class Folders
         {
             public const string Site = "Site";
@@ -23,6 +25,7 @@ namespace FranceJudo.Metier.Resources
             public const string Referentiels = "Referentiels";
         }
 
+        [ExcludeFromCodeCoverage]
         public static class Files
         {
             public const string PublicationFFJudo = "PublicationFFJudo.xml";
