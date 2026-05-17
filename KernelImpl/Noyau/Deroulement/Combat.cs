@@ -840,7 +840,7 @@ namespace KernelImpl.Noyau.Deroulement
             else
             {
                 string res = "";
-                CompetitionDisciplineEnum discipline = DC?.Organisation?.Competition?.discipline.ByString2() ?? CompetitionDisciplineEnum.Judo;
+                CompetitionDisciplineEnum discipline = DC?.Organisation?.Competition?.discipline.ByString2() ?? CompetitionDisciplineEnum.JujitsuNeWaza;
                 if (this.vainqueur == this.participant1)
                 {
                     res = this.GetScoreJujitsu(discipline, DC, 1);
@@ -907,7 +907,8 @@ namespace KernelImpl.Noyau.Deroulement
             }
             else
             {
-                CompetitionDisciplineEnum discipline = CompetitionDisciplineEnum_Extension.ByString2(DC.Organisation.Competition.discipline);
+                CompetitionDisciplineEnum discipline = DC?.Organisation?.Competition?.discipline?.ByString2() ?? CompetitionDisciplineEnum.JujitsuNeWaza;
+
                 if (this.vainqueur == this.participant2)
                 {
                     return this.GetScoreJujitsu(discipline, DC, 1);
@@ -1136,6 +1137,8 @@ namespace KernelImpl.Noyau.Deroulement
             }
             else
             {
+                if(this.scoresJujitsu == null) { return string.Empty; }
+
                 ScoresJujitsu scoresJson = Newtonsoft.Json.JsonConvert.DeserializeObject<ScoresJujitsu>(this.scoresJujitsu);
                 scoresJson ??= new ScoresJujitsu();
 

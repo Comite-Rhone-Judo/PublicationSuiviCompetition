@@ -113,7 +113,7 @@ namespace KernelImpl.Noyau.Organisation
             XElement xepreuve = new XElement(ConstantXML.Epreuve);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_Categorie_Age, categorieAge.ToString());
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_Categorie_Poids, categoriePoids.ToString());
-            xepreuve.SetAttributeValue(ConstantXML.Epreuve_Nom, nom.ToString());
+            xepreuve.SetAttributeValue(ConstantXML.Epreuve_Nom, nom);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_Grade_Min, ceintureMin.ToString());
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_Grade_Max, ceintureMax.ToString());
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_RemoteID, remoteID);
@@ -127,7 +127,7 @@ namespace KernelImpl.Noyau.Organisation
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_EquipeEP, epreuve_equipe);
 
             //CateAge
-            if (DC.Categories.CAges != null)
+            if (DC?.Categories?.CAges != null)
             {
                 ICategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == categorieAge);
                 if (cateAge != null)
@@ -137,7 +137,7 @@ namespace KernelImpl.Noyau.Organisation
                 }
             }
 
-            if (DC.Categories.CPoids != null)
+            if (DC?.Categories?.CPoids != null)
             {
                 //CatePoids
                 ICategoriePoids catePoids = DC.Categories.CPoids.FirstOrDefault(o => o.id == categoriePoids);
@@ -163,7 +163,7 @@ namespace KernelImpl.Noyau.Organisation
         {
             Competition compet = competitions.FirstOrDefault(o => o.id == competition);
 
-            return this.nom + " " + (compet != null ? (" (" + compet.nom + ")") : "");
+            return this.nom + " " + (compet != null ? ("(" + compet.nom + ")") : "");
         }
 
         /// <summary>

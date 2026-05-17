@@ -78,19 +78,19 @@ namespace KernelImpl.Noyau.Organisation
             anneeMax = epreuve.anneeMax;
             categorieAge = epreuve.categorieAge;
 
-            ICategorieAge c_age = DC.Categories.CAges.FirstOrDefault(o => o.id == epreuve.categorieAge);
+            ICategorieAge c_age = DC?.Categories?.CAges?.FirstOrDefault(o => o.id == epreuve.categorieAge);
 
-            nom_cateage = c_age != null ? c_age.nom : "";
-            ordre = c_age != null ? c_age.ordre : "0";
-            remoteId_cateage = c_age != null ? c_age.remoteId : "";
+            nom_cateage = c_age?.nom ?? String.Empty;
+            ordre = c_age?.ordre ?? "0";
+            remoteId_cateage = c_age?.remoteId ?? string.Empty;
 
             //phase1 = ;
             //phase2 = ;
 
-            ICompetition compet = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
+            ICompetition compet = DC?.Organisation?.Competitions?.FirstOrDefault(o => o.id == epreuve.competition);
 
-            nom_compet = compet != null ? compet.nom : "";
-            discipline_competition = compet != null ? compet.disciplineId : CompetitionDisciplineEnum.Judo;
+            nom_compet = compet?.nom ?? string.Empty;
+            discipline_competition = compet?.disciplineId ?? CompetitionDisciplineEnum.Judo;
         }
 
         public void LoadXml(XElement node) { throw new NotImplementedException(); }
@@ -99,7 +99,7 @@ namespace KernelImpl.Noyau.Organisation
         {
             XElement xepreuve = new XElement(ConstantXML.Epreuve);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_Categorie_Age, categorieAge.ToString());
-            xepreuve.SetAttributeValue(ConstantXML.Epreuve_Nom, nom.ToString());
+            xepreuve.SetAttributeValue(ConstantXML.Epreuve_Nom, nom);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_Grade_Min, ceintureMin.ToString());
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_Grade_Max, ceintureMax.ToString());
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_RemoteID, remoteID);
@@ -111,7 +111,7 @@ namespace KernelImpl.Noyau.Organisation
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_AnneeMax, anneeMax);
             xepreuve.SetAttributeValue(ConstantXML.Epreuve_CateAge_RemoteId, remoteId_cateage);
 
-            List<IEpreuve> epreuves = DC.Organisation.Epreuves.Where(o => o.epreuve_equipe == this.id).ToList();
+            List<IEpreuve> epreuves = DC?.Organisation?.Epreuves?.Where(o => o.epreuve_equipe == this.id).ToList();
             EpreuveSexe sexe = new EpreuveSexe(EpreuveSexeEnum.Feminine);
 
             if (epreuves.Count(o => o.sexe == 1) > 0 && epreuves.Count(o => o.sexe == 0) > 0)

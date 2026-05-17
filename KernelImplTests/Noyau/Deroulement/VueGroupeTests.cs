@@ -22,6 +22,11 @@ namespace KernelImpl.Tests.Noyau.Deroulement
             Mock<IJudoData> mockDc = new Mock<IJudoData>();
             Mock<IDeroulementData> mockDeroulement = new Mock<IDeroulementData>();
             Mock<IOrganisationData> mockOrganisation = new Mock<IOrganisationData>();
+            Mock<ICompetition> mockCompetition = new Mock<ICompetition>();
+
+            mockCompetition.Setup(c => c.type).Returns((int)CompetitionTypeEnum.Equipe);
+            mockOrganisation.SetupGet(o => o.Competition).Returns(mockCompetition.Object);
+            mockDc.SetupGet(d => d.Organisation).Returns(mockOrganisation.Object);
 
             mockDc.Setup(dc => dc.Deroulement).Returns(mockDeroulement.Object);
             mockDc.Setup(dc => dc.Organisation).Returns(mockOrganisation.Object);

@@ -44,7 +44,7 @@ namespace KernelImpl.Noyau.Deroulement
             groupe_debut = groupe.horaire_debut;
             groupe_fin = groupe.horaire_fin;
             groupe_verrouille = groupe.verrouille;
-            nb_combats_restant = DC.Deroulement.Combats.Count(o => o.groupe == groupe.id && o.vainqueur == null);
+            nb_combats_restant = DC?.Deroulement?.Combats?.Count(o => o.groupe == groupe.id && o.vainqueur == null) ?? 0;
 
             IPhase phase = groupe.GetPhase(DC);
             if (phase != null)

@@ -118,8 +118,8 @@ namespace KernelImpl.Noyau.Deroulement
             combat_penalite2 = combat.penalite2;
             combat_etat = combat.etat;
             combat_niveau = combat.niveau;
-            combat_tapis = (int)combat.tapis;
-            combat_groupe = (int)combat.groupe;
+            combat_tapis = combat.tapis ?? -1;
+            combat_groupe = combat.groupe ?? -1;
             combat_vaiqueur = combat.vainqueur;
             combat_reference = combat.reference;
             combat_details = combat.details;
@@ -129,7 +129,7 @@ namespace KernelImpl.Noyau.Deroulement
             combat_discipline = combat.discipline;
 
             // Ajout de la lecture des donnees de phase et d'epreuve
-            IPhase phase = DC.Deroulement.Phases.FirstOrDefault(o => o.id == combat.phase);
+            IPhase phase = DC?.Deroulement?.Phases?.FirstOrDefault(o => o.id == combat.phase);
             if (phase != null)
             {
                 phase_id = phase.id;
@@ -137,7 +137,7 @@ namespace KernelImpl.Noyau.Deroulement
                 phase_type = phase.typePhase;
                 phase_etat = phase.etat;
 
-                IEpreuve epreuve = DC.Organisation.Epreuves.FirstOrDefault(o => o.id == phase.epreuve);
+                IEpreuve epreuve = DC?.Organisation?.Epreuves?.FirstOrDefault(o => o.id == phase.epreuve);
                 if (epreuve != null)
                 {
                     epreuve_id = epreuve.id;
@@ -150,10 +150,10 @@ namespace KernelImpl.Noyau.Deroulement
                     epreuve_anneeMax = epreuve.anneeMax;
                 }
             }
-
-            if ((CompetitionTypeEnum)DC.Organisation.Competition.type != CompetitionTypeEnum.Equipe)
+            CompetitionTypeEnum typeC = (DC?.Organisation?.Competition != null) ? (CompetitionTypeEnum)DC?.Organisation?.Competition.type : CompetitionTypeEnum.Individuel;
+            if (typeC != CompetitionTypeEnum.Equipe)
             {
-                IJudoka judoka1 = DC.Participants.Judokas.FirstOrDefault(o => o.id == combat.participant1);
+                IJudoka judoka1 = DC?.Participants?.Judokas?.FirstOrDefault(o => o.id == combat.participant1);
                 if (judoka1 != null)
                 {
                     judoka1_id1 = judoka1.id;
@@ -163,7 +163,7 @@ namespace KernelImpl.Noyau.Deroulement
                     judoka1_club1 = judoka1.club;
                 }
 
-                IJudoka judoka2 = DC.Participants.Judokas.FirstOrDefault(o => o.id == combat.participant2);
+                IJudoka judoka2 = DC?.Participants?.Judokas?.FirstOrDefault(o => o.id == combat.participant2);
 
                 if (judoka2 != null)
                 {
@@ -176,14 +176,14 @@ namespace KernelImpl.Noyau.Deroulement
             }
             else
             {
-                IEquipe E1 = DC.Participants.Equipes.FirstOrDefault(o => o.id == combat.participant1);
+                IEquipe E1 = DC?.Participants?.Equipes?.FirstOrDefault(o => o.id == combat.participant1);
                 if (E1 != null)
                 {
                     judoka1_id1 = E1.id;
                     judoka1_nom1 = E1.libelle;
                 }
 
-                IEquipe E2 = DC.Participants.Equipes.FirstOrDefault(o => o.id == combat.participant2);
+                IEquipe E2 = DC?.Participants?.Equipes?.FirstOrDefault(o => o.id == combat.participant2);
                 if (E2 != null)
                 {
                     judoka2_id1 = E2.id;
