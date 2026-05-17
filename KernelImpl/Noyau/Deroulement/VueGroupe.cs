@@ -12,7 +12,7 @@ using System.Xml.Linq;
 
 namespace KernelImpl.Noyau.Deroulement
 {
-    public partial class VueGroupe : IVueGroupe, IEntityWithKey<int>
+    public class VueGroupe : IVueGroupe, IEntityWithKey<int>
     {
 
         int IEntityWithKey<int>.EntityKey => groupe_id;

@@ -39,13 +39,12 @@ namespace KernelImpl.Noyau.Arbitrage
             XElement xdelegue = new System.Xml.Linq.XElement(ConstantXML.Delegue);
 
             xdelegue.SetAttributeValue(ConstantXML.Delegue_ID, id);
-            xdelegue.Add(new XElement(ConstantXML.Delegue_Nom, nom.ToUpper().ToString()));
-            xdelegue.Add(new XElement(ConstantXML.Delegue_Prenom, prenom.ToString()));
-            xdelegue.SetAttributeValue(ConstantXML.Delegue_Mail, mail);
-            xdelegue.SetAttributeValue(ConstantXML.Delegue_Telephone, telephone);
-            xdelegue.SetAttributeValue(ConstantXML.Delegue_Fonction, fonction);
-            xdelegue.Add(new XElement(ConstantXML.Delegue_Commentaire, commentaires.ToString()));
-
+            xdelegue.SetAttributeValue(ConstantXML.Delegue_Nom, nom?.ToUpper() ?? string.Empty);
+            xdelegue.SetAttributeValue(ConstantXML.Delegue_Prenom, prenom ?? string.Empty);
+            xdelegue.SetAttributeValue(ConstantXML.Delegue_Mail, mail ?? string.Empty);
+            xdelegue.SetAttributeValue(ConstantXML.Delegue_Telephone, telephone ?? string.Empty);
+            xdelegue.SetAttributeValue(ConstantXML.Delegue_Fonction, fonction ?? string.Empty);
+            xdelegue.SetAttributeValue(ConstantXML.Delegue_Commentaire, commentaires ?? string.Empty);
 
             return xdelegue;
         }

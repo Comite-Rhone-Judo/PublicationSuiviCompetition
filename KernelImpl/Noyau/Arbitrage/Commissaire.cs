@@ -97,13 +97,16 @@ namespace KernelImpl.Noyau.Arbitrage
             xcommissaire.SetAttributeValue(ConstantXML.Commissaire_Licence, licence);
             xcommissaire.SetAttributeValue(ConstantXML.Commissaire_Nom, nom);
             xcommissaire.SetAttributeValue(ConstantXML.Commissaire_Prenom, prenom);
-            xcommissaire.SetAttributeValue(ConstantXML.Commissaire_Naissance, naissance.ToString("ddMMyyyy"));
+            xcommissaire.SetAttributeValue(ConstantXML.Commissaire_Naissance, naissance.ToString("ddMMyyyy") ?? String.Empty);
             xcommissaire.SetAttributeValue(ConstantXML.Commissaire_Sexe, sexeEnum.ToString());
             xcommissaire.SetAttributeValue(ConstantXML.Commissaire_Modification, modification);
             xcommissaire.SetAttributeValue(ConstantXML.Commissaire_RemoteID, remoteID);
             xcommissaire.SetAttributeValue(ConstantXML.Commissaire_Club, club);
+            xcommissaire.SetAttributeValue(ConstantXML.Commissaire_Comite, comite ?? string.Empty);
+            xcommissaire.SetAttributeValue(ConstantXML.Commissaire_Ligue, ligue ?? string.Empty);
             xcommissaire.SetAttributeValue(ConstantXML.Commissaire_EstResponsable, estResponsable);
             xcommissaire.SetAttributeValue(ConstantXML.Commissaire_Present, present);
+
 
             return xcommissaire;
         }

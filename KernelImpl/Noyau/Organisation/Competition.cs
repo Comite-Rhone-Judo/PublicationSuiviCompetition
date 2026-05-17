@@ -105,6 +105,10 @@ namespace KernelImpl.Noyau.Organisation
 
             this.id = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_ID));
 
+            this.tempsCombat = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_TempsCombat));
+            this.siteInternet = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_SiteInternet));
+            this.codeAcces = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_CodeAcces));
+
             this.date = XMLTools.LectureDate(xinfo.Attribute(ConstantXML.Competition_Date), "ddMMyyyy", DateTime.Now);
             this.remoteId = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_RemoteID));
             this.type = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_Type));
@@ -154,9 +158,13 @@ namespace KernelImpl.Noyau.Organisation
             xcompetition.SetAttributeValue(ConstantXML.Competition_Tapis, nbTapis.ToString());
             xcompetition.SetAttributeValue(ConstantXML.Competition_TempsMedical, tempsMedical.ToString());
 
+            xcompetition.SetAttributeValue(ConstantXML.Competition_TempsCombat, tempsCombat);
+            xcompetition.SetAttributeValue(ConstantXML.Competition_SiteInternet, siteInternet ?? string.Empty);
+            xcompetition.SetAttributeValue(ConstantXML.Competition_CodeAcces, codeAcces ?? string.Empty);
+
             xcompetition.Add(new XElement(ConstantXML.Competition_Titre, nom));
             xcompetition.Add(new XElement(ConstantXML.Competition_Lieu, lieu));
-            xcompetition.SetAttributeValue(ConstantXML.Competition_ReglementEquipe, reglementEquipe.ToString());
+            xcompetition.SetAttributeValue(ConstantXML.Competition_ReglementEquipe, (int) reglementEquipe);
             return xcompetition;
         }
 

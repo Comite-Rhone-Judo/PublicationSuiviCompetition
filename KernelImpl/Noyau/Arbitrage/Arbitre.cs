@@ -95,9 +95,9 @@ namespace KernelImpl.Noyau.Arbitrage
             XElement xarbitre = new XElement(ConstantXML.Arbitre);
             xarbitre.SetAttributeValue(ConstantXML.Arbitre_ID, id);
             xarbitre.SetAttributeValue(ConstantXML.Arbitre_Licence, licence);
-            xarbitre.SetAttributeValue(ConstantXML.Arbitre_Nom, nom.ToUpper());
-            xarbitre.SetAttributeValue(ConstantXML.Arbitre_Prenom, prenom.FormatPrenom());
-            xarbitre.SetAttributeValue(ConstantXML.Arbitre_Naissance, naissance.ToString("ddMMyyyy"));
+            xarbitre.SetAttributeValue(ConstantXML.Arbitre_Nom, nom?.ToUpper() ?? string.Empty);
+            xarbitre.SetAttributeValue(ConstantXML.Arbitre_Prenom, prenom?.FormatPrenom() ?? string.Empty);
+            xarbitre.SetAttributeValue(ConstantXML.Arbitre_Naissance, naissance.ToString("ddMMyyyy") ?? string.Empty);
             xarbitre.SetAttributeValue(ConstantXML.Arbitre_Sexe, sexeEnum.ToString());
             xarbitre.SetAttributeValue(ConstantXML.Arbitre_Modification, modification);
             xarbitre.SetAttributeValue(ConstantXML.Arbitre_RemoteID, remoteID);

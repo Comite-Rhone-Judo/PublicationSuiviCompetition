@@ -66,7 +66,7 @@ namespace KernelImpl.Tests.Internal
             {
                 if (i % 5 == 0) // 20% d'écritures massives de listes
                 {
-                    var newList = new List<ConcurrencyDummy>
+                    List<ConcurrencyDummy> newList = new List<ConcurrencyDummy>
                     {
                         new ConcurrencyDummy { Id = i, Data = "A" },
                         new ConcurrencyDummy { Id = i + 1, Data = "B" }

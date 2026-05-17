@@ -24,8 +24,8 @@ namespace KernelImpl.Noyau.Logos
 
         // Accesseurs O(1)
         public IReadOnlyList<string> Fede { get { return _fedeCache.Cache; } }
-        public IReadOnlyList<string> Ligue { get { return _fedeCache.Cache; } }
-        public IReadOnlyList<string> Sponsors { get { return _fedeCache.Cache; } }
+        public IReadOnlyList<string> Ligue { get { return _ligueCache.Cache; } }
+        public IReadOnlyList<string> Sponsors { get { return _logosCache.Cache; } }
 
 
         /// <summary>
@@ -42,8 +42,8 @@ namespace KernelImpl.Noyau.Logos
             ICollection<string> ligues = allLogos.Where(o => o.Contains(AppDirectoryManager.Logo2Dir)).ToList();
 
             _logosCache.UpdateFullSnapshot(logos, o => o);
-            _fedeCache.UpdateFullSnapshot(logos, o => o);
-            _ligueCache.UpdateFullSnapshot(logos, o => o);
+            _fedeCache.UpdateFullSnapshot(fede, o => o);
+            _ligueCache.UpdateFullSnapshot(ligues, o => o);
         }
 
         #region METHODES PRIVEES

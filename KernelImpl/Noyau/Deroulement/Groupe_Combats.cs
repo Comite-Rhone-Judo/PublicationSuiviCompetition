@@ -60,6 +60,7 @@ namespace KernelImpl.Noyau.Deroulement
             this.id = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Groupe_ID));
             this.tapis = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Groupe_Tapis));
             this.libelle = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Groupe_Libelle));
+            this.numero = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Groupe_Numero));
 
             this.horaire_debut =
                 XMLTools.LectureDate(xinfo.Attribute(ConstantXML.Groupe_Horaire_Debut_Date), "ddMMyyyy", DateTime.Now) +
@@ -80,6 +81,7 @@ namespace KernelImpl.Noyau.Deroulement
             xgroupe.SetAttributeValue(ConstantXML.Groupe_ID, id);
             xgroupe.SetAttributeValue(ConstantXML.Groupe_Tapis, tapis);
             xgroupe.SetAttributeValue(ConstantXML.Groupe_Libelle, libelle);
+            xgroupe.SetAttributeValue(ConstantXML.Groupe_Numero, numero);
 
             xgroupe.SetAttributeValue(ConstantXML.Groupe_Horaire_Debut_Date, horaire_debut.HasValue ? ((DateTime)horaire_debut).ToString("ddMMyyyy") : null);
             xgroupe.SetAttributeValue(ConstantXML.Groupe_Horaire_Debut_Time, horaire_debut.HasValue ? ((DateTime)horaire_debut).ToString("HHmmss") : null);

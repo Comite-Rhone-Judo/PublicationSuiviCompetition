@@ -96,6 +96,9 @@
         //Compétition 
         public const string Competition = "competition";
         public const string Competition_ID = "ID";
+        public const string Competition_TempsCombat = "tempsCombat";
+        public const string Competition_SiteInternet = "siteInternet";
+        public const string Competition_CodeAcces = "codeAcces";
         public const string Competition_ID2 = "id";
         public const string Competition_RemoteID = "RemoteID";
         public const string Competition_Date = "date";
@@ -293,6 +296,7 @@
         public const string Groupe_ID = "id";
         public const string Groupe_Tapis = "tapis";
         public const string Groupe_Libelle = "libelle";
+        public const string Groupe_Numero = "nom";
         public const string Groupe_Horaire_Debut_Date = "horaire_debut_date";
         public const string Groupe_Horaire_Debut_Time = "horaire_debut_time";
         public const string Groupe_Horaire_Fin_Date = "horaire_fin_date";

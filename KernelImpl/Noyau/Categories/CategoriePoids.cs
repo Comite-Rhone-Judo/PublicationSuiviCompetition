@@ -74,14 +74,14 @@ namespace KernelImpl.Noyau.Categories
         {
             XElement xcatepoids = new XElement(ConstantXML.CatePoids);
             xcatepoids.SetAttributeValue(ConstantXML.CatePoids_id, id.ToString());
-            xcatepoids.SetAttributeValue(ConstantXML.CatePoids_nom, nom.ToString());
-            xcatepoids.SetAttributeValue(ConstantXML.CatePoids_ordre, ordre.ToString());
+            xcatepoids.SetAttributeValue(ConstantXML.CatePoids_nom, nom);
+            xcatepoids.SetAttributeValue(ConstantXML.CatePoids_ordre, ordre);
             xcatepoids.SetAttributeValue(ConstantXML.CatePoids_remoteId, remoteId);
             xcatepoids.SetAttributeValue(ConstantXML.CatePoids_poidsMin, poidsMin);
             xcatepoids.SetAttributeValue(ConstantXML.CatePoids_poidsMax, poidsMax);
-            xcatepoids.SetAttributeValue(ConstantXML.CatePoids_sexe, sexeEnum.ToString());
+            xcatepoids.SetAttributeValue(ConstantXML.CatePoids_sexe, sexe.ToString());
             xcatepoids.SetAttributeValue(ConstantXML.CatePoids_cateage, categorieAge);
-            xcatepoids.SetAttributeValue(ConstantXML.CatePoids_equipe, equipe.ToString().ToLower());
+            xcatepoids.SetAttributeValue(ConstantXML.CatePoids_equipe, equipe.ToString()?.ToLower() ?? string.Empty);
             xcatepoids.SetAttributeValue(ConstantXML.CatePoids_discipline, discipline);
             return xcatepoids;
         }

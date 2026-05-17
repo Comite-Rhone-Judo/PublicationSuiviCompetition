@@ -208,7 +208,7 @@ namespace KernelImpl.Noyau.Deroulement
             xcombat.SetAttributeValue(ConstantXML.Combat_Reference, reference);
             xcombat.SetAttributeValue(ConstantXML.Combat_Groupe, groupe);
             xcombat.SetAttributeValue(ConstantXML.Combat_FirstRencontre, first_rencontre);
-            IVueEpreuve ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == first_rencontre);
+            IVueEpreuve ep = DC?.Organisation?.VueEpreuves?.FirstOrDefault(o => o.id == first_rencontre);
             string lib = string.Empty;
             if (ep != null)
             {
@@ -270,7 +270,7 @@ namespace KernelImpl.Noyau.Deroulement
             xcombat.SetAttributeValue(ConstantXML.Combat_PointsGRCH1, pointsGRCH1);
             xcombat.SetAttributeValue(ConstantXML.Combat_PointsGRCH2, pointsGRCH2);
 
-            IFeuille feuille = DC.Deroulement.Feuilles.FirstOrDefault(o => o.combat == this.id);
+            IFeuille feuille = DC?.Deroulement?.Feuilles?.FirstOrDefault(o => o.combat == this.id);
             if (feuille != null)
             {
                 xcombat.SetAttributeValue(ConstantXML.Combat_Repechage, feuille.repechage);
@@ -315,7 +315,7 @@ namespace KernelImpl.Noyau.Deroulement
         public int CalculePointVainqueurJujitsu(IJudoData DC, IParticipant pVainqueur)
         {
             int res = 0;
-            IFeuille feuille = DC.Deroulement.Feuilles.FirstOrDefault(o => o.combat == this.id);
+            IFeuille feuille = DC?.Deroulement?.Feuilles?.FirstOrDefault(o => o.combat == this.id);
             //Pas de feuille => on est dans un combat dans une poule
             if (feuille == null)
             {
@@ -345,7 +345,7 @@ namespace KernelImpl.Noyau.Deroulement
         public int CalculePointPerdantJujitsu(IJudoData DC, IParticipant pPerdant)
         {
             int res = 0;
-            IFeuille feuille = DC.Deroulement.Feuilles.FirstOrDefault(o => o.combat == this.id);
+            IFeuille feuille = DC?.Deroulement?.Feuilles?.FirstOrDefault(o => o.combat == this.id);
             //Pas de feuille => on est dans un combat dans une poule
             if (feuille == null)
             {
@@ -515,7 +515,7 @@ namespace KernelImpl.Noyau.Deroulement
 
         public int CalculeScoreGRCH(IJudoData DC, int? participant)
         {
-            if (DC.Organisation.Competition.type == (int)CompetitionTypeEnum.Equipe)
+            if (DC?.Organisation?.Competition?.type == (int)CompetitionTypeEnum.Equipe)
             {
                 return 0;
             }
@@ -527,7 +527,7 @@ namespace KernelImpl.Noyau.Deroulement
                 zero = zero || participant == null || participant == 0;     // Participant inconnu
                 zero = zero || this.vainqueur == null;                      // pas de vainqueur identifie
                 zero = zero || this.vainqueur != participant;               // Si le judoka n'est pas le vainqueur (perdant = 0 pts)
-                if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.Judo)
+                if (DC?.Organisation?.Competition?.disciplineId == CompetitionDisciplineEnum.Judo)
                 {
                     zero = zero || (this.score1 < 10 && this.score2 < 10);      // Si aucun Waza-Ari ou Ippon dans les scores
                 }
@@ -552,11 +552,11 @@ namespace KernelImpl.Noyau.Deroulement
                 IJudoka j1 = null;
                 IJudoka j2 = null;
 
-                j1 = DC.Participants.Judokas.FirstOrDefault(o => o.id == this.participant1);
-                j2 = DC.Participants.Judokas.FirstOrDefault(o => o.id == this.participant2);
+                j1 = DC?.Participants?.Judokas?.FirstOrDefault(o => o.id == this.participant1);
+                j2 = DC?.Participants?.Judokas?.FirstOrDefault(o => o.id == this.participant2);
 
-                ICeintures grademin = DC.Categories.Grades.FirstOrDefault(o => o.remoteId == "MA");
-                if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.Judo)
+                ICeintures grademin = DC?.Categories?.Grades?.FirstOrDefault(o => o.remoteId == "MA");
+                if (DC?.Organisation?.Competition?.disciplineId == CompetitionDisciplineEnum.Judo)
                 {
                     zero = zero || ((j1?.ceinture ?? 0) < grademin.id || (j2?.ceinture ?? 0) < grademin.id);  //SI GRADE INFERIEUR A MARRON
                 }
@@ -596,14 +596,14 @@ namespace KernelImpl.Noyau.Deroulement
 
 
                 // DGR 2022-03-26 Vu avec Eric Fauroux, en shiai on ne fait pas ce controle pour permettre le deroulement sur les 2D/3D (manque de participant)
-                if (DC.Organisation.Competition.type != (int)CompetitionTypeEnum.Shiai)
+                if (DC?.Organisation?.Competition?.type != (int)CompetitionTypeEnum.Shiai)
                 {
                     // A cette etape de code, le participant est forcement le vainqueur (cas contraire elimine au debut du code)
                     zero = zero || (j1?.id == participant && j1?.ceinture > j2?.ceinture);  //SI GRADE INFERIEUR
                     zero = zero || (j2?.id == participant && j2?.ceinture > j1?.ceinture);  //SI GRADE INFERIEUR
                 }
 
-                if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.Judo)
+                if (DC?.Organisation?.Competition?.disciplineId == CompetitionDisciplineEnum.Judo)
                 {
                     // Les comnbats de barrage en individuelle ne marque pas de points
                     zero = zero || (this.reference.StartsWith("3.")); //SI COMBAT DE BARRAGE
@@ -613,7 +613,7 @@ namespace KernelImpl.Noyau.Deroulement
 
 
                 List<ICombat> combats = new List<ICombat>();
-                combats = DC.Deroulement.Combats.Where(o => o.participant1 == participant || o.participant2 == participant).ToList();
+                combats = DC?.Deroulement?.Combats?.Where(o => o.participant1 == participant || o.participant2 == participant)?.ToList();
 
                 /********************************************************************************************************************
                  * 
@@ -652,7 +652,7 @@ namespace KernelImpl.Noyau.Deroulement
                 }
 
 
-                if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.Judo)
+                if (DC?.Organisation?.Competition?.disciplineId == CompetitionDisciplineEnum.Judo)
                 {
                     if (score11 >= 100 || score11 >= 20)
                     {
@@ -670,7 +670,7 @@ namespace KernelImpl.Noyau.Deroulement
                     ScoresJujitsu scoresJson = Newtonsoft.Json.JsonConvert.DeserializeObject<ScoresJujitsu>(this.scoresJujitsu);
                     scoresJson ??= new ScoresJujitsu();
 
-                    if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.JujitsuCombat)
+                    if (DC?.Organisation?.Competition?.disciplineId == CompetitionDisciplineEnum.JujitsuCombat)
                     {
                         if (participant == participant1)
                         {
@@ -777,13 +777,13 @@ namespace KernelImpl.Noyau.Deroulement
                 return "";
             }
 
-            bool isEquipe = DC.Organisation.Competition.type == (int)CompetitionTypeEnum.Equipe;
+            bool isEquipe = DC?.Organisation?.Competition?.type == (int)CompetitionTypeEnum.Equipe;
 
             int nbV = 0;
             int score = 0;
             int pen = 0;
 
-            if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.Judo)
+            if (DC?.Organisation?.Competition?.disciplineId == CompetitionDisciplineEnum.Judo)
             {
                 if (this.vainqueur == this.participant1)
                 {
@@ -820,7 +820,7 @@ namespace KernelImpl.Noyau.Deroulement
 
                 if (isEquipe)
                 {
-                    return DC.Organisation.Competition.reglementEquipe switch
+                    return DC?.Organisation?.Competition?.reglementEquipe switch
                     {
                         ReglementEquipeEnum.FIJ => string.Format("{0}v", nbV),
                         _ => string.Format("{0}v.{1:000}", nbV, score),
@@ -840,7 +840,7 @@ namespace KernelImpl.Noyau.Deroulement
             else
             {
                 string res = "";
-                CompetitionDisciplineEnum discipline = CompetitionDisciplineEnum_Extension.ByString2(DC.Organisation.Competition.discipline);
+                CompetitionDisciplineEnum discipline = DC?.Organisation?.Competition?.discipline.ByString2() ?? CompetitionDisciplineEnum.Judo;
                 if (this.vainqueur == this.participant1)
                 {
                     res = this.GetScoreJujitsu(discipline, DC, 1);
@@ -868,7 +868,7 @@ namespace KernelImpl.Noyau.Deroulement
             int score = 0;
             int nbV = 0;
 
-            if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.Judo)
+            if (DC?.Organisation?.Competition?.disciplineId == CompetitionDisciplineEnum.Judo)
             {
                 if (this.vainqueur == this.participant2)
                 {
@@ -885,9 +885,9 @@ namespace KernelImpl.Noyau.Deroulement
                     return "";
                 }
 
-                if (DC.Organisation.Competition.type == (int)CompetitionTypeEnum.Equipe)
+                if (DC?.Organisation?.Competition?.type == (int)CompetitionTypeEnum.Equipe)
                 {
-                    return DC.Organisation.Competition.reglementEquipe switch
+                    return DC?.Organisation?.Competition?.reglementEquipe switch
                     {
                         ReglementEquipeEnum.FIJ => string.Format("{0}v", nbV),
                         _ => string.Format("{0}v.{1:000}", nbV, score),
@@ -973,7 +973,7 @@ namespace KernelImpl.Noyau.Deroulement
                 ScoresJujitsu scoresJson = Newtonsoft.Json.JsonConvert.DeserializeObject<ScoresJujitsu>(this.scoresJujitsu);
                 scoresJson ??= new ScoresJujitsu();
 
-                if (DC.Organisation.Competition.disciplineId == CompetitionDisciplineEnum.JujitsuCombat)
+                if (DC?.Organisation?.Competition?.disciplineId == CompetitionDisciplineEnum.JujitsuCombat)
                 {
                     int nbPartiesValideesJujitsuCombat1 = scoresJson.NbPartiesValides(1);
                     int nbPartiesValideesJujitsuCombat2 = scoresJson.NbPartiesValides(2);
@@ -1032,10 +1032,10 @@ namespace KernelImpl.Noyau.Deroulement
 
 
                     int maxPenalites = 4;
-                    IVueEpreuve ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == this.epreuve);
+                    IVueEpreuve ep = DC?.Organisation?.VueEpreuves?.FirstOrDefault(o => o.id == this.epreuve);
                     if (ep is not null)
                     {
-                        ICategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == ep.categorieAge);
+                        ICategorieAge cateAge = DC?.Categories?.CAges?.FirstOrDefault(o => o.id == ep.categorieAge);
                         if (cateAge is not null)
                         {
                             if (cateAge.remoteId == "B" || cateAge.remoteId == "M") //Benjamin ou minime
@@ -1104,10 +1104,10 @@ namespace KernelImpl.Noyau.Deroulement
             if (discipline == CompetitionDisciplineEnum.JujitsuNeWaza)
             {
                 maxPenalites = 4;
-                IVueEpreuve ep = DC.Organisation.VueEpreuves.FirstOrDefault(o => o.id == this.epreuve);
+                IVueEpreuve ep = DC?.Organisation?.VueEpreuves?.FirstOrDefault(o => o.id == this.epreuve);
                 if (ep is not null)
                 {
-                    ICategorieAge cateAge = DC.Categories.CAges.FirstOrDefault(o => o.id == ep.categorieAge);
+                    ICategorieAge cateAge = DC?.Categories?.CAges?.FirstOrDefault(o => o.id == ep.categorieAge);
                     if (cateAge is not null)
                     {
                         if (cateAge.remoteId == "B" || cateAge.remoteId == "M") //Benjamin ou minime
