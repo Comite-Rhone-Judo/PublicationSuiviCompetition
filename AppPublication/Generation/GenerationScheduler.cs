@@ -66,7 +66,7 @@ namespace AppPublication.Generation
         public GenerationScheduler(StatMgrGeneration statMgrGen, StatMgrSynchronisation statMgrSync, IGenerateurSite generateur)
         {
             // Impossible d'etre null
-            if (generateur == null) throw new ArgumentNullException();
+            ArgumentNullException.ThrowIfNull(generateur);
 
             try
             {

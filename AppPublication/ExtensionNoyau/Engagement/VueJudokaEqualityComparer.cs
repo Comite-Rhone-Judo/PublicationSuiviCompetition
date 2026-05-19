@@ -6,7 +6,7 @@ namespace AppPublication.ExtensionNoyau.Engagement
 {
 
     // Comparateur de judokas pour trier les listes de judokas
-    class VueJudokaEqualityComparer : IEqualityComparer<IVueJudoka>
+    public class VueJudokaEqualityComparer : IEqualityComparer<IVueJudoka>
     {
         /// <summary>
         /// Les judokas sont egaux si nom et prenom sont egaux

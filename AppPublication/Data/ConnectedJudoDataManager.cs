@@ -1,6 +1,7 @@
 ﻿using AppPublication.Controles;
 using AppPublication.Statistiques;
 using AppPublication.Tools.Enum;
+using AppPublication.Tools;
 using FranceJudo.Core.Diagnostic;
 using FranceJudo.Core.Logging;
 using FranceJudo.Core.Threading;

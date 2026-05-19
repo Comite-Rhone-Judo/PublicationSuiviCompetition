@@ -1,6 +1,6 @@
 ﻿namespace AppPublication.Statistiques
 {
-    public class StatistiqueItemCompteur : StatistiqueItem
+    internal class StatistiqueItemCompteur : StatistiqueItem
     {
         #region CONSTRUCTEURS
         public StatistiqueItemCompteur(string name, string libelle) : base(name, libelle)

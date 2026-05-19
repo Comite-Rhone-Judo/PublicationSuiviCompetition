@@ -1,7 +1,7 @@
 ﻿using AppPublication.Data;
 using AppPublication.Models.Statistiques;
 using AppPublication.Tools.Enum;
-using AppPublication.ViewModels.Configuration;
+using AppPublication.ViewModels.Main;
 using AppPublication.Views.Configuration;
 using FranceJudo.Core.Environment;
 using FranceJudo.Core.Foundation;

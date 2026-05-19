@@ -1,4 +1,4 @@
-﻿using AppPublication.ViewModels.Configuration;
+﻿using AppPublication.ViewModels.Main;
 using HandyControl.Controls;
 
 namespace AppPublication.Views.Configuration
