@@ -46,7 +46,10 @@ namespace AppPublication.ViewModels.Configuration
             {
                 _selectedInterface = value;
                 // Mémorisation du choix de l'utilisateur dans le contexte
-                if (value != null) _context.LastSelectedInterfaceId = value.Interface.Id;
+                if (value?.Interface != null)
+                {
+                    _context.LastSelectedInterfaceId = value.Interface.Id;
+                }
                 NotifyPropertyChanged();
             }
         }

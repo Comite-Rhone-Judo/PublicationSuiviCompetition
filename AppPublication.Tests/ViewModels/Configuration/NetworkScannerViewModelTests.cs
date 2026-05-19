@@ -57,12 +57,21 @@ namespace AppPublication.Tests.ViewModels.Configuration
             NetworkScannerContext contexte = new NetworkScannerContext();
             NetworkScannerViewModel viewModel = new NetworkScannerViewModel(contexte)
             {
-                // On simule la sélection d'une interface réseau valide
-                SelectedInterface = new NetworkInterfaceDisplay(),
-
                 // Act 1 : État de repos (IsScanning = false)
                 IsScanning = false
             };
+
+
+            // FIX : Création d'un mock pour l'interface réseau
+            var mockInterface = new Moq.Mock<System.Net.NetworkInformation.NetworkInterface>();
+            mockInterface.Setup(ni => ni.Id).Returns("test-id-123");
+
+            // Assignation avec un objet complet
+            viewModel.SelectedInterface = new NetworkInterfaceDisplay
+            {
+                Interface = mockInterface.Object
+            };
+
             bool peutChercherRepos = viewModel.CmdLancerRecherche.CanExecute(null);
             bool peutAnnulerRepos = viewModel.CmdAnnulerRecherche.CanExecute(null);
 
