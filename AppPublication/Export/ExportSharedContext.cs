@@ -20,17 +20,26 @@ namespace AppPublication.Export
         /// </summary>
         public static ExportSharedContext Create(IJudoData DC, ExtendedJudoData EDC, ConfigurationExportSite config)
         {
-            if (DC == null) throw new System.ArgumentNullException(nameof(DC));
-            if (EDC == null) throw new System.ArgumentNullException(nameof(EDC));
-            if (config == null) throw new System.ArgumentNullException(nameof(config));
+            System.ArgumentNullException.ThrowIfNull(DC);
+            System.ArgumentNullException.ThrowIfNull(EDC);
+            System.ArgumentNullException.ThrowIfNull(config);
 
             var context = new ExportSharedContext(DC, EDC, config);
 
-            // Génération du document spécifique aux engagements
-            XDocument outDoc = ExportXML.CreateDocumentEngagements(context);
+            // Injection dans le parent générique via nameof()
+            // Le document spécifique aux engagements
+            context.RegisterLazyDocument(
+                nameof(ExportDocumentKey.Engagements),
+                () => ExportXML.CreateDocumentEngagements(context));
+
+            /*
+             * context.RegisterLazyDocument(
+                nameof(ExportDocumentKey.Statistiques),
+                () => ExportXML.GenererElementStatistiques(context.ExtendedDataContext.Statistiques));
+            */
 
             // Lancement du pipeline centralisé dans la classe mère
-            context.ExecuteExportPipeline(config.ToXml(), outDoc);
+            context.ExecuteExportPipeline(config.ToXml());
 
             return context;
         }

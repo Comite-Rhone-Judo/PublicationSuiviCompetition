@@ -1,4 +1,5 @@
 ﻿using AppPublication.ExtensionNoyau.Engagement;
+using AppPublication.ExtensionNoyau.StatistiquesCombats;
 using FranceJudo.Metier.Noyau;
 
 namespace AppPublication.ExtensionNoyau
@@ -8,6 +9,8 @@ namespace AppPublication.ExtensionNoyau
         /// <summary>
         /// Retourne la section de donnees d'engagement
         /// </summary>
-        DataEngagement Engagement { get; }
+        IDataEngagement Engagement { get; }
+
+        IDataStatistiquesCombats StatistiquesCombats { get; }
     }
 }

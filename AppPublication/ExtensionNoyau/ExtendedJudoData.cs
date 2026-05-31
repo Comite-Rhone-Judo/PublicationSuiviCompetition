@@ -1,4 +1,5 @@
 ﻿using AppPublication.ExtensionNoyau.Engagement;
+using AppPublication.ExtensionNoyau.StatistiquesCombats;
 using FranceJudo.Metier.Noyau;
 using System;
 using System.Threading;
@@ -10,6 +11,7 @@ namespace AppPublication.ExtensionNoyau
         #region MEMBRES
         // On encapsule les données calculées dans des objets Lazy
         private readonly Lazy<DataEngagement> _engagement;
+        private readonly Lazy<DataStatistiquesCombats> _statistiquesCombats;
         #endregion
 
         #region CONSTRUCTEURS
@@ -23,6 +25,11 @@ namespace AppPublication.ExtensionNoyau
                 () => new DataEngagement(snapshot), // <-- La magie est ici !
                 LazyThreadSafetyMode.ExecutionAndPublication
             );
+
+            _statistiquesCombats = new Lazy<DataStatistiquesCombats>(
+                () => new DataStatistiquesCombats(snapshot), // <-- La magie est ici !
+                LazyThreadSafetyMode.ExecutionAndPublication
+            );
         }
 
         #endregion
@@ -31,7 +38,9 @@ namespace AppPublication.ExtensionNoyau
 
         public IJudoData CoreData { get; }
 
-        public DataEngagement Engagement => _engagement.Value;
+        public IDataEngagement Engagement => _engagement.Value;
+
+        public IDataStatistiquesCombats StatistiquesCombats => _statistiquesCombats.Value;
 
         #endregion
     }

@@ -18,8 +18,8 @@ namespace AppPublication.Export
         /// </summary>
         public static ExportSharedContextInterne Create(IJudoData DC, ConfigurationExportSiteInterne config)
         {
-            if (DC == null) throw new System.ArgumentNullException(nameof(DC));
-            if (config == null) throw new System.ArgumentNullException(nameof(config));
+            System.ArgumentNullException.ThrowIfNull(DC);
+            System.ArgumentNullException.ThrowIfNull(config);
 
             var context = new ExportSharedContextInterne(DC, config);
 
@@ -27,7 +27,7 @@ namespace AppPublication.Export
             XDocument outDoc = ExportXML.CreateDocumentFeuilleCombat(context, null, null);
 
             // Lancement du pipeline centralisé dans la classe mère
-            context.ExecuteExportPipeline(config.ToXml(), outDoc);
+            context.ExecuteExportPipeline(config.ToXml());
 
             return context;
         }

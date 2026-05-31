@@ -6,8 +6,11 @@ using FranceJudo.Metier.Noyau.Deroulement;
 using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.Noyau.Participants;
 using FranceJudo.Metier.XML;
+using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
@@ -32,17 +35,26 @@ namespace AppPublication.Export
         // Configuration spécifique remontée pour factorisation
         public XElement SiteConfiguration { get; protected set; }
 
-        // Document principal généré (Unifie DocCombats et DocEngagements)
-        public XmlSource ExportDocument { get; protected set; }
+        // Le registre universel, totalement agnostique
+        private readonly Dictionary<string, Lazy<XPathDocument>> _documentsRegistry;
+
 
         // Dictionnaire ultra-rapide et lock-free pour suivre l'état de generation des prochains combats (peu y avoir des conflits lors des poules/tableau)
         public ConcurrentDictionary<int, bool> ProchainsCombatsGeneres { get; } = new ConcurrentDictionary<int, bool>();
         #endregion
 
+        /// <summary>
+        /// Constructeur protege pour empecher l'instantiation directe et forcer l'utilisation des factories dans les classes filles, garantissant ainsi une initialisation complète et cohérente du contexte partagé.
+        /// </summary>
+        /// <param name="DC"></param>
+        /// <param name="EDC"></param>
         protected ExportSharedContextBase(IJudoData DC, IExtendedJudoData EDC = null)
         {
             DataContext = DC;
             ExtendedDataContext = EDC;
+
+            _documentsRegistry = new Dictionary<string, Lazy<XPathDocument>>(StringComparer.OrdinalIgnoreCase);
+
             // On initialise le cache dès la construction de l'objet de base, il pourront etre utilise pour creer les documents de base (combats et engagements) avant l'enrichissement final
             InitCaches();
 
@@ -51,8 +63,68 @@ namespace AppPublication.Export
             InitReferenceData();
         }
 
+        #region Gestion du registre
+        // =================================================================
+        // GESTION DU REGISTRE (Uniquement du String)
+        // =================================================================
+
+        /// <summary>
+        /// Enregistre un document dans le registre universel avec une clé d'accès. Le document est compilé en XPathDocument de manière paresseuse (lazy) pour optimiser les performances et la mémoire, surtout si certains documents ne sont pas toujours nécessaires.
+        /// </summary>
+        /// <param name="key">La clé d'accès au document</param>
+        /// <param name="document">Le document à enregistrer</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public void RegisterDocument(string key, XNode document)
+        {
+            if (string.IsNullOrWhiteSpace(key)) throw new ArgumentNullException(nameof(key));
+            System.ArgumentNullException.ThrowIfNull(document);
+
+            _documentsRegistry[key] = new Lazy<XPathDocument>(() => CompileToXPathDocument(document));
+        }
+
+        /// <summary>
+        /// Enregistre un document dans le registre universel avec une clé d'accès. Le document est compilé en XPathDocument de manière paresseuse (lazy) pour optimiser les performances et la mémoire, surtout si certains documents ne sont pas toujours nécessaires.
+        /// </summary>
+        /// <param name="key">La clé d'accès au document</param>
+        /// <param name="documentGenerator">La fonction génératrice du document</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public void RegisterLazyDocument(string key, Func<XNode> documentGenerator)
+        {
+            if (string.IsNullOrWhiteSpace(key)) throw new ArgumentNullException(nameof(key));
+            System.ArgumentNullException.ThrowIfNull(documentGenerator);
+
+            _documentsRegistry[key] = new Lazy<XPathDocument>(() => CompileToXPathDocument(documentGenerator()));
+        }
+
+        // =================================================================
+        // ACCESSEURS
+        // =================================================================
+
+        /// <summary>
+        /// Récupère un document compilé sous la forme d'un XPathDocument à partir du registre universel.
+        /// </summary>
+        /// <param name="key">La clé d'accès au document</param>
+        /// <returns>Le document compilé ou null s'il n'existe pas</returns>
+        public XPathDocument GetCompiledDocument(string key)
+        {
+            if (string.IsNullOrWhiteSpace(key)) return null;
+
+            if (_documentsRegistry.TryGetValue(key, out var lazyDoc))
+            {
+                return lazyDoc.Value;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Récupère la liste des clés disponibles pour les documents enregistrés.
+        /// </summary>
+        /// <returns></returns>
+        public IReadOnlyCollection<string> GetAvailableDocumentKeys() => _documentsRegistry.Keys;
+        #endregion
+
         #region METHODES PUBLIQUES D'ENRICHISSEMENT (API EXTERNE)
-       
+
         /// <summary>
         /// Enrichit le document avec toutes les informations (Structure de base + Configuration du site)
         /// </summary>
@@ -83,31 +155,62 @@ namespace AppPublication.Export
                 doc.Root.Add(SiteConfiguration);
             }
         }
-
-        public void Dispose()
-        {
-            // Nettoie le XmlSource (et donc le fichier temporaire si présent)
-            ExportDocument?.Dispose();
-        }
         #endregion
 
         #region METHODES PRIVEES
+
+        // =================================================================
+        // MOTEUR D'OPTIMISATION
+        // =================================================================
+
+        /// <summary>
+        /// Compile un nœud source en un document XPathDocument.
+        /// </summary>
+        /// <param name="sourceNode">Le nœud source à compiler</param>
+        /// <returns>Le document XPathDocument compilé ou null en cas d'erreur</returns>
+        private XPathDocument CompileToXPathDocument(XNode sourceNode)
+        {
+            if (sourceNode == null) return null;
+
+            // 1. Enrichissement systématique si c'est un document complet
+            if (sourceNode is XDocument doc)
+            {
+                EnrichWithFullContext(doc);
+                LogTools.DebugLogData(doc);
+            }
+
+            // 2. Compilation XPath directe en RAM (Zéro fichier temporaire)
+            var settings = new XmlReaderSettings
+            {
+                NameTable = new NameTable(),
+                IgnoreWhitespace = true
+            };
+
+            using (var reader = XmlReader.Create(sourceNode.CreateReader(), settings))
+            {
+                return new XPathDocument(reader);
+            }
+        }
+
         /// <summary>
         /// Workflow centralisé garantissant l'ordre d'initialisation pour toutes les classes filles.
         /// </summary>
-        protected void ExecuteExportPipeline(XElement configXml, XDocument generatedDoc)
+        protected void ExecuteExportPipeline(XElement configXml)
         {
-            // 2. Assignation des spécificités transmises par l'enfant
+            // Assignation des spécificités transmises par l'enfant
             SiteConfiguration = configXml;
-            
-            // 3. Enrichissement automatique du document généré
-            EnrichWithFullContext(generatedDoc);
 
-            // 4. Log
-            LogTools.DebugLogData(generatedDoc);
-
-            // on le fait en dernier car sur un gros document, il peut etre flush sur disque
-            ExportDocument = new XmlSource(generatedDoc);
+            // --- LE DÉCLENCHEUR DEBUG ---
+            // Si votre framework de log (log4net, NLog, Serilog) expose une propriété IsDebugEnabled
+            if (LogTools.Logger != null && LogTools.Logger.IsDebugEnabled)
+            {
+                // On force l'évaluation de TOUS les documents enregistrés.
+                // L'appel à GetCompiledDocument va déclencher le Lazy -> le CompileToXPathDocument -> l'enrichissement -> et le Log !
+                foreach (string key in _documentsRegistry.Keys)
+                {
+                    GetCompiledDocument(key);
+                }
+            }
         }
 
         /// <summary>

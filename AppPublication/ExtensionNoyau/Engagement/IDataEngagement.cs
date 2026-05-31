@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace AppPublication.ExtensionNoyau.Engagement
 {
-    public interface IEngagementData
+    public interface IDataEngagement
     {
         /// <summary>
         /// Les groupes d'engages

@@ -8,11 +8,11 @@ using System.Linq;
 
 namespace AppPublication.ExtensionNoyau.Engagement
 {
-    public class DataEngagement : IEngagementData
+    public class DataEngagement : IDataEngagement
     {
         // 1. Les données deviennent ReadOnly. Une fois calculées, elles sont figées.
-        private readonly IReadOnlyList<GroupeEngagements> _groupesEngages;
-        private readonly IReadOnlyDictionary<int, List<EchelonEnum>> _typesGroupes;
+        private readonly List<GroupeEngagements> _groupesEngages;
+        private readonly Dictionary<int, List<EchelonEnum>> _typesGroupes;
 
         public IReadOnlyList<GroupeEngagements> GroupesEngages => _groupesEngages;
         public IReadOnlyDictionary<int, List<EchelonEnum>> TypesGroupes => _typesGroupes;
@@ -26,7 +26,7 @@ namespace AppPublication.ExtensionNoyau.Engagement
         }
 
         // 3. Les méthodes de calcul (privées) retournent maintenant des dictionnaires/listes
-        private IReadOnlyDictionary<int, List<EchelonEnum>> BuildTypesGroupes(IJudoData dataContext)
+        private Dictionary<int, List<EchelonEnum>> BuildTypesGroupes(IJudoData dataContext)
         {
             var dict = new Dictionary<int, List<EchelonEnum>>();
 
@@ -67,7 +67,7 @@ namespace AppPublication.ExtensionNoyau.Engagement
             return dict;
         }
 
-        private IReadOnlyList<GroupeEngagements> BuildGroupesEngagements(IJudoData DC)
+        private List<GroupeEngagements> BuildGroupesEngagements(IJudoData DC)
         {
             var listGroupes = new List<GroupeEngagements>();
             IList<ICompetition> competitions = DC.Organisation.Competitions.ToList();
@@ -77,7 +77,7 @@ namespace AppPublication.ExtensionNoyau.Engagement
             {
                 if (competition.IsShiai() || competition.IsIndividuelle())
                 {
-                    foreach (EpreuveSexeEnum s in Enum.GetValues(typeof(EpreuveSexeEnum)))
+                    foreach (EpreuveSexeEnum s in Enum.GetValues<EpreuveSexeEnum>())
                     {
                         EpreuveSexe sexe = new EpreuveSexe(s);
                         IList<IEpreuve> epreuvesSexe = DC.Organisation.Epreuves.Where(ep => ep.competition == competition.id && ep.sexeEnum.Enum == s).ToList();
