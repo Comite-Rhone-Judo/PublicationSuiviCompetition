@@ -22,9 +22,12 @@ namespace AppPublication.Export
             System.ArgumentNullException.ThrowIfNull(config);
 
             var context = new ExportSharedContextInterne(DC, config);
-
-            // Génération du document spécifique aux combats (feuilles de combat)
-            XDocument outDoc = ExportXML.CreateDocumentFeuilleCombat(context, null, null);
+            // Enregistrement paresseux (Lazy) du document spécifique aux combats.
+            // La méthode CreateDocumentFeuilleCombat ne sera exécutée que si la clé est appelée.
+            context.RegisterLazyDocument(
+                nameof(ExportDocumentKey.FeuillesCombat),
+                () => ExportXML.CreateDocumentFeuilleCombat(context, null, null)
+            );
 
             // Lancement du pipeline centralisé dans la classe mère
             context.ExecuteExportPipeline(config.ToXml());

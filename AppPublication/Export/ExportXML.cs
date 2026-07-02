@@ -1,5 +1,6 @@
 ﻿using AppPublication.ExtensionNoyau;
 using AppPublication.ExtensionNoyau.Engagement;
+using AppPublication.ExtensionNoyau.StatistiquesCombats;
 using AppPublication.Publication;
 using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
@@ -166,7 +167,7 @@ namespace AppPublication.Export
                 LogTools.Logger?.Debug(ex);
                 return new XElement(ConstantXML.Ceintures);
             }
-        }
+        } 
 
         #endregion
 
@@ -208,6 +209,116 @@ namespace AppPublication.Export
         #endregion
 
         #region Generation Documents XML pour le site
+
+        public static XDocument CreateDocumentStatistiques(ExportSharedContext ctx)
+        {
+            var dataStats = ctx.ExtendedDataContext.StatistiquesCombats;
+
+            // 1. Racine standardisée du framework
+            var root = new XElement(ConstantXML.DocRoot,
+                new XAttribute(ConstantXML.DocType, ConstantXML.DocumentType_DocumentStatistiques)
+            );
+
+            // 2. Le conteneur spécifique aux statistiques
+            var exportStatistiques = new XElement(ConstantXML.Statistiques_ExportStatistiques);
+
+            // 3. Export des Groupes
+            var groupesContainer = new XElement(ConstantXML.GroupeStatistiques_groupes);
+            foreach (var groupe in dataStats.GroupesStatistiques)
+            {
+                groupesContainer.Add(groupe.ToXml());
+            }
+            exportStatistiques.Add(groupesContainer);
+
+            // 4. Export des Items (Lignes de statistiques)
+            var itemsContainer = new XElement(ConstantXML.Statistiques_Items);
+
+            foreach (var kvp in dataStats.Statistiques)
+            {
+                var cle = kvp.Key;
+                var stats = kvp.Value;
+
+                // Instanciation du nœud avec les valeurs garanties non-nulles
+                var itemNode = new XElement(ConstantXML.Statistiques_Item,
+                    new XAttribute(ConstantXML.Statistiques_TypeEntite, cle.TypeEntite.ToString()),
+                    new XAttribute(ConstantXML.Statistiques_IdEntite, cle.IdEntite),
+                    new XAttribute(ConstantXML.Statistiques_Sexe, cle.Sexe.ToString()),
+
+                    new XAttribute(ConstantXML.Statistiques_NbCombats, stats.NbCombats),
+                    new XAttribute(ConstantXML.Statistiques_NbVictoires, stats.NbVictoires),
+                    new XAttribute(ConstantXML.Statistiques_NbHikiwake, stats.NbHikiwake),
+                    new XAttribute(ConstantXML.Statistiques_NbCombatsGoldenScore, stats.NbCombatsGoldenScore)
+                );
+
+                // --- Fonctions locales d'aide à l'injection pour garder le code propre ---
+
+                void AddInt(string nomAttribut, int? valeur)
+                {
+                    if (valeur.HasValue) itemNode.Add(new XAttribute(nomAttribut, valeur.Value));
+                }
+
+                void AddPct(string nomAttribut, double? valeur)
+                {
+                    // Multiplie par 100 et arrondit à 2 décimales pour l'affichage XSLT
+                    if (valeur.HasValue) itemNode.Add(new XAttribute(nomAttribut, Math.Round(valeur.Value * 100, 2)));
+                }
+
+                void AddRawDouble(string nomAttribut, double? valeur)
+                {
+                    // Arrondi simple sans passage en pourcentage (Ex: Moyenne des pénalités)
+                    if (valeur.HasValue) itemNode.Add(new XAttribute(nomAttribut, Math.Round(valeur.Value, 2)));
+                }
+
+                void AddTime(string nomAttribut, TimeSpan? valeur)
+                {
+                    // Exporte au format standard hh:mm:ss pour une lecture directe
+                    if (valeur.HasValue) itemNode.Add(new XAttribute(nomAttribut, valeur.Value.ToString(@"hh\:mm\:ss")));
+                }
+
+                // --- Injection exhaustive de toutes les propriétés nullables ---
+
+                // Participation
+                AddInt(ConstantXML.Statistiques_NbParticipants, stats.NbParticipants);
+                AddInt(ConstantXML.Statistiques_NbCombattants, stats.NbCombattants);
+                AddPct(ConstantXML.Statistiques_PctParticipation, stats.PctParticipation);
+
+                // Ratios globaux
+                AddPct(ConstantXML.Statistiques_PctVictoires, stats.PctVictoires);
+                AddPct(ConstantXML.Statistiques_PctHikiwake, stats.PctHikiwake);
+
+                // Détail des victoires
+                AddPct(ConstantXML.Statistiques_PctVictoireIpponDirect, stats.PctVictoireIpponDirect);
+                AddPct(ConstantXML.Statistiques_PctVictoireWazaAriAwaseteIppon, stats.PctVictoireWazaAriAwaseteIppon);
+                AddPct(ConstantXML.Statistiques_PctVictoireWazaAri, stats.PctVictoireWazaAri);
+                AddPct(ConstantXML.Statistiques_PctVictoireYuko, stats.PctVictoireYuko);
+                AddPct(ConstantXML.Statistiques_PctVictoireSogoGachi, stats.PctVictoireSogoGachi);
+                AddPct(ConstantXML.Statistiques_PctVictoireHansokuMake, stats.PctVictoireHansokuMake);
+
+                // Pénalités
+                AddRawDouble(ConstantXML.Statistiques_MoyennePenalitesParCombat, stats.MoyennePenalitesParCombat);
+
+                // Golden Score (Ratios et Temps)
+                AddPct(ConstantXML.Statistiques_PctCombatsGoldenScore, stats.PctCombatsGoldenScore);
+                AddTime(ConstantXML.Statistiques_DureeMoyenneGoldenScore, stats.DureeMoyenneGoldenScore);
+                AddTime(ConstantXML.Statistiques_DureeMaximaleGoldenScore, stats.DureeMaximaleGoldenScore);
+
+                // Temps de combats globaux
+                AddTime(ConstantXML.Statistiques_DureeCombatMin, stats.DureeCombatMin);
+                AddTime(ConstantXML.Statistiques_DureeCombatMax, stats.DureeCombatMax);
+                AddTime(ConstantXML.Statistiques_DureeCombatMoy, stats.DureeCombatMoy);
+
+                // Ajout du nœud construit à la liste
+                itemsContainer.Add(itemNode);
+            }
+            exportStatistiques.Add(itemsContainer);
+
+            // 5. Ajout à la racine
+            root.Add(exportStatistiques);
+
+            // 6. Retourne le document officiel
+            return new XDocument(new XDeclaration("1.0", "utf-8", "yes"), root);
+        }
+
         /// <summary>
         /// Creation du document pour l'index
         /// </summary>
@@ -219,7 +330,7 @@ namespace AppPublication.Export
             // On construit l'arbre entier, la racine et les enfants en une seule passe
             return new XDocument(
                     new XElement(ConstantXML.DocRoot,
-                        new XAttribute(ConstantXML.DocType, "DocumentIndex"),
+                        new XAttribute(ConstantXML.DocType, ConstantXML.DocumentType_DocumentIndex),
                         new XElement(ConstantXML.Competitions,
                             // On stream directement depuis la base vers les éléments XML
                             DC.Organisation.Competitions
@@ -247,7 +358,7 @@ namespace AppPublication.Export
             // 2. Construction fonctionnelle globale de l'arbre
             return new XDocument(
                 new XElement(ConstantXML.DocRoot,
-                    new XAttribute(ConstantXML.DocType, "DocumentMenu"),
+                    new XAttribute(ConstantXML.DocType, ConstantXML.DocumentType_DocumentMenu),
                     new XElement(ConstantXML.Competitions,
 
                        // Boucle principale transformée en projection LINQ
@@ -334,7 +445,7 @@ namespace AppPublication.Export
 
             return new XDocument(
                 new XElement(ConstantXML.DocRoot,
-                    new XAttribute(ConstantXML.DocType, "DocumentEngagements"),
+                    new XAttribute(ConstantXML.DocType, ConstantXML.DocumentType_DocumentEngagements),
                     new XElement(ConstantXML.Competitions,
 
                         // 1. On filtre DÈS LE DÉPART (on ne génère le XML que pour les compétitions valides)
@@ -421,7 +532,7 @@ namespace AppPublication.Export
             // 2. Construction fonctionnelle globale
             return new XDocument(
                 new XElement(ConstantXML.DocRoot,
-                    new XAttribute(ConstantXML.DocType, "DocumentAffectationTapis"),
+                    new XAttribute(ConstantXML.DocType, ConstantXML.DocumentType_DocumentAffectationTapis),
                     new XElement(ConstantXML.Competitions,
                         DC.Organisation.Competitions
                             .AsEnumerable()
@@ -499,7 +610,7 @@ namespace AppPublication.Export
             XElement xcompetition = competition.ToXml();
             xcompetition.Add(ExportEpreuve(DC, epreuve));
 
-            return new XDocument(new XElement(ConstantXML.DocRoot, new XAttribute(ConstantXML.DocType, "DocumentEpreuve"), xcompetition));
+            return new XDocument(new XElement(ConstantXML.DocRoot, new XAttribute(ConstantXML.DocType, ConstantXML.DocumentType_DocumentEpreuve), xcompetition));
         }
 
         /// <summary>
@@ -521,7 +632,7 @@ namespace AppPublication.Export
             xepreuve.Add(ExportPhase(DC, phase)); // On délègue au sous-boss optimisé
             xcompetition.Add(xepreuve);
 
-            return new XDocument(new XElement(ConstantXML.DocRoot, new XAttribute(ConstantXML.DocType, "DocumentPhase"), xcompetition));
+            return new XDocument(new XElement(ConstantXML.DocRoot, new XAttribute(ConstantXML.DocType, ConstantXML.DocumentType_DocumentPhase), xcompetition));
         }
 
         /// <summary>
@@ -723,7 +834,7 @@ namespace AppPublication.Export
             XElement xRoot = competition.ToXml();
             xRoot.Add(xTapisElements);
 
-            return new XDocument(new XElement(ConstantXML.DocRoot, new XAttribute(ConstantXML.DocType, "DocumentFeuilleCombat"), xRoot));
+            return new XDocument(new XElement(ConstantXML.DocRoot, new XAttribute(ConstantXML.DocType, ConstantXML.DocumentType_DocumentFeuilleCombat), xRoot));
         }
         #endregion
 

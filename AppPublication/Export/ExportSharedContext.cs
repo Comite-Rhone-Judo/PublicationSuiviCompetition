@@ -29,14 +29,13 @@ namespace AppPublication.Export
             // Injection dans le parent générique via nameof()
             // Le document spécifique aux engagements
             context.RegisterLazyDocument(
-                nameof(ExportDocumentKey.Engagements),
-                () => ExportXML.CreateDocumentEngagements(context));
+                    nameof(ExportDocumentKey.Engagements),
+                    () => ExportXML.CreateDocumentEngagements(context));
 
-            /*
-             * context.RegisterLazyDocument(
-                nameof(ExportDocumentKey.Statistiques),
-                () => ExportXML.GenererElementStatistiques(context.ExtendedDataContext.Statistiques));
-            */
+            context.RegisterLazyDocument(
+                    nameof(ExportDocumentKey.Statistiques),
+                    () => ExportXML.CreateDocumentStatistiques(context)
+                );
 
             // Lancement du pipeline centralisé dans la classe mère
             context.ExecuteExportPipeline(config.ToXml());

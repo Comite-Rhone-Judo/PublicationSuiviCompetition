@@ -101,11 +101,13 @@ namespace AppPublication.Export
             var targetDirectory = siteStructure.PhysicalStructure.RepertoireEcransAppel();
 
             // 1. COMPILATION XPATH (Zéro allocation pour le moteur XSLT)
-            XPathDocument xpathEcrans;
-            var settings = new XmlReaderSettings { NameTable = new NameTable(), IgnoreWhitespace = true };
-            using (var reader = XmlReader.Create(ctx.ExportDocument.CreateReader(), settings))
+            XPathDocument xpathEcrans = ctx.GetCompiledDocument(nameof(ExportDocumentKey.FeuillesCombat));
+
+            // Sécurité : vérifier que la génération a bien eu lieu
+            if (xpathEcrans == null)
             {
-                xpathEcrans = new XPathDocument(reader);
+                LogTools.Logger?.Error("Impossible de récupérer le document XPath pour les combats.");
+                return output; // Retourne une liste vide si le document n'est pas disponible
             }
 
             // Ici on ne prend que les numeros de tapis qui sont dans la limite de la competition (cas ou on a plus de tapis configures que de tapis declarés)

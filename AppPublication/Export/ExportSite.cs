@@ -494,14 +494,15 @@ namespace AppPublication.Export
                 ExportEnum exportType = ExportEnum.Site_Engagements;
 
                 // --- DÉBUT DE L'OPTIMISATION XPATH ---
-                XPathDocument xpathEngagements;
+                // La plomberie de compilation XML est maintenant 100% encapsulée.
+                // L'appel au registre déclenche le Lazy (si ce n'est pas déjà fait) et renvoie directement l'arbre optimisé.
+                XPathDocument xpathEngagements = ctx.GetCompiledDocument(nameof(ExportDocumentKey.Engagements));
 
-                // On crée un lecteur optimisé avec NameTable depuis le XDocument du contexte
-                var settings = new XmlReaderSettings { NameTable = new NameTable(), IgnoreWhitespace = true };
-                using (var reader = XmlReader.Create(ctx.ExportDocument.CreateReader(), settings))
+                // Sécurité : vérifier que la génération a bien eu lieu
+                if (xpathEngagements == null)
                 {
-                    // Compilation en RAM (zéro allocation future)
-                    xpathEngagements = new XPathDocument(reader);
+                    LogTools.Logger?.Error("Impossible de récupérer le document XPath pour les engagements.");
+                    return output; // Retourne une liste vide si le document n'est pas disponible
                 }
 
                 int currentStep = 0;

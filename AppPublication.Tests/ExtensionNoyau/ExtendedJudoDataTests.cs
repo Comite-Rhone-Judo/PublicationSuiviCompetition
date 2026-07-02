@@ -34,7 +34,7 @@ namespace AppPublication.Tests.ExtensionNoyau
             void ActionEvaluationLazy()
             {
                 // C'est cet appel exact qui va déclencher : () => new DataEngagement(snapshot)
-                DataEngagement resultat = extendedData.Engagement;
+                IDataEngagement resultat = extendedData.Engagement;
 
                 // Si le code arrive ici, l'instanciation a réussi avec un Mock vide
                 Assert.NotNull(resultat);

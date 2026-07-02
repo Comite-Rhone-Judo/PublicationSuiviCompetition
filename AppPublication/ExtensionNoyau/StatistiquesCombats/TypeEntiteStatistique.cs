@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace AppPublication.ExtensionNoyau.StatistiquesCombats
+﻿namespace AppPublication.ExtensionNoyau.StatistiquesCombats
 {
     public enum TypeEntiteStatistique
     {
         Judoka,
-        Structure // Club, Comité, Ligue, Pays...
+        Structure // Englobe Club, Comité, Ligue, Pays
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace FranceJudo.Metier.XML
+﻿using System.Xml.Linq;
+
+namespace FranceJudo.Metier.XML
 {
     /// <summary>
     /// Enumération des constants pour la construction des fichiers XML
@@ -75,12 +77,71 @@
         public const string TapisEpreuve = "TapisEpreuve";
         public const string Tapis_No = "no_tapis";
 
+        // Type de document
+        public const string DocumentType_DocumentIndex = "DocumentIndex";
+        public const string DocumentType_DocumentMenu = "DocumentMenu";
+        public const string DocumentType_DocumentEngagements = "DocumentEngagements";
+        public const string DocumentType_DocumentAffectationTapis = "DocumentAffectationTapis";
+        public const string DocumentType_DocumentEpreuve = "DocumentEpreuve";
+        public const string DocumentType_DocumentPhase = "DocumentPhase";
+        public const string DocumentType_DocumentFeuilleCombat = "DocumentFeuilleCombat";
+        public const string DocumentType_DocumentStatistiques = "DocumentStatistiques";
+
         //Structure 
         public const string Structures = "structures";
         public const string Structure_ID = "ID";
         public const string Structure_RemoteID = "remoteID";
         public const string Structure_Nom = "nom";
 
+        // Statistiques
+
+        public const string GroupeStatistiques_groupes = "groupesStatistiques";
+        public const string GroupeStatistiques_groupe = "groupeStatistiques";
+        public const string GroupeStatistique_Competition = "competition";
+        public const string GroupeStatistique_Id = "id";
+        public const string GroupeStatistique_Sexe = "sexe";
+        public const string GroupeStatistique_Type = "type";
+        public const string GroupeStatistique_Entite = "entite";
+
+        public const string Statistiques_ExportStatistiques = "statistiques";
+        public const string Statistiques_Items = "items";
+        public const string Statistiques_Item = "item";
+        public const string Statistiques_TypeEntite = "typeEntite";
+        public const string Statistiques_IdEntite = "idEntite";
+        public const string Statistiques_Sexe = "sexe";
+        // --- Attributs de volumétrie et globaux ---
+        public const string Statistiques_NbParticipants = "nbParticipants";
+        public const string Statistiques_NbCombattants = "nbCombattants";
+        public const string Statistiques_PctParticipation = "pctParticipation";
+        public const string Statistiques_NbCombats = "nbCombats";
+        public const string Statistiques_NbVictoires = "nbVictoires";
+        public const string Statistiques_PctVictoires = "pctVictoires";
+        public const string Statistiques_NbHikiwake = "nbHikiwake";
+        public const string Statistiques_PctHikiwake = "pctHikiwake";
+
+        // --- Attributs de détail des victoires ---
+        public const string Statistiques_PctVictoireIpponDirect = "pctVictoireIpponDirect";
+        public const string Statistiques_PctVictoireWazaAriAwaseteIppon = "pctVictoireWazaAriAwaseteIppon";
+        public const string Statistiques_PctVictoireWazaAri = "pctVictoireWazaAri";
+        public const string Statistiques_PctVictoireYuko = "pctVictoireYuko";
+        public const string Statistiques_PctVictoireSogoGachi = "pctVictoireSogoGachi";
+        public const string Statistiques_PctVictoireHansokuMake = "pctVictoireHansokuMake";
+
+        // --- Attributs des pénalités ---
+        public const string Statistiques_MoyennePenalitesParCombat = "moyennePenalitesParCombat";
+
+        // --- Attributs du Golden Score ---
+        public const string Statistiques_NbCombatsGoldenScore = "nbCombatsGoldenScore";
+        public const string Statistiques_PctCombatsGoldenScore = "pctCombatsGoldenScore";
+        public const string Statistiques_DureeMoyenneGoldenScore = "dureeMoyenneGoldenScore";
+        public const string Statistiques_DureeMaximaleGoldenScore = "dureeMaximaleGoldenScore";
+
+        // --- Attributs des Temps de combat ---
+        public const string Statistiques_DureeCombatMin = "dureeCombatMin";
+        public const string Statistiques_DureeCombatMax = "dureeCombatMax";
+        public const string Statistiques_DureeCombatMoy = "dureeCombatMoy";
+
+        // Engagements
         public const string GroupeEngagements_groupes = "groupesEngagements";
         public const string GroupeEngagements_groupe = "groupeEngagements";
 

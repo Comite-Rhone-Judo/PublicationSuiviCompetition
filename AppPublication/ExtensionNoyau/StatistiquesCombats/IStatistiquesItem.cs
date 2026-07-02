@@ -22,9 +22,13 @@ namespace AppPublication.ExtensionNoyau.StatistiquesCombats
 
         // --- Volumétrie Combats (STAT02) ---
         int NbCombats { get; }
+        int NbVictoires { get; }
+        int NbHikiwake { get; }
 
         // --- Victoires (STAT07 à STAT12) ---
         // Nullables si NbCombats == 0
+        double? PctVictoires { get; }
+        double? PctHikiwake { get; }
         double? PctVictoireIpponDirect { get; }
         double? PctVictoireWazaAriAwaseteIppon { get; }
         double? PctVictoireWazaAri { get; }

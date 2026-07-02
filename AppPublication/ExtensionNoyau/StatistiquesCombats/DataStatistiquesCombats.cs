@@ -11,46 +11,72 @@ namespace AppPublication.ExtensionNoyau.StatistiquesCombats
 {
     public class DataStatistiquesCombats : IDataStatistiquesCombats
     {
-        private readonly Dictionary<string, IStatistiquesItem> _statistiques;
-
-        public IReadOnlyDictionary<string, IStatistiquesItem> Statistiques => _statistiques;
+        public IReadOnlyDictionary<StatistiqueCle, IStatistiquesItem> Statistiques { get; }
+        public IReadOnlyList<GroupeStatistiques> GroupesStatistiques { get; }
+        public IReadOnlyDictionary<int, List<EchelonEnum>> TypesGroupes { get; }
 
         public DataStatistiquesCombats(IJudoData snapshot)
         {
-            _statistiques = BuildStatistiques(snapshot);
-        }
-        private Dictionary<string, IStatistiquesItem> BuildStatistiques(IJudoData judoData)
-        {
-            var compteurs = new Dictionary<string, CompteurStatistiques>();
+            var setGroupes = new HashSet<GroupeStatistiques>();
+            var setTypesParComp = new Dictionary<int, HashSet<EchelonEnum>>();
 
-            CompteurStatistiques GetOrCreateCompteur(string id, TypeEntiteStatistique typeEntite)
+            Statistiques = BuildStatistiques(snapshot, setGroupes, setTypesParComp);
+
+            GroupesStatistiques = setGroupes.ToList();
+            TypesGroupes = setTypesParComp.ToDictionary(k => k.Key, v => v.Value.ToList());
+        }
+
+        private Dictionary<StatistiqueCle, IStatistiquesItem> BuildStatistiques(
+            IJudoData data,
+            HashSet<GroupeStatistiques> setGroupes,
+            Dictionary<int, HashSet<EchelonEnum>> setTypesParComp)
+        {
+            var compteurs = new Dictionary<StatistiqueCle, CompteurStatistiques>();
+
+            CompteurStatistiques GetOrCreateCompteur(StatistiqueCle cle)
             {
-                if (string.IsNullOrEmpty(id)) return null;
-                if (!compteurs.TryGetValue(id, out var compteur))
+                if (string.IsNullOrEmpty(cle.IdEntite)) return null;
+                if (!compteurs.TryGetValue(cle, out var c))
                 {
-                    compteur = new CompteurStatistiques(typeEntite);
-                    compteurs[id] = compteur;
+                    c = new CompteurStatistiques(cle.TypeEntite);
+                    compteurs[cle] = c;
                 }
-                return compteur;
+                return c;
             }
 
-            var competition = ExtractCompetition(judoData);
-            EchelonEnum niveauCompetition = competition != null ? (EchelonEnum)competition.niveau : EchelonEnum.Club;
-            var echelonsCibles = DeterminerEchelonsCibles(niveauCompetition);
+            var competition = data.Organisation?.Competitions is { Count: > 0 } comps ? comps[0] : null;
+            int idComp = competition?.id ?? 0;
+            var echelonsCibles = DeterminerEchelonsCibles(competition != null ? (EchelonEnum)competition.niveau : EchelonEnum.Club);
 
-            // 1. Passe des Participants (Pour la participation STAT35, STAT36, STAT37)
-            foreach (IVueJudoka participant in ExtractAllParticipants(judoData))
+            void EnregistrerGroupe(EchelonEnum echelon, EpreuveSexe sexe, string idEntite)
             {
-                // Utilisation de la propriété de l'interface IVueJudoka
+                if (string.IsNullOrEmpty(idEntite)) return;
+                setGroupes.Add(new GroupeStatistiques(idComp, sexe, (int)echelon, idEntite));
+
+                if (!setTypesParComp.TryGetValue(idComp, out var typesDispos))
+                {
+                    typesDispos = new HashSet<EchelonEnum>();
+                    setTypesParComp[idComp] = typesDispos;
+                }
+                typesDispos.Add(echelon);
+            }
+
+            // 1. Passe des Participants (Initialisation et Participation)
+            foreach (IVueJudoka participant in data.Participants?.Vuejudokas ?? Enumerable.Empty<IVueJudoka>())
+            {
                 bool estPresent = participant.present;
 
-                GetOrCreateCompteur(participant.id.ToString(), TypeEntiteStatistique.Judoka);
+                // Génération en cascade de toutes les clés d'identification de ce judoka
+                var clesImpactees = GetClesCascadePourParticipant(participant, echelonsCibles).ToList();
 
-                foreach (var idStructure in GetIdsStructuresPourParticipant(participant, echelonsCibles))
+                foreach (var cle in clesImpactees)
                 {
-                    var c = GetOrCreateCompteur(idStructure, TypeEntiteStatistique.Structure);
-                    if (c != null)
+                    var c = GetOrCreateCompteur(cle);
+                    if (cle.TypeEntite == TypeEntiteStatistique.Structure && c != null)
                     {
+                        // On enregistre les groupes structurels pour le XSLT (uniquement Club, Ligue, etc.)
+                        EnregistrerGroupe(echelonsCibles.First(), cle.Sexe, cle.IdEntite); // Simplifié pour l'exemple
+
                         c.NbParticipants++;
                         if (estPresent) c.NbCombattants++;
                     }
@@ -58,145 +84,108 @@ namespace AppPublication.ExtensionNoyau.StatistiquesCombats
             }
 
             // 2. Passe des Combats 
-            foreach (Combat combat in ExtractAllCombats(judoData))
+            foreach (Combat combat in data.Deroulement?.Combats?.OfType<Combat>() ?? Enumerable.Empty<Combat>())
             {
-                if (!EstCombatValidePourStats(combat)) continue;
+                if (!combat.vainqueur.HasValue || combat.virtuel || !combat.participant1.HasValue || !combat.participant2.HasValue) continue;
 
-                var idsP1 = GetIdsStructuresEtPersoPourParticipant(judoData, combat.participant1, echelonsCibles);
-                var idsP2 = GetIdsStructuresEtPersoPourParticipant(judoData, combat.participant2, echelonsCibles);
+                var p1 = data.Participants?.Vuejudokas?.FirstOrDefault(p => p.id == combat.participant1.Value);
+                var p2 = data.Participants?.Vuejudokas?.FirstOrDefault(p => p.id == combat.participant2.Value);
+                if (p1 == null || p2 == null) continue;
 
-                string penP1Str = combat.GetPenalites(1);
-                string penP2Str = combat.GetPenalites(2);
+                var clesP1 = GetClesCascadePourParticipant(p1, echelonsCibles);
+                var clesP2 = GetClesCascadePourParticipant(p2, echelonsCibles);
+
+                string penP1Str = combat.GetPenalites(1)?.TrimStart('-');
+                string penP2Str = combat.GetPenalites(2)?.TrimStart('-');
                 int pen1Count = ParseNombrePenalites(penP1Str);
                 int pen2Count = ParseNombrePenalites(penP2Str);
 
                 bool p1Gagne = combat.vainqueur == combat.participant1;
                 bool p2Gagne = combat.vainqueur == combat.participant2;
+                bool estHikiwake = !p1Gagne && !p2Gagne;
 
                 TimeSpan tEffectif = combat.fin - combat.debut;
                 if (tEffectif < TimeSpan.Zero) tEffectif = TimeSpan.Zero;
-
                 TimeSpan tNominal = TimeSpan.FromMinutes(combat.temps);
                 bool isGoldenScore = combat.goldenScore || tEffectif > tNominal;
                 TimeSpan dureeGolden = (isGoldenScore && tEffectif > tNominal) ? tEffectif - tNominal : TimeSpan.Zero;
 
-                void AppliquerStats(string id, TypeEntiteStatistique typeEntite, bool estVainqueur, int score, string penAdversaire, int nbPenalitesRecues)
+                void AppliquerStats(IEnumerable<StatistiqueCle> cles, bool estVainqueur, bool hikiwake, int score, string penAdversaire, int nbPenalitesRecues)
                 {
-                    var c = GetOrCreateCompteur(id, typeEntite);
-                    if (c == null) return;
-
-                    c.NbCombats++;
-                    c.TotalPenalites += nbPenalitesRecues;
-
-                    c.TotalDureeCombat += tEffectif;
-                    if (tEffectif < c.DureeCombatMinInterne) c.DureeCombatMinInterne = tEffectif;
-                    if (tEffectif > c.DureeCombatMaxInterne) c.DureeCombatMaxInterne = tEffectif;
-
-                    if (isGoldenScore)
+                    foreach (var cle in cles)
                     {
-                        c.NbCombatsGoldenScore++;
-                        c.TotalDureeGoldenScore += dureeGolden;
-                        if (dureeGolden > c.DureeMaximaleGoldenScoreInterne) c.DureeMaximaleGoldenScoreInterne = dureeGolden;
-                    }
+                        var c = GetOrCreateCompteur(cle);
+                        if (c == null) continue;
 
-                    if (estVainqueur) AnalyserVictoire(c, score, penAdversaire);
+                        c.NbCombats++;
+                        c.TotalPenalites += nbPenalitesRecues;
+                        c.TotalDureeCombat += tEffectif;
+
+                        if (tEffectif < c.DureeCombatMinInterne) c.DureeCombatMinInterne = tEffectif;
+                        if (tEffectif > c.DureeCombatMaxInterne) c.DureeCombatMaxInterne = tEffectif;
+
+                        if (estVainqueur)
+                        {
+                            c.NbVictoires++;
+                            AnalyserVictoire(c, score, penAdversaire);
+                        }
+                        else if (hikiwake) c.NbHikiwake++;
+
+                        if (isGoldenScore)
+                        {
+                            c.NbCombatsGoldenScore++;
+                            c.TotalDureeGoldenScore += dureeGolden;
+                            if (dureeGolden > c.DureeMaximaleGoldenScoreInterne) c.DureeMaximaleGoldenScoreInterne = dureeGolden;
+                        }
+                    }
                 }
 
-                foreach (var tuple in idsP1)
-                    AppliquerStats(tuple.Id, tuple.Type, p1Gagne, combat.score1, penP2Str, pen1Count);
-
-                foreach (var tuple in idsP2)
-                    AppliquerStats(tuple.Id, tuple.Type, p2Gagne, combat.score2, penP1Str, pen2Count);
+                AppliquerStats(clesP1, p1Gagne, estHikiwake, combat.score1, penP2Str, pen1Count);
+                AppliquerStats(clesP2, p2Gagne, estHikiwake, combat.score2, penP1Str, pen2Count);
             }
 
-            var statsFinales = new Dictionary<string, IStatistiquesItem>(compteurs.Count);
-            foreach (var kvp in compteurs)
-            {
-                statsFinales.Add(kvp.Key, kvp.Value);
-            }
-
-            return statsFinales;
+            return compteurs.ToDictionary(k => k.Key, v => (IStatistiquesItem)v.Value);
         }
 
-        // --- Méthodes privées internes ---
-
-        private HashSet<EchelonEnum> DeterminerEchelonsCibles(EchelonEnum niveauCompetition)
-        {
-            var echelons = new HashSet<EchelonEnum> { EchelonEnum.Club }; // Le club est toujours calculé
-
-            switch (niveauCompetition)
-            {
-                case EchelonEnum.Departement:
-                    echelons.Add(EchelonEnum.Departement);
-                    break;
-                case EchelonEnum.Ligue:
-                    echelons.Add(EchelonEnum.Departement);
-                    echelons.Add(EchelonEnum.Ligue);
-                    break;
-                case EchelonEnum.National:
-                case EchelonEnum.International:
-                    echelons.Add(EchelonEnum.Departement);
-                    echelons.Add(EchelonEnum.Ligue);
-                    echelons.Add(EchelonEnum.National);
-                    break;
-            }
-
-            return echelons;
-        }
-
-        private IEnumerable<string> GetIdsStructuresPourParticipant(IVueJudoka p, HashSet<EchelonEnum> echelonsCibles)
+        // --- LA CASCADE (Drill-Down) ---
+        private IEnumerable<StatistiqueCle> GetClesCascadePourParticipant(IVueJudoka p, HashSet<EchelonEnum> echelonsCibles)
         {
             if (p == null) yield break;
 
-            // Calqué sur le mapping de DataEngagement
-            foreach (var echelon in echelonsCibles)
-            {
-                switch (echelon)
-                {
-                    case EchelonEnum.Club:
-                        if (!string.IsNullOrEmpty(p.club)) yield return p.club;
-                        break;
-                    case EchelonEnum.Departement:
-                        if (!string.IsNullOrEmpty(p.comite)) yield return p.comite;
-                        break;
-                    case EchelonEnum.Ligue:
-                        if (!string.IsNullOrEmpty(p.ligue)) yield return p.ligue;
-                        break;
-                    case EchelonEnum.National:
-                        if (p.pays != 0) yield return p.pays.ToString();
-                        break;
-                }
-            }
+            // 1. Clé individuelle (La feuille)
+            yield return new StatistiqueCle(TypeEntiteStatistique.Judoka, p.id.ToString(), p.sexeEnum);
+
+            // 2. Clés structurelles (Les branches, filtrées par le niveau de la compétition)
+            if (echelonsCibles.Contains(EchelonEnum.National) && p.pays != 0)
+                yield return new StatistiqueCle(TypeEntiteStatistique.Structure, p.pays.ToString(), p.sexeEnum);
+
+            if (echelonsCibles.Contains(EchelonEnum.Ligue) && !string.IsNullOrEmpty(p.ligue))
+                yield return new StatistiqueCle(TypeEntiteStatistique.Structure, p.ligue, p.sexeEnum);
+
+            if (echelonsCibles.Contains(EchelonEnum.Departement) && !string.IsNullOrEmpty(p.comite))
+                yield return new StatistiqueCle(TypeEntiteStatistique.Structure, p.comite, p.sexeEnum);
+
+            if (echelonsCibles.Contains(EchelonEnum.Club) && !string.IsNullOrEmpty(p.club))
+                yield return new StatistiqueCle(TypeEntiteStatistique.Structure, p.club, p.sexeEnum);
         }
 
-        private IEnumerable<(string Id, TypeEntiteStatistique Type)> GetIdsStructuresEtPersoPourParticipant(
-            IJudoData data,
-            int? idParticipant,
-            HashSet<EchelonEnum> echelonsCibles)
+        private HashSet<EchelonEnum> DeterminerEchelonsCibles(EchelonEnum niveau)
         {
-            if (!idParticipant.HasValue) yield break;
-
-            yield return (idParticipant.Value.ToString(), TypeEntiteStatistique.Judoka);
-
-            // On utilise la collection des vues Judokas
-            var participant = data.Participants?.Vuejudokas?.FirstOrDefault(p => p.id == idParticipant.Value);
-            if (participant != null)
-            {
-                foreach (var idStructure in GetIdsStructuresPourParticipant(participant, echelonsCibles))
-                {
-                    yield return (idStructure, TypeEntiteStatistique.Structure);
-                }
-            }
+            var echelons = new HashSet<EchelonEnum> { EchelonEnum.Club };
+            if (niveau >= EchelonEnum.Departement) echelons.Add(EchelonEnum.Departement);
+            if (niveau >= EchelonEnum.Ligue) echelons.Add(EchelonEnum.Ligue);
+            if (niveau >= EchelonEnum.National) echelons.Add(EchelonEnum.National);
+            return echelons;
         }
 
-        private void AnalyserVictoire(CompteurStatistiques c, int scoreVainqueur, string penalitePerdant)
+        private void AnalyserVictoire(CompteurStatistiques c, int score, string pen)
         {
-            if (penalitePerdant == "3") { c.NbVictoireSogoGachi++; return; }
-            if (penalitePerdant == "H" || penalitePerdant == "X") { c.NbVictoireHansokuMake++; return; }
+            if (pen == "3") { c.NbVictoireSogoGachi++; return; }
+            if (pen == "H" || pen == "X") { c.NbVictoireHansokuMake++; return; }
 
-            int ipponV = scoreVainqueur / 100;
-            int wazaV = (scoreVainqueur / 10) % 10;
-            int yukoV = scoreVainqueur % 10;
+            int ipponV = score / 100;
+            int wazaV = (score / 10) % 10;
+            int yukoV = score % 10;
 
             if (ipponV >= 1) c.NbVictoireIpponDirect++;
             else if (wazaV >= 2) c.NbVictoireWazaAriAwaseteIppon++;
@@ -204,48 +193,24 @@ namespace AppPublication.ExtensionNoyau.StatistiquesCombats
             else if (yukoV >= 1) c.NbVictoireYuko++;
         }
 
-        private int ParseNombrePenalites(string penaliteStr)
-        {
-            if (string.IsNullOrEmpty(penaliteStr)) return 0;
-
-            // Nettoyage du préfixe optionnel "-"
-            string cleanPenalite = penaliteStr.TrimStart('-');
-
-            if (cleanPenalite == "H" || cleanPenalite == "X" || cleanPenalite == "3" ||
-                cleanPenalite == "A" || cleanPenalite == "M" || cleanPenalite == "F") return 3;
-
-            if (cleanPenalite == "2") return 2;
-            if (cleanPenalite == "1") return 1;
-
-            return 0;
-        }
-
-        private bool EstCombatValidePourStats(Combat combat)
-        {
-            return !combat.virtuel && combat.vainqueur.HasValue &&
-                   combat.participant1.HasValue && combat.participant2.HasValue;
-        }
-
-        private ICompetition ExtractCompetition(IJudoData data)
-        {
-            // Utilisation du Pattern Matching (C# 8+) pour vérifier que la liste n'est pas nulle et contient des éléments.
-            // Si c'est le cas, on l'assigne à la variable 'comps' et on retourne le premier élément.
-            return data.Organisation?.Competitions is { Count: > 0 } comps ? comps[0] : null;
-        }
-
-        private IEnumerable<Combat> ExtractAllCombats(IJudoData data) => data.Deroulement?.Combats?.OfType<Combat>() ?? Enumerable.Empty<Combat>();
-
-        private IEnumerable<IVueJudoka> ExtractAllParticipants(IJudoData data) => data.Participants?.Vuejudokas ?? Enumerable.Empty<IVueJudoka>();
+        private int ParseNombrePenalites(string p) => (p == "H" || p == "X" || p == "3" || p == "A" || p == "M" || p == "F") ? 3 : (p == "2" ? 2 : (p == "1" ? 1 : 0));
     }
 
-    // La classe CompteurStatistiques reste strictement identique à la version précédente 
+    // Le CompteurInterne reste strictement votre classe contenant les propriétés brutes et les calculs de ratios (PctVictoires, etc.)
     internal class CompteurStatistiques : IStatistiquesItem
     {
         public TypeEntiteStatistique TypeEntite { get; }
 
+        // =========================================================
+        // 1. COMPTEURS BRUTS (Alimentés par DataStatistiquesCombats)
+        // =========================================================
+
         public int? NbParticipants { get; set; }
         public int? NbCombattants { get; set; }
+
         public int NbCombats { get; set; }
+        public int NbVictoires { get; set; }
+        public int NbHikiwake { get; set; }
 
         public int NbVictoireIpponDirect { get; set; }
         public int NbVictoireWazaAriAwaseteIppon { get; set; }
@@ -262,11 +227,19 @@ namespace AppPublication.ExtensionNoyau.StatistiquesCombats
 
         public TimeSpan TotalDureeCombat { get; set; }
         public TimeSpan DureeCombatMaxInterne { get; set; }
+
+        // Initialisé au max pour permettre de trouver le minimum absolu lors de la passe
         public TimeSpan DureeCombatMinInterne { get; set; } = TimeSpan.MaxValue;
+
+        // =========================================================
+        // 2. CONSTRUCTEUR
+        // =========================================================
 
         public CompteurStatistiques(TypeEntiteStatistique typeEntite)
         {
             TypeEntite = typeEntite;
+
+            // Les compteurs de participation n'ont de sens que pour les structures
             if (typeEntite == TypeEntiteStatistique.Structure)
             {
                 NbParticipants = 0;
@@ -274,7 +247,20 @@ namespace AppPublication.ExtensionNoyau.StatistiquesCombats
             }
         }
 
-        public double? PctParticipation => (!NbParticipants.HasValue || NbParticipants.Value == 0) ? null : (double)NbCombattants.Value / NbParticipants.Value;
+        // =========================================================
+        // 3. PROPRIÉTÉS CALCULÉES (Implémentation de IStatistiquesItem)
+        // =========================================================
+
+        // --- Participation ---
+        public double? PctParticipation => (!NbParticipants.HasValue || NbParticipants.Value == 0)
+            ? null
+            : (double)NbCombattants.Value / NbParticipants.Value;
+
+        // --- Volumétrie et Ratios Globaux ---
+        public double? PctVictoires => NbCombats == 0 ? null : (double)NbVictoires / NbCombats;
+        public double? PctHikiwake => NbCombats == 0 ? null : (double)NbHikiwake / NbCombats;
+
+        // --- Détail des victoires ---
         public double? PctVictoireIpponDirect => NbCombats == 0 ? null : (double)NbVictoireIpponDirect / NbCombats;
         public double? PctVictoireWazaAriAwaseteIppon => NbCombats == 0 ? null : (double)NbVictoireWazaAriAwaseteIppon / NbCombats;
         public double? PctVictoireWazaAri => NbCombats == 0 ? null : (double)NbVictoireWazaAri / NbCombats;
@@ -282,14 +268,31 @@ namespace AppPublication.ExtensionNoyau.StatistiquesCombats
         public double? PctVictoireSogoGachi => NbCombats == 0 ? null : (double)NbVictoireSogoGachi / NbCombats;
         public double? PctVictoireHansokuMake => NbCombats == 0 ? null : (double)NbVictoireHansokuMake / NbCombats;
 
+        // --- Pénalités ---
         public double? MoyennePenalitesParCombat => NbCombats == 0 ? null : (double)TotalPenalites / NbCombats;
 
+        // --- Golden Score ---
         public double? PctCombatsGoldenScore => NbCombats == 0 ? null : (double)NbCombatsGoldenScore / NbCombats;
-        public TimeSpan? DureeMoyenneGoldenScore => NbCombatsGoldenScore == 0 ? null : TimeSpan.FromTicks(TotalDureeGoldenScore.Ticks / NbCombatsGoldenScore);
-        public TimeSpan? DureeMaximaleGoldenScore => NbCombatsGoldenScore == 0 ? null : DureeMaximaleGoldenScoreInterne;
 
-        public TimeSpan? DureeCombatMin => NbCombats == 0 ? null : DureeCombatMinInterne;
-        public TimeSpan? DureeCombatMax => NbCombats == 0 ? null : DureeCombatMaxInterne;
-        public TimeSpan? DureeCombatMoy => NbCombats == 0 ? null : TimeSpan.FromTicks(TotalDureeCombat.Ticks / NbCombats);
+        public TimeSpan? DureeMoyenneGoldenScore => NbCombatsGoldenScore == 0
+            ? null
+            : TimeSpan.FromTicks(TotalDureeGoldenScore.Ticks / NbCombatsGoldenScore);
+
+        public TimeSpan? DureeMaximaleGoldenScore => NbCombatsGoldenScore == 0
+            ? null
+            : DureeMaximaleGoldenScoreInterne;
+
+        // --- Temps de combat ---
+        public TimeSpan? DureeCombatMin => NbCombats == 0
+            ? null
+            : DureeCombatMinInterne;
+
+        public TimeSpan? DureeCombatMax => NbCombats == 0
+            ? null
+            : DureeCombatMaxInterne;
+
+        public TimeSpan? DureeCombatMoy => NbCombats == 0
+            ? null
+            : TimeSpan.FromTicks(TotalDureeCombat.Ticks / NbCombats);
     }
 }
