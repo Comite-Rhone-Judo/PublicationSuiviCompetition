@@ -3,7 +3,6 @@ using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.Noyau.Participants;
 using FranceJudo.Metier.Noyau.Deroulement;
-using JudoClient.Communication;
 using KernelImpl.Noyau.Deroulement;
 using Moq;
 using System;
@@ -16,146 +15,260 @@ namespace AppPublication.Tests.ExtensionNoyau.StatistiquesCombats
     public class DataStatistiquesCombatsTests
     {
         private Mock<IJudoData> _mockJudoData;
+        private Mock<IOrganisationData> _mockOrg;
+        private Mock<IParticipantsData> _mockParts;
+        private Mock<IDeroulementData> _mockDeroulement;
 
         public DataStatistiquesCombatsTests()
         {
             _mockJudoData = new Mock<IJudoData>();
+            _mockOrg = new Mock<IOrganisationData>();
+            _mockParts = new Mock<IParticipantsData>();
+            _mockDeroulement = new Mock<IDeroulementData>();
+
+            // INITIALISATION DE SÉCURITÉ (Évite les NullReferenceException)
+            // Par défaut, un IJudoData vide renvoie des listes vides, et non des objets nuls.
+            _mockOrg.Setup(o => o.Competitions).Returns(new List<ICompetition>());
+            _mockOrg.Setup(o => o.Epreuves).Returns(new List<IEpreuve>());
+            _mockParts.Setup(p => p.Vuejudokas).Returns(new List<IVueJudoka>());
+            _mockDeroulement.Setup(d => d.Combats).Returns(new List<ICombat>());
+
+            _mockJudoData.Setup(d => d.Organisation).Returns(_mockOrg.Object);
+            _mockJudoData.Setup(d => d.Participants).Returns(_mockParts.Object);
+            _mockJudoData.Setup(d => d.Deroulement).Returns(_mockDeroulement.Object);
         }
 
         [Fact]
         public void Constructeur_DataVide_NePlantePas()
         {
-            // Arrange
-
-            // Act
+            // Act : Le moteur lit dataContext.Organisation.Competitions qui est maintenant une liste vide
             var moteur = new DataStatistiquesCombats(_mockJudoData.Object);
 
             // Assert
-            Assert.NotNull(moteur.Statistiques);
-            Assert.Empty(moteur.Statistiques);
+            Assert.NotNull(moteur);
+            Assert.Empty(moteur.StatsJudokas);
         }
 
         [Fact]
-        public void PasseParticipants_CascadeStructurelle_GenereToutesLesCles()
+        public void TraitementCombats_PointsTechniques_ComptabiliseCorrectement()
         {
             // Arrange
-            PreparerMockCompetition(EchelonEnum.National);
+            PreparerEnvironnement(EchelonEnum.Club);
+            PreparerMockParticipants(new[] { CreerMockJudoka(1, "M"), CreerMockJudoka(2, "M") });
 
-            var mockJudoka = new Mock<IVueJudoka>();
-            mockJudoka.Setup(j => j.id).Returns(1);
-            mockJudoka.Setup(j => j.present).Returns(true);
-            mockJudoka.Setup(j => j.sexeEnum).Returns(new EpreuveSexe("M"));
-            mockJudoka.Setup(j => j.club).Returns("ClubA");
-            mockJudoka.Setup(j => j.comite).Returns("ComiteB");
-            mockJudoka.Setup(j => j.ligue).Returns("LigueC");
-            mockJudoka.Setup(j => j.pays).Returns(250);
-
-            PreparerMockParticipants(new[] { mockJudoka.Object });
-
-            // Act
-            var moteur = new DataStatistiquesCombats(_mockJudoData.Object);
-
-            // Assert
-            var stats = moteur.Statistiques;
-
-            var sexeAttendu = new EpreuveSexe("M");
-
-            Assert.True(stats.ContainsKey(new GroupeStatistiques(99, sexeAttendu, "1", (int)EchelonEnum.Aucun)));
-            Assert.True(stats.ContainsKey(new GroupeStatistiques(99, sexeAttendu, "ClubA", (int)EchelonEnum.Club)));
-            Assert.True(stats.ContainsKey(new GroupeStatistiques(99, sexeAttendu, "ComiteB", (int)EchelonEnum.Departement)));
-            Assert.True(stats.ContainsKey(new GroupeStatistiques(99, sexeAttendu, "LigueC", (int)EchelonEnum.Ligue)));
-            Assert.True(stats.ContainsKey(new GroupeStatistiques(99, sexeAttendu, "250", (int)EchelonEnum.National)));
-
-            var statsClub = stats[new GroupeStatistiques(99, sexeAttendu, "ClubA", (int)EchelonEnum.Club)];
-            Assert.Equal(1, statsClub.NbParticipants);
-            Assert.Equal(1, statsClub.NbCombattants);
-        }
-
-        [Fact]
-        public void PasseCombats_VictoireIppon_InscritCorrectement()
-        {
-            // Arrange
-            PreparerMockCompetition(EchelonEnum.Club);
-
-            var sexeTest = new EpreuveSexe("F");
-
-            var mockJudoka1 = new Mock<IVueJudoka>();
-            mockJudoka1.Setup(j => j.id).Returns(1);
-            mockJudoka1.Setup(j => j.sexeEnum).Returns(sexeTest);
-            mockJudoka1.Setup(j => j.club).Returns("ClubGagnant");
-
-            var mockJudoka2 = new Mock<IVueJudoka>();
-            mockJudoka2.Setup(j => j.id).Returns(2);
-            mockJudoka2.Setup(j => j.sexeEnum).Returns(sexeTest);
-            mockJudoka2.Setup(j => j.club).Returns("ClubPerdant");
-
-            PreparerMockParticipants(new[] { mockJudoka1.Object, mockJudoka2.Object });
-
-            var combat = new Combat
+            var combats = new List<Combat>
             {
-                participant1 = 1,
-                participant2 = 2,
-                vainqueur = 1,
-                score1 = 100,
-                score2 = 0,
-                temps = 4,
-                debut = DateTime.Today,
-                fin = DateTime.Today.AddMinutes(2),
-                virtuel = false
+                // Cbt 1: Ippon Direct (Score 100) -> J1 gagne
+                CreerCombat(1, 2, vainqueur: 1, score1: 100),
+                // Cbt 2: Waza-ari Awasete Ippon (Score 20) -> J1 gagne
+                CreerCombat(1, 2, vainqueur: 1, score1: 20),
+                // Cbt 3: Waza-ari (Score 10) -> J2 gagne
+                CreerCombat(1, 2, vainqueur: 2, score2: 10),
+                // Cbt 4: Yuko (Score 1) -> J2 gagne
+                CreerCombat(1, 2, vainqueur: 2, score2: 1)
             };
-            PreparerMockCombats(new[] { combat });
+            PreparerMockCombats(combats);
 
             // Act
             var moteur = new DataStatistiquesCombats(_mockJudoData.Object);
-            var stats = moteur.Statistiques;
+            var statJ1 = (CompteurStatistiques)moteur.StatsJudokas[1];
+            var statJ2 = (CompteurStatistiques)moteur.StatsJudokas[2];
 
-            // Assert
-            var cleClubGagnant = new GroupeStatistiques(99, sexeTest, "ClubGagnant", (int) EchelonEnum.Club);
-            var statGagnant = stats[cleClubGagnant];
+            // Assert J1
+            Assert.Equal(4, statJ1.NbCombats);
+            Assert.Equal(2, statJ1.NbVictoires);
+            Assert.Equal(1, statJ1.NbVictoireIpponDirect);
+            Assert.Equal(1, statJ1.NbVictoireWazaAriAwaseteIppon);
 
-            Assert.Equal(1, statGagnant.NbCombats);
-            Assert.Equal(1, statGagnant.NbVictoires);
-            Assert.Equal(1, ((CompteurStatistiques)statGagnant).NbVictoireIpponDirect);
-            Assert.Equal(TimeSpan.FromMinutes(2), statGagnant.DureeCombatMoy);
-
-            var cleClubPerdant = new GroupeStatistiques(99, sexeTest, "ClubPerdant", (int) EchelonEnum.Club);
-            var statPerdant = stats[cleClubPerdant];
-
-            Assert.Equal(1, statPerdant.NbCombats);
-            Assert.Equal(0, statPerdant.NbVictoires);
-            Assert.Equal(0, statPerdant.NbHikiwake);
+            // Assert J2
+            Assert.Equal(4, statJ2.NbCombats);
+            Assert.Equal(2, statJ2.NbVictoires);
+            Assert.Equal(1, statJ2.NbVictoireWazaAri);
+            Assert.Equal(1, statJ2.NbVictoireYuko);
         }
 
-        private void PreparerMockCompetition(EchelonEnum niveau)
+        [Fact]
+        public void TraitementCombats_EtatsVictoire_ComptabiliseCorrectement()
+        {
+            // Arrange
+            PreparerEnvironnement(EchelonEnum.Club);
+            PreparerMockParticipants(new[] { CreerMockJudoka(1, "M"), CreerMockJudoka(2, "M") });
+
+            var combats = new List<Combat>
+            {
+                // Cbt 1: Decision (etat Vainqueur = 7) -> J1 gagne
+                CreerCombat(1, 2, vainqueur: 1, etatJ1: 7),
+                // Cbt 2: Abandon (etat Perdant = 2) -> J1 gagne
+                CreerCombat(1, 2, vainqueur: 1, etatJ2: 2),
+                // Cbt 3: Forfait (etat Perdant = 3) -> J1 gagne
+                CreerCombat(1, 2, vainqueur: 1, etatJ2: 3),
+                // Cbt 4: Medical (etat Perdant = 4) -> J1 gagne
+                CreerCombat(1, 2, vainqueur: 1, etatJ2: 4),
+                // Cbt 5: Hansoku Make direct ou cumulé (etat Perdant = 5) -> J1 gagne
+                CreerCombat(1, 2, vainqueur: 1, etatJ2: 5)
+            };
+            PreparerMockCombats(combats);
+
+            // Act
+            var moteur = new DataStatistiquesCombats(_mockJudoData.Object);
+            var statJ1 = (CompteurStatistiques)moteur.StatsJudokas[1];
+            var statJ2 = (CompteurStatistiques)moteur.StatsJudokas[2];
+
+            // Assert
+            Assert.Equal(5, statJ1.NbCombats);
+            Assert.Equal(5, statJ1.NbVictoires);
+
+            // Décision
+            Assert.Equal(1, statJ1.NbVictoireDecision);
+
+            // Les 3 états de défaite par abandon/forfait/médical sont regroupés
+            Assert.Equal(3, statJ1.NbVictoireAbandonForfaitMedical);
+
+            // Hansoku Make
+            Assert.Equal(1, statJ1.NbVictoireHansokuMake);
+
+            // Le perdant n'a aucune stat de victoire
+            Assert.Equal(5, statJ2.NbCombats);
+            Assert.Equal(0, statJ2.NbVictoires);
+        }
+
+        [Fact]
+        public void TraitementCombats_Hikiwake_IncrementePourLesDeuxCombattants()
+        {
+            // Arrange
+            PreparerEnvironnement(EchelonEnum.Club);
+            PreparerMockParticipants(new[] { CreerMockJudoka(1, "M"), CreerMockJudoka(2, "M") });
+
+            var combats = new List<Combat>
+            {
+                CreerCombat(1, 2, vainqueur: int.MinValue)
+            };
+            PreparerMockCombats(combats);
+
+            // Act
+            var moteur = new DataStatistiquesCombats(_mockJudoData.Object);
+            var statJ1 = (CompteurStatistiques)moteur.StatsJudokas[1];
+            var statJ2 = (CompteurStatistiques)moteur.StatsJudokas[2];
+
+            // Assert
+            Assert.Equal(1, statJ1.NbCombats);
+            Assert.Equal(1, statJ1.NbHikiwake);
+            Assert.Equal(0, statJ1.NbVictoires);
+
+            Assert.Equal(1, statJ2.NbCombats);
+            Assert.Equal(1, statJ2.NbHikiwake);
+            Assert.Equal(0, statJ2.NbVictoires);
+        }
+
+        [Fact]
+        public void TraitementCombats_GoldenScoreEtDurees_CalculsCorrects()
+        {
+            // Arrange
+            PreparerEnvironnement(EchelonEnum.Club);
+            PreparerMockParticipants(new[] { CreerMockJudoka(1, "M"), CreerMockJudoka(2, "M") });
+
+            var debut = DateTime.Today;
+
+            var combats = new List<Combat>
+            {
+                // Cbt 1: Dure 6 min pour un temps nominal de 4 min -> Golden Score (2 min)
+                CreerCombat(1, 2, vainqueur: 1, temps: 4, debut: debut, fin: debut.AddMinutes(6)),
+                // Cbt 2: Combat rapide -> 1 min -> Pas de GS
+                CreerCombat(1, 2, vainqueur: 1, temps: 4, debut: debut, fin: debut.AddMinutes(1))
+            };
+            PreparerMockCombats(combats);
+
+            // Act
+            var moteur = new DataStatistiquesCombats(_mockJudoData.Object);
+            var statJ1 = (CompteurStatistiques)moteur.StatsJudokas[1];
+
+            // Assert
+            Assert.Equal(2, statJ1.NbCombats);
+
+            // Validation Temps de Combat globaux
+            Assert.Equal(TimeSpan.FromMinutes(1), statJ1.DureeCombatMinInterne);
+            Assert.Equal(TimeSpan.FromMinutes(6), statJ1.DureeCombatMaxInterne);
+            Assert.Equal(TimeSpan.FromMinutes(7), statJ1.TotalDureeCombat); // 6 + 1
+
+            // Validation Golden Score
+            Assert.Equal(1, statJ1.NbCombatsGoldenScore);
+            Assert.Equal(TimeSpan.FromMinutes(2), statJ1.TotalDureeGoldenScore);
+            Assert.Equal(TimeSpan.FromMinutes(2), statJ1.DureeMaximaleGoldenScoreInterne);
+        }
+
+        // =================================================================================
+        // OUTILS DE PREPARATION ET DE MOCKING (Refactorisés pour s'appuyer sur le constructeur)
+        // =================================================================================
+
+        private void PreparerEnvironnement(EchelonEnum niveau)
         {
             var mockComp = new Mock<ICompetition>();
             mockComp.Setup(c => c.id).Returns(99);
             mockComp.Setup(c => c.niveau).Returns((int)niveau);
+            mockComp.Setup(c => c.IsShiai()).Returns(true);
 
-            var mockOrg = new Mock<IOrganisationData>();
-            mockOrg.Setup(o => o.Competitions).Returns(new List<ICompetition> { mockComp.Object });
+            var mockEpM = new Mock<IEpreuve>();
+            mockEpM.Setup(e => e.id).Returns(10);
+            mockEpM.Setup(e => e.competition).Returns(99);
+            mockEpM.Setup(e => e.sexeEnum).Returns(new EpreuveSexe("M"));
 
-            _mockJudoData.Setup(d => d.Organisation).Returns(mockOrg.Object);
+            var mockEpF = new Mock<IEpreuve>();
+            mockEpF.Setup(e => e.id).Returns(11);
+            mockEpF.Setup(e => e.competition).Returns(99);
+            mockEpF.Setup(e => e.sexeEnum).Returns(new EpreuveSexe("F"));
+
+            // On surcharge les listes vides créées dans le constructeur avec nos données
+            _mockOrg.Setup(o => o.Competitions).Returns(new List<ICompetition> { mockComp.Object });
+            _mockOrg.Setup(o => o.Epreuves).Returns(new List<IEpreuve> { mockEpM.Object, mockEpF.Object });
         }
 
         private void PreparerMockParticipants(IEnumerable<IVueJudoka> judokas)
         {
-            var mockParts = new Mock<IParticipantsData>();
-
-            // On matérialise l'IEnumerable en List (qui implémente IReadOnlyList)
-            mockParts.Setup(p => p.Vuejudokas).Returns(judokas.ToList());
-
-            _mockJudoData.Setup(d => d.Participants).Returns(mockParts.Object);
+            _mockParts.Setup(p => p.Vuejudokas).Returns(judokas.ToList());
         }
 
         private void PreparerMockCombats(IEnumerable<Combat> combats)
         {
-            var mockDeroulement = new Mock<IDeroulementData>();
+            _mockDeroulement.Setup(d => d.Combats).Returns(combats.Cast<ICombat>().ToList());
+        }
 
-            // On caste explicitement les Combat concrets en ICombat, puis on matérialise en List
-            mockDeroulement.Setup(d => d.Combats).Returns(combats.Cast<ICombat>().ToList());
+        private IVueJudoka CreerMockJudoka(int id, string sexeStr)
+        {
+            var mock = new Mock<IVueJudoka>();
+            mock.Setup(j => j.id).Returns(id);
 
-            _mockJudoData.Setup(d => d.Deroulement).Returns(mockDeroulement.Object);
+            // NOUVEAU : Propriétés uniques pour éviter que le .Distinct() du moteur ne les fusionne !
+            mock.Setup(j => j.licence).Returns($"LICENCE_{id}");
+            mock.Setup(j => j.nom).Returns($"NOM_{id}");
+            mock.Setup(j => j.prenom).Returns($"PRENOM_{id}");
+
+            mock.Setup(j => j.sexeEnum).Returns(new EpreuveSexe(sexeStr));
+
+            mock.Setup(j => j.idcompet).Returns(99);
+            mock.Setup(j => j.idepreuve).Returns(sexeStr == "M" ? 10 : 11);
+
+            mock.Setup(j => j.club).Returns("CLUB_TEST");
+            mock.Setup(j => j.present).Returns(true);
+
+            return mock.Object;
+        }
+
+        private Combat CreerCombat(int id1, int id2, int vainqueur, int score1 = 0, int score2 = 0, int etatJ1 = 0, int etatJ2 = 0, int temps = 4, DateTime? debut = null, DateTime? fin = null)
+        {
+            return new Combat
+            {
+                participant1 = id1,
+                participant2 = id2,
+                vainqueur = vainqueur,
+                score1 = score1,
+                score2 = score2,
+                etatJ1 = etatJ1,
+                etatJ2 = etatJ2,
+                temps = temps,
+                debut = debut ?? DateTime.Today,
+                fin = fin ?? DateTime.Today.AddMinutes(temps),
+                virtuel = false
+            };
         }
     }
 }

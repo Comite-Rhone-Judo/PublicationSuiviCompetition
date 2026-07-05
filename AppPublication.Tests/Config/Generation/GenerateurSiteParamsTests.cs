@@ -23,8 +23,6 @@ namespace AppPublication.Tests.Config.Generation
             Assert.True(parametres.PublierEngagements);
             Assert.False(parametres.EngagementsAbsents);
             Assert.False(parametres.EngagementsTousCombats);
-            Assert.False(parametres.UseIntituleCommun);
-            Assert.Equal(string.Empty, parametres.IntituleCommun);
             Assert.False(parametres.ScoreEngagesGagnantPerdant);
             Assert.True(parametres.AfficherPositionCombat);
         }

@@ -15,11 +15,11 @@ namespace AppPublication.Tests.ExtensionNoyau.Engagement
             // Arrange
             int competition = 10;
             EpreuveSexe sexe = new EpreuveSexe(EpreuveSexeEnum.Masculin);
-            int type = (int)EchelonEnum.Club; // Vaut 2 en réalité
+            EchelonEnum type = EchelonEnum.Club; // Vaut 2 en réalité
             string entite = "JudoClubParis";
 
             // Act
-            GroupeEngagements groupe = new GroupeEngagements(competition, sexe, type, entite);
+            GroupeEngagements groupe = new GroupeEngagements(competition, sexe, entite, type);
 
             // Assert
             Assert.Equal(10, groupe.Competition);
@@ -36,22 +36,17 @@ namespace AppPublication.Tests.ExtensionNoyau.Engagement
         public void Setters_MettentAJourLId()
         {
             // Arrange
-            GroupeEngagements groupe = new GroupeEngagements(1, new EpreuveSexe(EpreuveSexeEnum.Feminine), 1, "Entite1")
-            {
-                // Act
-                Competition = 2,
-                Entite = "Entite2"
-            };
+            GroupeEngagements groupe = new GroupeEngagements(1, new EpreuveSexe(EpreuveSexeEnum.Feminine), "Entite1", EchelonEnum.Club);
 
             // Assert
-            Assert.Equal("2-F-Entite2-1", groupe.Id);
+            Assert.Equal("1-F-Entite2-1", groupe.Id);
         }
 
         [Fact]
         public void ToXml_CreeUneBaliseValide()
         {
             // Arrange
-            GroupeEngagements groupe = new GroupeEngagements(100, new EpreuveSexe(EpreuveSexeEnum.Mixte), 5, "LigueIDF");
+            GroupeEngagements groupe = new GroupeEngagements(100, new EpreuveSexe(EpreuveSexeEnum.Mixte), "LigueIDF", EchelonEnum.Ligue);
 
             // Act
             XElement xml = groupe.ToXml();

@@ -4,9 +4,12 @@
 #define MyAppName "Publication Suivi Competition"
 #define MyAppPublisher "Comité du Rhone-Lyon Metropole Judo"
 #define MyAppExeName "AppPublication.exe"
-#define MyAppConfig MyAppExeName + ".config"
+#define MyAppConfig "appsettings.json"
 #define InstallerName "PublicationSuiviCompetitionInstaller_v" + MyAppVersion
-#define MinVersionCompatible "2.0.0.0"
+#define MinVersionCompatible "2.1.0.0"
+
+; Ajout du sous-dossier lié au Target Framework .NET 10
+#define TargetFramework "net10.0-windows8.0"
 
 ; ################# WARNING ##############
 ; Do Not configure MyAppVersion, it will be added automatically using PreBuild Event
@@ -43,14 +46,17 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "useroverrideConfig"; Description: "{cm:OverrideConfig}"; GroupDescription: "{cm:PreviousInstall}"; Flags: checkedonce; Check: IsVersionCompatible
 
 [Files]
-Source: "..\..\..\AppPublication\bin\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\..\AppPublication\bin\Release\*"; Excludes:"*.log, *.pdb, {#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\..\AppPublication\bin\Release\{#TargetFramework}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\..\AppPublication\bin\Release\{#TargetFramework}\*"; Excludes:"*.log, *.pdb, {#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+
 ; Deploit le fichier de configuration s'il n'existe pas
-Source: "..\..\..\AppPublication\bin\Release\{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
+Source: "..\..\..\AppPublication\bin\Release\{#TargetFramework}\{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
+
 ; Deploit le fichier de configuration au choix de l'utilisateur (la tache peut etre desactivee si elle n'est pas compatible avec la version du fichier)
-Source: "..\..\..\AppPublication\bin\Release\{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion; Tasks: useroverrideConfig
+Source: "..\..\..\AppPublication\bin\Release\{#TargetFramework}\{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion; Tasks: useroverrideConfig
+
 ; Force le deploiement du fichier de configuration s'il n'est pas compatible
-Source: "..\..\..\AppPublication\bin\Release\{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion; Check: IsForceConfigOverride
+Source: "..\..\..\AppPublication\bin\Release\{#TargetFramework}\{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion; Check: IsForceConfigOverride
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -116,7 +122,7 @@ begin
       NoteHeight
     );
     Note.Font.Color := clRed;
-    Note.Caption := 'Activez <Effacer la configuration existante> si la version précédente' + #13#10 + 'est antérieure a la version 1.3.0.0. Dans le cas contraire' + #13#10 + 'des dysfonctionnements peuvent apparaitre.';
+    Note.Caption := 'Activez <Effacer la configuration existante> si la version précédente' + #13#10 + 'est antérieure a la version ' + ExpandConstant('{#MinVersionCompatible}') + '.' + #13#10 + 'Dans le cas contraire' + #13#10 + 'des dysfonctionnements peuvent apparaitre.';
   end;
 end; }
 
