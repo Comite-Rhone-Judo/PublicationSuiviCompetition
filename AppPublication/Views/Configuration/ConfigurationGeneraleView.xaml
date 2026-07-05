@@ -6,7 +6,7 @@
             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
             xmlns:local="clr-namespace:AppPublication.Views.Configuration"
             mc:Ignorable="d"
-            Title="Configuration Générale" Height="280" Width="920" Background="Black">
+            Title="Configuration Générale" Height="330" Width="920" Background="Black">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
@@ -26,7 +26,7 @@
         <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Style="{StaticResource Header1Style}" Margin="10 10 10 5" Visibility="Visible" >
             <TextBlock Text="Général" Style="{StaticResource Header1TextStyle}"/>
         </StackPanel>
-        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" BorderBrush="White" Margin="10,0,10,10" Width="880" Height="140">
+        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" BorderBrush="White" Margin="10,0,10,10" Width="880" Height="200">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -39,8 +39,9 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <Line Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" Grid.RowSpan="5" StrokeThickness="1" Stroke="White" Margin="5" Y1="0" Y2="1" Stretch="Fill"/>
+                <Line Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" Grid.RowSpan="4" StrokeThickness="1" Stroke="White" Margin="5" Y1="0" Y2="1" Stretch="Fill"/>
 
                 <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="0 10 0 0">
                     <Label  HorizontalAlignment="Right" Content="Sélection du logo:" Style="{StaticResource LabelStyle}" />
@@ -56,7 +57,7 @@
                         </Grid>
                     </Button>
                 </StackPanel>
-                <Border Grid.Column="1" Grid.Row="0" Grid.RowSpan="23" Background="LightGray" Width="120" Margin="0 10 0 0" VerticalAlignment="Center">
+                <Border Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" Background="LightGray" Width="120" Margin="0 10 0 0" VerticalAlignment="Center">
                     <Image  Source="{Binding ElementName=LogoList, Path=SelectedItem.FullName}" Width="120" Height="120"/>
                 </Border>
 
@@ -65,7 +66,7 @@
                     <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Répertoire racine dans lequel les données du site sont générées et publiées"/>
                 </StackPanel>
                 <TextBox Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="2" Height="20" Margin="5 -10 5 5" Text = "{Binding Path=RepertoireRacine}" IsEnabled="False"/>
-                <Button Grid.Row="4" Grid.Column="3" Width="105" Height="30" Command="{Binding CmdGetRepertoireRacine}" Margin="-70 0 0 0">
+                <Button Grid.Row="2" Grid.Column="3" Width="105" Height="30" Command="{Binding CmdGetRepertoireRacine}" Margin="-70 0 0 0">
                     <Grid>
                         <TextBlock Text="Sélectionner ..." Style="{StaticResource ButtonLabelStyle}"/>
                     </Grid>
@@ -79,6 +80,19 @@
                     <Label HorizontalAlignment="Right" Content="Effacer au démarage" Style="{StaticResource LabelStyle}"/>
                     <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, supprime tout le contenu préalable du répertoire au démarrage. Le site distant sera également effacé."/>
                 </StackPanel>
+
+                <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="6" Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox   Content="Utiliser un intitulé de compétition commun" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=UseIntituleCommun}"/>
+                        <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, en cas de gestion avec plusieurs compétitions simultanéement (ex. Districts),  utilise l'intitulé commun configuré au lieu du titre de la 1ère compétition."/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="30 -5 0 0" >
+                        <TextBox Height="24" VerticalScrollBarVisibility="Auto" Margin="5 5 5 5" Width="300"
+                                 Text = "{Binding Path=IntituleCommun}"
+                                 IsEnabled="{Binding Path=UseIntituleCommun}"/>
+                    </StackPanel>
+                </StackPanel>
+
             </Grid>
         </Border>
 

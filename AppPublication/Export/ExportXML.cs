@@ -210,113 +210,86 @@ namespace AppPublication.Export
 
         #region Generation Documents XML pour le site
 
+        /// <summary>
+        /// Creation du document pour les statistiques (pour le site)
+        /// Structure multi-compétitions alignée sur CreateDocumentEngagements.
+        /// </summary>
+        /// <param name="ctx">Contexte en lecture seule pour l'export</param>
+        /// <returns>Document XML des statistiques</returns>
+        /// <summary>
+        /// Creation du document pour les statistiques (pour le site)
+        /// Intègre la séparation entre les stats structurelles et les stats individuelles des judokas.
+        /// </summary>
         public static XDocument CreateDocumentStatistiques(ExportSharedContext ctx)
         {
+            IJudoData DC = ctx.DataContext;
             var dataStats = ctx.ExtendedDataContext.StatistiquesCombats;
 
-            // 1. Racine standardisée du framework
-            var root = new XElement(ConstantXML.DocRoot,
-                new XAttribute(ConstantXML.DocType, ConstantXML.DocumentType_DocumentStatistiques)
+            // 1. CRÉATION DES INDEX EN MÉMOIRE (O(1))
+            var groupesByCompet = dataStats.GroupesStatistiques.ToLookup(g => g.Competition);
+
+            // 2. CONSTRUCTION FONCTIONNELLE GLOBALE DE L'ARBRE
+            return new XDocument(
+                new XElement(ConstantXML.DocRoot,
+                    new XAttribute(ConstantXML.DocType, ConstantXML.DocumentType_DocumentStatistiques),
+                    new XElement(ConstantXML.Competitions,
+
+                        DC.Organisation.Competitions
+                          .Where(c => c.IsShiai() || c.IsIndividuelle())
+                          .Select(competition =>
+                          {
+                              XElement xcompetition = competition.ToXml();
+
+                              if (dataStats.TypesGroupes.TryGetValue(competition.id, out var typesGroupes))
+                              {
+                                  xcompetition.Add(
+                                      typesGroupes.Select(typeGroupe =>
+                                          new XElement(ConstantXML.GroupeStatistiques_groupes,
+                                              new XAttribute(ConstantXML.GroupeStatistiques_Type, (int)typeGroupe),
+
+                                              groupesByCompet[competition.id]
+                                                  .Where(g => g.Type == typeGroupe)
+                                                  .Select(groupe =>
+                                                  {
+                                                      // A. La balise racine du groupe (La page HTML)
+                                                      XElement xgroupe = groupe.ToXml();
+
+                                                      // B. Stats de la structure (On ignore si c'est un groupe par Lettre)
+                                                      if (groupe.Type != EchelonEnum.Aucun && dataStats.StatsStructures.TryGetValue(groupe, out var statsStruct))
+                                                      {
+                                                          xgroupe.Add(CreateStatistiqueItemNode("StatsStructure", statsStruct));
+                                                      }
+
+                                                      // C. La liste des judokas et leurs statistiques individuelles (Pour le tableau HTML et la Pop-up)
+                                                      if (dataStats.JudokasParGroupe.TryGetValue(groupe, out var judokasDuGroupe))
+                                                      {
+                                                          XElement xjudokas = new XElement("judokas");
+                                                          foreach (var judoka in judokasDuGroupe)
+                                                          {
+                                                              XElement xjudoka = judoka.ToXml(DC);
+
+                                                              // Injection des stats individuelles au coeur du noeud du judoka
+                                                              if (dataStats.StatsJudokas.TryGetValue(judoka.id, out var statsIndiv))
+                                                              {
+                                                                  xjudoka.Add(CreateStatistiqueItemNode("StatsJudoka", statsIndiv));
+                                                              }
+                                                              xjudokas.Add(xjudoka);
+                                                          }
+                                                          xgroupe.Add(xjudokas);
+                                                      }
+
+                                                      return xgroupe;
+                                                  })
+                                          )
+                                      )
+                                  );
+                              }
+
+                              return xcompetition;
+                          })
+                    )
+                )
             );
-
-            // 2. Le conteneur spécifique aux statistiques
-            var exportStatistiques = new XElement(ConstantXML.Statistiques_ExportStatistiques);
-
-            // 3. Export des Groupes
-            var groupesContainer = new XElement(ConstantXML.GroupeStatistiques_groupes);
-            foreach (var groupe in dataStats.GroupesStatistiques)
-            {
-                groupesContainer.Add(groupe.ToXml());
-            }
-            exportStatistiques.Add(groupesContainer);
-
-            // 4. Export des Items (Lignes de statistiques)
-            var itemsContainer = new XElement(ConstantXML.Statistiques_Items);
-
-            foreach (var kvp in dataStats.Statistiques)
-            {
-                var cle = kvp.Key;
-                var stats = kvp.Value;
-
-                // Instanciation du nœud avec les valeurs garanties non-nulles
-                var itemNode = new XElement(ConstantXML.Statistiques_Item,
-                    new XAttribute(ConstantXML.Statistiques_TypeEntite, cle.TypeEntite.ToString()),
-                    new XAttribute(ConstantXML.Statistiques_IdEntite, cle.IdEntite),
-                    new XAttribute(ConstantXML.Statistiques_Sexe, cle.Sexe.ToString()),
-
-                    new XAttribute(ConstantXML.Statistiques_NbCombats, stats.NbCombats),
-                    new XAttribute(ConstantXML.Statistiques_NbVictoires, stats.NbVictoires),
-                    new XAttribute(ConstantXML.Statistiques_NbHikiwake, stats.NbHikiwake),
-                    new XAttribute(ConstantXML.Statistiques_NbCombatsGoldenScore, stats.NbCombatsGoldenScore)
-                );
-
-                // --- Fonctions locales d'aide à l'injection pour garder le code propre ---
-
-                void AddInt(string nomAttribut, int? valeur)
-                {
-                    if (valeur.HasValue) itemNode.Add(new XAttribute(nomAttribut, valeur.Value));
-                }
-
-                void AddPct(string nomAttribut, double? valeur)
-                {
-                    // Multiplie par 100 et arrondit à 2 décimales pour l'affichage XSLT
-                    if (valeur.HasValue) itemNode.Add(new XAttribute(nomAttribut, Math.Round(valeur.Value * 100, 2)));
-                }
-
-                void AddRawDouble(string nomAttribut, double? valeur)
-                {
-                    // Arrondi simple sans passage en pourcentage (Ex: Moyenne des pénalités)
-                    if (valeur.HasValue) itemNode.Add(new XAttribute(nomAttribut, Math.Round(valeur.Value, 2)));
-                }
-
-                void AddTime(string nomAttribut, TimeSpan? valeur)
-                {
-                    // Exporte au format standard hh:mm:ss pour une lecture directe
-                    if (valeur.HasValue) itemNode.Add(new XAttribute(nomAttribut, valeur.Value.ToString(@"hh\:mm\:ss")));
-                }
-
-                // --- Injection exhaustive de toutes les propriétés nullables ---
-
-                // Participation
-                AddInt(ConstantXML.Statistiques_NbParticipants, stats.NbParticipants);
-                AddInt(ConstantXML.Statistiques_NbCombattants, stats.NbCombattants);
-                AddPct(ConstantXML.Statistiques_PctParticipation, stats.PctParticipation);
-
-                // Ratios globaux
-                AddPct(ConstantXML.Statistiques_PctVictoires, stats.PctVictoires);
-                AddPct(ConstantXML.Statistiques_PctHikiwake, stats.PctHikiwake);
-
-                // Détail des victoires
-                AddPct(ConstantXML.Statistiques_PctVictoireIpponDirect, stats.PctVictoireIpponDirect);
-                AddPct(ConstantXML.Statistiques_PctVictoireWazaAriAwaseteIppon, stats.PctVictoireWazaAriAwaseteIppon);
-                AddPct(ConstantXML.Statistiques_PctVictoireWazaAri, stats.PctVictoireWazaAri);
-                AddPct(ConstantXML.Statistiques_PctVictoireYuko, stats.PctVictoireYuko);
-                AddPct(ConstantXML.Statistiques_PctVictoireSogoGachi, stats.PctVictoireSogoGachi);
-                AddPct(ConstantXML.Statistiques_PctVictoireHansokuMake, stats.PctVictoireHansokuMake);
-
-                // Pénalités
-                AddRawDouble(ConstantXML.Statistiques_MoyennePenalitesParCombat, stats.MoyennePenalitesParCombat);
-
-                // Golden Score (Ratios et Temps)
-                AddPct(ConstantXML.Statistiques_PctCombatsGoldenScore, stats.PctCombatsGoldenScore);
-                AddTime(ConstantXML.Statistiques_DureeMoyenneGoldenScore, stats.DureeMoyenneGoldenScore);
-                AddTime(ConstantXML.Statistiques_DureeMaximaleGoldenScore, stats.DureeMaximaleGoldenScore);
-
-                // Temps de combats globaux
-                AddTime(ConstantXML.Statistiques_DureeCombatMin, stats.DureeCombatMin);
-                AddTime(ConstantXML.Statistiques_DureeCombatMax, stats.DureeCombatMax);
-                AddTime(ConstantXML.Statistiques_DureeCombatMoy, stats.DureeCombatMoy);
-
-                // Ajout du nœud construit à la liste
-                itemsContainer.Add(itemNode);
-            }
-            exportStatistiques.Add(itemsContainer);
-
-            // 5. Ajout à la racine
-            root.Add(exportStatistiques);
-
-            // 6. Retourne le document officiel
-            return new XDocument(new XDeclaration("1.0", "utf-8", "yes"), root);
         }
 
         /// <summary>
@@ -407,19 +380,36 @@ namespace AppPublication.Export
                             {
                                 xcompetition.Add(
                                     typesGroupes.Select(typeGroupe =>
-                                        new XElement(ConstantXML.GroupeEngagements_groupes,
-                                            new XAttribute(ConstantXML.GroupeEngagements_type, (int)typeGroupe),
+                                        new XElement(ConstantXML.GroupeEngagements_Groupes,
+                                            new XAttribute(ConstantXML.GroupeEngagements_Type, (int)typeGroupe),
 
                                             // On injecte les groupes directement à l'intérieur
                                             EDC.Engagement.GroupesEngages
-                                                .Where(g => g.Competition == competition.id && g.Type == (int)typeGroupe)
+                                                .Where(g => g.Competition == competition.id && g.Type == typeGroupe)
                                                 .Select(grp => grp.ToXml())
                                         )
                                     )
                                 );
                             }
 
-                            return xcompetition;
+                           // --- D. Ajout des Groupes de Statistiques ---
+                           if (EDC.StatistiquesCombats.TypesGroupes.TryGetValue(competition.id, out var typesGroupesStats))
+                           {
+                               xcompetition.Add(
+                                   typesGroupesStats.Select(typeGroupe =>
+                                       new XElement(ConstantXML.GroupeStatistiques_groupes,
+                                           // Attention à la casse de l'attribut Type selon votre ConstantXML
+                                           new XAttribute(ConstantXML.GroupeStatistiques_Type, (int)typeGroupe),
+
+                                           EDC.StatistiquesCombats.GroupesStatistiques
+                                               .Where(g => g.Competition == competition.id && g.Type == typeGroupe)
+                                               .Select(grp => grp.ToXml())
+                                       )
+                                   )
+                               );
+                           }
+
+                           return xcompetition;
                         })
                     )
             ));
@@ -462,11 +452,11 @@ namespace AppPublication.Export
                               {
                                   xcompetition.Add(
                                       typesGroupes.Select(typeGroupe =>
-                                          new XElement(ConstantXML.GroupeEngagements_groupes,
-                                              new XAttribute(ConstantXML.GroupeEngagements_type, (int)typeGroupe),
+                                          new XElement(ConstantXML.GroupeEngagements_Groupes,
+                                              new XAttribute(ConstantXML.GroupeEngagements_Type, (int)typeGroupe),
 
                                               groupesByCompet[competition.id]
-                                                  .Where(g => g.Type == (int)typeGroupe)
+                                                  .Where(g => g.Type == typeGroupe)
                                                   .Select(groupe => groupe.ToXml())
                                           )
                                       )
@@ -475,7 +465,7 @@ namespace AppPublication.Export
 
                               // --- B. Ajout des Judokas ---
                               xcompetition.Add(
-                                  new XElement(ConstantXML.GroupeEngagements_judokas,
+                                  new XElement(ConstantXML.GroupeEngagements_Judokas,
                                         judokasByCompet[competition.id].Select(vj => vj.ToXml())
                                     )
                                );
@@ -484,7 +474,7 @@ namespace AppPublication.Export
                               // On matérialise la liste (ToList) car on va la réutiliser juste en dessous pour la jointure
                               var epreuves = epreuvesByCompet[competition.id].ToList();
                               xcompetition.Add(
-                                  new XElement(ConstantXML.GroupeEngagements_epreuves,
+                                  new XElement(ConstantXML.GroupeEngagements_Epreuves,
                                         epreuves.Select(ep => ep.ToXml(DC))));
 
                               // --- D. Ajout des Phases ---
@@ -498,7 +488,7 @@ namespace AppPublication.Export
                               // On fait la jointure avec la liste en mémoire (phases), on dédoublonne, et on injecte.
                               var combats = phases.SelectMany(ph => combatsByPhase[ph.id]).Distinct(new CombatEqualityComparer());
                               xcompetition.Add(
-                                   new XElement(ConstantXML.GroupeEngagements_combats,
+                                   new XElement(ConstantXML.GroupeEngagements_Combats,
                                         combats.Select(c => c.ToXml(DC))));
 
                               return xcompetition;
@@ -839,6 +829,70 @@ namespace AppPublication.Export
         #endregion
 
         #region METHODES PRIVEES
+
+        /// <summary>
+        /// Méthode utilitaire universelle pour générer le noeud XML d'une statistique.
+        /// </summary>
+        private static XElement CreateStatistiqueItemNode(string nodeName, IStatistiquesItem stats)
+        {
+            var itemNode = new XElement(nodeName,
+                new XAttribute(ConstantXML.Statistiques_NbCombats, stats.NbCombats),
+                new XAttribute(ConstantXML.Statistiques_NbVictoires, stats.NbVictoires),
+                new XAttribute(ConstantXML.Statistiques_NbHikiwake, stats.NbHikiwake),
+                new XAttribute(ConstantXML.Statistiques_NbCombatsGoldenScore, stats.NbCombatsGoldenScore)
+            );
+
+            void AddInt(string nomAttribut, int? valeur)
+            {
+                if (valeur.HasValue) itemNode.Add(new XAttribute(nomAttribut, valeur.Value));
+            }
+
+            void AddPct(string nomAttribut, double? valeur)
+            {
+                // Arrondi strict à 1 chiffre après la virgule. 
+                // XAttribute garantira le format "12.5" dans le XML.
+                if (valeur.HasValue) itemNode.Add(new XAttribute(nomAttribut, Math.Round(valeur.Value * 100, 1)));
+            }
+
+            void AddRawDouble(string nomAttribut, double? valeur)
+            {
+                if (valeur.HasValue) itemNode.Add(new XAttribute(nomAttribut, Math.Round(valeur.Value, 1)));
+            }
+
+            void AddTime(string nomAttribut, TimeSpan? valeur)
+            {
+                if (valeur.HasValue) itemNode.Add(new XAttribute(nomAttribut, valeur.Value.ToString(@"hh\:mm\:ss")));
+            }
+
+            // --- Injection ---
+            AddInt(ConstantXML.Statistiques_NbParticipants, stats.NbParticipants);
+            AddInt(ConstantXML.Statistiques_NbCombattants, stats.NbCombattants);
+            AddPct(ConstantXML.Statistiques_PctParticipation, stats.PctParticipation);
+
+            AddPct(ConstantXML.Statistiques_PctVictoires, stats.PctVictoires);
+            AddPct(ConstantXML.Statistiques_PctHikiwake, stats.PctHikiwake);
+
+            AddPct(ConstantXML.Statistiques_PctVictoireIpponDirect, stats.PctVictoireIpponDirect);
+            AddPct(ConstantXML.Statistiques_PctVictoireWazaAriAwaseteIppon, stats.PctVictoireWazaAriAwaseteIppon);
+            AddPct(ConstantXML.Statistiques_PctVictoireWazaAri, stats.PctVictoireWazaAri);
+            AddPct(ConstantXML.Statistiques_PctVictoireYuko, stats.PctVictoireYuko);
+            AddPct(ConstantXML.Statistiques_PctVictoireSogoGachi, stats.PctVictoireSogoGachi);
+            AddPct(ConstantXML.Statistiques_PctVictoireHansokuMake, stats.PctVictoireHansokuMake);
+            AddPct(ConstantXML.Statistiques_PctVictoireDecision, stats.PctVictoireDecision);
+            AddPct(ConstantXML.Statistiques_PctVictoireAbandonForfaitMedical, stats.PctVictoireAbandonForfaitMedical);
+
+            AddRawDouble(ConstantXML.Statistiques_MoyennePenalitesParCombat, stats.MoyennePenalitesParCombat);
+
+            AddPct(ConstantXML.Statistiques_PctCombatsGoldenScore, stats.PctCombatsGoldenScore);
+            AddTime(ConstantXML.Statistiques_DureeMoyenneGoldenScore, stats.DureeMoyenneGoldenScore);
+            AddTime(ConstantXML.Statistiques_DureeMaximaleGoldenScore, stats.DureeMaximaleGoldenScore);
+
+            AddTime(ConstantXML.Statistiques_DureeCombatMin, stats.DureeCombatMin);
+            AddTime(ConstantXML.Statistiques_DureeCombatMax, stats.DureeCombatMax);
+            AddTime(ConstantXML.Statistiques_DureeCombatMoy, stats.DureeCombatMoy);
+
+            return itemNode;
+        }
 
         /// <summary>
         /// Fonction utilitaire permettant d'ajouter les nœuds d'épreuves (individuelles ou par équipe) au tapis.

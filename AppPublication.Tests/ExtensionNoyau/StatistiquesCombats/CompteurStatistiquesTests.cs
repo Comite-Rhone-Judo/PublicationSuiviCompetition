@@ -1,6 +1,7 @@
 ﻿using System;
 using Xunit;
 using AppPublication.ExtensionNoyau.StatistiquesCombats;
+using FranceJudo.Metier.Noyau.Organisation;
 
 namespace AppPublication.Tests.ExtensionNoyau.StatistiquesCombats
 {
@@ -10,7 +11,7 @@ namespace AppPublication.Tests.ExtensionNoyau.StatistiquesCombats
         public void Ratios_ZeroCombat_RetournentNull()
         {
             // Arrange
-            var compteur = new CompteurStatistiques(TypeEntiteStatistique.Structure);
+            var compteur = new CompteurStatistiques(EchelonEnum.Club);
             compteur.NbCombats = 0; // Aucun combat
 
             // Act & Assert
@@ -25,7 +26,7 @@ namespace AppPublication.Tests.ExtensionNoyau.StatistiquesCombats
         public void PctVictoires_CalculCorrect()
         {
             // Arrange
-            var compteur = new CompteurStatistiques(TypeEntiteStatistique.Structure)
+            var compteur = new CompteurStatistiques(EchelonEnum.Club)
             {
                 NbCombats = 4,
                 NbVictoires = 1,
@@ -41,7 +42,7 @@ namespace AppPublication.Tests.ExtensionNoyau.StatistiquesCombats
         public void PctParticipation_CalculCorrect()
         {
             // Arrange
-            var compteur = new CompteurStatistiques(TypeEntiteStatistique.Structure)
+            var compteur = new CompteurStatistiques(EchelonEnum.Club)
             {
                 NbParticipants = 10,
                 NbCombattants = 8 // 8 présents sur 10 inscrits
@@ -55,7 +56,7 @@ namespace AppPublication.Tests.ExtensionNoyau.StatistiquesCombats
         public void DureesCombat_MoyenneCalculCorrecte()
         {
             // Arrange
-            var compteur = new CompteurStatistiques(TypeEntiteStatistique.Judoka)
+            var compteur = new CompteurStatistiques(EchelonEnum.Aucun)
             {
                 NbCombats = 3,
                 TotalDureeCombat = TimeSpan.FromMinutes(9) // 9 minutes au total

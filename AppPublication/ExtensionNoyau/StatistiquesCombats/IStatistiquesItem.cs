@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FranceJudo.Metier.Noyau.Organisation;
+using System;
 using System.Collections.Generic;
 
 namespace AppPublication.ExtensionNoyau.StatistiquesCombats
@@ -12,7 +13,7 @@ namespace AppPublication.ExtensionNoyau.StatistiquesCombats
         /// <summary>
         /// Permet au moteur XSLT de conditionner l'affichage.
         /// </summary>
-        TypeEntiteStatistique TypeEntite { get; }
+        EchelonEnum TypeEntite { get; }
 
         // --- Participation (STAT35, STAT36, STAT37) ---
         // Nullables car N/A pour un Judoka individuel
@@ -24,6 +25,9 @@ namespace AppPublication.ExtensionNoyau.StatistiquesCombats
         int NbCombats { get; }
         int NbVictoires { get; }
         int NbHikiwake { get; }
+        int NbVictoireDecision { get; }
+
+        int NbVictoireAbandonForfaitMedical { get; }
 
         // --- Victoires (STAT07 à STAT12) ---
         // Nullables si NbCombats == 0
@@ -35,6 +39,9 @@ namespace AppPublication.ExtensionNoyau.StatistiquesCombats
         double? PctVictoireYuko { get; }
         double? PctVictoireSogoGachi { get; }
         double? PctVictoireHansokuMake { get; }
+
+        double? PctVictoireAbandonForfaitMedical { get; }
+        double? PctVictoireDecision { get; }
 
         // --- Pénalités (STAT18) ---
         // Nullable si NbCombats == 0

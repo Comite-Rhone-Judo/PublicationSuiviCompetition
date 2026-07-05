@@ -568,6 +568,26 @@ namespace AppPublication.Models.Publication
             }
         }
 
+
+        private bool _canPublierStatistiques = true;
+        /// <summary>
+        /// Indique si on peut publier les statistiques ou non
+        /// </summary>
+        public bool CanPublierStatistiques  
+        {
+            get { return _canPublierStatistiques; }
+            private set
+            {
+                // Propage la valeur au generateur de site
+                _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+                {
+                    c.PublierStatistiques = value && PublierStatistiques;
+                });
+                _canPublierStatistiques = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         private bool _publierProchainsCombats = false;
         /// <summary>
         /// Indique si on doit publier la liste des prochains combats ou non
@@ -631,6 +651,28 @@ namespace AppPublication.Models.Publication
             }
         }
 
+        private bool _publierStatistiques = false;
+        /// <summary>
+        /// Indique si on doit publier la liste des statistiques
+        /// </summary>
+        public bool PublierStatistiques
+        {
+            get { return _publierStatistiques; }
+            set
+            {
+                if (_publierStatistiques != value)
+                {
+                    // Propage la valeur au generateur de site
+                    _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+                    {
+                        c.PublierStatistiques = value && CanPublierStatistiques;
+                    });
+                    AppConfigRoot.Instance.Generation.GenerateurSite.PublierStatistiques = (_publierStatistiques = value);
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         private bool _engagementsAbsents = false;
         /// <summary>
         /// Indique si on doit publier les judokas absents
@@ -670,47 +712,6 @@ namespace AppPublication.Models.Publication
                         c.EngagementsTousCombats = value;
                     } );
                     AppConfigRoot.Instance.Generation.GenerateurSite.EngagementsTousCombats = (_engagementsTousCombats = value);
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private bool _useIntituleCommun;
-        /// <summary>
-        /// Flag indiquant si on doit utiliser un intitule commun en cas de poly competition
-        /// </summary>
-        public bool UseIntituleCommun
-        {
-            get { return _useIntituleCommun; }
-            set
-            {
-                if (_useIntituleCommun != value)
-                {
-                    // propage la valeur au generateur de site
-                    _generateurSite?.ExportConfigurationManager?.Modifier(c => { c.UseIntituleCommun = value; }) ;
-                    AppConfigRoot.Instance.Generation.GenerateurSite.UseIntituleCommun = (_useIntituleCommun = value);
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private string _intituleCommun;
-        /// <summary>
-        /// intitule commun en cas de poly competition
-        /// </summary>
-        public string IntituleCommun
-        {
-            get { return _intituleCommun; }
-            set
-            {
-                if (_intituleCommun != value)
-                {
-                    // propage la valeur au generateur de site
-                    _generateurSite?.ExportConfigurationManager?.Modifier(c =>
-                    {
-                        c.IntituleCommun = value;
-                    } );
-                    AppConfigRoot.Instance.Generation.GenerateurSite.IntituleCommun = (_intituleCommun = value);
                     NotifyPropertyChanged();
                 }
             }
@@ -790,6 +791,7 @@ namespace AppPublication.Models.Publication
                 NbProchainsCombats = AppConfigRoot.Instance.Generation.GenerateurSite.NbProchainsCombats;
                 PublierAffectationTapis = AppConfigRoot.Instance.Generation.GenerateurSite.PublierAffectationTapis;
                 PublierEngagements = AppConfigRoot.Instance.Generation.GenerateurSite.PublierEngagements;
+                PublierStatistiques = AppConfigRoot.Instance.Generation.GenerateurSite.PublierStatistiques;
                 EngagementsAbsents = AppConfigRoot.Instance.Generation.GenerateurSite.EngagementsAbsents;
                 EngagementsTousCombats = AppConfigRoot.Instance.Generation.GenerateurSite.EngagementsTousCombats;
                 DelaiActualisationClientSec = AppConfigRoot.Instance.Generation.GenerateurSite.DelaiActualisationClientSec;
@@ -797,8 +799,6 @@ namespace AppPublication.Models.Publication
                 PouleEnColonnes = AppConfigRoot.Instance.Generation.GenerateurSite.PouleEnColonnes;
                 PouleToujoursEnColonnes = AppConfigRoot.Instance.Generation.GenerateurSite.PouleToujoursEnColonnes;
                 TailleMaxPouleColonnes = AppConfigRoot.Instance.Generation.GenerateurSite.TailleMaxPouleColonnes;
-                UseIntituleCommun = AppConfigRoot.Instance.Generation.GenerateurSite.UseIntituleCommun;
-                IntituleCommun = AppConfigRoot.Instance.Generation.GenerateurSite.IntituleCommun;
                 ScoreEngagesGagnantPerdant = AppConfigRoot.Instance.Generation.GenerateurSite.ScoreEngagesGagnantPerdant;
                 AfficherPositionCombat = AppConfigRoot.Instance.Generation.GenerateurSite.AfficherPositionCombat;
                 // L'interface local de publication a ete chargee via la configuration du minisite, il faut juste s'assurer du bon calcul des URLs
@@ -843,6 +843,24 @@ namespace AppPublication.Models.Publication
             } );
         }
 
+        protected override void OnUseIntituleCommunChanged(bool newValue)
+        {
+            // Propage la valeur au generateur de site
+            _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+            {
+                c.UseIntituleCommun = newValue;
+            });
+        }
+        protected override void OnIntituleCommunChanged(string newValue)
+        {
+            // Propage la valeur au generateur de site
+            _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+            {
+                c.IntituleCommun = newValue;
+            });
+        }
+
+
         protected override void OnInterfaceLocalPublicationChanged()
         {
             URLLocalPublication = CalculURLSiteLocal();
@@ -867,6 +885,7 @@ namespace AppPublication.Models.Publication
             var DC = _judoDataManager.Data;
             CanPublierAffectation = DC.Organisation.Competition.IsIndividuelle();
             CanPublierEngagements = DC.Organisation.Competition.IsIndividuelle() || DC.Organisation.Competition.IsShiai();
+            CanPublierStatistiques = DC.Organisation.Competition.IsIndividuelle() || DC.Organisation.Competition.IsShiai();
 
             // Si on est en Shiai, par defaut on met les poules en colonnes
             if (DC.Organisation.Competition.IsShiai())

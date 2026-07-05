@@ -179,9 +179,21 @@ namespace AppPublication.Generation
                 _extendedJudoData =  new ExtendedJudoData(_snapshot);
 
                 // Clone la configuration
-                ConfigurationExportSite snapshotConfig;
+                ConfigurationExportSite snapshotConfig = ExportConfigurationManager.Snapshot;
 
-                snapshotConfig = ExportConfigurationManager.Snapshot;
+                // --- PRÉ-CHARGEMENT CONDITIONNEL ---
+                // On pré-calcule les données lourdes maintenant pour ne pas figer 
+                // la barre de progression plus tard dans le TaskBatcher.
+
+             if (snapshotConfig.PublierStatistiques)
+                {
+                    _extendedJudoData.EnsureStatistiquesLoaded();
+                }
+
+                if (snapshotConfig.PublierEngagements)
+                {
+                    _extendedJudoData.EnsureEngagementsLoaded();
+                }
 
                 // Initialise les donnees partagees de generation (ces donnees sont statiques et communes a toutes les taches)
                 _currentContext = ExportSharedContext.Create(_snapshot, _extendedJudoData, snapshotConfig);
@@ -253,7 +265,7 @@ namespace AppPublication.Generation
                     }
 
                     if (_cfgExport.PublierEngagements)
-                    {                      
+                    {
                         foreach (ICompetition comp in _snapshot.Organisation.Competitions)
                         {
                             // Recupere les groupes en fonction du type de groupement
@@ -262,17 +274,17 @@ namespace AppPublication.Generation
                             // On genere les engagements pour chaque type de groupe
                             foreach (EchelonEnum typeGrp in typesGrp)
                             {
-                                List<GroupeEngagements> groupesP = _extendedJudoData.Engagement.GroupesEngages.Where(g => g.Competition == comp.id && g.Type == (int)typeGrp).ToList();
+                                List<GroupeEngagements> groupesP = _extendedJudoData.Engagement.GroupesEngages.Where(g => g.Competition == comp.id && g.Type == typeGrp).ToList();
 
                                 int nbChunkEng = 0;
                                 int tailleChunkEngagement = Math.Max(20, groupesP.Count / (_nbCoeurs * 2)); ; // Ajuste la taille du chunk en fonction du nombre de groupes et du nombre de coeurs, avec un minimum de 1
                                 LogTools.Logger?.Debug($"Taille de chunk pour Engagement Competition {comp.nom}, groupe {typeGrp} : {tailleChunkEngagement} sur {_nbCoeurs} coeurs");
-                                
+
                                 // On fait un decoupe de la liste en paquet de n groupes pour limiter le nombre de taches (et donc le cout de lancement des taches) tout en gardant une bonne granularite pour le progress
                                 foreach (var paquet in groupesP.Chunk(tailleChunkEngagement))
                                 {
                                     LogTools.Logger?.Debug($"Batching chunk Engagement Competition {comp.nom}, groupe {typeGrp}: #{nbChunkEng++} (size = {paquet.Length}");
-                                    
+
                                     // Ce code est plus efficace qye celui qui cree une tache par groupe
                                     // car le lancement de trop nombreuses Task est couteux
                                     // Le paquet étant gros, on passe l'initialEstimate
@@ -280,6 +292,42 @@ namespace AppPublication.Generation
                                     {
                                         return exporter.GenereWebSiteEngagements(paquet, _currentContext, _siteUrlGenerator, p);
                                     }, paquet.Length);
+                                }
+                            }
+                        }
+                    }
+
+                    // Ajout de la logique de génération des Statistiques
+                    if (_cfgExport.PublierStatistiques)
+                    {
+                        foreach (ICompetition comp in _snapshot.Organisation.Competitions)
+                        {
+                            // Récupère les types de groupements pour les statistiques (ex: Club, Comité, Ligue, etc.)
+                            // NOTE : Adaptez "_extendedJudoData.Statistiques" avec le nom exact de votre propriété dans ExtendedJudoData
+                            List<EchelonEnum> typesGrpStats = _extendedJudoData.StatistiquesCombats.TypesGroupes[comp.id];
+
+                            // On génère les statistiques pour chaque type de groupe
+                            foreach (EchelonEnum typeGrp in typesGrpStats)
+                            {
+                                // Récupération de la liste des statistiques à traiter
+                                var groupesStats = _extendedJudoData.StatistiquesCombats.GroupesStatistiques.Where(g => g.Competition == comp.id && g.Type == typeGrp).ToList();
+
+                                int nbChunkStat = 0;
+                                // Ajuste la taille du chunk en fonction du nombre de groupes et de coeurs, avec un minimum de 20
+                                int tailleChunkStat = Math.Max(20, groupesStats.Count / (_nbCoeurs * 2));
+                                LogTools.Logger?.Debug($"Taille de chunk pour Statistiques Competition {comp.nom}, groupe {typeGrp} : {tailleChunkStat} sur {_nbCoeurs} coeurs");
+
+                                // Découpage de la liste en paquets (chunks)
+                                foreach (var paquet in groupesStats.Chunk(tailleChunkStat))
+                                {
+                                    LogTools.Logger?.Debug($"Batching chunk Statistiques Competition {comp.nom}, groupe {typeGrp}: #{nbChunkStat++} (size = {paquet.Length})");
+
+                                    // On délègue le travail au batcher avec une estimation du travail (paquet.Length)
+                                    _taskBatcher.AddWork(p =>
+                                    {
+                                        // Appel à la méthode de l'exporteur
+                                        return exporter.GenereWebSiteStatistiques(paquet, _currentContext, _siteUrlGenerator, p);
+                                    }, paquet.Length);    
                                 }
                             }
                         }

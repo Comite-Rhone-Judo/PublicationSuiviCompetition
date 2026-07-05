@@ -64,6 +64,7 @@
                     <Label HorizontalAlignment="Right" Content="Sec." Style="{StaticResource LabelStyle}" />
                 </StackPanel>
 
+                <!--
                 <StackPanel Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Orientation="Vertical">
                     <StackPanel Orientation="Horizontal">
                         <CheckBox   Content="Utiliser un intitulé de compétition commun" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionnaireSitePublique.UseIntituleCommun}"/>
@@ -75,6 +76,40 @@
                                  IsEnabled="{Binding Path=GestionnaireSitePublique.UseIntituleCommun}"/>
                     </StackPanel>
                 </StackPanel>
+                -->
+                <StackPanel Grid.Row="0" Grid.Column="2" Grid.RowSpan="2"  Orientation="Vertical">
+                    <StackPanel  Orientation="Horizontal">
+                        <CheckBox   Content="Afficher les Poules en colonnes" Style="{StaticResource CheckboxStyle}"
+                                            IsChecked="{Binding Path=GestionnaireSitePublique.PouleEnColonnes}">
+                        </CheckBox>
+                        <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, les poules seront affichées en colonnes selon les critères de taille. Affichage en diagonale sinon."/>
+                    </StackPanel >
+                    <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal" Margin="30 -5 0 0">
+                        <CheckBox Style="{StaticResource CheckboxStyle}"
+                                    IsChecked="{Binding Path=GestionnaireSitePublique.PouleToujoursEnColonnes, Converter={StaticResource BoolNotConverter}}"
+                                    IsEnabled="{Binding Path=GestionnaireSitePublique.PouleEnColonnes, Mode=OneWay}"
+                                    Margin="0 0 0 0"
+                                    Content="taille max. poule en colonne:">
+                        </CheckBox>
+                        <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0"
+                                       ToolTip="Taille minimale de la poule au dessus de laquelle la disposition est en diagonale."/>
+                        <hc:NumericUpDown Grid.Row="2" Grid.Column="3" 
+                                       Value="{Binding GestionnaireSitePublique.TailleMaxPouleColonnes}" 
+                                       Width="80" Height="20" 
+                                       Minimum="2" Maximum="999" 
+                                       Increment="1" 
+                                       Margin="5 0 5 0">
+                            <hc:NumericUpDown.IsEnabled>
+                                <MultiBinding Converter="{StaticResource BoolOperationConverter}" ConverterParameter="not_a_and_b"  Mode="OneWay">
+                                    <Binding Path="GestionnaireSitePublique.PouleToujoursEnColonnes" Mode="OneWay"/>
+                                    <Binding Path="GestionnaireSitePublique.PouleEnColonnes" Mode="OneWay"/>
+                                </MultiBinding>
+                            </hc:NumericUpDown.IsEnabled>
+                        </hc:NumericUpDown>
+                    </StackPanel>
+                </StackPanel>
+
+                
 
                 <Line Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" StrokeThickness="1" Stroke="DimGray" Margin="10 0 10 0" X1="0" X2="1" Stretch="Fill"/>
                 <Line Grid.Row="2" Grid.Column="2" HorizontalAlignment="Center" StrokeThickness="1" Stroke="DimGray" Margin="10 0 10 0" X1="0" X2="1" Stretch="Fill"/>
@@ -160,41 +195,16 @@
                                    Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="5 0"
                                    ToolTip="Si cochée, provoque l'ajout du menu 'Affectations' qui liste les tapis assignés pour chaque catégorie. Disponible uniquement en compétition Individuelle ou Shiai."/>
                 </StackPanel>
-
-                <StackPanel Grid.Row="5" Grid.Column="2"  Orientation="Vertical">
-                    <StackPanel  Orientation="Horizontal">
-                        <CheckBox   Content="Afficher les Poules en colonnes" Style="{StaticResource CheckboxStyle}"
-                                            IsChecked="{Binding Path=GestionnaireSitePublique.PouleEnColonnes}">
-                        </CheckBox>
-                        <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, les poules seront affichées en colonnes selon les critères de taille. Affichage en diagonale sinon."/>
-                    </StackPanel >
-                    <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal" Margin="30 -5 0 0">
-                        <CheckBox Style="{StaticResource CheckboxStyle}"
-                                    IsChecked="{Binding Path=GestionnaireSitePublique.PouleToujoursEnColonnes, Converter={StaticResource BoolNotConverter}}"
-                                    IsEnabled="{Binding Path=GestionnaireSitePublique.PouleEnColonnes, Mode=OneWay}"
-                                    Margin="0 0 0 0"
-                                    Content="taille max. poule en colonne:">
-                        </CheckBox>
-                        <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0"
-                                       ToolTip="Taille minimale de la poule au dessus de laquelle la disposition est en diagonale."/>
-                        <hc:NumericUpDown Grid.Row="2" Grid.Column="3" 
-                                       Value="{Binding GestionnaireSitePublique.TailleMaxPouleColonnes}" 
-                                       Width="80" Height="20" 
-                                       Minimum="2" Maximum="999" 
-                                       Increment="1" 
-                                       Margin="5 0 5 0">
-                            <hc:NumericUpDown.IsEnabled>
-                                <MultiBinding Converter="{StaticResource BoolOperationConverter}" ConverterParameter="not_a_and_b"  Mode="OneWay">
-                                    <Binding Path="GestionnaireSitePublique.PouleToujoursEnColonnes" Mode="OneWay"/>
-                                    <Binding Path="GestionnaireSitePublique.PouleEnColonnes" Mode="OneWay"/>
-                                </MultiBinding>
-                            </hc:NumericUpDown.IsEnabled>
-                        </hc:NumericUpDown>
-                    </StackPanel>
-                </StackPanel>
-
                 <Line Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Grid.RowSpan="6" StrokeThickness="1" Stroke="White" Margin="5" Y1="0" Y2="1" Stretch="Fill"/>
-
+                <StackPanel Grid.Row="5" Grid.Column="2"  Orientation="Horizontal" VerticalAlignment="Top">
+                    <CheckBox   Content="Publier 'Statistiques Combats'" Style="{StaticResource CheckboxStyle}"
+                                            IsChecked="{Binding Path=GestionnaireSitePublique.PublierStatistiques}"
+                                            Visibility="{Binding Path=GestionnaireSitePublique.CanPublierStatistiques, Converter={StaticResource BoolToVisibilityConverter}}">
+                    </CheckBox>
+                    <Image Visibility="{Binding Path=GestionnaireSitePublique.CanPublierStatistiques, Converter={StaticResource BoolToVisibilityConverter}}"
+                   Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="5 0"
+                   ToolTip="Si cochée, provoque l'ajout du menu 'Statistiques' qui affiche les statistiques des combats de la compétition. Disponible uniquement en compétition Individuelle ou Shiai."/>
+                </StackPanel>
             </Grid>
         </Border>
 

@@ -58,12 +58,12 @@ namespace AppPublication.Tests.ExtensionNoyau.Engagement
 
             // Assert
             Assert.NotNull(xml);
-            Assert.Equal(ConstantXML.GroupeEngagements_groupe, xml.Name.LocalName);
-            Assert.Equal("100", xml.Attribute(ConstantXML.GroupeEngagements_competition)?.Value);
-            Assert.Equal("100-X-LigueIDF-5", xml.Attribute(ConstantXML.GroupeEngagements_id)?.Value);
-            Assert.Equal("X", xml.Attribute(ConstantXML.GroupeEngagements_sexe)?.Value);
-            Assert.Equal("5", xml.Attribute(ConstantXML.GroupeEngagements_type)?.Value);
-            Assert.Equal("LigueIDF", xml.Attribute(ConstantXML.GroupeEngagements_entite)?.Value);
+            Assert.Equal(ConstantXML.GroupeEngagements_Groupe, xml.Name.LocalName);
+            Assert.Equal("100", xml.Attribute(ConstantXML.GroupeEngagements_Competition)?.Value);
+            Assert.Equal("100-X-LigueIDF-5", xml.Attribute(ConstantXML.GroupeEngagements_Id)?.Value);
+            Assert.Equal("X", xml.Attribute(ConstantXML.GroupeEngagements_Sexe)?.Value);
+            Assert.Equal("5", xml.Attribute(ConstantXML.GroupeEngagements_Type)?.Value);
+            Assert.Equal("LigueIDF", xml.Attribute(ConstantXML.GroupeEngagements_Entite)?.Value);
         }
     }
 }

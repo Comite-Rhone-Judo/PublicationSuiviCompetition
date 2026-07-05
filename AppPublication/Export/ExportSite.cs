@@ -1,5 +1,6 @@
 ﻿using AppPublication.ExtensionNoyau;
 using AppPublication.ExtensionNoyau.Engagement;
+using AppPublication.ExtensionNoyau.StatistiquesCombats;
 using AppPublication.Publication;
 using AppPublication.Tools.Enum;
 using FranceJudo.Core.Export;
@@ -84,13 +85,24 @@ namespace AppPublication.Export
         /// </summary>
         public List<FileWithChecksum> GenereWebSitePhase(IPhase phase, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
+            if (phase == null || ctx == null || siteStructure == null)
+            {
+                LogTools.Logger?.Error("Paramètres invalides pour la génération de la phase.");
+                return new List<FileWithChecksum>();
+            }
+
             IJudoData DC = ctx.DataContext;
+            List<FileWithChecksum> output = new List<FileWithChecksum>();
+
+            if (DC == null)
+            {
+                LogTools.Logger?.Error("DataContext est null dans le contexte d'export.");
+                return output;
+            }
 
             LogTools.Logger?.Debug("Phase ({1}) '{0}'", phase?.libelle, phase?.id);
 
             ConfigurationExportSite config = ctx.Config;
-
-            List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             int nbGen = config.PublierProchainsCombats ? 2 : 1;
             progress?.Report(BatchProgressInfo.Init(nbGen));
@@ -167,7 +179,8 @@ namespace AppPublication.Export
 
                         progress?.Report(BatchProgressInfo.Step(2));
                     }
-                    else {
+                    else
+                    {
                         // Un autre thread a déjà généré les prochains combats pour cette épreuve !
                         // On signale juste l'avancement pour ne pas fausser la barre de progression
                         progress?.Report(BatchProgressInfo.Step(2));
@@ -175,7 +188,6 @@ namespace AppPublication.Export
                     }
                 }
             }
-
             progress?.Report(BatchProgressInfo.Step(nbGen));
             return output;
         }
@@ -191,11 +203,22 @@ namespace AppPublication.Export
         /// <returns></returns>
         public List<FileWithChecksum> GenereWebSiteClassement(i_vue_epreuve_interface epreuve, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
+            if (epreuve == null || ctx == null || siteStructure == null)
+            {
+                LogTools.Logger?.Error("Paramètres invalides pour la génération du classement.");
+                return new List<FileWithChecksum>();
+            }
+
             IJudoData DC = ctx.DataContext;
+            List<FileWithChecksum> output = new List<FileWithChecksum>();
+
+            if (DC == null)
+            {
+                LogTools.Logger?.Error("DataContext est null dans le contexte d'export.");
+                return output;
+            }
 
             LogTools.Logger?.Debug("Epreuve ({1}) '{0}'", epreuve?.nom, epreuve?.id);
-
-            List<FileWithChecksum> output = new List<FileWithChecksum>();
 
             progress?.Report(BatchProgressInfo.Init(1));
 
@@ -229,7 +252,6 @@ namespace AppPublication.Export
 
             LogTools.Logger?.Debug("Classement = {0}", output.Count);
             progress?.Report(BatchProgressInfo.Step(1));
-
             return output;
         }
 
@@ -243,8 +265,20 @@ namespace AppPublication.Export
         /// <returns></returns>
         public List<FileWithChecksum> GenereWebSiteAllTapis(ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
+            if (ctx == null || siteStructure == null)
+            {
+                LogTools.Logger?.Error("Paramètres invalides pour la génération AllTapis.");
+                return new List<FileWithChecksum>();
+            }
+
             IJudoData DC = ctx.DataContext;
-            List <FileWithChecksum> output = new List<FileWithChecksum>();
+            List<FileWithChecksum> output = new List<FileWithChecksum>();
+
+            if (DC == null)
+            {
+                LogTools.Logger?.Error("DataContext est null dans le contexte d'export.");
+                return output;
+            }
 
             // Report the start of the task
             progress?.Report(BatchProgressInfo.Init(1));
@@ -298,9 +332,20 @@ namespace AppPublication.Export
         /// </summary>
         public List<FileWithChecksum> GenereWebSiteIndex(ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
+            if (ctx == null || siteStructure == null)
+            {
+                LogTools.Logger?.Error("Paramètres invalides pour la génération de l'index du site.");
+                return new List<FileWithChecksum>();
+            }
+
             IJudoData DC = ctx.DataContext;
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
+            if (DC == null)
+            {
+                LogTools.Logger?.Error("DataContext est null dans le contexte d'export.");
+                return output;
+            }
             progress?.Report(BatchProgressInfo.Init(2));
 
             if (DC != null && ctx != null && siteStructure != null)
@@ -357,6 +402,7 @@ namespace AppPublication.Export
             }
 
             progress?.Report(BatchProgressInfo.Step(2));
+
             return output;
         }
 
@@ -371,13 +417,22 @@ namespace AppPublication.Export
         /// <returns></returns>
         public List<FileWithChecksum> GenereWebSiteMenu(ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
+            if(ctx == null || siteStructure == null)
+            {
+                LogTools.Logger?.Error("Paramètres invalides pour la génération des menus du site.");
+                return new List<FileWithChecksum>();
+            }
+
             IJudoData DC = ctx.DataContext;
+            List<FileWithChecksum> output = new List<FileWithChecksum>();
             IExtendedJudoData EDC = ctx.ExtendedDataContext;
 
-            List<FileWithChecksum> output = new List<FileWithChecksum>();
 
-            if (DC == null || EDC == null || ctx == null || siteStructure == null)
+            if (DC == null || EDC == null)
+            {
+                LogTools.Logger?.Error("DataContext ou ExtendedDataContext est null dans le contexte d'export.");
                 return output;
+            }
 
             ConfigurationExportSite config = ctx.Config;
 
@@ -421,6 +476,13 @@ namespace AppPublication.Export
                     output.Add(GenerateMenuFile(ExportEnum.Site_MenuEngagements, targetDirectory, siteStructure, source));
                     progress?.Report(BatchProgressInfo.Step(++currentStep));
                 }
+
+                // 6. Génération du menu des statistiques (optionnel)
+                if (config.PublierStatistiques)
+                {
+                    output.Add(GenerateMenuFile(ExportEnum.Site_MenuStatistiques, targetDirectory, siteStructure, source));
+                    progress?.Report(BatchProgressInfo.Step(++currentStep));
+                }
             }
 
             LogTools.Logger?.Debug("Menu = {0}", output.Count);
@@ -439,34 +501,44 @@ namespace AppPublication.Export
         /// <returns></returns>
         public List<FileWithChecksum> GenereWebSiteAffectation(ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
+            if (ctx == null || siteStructure == null)
+            {
+                LogTools.Logger?.Error("Paramètres invalides pour la génération de l'affectation des tapis.");
+                return new List<FileWithChecksum>();
+            }
+
             IJudoData DC = ctx.DataContext;
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
+            if (DC == null)
+            {
+                LogTools.Logger?.Error("DataContext est null dans le contexte d'export.");
+                return output;
+            }
+
             progress?.Report(BatchProgressInfo.Init(1));
 
-            if (DC != null && ctx != null && siteStructure != null)
+            string targetDirectory = siteStructure.PhysicalStructure.RepertoireCommon();
+            ExportEnum exportType = ExportEnum.Site_AffectationTapis;
+
+            // Appel unifié avec notre méthode utilitaire
+            string savePath = GetFileSavePath(targetDirectory, exportType);
+
+            var xsltArgs = CreateAllXsltArgs(siteStructure, savePath);
+
+            // Génération du document et enrichissement via le contexte
+            XDocument outDoc = ExportXML.CreateDocumentAffectationTapis(ctx);
+            ctx.EnrichWithConfiguration(outDoc);
+
+            LogTools.DebugLogData(outDoc);
+
+            using (var source = new XmlSource(outDoc))
             {
-                string targetDirectory = siteStructure.PhysicalStructure.RepertoireCommon();
-                ExportEnum exportType = ExportEnum.Site_AffectationTapis;
-
-                // Appel unifié avec notre méthode utilitaire
-                string savePath = GetFileSavePath(targetDirectory, exportType);
-
-                var xsltArgs = CreateAllXsltArgs(siteStructure, savePath);
-
-                // Génération du document et enrichissement via le contexte
-                XDocument outDoc = ExportXML.CreateDocumentAffectationTapis(ctx);
-                ctx.EnrichWithConfiguration(outDoc);
-
-                LogTools.DebugLogData(outDoc);
-
-                using (var source = new XmlSource(outDoc))
-                {
-                    SiteExportEngine.GenererHtmlSite(source, exportType, savePath, xsltArgs);
-                }
-
-                output.Add(new FileWithChecksum($"{savePath}.html"));
+                SiteExportEngine.GenererHtmlSite(source, exportType, savePath, xsltArgs);
             }
+
+            output.Add(new FileWithChecksum($"{savePath}.html"));
+
 
             LogTools.Logger?.Debug("Affectation = {0}", output.Count);
             progress?.Report(BatchProgressInfo.Step(1));
@@ -482,57 +554,138 @@ namespace AppPublication.Export
         /// <summary>
         public List<FileWithChecksum> GenereWebSiteEngagements(IReadOnlyCollection<GroupeEngagements> grps, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
         {
+            if (grps == null || ctx == null || siteStructure == null)
+            {
+                LogTools.Logger?.Error("Paramètres invalides pour la génération des engagements.");
+                return new List<FileWithChecksum>();
+            }
+
             IJudoData DC = ctx.DataContext;
             IExtendedJudoData EDC = ctx.ExtendedDataContext;
             List<FileWithChecksum> output = new List<FileWithChecksum>();
 
-            if (DC != null && EDC != null && grps != null && ctx != null && siteStructure != null)
+            if (DC == null || EDC == null)
             {
-                int nbGrps = grps.Count;
-                progress?.Report(BatchProgressInfo.Init(nbGrps));
-
-                ExportEnum exportType = ExportEnum.Site_Engagements;
-
-                // --- DÉBUT DE L'OPTIMISATION XPATH ---
-                // La plomberie de compilation XML est maintenant 100% encapsulée.
-                // L'appel au registre déclenche le Lazy (si ce n'est pas déjà fait) et renvoie directement l'arbre optimisé.
-                XPathDocument xpathEngagements = ctx.GetCompiledDocument(nameof(ExportDocumentKey.Engagements));
-
-                // Sécurité : vérifier que la génération a bien eu lieu
-                if (xpathEngagements == null)
-                {
-                    LogTools.Logger?.Error("Impossible de récupérer le document XPath pour les engagements.");
-                    return output; // Retourne une liste vide si le document n'est pas disponible
-                }
-
-                int currentStep = 0;
-
-                // Remplacement de la boucle 'for' par un 'foreach' plus lisible
-                foreach (GroupeEngagements grp in grps)
-                {
-                    // Détermination du répertoire cible dynamique pour ce groupe
-                    string targetDirectory = siteStructure.PhysicalStructure.RepertoireGroupeEngagements(grp.Id);
-                    string savePath = GetFileSavePath(targetDirectory, exportType);
-
-                    var xsltArgs = CreateAllXsltArgs(siteStructure, savePath,
-                        ("idgroupe", grp.Id),
-                        ("idcompetition", grp.Competition)
-                    );
-
-                    // Transformation HTML à partir du document contextuel
-                    SiteExportEngine.GenererHtmlSite(xpathEngagements, exportType, savePath, xsltArgs);
-
-                    output.Add(new FileWithChecksum($"{savePath}.html"));
-
-                    progress?.Report(BatchProgressInfo.Step(++currentStep));
-                }
+                LogTools.Logger?.Error("DataContext ou ExtendedDataContext est null dans le contexte d'export.");
+                return output;
             }
+            int nbGrps = grps.Count;
+            progress?.Report(BatchProgressInfo.Init(nbGrps));
+
+            ExportEnum exportType = ExportEnum.Site_Engagements;
+
+            // --- DÉBUT DE L'OPTIMISATION XPATH ---
+            // La plomberie de compilation XML est maintenant 100% encapsulée.
+            // L'appel au registre déclenche le Lazy (si ce n'est pas déjà fait) et renvoie directement l'arbre optimisé.
+            XPathDocument xpathEngagements = ctx.GetCompiledDocument(nameof(ExportDocumentKey.Engagements));
+
+            // Sécurité : vérifier que la génération a bien eu lieu
+            if (xpathEngagements == null)
+            {
+                LogTools.Logger?.Error("Impossible de récupérer le document XPath pour les engagements.");
+                return output; // Retourne une liste vide si le document n'est pas disponible
+            }
+
+            int currentStep = 0;
+
+            // Remplacement de la boucle 'for' par un 'foreach' plus lisible
+            foreach (GroupeEngagements grp in grps)
+            {
+                // Détermination du répertoire cible dynamique pour ce groupe
+                string targetDirectory = siteStructure.PhysicalStructure.RepertoireGroupeEngagements(grp.Id);
+                string savePath = GetFileSavePath(targetDirectory, exportType);
+
+                var xsltArgs = CreateAllXsltArgs(siteStructure, savePath,
+                    ("idgroupe", grp.Id),
+                    ("idcompetition", grp.Competition)
+                );
+
+                // Transformation HTML à partir du document contextuel
+                SiteExportEngine.GenererHtmlSite(xpathEngagements, exportType, savePath, xsltArgs);
+
+                output.Add(new FileWithChecksum($"{savePath}.html"));
+
+                progress?.Report(BatchProgressInfo.Step(++currentStep));
+            }
+
 
             LogTools.Logger?.Debug("Engagements = {0}", output.Count);
 
             return output;
         }
 
+
+        /// <summary>
+        /// Genere la page des statistiques
+        /// </summary>
+        /// <param name="grps">Liste des groupes de statistiques</param>
+        /// <param name="ctx">Le contexte d'export</param>
+        /// <param name="siteStructure">Générateur d'URL</param>
+        /// <param name="progress">Rapporteur de progression</param>
+        /// <returns></returns>
+        public List<FileWithChecksum> GenereWebSiteStatistiques(IReadOnlyCollection<GroupeStatistiques> grps, ExportSharedContext ctx, SiteUrlGenerator siteStructure, IProgress<BatchProgressInfo> progress)
+        {
+
+
+            if (grps == null || ctx == null || siteStructure == null)
+            {
+                LogTools.Logger?.Error("Paramètres invalides pour la génération des statistiques.");
+                return new List<FileWithChecksum>();
+            }
+
+            IJudoData DC = ctx.DataContext;
+            IExtendedJudoData EDC = ctx.ExtendedDataContext;
+            List<FileWithChecksum> output = new List<FileWithChecksum>();
+
+            if (DC == null || EDC == null)
+            {
+                LogTools.Logger?.Error("DataContext ou ExtendedDataContext est null dans le contexte d'export.");
+                return output;
+            }
+
+            int nbGrps = grps.Count;
+            progress?.Report(BatchProgressInfo.Init(nbGrps));
+
+            // Note: Assurez-vous que ExportEnum.Site_Statistiques existe
+            ExportEnum exportType = ExportEnum.Site_Statistiques;
+
+            // --- UTILISATION DE L'OPTIMISATION XPATH ---
+            // Note: Assurez-vous d'avoir ajouté "Statistiques" dans l'énumération ExportDocumentKey
+            XPathDocument xpathStatistiques = ctx.GetCompiledDocument(nameof(ExportDocumentKey.Statistiques));
+            
+            
+            // Sécurité : vérifier que la génération a bien eu lieu
+            if (xpathStatistiques == null)
+            {
+                LogTools.Logger?.Error("Impossible de récupérer le document XPath pour les statistiques.");
+                return output;
+            }
+
+            int currentStep = 0;
+
+            foreach (var grp in grps)
+            {
+                // Détermination du répertoire cible dynamique pour ce groupe de statistiques
+                string targetDirectory = siteStructure.PhysicalStructure.RepertoireGroupeStatistiques(grp.Id);
+                string savePath = GetFileSavePath(targetDirectory, exportType);
+
+                var xsltArgs = CreateAllXsltArgs(siteStructure, savePath,
+                    ("idgroupe", grp.Id),
+                    ("idcompetition", grp.Competition)
+                );
+
+                // Transformation HTML à partir du document contextuel
+                SiteExportEngine.GenererHtmlSite(xpathStatistiques, exportType, savePath, xsltArgs);
+
+                output.Add(new FileWithChecksum($"{savePath}.html"));
+
+                progress?.Report(BatchProgressInfo.Step(++currentStep));
+            }
+
+            LogTools.Logger?.Debug("Statistiques = {0}", output.Count);
+
+            return output;
+        }
         #endregion
     }
 }

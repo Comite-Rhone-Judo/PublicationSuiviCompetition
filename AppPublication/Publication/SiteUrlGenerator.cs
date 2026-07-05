@@ -30,11 +30,14 @@ namespace AppPublication.Publication
 
         // --- URLs ABSOLUES ---
         public Uri UrlEngagements => GetUrlFromPhysicalPath(PhysicalStructure.RepertoireEngagements());
+        public Uri UrlStatistiques => GetUrlFromPhysicalPath(PhysicalStructure.RepertoireStatistiques());
         public Uri UrlCommon => GetUrlFromPhysicalPath(PhysicalStructure.RepertoireCommon());
         public Uri UrlIndex => GetUrlFromPhysicalPath(PhysicalStructure.FichierIndex());
 
         public Uri GetUrlGroupeEngagements(string idGroupe)
             => GetUrlFromPhysicalPath(PhysicalStructure.RepertoireGroupeEngagements(idGroupe));
+        public Uri GetUrlGroupeStatistiques(string idGroupe)
+            => GetUrlFromPhysicalPath(PhysicalStructure.RepertoireGroupeStatistiques(idGroupe));
 
         public Uri GetUrlEpreuve(string idEpreuve, string nomEpreuve)
             => GetUrlFromPhysicalPath(PhysicalStructure.RepertoireEpreuve(idEpreuve, nomEpreuve));
@@ -42,6 +45,8 @@ namespace AppPublication.Publication
         // --- URLs RELATIVES (Pour le XSLT) ---
         public string GetRelativeUrlEngagements(string targetFile)
             => GetRelativeWebPath(targetFile, PhysicalStructure.RepertoireEngagements());
+        public string GetRelativeUrlStatistiques(string targetFile)
+            => GetRelativeWebPath(targetFile, PhysicalStructure.RepertoireStatistiques());
 
         public string GetRelativeUrlCommon(string targetFile)
             => GetRelativeWebPath(targetFile, PhysicalStructure.RepertoireCommon());

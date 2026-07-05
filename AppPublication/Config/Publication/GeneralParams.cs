@@ -26,10 +26,16 @@ namespace AppPublication.Config.Publication
         private bool _isolerCompetition = false;
         private string _repertoireRacineSiteFTPDistant = string.Empty;
         private bool _effacerAuDemarrage = true;
-
+        private bool _useIntituleCommun = false;
+        private string _intituleCommun = string.Empty;
         #endregion
 
         #region PROPRIÉTÉS
+
+        public bool UseIntituleCommun { get => _useIntituleCommun; set => SetValue(ref _useIntituleCommun, value); }
+        public string IntituleCommun { get => _intituleCommun; set => SetValue(ref _intituleCommun, value); }
+
+
 
         public string NiveauPublicationFFJudo
         {

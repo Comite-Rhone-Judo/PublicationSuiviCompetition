@@ -2,6 +2,7 @@
 using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.Noyau.Participants;
+using KernelImpl.Noyau.Organisation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,30 +11,26 @@ namespace AppPublication.ExtensionNoyau.Engagement
 {
     public class DataEngagement : IDataEngagement
     {
-        // 1. Les données deviennent ReadOnly. Une fois calculées, elles sont figées.
         private readonly List<GroupeEngagements> _groupesEngages;
         private readonly Dictionary<int, List<EchelonEnum>> _typesGroupes;
 
         public IReadOnlyList<GroupeEngagements> GroupesEngages => _groupesEngages;
         public IReadOnlyDictionary<int, List<EchelonEnum>> TypesGroupes => _typesGroupes;
 
-        // 2. LE CONSTRUCTEUR (Agit comme votre Factory)
-        // Il est appelé uniquement lorsque le Lazy<DataEngagement>.Value est demandé.
         public DataEngagement(IJudoData snapshot)
         {
             _typesGroupes = BuildTypesGroupes(snapshot);
             _groupesEngages = BuildGroupesEngagements(snapshot);
         }
 
-        // 3. Les méthodes de calcul (privées) retournent maintenant des dictionnaires/listes
         private Dictionary<int, List<EchelonEnum>> BuildTypesGroupes(IJudoData dataContext)
         {
             var dict = new Dictionary<int, List<EchelonEnum>>();
 
-            foreach (ICompetition comp in dataContext.Organisation.Competitions)
+            // Ajout du ToList() ici par sécurité
+            foreach (ICompetition comp in dataContext.Organisation.Competitions.ToList())
             {
-                List<EchelonEnum> listEchelon = new List<EchelonEnum>();
-                listEchelon.Add(EchelonEnum.Aucun);
+                List<EchelonEnum> listEchelon = new List<EchelonEnum> { EchelonEnum.Aucun };
 
                 switch (comp.niveau)
                 {
@@ -60,84 +57,90 @@ namespace AppPublication.ExtensionNoyau.Engagement
                         listEchelon.Add(EchelonEnum.Club);
                         break;
                 }
-
                 dict.Add(comp.id, listEchelon);
             }
-
             return dict;
         }
 
         private List<GroupeEngagements> BuildGroupesEngagements(IJudoData DC)
         {
-            var listGroupes = new List<GroupeEngagements>();
+            var groupesUniques = new HashSet<GroupeEngagements>();
+
+            // Le ToList() originel, indispensable
             IList<ICompetition> competitions = DC.Organisation.Competitions.ToList();
-            string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
             foreach (ICompetition competition in competitions)
             {
                 if (competition.IsShiai() || competition.IsIndividuelle())
                 {
+                    if (!_typesGroupes.TryGetValue(competition.id, out var echelonsCibles)) continue;
+
+                    // Restauration de la boucle des sexes de votre ancien code
                     foreach (EpreuveSexeEnum s in Enum.GetValues<EpreuveSexeEnum>())
                     {
-                        EpreuveSexe sexe = new EpreuveSexe(s);
-                        IList<IEpreuve> epreuvesSexe = DC.Organisation.Epreuves.Where(ep => ep.competition == competition.id && ep.sexeEnum.Enum == s).ToList();
+                        // 1er ToList() crucial : Fige les épreuves, relâche l'UI
+                        IList<IEpreuve> epreuvesSexe = DC.Organisation.Epreuves
+                            .Where(ep => ep.competition == competition.id && ep.sexeEnum.Enum == s)
+                            .ToList();
 
+                        // 2ème ToList() crucial : Restauration de la jointure qui charge les judokas en RAM 
                         IList<IVueJudoka> judokasParticipants = DC.Participants.Vuejudokas
                             .Join(epreuvesSexe, vj => vj.idepreuve, ep => ep.id, (vj, ep) => vj)
                             .Distinct(new VueJudokaEqualityComparer())
                             .ToList();
 
-                        Dictionary<EchelonEnum, List<string>> dictEntites = new Dictionary<EchelonEnum, List<string>>();
-
-                        switch (competition.niveau)
+                        // L'extraction est maintenant 100% sécurisée sur notre copie de données locale
+                        foreach (var judoka in judokasParticipants)
                         {
-                            case (int)EchelonEnum.Club:
-                                dictEntites.Add(EchelonEnum.Club, judokasParticipants.Select(o => o.club).Distinct().ToList());
-                                break;
-                            case (int)EchelonEnum.Departement:
-                                dictEntites.Add(EchelonEnum.Club, judokasParticipants.Select(o => o.club).Distinct().ToList());
-                                dictEntites.Add(EchelonEnum.Departement, judokasParticipants.Select(o => o.comite).Distinct().ToList());
-                                break;
-                            case (int)EchelonEnum.Ligue:
-                                dictEntites.Add(EchelonEnum.Club, judokasParticipants.Select(o => o.club).Distinct().ToList());
-                                dictEntites.Add(EchelonEnum.Departement, judokasParticipants.Select(o => o.comite).Distinct().ToList());
-                                dictEntites.Add(EchelonEnum.Ligue, judokasParticipants.Select(o => o.ligue).Distinct().ToList());
-                                break;
-                            case (int)EchelonEnum.National:
-                            case (int)EchelonEnum.International:
-                                dictEntites.Add(EchelonEnum.Club, judokasParticipants.Select(o => o.club).Distinct().ToList());
-                                dictEntites.Add(EchelonEnum.Departement, judokasParticipants.Select(o => o.comite).Distinct().ToList());
-                                dictEntites.Add(EchelonEnum.Ligue, judokasParticipants.Select(o => o.ligue).Distinct().ToList());
-                                dictEntites.Add(EchelonEnum.National, judokasParticipants.Select(o => o.pays.ToString()).Distinct().ToList());
-                                break;
-                            default:
-                                LogTools.Logger?.Error("Niveau de competition inconnu : {0}. Utilisation du niveau club par defaut", competition.niveau);
-                                dictEntites.Add(EchelonEnum.Club, judokasParticipants.Select(o => o.club).Distinct().ToList());
-                                break;
-                        }
-
-                        foreach (EchelonEnum typeEntite in dictEntites.Keys)
-                        {
-                            List<string> entites = dictEntites[typeEntite];
-                            IEnumerable<GroupeEngagements> groupesEntites = entites.Select(o => new GroupeEngagements(competition.id, sexe, (int)typeEntite, o));
-
-                            // Optimisation : AddRange est plus rapide que de faire des Concat.ToList() en boucle
-                            listGroupes.AddRange(groupesEntites);
-                        }
-
-                        foreach (char c in alphabet)
-                        {
-                            int nj = judokasParticipants.Count(o => Char.ToUpper(o.nom.First()) == c);
-                            if (nj > 0)
+                            foreach (var groupe in GetGroupesCascadePourParticipant(judoka, echelonsCibles))
                             {
-                                listGroupes.Add(new GroupeEngagements(competition.id, sexe, (int)EchelonEnum.Aucun, c.ToString()));
+                                groupesUniques.Add(groupe);
                             }
                         }
                     }
                 }
             }
 
-            return listGroupes;
+            return groupesUniques.ToList();
+        }
+
+        // --- LA CASCADE CORRIGÉE ---
+        private IEnumerable<GroupeEngagements> GetGroupesCascadePourParticipant(IVueJudoka p, List<EchelonEnum> echelonsCibles)
+        {
+            var groupes = new List<GroupeEngagements>();
+
+            if (p == null) return groupes;
+
+            // ATTENTION : L'ordre des paramètres est (Compétition, Sexe, TYPE, ENTITÉ)
+            // J'avais inversé les deux derniers paramètres dans mon code précédent !
+
+            if (echelonsCibles.Contains(EchelonEnum.Aucun) && !string.IsNullOrWhiteSpace(p.nom))
+            {
+                string premiereLettre = p.nom.Trim().Substring(0, 1).ToUpper();
+                groupes.Add(new GroupeEngagements(p.idcompet, p.sexeEnum, premiereLettre, EchelonEnum.Aucun));
+            }
+
+            if (echelonsCibles.Contains(EchelonEnum.National) && p.pays != 0)
+            {
+                groupes.Add(new GroupeEngagements(p.idcompet, p.sexeEnum, p.pays.ToString(), EchelonEnum.National));
+            }
+
+            if (echelonsCibles.Contains(EchelonEnum.Ligue) && !string.IsNullOrEmpty(p.ligue))
+            {
+                groupes.Add(new GroupeEngagements(p.idcompet, p.sexeEnum, p.ligue, EchelonEnum.Ligue));
+            }
+
+            if (echelonsCibles.Contains(EchelonEnum.Departement) && !string.IsNullOrEmpty(p.comite))
+            {
+                groupes.Add(new GroupeEngagements(p.idcompet, p.sexeEnum, p.comite, EchelonEnum.Departement));
+            }
+
+            if (echelonsCibles.Contains(EchelonEnum.Club) && !string.IsNullOrEmpty(p.club))
+            {
+                groupes.Add(new GroupeEngagements(p.idcompet, p.sexeEnum, p.club, EchelonEnum.Club));
+            }
+
+            return groupes;
         }
     }
 }

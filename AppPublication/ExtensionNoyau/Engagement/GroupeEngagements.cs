@@ -1,99 +1,66 @@
-﻿using FranceJudo.Metier.Noyau.Organisation;
+﻿using System;
+using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.XML;
 using System.Xml.Linq;
 
-
 namespace AppPublication.ExtensionNoyau.Engagement
 {
-    public class GroupeEngagements
+    public class GroupeEngagements : IEquatable<GroupeEngagements>
     {
-        public GroupeEngagements(int c, EpreuveSexe s, int t, string e)
+        public int Competition { get; }
+        public EpreuveSexe Sexe { get; }
+        public string Entite { get; }
+        public EchelonEnum Type { get; }
+
+        public string Id => $"{Competition}-{Sexe}-{Entite}-{(int)Type}";
+
+        public GroupeEngagements(int competition, EpreuveSexe sexe, string entite, EchelonEnum type)
         {
-            // Initialisation des valeurs par defaut
-            Competition = c;
-            Sexe = s;
-            Type = t;
-            Entite = e;
-            GetId();
+            Competition = competition;
+            Sexe = sexe;
+            Entite = entite ?? string.Empty;
+            Type = type;
         }
 
-        // Identifiant du groupement {IdCompetition}-{sexe}-{ID entite}-{Type entite}
-        private string _id;
-        public string Id
+        // --- GESTION DE L'UNICITÉ POUR LE HASHSET ---
+
+        public bool Equals(GroupeEngagements other)
         {
-            get { return _id; }
-            private set { _id = value; }
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Competition == other.Competition &&
+                   Sexe.Equals(other.Sexe) &&
+                   string.Equals(Entite, other.Entite, StringComparison.OrdinalIgnoreCase) &&
+                   Type == other.Type;
         }
 
-        // Id de la competition associee au groupement
-        private int _competition;
-        public int Competition
+        public override bool Equals(object obj) => Equals(obj as GroupeEngagements);
+
+        public override int GetHashCode()
         {
-            get { return _competition; }
-            set
+            unchecked
             {
-                _competition = value;
-                GetId();
-            }
-        }
-
-        // le sexe associe au groupement
-        EpreuveSexe _sexe;
-        public EpreuveSexe Sexe
-        {
-            get { return _sexe; }
-            set
-            {
-                _sexe = value;
-                GetId();
-            }
-        }
-
-        // Type de l'entite de groupement
-        private int _type;
-        public int Type
-        {
-            get { return _type; }
-            set
-            {
-                _type = value;
-                GetId();
-            }
-        }
-
-        // ID de l'entite de groupement
-        private string _entite;
-        public string Entite
-        {
-            get { return _entite; }
-            set
-            {
-                _entite = value;
-                GetId();
+                int hash = 17;
+                hash = hash * 31 + Competition.GetHashCode();
+                hash = hash * 31 + Sexe.GetHashCode();
+                hash = hash * 31 + StringComparer.OrdinalIgnoreCase.GetHashCode(Entite);
+                hash = hash * 31 + Type.GetHashCode();
+                return hash;
             }
         }
 
         /// <summary>
         /// Serialize l'objet en XML
         /// </summary>
-        /// <returns></returns>
         public XElement ToXml()
         {
-            XElement xgroupeP = new XElement(ConstantXML.GroupeEngagements_groupe);
-            xgroupeP.SetAttributeValue(ConstantXML.GroupeEngagements_competition, this.Competition);
-            xgroupeP.SetAttributeValue(ConstantXML.GroupeEngagements_id, this.Id);
-            xgroupeP.SetAttributeValue(ConstantXML.GroupeEngagements_sexe, this.Sexe.ToString());
-            xgroupeP.SetAttributeValue(ConstantXML.GroupeEngagements_type, this.Type);
-            xgroupeP.SetAttributeValue(ConstantXML.GroupeEngagements_entite, this.Entite);
+            XElement xgroupeP = new XElement(ConstantXML.GroupeEngagements_Groupe);
+            xgroupeP.SetAttributeValue(ConstantXML.GroupeEngagements_Competition, Competition);
+            xgroupeP.SetAttributeValue(ConstantXML.GroupeEngagements_Id, Id);
+            xgroupeP.SetAttributeValue(ConstantXML.GroupeEngagements_Sexe, Sexe.ToString());
+            xgroupeP.SetAttributeValue(ConstantXML.GroupeEngagements_Type, (int) Type);     // On force en int pour ne pas avoir le label de l'enum
+            xgroupeP.SetAttributeValue(ConstantXML.GroupeEngagements_Entite, Entite);
             return xgroupeP;
-        }
-
-        /// <summary>
-        /// Calcul l'identifiant interne du groupe
-        /// </summary>
-        private void GetId()
-        {
-            Id = string.Format("{0}-{1}-{2}-{3}", Competition, Sexe.ToString(), Entite, Type);
         }
     }
 }

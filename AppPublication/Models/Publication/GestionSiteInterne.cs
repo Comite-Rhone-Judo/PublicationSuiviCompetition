@@ -224,6 +224,23 @@ namespace AppPublication.Models.Publication
             URLLocalPublication = CalculURLSiteLocal();
         }
 
+        protected override void OnUseIntituleCommunChanged(bool newValue)
+        {
+            // Propage la valeur au generateur de site
+            _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+            {
+                c.UseIntituleCommun = newValue;
+            });
+        }
+        protected override void OnIntituleCommunChanged(string newValue)
+        {
+            // Propage la valeur au generateur de site
+            _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+            {
+                c.IntituleCommun = newValue;
+            });
+        }
+
         protected override void UpdateDelaiGenerationConfig(int newValue)
         {
             // On récupère le paramètre depuis le JSON et on le modifie.

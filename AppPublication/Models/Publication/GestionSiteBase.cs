@@ -1,4 +1,5 @@
-﻿using AppPublication.Generation;
+﻿using AppPublication.Config;
+using AppPublication.Generation;
 using AppPublication.Models.Statistiques;
 using AppPublication.Statistiques;
 using FranceJudo.Core.Foundation;
@@ -246,6 +247,44 @@ namespace AppPublication.Models.Publication
                 IsGenerationActive = !(_status.State == StateGenerationEnum.Stopped);
             }
         }
+
+        private bool _useIntituleCommun;
+        /// <summary>
+        /// Flag indiquant si on doit utiliser un intitule commun en cas de poly competition
+        /// </summary>
+        public bool UseIntituleCommun
+        {
+            get { return _useIntituleCommun; }
+            set
+            {
+                if (_useIntituleCommun != value)
+                {
+                    // propage la valeur au generateur de site
+                    _useIntituleCommun = value;
+                    NotifyPropertyChanged();
+                    OnUseIntituleCommunChanged(value);
+                }
+            }
+        }
+
+        private string _intituleCommun;
+        /// <summary>
+        /// intitule commun en cas de poly competition
+        /// </summary>
+        public string IntituleCommun
+        {
+            get { return _intituleCommun; }
+            set
+            {
+                if (_intituleCommun != value)
+                {
+                    _intituleCommun = value;
+                    NotifyPropertyChanged();
+                    OnIntituleCommunChanged(value);
+                }
+            }
+        }
+
         #endregion
 
         #region CONSTRUCTEUR
@@ -273,6 +312,12 @@ namespace AppPublication.Models.Publication
 
         /// <summary>Hook exécuté lorsque le logo sélectionné change</summary>
         protected abstract void OnSelectedLogoChanged(string logoName);
+
+        /// <summary>Hook exécuté lorsque le flag d'utilisation de l'intitulé commun change</summary>
+        protected abstract void OnUseIntituleCommunChanged(bool newValue);
+
+        /// <summary>Hook exécuté lorsque l'intitulé commun change</summary>
+        protected abstract void OnIntituleCommunChanged(string newValue);
 
         /// <summary>Hook exécuté lorsque l'interface locale change</summary>
         protected abstract void OnInterfaceLocalPublicationChanged();

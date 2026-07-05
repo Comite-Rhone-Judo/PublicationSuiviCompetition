@@ -16,6 +16,7 @@
 	<xsl:param name="commonPath"/>
 	<xsl:param name="competitionPath"/>
 	<xsl:param name="RefData"/>
+	<xsl:param name="useIntituleCommun" select="'false'"/>
 
 	<xsl:param name="tailleGroupe"/>
 	<xsl:param name="idEcran"/>
@@ -40,7 +41,18 @@
 	<xsl:variable name="couleur2" select="/docroot/competition/@couleur2" />
 	<xsl:variable name="idCompetition" select="/docroot/competition/@ID" />
 	<xsl:variable name="typeCompetition" select="/docroot/competition/@type" />
-	<xsl:variable name="TitreCompetition" select="/docroot/competition/titre"/>
+
+	<xsl:variable name="TitreCompetition">
+		<xsl:choose>
+			<xsl:when test="$useIntituleCommun = 'true'">
+				<xsl:value-of select="/docroot/SiteConfiguration/@IntituleCommun"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="/docroot/competition/titre"/>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
+
 
 	<!-- En jujitsu, on affiche la discpline -->
 	<xsl:variable select="/docroot/competition/@discipline != 'C_COMPETITION'" name="affDiscipline"/>

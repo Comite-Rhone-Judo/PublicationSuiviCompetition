@@ -14,10 +14,9 @@ namespace AppPublication.Config.Generation
         private string _msgProchainsCombats = string.Empty;
         private bool _publierAffectationTapis = true;
         private bool _publierEngagements = true;
+        private bool _publierStatistiques = true;
         private bool _engagementsAbsents = false;
         private bool _engagementsTousCombats = false;
-        private bool _useIntituleCommun = false;
-        private string _intituleCommun = string.Empty;
         private bool _scoreEngagesGagnantPerdant = false;
         private bool _afficherPositionCombat = true;
 
@@ -30,10 +29,9 @@ namespace AppPublication.Config.Generation
         public string MsgProchainsCombats { get => _msgProchainsCombats; set => SetValue(ref _msgProchainsCombats, value); }
         public bool PublierAffectationTapis { get => _publierAffectationTapis; set => SetValue(ref _publierAffectationTapis, value); }
         public bool PublierEngagements { get => _publierEngagements; set => SetValue(ref _publierEngagements, value); }
+        public bool PublierStatistiques { get => _publierStatistiques; set => SetValue(ref _publierStatistiques, value); }
         public bool EngagementsAbsents { get => _engagementsAbsents; set => SetValue(ref _engagementsAbsents, value); }
         public bool EngagementsTousCombats { get => _engagementsTousCombats; set => SetValue(ref _engagementsTousCombats, value); }
-        public bool UseIntituleCommun { get => _useIntituleCommun; set => SetValue(ref _useIntituleCommun, value); }
-        public string IntituleCommun { get => _intituleCommun; set => SetValue(ref _intituleCommun, value); }
         public bool ScoreEngagesGagnantPerdant { get => _scoreEngagesGagnantPerdant; set => SetValue(ref _scoreEngagesGagnantPerdant, value); }
         public bool AfficherPositionCombat { get => _afficherPositionCombat; set => SetValue(ref _afficherPositionCombat, value); }
     }

@@ -19,6 +19,8 @@ namespace FranceJudo.Metier.Export
         Site_MenuEngagements = 117,
         Site_Engagements = 118,
         Site_FooterScript = 119,
+        Site_MenuStatistiques = 120,
+        Site_Statistiques = 121,
 
         Site_Interne_EcranAppel = 1000
     }

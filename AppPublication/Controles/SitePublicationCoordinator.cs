@@ -210,6 +210,47 @@ namespace AppPublication.Controles
             }
         }
 
+        private bool _useIntituleCommun;
+        /// <summary>
+        /// Flag indiquant si on doit utiliser un intitule commun en cas de poly competition
+        /// </summary>
+        public bool UseIntituleCommun
+        {
+            get { return _useIntituleCommun; }
+            set
+            {
+                if (_useIntituleCommun != value)
+                {
+                    // propage la valeur au generateur de site
+                    AppConfigRoot.Instance.Publication.General.UseIntituleCommun = (_useIntituleCommun = value);
+                    NotifyPropertyChanged();
+
+                    GestionnaireSiteInterne.UseIntituleCommun = value;
+                    GestionnaireSitePublique.UseIntituleCommun = value;
+                }
+            }
+        }
+
+        private string _intituleCommun;
+        /// <summary>
+        /// intitule commun en cas de poly competition
+        /// </summary>
+        public string IntituleCommun
+        {
+            get { return _intituleCommun; }
+            set
+            {
+                if (_intituleCommun != value)
+                {
+                    AppConfigRoot.Instance.Publication.General.IntituleCommun = (_intituleCommun = value);
+                    NotifyPropertyChanged();
+
+                    GestionnaireSiteInterne.IntituleCommun = value;
+                    GestionnaireSitePublique.IntituleCommun = value;
+                }
+            }
+        }
+
         #endregion
 
 
@@ -351,6 +392,8 @@ namespace AppPublication.Controles
             // Recupere les donnees mutualisee
             RepertoireRacine = AppConfigRoot.Instance.Publication.General.RepertoireRacine;
             SelectedLogo = AppConfigRoot.Instance.Publication.General.GetLogo(FichiersLogo.ToList(), o => o.Name);
+            UseIntituleCommun = AppConfigRoot.Instance.Publication.General.UseIntituleCommun;
+            IntituleCommun = AppConfigRoot.Instance.Publication.General.IntituleCommun;
 
             // Propage la lecture du fichier de configuration dans les gestionnaires de site
             _gestionSite.InitFromConfigFile();

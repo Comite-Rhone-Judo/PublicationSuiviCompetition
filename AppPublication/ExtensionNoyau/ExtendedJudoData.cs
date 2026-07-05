@@ -22,12 +22,12 @@ namespace AppPublication.ExtensionNoyau
             // On "arme" le cache. Le 'new DataEngagement(snapshot)' ne s'exécutera 
             // QUE si le générateur demande la propriété 'Engagements'.
             _engagement = new Lazy<DataEngagement>(
-                () => new DataEngagement(snapshot), // <-- La magie est ici !
+                () => new DataEngagement(snapshot),
                 LazyThreadSafetyMode.ExecutionAndPublication
             );
 
             _statistiquesCombats = new Lazy<DataStatistiquesCombats>(
-                () => new DataStatistiquesCombats(snapshot), // <-- La magie est ici !
+                () => new DataStatistiquesCombats(snapshot),
                 LazyThreadSafetyMode.ExecutionAndPublication
             );
         }
@@ -42,6 +42,24 @@ namespace AppPublication.ExtensionNoyau
 
         public IDataStatistiquesCombats StatistiquesCombats => _statistiquesCombats.Value;
 
+        #endregion
+
+        #region PROPERTIES
+        /// <summary>
+        /// Force le calcul et la mise en cache des statistiques si ce n'est pas déjà fait.
+        /// </summary>
+        public void EnsureStatistiquesLoaded()
+        {
+            var _ = _statistiquesCombats.Value; 
+        }
+
+        /// <summary>
+        /// Force le calcul et la mise en cache des engagements si ce n'est pas déjà fait.
+        /// </summary>
+        public void EnsureEngagementsLoaded()
+        {
+            var _ = _engagement.Value;
+        }
         #endregion
     }
 }

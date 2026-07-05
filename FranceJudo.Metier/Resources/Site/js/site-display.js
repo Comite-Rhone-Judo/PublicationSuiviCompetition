@@ -220,3 +220,92 @@ function getInSession(key) {
 
     return sessionStorage.getItem(fullKey);
 }
+
+// ========== Gestion de la modale des Statistiques ==========
+
+/**
+ * Formate une valeur technique (ex: "12.5") en affichage français (ex: "12,5").
+ * Gère les valeurs nulles, indéfinies ou vides.
+ */
+function formatFr(valueStr, defaultValue = '0') {
+    if (!valueStr || valueStr === '') return defaultValue;
+    return valueStr.replace('.', ',');
+}
+
+/**
+ * Raccourci sécurisé pour injecter du texte dans un élément du DOM.
+ */
+function setModalText(id, text) {
+    let el = document.getElementById(id);
+    if (el) el.innerText = text;
+}
+
+/**
+ * Met à jour une barre de progression W3.CSS et son label associé.
+ */
+function setJauge(lblId, barId, valueStr) {
+    let barElement = document.getElementById(barId);
+    if (barElement) {
+        // Le CSS exige la donnée technique avec le point
+        barElement.style.width = (valueStr || '0') + '%';
+    }
+
+    // Le label visuel utilise la fonction utilitaire française
+    setModalText(lblId, formatFr(valueStr) + ' %');
+}
+
+/**
+ * Charge les données du judoka cliqué dans la modale et l'affiche.
+ */
+function openJudokaStatsModal(rowElement) {
+    // 1. En-tête de la modale
+    setModalText('m-nom', rowElement.getAttribute('data-nom'));
+    setModalText('m-cat', rowElement.getAttribute('data-cat'));
+
+    // 2. Résultats globaux
+    setModalText('d-combats', rowElement.getAttribute('data-cbts') || '0');
+    setModalText('d-tauxvic', formatFr(rowElement.getAttribute('data-vic')) + ' %');
+
+    // 3. Profil des victoires
+    setJauge('lbl-ippon', 'bar-ippon', rowElement.getAttribute('data-ippon'));
+    setJauge('lbl-wazaawa', 'bar-wazaawa', rowElement.getAttribute('data-wazaawa'));
+    setJauge('lbl-waza', 'bar-waza', rowElement.getAttribute('data-waza'));
+    setJauge('lbl-yuko', 'bar-yuko', rowElement.getAttribute('data-yuko'));
+    setJauge('lbl-shido3', 'bar-shido3', rowElement.getAttribute('data-shido3'));
+    setJauge('lbl-hansoku', 'bar-hansoku', rowElement.getAttribute('data-hansoku'));
+    setJauge('lbl-amf', 'bar-amf', rowElement.getAttribute('data-amf'));
+    setJauge('lbl-decision', 'bar-decision', rowElement.getAttribute('data-decision'));
+
+    // 4. Durées de combat
+    setModalText('d-tmin', rowElement.getAttribute('data-tmin') || '-');
+    setModalText('d-tmoy', rowElement.getAttribute('data-tmoy') || '-');
+    setModalText('d-tmax', rowElement.getAttribute('data-tmax') || '-');
+
+    // 5. Golden Score
+    let gsCbt = rowElement.getAttribute('data-gscbt') || '0';
+    let gsPct = formatFr(rowElement.getAttribute('data-gspct'));
+    setModalText('d-gscbt_pct', gsCbt + ' (' + gsPct + ' %)');
+    setModalText('d-gsmoy', rowElement.getAttribute('data-gsmoy') || '-');
+
+    // 6. Discipline
+    setModalText('d-pen', formatFr(rowElement.getAttribute('data-pen')));
+
+    // Bloquer le défilement de <body> ET de <html> (Correction du double ascenseur)
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
+    // Afficher la modale
+    document.getElementById('statsModal').style.display = 'block';
+}
+
+/**
+ * Ferme la modale
+ */
+function closeJudokaStatsModal() {
+    // Masquer la modale
+    document.getElementById('statsModal').style.display = 'none';
+
+    // Restaurer le défilement normal de la page
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+}

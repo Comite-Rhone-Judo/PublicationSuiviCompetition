@@ -115,12 +115,18 @@ namespace AppPublication.Export
             int nbTapisMax = DC.Organisation.Competitions.Max(c => c.nbTapis);
             int currentStep = 0;
 
+            // Calcul si on doit prendre en compte l'intitulé commun pour les compétitions multiples
+            bool useIntituleCommun = DC.Organisation.Competitions.Count > 1
+                         && ctx.Config.UseIntituleCommun
+                         && !string.IsNullOrEmpty(ctx.Config.IntituleCommun);
+
             foreach (var ecran in ecrans)
             {
                 // Le fichier de destination
                 string savePath = GetFileSavePath(targetDirectory, exportType, (ecran.Id >= 0) ? $"{ecran.Id:00}" : "default");
 
                 var ecransParams = new List<(string, object)>();
+                ecransParams.Add(("useIntituleCommun", useIntituleCommun.ToString().ToLower()));
                 ecransParams.Add(("idEcran", ecran.Id));                 // Le numero de l'ecran d'appel
                 ecransParams.Add(("tailleGroupe", ecran.Groupement));     // La taille du groupe
                 ecransParams.Add(("dispositionAffichage", ecran.Disposition.ToString().ToLower()));

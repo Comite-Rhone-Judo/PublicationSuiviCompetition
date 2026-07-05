@@ -24,6 +24,10 @@ namespace AppPublication.Tests.Models.Publication
         protected override void OnSelectedLogoChanged(string logoName) { }
         protected override void UpdateDelaiGenerationConfig(int newValue) { }
 
+        protected override void OnUseIntituleCommunChanged(bool newValue) { }
+
+        protected override void OnIntituleCommunChanged(string newValue) { }
+
         protected override void OnIdCompetitionChanged(string newValue)
         {
             HookIdCompetitionCalled = true;

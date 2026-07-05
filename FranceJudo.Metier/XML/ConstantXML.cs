@@ -1,6 +1,4 @@
-﻿using System.Xml.Linq;
-
-namespace FranceJudo.Metier.XML
+﻿namespace FranceJudo.Metier.XML
 {
     /// <summary>
     /// Enumération des constants pour la construction des fichiers XML
@@ -59,6 +57,7 @@ namespace FranceJudo.Metier.XML
         public const string publierProchainsCombats = "PublierProchainsCombats";
         public const string publierAffectationTapis = "PublierAffectationTapis";
         public const string publierEngagements = "PublierEngagements";
+        public const string publierStatistiques = "PublierStatistiques";
         public const string EngagementsAbsents = "EngagementsAbsents";
         public const string EngagementsTousCombats = "EngagementsTousCombats";
         public const string EngagementsScoreGP = "EngagementsScoreGP";
@@ -97,11 +96,11 @@ namespace FranceJudo.Metier.XML
 
         public const string GroupeStatistiques_groupes = "groupesStatistiques";
         public const string GroupeStatistiques_groupe = "groupeStatistiques";
-        public const string GroupeStatistique_Competition = "competition";
-        public const string GroupeStatistique_Id = "id";
-        public const string GroupeStatistique_Sexe = "sexe";
-        public const string GroupeStatistique_Type = "type";
-        public const string GroupeStatistique_Entite = "entite";
+        public const string GroupeStatistiques_Competition = "competition";
+        public const string GroupeStatistiques_Id = "id";
+        public const string GroupeStatistiques_Sexe = "sexe";
+        public const string GroupeStatistiques_Type = "type";
+        public const string GroupeStatistiques_Entite = "entite";
 
         public const string Statistiques_ExportStatistiques = "statistiques";
         public const string Statistiques_Items = "items";
@@ -109,6 +108,7 @@ namespace FranceJudo.Metier.XML
         public const string Statistiques_TypeEntite = "typeEntite";
         public const string Statistiques_IdEntite = "idEntite";
         public const string Statistiques_Sexe = "sexe";
+
         // --- Attributs de volumétrie et globaux ---
         public const string Statistiques_NbParticipants = "nbParticipants";
         public const string Statistiques_NbCombattants = "nbCombattants";
@@ -126,6 +126,8 @@ namespace FranceJudo.Metier.XML
         public const string Statistiques_PctVictoireYuko = "pctVictoireYuko";
         public const string Statistiques_PctVictoireSogoGachi = "pctVictoireSogoGachi";
         public const string Statistiques_PctVictoireHansokuMake = "pctVictoireHansokuMake";
+        public const string Statistiques_PctVictoireAbandonForfaitMedical = "pctVictoireAbandonForfaitMedical";
+        public const string Statistiques_PctVictoireDecision = "pctVictoireDecision";
 
         // --- Attributs des pénalités ---
         public const string Statistiques_MoyennePenalitesParCombat = "moyennePenalitesParCombat";
@@ -142,17 +144,17 @@ namespace FranceJudo.Metier.XML
         public const string Statistiques_DureeCombatMoy = "dureeCombatMoy";
 
         // Engagements
-        public const string GroupeEngagements_groupes = "groupesEngagements";
-        public const string GroupeEngagements_groupe = "groupeEngagements";
+        public const string GroupeEngagements_Groupes = "groupesEngagements";
+        public const string GroupeEngagements_Groupe = "groupeEngagements";
 
-        public const string GroupeEngagements_sexe = "sexe";
-        public const string GroupeEngagements_id = "id";
-        public const string GroupeEngagements_entite = "entite";
-        public const string GroupeEngagements_judokas = "judokas";
-        public const string GroupeEngagements_epreuves = "epreuves";
-        public const string GroupeEngagements_combats = "combats";
-        public const string GroupeEngagements_type = "type";
-        public const string GroupeEngagements_competition = "competition";
+        public const string GroupeEngagements_Sexe = "sexe";
+        public const string GroupeEngagements_Id = "id";
+        public const string GroupeEngagements_Entite = "entite";
+        public const string GroupeEngagements_Judokas = "judokas";
+        public const string GroupeEngagements_Epreuves = "epreuves";
+        public const string GroupeEngagements_Combats = "combats";
+        public const string GroupeEngagements_Type = "type";
+        public const string GroupeEngagements_Competition = "competition";
 
         //Compétition 
         public const string Competition = "competition";

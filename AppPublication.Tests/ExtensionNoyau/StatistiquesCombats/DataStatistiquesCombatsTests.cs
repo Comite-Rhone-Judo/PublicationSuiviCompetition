@@ -60,13 +60,13 @@ namespace AppPublication.Tests.ExtensionNoyau.StatistiquesCombats
 
             var sexeAttendu = new EpreuveSexe("M");
 
-            Assert.True(stats.ContainsKey(new StatistiqueCle(TypeEntiteStatistique.Judoka, "1", sexeAttendu)));
-            Assert.True(stats.ContainsKey(new StatistiqueCle(TypeEntiteStatistique.Structure, "ClubA", sexeAttendu)));
-            Assert.True(stats.ContainsKey(new StatistiqueCle(TypeEntiteStatistique.Structure, "ComiteB", sexeAttendu)));
-            Assert.True(stats.ContainsKey(new StatistiqueCle(TypeEntiteStatistique.Structure, "LigueC", sexeAttendu)));
-            Assert.True(stats.ContainsKey(new StatistiqueCle(TypeEntiteStatistique.Structure, "250", sexeAttendu)));
+            Assert.True(stats.ContainsKey(new GroupeStatistiques(99, sexeAttendu, "1", (int)EchelonEnum.Aucun)));
+            Assert.True(stats.ContainsKey(new GroupeStatistiques(99, sexeAttendu, "ClubA", (int)EchelonEnum.Club)));
+            Assert.True(stats.ContainsKey(new GroupeStatistiques(99, sexeAttendu, "ComiteB", (int)EchelonEnum.Departement)));
+            Assert.True(stats.ContainsKey(new GroupeStatistiques(99, sexeAttendu, "LigueC", (int)EchelonEnum.Ligue)));
+            Assert.True(stats.ContainsKey(new GroupeStatistiques(99, sexeAttendu, "250", (int)EchelonEnum.National)));
 
-            var statsClub = stats[new StatistiqueCle(TypeEntiteStatistique.Structure, "ClubA", sexeAttendu)];
+            var statsClub = stats[new GroupeStatistiques(99, sexeAttendu, "ClubA", (int)EchelonEnum.Club)];
             Assert.Equal(1, statsClub.NbParticipants);
             Assert.Equal(1, statsClub.NbCombattants);
         }
@@ -110,7 +110,7 @@ namespace AppPublication.Tests.ExtensionNoyau.StatistiquesCombats
             var stats = moteur.Statistiques;
 
             // Assert
-            var cleClubGagnant = new StatistiqueCle(TypeEntiteStatistique.Structure, "ClubGagnant", sexeTest);
+            var cleClubGagnant = new GroupeStatistiques(99, sexeTest, "ClubGagnant", (int) EchelonEnum.Club);
             var statGagnant = stats[cleClubGagnant];
 
             Assert.Equal(1, statGagnant.NbCombats);
@@ -118,7 +118,7 @@ namespace AppPublication.Tests.ExtensionNoyau.StatistiquesCombats
             Assert.Equal(1, ((CompteurStatistiques)statGagnant).NbVictoireIpponDirect);
             Assert.Equal(TimeSpan.FromMinutes(2), statGagnant.DureeCombatMoy);
 
-            var cleClubPerdant = new StatistiqueCle(TypeEntiteStatistique.Structure, "ClubPerdant", sexeTest);
+            var cleClubPerdant = new GroupeStatistiques(99, sexeTest, "ClubPerdant", (int) EchelonEnum.Club);
             var statPerdant = stats[cleClubPerdant];
 
             Assert.Equal(1, statPerdant.NbCombats);

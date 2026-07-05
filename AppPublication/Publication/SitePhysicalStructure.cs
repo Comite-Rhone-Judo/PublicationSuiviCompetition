@@ -13,6 +13,7 @@ namespace AppPublication.Publication
     {
         #region CONSTANTES
         public const string kEngagements = "engagements";
+        public const string kStatistiques = "statistiques";
         public const string kCommon = "common";
         #endregion
 
@@ -24,6 +25,7 @@ namespace AppPublication.Publication
         #region PROPRIETES PUBLIQUES
 
         public string RepertoireEngagements() => GetAndCreateDirectory(kEngagements);
+        public string RepertoireStatistiques() => GetAndCreateDirectory(kStatistiques);
         public string RepertoireCommon() => GetAndCreateDirectory(kCommon);
 
         /// <summary>
@@ -50,6 +52,22 @@ namespace AppPublication.Publication
             string path = Path.Combine(RepertoireEngagements(), idGroupe.TraiteChaine());
             return GetAndCreateDirectory(path, isAbsolute: true);
         }
+
+        /// <summary>
+        /// Retourne le repertoire pour un groupe de statistiques
+        /// </summary>
+        /// <param name="idGroupe"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public string RepertoireGroupeStatistiques(string idGroupe)
+        {
+            if (string.IsNullOrWhiteSpace(idGroupe)) throw new ArgumentNullException(nameof(idGroupe));
+
+            string path = Path.Combine(RepertoireStatistiques(), idGroupe.TraiteChaine());
+            return GetAndCreateDirectory(path, isAbsolute: true);
+        }
+
+
 
         /// <summary>
         /// Retourne le repertoire d'une epreuve

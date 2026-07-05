@@ -35,6 +35,7 @@
 
 	<xsl:variable select="/docroot/SiteConfiguration/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@PublierStatistiques = 'true'" name="affStatistiques"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@EngagementsAbsents = 'true'" name="affEngagementsAbsents"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@EngagementsTousCombats = 'true'" name="affTousCombats"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@EngagementsScoreGP = 'true'" name="affscoreGP"/>
@@ -102,6 +103,7 @@
 					<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
 					<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
 					<xsl:with-param name="affEngagements" select="true()"/>
+					<xsl:with-param name="affStatistiques" select="$affStatistiques"/>
 					<xsl:with-param name="affActualiser" select="true()"/>
 					<xsl:with-param name="selectedItem" select="'engagements'"/>
 					<xsl:with-param name="pathToImg" select="$imgPath"/>

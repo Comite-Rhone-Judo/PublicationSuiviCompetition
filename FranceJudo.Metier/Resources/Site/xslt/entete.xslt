@@ -10,6 +10,7 @@
 		<xsl:param name="affProchainCombats"/>
 		<xsl:param name="affAffectationTapis"/>
 		<xsl:param name="affEngagements"/>
+		<xsl:param name="affStatistiques"/>
 		<xsl:param name="affActualiser"/>
 		<xsl:param name="selectedItem"/>
 		<xsl:param name="pathToImg"/>
@@ -117,6 +118,20 @@
 						</xsl:choose>
 					</xsl:attribute>
 					Engagements
+				</a>
+			</xsl:if>
+			<xsl:if test="$affStatistiques">
+				<a>
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($pathToCommon, 'statistiques.html')"/>
+					</xsl:attribute>
+					<xsl:attribute name="class">
+						<xsl:choose>
+							<xsl:when test="$selectedItem = 'statistiques'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
+							<xsl:otherwise>w3-bar-item w3-button navButton</xsl:otherwise>
+						</xsl:choose>
+					</xsl:attribute>
+					Statistiques
 				</a>
 			</xsl:if>
 		</div>

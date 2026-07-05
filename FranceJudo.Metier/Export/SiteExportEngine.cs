@@ -47,6 +47,8 @@ namespace FranceJudo.Metier.Export
             { ExportEnum.Site_FooterScript,        ("footer_script", "footer_script_site.xslt") },
             { ExportEnum.Site_Engagements,         ("groupe_engagements", "groupe_engagements_site.xslt") },
             { ExportEnum.Site_MenuEngagements,     ("engagements", "engagements_site.xslt") },
+            { ExportEnum.Site_MenuStatistiques,    ("statistiques", "statistiques_site.xslt") },
+            { ExportEnum.Site_Statistiques,        ("groupe_statistiques", "groupe_statistiques_site.xslt") },
             { ExportEnum.Site_Interne_EcranAppel,  ("ecran", "ecrans_appel_site.xslt") }
         };
         #endregion

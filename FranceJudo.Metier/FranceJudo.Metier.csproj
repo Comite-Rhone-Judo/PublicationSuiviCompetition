@@ -9,6 +9,11 @@
     <Product>FranceJudo.Metier</Product>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Resources\Site\style\style-statistiques.css" />
+    <None Remove="Resources\Site\xslt\groupe_statistiques_site.xslt" />
+    <None Remove="Resources\Site\xslt\statistiques_site.xslt" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="NLog" Version="6.1.3" />
@@ -52,6 +57,9 @@
     <EmbeddedResource Include="Resources\Referentiels\structures.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Site\style\style-statistiques.css" />
+    <EmbeddedResource Include="Resources\Site\xslt\groupe_statistiques_site.xslt" />
+    <EmbeddedResource Include="Resources\Site\xslt\statistiques_site.xslt" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Media\Images\France-Judo.ico" />
