@@ -23,6 +23,7 @@ namespace AppPublication.Tests.Export
             Assert.False(config.EngagementsScoreGP);
             Assert.False(config.AfficherPositionCombat);
             Assert.Equal(30, config.DelaiActualisationClientSec);
+            Assert.False(config.ActualisationClientDefaut);
             Assert.Equal(6, config.NbProchainsCombats);
             Assert.Equal(string.Empty, config.MsgProchainsCombats);
             Assert.False(config.PouleEnColonnes);

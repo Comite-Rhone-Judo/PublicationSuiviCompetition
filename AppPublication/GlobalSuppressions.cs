@@ -17,3 +17,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Style", "IDE0306:Simplifier l'initialisation des collections", Justification = "<En attente>", Scope = "module")]
 [assembly: SuppressMessage("Performance", "CA1822:Marquer les membres comme étant static", Justification = "<En attente>", Scope = "module")]
 [assembly: SuppressMessage("Style", "IDE0301:Simplifier l'initialisation des collections", Justification = "<En attente>", Scope = "module")]
+[assembly: SuppressMessage("Usage", "CA2208:Instancier les exceptions d'argument correctement", Justification = "<En attente>", Scope = "module")]

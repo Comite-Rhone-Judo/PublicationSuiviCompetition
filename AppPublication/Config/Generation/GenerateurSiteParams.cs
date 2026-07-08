@@ -6,6 +6,7 @@ namespace AppPublication.Config.Generation
     public class GenerateurSiteParams : JsonConfigElement
     {
         private int _delaiActualisationClientSec = 30;
+        private bool _actualisationClientDefaut = false;
         private int _tailleMaxPouleColonnes = 5;
         private bool _pouleEnColonnes = false;
         private bool _pouleToujoursEnColonnes = false;
@@ -21,6 +22,9 @@ namespace AppPublication.Config.Generation
         private bool _afficherPositionCombat = true;
 
         public int DelaiActualisationClientSec { get => _delaiActualisationClientSec; set => SetValue(ref _delaiActualisationClientSec, value); }
+
+        public bool ActualisationClientDefaut { get => _actualisationClientDefaut; set => SetValue(ref _actualisationClientDefaut, value); }
+
         public int TailleMaxPouleColonnes { get => _tailleMaxPouleColonnes; set => SetValue(ref _tailleMaxPouleColonnes, value); }
         public bool PouleEnColonnes { get => _pouleEnColonnes; set => SetValue(ref _pouleEnColonnes, value); }
         public bool PouleToujoursEnColonnes { get => _pouleToujoursEnColonnes; set => SetValue(ref _pouleToujoursEnColonnes, value); }

@@ -35,7 +35,7 @@ namespace AppPublication.Config.Publication
         private string _interfaceLocalPublication = string.Empty;
         public string InterfaceLocalPublication { get => _interfaceLocalPublication; set => SetValue(ref _interfaceLocalPublication, value); }
 
-        [JsonProperty("FtpPassword")]
+        [JsonProperty(nameof(FtpPassword))]
         public string FtpPassword
         {
             get

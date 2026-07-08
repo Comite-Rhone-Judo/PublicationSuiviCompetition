@@ -452,7 +452,7 @@ namespace FranceJudo.Core.Network
 
                     if (profiles.Count > 0)
                     {
-                        _ftp_profile = profiles.First();
+                        _ftp_profile = profiles.First();    
                         _ftp_profile.DataConnection = (ModeActifFTPDistant) ? FtpDataConnectionType.PORT : FtpDataConnectionType.PASV;
                         output = true;
                     }

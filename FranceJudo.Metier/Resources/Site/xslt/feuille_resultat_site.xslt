@@ -29,6 +29,7 @@
 	<xsl:variable select="/docroot/SiteConfiguration/@PublierEngagements = 'true'" name="affEngagements"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@PublierStatistiques = 'true'" name="affStatistiques"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@DelaiActualisationClientSec" name="delayActualisationClient"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@ActualisationClientDefaut = 'true'" name="actualisationClientDefaut"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@kinzas" name="affKinzas"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@Logo" name="logo"/>
 	
@@ -59,7 +60,13 @@
 						<xsl:value-of select="concat($cssPath, 'style-poule.css')"/>
 					</xsl:attribute>
 				</link>
-
+				
+				<!-- Script ajoute en parametre -->
+				<script type="text/javascript">
+					<xsl:value-of select="$js"/>
+					gDelayAutoReloadSec = <xsl:value-of select="$delayActualisationClient"/>;
+					gDefaultAutoReload = <xsl:value-of select="$actualisationClientDefaut"/>;
+				</script>
 				<!-- Script de navigation par defaut -->
 				<script>
 					<xsl:attribute name="src">
@@ -67,11 +74,7 @@
 					</xsl:attribute>
 				</script>
 
-				<!-- Script ajoute en parametre -->
-				<script type="text/javascript">
-					<xsl:value-of select="$js"/>
-					gDelayAutoReloadSec = <xsl:value-of select="$delayActualisationClient"/>;
-				</script>
+
 				<title>
 					Suivi Compétition - Avancement
 				</title>

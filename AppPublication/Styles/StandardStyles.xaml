@@ -235,6 +235,7 @@
     <Setter Property="Background" Value="White" />
     <Setter Property="Margin" Value="5 10" />
     <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+     <Setter Property="Foreground" Value="DarkSlateGray" />
     </Style>
 
     <Style x:Key="LabelErrorStyle" TargetType="Label">

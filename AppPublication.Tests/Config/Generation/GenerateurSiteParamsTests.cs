@@ -13,6 +13,7 @@ namespace AppPublication.Tests.Config.Generation
 
             // Assert
             Assert.Equal(30, parametres.DelaiActualisationClientSec);
+            Assert.False(parametres.ActualisationClientDefaut);
             Assert.Equal(5, parametres.TailleMaxPouleColonnes);
             Assert.False(parametres.PouleEnColonnes);
             Assert.False(parametres.PouleToujoursEnColonnes);

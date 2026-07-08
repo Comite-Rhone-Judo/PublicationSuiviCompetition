@@ -444,6 +444,28 @@ namespace AppPublication.Models.Publication
             }
         }
 
+        private bool _actualisationClientDefaut = false;
+        /// <summary>
+        /// ACtive l'actualisation par defaut cote client
+        /// </summary>
+        public bool ActualisationClientDefaut
+        {
+            get { return _actualisationClientDefaut; }
+            set
+            {
+                if (_actualisationClientDefaut != value)
+                {
+                    // Propage au generateur de site
+                    _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+                    {
+                        c.ActualisationClientDefaut = value;
+                    });
+                    AppConfigRoot.Instance.Generation.GenerateurSite.ActualisationClientDefaut = (_actualisationClientDefaut = value);
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         private string _msgProchainsCombats = string.Empty;
         /// <summary>
         /// Message optionnel pour les prochains combats
@@ -795,6 +817,7 @@ namespace AppPublication.Models.Publication
                 EngagementsAbsents = AppConfigRoot.Instance.Generation.GenerateurSite.EngagementsAbsents;
                 EngagementsTousCombats = AppConfigRoot.Instance.Generation.GenerateurSite.EngagementsTousCombats;
                 DelaiActualisationClientSec = AppConfigRoot.Instance.Generation.GenerateurSite.DelaiActualisationClientSec;
+                ActualisationClientDefaut = AppConfigRoot.Instance.Generation.GenerateurSite.ActualisationClientDefaut;
                 MsgProchainsCombats = AppConfigRoot.Instance.Generation.GenerateurSite.MsgProchainsCombats;
                 PouleEnColonnes = AppConfigRoot.Instance.Generation.GenerateurSite.PouleEnColonnes;
                 PouleToujoursEnColonnes = AppConfigRoot.Instance.Generation.GenerateurSite.PouleToujoursEnColonnes;
@@ -1140,7 +1163,7 @@ namespace AppPublication.Models.Publication
                     // L'URL de la competition n'existe pas forcement encore si pas connecte
                     if (string.IsNullOrEmpty(_siteDistantUrlGenerator.UrlPathCompetition))
                     {
-                        throw new ArgumentNullException("Le path de la competition ne doit pas etre null ou vide");
+                        throw new ArgumentNullException("UrlPathCompetition ne doit pas etre null ou vide");
                     }
 
                     // Repertoire distant donc, c'est unix style

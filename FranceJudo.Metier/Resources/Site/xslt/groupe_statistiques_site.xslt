@@ -26,6 +26,7 @@
 	<xsl:variable name="selectedCompetition" select="/docroot/competitions/competition[@ID = $idcompetition]"/>
 	<xsl:variable select="$selectedCompetition/@type" name="typeCompetition"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@DelaiActualisationClientSec" name="delayActualisationClient"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@ActualisationClientDefaut = 'true'" name="actualisationClientDefaut"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@Logo" name="logo"/>
 
 	<xsl:variable select="//groupeStatistiques[@id = $idgroupe]" name="selectedGroupe"/>
@@ -56,16 +57,18 @@
 					</xsl:attribute>
 				</link>
 
+				<script type="text/javascript">
+					<xsl:value-of select="$js"/>
+					gDelayAutoReloadSec = <xsl:value-of select="$delayActualisationClient"/>;
+					gDefaultAutoReload = <xsl:value-of select="$actualisationClientDefaut"/>;
+				</script>
+
 				<script>
 					<xsl:attribute name="src">
 						<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
 					</xsl:attribute>
 				</script>
 
-				<script type="text/javascript">
-					<xsl:value-of select="$js"/>
-					gDelayAutoReloadSec = <xsl:value-of select="$delayActualisationClient"/>;
-				</script>
 				<title>Suivi Compétition - Statistiques</title>
 			</head>
 			<body>
@@ -119,6 +122,8 @@
 						<xsl:if test="$selectedGroupe/@type != 1 and $selectedGroupe/StatsStructure">
 							<xsl:variable name="sStat" select="$selectedGroupe/StatsStructure" />
 
+
+							<!-- Bloc PARTICIPATION -->
 							<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
 								<button class="tas-stat-accordion-btn" onclick="togglePanel('club-part')">
 									<img width="20" style="display: none; margin-right: 8px;" id="club-partCollapse">
@@ -134,7 +139,26 @@
 									Participation
 								</button>
 							</div>
-							<div id="club-part" class="w3-container w3-padding-small" style="display: block;">
+							<div id="club-part" class="tasClosedPanelType w3-container w3-padding-small" style="display: none;">
+								<div class="w3-right-align" style="margin: 0; padding: 0; line-height: 0;">
+									<button id="info-bloc-club-partExpand" class="w3-button w3-transparent" style="padding: 0; margin: 0; min-height: auto;" onclick="togglePanel('info-bloc-club-part')">
+										<img width="18" alt="Info">
+											<xsl:attribute name="src">
+												<xsl:value-of select="concat($imgPath, 'info-32.png')"/>
+											</xsl:attribute>
+										</img>
+									</button>
+								</div>
+								<div id="info-bloc-club-part" class="tasClosedPanelType w3-panel w3-leftbar w3-border-grey w3-paper w3-display-container" style="display: none; padding: 4px 8px; margin-top: 0; margin-bottom: 6px;">
+									<span onclick="togglePanel('info-bloc-club-part')" class="w3-button w3-display-topright w3-hover-grey" style="padding: 2px 8px; background: transparent;">&times;</span>
+									<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
+										<p style="margin: 2px 0;">
+											<strong>Inscrits :</strong> Enregistrés à la compétition.<br/>
+											<strong>Présents :</strong> Ayant passé la pesée.<br/>
+											<strong>Participation :</strong> Taux de présence effectif.
+										</p>
+									</div>
+								</div>
 								<div class="w3-row-padding w3-margin-top w3-margin-bottom">
 									<div class="w3-col s4">
 										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-blue">
@@ -158,8 +182,8 @@
 										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-blue">
 											<div class="tas-stat-label">
 												<xsl:choose>
-													<xsl:when test="$selectedGroupe/@sexe = 'F'">Pesées</xsl:when>
-													<xsl:otherwise>Pesés</xsl:otherwise>
+													<xsl:when test="$selectedGroupe/@sexe = 'F'">Présentes</xsl:when>
+													<xsl:otherwise>Présents</xsl:otherwise>
 												</xsl:choose>
 											</div>
 											<div class="tas-stat-value">
@@ -188,6 +212,7 @@
 								</div>
 							</div>
 
+							<!-- Bloc RESULTATS -->
 							<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
 								<button class="tas-stat-accordion-btn" onclick="togglePanel('club-res')">
 									<img width="20" style="display: none; margin-right: 8px;" id="club-resCollapse">
@@ -203,7 +228,27 @@
 									Résultats
 								</button>
 							</div>
-							<div id="club-res" class="w3-container w3-padding-small" style="display: block;">
+							<div id="club-res" class="tasClosedPanelType w3-container w3-padding-small" style="display: none;">
+								<div class="w3-right-align" style="margin: 0; padding: 0; line-height: 0;">
+									<button id="info-bloc-club-resExpand" class="w3-button w3-transparent" style="padding: 0; margin: 0; min-height: auto;" onclick="togglePanel('info-bloc-club-res')">
+										<img width="18" alt="Info">
+											<xsl:attribute name="src">
+												<xsl:value-of select="concat($imgPath, 'info-32.png')"/>
+											</xsl:attribute>
+										</img>
+									</button>
+								</div>
+								<div id="info-bloc-club-res" class="tasClosedPanelType w3-panel w3-leftbar w3-border-grey w3-paper w3-display-container" style="display: none; padding: 4px 8px; margin-top: 0; margin-bottom: 6px;">
+									<span onclick="togglePanel('info-bloc-club-res')" class="w3-button w3-display-topright w3-hover-grey" style="padding: 2px 8px; background: transparent;">&times;</span>
+									<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
+										<p style="margin: 2px 0;">
+											<strong>Total combats :</strong> Cumul du nombre de combats disputés par les combattants du groupe.<br/>
+											<strong>Combats/judoka :</strong> Nombre moyen de combats disputés par combattant du groupe.<br/>
+											<strong>% Victoire :</strong> Pourcentage de victoire par combattant du groupe.<br/>
+											<strong>Hikiwake :</strong> Pourcentage de matchs nuls.
+										</p>
+									</div>
+								</div>
 								<div class="w3-row-padding w3-margin-top w3-margin-bottom">
 									<div class="w3-col s6">
 										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-green">
@@ -260,6 +305,7 @@
 								</div>
 							</div>
 
+							<!-- Bloc PROFILS VICTOIRES -->
 							<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
 								<button class="tas-stat-accordion-btn" onclick="togglePanel('club-vic')">
 									<img width="20" style="display: none; margin-right: 8px;" id="club-vicCollapse">
@@ -275,7 +321,24 @@
 									Profil des victoires
 								</button>
 							</div>
-							<div id="club-vic" class="w3-container w3-padding-small" style="display: none;">
+							<div id="club-vic" class="tasClosedPanelType w3-container w3-padding-small" style="display: none;">
+								<div class="w3-right-align" style="margin: 0; padding: 0; line-height: 0;">
+									<button id="info-bloc-club-vicExpand" class="w3-button w3-transparent" style="padding: 0; margin: 0; min-height: auto;" onclick="togglePanel('info-bloc-club-vic')">
+										<img width="18" alt="Info">
+											<xsl:attribute name="src">
+												<xsl:value-of select="concat($imgPath, 'info-32.png')"/>
+											</xsl:attribute>
+										</img>
+									</button>
+								</div>
+								<div id="info-bloc-club-vic" class="tasClosedPanelType w3-panel w3-leftbar w3-border-grey w3-paper w3-display-container" style="display: none; padding: 4px 8px; margin-top: 0; margin-bottom: 6px;">
+									<span onclick="togglePanel('info-bloc-club-vic')" class="w3-button w3-display-topright w3-hover-grey" style="padding: 2px 8px; background: transparent;">&times;</span>
+									<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
+										<p style="margin: 2px 0;">
+											Répartition de toutes les victoires du groupe selon <strong>l'avantage décisif marqué</strong> (Ippon, Waza-ari...) ou la <strong>sanction de l'adversaire</strong> (Hansoku-make, Shidos, forfait).
+										</p>
+									</div>
+								</div>
 								<div class="w3-row-padding w3-margin-top w3-padding-bottom">
 									<div class="w3-col m6 s12">
 										<div class="w3-margin-bottom">
@@ -484,6 +547,7 @@
 								</div>
 							</div>
 
+							<!-- Bloc DUREE -->
 							<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
 								<button class="tas-stat-accordion-btn" onclick="togglePanel('club-temps')">
 									<img width="20" style="display: none; margin-right: 8px;" id="club-tempsCollapse">
@@ -499,7 +563,26 @@
 									Durée
 								</button>
 							</div>
-							<div id="club-temps" class="w3-container w3-padding-small" style="display: none;">
+							<div id="club-temps" class="tasClosedPanelType w3-container w3-padding-small" style="display: none;">
+								<div class="w3-right-align" style="margin: 0; padding: 0; line-height: 0;">
+									<button id="info-bloc-club-tempsExpand" class="w3-button w3-transparent" style="padding: 0; margin: 0; min-height: auto;" onclick="togglePanel('info-bloc-club-temps')">
+										<img width="18" alt="Info">
+											<xsl:attribute name="src">
+												<xsl:value-of select="concat($imgPath, 'info-32.png')"/>
+											</xsl:attribute>
+										</img>
+									</button>
+								</div>
+								<div id="info-bloc-club-temps" class="tasClosedPanelType w3-panel w3-leftbar w3-border-grey w3-paper w3-display-container" style="display: none; padding: 4px 8px; margin-top: 0; margin-bottom: 6px;">
+									<span onclick="togglePanel('info-bloc-club-temps')" class="w3-button w3-display-topright w3-hover-grey" style="padding: 2px 8px; background: transparent;">&times;</span>
+									<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
+										<p style="margin: 2px 0;">
+											Temps de combat effectif (minimum, moyen, maximum) du groupe.<br/>
+											<strong>Golden Score</strong>: Nombre et pourcentage de combats ayant eu un Golden Score pour les combattants du groupe.<br/>
+											<strong>Moy. Golden Score</strong>: Durée moyenne des Golden Score pour les combattants du groupe.<br/>											
+										</p>
+									</div>
+								</div>
 								<div class="w3-row-padding w3-margin-top w3-margin-bottom">
 									<div class="w3-col s4">
 										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-teal">
@@ -580,6 +663,7 @@
 								</div>
 							</div>
 
+							<!-- Bloc DISCIPLINE -->
 							<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
 								<button class="tas-stat-accordion-btn" onclick="togglePanel('club-discip')">
 									<img width="20" style="display: none; margin-right: 8px;" id="club-discipCollapse">
@@ -595,11 +679,28 @@
 									Discipline
 								</button>
 							</div>
-							<div id="club-discip" class="w3-container w3-padding-small" style="display: none;">
+							<div id="club-discip" class="tasClosedPanelType w3-container w3-padding-small" style="display: none;">
+								<div class="w3-right-align" style="margin: 0; padding: 0; line-height: 0;">
+									<button id="info-bloc-club-discipExpand" class="w3-button w3-transparent" style="padding: 0; margin: 0; min-height: auto;" onclick="togglePanel('info-bloc-club-discip')">
+										<img width="18" alt="Info">
+											<xsl:attribute name="src">
+												<xsl:value-of select="concat($imgPath, 'info-32.png')"/>
+											</xsl:attribute>
+										</img>
+									</button>
+								</div>
+								<div id="info-bloc-club-discip" class="tasClosedPanelType w3-panel w3-leftbar w3-border-grey w3-paper w3-display-container" style="display: none; padding: 4px 8px; margin-top: 0; margin-bottom: 6px;">
+									<span onclick="togglePanel('info-bloc-club-discip')" class="w3-button w3-display-topright w3-hover-grey" style="padding: 2px 8px; background: transparent;">&times;</span>
+									<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
+										<p style="margin: 2px 0;">
+											<strong>Moyenne de pénalités :</strong> Nombre moyen de Shidos reçus par combat pour les membres de ce groupe.
+										</p>
+									</div>
+								</div>
 								<div class="w3-row-padding w3-margin-top w3-margin-bottom">
 									<div class="w3-col s12">
 										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-orange">
-											<div class="tas-stat-label">Moyenne de pénalités par combat</div>
+											<div class="tas-stat-label">Moyenne de shidos</div>
 											<div class="tas-stat-value">
 												<xsl:choose>
 													<xsl:when test="$sStat/@moyennePenalitesParCombat != ''">
@@ -614,7 +715,7 @@
 							</div>
 						</xsl:if>
 
-
+						<!-- Bloc COMBATTANTS -->
 						<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
 							<button class="tas-stat-accordion-btn" onclick="togglePanel('club-com')">
 								<img width="20" style="display: none; margin-right: 8px;" id="club-comCollapse">
@@ -633,8 +734,32 @@
 								</xsl:choose>
 							</button>
 						</div>
-						<div id="club-com" class="w3-container w3-padding-0" style="display: block;">
+						<div id="club-com" class="tasClosedPanelType w3-container w3-padding-small" style="display: none;">
+							<div class="w3-right-align" style="margin: 0; padding: 0; line-height: 0;">
+								<button id="info-bloc-club-comExpand" class="w3-button w3-transparent" style="padding: 0; margin: 0; min-height: auto;" onclick="togglePanel('info-bloc-club-com')">
+									<img width="18" alt="Info">
+										<xsl:attribute name="src">
+											<xsl:value-of select="concat($imgPath, 'info-32.png')"/>
+										</xsl:attribute>
+									</img>
+								</button>
+							</div>
 
+							<div id="info-bloc-club-com" class="tasClosedPanelType w3-panel w3-leftbar w3-border-grey w3-paper w3-display-container" style="display: none; padding: 4px 8px; margin-top: 0; margin-bottom: 6px;">
+								<span onclick="togglePanel('info-bloc-club-com')" class="w3-button w3-display-topright w3-hover-grey" style="padding: 2px 8px; background: transparent;">&times;</span>
+								<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
+									<p style="margin: 2px 0;">
+										<strong>Cbts :</strong> Total des combats<br/>
+										<strong>Moy. Pén. :</strong> Moyenne de shidos<br/>
+										<xsl:if test="$typeCompetition != '1'">
+											<strong>% GS :</strong> Fréquence des Golden Score<br/>
+											<strong>Moy. GS :</strong> Durée moyenne des Golden Score
+										</xsl:if>
+										<strong>Moy. Cbt :</strong> Durée moyenne des combats<br/>
+										<strong>% Vic. :</strong> Taux de victoires
+									</p>
+								</div>
+							</div>
 							<div class="w3-responsive w3-card w3-small w3-margin-top w3-margin-bottom">
 								<table class="w3-table-all">
 									<thead>
@@ -666,7 +791,7 @@
 													<xsl:value-of select="@nom"/>&nbsp;<xsl:value-of select="@prenom"/>
 												</xsl:attribute>
 												<xsl:attribute name="data-cat">
-													<xsl:value-of select="$sexeStr"/> / <xsl:value-of select="@nom_cateage"/>
+													<xsl:value-of select="$sexeStr"/> / <xsl:value-of select="@libepreuve"/>
 												</xsl:attribute>
 												<xsl:attribute name="data-cbts">
 													<xsl:choose>
@@ -886,6 +1011,7 @@
 					</div>
 				</div>
 
+				<!-- MODALE JUDOKA INDIVIDUEL -->
 				<div id="statsModal" class="w3-modal" style="padding-top:0; z-index: 999;">
 					<div class="w3-modal-content w3-animate-right tas-stat-modal-flex"
 							 style="width: 100%; height: 100%; margin: 0; max-width: none; background-color: #f1f1f1;">
@@ -898,6 +1024,7 @@
 
 						<div class="tas-stat-modal-body">
 
+							<!-- Bloc RESULTATS -->
 							<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
 								<button class="tas-stat-accordion-btn" onclick="togglePanel('j-res')">
 									<img width="20" style="display: none; margin-right: 8px;" id="j-resCollapse">
@@ -913,7 +1040,25 @@
 									Résultats
 								</button>
 							</div>
-							<div id="j-res" class="w3-container w3-padding-small" style="display: block;">
+							<div id="j-res" class="tasClosedPanelType w3-container w3-padding-small" style="display: none;">
+								<div class="w3-right-align" style="margin: 0; padding: 0; line-height: 0;">
+									<button id="info-bloc-j-resExpand" class="w3-button w3-transparent" style="padding: 0; margin: 0; min-height: auto;" onclick="togglePanel('info-bloc-j-res')">
+										<img width="18" alt="Info">
+											<xsl:attribute name="src">
+												<xsl:value-of select="concat($imgPath, 'info-32.png')"/>
+											</xsl:attribute>
+										</img>
+									</button>
+								</div>
+								<div id="info-bloc-j-res" class="tasClosedPanelType w3-panel w3-leftbar w3-border-grey w3-paper w3-display-container" style="display: none; padding: 4px 8px; margin-top: 0; margin-bottom: 6px;">
+									<span onclick="togglePanel('info-bloc-j-res')" class="w3-button w3-display-topright w3-hover-grey" style="padding: 2px 8px; background: transparent;">&times;</span>
+									<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
+										<p style="margin: 2px 0;">
+											<strong>Total Combats :</strong> Nombre de matchs disputés.<br/>
+											<strong>% Victoires :</strong> Ratio des matchs remportés.
+										</p>
+									</div>
+								</div>
 								<div class="w3-row-padding w3-margin-top w3-margin-bottom">
 									<div class="w3-col s6">
 										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-green">
@@ -930,6 +1075,7 @@
 								</div>
 							</div>
 
+							<!-- Bloc PROFILS VICTOIRES -->
 							<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
 								<button class="tas-stat-accordion-btn" onclick="togglePanel('j-vic')">
 									<img width="20" style="display: none; margin-right: 8px;" id="j-vicCollapse">
@@ -945,7 +1091,24 @@
 									Profil des victoires
 								</button>
 							</div>
-							<div id="j-vic" class="w3-container w3-padding-small" style="display: none;">
+							<div id="j-vic" class="tasClosedPanelType w3-container w3-padding-small" style="display: none;">
+								<div class="w3-right-align" style="margin: 0; padding: 0; line-height: 0;">
+									<button id="info-bloc-j-vicExpand" class="w3-button w3-transparent" style="padding: 0; margin: 0; min-height: auto;" onclick="togglePanel('info-bloc-j-vic')">
+										<img width="18" alt="Info">
+											<xsl:attribute name="src">
+												<xsl:value-of select="concat($imgPath, 'info-32.png')"/>
+											</xsl:attribute>
+										</img>
+									</button>
+								</div>
+								<div id="info-bloc-j-vic" class="tasClosedPanelType w3-panel w3-leftbar w3-border-grey w3-paper w3-display-container" style="display: none; padding: 4px 8px; margin-top: 0; margin-bottom: 6px;">
+									<span onclick="togglePanel('info-bloc-j-vic')" class="w3-button w3-display-topright w3-hover-grey" style="padding: 2px 8px; background: transparent;">&times;</span>
+									<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
+										<p style="margin: 2px 0;">
+											Proportion des victoires du combattant selon <strong>l'avantage décisif marqué</strong> (ex: Ippon) ou la <strong>sanction de l'adversaire</strong> (ex: Hansoku-make).
+										</p>
+									</div>
+								</div>
 								<div class="w3-row-padding w3-margin-top w3-padding-bottom">
 									<div class="w3-col m6 s12">
 										<div class="w3-margin-bottom">
@@ -1026,6 +1189,7 @@
 								</div>
 							</div>
 
+							<!-- Bloc DUREE -->
 							<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
 								<button class="tas-stat-accordion-btn" onclick="togglePanel('j-temps')">
 									<img width="20" style="display: none; margin-right: 8px;" id="j-tempsCollapse">
@@ -1038,10 +1202,29 @@
 											<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
 										</xsl:attribute>
 									</img>
-									Durée<xsl:if test="$typeCompetition != '1'"> &amp; Golden Score</xsl:if>
+									Durée
 								</button>
 							</div>
-							<div id="j-temps" class="w3-container w3-padding-small" style="display: none;">
+							<div id="j-temps" class="tasClosedPanelType w3-container w3-padding-small" style="display: none;">
+								<div class="w3-right-align" style="margin: 0; padding: 0; line-height: 0;">
+									<button id="info-bloc-j-tempsExpand" class="w3-button w3-transparent" style="padding: 0; margin: 0; min-height: auto;" onclick="togglePanel('info-bloc-j-temps')">
+										<img width="18" alt="Info">
+											<xsl:attribute name="src">
+												<xsl:value-of select="concat($imgPath, 'info-32.png')"/>
+											</xsl:attribute>
+										</img>
+									</button>
+								</div>
+								<div id="info-bloc-j-temps" class="tasClosedPanelType w3-panel w3-leftbar w3-border-grey w3-paper w3-display-container" style="display: none; padding: 4px 8px; margin-top: 0; margin-bottom: 6px;">
+									<span onclick="togglePanel('info-bloc-j-temps')" class="w3-button w3-display-topright w3-hover-grey" style="padding: 2px 8px; background: transparent;">&times;</span>
+									<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
+										<p style="margin: 2px 0;">
+											Temps de combat effectif (minimum, moyen, maximum) du judoka.<br/>
+											<strong>Golden Score</strong>: Nombre et pourcentage de combats ayant eu un Golden Score.<br/>
+											<strong>Moy. Golden Score</strong>: Durée moyenne des Golden Score.<br/>		
+										</p>
+									</div>
+								</div>
 								<div class="w3-row-padding w3-margin-top w3-margin-bottom">
 									<div class="w3-col s4">
 										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-teal">
@@ -1083,6 +1266,7 @@
 								</div>
 							</div>
 
+							<!-- Bloc DISCIPLINE -->
 							<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
 								<button class="tas-stat-accordion-btn" onclick="togglePanel('j-discip')">
 									<img width="20" style="display: none; margin-right: 8px;" id="j-discipCollapse">
@@ -1098,11 +1282,28 @@
 									Discipline
 								</button>
 							</div>
-							<div id="j-discip" class="w3-container w3-padding-small" style="display: none;">
+							<div id="j-discip" class="tasClosedPanelType w3-container w3-padding-small" style="display: none;">
+								<div class="w3-right-align" style="margin: 0; padding: 0; line-height: 0;">
+									<button id="info-bloc-j-discipExpand" class="w3-button w3-transparent" style="padding: 0; margin: 0; min-height: auto;" onclick="togglePanel('info-bloc-j-discip')">
+										<img width="18" alt="Info">
+											<xsl:attribute name="src">
+												<xsl:value-of select="concat($imgPath, 'info-32.png')"/>
+											</xsl:attribute>
+										</img>
+									</button>
+								</div>
+								<div id="info-bloc-j-discip" class="tasClosedPanelType w3-panel w3-leftbar w3-border-grey w3-paper w3-display-container" style="display: none; padding: 4px 8px; margin-top: 0; margin-bottom: 6px;">
+									<span onclick="togglePanel('info-bloc-j-discip')" class="w3-button w3-display-topright w3-hover-grey" style="padding: 2px 8px; background: transparent;">&times;</span>
+									<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
+										<p style="margin: 2px 0;">
+											<strong>Moyenne :</strong> Nombre moyen de Shidos reçus.
+										</p>
+									</div>
+								</div>
 								<div class="w3-row-padding w3-margin-top w3-margin-bottom">
 									<div class="w3-col s12">
 										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-orange">
-											<div class="tas-stat-label">Moyenne de pénalités par combat</div>
+											<div class="tas-stat-label">Moyenne de shidos</div>
 											<div class="tas-stat-value" id="d-pen">0.0</div>
 										</div>
 									</div>

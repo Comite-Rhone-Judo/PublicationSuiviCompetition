@@ -3,6 +3,7 @@
 var gReloading;                 // Pour les gestion de l'autoreload
 var gUseAutoReload = true;      // Pour activer ou desactiver l'autoreload
 var gDelayAutoReloadSec = 60;   // Pour definir le delai de l'autoreload en secondes
+var gDefaultAutoReload = typeof gDefaultAutoReload !== 'undefined' ? gDefaultAutoReload : false;    // Activation autoreload par defaut (si la variable est definie dans le script de la page)
 
 window.onload = windowOnLoad;   // Gestionnaire d'evenements pour le chargement de la page par defaut
 
@@ -17,30 +18,55 @@ function closeElement(elementName) {
 }
 
 // ========== Gestion de l'autoreload ==========
-
-// A mettre sur le window.onload pour verifier automatiquement le reload toutes les 1 secondes
+// A mettre sur le window.onload pour verifier automatiquement le reload
 function checkReloading() {
-    var timeoutms;
+    var timeoutms = (typeof gDelayAutoReloadSec === "undefined" || isNaN(gDelayAutoReloadSec)) ? 60000 : gDelayAutoReloadSec * 1000;
 
-    if (window.location.hash == "#autoreload") {
+    // 1. Lire la préférence utilisateur dans la session (ex: "groupe_statistiques_site.html,autoReloadEnabled")
+    var sessionPref = getInSession("autoReloadEnabled");
+    var isEnabled = false;
 
-        if (typeof (gDelayAutoReloadSec) == undefined || isNaN(gDelayAutoReloadSec)) {
-            timeoutms = 60000;    // Par defaut 1 min
-        } else {
-            timeoutms = gDelayAutoReloadSec * 1000;    // Par defaut 1 min
+    if (sessionPref !== null) {
+        // L'utilisateur a déjà cliqué sur la case à cocher pour ce type de page, son choix prime
+        isEnabled = (sessionPref === "true");
+    } else {
+        // Pas de choix mémorisé, on applique le paramètre par défaut issu du XSLT
+        isEnabled = gDefaultAutoReload;
+
+        // Rétrocompatibilité (au cas où l'utilisateur arrive depuis un vieux lien avec le hash)
+        if (window.location.hash === "#autoreload") {
+            isEnabled = true;
         }
+    }
 
+    // 2. Mettre à jour l'état visuel de la checkbox
+    var cb = document.getElementById('cbActualiser');
+    if (cb) {
+        cb.checked = isEnabled;
+    }
+
+    // 3. Lancer le timer si le rechargement est actif
+    if (isEnabled) {
         gReloading = setTimeout(function () { window.location.reload(); }, timeoutms);
-        document.getElementById('cbActualiser').checked = true;
     }
 }
 
-// Active le autoreload si la checkbox est cochee
+// Active/Désactive l'autoreload au clic sur la checkbox
 function toggleAutoRefresh(cb) {
-    if (cb.checked) {
-        window.location.replace("#autoreload"); // Flag pour indiquer le autoreload
-        gReloading = setTimeout(function () { window.location.reload(); }, 100); // Pour faire un 1er refrech immediatement
+    var isEnabled = cb.checked;
+
+    // 1. Mémoriser le choix de l'utilisateur pour cette page (écrase le paramètre par défaut)
+    setInSession("autoReloadEnabled", isEnabled ? "true" : "false");
+
+    // 2. Appliquer le comportement
+    if (isEnabled) {
+        // Optionnel : on maintient le hash pour indiquer visuellement dans l'URL qu'on s'actualise
+        window.location.replace("#autoreload");
+
+        // 1er refresh quasi-immédiat (comme dans votre ancien code)
+        gReloading = setTimeout(function () { window.location.reload(); }, 100);
     } else {
+        // On nettoie l'URL et on coupe le timer
         window.location.replace("#");
         clearTimeout(gReloading);
     }
@@ -50,10 +76,8 @@ function toggleAutoRefresh(cb) {
 
 // Callback pour le chargement de la page
 function windowOnLoad() {
-    if (gUseAutoReload) {
-        // On verifie si on a un hash pour l'autoreload
-        checkReloading();
-    }
+    // Verifie la gestion de l'actualisation automatique (auto-reload)
+    checkReloading();
 
     // Charge les panels (categories, etc.)
     initPanels();
@@ -119,84 +143,58 @@ function initTabs() {
 
 // Initialisation des panneaux au chargement de la page
 function initPanels() {
-    var x;
+    // Initialise les panneaux ouverts par défaut
+    initPanelGroup("tasOpenedPanelType", "block");
 
-    // Les panneaux ouverts par defaut
-    x = document.getElementsByClassName("tasOpenedPanelType");
-    for (i = 0; i < x.length; i++) {
+    // Initialise les panneaux fermés par défaut
+    initPanelGroup("tasClosedPanelType", "none");
+}
 
-        // On les ouvre par defaut
-        expandPanel(x[i].id);
+// Applique l'état aux éléments d'une classe donnée (lecture session)
+function initPanelGroup(className, defaultState) {
+    let elements = document.getElementsByClassName(className);
+    for (let i = 0; i < elements.length; i++) {
+        let panelId = elements[i].id;
+        let sessionState = getInSession(panelId);
 
-        // Si l'etat est different en session
-        if (getInSession(x[i].id) == "none") {
-            collapsePanel(x[i].id);
-        }
-    }
-
-    // Les panneaux fermes par defaut
-    x = document.getElementsByClassName("tasClosedPanelType");
-    for (i = 0; i < x.length; i++) {
-
-        // On les fermes par defaut
-        collapsePanel(x[i].id);
-
-        // Si l'etat est different en session
-        if (getInSession(x[i].id) == "block") {
-            expandPanel(x[i].id);
-        }
+        // Si une valeur existe en session on l'utilise, sinon on prend l'état par défaut
+        let finalState = sessionState ? sessionState : defaultState;
+        applyPanelState(panelId, finalState);
     }
 }
 
-// Permute l'affiche d'un Panneau
+// Fonction centrale pour appliquer visuellement l'état (Manipulation du DOM)
+function applyPanelState(elementName, state) {
+    let panel = document.getElementById(elementName);
+    let expandIcon = document.getElementById(elementName + "Expand");
+    let collapseIcon = document.getElementById(elementName + "Collapse");
+
+    if (!panel) return;
+
+    panel.style.display = state;
+
+    if (state === "block") {
+        if (collapseIcon) collapseIcon.style.display = "inline";
+        if (expandIcon) expandIcon.style.display = "none";
+    } else {
+        if (collapseIcon) collapseIcon.style.display = "none";
+        if (expandIcon) expandIcon.style.display = "inline";
+    }
+}
+
+// Fonction appelée au clic sur les boutons d'accordéon
 function togglePanel(elementName) {
-    var state = document.getElementById(elementName).style.display;
-    var expandElement = elementName + "Expand";
-    var collapseElement = elementName + "Collapse";
-    var elementToShow;
-    var newState;
+    let panel = document.getElementById(elementName);
+    if (!panel) return;
 
-    document.getElementById(expandElement).style.display = "none";
-    document.getElementById(collapseElement).style.display = "none";
+    let currentState = panel.style.display;
+    let newState = (currentState === "none" || currentState === "") ? "block" : "none";
 
+    // 1. Mise à jour visuelle
+    applyPanelState(elementName, newState);
 
-    if (state == "none") {
-        newState = "block";
-        elementToShow = collapseElement;
-    }
-    else {
-        newState = "none";
-        elementToShow = expandElement;
-    }
-    // memorise l'etat dans le sessionStorage
+    // 2. Mémorisation de l'état dans le sessionStorage
     setInSession(elementName, newState);
-
-    document.getElementById(elementName).style.display = newState;
-    document.getElementById(elementToShow).style.display = "inline";
-}
-
-// Permet d'expand un panneau et de cacher les autres
-function expandPanel(elementName) {
-    var expandElement = elementName + "Expand";
-    var collapseElement = elementName + "Collapse";
-
-    document.getElementById(expandElement).style.display = "none";
-    document.getElementById(collapseElement).style.display = "none";
-
-    document.getElementById(elementName).style.display = "block";
-    document.getElementById(collapseElement).style.display = "inline";
-}
-
-// Permet de cacher un panneau
-function collapsePanel(elementName) {
-    var expandElement = elementName + "Expand";
-    var collapseElement = elementName + "Collapse";
-
-    document.getElementById(expandElement).style.display = "none";
-    document.getElementById(collapseElement).style.display = "none";
-
-    document.getElementById(elementName).style.display = "none";
-    document.getElementById(expandElement).style.display = "inline";
 }
 
 // ========== Gestion de la session ==========
