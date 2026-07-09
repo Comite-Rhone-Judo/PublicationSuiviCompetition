@@ -325,7 +325,7 @@ namespace KernelImpl.Noyau.Participants
             }
         }
 
-        private int _etat;
+        private EtatJudokaEnum _etat;
 
         /// <summary>
         /// L'état du judoka :
@@ -335,7 +335,7 @@ namespace KernelImpl.Noyau.Participants
         /// 4-Au poids
         /// 5-Hors poids
         /// </summary>
-        public int etat
+        public EtatJudokaEnum etat
         {
             get { return _etat; }
             set
@@ -1056,7 +1056,7 @@ namespace KernelImpl.Noyau.Participants
 
         public bool EstPresent()
         {
-            return this.etat == (int)EtatJudokaEnum.AuPoids || this.etat == (int)EtatJudokaEnum.HorsCategorie || this.etat == (int)EtatJudokaEnum.HorsPoids;
+            return this.etat == EtatJudokaEnum.AuPoids || this.etat == EtatJudokaEnum.HorsCategorie || this.etat == EtatJudokaEnum.HorsPoids;
         }
         #endregion
         #region CONSTRUCTEURS
@@ -1156,7 +1156,7 @@ namespace KernelImpl.Noyau.Participants
             else
             {
                 this.serie = 0;
-                this.etat = (int)EtatJudokaEnum.Aucun;
+                this.etat = EtatJudokaEnum.Aucun;
                 this.serie2 = 0;
                 this.observation = 0;
                 this.classement = 0;
@@ -1326,7 +1326,7 @@ namespace KernelImpl.Noyau.Participants
             else
             {
                 this.serie = 0;
-                this.etat = (int)EtatJudokaEnum.Aucun;
+                this.etat = EtatJudokaEnum.Aucun;
                 this.serie2 = 0;
                 this.observation = 0;
                 this.classement = 0;
@@ -1496,7 +1496,7 @@ namespace KernelImpl.Noyau.Participants
             else
             {
                 this.serie = 0;
-                this.etat = (int)EtatJudokaEnum.Aucun;
+                this.etat = EtatJudokaEnum.Aucun;
                 this.serie2 = 0;
                 this.observation = 0;
                 this.classement = 0;
@@ -1573,7 +1573,7 @@ namespace KernelImpl.Noyau.Participants
         #region METHODES
         public bool PeuxParticiter()
         {
-            return this.etat == (int)EtatJudokaEnum.AuPoids && this.observation == 0;
+            return this.etat == EtatJudokaEnum.AuPoids && this.observation == 0;
         }
 
         public void LoadXml(XElement node) { throw new NotImplementedException(); }
@@ -1598,7 +1598,7 @@ namespace KernelImpl.Noyau.Participants
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_Sexe, this.lib_sexe);
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_PoidsMesure, this.poidsMesure.ToString("0:#.###"));
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_Present, this.present.ToString().ToLower());
-            xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_Etat, this.etat.ToString());
+            xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_Etat, (int) this.etat);
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_NomCategorieAge, this.nomCategorieAge);
 
             xjudoka.SetAttributeValue(ConstantXML.Vue_Judoka_Club, this.club);

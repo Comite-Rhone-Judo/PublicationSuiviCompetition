@@ -2,7 +2,7 @@ using FranceJudo.Metier.Noyau.Participants;
 using System;
 using System.Collections.Generic;
 
-namespace AppPublication.ExtensionNoyau.Engagement
+namespace FranceJudo.Metier.ExtensionNoyau.Engagement
 {
 
     // Comparateur de judokas pour trier les listes de judokas

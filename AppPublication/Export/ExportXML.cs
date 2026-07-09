@@ -1,6 +1,6 @@
-﻿using AppPublication.ExtensionNoyau;
-using AppPublication.ExtensionNoyau.Engagement;
-using AppPublication.ExtensionNoyau.StatistiquesCombats;
+﻿using FranceJudo.Metier.ExtensionNoyau;
+using FranceJudo.Metier.ExtensionNoyau.Engagement;
+using FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats;
 using AppPublication.Publication;
 using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
@@ -357,7 +357,7 @@ namespace AppPublication.Export
                                 epreuves_compet
                                     // On filtre en utilisant la liste en MÉMOIRE (phasesInMem)
                                     // Utilisation de l'index ILookup (Recherche ultra-rapide)
-                                    .Where(ep => phasesByEpreuve[ep.id].Any(o => o.etat > (int)EtatPhaseEnum.Cree))
+                                    .Where(ep => phasesByEpreuve[ep.id].Any(o => o.etat > EtatPhaseEnum.Cree))
                                     .Select(ep =>
                                     {
                                         string webPathEpreuve = siteStructure.GetRelativeUrlEpreuveFromCompetition(ep.id.ToString(), ep.nom);
@@ -513,7 +513,7 @@ namespace AppPublication.Export
             // on extrait tous les tapis actifs de la compétition en UNE SEULE passe.
             var activeTapisByEpreuve = DC.Deroulement.VueCombats
                 .Where(o => o.combat_tapis > 0
-                         && o.phase_etat == (int)EtatPhaseEnum.TirageValide
+                         && o.phase_etat == EtatPhaseEnum.TirageValide
                          && o.combat_vaiqueur == null)
                 .Select(o => new { o.epreuve_id, o.combat_tapis })
                 .Distinct()
@@ -539,7 +539,7 @@ namespace AppPublication.Export
                                 xcompetition.Add(
                                     epreuves_compet
                                         // Utilisation de l'index des phases
-                                        .Where(ep => phasesByEpreuve[ep.id].Any(o => o.etat > (int)EtatPhaseEnum.Cree))
+                                        .Where(ep => phasesByEpreuve[ep.id].Any(o => o.etat > EtatPhaseEnum.Cree))
                                         .Select(ep =>
                                         {
                                             XElement xepreuve = ep.ToXml(DC);
@@ -558,7 +558,7 @@ namespace AppPublication.Export
                                                 var tapisEpreuve = activeTapisByEpreuve[ep.id].ToList();
 
                                                 // S'il y a des tapis, on crée la balise et on les injecte
-                                                if (tapisEpreuve.Any())
+                                                if (tapisEpreuve.Count != 0)
                                                 {
                                                     xepreuve.Add(
                                                         new XElement(ConstantXML.TapisEpreuve,
@@ -659,7 +659,7 @@ namespace AppPublication.Export
             }
 
             // Fallback : on prend la première compétition disponible si la résolution a échoué
-            competition ??= DC.Organisation.Competitions.FirstOrDefault();
+            competition ??= DC.Organisation.Competitions.Count > 0 ? DC.Organisation.Competitions[0] : null;
             if (competition == null) return new XDocument();
 
             // =========================================================================
@@ -686,7 +686,7 @@ namespace AppPublication.Export
                 .ToList();
 
             bool isCSA = (competition.afficheCSA == (int)TypeCSAEnum.Minisite) || (competition.afficheCSA == (int)TypeCSAEnum.Tous);
-            int compType = competition.type;
+            CompetitionTypeEnum compType = competition.type;
 
             // Variable pour traquer l'ID réel de la compétition rencontrée lors du traitement des combats
             int? firstCompetIdFound = null;
@@ -739,7 +739,7 @@ namespace AppPublication.Export
                     // Vérification de l'intégrité et de l'état de la phase liée au combat
                     if (!phasesDict.TryGetValue(combat.phase, out var phase) ||
                         (_phase != null && phase.epreuve != _phase.epreuve) ||
-                        phase.etat < (int)EtatPhaseEnum.TirageValide)
+                        phase.etat < EtatPhaseEnum.TirageValide)
                     {
                         continue;
                     }
@@ -750,7 +750,7 @@ namespace AppPublication.Export
                     // Enregistrement du premier ID de compétition concrètement rencontré dans les épreuves
                     if (firstCompetIdFound == null && phase.epreuve.HasValue)
                     {
-                        if (compType == (int)CompetitionTypeEnum.Equipe)
+                        if (compType == CompetitionTypeEnum.Equipe)
                         {
                             if (epreuvesEqDict.TryGetValue(phase.epreuve.Value, out var vEq)) firstCompetIdFound = vEq.competition;
                         }
@@ -769,7 +769,7 @@ namespace AppPublication.Export
                         if (participant_id_ajoute.Add(p.judoka))
                         {
                             XElement xp = p.ToXml(DC);
-                            if (compType == (int)CompetitionTypeEnum.Equipe)
+                            if (compType == CompetitionTypeEnum.Equipe)
                             {
                                 if (equipesDict.TryGetValue(p.judoka, out var eq))
                                 {
@@ -898,7 +898,7 @@ namespace AppPublication.Export
         /// Fonction utilitaire permettant d'ajouter les nœuds d'épreuves (individuelles ou par équipe) au tapis.
         /// Gère l'unicité via les HashSets fournis et protège contre les références nulles.
         /// </summary>
-        private static void AddEpreuveToXml(XElement xtapis, int? epreuveIdNullable, int compType, IJudoData DC,
+        private static void AddEpreuveToXml(XElement xtapis, int? epreuveIdNullable, CompetitionTypeEnum compType, IJudoData DC,
             Dictionary<int, IVueEpreuve> epreuvesDict, Dictionary<int, IVueEpreuveEquipe> epreuvesEqDict,
             HashSet<int> addedEp, HashSet<int> addedEq,
             ILookup<int?, IVueEpreuve> epreuvesByEquipe)
@@ -907,7 +907,7 @@ namespace AppPublication.Export
             if (!epreuveIdNullable.HasValue) return;
             int epreuveId = epreuveIdNullable.Value;
 
-            if (compType == (int)CompetitionTypeEnum.Equipe)
+            if (compType == CompetitionTypeEnum.Equipe)
             {
                 if (epreuvesEqDict.TryGetValue(epreuveId, out var eq) && addedEq.Add(eq.id))
                 {
@@ -995,7 +995,7 @@ namespace AppPublication.Export
             XElement xphase = phase.ToXml();
 
             // --- 1. AFFECTATION DES POULES ---
-            if (phase.typePhase == (int)TypePhaseEnum.Poule)
+            if (phase.typePhase == TypePhaseEnum.Poule)
             {
                 xphase.Add(
                     new XElement(ConstantXML.Poules,
@@ -1115,7 +1115,7 @@ namespace AppPublication.Export
                                                  .ToList();
 
             // S'il n'y a personne, on sort tout de suite pour ne pas travailler pour rien
-            if (!finalParticipants.Any()) return new XElement(ConstantXML.Classement);
+            if (finalParticipants.Count == 0) return new XElement(ConstantXML.Classement);
 
             // 2. PRÉPARATION DES CACHES (On ne charge QUE les participants de ce classement)
             var participantIds = finalParticipants.Select(p => p.judoka).ToHashSet();

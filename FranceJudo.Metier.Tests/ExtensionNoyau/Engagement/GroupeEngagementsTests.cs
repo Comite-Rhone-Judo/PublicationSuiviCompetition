@@ -1,11 +1,11 @@
 ﻿#nullable enable
-using AppPublication.ExtensionNoyau.Engagement;
+using FranceJudo.Metier.ExtensionNoyau.Engagement;
 using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.XML;
 using System.Xml.Linq;
 using Xunit;
 
-namespace AppPublication.Tests.ExtensionNoyau.Engagement
+namespace FranceJudo.Metier.Tests.ExtensionNoyau.Engagement
 {
     public class GroupeEngagementsTests
     {

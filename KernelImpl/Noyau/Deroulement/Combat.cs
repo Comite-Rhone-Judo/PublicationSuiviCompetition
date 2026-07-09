@@ -53,8 +53,8 @@ namespace KernelImpl.Noyau.Deroulement
         public int score2 { get; set; }
         public int penalite1 { get; set; }
         public int penalite2 { get; set; }
-        public int etatJ1 { get; set; }
-        public int etatJ2 { get; set; }
+        public EtatCombattantEnum etatJ1 { get; set; }
+        public EtatCombattantEnum etatJ2 { get; set; }
         public int positionJ1 { get; set; }
         public int positionJ2 { get; set; }
         public int nbVictoire1 { get; set; }
@@ -65,7 +65,7 @@ namespace KernelImpl.Noyau.Deroulement
         public System.DateTime debut { get; set; }
         public System.DateTime fin { get; set; }
         public double temps { get; set; }
-        public int etat { get; set; }
+        public EtatCombatEnum etat { get; set; }
         public int arbitre1 { get; set; }
         public int arbitre2 { get; set; }
         public int arbitre3 { get; set; }
@@ -120,7 +120,7 @@ namespace KernelImpl.Noyau.Deroulement
                     this.participant1 = XMLTools.LectureNullableInt(ele_Judoka1.Attribute(ConstantXML.Combat_Judoka));
                     this.score1 = XMLTools.LectureInt(ele_Judoka1.Attribute(ConstantXML.Combat_Score));
                     this.penalite1 = XMLTools.LectureInt(ele_Judoka1.Attribute(ConstantXML.Combat_Penalite));
-                    this.etatJ1 = XMLTools.LectureInt(ele_Judoka1.Attribute(ConstantXML.Combat_Etat));
+                    this.etatJ1 = (EtatCombattantEnum) XMLTools.LectureInt(ele_Judoka1.Attribute(ConstantXML.Combat_Etat));
                     this.nbVictoire1 = XMLTools.LectureInt(ele_Judoka1.Attribute(ConstantXML.Combat_NbVictoire));
                 }
             }
@@ -133,7 +133,7 @@ namespace KernelImpl.Noyau.Deroulement
                     this.participant2 = XMLTools.LectureNullableInt(ele_Judoka2.Attribute(ConstantXML.Combat_Judoka));
                     this.score2 = XMLTools.LectureInt(ele_Judoka2.Attribute(ConstantXML.Combat_Score));
                     this.penalite2 = XMLTools.LectureInt(ele_Judoka2.Attribute(ConstantXML.Combat_Penalite));
-                    this.etatJ2 = XMLTools.LectureInt(ele_Judoka2.Attribute(ConstantXML.Combat_Etat));
+                    this.etatJ2 = (EtatCombattantEnum) XMLTools.LectureInt(ele_Judoka2.Attribute(ConstantXML.Combat_Etat));
                     this.nbVictoire2 = XMLTools.LectureInt(ele_Judoka2.Attribute(ConstantXML.Combat_NbVictoire));
                 }
             }
@@ -155,7 +155,7 @@ namespace KernelImpl.Noyau.Deroulement
 
 
             this.temps = XMLTools.LectureDouble(xinfo.Attribute(ConstantXML.Combat_Temps));
-            this.etat = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Combat_Etat));
+            this.etat = (EtatCombatEnum) XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Combat_Etat));
             this.arbitre1 = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Combat_Arbitre1));
             this.arbitre2 = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Combat_Arbitre2));
             this.arbitre3 = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Combat_Arbitre3));
@@ -243,7 +243,7 @@ namespace KernelImpl.Noyau.Deroulement
             xcombat.SetAttributeValue(ConstantXML.Combat_Kinza2, kinza2.ToString());
 
             xcombat.SetAttributeValue(ConstantXML.Combat_Tapis, tapis);
-            xcombat.SetAttributeValue(ConstantXML.Combat_Etat, etat);
+            xcombat.SetAttributeValue(ConstantXML.Combat_Etat, (int) etat);
             xcombat.SetAttributeValue(ConstantXML.Combat_Arbitre1, arbitre1);
             xcombat.SetAttributeValue(ConstantXML.Combat_Arbitre2, arbitre2);
             xcombat.SetAttributeValue(ConstantXML.Combat_Arbitre3, arbitre3);
@@ -283,7 +283,7 @@ namespace KernelImpl.Noyau.Deroulement
 
             XElement xjudoka1 = new XElement(ConstantXML.Combat_Score);
             xjudoka1.SetAttributeValue(ConstantXML.Combat_Judoka, participant1 != null ? participant1.ToString() : "null");
-            xjudoka1.SetAttributeValue(ConstantXML.Combat_Etat, etatJ1);
+            xjudoka1.SetAttributeValue(ConstantXML.Combat_Etat, (int) etatJ1);
             xjudoka1.SetAttributeValue(ConstantXML.Combat_Score, score1.ToString("000"));
             xjudoka1.SetAttributeValue(ConstantXML.Combat_Kinza, kinza1.ToString());
             xjudoka1.SetAttributeValue(ConstantXML.Combat_Penalite, penalite1);
@@ -297,7 +297,7 @@ namespace KernelImpl.Noyau.Deroulement
 
             XElement xjudoka2 = new XElement(ConstantXML.Combat_Score);
             xjudoka2.SetAttributeValue(ConstantXML.Combat_Judoka, participant2 != null ? participant2.ToString() : "null");
-            xjudoka2.SetAttributeValue(ConstantXML.Combat_Etat, etatJ2);
+            xjudoka2.SetAttributeValue(ConstantXML.Combat_Etat, (int) etatJ2);
             xjudoka2.SetAttributeValue(ConstantXML.Combat_Score, score2.ToString("000"));
             xjudoka2.SetAttributeValue(ConstantXML.Combat_Kinza, kinza2.ToString());
             xjudoka2.SetAttributeValue(ConstantXML.Combat_Penalite, penalite2);
@@ -396,11 +396,11 @@ namespace KernelImpl.Noyau.Deroulement
             /*
             if (this.etatJ1 == (int)EtatCombattantEnum.Normal && this.etatJ2 == (int)EtatCombattantEnum.Normal)
             {*/
-            if (this.etatJ1 != (int)EtatCombattantEnum.HansokuMakeX && this.etatJ2 != (int)EtatCombattantEnum.HansokuMakeX &&
-                this.etatJ1 != (int)EtatCombattantEnum.HansokuMakeH && this.etatJ2 != (int)EtatCombattantEnum.HansokuMakeH &&
-                this.etatJ1 != (int)EtatCombattantEnum.Abandon && this.etatJ2 != (int)EtatCombattantEnum.Abandon &&
-                this.etatJ1 != (int)EtatCombattantEnum.Medical && this.etatJ2 != (int)EtatCombattantEnum.Medical &&
-                this.etatJ1 != (int)EtatCombattantEnum.Forfait && this.etatJ2 != (int)EtatCombattantEnum.Forfait)
+            if (this.etatJ1 != EtatCombattantEnum.HansokuMakeX && this.etatJ2 != EtatCombattantEnum.HansokuMakeX &&
+                this.etatJ1 != EtatCombattantEnum.HansokuMakeH && this.etatJ2 != EtatCombattantEnum.HansokuMakeH &&
+                this.etatJ1 != EtatCombattantEnum.Abandon && this.etatJ2 != EtatCombattantEnum.Abandon &&
+                this.etatJ1 != EtatCombattantEnum.Medical && this.etatJ2 != EtatCombattantEnum.Medical &&
+                this.etatJ1 != EtatCombattantEnum.Forfait && this.etatJ2 != EtatCombattantEnum.Forfait)
             {
                 //Victoire par IPPON 
                 if ((scoreV / 100) - (scoreP / 100) >= 1)
@@ -470,16 +470,16 @@ namespace KernelImpl.Noyau.Deroulement
             }
 
             // En cas de Hansokumake X, le perdant perd toutes ses valeurs
-            if (this.etatJ1 == (int)EtatCombattantEnum.HansokuMakeX || this.etatJ2 == (int)EtatCombattantEnum.HansokuMakeX)
+            if (this.etatJ1 == EtatCombattantEnum.HansokuMakeX || this.etatJ2 == EtatCombattantEnum.HansokuMakeX)
             {
                 return 0;
             }
 
             // Perdu sur 3 Pénalités, A/M/F ou H: il garde le benefice s'il a un Waza-Ari de difference avec le gagnant
-            if (this.etatJ1 != (int)EtatCombattantEnum.HansokuMakeH || this.etatJ2 != (int)EtatCombattantEnum.HansokuMakeH ||
-            this.etatJ1 != (int)EtatCombattantEnum.Abandon || this.etatJ2 != (int)EtatCombattantEnum.Abandon ||
-            this.etatJ1 != (int)EtatCombattantEnum.Medical || this.etatJ2 != (int)EtatCombattantEnum.Medical ||
-            this.etatJ1 != (int)EtatCombattantEnum.Forfait || this.etatJ2 != (int)EtatCombattantEnum.Forfait ||
+            if (this.etatJ1 != EtatCombattantEnum.HansokuMakeH || this.etatJ2 != EtatCombattantEnum.HansokuMakeH ||
+            this.etatJ1 != EtatCombattantEnum.Abandon || this.etatJ2 != EtatCombattantEnum.Abandon ||
+            this.etatJ1 != EtatCombattantEnum.Medical || this.etatJ2 != EtatCombattantEnum.Medical ||
+            this.etatJ1 != EtatCombattantEnum.Forfait || this.etatJ2 != EtatCombattantEnum.Forfait ||
             penP >= 3)
             {
                 // Le perdant doit avoir un Waza-ari de difference avec le gagnant
@@ -515,7 +515,7 @@ namespace KernelImpl.Noyau.Deroulement
 
         public int CalculeScoreGRCH(IJudoData DC, int? participant)
         {
-            if (DC?.Organisation?.Competition?.type == (int)CompetitionTypeEnum.Equipe)
+            if (DC?.Organisation?.Competition?.type == CompetitionTypeEnum.Equipe)
             {
                 return 0;
             }
@@ -596,7 +596,7 @@ namespace KernelImpl.Noyau.Deroulement
 
 
                 // DGR 2022-03-26 Vu avec Eric Fauroux, en shiai on ne fait pas ce controle pour permettre le deroulement sur les 2D/3D (manque de participant)
-                if (DC?.Organisation?.Competition?.type != (int)CompetitionTypeEnum.Shiai)
+                if (DC?.Organisation?.Competition?.type != CompetitionTypeEnum.Shiai)
                 {
                     // A cette etape de code, le participant est forcement le vainqueur (cas contraire elimine au debut du code)
                     zero = zero || (j1?.id == participant && j1?.ceinture > j2?.ceinture);  //SI GRADE INFERIEUR
@@ -674,7 +674,7 @@ namespace KernelImpl.Noyau.Deroulement
                     {
                         if (participant == participant1)
                         {
-                            if (this.etatJ1 == (int)EtatCombattantEnum.HansokuMakeX) //perd ses point de la RGC
+                            if (this.etatJ1 == EtatCombattantEnum.HansokuMakeX) //perd ses point de la RGC
                             {
                                 return -1;
                             }
@@ -707,7 +707,7 @@ namespace KernelImpl.Noyau.Deroulement
                         }
                         else
                         {
-                            if (this.etatJ2 == (int)EtatCombattantEnum.HansokuMakeX) //perd ses point de la RGC
+                            if (this.etatJ2 == EtatCombattantEnum.HansokuMakeX) //perd ses point de la RGC
                             {
                                 return -1;
 
@@ -777,7 +777,7 @@ namespace KernelImpl.Noyau.Deroulement
                 return "";
             }
 
-            bool isEquipe = DC?.Organisation?.Competition?.type == (int)CompetitionTypeEnum.Equipe;
+            bool isEquipe = DC?.Organisation?.Competition?.type == CompetitionTypeEnum.Equipe;
 
             int nbV = 0;
             int score = 0;
@@ -885,7 +885,7 @@ namespace KernelImpl.Noyau.Deroulement
                     return "";
                 }
 
-                if (DC?.Organisation?.Competition?.type == (int)CompetitionTypeEnum.Equipe)
+                if (DC?.Organisation?.Competition?.type == CompetitionTypeEnum.Equipe)
                 {
                     return DC?.Organisation?.Competition?.reglementEquipe switch
                     {
@@ -1119,7 +1119,7 @@ namespace KernelImpl.Noyau.Deroulement
                 }
             }
 
-            if (this.etatJ1 != (int)EtatCombattantEnum.Normal)
+            if (this.etatJ1 != EtatCombattantEnum.Normal)
             {
                 res1 += "." + this.GetPenalites(judoka);
                 //if (this.etatJ1 == (int)EtatCombattantEnum.HansokuMakeH)
@@ -1148,7 +1148,7 @@ namespace KernelImpl.Noyau.Deroulement
                     {
                         res1 += ".H";
                     }
-                    else if (scoresJson.IsFullIppon(1) && this.etatJ2 == (int)EtatCombattantEnum.Normal)
+                    else if (scoresJson.IsFullIppon(1) && this.etatJ2 == EtatCombattantEnum.Normal)
                     {
                         res1 += "FI";
                     }
@@ -1181,10 +1181,10 @@ namespace KernelImpl.Noyau.Deroulement
 
             res2 = this.score2.ToString();
 
-            if (this.etatJ2 != (int)EtatCombattantEnum.Normal)
+            if (this.etatJ2 != EtatCombattantEnum.Normal)
             {
                 res2 += "." + this.GetPenalites(judoka);
-                //if (this.etatJ2 == (int)EtatCombattantEnum.HansokuMakeH)
+                //if (this.etatJ2 == EtatCombattantEnum.HansokuMakeH)
                 //{
                 //    res2 += ".H";
                 //}
@@ -1208,7 +1208,7 @@ namespace KernelImpl.Noyau.Deroulement
                     {
                         res2 += ".H";
                     }
-                    else if (scoresJson.IsFullIppon(2) && this.etatJ1 == (int)EtatCombattantEnum.Normal)
+                    else if (scoresJson.IsFullIppon(2) && this.etatJ1 == EtatCombattantEnum.Normal)
                     {
                         res2 += "FI";
                     }
@@ -1258,15 +1258,15 @@ namespace KernelImpl.Noyau.Deroulement
         {
             string pen1 = "";
 
-            int etat = judoka == 1 ? this.etatJ1 : this.etatJ2;
+            EtatCombattantEnum etat = judoka == 1 ? this.etatJ1 : this.etatJ2;
 
             pen1 += etat switch
             {
-                (int)EtatCombattantEnum.Abandon => "A",
-                (int)EtatCombattantEnum.Medical => "M",
-                (int)EtatCombattantEnum.Forfait => "F",
-                (int)EtatCombattantEnum.HansokuMakeH => "H",
-                (int)EtatCombattantEnum.HansokuMakeX => "X",
+                EtatCombattantEnum.Abandon => "A",
+                EtatCombattantEnum.Medical => "M",
+                EtatCombattantEnum.Forfait => "F",
+                EtatCombattantEnum.HansokuMakeH => "H",
+                EtatCombattantEnum.HansokuMakeX => "X",
                 _ => (judoka == 1 ? this.penalite1.ToString() : this.penalite2.ToString()),
             };
             return pen1;

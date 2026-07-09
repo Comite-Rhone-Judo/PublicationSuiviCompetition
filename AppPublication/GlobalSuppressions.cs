@@ -18,3 +18,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Performance", "CA1822:Marquer les membres comme étant static", Justification = "<En attente>", Scope = "module")]
 [assembly: SuppressMessage("Style", "IDE0301:Simplifier l'initialisation des collections", Justification = "<En attente>", Scope = "module")]
 [assembly: SuppressMessage("Usage", "CA2208:Instancier les exceptions d'argument correctement", Justification = "<En attente>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0057:Utiliser l'opérateur de plage", Justification = "<En attente>", Scope = "module")]

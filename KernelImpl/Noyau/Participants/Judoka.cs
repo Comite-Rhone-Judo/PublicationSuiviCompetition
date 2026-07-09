@@ -260,8 +260,8 @@ namespace KernelImpl.Noyau.Participants
             }
         }
 
-        private int _etat;
-        public int etat
+        private EtatJudokaEnum _etat;
+        public EtatJudokaEnum etat
         {
             get { return _etat; }
             set
@@ -416,7 +416,7 @@ namespace KernelImpl.Noyau.Participants
             this.ceinture = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Judoka_Grade));
             this.categorie = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Judoka_Categorie));
             this.present = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Judoka_Present));
-            this.etat = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Judoka_Etat));
+            this.etat = (EtatJudokaEnum) XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Judoka_Etat));
 
             this.datePesee =
                 XMLTools.LectureDate(xinfo.Attribute(ConstantXML.Judoka_DatePesee_Date), "ddMMyyyy", DateTime.Now) +
@@ -460,8 +460,8 @@ namespace KernelImpl.Noyau.Participants
             xjudoka.SetAttributeValue(ConstantXML.Judoka_Club, club);
             xjudoka.SetAttributeValue(ConstantXML.Judoka_Grade, ceinture);
             xjudoka.SetAttributeValue(ConstantXML.Judoka_Categorie, categorie);
-            xjudoka.SetAttributeValue(ConstantXML.Judoka_Present, etat == (int)EtatJudokaEnum.AuPoids || etat == (int)EtatJudokaEnum.HorsPoids || etat == (int)EtatJudokaEnum.HorsCategorie);
-            xjudoka.SetAttributeValue(ConstantXML.Judoka_Etat, etat.ToString());
+            xjudoka.SetAttributeValue(ConstantXML.Judoka_Present, etat == EtatJudokaEnum.AuPoids || etat == EtatJudokaEnum.HorsPoids || etat == EtatJudokaEnum.HorsCategorie);
+            xjudoka.SetAttributeValue(ConstantXML.Judoka_Etat, (int)etat);
             xjudoka.SetAttributeValue(ConstantXML.Judoka_PoidsM, poidsMesure);
             xjudoka.SetAttributeValue(ConstantXML.Judoka_Poids, poids);
             xjudoka.SetAttributeValue(ConstantXML.Judoka_Modification, modification);

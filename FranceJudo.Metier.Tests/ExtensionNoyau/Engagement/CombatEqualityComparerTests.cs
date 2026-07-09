@@ -1,10 +1,10 @@
 ﻿#nullable enable
-using AppPublication.ExtensionNoyau.Engagement;
+using FranceJudo.Metier.ExtensionNoyau.Engagement;
 using FranceJudo.Metier.Noyau.Deroulement;
 using Moq;
 using Xunit;
 
-namespace AppPublication.Tests.ExtensionNoyau.Engagement
+namespace FranceJudo.Metier.Tests.ExtensionNoyau.Engagement
 {
     public class CombatEqualityComparerTests
     {

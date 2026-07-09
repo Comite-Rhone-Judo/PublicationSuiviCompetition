@@ -16,16 +16,16 @@ namespace KernelImpl.Tests.Noyau.Deroulement
             {
                 id = 99,
                 libelle = "Tableau Principal",
-                typePhase = 2,
-                etat = 0
+                typePhase = FranceJudo.Metier.Noyau.Deroulement.TypePhaseEnum.Tableau,
+                etat = FranceJudo.Metier.Noyau.Deroulement.EtatPhaseEnum.NonCree
             };
 
             VueEpreuvePhase vue = new VueEpreuvePhase(phase);
 
             vue.id.Should().Be(99);
             vue.nom.Should().Be("Tableau Principal");
-            vue.type_phase.Should().Be(2);
-            vue.etat.Should().NotBeNullOrEmpty("L'état de la phase doit être converti en string (EtatPhaseEnum).");
+            vue.type_phase.Should().Be(FranceJudo.Metier.Noyau.Deroulement.TypePhaseEnum.Tableau);
+            vue.etat.Should().Be(FranceJudo.Metier.Noyau.Deroulement.EtatPhaseEnum.NonCree);
 
             IEntityWithKey<int> entity = vue;
             entity.EntityKey.Should().Be(99);

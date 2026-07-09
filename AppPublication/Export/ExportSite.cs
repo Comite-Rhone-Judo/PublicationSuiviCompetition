@@ -1,6 +1,7 @@
-﻿using AppPublication.ExtensionNoyau;
-using AppPublication.ExtensionNoyau.Engagement;
-using AppPublication.ExtensionNoyau.StatistiquesCombats;
+﻿using FranceJudo.Metier.ExtensionNoyau;
+using FranceJudo.Metier.ExtensionNoyau.Engagement;
+using FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats;
+
 using AppPublication.Publication;
 using AppPublication.Tools.Enum;
 using FranceJudo.Core.Export;
@@ -119,9 +120,9 @@ namespace AppPublication.Export
                 string targetDirectory = siteStructure.PhysicalStructure.RepertoireEpreuve(vueEpreuve.id.ToString(), vueEpreuve.nom);
 
                 // --- 1. TRAITEMENTS POULE / TABLEAU ---
-                if (phase.typePhase == (int)TypePhaseEnum.Poule || phase.typePhase == (int)TypePhaseEnum.Tableau)
+                if (phase.typePhase == TypePhaseEnum.Poule || phase.typePhase == TypePhaseEnum.Tableau)
                 {
-                    bool isPoule = phase.typePhase == (int)TypePhaseEnum.Poule;
+                    bool isPoule = phase.typePhase == TypePhaseEnum.Poule;
 
                     ExportEnum exportType = isPoule ? ExportEnum.Site_Poule_Resultat : ExportEnum.Site_Tableau_Competition;
                     string savePath = GetFileSavePath(targetDirectory, exportType);

@@ -286,7 +286,7 @@ namespace AppPublication.Controles
                                     {
                                         try
                                         {
-                                            if (imgFile.ToLower().Contains("logo"))
+                                            if (imgFile.Contains("logo", StringComparison.CurrentCultureIgnoreCase))
                                             {
                                                 int w, h;
 

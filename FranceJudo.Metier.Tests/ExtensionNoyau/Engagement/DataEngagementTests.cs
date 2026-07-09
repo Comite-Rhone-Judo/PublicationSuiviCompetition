@@ -1,5 +1,5 @@
 ﻿#nullable enable
-using AppPublication.ExtensionNoyau.Engagement;
+using FranceJudo.Metier.ExtensionNoyau.Engagement;
 using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.Noyau.Participants;
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace AppPublication.Tests.ExtensionNoyau.Engagement
+namespace FranceJudo.Metier.Tests.ExtensionNoyau.Engagement
 {
     public class DataEngagementTests
     {

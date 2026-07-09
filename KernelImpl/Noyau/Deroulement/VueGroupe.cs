@@ -25,10 +25,10 @@ namespace KernelImpl.Noyau.Deroulement
         public Nullable<System.DateTime> groupe_fin { get; set; }
         public bool groupe_verrouille { get; set; }
         public int nb_combats_restant { get; set; }
-        public int phase_etat { get; set; }
+        public EtatPhaseEnum phase_etat { get; set; }
         public string phase_libelle { get; set; }
         public int phase_id { get; set; }
-        public int phase_type { get; set; }
+        public TypePhaseEnum phase_type { get; set; }
         public Nullable<int> epreuve_id { get; set; }
         public string epreuve_nom { get; set; }
         public int epreuve_poidsMin { get; set; }
@@ -87,9 +87,9 @@ namespace KernelImpl.Noyau.Deroulement
             this.groupe_verrouille = XMLTools.LectureBool(xinfo.Attribute(ConstantXML.Vue_Groupe_Verrouille));
 
             this.nb_combats_restant = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Vue_Groupe_Restant));
-            this.phase_etat = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Vue_Groupe_PhaseEtat));
+            this.phase_etat = (EtatPhaseEnum)XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Vue_Groupe_PhaseEtat));
             this.phase_id = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Vue_Groupe_PhaseId));
-            this.phase_type = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Vue_Groupe_PhaseType));
+            this.phase_type = (TypePhaseEnum)XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Vue_Groupe_PhaseType));
             this.epreuve_id = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Vue_Groupe_EpreuveId));
             this.epreuve_poidsMin = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Vue_Groupe_EpreuvePoidsMin));
             this.epreuve_poidsMax = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Vue_Groupe_EpreuvePoidsMax));
@@ -111,10 +111,10 @@ namespace KernelImpl.Noyau.Deroulement
             xgroupe.SetAttributeValue(ConstantXML.Vue_Groupe_DebutTime, ((DateTime)this.groupe_debut).ToString("HH:mm"));
             xgroupe.SetAttributeValue(ConstantXML.Vue_Groupe_Verrouille, this.groupe_verrouille.ToString());
             xgroupe.SetAttributeValue(ConstantXML.Vue_Groupe_Restant, this.nb_combats_restant.ToString());
-            xgroupe.SetAttributeValue(ConstantXML.Vue_Groupe_PhaseEtat, this.phase_etat.ToString());
+            xgroupe.SetAttributeValue(ConstantXML.Vue_Groupe_PhaseEtat, (int)this.phase_etat);
             xgroupe.SetAttributeValue(ConstantXML.Vue_Groupe_PhaseLibelle, this.phase_libelle);
             xgroupe.SetAttributeValue(ConstantXML.Vue_Groupe_PhaseId, this.phase_id.ToString());
-            xgroupe.SetAttributeValue(ConstantXML.Vue_Groupe_PhaseType, this.phase_type.ToString());
+            xgroupe.SetAttributeValue(ConstantXML.Vue_Groupe_PhaseType, (int)this.phase_type);
             xgroupe.SetAttributeValue(ConstantXML.Vue_Groupe_EpreuveId, this.epreuve_id.ToString());
             xgroupe.SetAttributeValue(ConstantXML.Vue_Groupe_EpreuveNom, this.epreuve_nom);
             xgroupe.SetAttributeValue(ConstantXML.Vue_Groupe_EpreuvePoidsMin, this.epreuve_poidsMin.ToString());

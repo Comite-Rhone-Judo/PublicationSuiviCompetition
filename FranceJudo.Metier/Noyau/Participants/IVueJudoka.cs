@@ -94,7 +94,7 @@ namespace FranceJudo.Metier.Noyau.Participants
         /// 4-Au poids
         /// 5-Hors poids
         /// </summary>
-        public int etat { get; set; }
+        public EtatJudokaEnum etat { get; set; }
         public int modeControle { get; set; }
         public int modePesee { get; set; }
 

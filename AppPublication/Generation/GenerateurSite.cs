@@ -1,6 +1,6 @@
 ﻿using AppPublication.Export;
-using AppPublication.ExtensionNoyau;
-using AppPublication.ExtensionNoyau.Engagement;
+using FranceJudo.Metier.ExtensionNoyau;
+using FranceJudo.Metier.ExtensionNoyau.Engagement;
 using AppPublication.Publication;
 using FranceJudo.Core.Export;
 using FranceJudo.Core.IO;

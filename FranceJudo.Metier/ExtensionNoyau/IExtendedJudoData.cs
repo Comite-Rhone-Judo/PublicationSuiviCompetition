@@ -1,8 +1,8 @@
-﻿using AppPublication.ExtensionNoyau.Engagement;
-using AppPublication.ExtensionNoyau.StatistiquesCombats;
+﻿using FranceJudo.Metier.ExtensionNoyau.Engagement;
+using FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats;
 using FranceJudo.Metier.Noyau;
 
-namespace AppPublication.ExtensionNoyau
+namespace FranceJudo.Metier.ExtensionNoyau
 {
     public interface IExtendedJudoData
     {

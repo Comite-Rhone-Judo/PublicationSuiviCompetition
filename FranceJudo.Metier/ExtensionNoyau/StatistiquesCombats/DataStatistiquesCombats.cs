@@ -1,14 +1,14 @@
-﻿using AppPublication.ExtensionNoyau.Engagement;
+﻿using FranceJudo.Metier.ExtensionNoyau.Engagement;
 using FranceJudo.Core.Logging;
 using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.Noyau.Participants;
-using KernelImpl.Noyau.Deroulement;
+using FranceJudo.Metier.Noyau.Deroulement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AppPublication.ExtensionNoyau.StatistiquesCombats
+namespace FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats
 {
     public class DataStatistiquesCombats : IDataStatistiquesCombats
     {
@@ -94,7 +94,7 @@ namespace AppPublication.ExtensionNoyau.StatistiquesCombats
             var competitionsSnap = data.Organisation?.Competitions?.ToList() ?? new List<ICompetition>();
             var epreuvesSnap = data.Organisation?.Epreuves?.ToList() ?? new List<IEpreuve>();
             var judokasSnap = data.Participants?.Vuejudokas?.ToList() ?? new List<IVueJudoka>();
-            var combatsSnap = data.Deroulement?.Combats?.OfType<Combat>().ToList() ?? new List<Combat>();
+            var combatsSnap = data.Deroulement?.Combats?.OfType<ICombat>().ToList() ?? new List<ICombat>();
 
             var dictJudokas = new Dictionary<int, IVueJudoka>();
             foreach (var j in judokasSnap) dictJudokas[j.id] = j;
@@ -107,7 +107,7 @@ namespace AppPublication.ExtensionNoyau.StatistiquesCombats
                 if (!competition.IsShiai() && !competition.IsIndividuelle()) continue;
                 if (!_typesGroupes.TryGetValue(competition.id, out var echelonsCibles)) continue;
 
-                foreach (EpreuveSexeEnum s in Enum.GetValues<EpreuveSexeEnum>())
+                foreach (EpreuveSexeEnum s in Enum.GetValues(typeof(EpreuveSexeEnum)))
                 {
                     var sexe = new EpreuveSexe(s);
                     var epreuvesSexe = epreuvesSnap.Where(ep => ep.competition == competition.id && ep.sexeEnum.Enum == s).ToList();
@@ -171,10 +171,27 @@ namespace AppPublication.ExtensionNoyau.StatistiquesCombats
                 var groupesP1 = GetGroupesCascadePourParticipant(p1, typesP1);
                 var groupesP2 = GetGroupesCascadePourParticipant(p2, typesP2);
 
-                string penP1Str = combat.GetPenalites(1)?.TrimStart('-');
-                string penP2Str = combat.GetPenalites(2)?.TrimStart('-');
-                int pen1Count = ParseNombrePenalites(penP1Str);
-                int pen2Count = ParseNombrePenalites(penP2Str);
+                // --- ANALYSE DES ÉTATS VIA ENUM ---
+                EtatCombattantEnum etatP1 = combat.etatJ1;
+                EtatCombattantEnum etatP2 = combat.etatJ2;
+
+                // Détection des Hansoku-Make
+                bool p1Hansoku = etatP1 == EtatCombattantEnum.HansokuMakeH || etatP1 == EtatCombattantEnum.HansokuMakeX;
+                bool p2Hansoku = etatP2 == EtatCombattantEnum.HansokuMakeH || etatP2 == EtatCombattantEnum.HansokuMakeX;
+
+                // Fonction locale pour vérifier si l'état est un motif de fin exceptionnel (A, M, F, H, X)
+                bool EstFinExceptionnelle(EtatCombattantEnum etat)
+                {
+                    return etat == EtatCombattantEnum.Abandon ||
+                           etat == EtatCombattantEnum.Medical ||
+                           etat == EtatCombattantEnum.Forfait ||
+                           etat == EtatCombattantEnum.HansokuMakeH ||
+                           etat == EtatCombattantEnum.HansokuMakeX;
+                }
+
+                // Les Shidos techniques ne sont comptés que si ce n'est pas une fin exceptionnelle
+                int pen1Count = !EstFinExceptionnelle(etatP1) ? combat.penalite1 : 0;
+                int pen2Count = !EstFinExceptionnelle(etatP2) ? combat.penalite2 : 0;
 
                 bool p1Gagne = combat.vainqueur == combat.participant1;
                 bool p2Gagne = combat.vainqueur == combat.participant2;
@@ -188,7 +205,7 @@ namespace AppPublication.ExtensionNoyau.StatistiquesCombats
                 TimeSpan dureeGolden = (isGoldenScore && tEffectif > tNominal) ? tEffectif - tNominal : TimeSpan.Zero;
 
                 // Ajout des paramètres etatJudoka et etatAdversaire pour l'analyse précise des victoires
-                void AppliquerStats(IVueJudoka judoka, IEnumerable<GroupeStatistiques> groupesDuJudoka, bool estVainqueur, bool hikiwake, int score, string penAdversaire, int nbPenalitesRecues, int etatJudoka, int etatAdversaire)
+                void AppliquerStats(IVueJudoka judoka, IEnumerable<GroupeStatistiques> groupesDuJudoka, bool estVainqueur, bool hikiwake, int score, bool adversaireEstHansoku, int nbPenalitesRecues, EtatCombattantEnum etatJudoka, EtatCombattantEnum etatAdversaire)
                 {
                     // Met a jour un compteur spécifique
                     void UpdateCompteur(CompteurStatistiques c)
@@ -204,7 +221,7 @@ namespace AppPublication.ExtensionNoyau.StatistiquesCombats
                         {
                             c.NbVictoires++;
                             // Le judoka étant le vainqueur, on passe son état (etatVainqueur) et celui de l'adversaire (etatPerdant)
-                            AnalyserVictoire(c, score, penAdversaire, etatJudoka, etatAdversaire);
+                            AnalyserVictoire(c, score, adversaireEstHansoku, etatJudoka, etatAdversaire);
                         }
                         else if (hikiwake)
                         {
@@ -230,8 +247,8 @@ namespace AppPublication.ExtensionNoyau.StatistiquesCombats
                 }
 
                 // Appel de la méthode en passant les états respectifs (combat.etatJ1 et combat.etatJ2)
-                AppliquerStats(p1, groupesP1, p1Gagne, estHikiwake, combat.score1, penP2Str, pen1Count, combat.etatJ1, combat.etatJ2);
-                AppliquerStats(p2, groupesP2, p2Gagne, estHikiwake, combat.score2, penP1Str, pen2Count, combat.etatJ2, combat.etatJ1);
+                AppliquerStats(p1, groupesP1, p1Gagne, estHikiwake, combat.score1, p2Hansoku, pen1Count, combat.etatJ1, combat.etatJ2);
+                AppliquerStats(p2, groupesP2, p2Gagne, estHikiwake, combat.score2, p1Hansoku, pen2Count, combat.etatJ2, combat.etatJ1);
             } // Fin du foreach (var combat in combatsSnap)
 
             outGroupes = groupesUniques.ToList();
@@ -240,6 +257,12 @@ namespace AppPublication.ExtensionNoyau.StatistiquesCombats
             outJudokasParGroupe = judokasParGroupe;
         }
 
+        /// <summary>
+        /// Cette méthode génère les groupes de statistiques pour un participant donné en fonction des échelons cibles spécifiés. Elle retourne une liste de groupes correspondant aux différents niveaux de regroupement (alphabétique, structurel, etc.) pour le participant.
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="echelonsCibles"></param>
+        /// <returns></returns>
         private IEnumerable<GroupeStatistiques> GetGroupesCascadePourParticipant(IVueJudoka p, List<EchelonEnum> echelonsCibles)
         {
             var groupes = new List<GroupeStatistiques>();
@@ -268,33 +291,36 @@ namespace AppPublication.ExtensionNoyau.StatistiquesCombats
             return groupes;
         }
 
-        private void AnalyserVictoire(CompteurStatistiques c, int score, string pen, int etatVainqueur, int etatPerdant)
+        /// <summary>
+        /// Cette méthode analyse le type de victoire d'un combattant et met à jour les compteurs correspondants dans l'objet CompteurStatistiques.
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="score"></param>
+        /// <param name="adversaireEstHansoku"></param>
+        /// <param name="etatVainqueur"></param>
+        /// <param name="etatPerdant"></param>
+        private void AnalyserVictoire(CompteurStatistiques c, int score, bool adversaireEstHansoku, EtatCombattantEnum etatVainqueur, EtatCombattantEnum etatPerdant)
         {
-            // 1. Victoire par décision (Le vainqueur a l'état 7)
-            if (etatVainqueur == 7)
+            // 1. Victoire par décision (Assurez-vous que la valeur 7 possède bien un nom dans votre enum, ex: Decision)
+            if (etatVainqueur == EtatCombattantEnum.Decision)
             {
                 c.NbVictoireDecision++;
                 return;
             }
 
-            // 2. Victoire par Abandon (2), Forfait (3) ou Médical (4) du perdant
-            if (etatPerdant == 2 || etatPerdant == 3 || etatPerdant == 4)
+            // 2. Victoire par Abandon, Forfait ou Médical du perdant
+            if (etatPerdant == EtatCombattantEnum.Abandon ||
+                etatPerdant == EtatCombattantEnum.Forfait ||
+                etatPerdant == EtatCombattantEnum.Medical)
             {
                 c.NbVictoireAbandonForfaitMedical++;
                 return;
             }
 
             // 3. Victoires par pénalités du perdant
-            // Nettoyage de la chaîne de pénalité (retrait des tirets et espaces cachés)
-            string p = pen?.Replace("-", "").Trim().ToUpper() ?? "";
-
-            if (p == "3")
-            {
-                c.NbVictoireSogoGachi++;
-                return;
-            }
-            // Hansoku-Make (H = 5) direct ou Hansoku-Make cumulé (X = 6)
-            if (etatPerdant == 5 || etatPerdant == 6 || p == "H" || p == "X")
+            if (etatPerdant == EtatCombattantEnum.HansokuMakeH ||
+                etatPerdant == EtatCombattantEnum.HansokuMakeX ||
+                adversaireEstHansoku)
             {
                 c.NbVictoireHansokuMake++;
                 return;
@@ -309,19 +335,6 @@ namespace AppPublication.ExtensionNoyau.StatistiquesCombats
             else if (wazaV >= 2) c.NbVictoireWazaAriAwaseteIppon++;
             else if (wazaV == 1) c.NbVictoireWazaAri++;
             else if (yukoV >= 1) c.NbVictoireYuko++;
-        }
-
-        private int ParseNombrePenalites(string pen)
-        {
-            // Nettoyage de la chaîne (ex: "-2" devient "2")
-            string p = pen?.Replace("-", "").Trim().ToUpper() ?? "";
-
-            if (p == "3") return 3;
-            if (p == "2") return 2;
-            if (p == "1") return 1;
-
-            // Tous les autres cas (H, X, A, M, F, D, etc.) ne sont pas des shidos techniques
-            return 0;
         }
     }
 

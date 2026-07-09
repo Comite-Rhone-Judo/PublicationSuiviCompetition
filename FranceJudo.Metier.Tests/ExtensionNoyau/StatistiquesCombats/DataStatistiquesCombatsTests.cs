@@ -1,23 +1,22 @@
-﻿using AppPublication.ExtensionNoyau.StatistiquesCombats;
+﻿using FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats;
 using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.Noyau.Participants;
 using FranceJudo.Metier.Noyau.Deroulement;
-using KernelImpl.Noyau.Deroulement;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace AppPublication.Tests.ExtensionNoyau.StatistiquesCombats
+namespace FranceJudo.Metier.Tests.ExtensionNoyau.StatistiquesCombats
 {
     public class DataStatistiquesCombatsTests
     {
-        private Mock<IJudoData> _mockJudoData;
-        private Mock<IOrganisationData> _mockOrg;
-        private Mock<IParticipantsData> _mockParts;
-        private Mock<IDeroulementData> _mockDeroulement;
+        private readonly Mock<IJudoData> _mockJudoData;
+        private readonly Mock<IOrganisationData> _mockOrg;
+        private readonly Mock<IParticipantsData> _mockParts;
+        private readonly Mock<IDeroulementData> _mockDeroulement;
 
         public DataStatistiquesCombatsTests()
         {
@@ -56,7 +55,7 @@ namespace AppPublication.Tests.ExtensionNoyau.StatistiquesCombats
             PreparerEnvironnement(EchelonEnum.Club);
             PreparerMockParticipants(new[] { CreerMockJudoka(1, "M"), CreerMockJudoka(2, "M") });
 
-            var combats = new List<Combat>
+            var combats = new List<ICombat>
             {
                 // Cbt 1: Ippon Direct (Score 100) -> J1 gagne
                 CreerCombat(1, 2, vainqueur: 1, score1: 100),
@@ -94,18 +93,18 @@ namespace AppPublication.Tests.ExtensionNoyau.StatistiquesCombats
             PreparerEnvironnement(EchelonEnum.Club);
             PreparerMockParticipants(new[] { CreerMockJudoka(1, "M"), CreerMockJudoka(2, "M") });
 
-            var combats = new List<Combat>
+            var combats = new List<ICombat>
             {
                 // Cbt 1: Decision (etat Vainqueur = 7) -> J1 gagne
-                CreerCombat(1, 2, vainqueur: 1, etatJ1: 7),
+                CreerCombat(1, 2, vainqueur: 1, etatJ1: EtatCombattantEnum.Decision),
                 // Cbt 2: Abandon (etat Perdant = 2) -> J1 gagne
-                CreerCombat(1, 2, vainqueur: 1, etatJ2: 2),
+                CreerCombat(1, 2, vainqueur: 1, etatJ2: EtatCombattantEnum.Abandon),
                 // Cbt 3: Forfait (etat Perdant = 3) -> J1 gagne
-                CreerCombat(1, 2, vainqueur: 1, etatJ2: 3),
+                CreerCombat(1, 2, vainqueur: 1, etatJ2: EtatCombattantEnum.Forfait),
                 // Cbt 4: Medical (etat Perdant = 4) -> J1 gagne
-                CreerCombat(1, 2, vainqueur: 1, etatJ2: 4),
+                CreerCombat(1, 2, vainqueur: 1, etatJ2: EtatCombattantEnum.Medical),
                 // Cbt 5: Hansoku Make direct ou cumulé (etat Perdant = 5) -> J1 gagne
-                CreerCombat(1, 2, vainqueur: 1, etatJ2: 5)
+                CreerCombat(1, 2, vainqueur: 1, etatJ2: EtatCombattantEnum.HansokuMakeH)
             };
             PreparerMockCombats(combats);
 
@@ -139,7 +138,7 @@ namespace AppPublication.Tests.ExtensionNoyau.StatistiquesCombats
             PreparerEnvironnement(EchelonEnum.Club);
             PreparerMockParticipants(new[] { CreerMockJudoka(1, "M"), CreerMockJudoka(2, "M") });
 
-            var combats = new List<Combat>
+            var combats = new List<ICombat>
             {
                 CreerCombat(1, 2, vainqueur: int.MinValue)
             };
@@ -169,7 +168,7 @@ namespace AppPublication.Tests.ExtensionNoyau.StatistiquesCombats
 
             var debut = DateTime.Today;
 
-            var combats = new List<Combat>
+            var combats = new List<ICombat>
             {
                 // Cbt 1: Dure 6 min pour un temps nominal de 4 min -> Golden Score (2 min)
                 CreerCombat(1, 2, vainqueur: 1, temps: 4, debut: debut, fin: debut.AddMinutes(6)),
@@ -227,7 +226,7 @@ namespace AppPublication.Tests.ExtensionNoyau.StatistiquesCombats
             _mockParts.Setup(p => p.Vuejudokas).Returns(judokas.ToList());
         }
 
-        private void PreparerMockCombats(IEnumerable<Combat> combats)
+        private void PreparerMockCombats(IEnumerable<ICombat> combats)
         {
             _mockDeroulement.Setup(d => d.Combats).Returns(combats.Cast<ICombat>().ToList());
         }
@@ -253,22 +252,28 @@ namespace AppPublication.Tests.ExtensionNoyau.StatistiquesCombats
             return mock.Object;
         }
 
-        private Combat CreerCombat(int id1, int id2, int vainqueur, int score1 = 0, int score2 = 0, int etatJ1 = 0, int etatJ2 = 0, int temps = 4, DateTime? debut = null, DateTime? fin = null)
+        private ICombat CreerCombat(int id1, int id2, int vainqueur, int score1 = 0, int score2 = 0, EtatCombattantEnum etatJ1 = EtatCombattantEnum.Normal, EtatCombattantEnum etatJ2 = EtatCombattantEnum.Normal, int temps = 4, DateTime? debut = null, DateTime? fin = null)
         {
-            return new Combat
-            {
-                participant1 = id1,
-                participant2 = id2,
-                vainqueur = vainqueur,
-                score1 = score1,
-                score2 = score2,
-                etatJ1 = etatJ1,
-                etatJ2 = etatJ2,
-                temps = temps,
-                debut = debut ?? DateTime.Today,
-                fin = fin ?? DateTime.Today.AddMinutes(temps),
-                virtuel = false
-            };
+            // On crée un faux objet (Mock) basé uniquement sur l'interface
+            var mock = new Mock<ICombat>();
+
+            // On configure les retours des propriétés
+            mock.Setup(c => c.participant1).Returns(id1);
+            mock.Setup(c => c.participant2).Returns(id2);
+            mock.Setup(c => c.vainqueur).Returns(vainqueur);
+            mock.Setup(c => c.score1).Returns(score1);
+            mock.Setup(c => c.score2).Returns(score2);
+
+            mock.Setup(c => c.etatJ1).Returns(etatJ1);
+            mock.Setup(c => c.etatJ2).Returns(etatJ2);
+
+            mock.Setup(c => c.temps).Returns(temps);
+            mock.Setup(c => c.debut).Returns(debut ?? DateTime.Today);
+            mock.Setup(c => c.fin).Returns(fin ?? DateTime.Today.AddMinutes(temps));
+            mock.Setup(c => c.virtuel).Returns(false);
+
+            // Retourne l'instance générée par Moq (qui implémente ICombat)
+            return mock.Object;
         }
     }
 }

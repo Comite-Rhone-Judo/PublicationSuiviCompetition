@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace AppPublication.ExtensionNoyau.StatistiquesCombats
+namespace FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats
 {
     /// <summary>
     /// Représente le bloc de statistiques exhaustif pour une entité.

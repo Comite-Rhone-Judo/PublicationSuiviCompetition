@@ -32,8 +32,8 @@ namespace KernelImpl.Tests.Noyau.Organisation
                 siteInternet = "www.judo.fr",
                 remoteId = "COMP_1",
                 codeAcces = "1234",
-                type = (int)CompetitionTypeEnum.Individuel,
-                type2 = 2, // Officielle
+                type = CompetitionTypeEnum.Individuel,
+                type2 = CompetitionType2Enum.Officielle, // Officielle
                 discipline = CompetitionDisciplineEnum.Judo.ToString2(),
                 nbTapis = 8,
                 tempsCombat = 240,
@@ -65,9 +65,9 @@ namespace KernelImpl.Tests.Noyau.Organisation
         [Fact]
         public void MethodesDeVerificationDeType_RetournentLesBonsBooleens()
         {
-            Competition competIndiv = new Competition { type = (int)CompetitionTypeEnum.Individuel, type2 = 2 };
-            Competition competEquipe = new Competition { type = (int)CompetitionTypeEnum.Equipe, type2 = 3 };
-            Competition competShiai = new Competition { type = (int)CompetitionTypeEnum.Shiai };
+            Competition competIndiv = new Competition { type = CompetitionTypeEnum.Individuel, type2 = CompetitionType2Enum.Officielle };
+            Competition competEquipe = new Competition { type = CompetitionTypeEnum.Equipe, type2 = CompetitionType2Enum.ProLeague };
+            Competition competShiai = new Competition { type = CompetitionTypeEnum.Shiai };
 
             competIndiv.IsIndividuelle().Should().BeTrue();
             competIndiv.IsOfficielle().Should().BeTrue();

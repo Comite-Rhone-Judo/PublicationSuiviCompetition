@@ -13,10 +13,10 @@ namespace FranceJudo.Metier.Noyau.Deroulement
         public Nullable<System.DateTime> groupe_fin { get; set; }
         public bool groupe_verrouille { get; set; }
         public int nb_combats_restant { get; set; }
-        public int phase_etat { get; set; }
+        public EtatPhaseEnum phase_etat { get; set; }
         public string phase_libelle { get; set; }
         public int phase_id { get; set; }
-        public int phase_type { get; set; }
+        public TypePhaseEnum phase_type { get; set; }
         public Nullable<int> epreuve_id { get; set; }
         public string epreuve_nom { get; set; }
         public int epreuve_poidsMin { get; set; }

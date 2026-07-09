@@ -2,7 +2,7 @@
 using FranceJudo.Metier.Noyau.Participants;
 using System.Collections.Generic;
 
-namespace AppPublication.ExtensionNoyau.StatistiquesCombats
+namespace FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats
 {
     public interface IDataStatistiquesCombats
     {

@@ -26,7 +26,7 @@ namespace KernelImpl.Noyau.Deroulement
         public DateTime combat_programmation { get; set; }
         public DateTime combat_debut { get; set; }
         public DateTime combat_fin { get; set; }
-        public int combat_etat { get; set; }
+        public EtatCombatEnum combat_etat { get; set; }
         public Nullable<int> combat_vaiqueur { get; set; }
         public int combat_tapis { get; set; }
         public int combat_groupe { get; set; }
@@ -48,8 +48,8 @@ namespace KernelImpl.Noyau.Deroulement
         public string judoka2_prenom { get; set; }
         public int phase_id { get; set; }
         public string phase_libelle { get; set; }
-        public int phase_type { get; set; }
-        public int phase_etat { get; set; }
+        public TypePhaseEnum phase_type { get; set; }
+        public EtatPhaseEnum phase_etat { get; set; }
         public int cateAge_id { get; set; }
         public string cateAge_nom { get; set; }
         public int catePoids_id { get; set; }

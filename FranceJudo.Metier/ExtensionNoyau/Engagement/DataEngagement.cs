@@ -2,12 +2,11 @@
 using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.Noyau.Participants;
-using KernelImpl.Noyau.Organisation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AppPublication.ExtensionNoyau.Engagement
+namespace FranceJudo.Metier.ExtensionNoyau.Engagement
 {
     public class DataEngagement : IDataEngagement
     {
@@ -76,8 +75,8 @@ namespace AppPublication.ExtensionNoyau.Engagement
                     if (!_typesGroupes.TryGetValue(competition.id, out var echelonsCibles)) continue;
 
                     // Restauration de la boucle des sexes de votre ancien code
-                    foreach (EpreuveSexeEnum s in Enum.GetValues<EpreuveSexeEnum>())
-                    {
+                        foreach (EpreuveSexeEnum s in Enum.GetValues(typeof(EpreuveSexeEnum)))
+                        {
                         // 1er ToList() crucial : Fige les épreuves, relâche l'UI
                         IList<IEpreuve> epreuvesSexe = DC.Organisation.Epreuves
                             .Where(ep => ep.competition == competition.id && ep.sexeEnum.Enum == s)

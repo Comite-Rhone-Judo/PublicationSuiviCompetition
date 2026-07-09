@@ -24,7 +24,7 @@ namespace KernelImpl.Tests.Noyau.Deroulement
             Mock<IOrganisationData> mockOrganisation = new Mock<IOrganisationData>();
             Mock<ICompetition> mockCompetition = new Mock<ICompetition>();
 
-            mockCompetition.Setup(c => c.type).Returns((int)CompetitionTypeEnum.Equipe);
+            mockCompetition.Setup(c => c.type).Returns(CompetitionTypeEnum.Equipe);
             mockOrganisation.SetupGet(o => o.Competition).Returns(mockCompetition.Object);
             mockDc.SetupGet(d => d.Organisation).Returns(mockOrganisation.Object);
 
@@ -43,8 +43,8 @@ namespace KernelImpl.Tests.Noyau.Deroulement
             Mock<IPhase> mockPhase = new Mock<IPhase>();
             mockPhase.Setup(p => p.id).Returns(20);
             mockPhase.Setup(p => p.libelle).Returns("Phase Finale");
-            mockPhase.Setup(p => p.etat).Returns(1);
-            mockPhase.Setup(p => p.typePhase).Returns(2);
+            mockPhase.Setup(p => p.etat).Returns(EtatPhaseEnum.Cree);
+            mockPhase.Setup(p => p.typePhase).Returns(TypePhaseEnum.Tableau);
             mockPhase.Setup(p => p.epreuve).Returns(new int?(30)); // Propriété Nullable<int>
 
             List<IPhase> listePhases = new List<IPhase> { mockPhase.Object };
@@ -108,11 +108,12 @@ namespace KernelImpl.Tests.Noyau.Deroulement
                 verrouille = true
             };
 
-            VueGroupe vue = new VueGroupe(groupe, mockDc.Object);
-
-            // On assigne manuellement ces champs car ils seraient vides suite à la liste vide de découpages mockée ci-dessus
-            vue.epreuve_nom = "Epreuve Test";
-            vue.phase_libelle = "Phase Test";
+            VueGroupe vue = new VueGroupe(groupe, mockDc.Object)
+            {
+                // On assigne manuellement ces champs car ils seraient vides suite à la liste vide de découpages mockée ci-dessus
+                epreuve_nom = "Epreuve Test",
+                phase_libelle = "Phase Test"
+            };
 
             // Act
             XElement xml = vue.ToXml(mockDc.Object);

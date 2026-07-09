@@ -1,10 +1,10 @@
-﻿using AppPublication.ExtensionNoyau.Engagement;
-using AppPublication.ExtensionNoyau.StatistiquesCombats;
+﻿using FranceJudo.Metier.ExtensionNoyau.Engagement;
+using FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats;
 using FranceJudo.Metier.Noyau;
 using System;
 using System.Threading;
 
-namespace AppPublication.ExtensionNoyau
+namespace FranceJudo.Metier.ExtensionNoyau
 {
     public class ExtendedJudoData : IExtendedJudoData
     {

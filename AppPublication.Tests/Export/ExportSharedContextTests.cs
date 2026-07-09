@@ -1,6 +1,6 @@
 ﻿#nullable enable
 using AppPublication.Export;
-using AppPublication.ExtensionNoyau;
+using FranceJudo.Metier.ExtensionNoyau;
 using FranceJudo.Metier.Noyau;
 using Moq;
 using System;

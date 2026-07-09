@@ -20,7 +20,7 @@ namespace KernelImpl.Noyau.Participants
 
         public int epreuve { get; set; }
         public int judoka { get; set; }
-        public int etat { get; set; }
+        public EtatJudokaEnum etat { get; set; }
         public int classement { get; set; }
         public int id { get; set; }
         public int serie { get; set; }
@@ -45,7 +45,7 @@ namespace KernelImpl.Noyau.Participants
             xej.SetAttributeValue(ConstantXML.EpreuveJudoka_Classement, classement.ToString());
             xej.SetAttributeValue(ConstantXML.EpreuveJudoka_Serie, serie.ToString());
             xej.SetAttributeValue(ConstantXML.EpreuveJudoka_Serie2, serie2.ToString());
-            xej.SetAttributeValue(ConstantXML.EpreuveJudoka_Etat, etat.ToString());
+            xej.SetAttributeValue(ConstantXML.EpreuveJudoka_Etat, (int)etat);
             xej.SetAttributeValue(ConstantXML.EpreuveJudoka_Epreuve, epreuve.ToString());
             xej.SetAttributeValue(ConstantXML.EpreuveJudoka_Observation, observation.ToString());
             xej.SetAttributeValue(ConstantXML.EpreuveJudoka_Points, points.ToString());
@@ -57,7 +57,7 @@ namespace KernelImpl.Noyau.Participants
         {
             this.epreuve = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.EpreuveJudoka_Epreuve));
             this.judoka = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.EpreuveJudoka_Judoka));
-            this.etat = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.EpreuveJudoka_Etat));
+            this.etat = (EtatJudokaEnum)XMLTools.LectureInt(xinfo.Attribute(ConstantXML.EpreuveJudoka_Etat));
             this.classement = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.EpreuveJudoka_Classement));
             this.id = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.EpreuveJudoka_ID));
             this.serie = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.EpreuveJudoka_Serie));

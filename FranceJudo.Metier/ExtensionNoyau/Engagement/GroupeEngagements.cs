@@ -3,7 +3,7 @@ using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.XML;
 using System.Xml.Linq;
 
-namespace AppPublication.ExtensionNoyau.Engagement
+namespace FranceJudo.Metier.ExtensionNoyau.Engagement
 {
     public class GroupeEngagements : IEquatable<GroupeEngagements>
     {

@@ -1,12 +1,12 @@
 ﻿#nullable enable
-using AppPublication.ExtensionNoyau;
-using AppPublication.ExtensionNoyau.Engagement;
+using FranceJudo.Metier.ExtensionNoyau;
+using FranceJudo.Metier.ExtensionNoyau.Engagement;
 using FranceJudo.Metier.Noyau;
 using Moq;
 using System;
 using Xunit;
 
-namespace AppPublication.Tests.ExtensionNoyau
+namespace FranceJudo.Metier.Tests.ExtensionNoyau
 {
     public class ExtendedJudoDataTests
     {

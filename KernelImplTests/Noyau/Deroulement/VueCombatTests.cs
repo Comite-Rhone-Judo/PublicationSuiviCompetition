@@ -70,7 +70,7 @@ namespace KernelImpl.Tests.Noyau.Deroulement
             Mock<IOrganisationData> mockOrganisation = new Mock<IOrganisationData>();
             Mock<ICompetition> mockCompetition = new Mock<ICompetition>();
 
-            mockCompetition.Setup(c => c.type).Returns( (int) CompetitionTypeEnum.Equipe);
+            mockCompetition.Setup(c => c.type).Returns( CompetitionTypeEnum.Equipe);
             mockOrganisation.SetupGet(o => o.Competition).Returns(mockCompetition.Object);
             mockDc.SetupGet(d => d.Organisation).Returns(mockOrganisation.Object);
             mockDc.Setup(dc => dc.Participants).Returns(mockParticipants.Object);

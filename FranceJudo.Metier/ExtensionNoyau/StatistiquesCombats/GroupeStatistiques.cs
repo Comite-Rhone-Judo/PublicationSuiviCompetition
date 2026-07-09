@@ -3,7 +3,7 @@ using FranceJudo.Metier.Noyau.Organisation;
 using FranceJudo.Metier.XML;
 using System.Xml.Linq;
 
-namespace AppPublication.ExtensionNoyau.StatistiquesCombats
+namespace FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats
 {
     public class GroupeStatistiques : IEquatable<GroupeStatistiques>
     {

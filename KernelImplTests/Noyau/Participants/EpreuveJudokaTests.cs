@@ -21,7 +21,7 @@ namespace KernelImpl.Tests.Noyau.Participants
                 id = 1,
                 epreuve = 10,
                 judoka = 100,
-                etat = 2,
+                etat = EtatJudokaEnum.Present,
                 classement = 1,
                 serie = 3,
                 serie2 = 4,

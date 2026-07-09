@@ -8,3 +8,5 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Usage", "CA1816:Les méthodes Dispose doivent appeler SuppressFinalize", Justification = "<En attente>", Scope = "module")]
 [assembly: SuppressMessage("Style", "IDE0290:Utiliser le constructeur principal", Justification = "<En attente>", Scope = "module")]
 [assembly: SuppressMessage("Performance", "CA1822:Marquer les membres comme étant static", Justification = "<En attente>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0300:Simplifier l'initialisation des collections", Justification = "<En attente>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0305:Simplifier l'initialisation des collections", Justification = "<En attente>", Scope = "module")]

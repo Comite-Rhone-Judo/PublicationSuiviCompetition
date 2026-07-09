@@ -1,4 +1,4 @@
-﻿using AppPublication.ExtensionNoyau;
+﻿using FranceJudo.Metier.ExtensionNoyau;
 using FranceJudo.Core.Export;
 using FranceJudo.Core.Logging;
 using FranceJudo.Metier.Noyau;

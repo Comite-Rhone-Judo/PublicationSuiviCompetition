@@ -1,9 +1,9 @@
 ﻿using System;
 using Xunit;
-using AppPublication.ExtensionNoyau.StatistiquesCombats;
+using FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats;
 using FranceJudo.Metier.Noyau.Organisation;
 
-namespace AppPublication.Tests.ExtensionNoyau.StatistiquesCombats
+namespace FranceJudo.Metier.Tests.ExtensionNoyau.StatistiquesCombats
 {
     public class CompteurStatistiquesTests
     {

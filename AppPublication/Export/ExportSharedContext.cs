@@ -1,4 +1,4 @@
-﻿using AppPublication.ExtensionNoyau;
+﻿using FranceJudo.Metier.ExtensionNoyau;
 using FranceJudo.Metier.Noyau;
 using System.Xml.Linq;
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 
-namespace AppPublication.ExtensionNoyau.Engagement
+namespace FranceJudo.Metier.ExtensionNoyau.Engagement
 {
     public interface IDataEngagement
     {

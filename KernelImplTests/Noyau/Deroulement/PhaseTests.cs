@@ -25,7 +25,7 @@ namespace KernelImpl.Tests.Noyau.Deroulement
             {
                 id = 3,
                 libelle = "Demi-Finale",
-                typePhase = 2,
+                typePhase = FranceJudo.Metier.Noyau.Deroulement.TypePhaseEnum.Tableau,
                 nbPoules = 0,
                 niveauRepechage = 1,
                 bresilien = true,

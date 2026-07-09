@@ -16,3 +16,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Style", "IDE0305:Simplify collection initialization", Justification = "<Pending>", Scope = "module")]
 [assembly: SuppressMessage("Style", "IDE0038:Use pattern matching", Justification = "<Pending>", Scope = "module")]
 [assembly: SuppressMessage("Style", "IDE0020:Use pattern matching", Justification = "<Pending>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE1006:Styles d'affectation de noms", Justification = "<En attente>", Scope = "module")]
