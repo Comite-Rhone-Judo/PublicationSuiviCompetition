@@ -119,25 +119,13 @@ namespace FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats
 
                     foreach (var judoka in judokasParticipants)
                     {
-                        // A. Initialisation des stats individuelles (EchelonEnum.Aucun)
-                        statsJudokas[judoka.id] = new CompteurStatistiques(EchelonEnum.Aucun);
-
-                        // B. Calcul des groupes de navigation pour l'UI
                         var groupesImpactes = GetGroupesCascadePourParticipant(judoka, echelonsCibles);
 
                         foreach (var groupe in groupesImpactes)
                         {
                             groupesUniques.Add(groupe);
 
-                            // Ajout du judoka à la liste de ce groupe
-                            if (!judokasParGroupe.TryGetValue(groupe, out var listeJ))
-                            {
-                                listeJ = new List<IVueJudoka>();
-                                judokasParGroupe[groupe] = listeJ;
-                            }
-                            listeJ.Add(judoka);
-
-                            // C. Initialisation des stats structurelles UNIQUEMENT (On ignore la lettre)
+                            // 1. Comptage structurel global (On compte les inscrits et les présents)
                             if (groupe.Type != EchelonEnum.Aucun)
                             {
                                 if (!statsStructures.TryGetValue(groupe, out var cStruct))
@@ -148,6 +136,23 @@ namespace FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats
                                 cStruct.NbParticipants = (cStruct.NbParticipants ?? 0) + 1;
                                 if (judoka.present) cStruct.NbCombattants = (cStruct.NbCombattants ?? 0) + 1;
                             }
+
+                            // 2. FILTRE STRICT : On arrête tout traitement supplémentaire si le judoka est absent
+                            if (!judoka.present) continue;
+
+                            // 3. Ajout du judoka à la liste de l'interface (Uniquement les présents)
+                            if (!judokasParGroupe.TryGetValue(groupe, out var listeJ))
+                            {
+                                listeJ = new List<IVueJudoka>();
+                                judokasParGroupe[groupe] = listeJ;
+                            }
+                            listeJ.Add(judoka);
+                        }
+
+                        // 4. Initialisation des stats individuelles (Uniquement pour les présents)
+                        if (judoka.present)
+                        {
+                            statsJudokas[judoka.id] = new CompteurStatistiques(EchelonEnum.Aucun);
                         }
                     }
                 }
@@ -205,7 +210,7 @@ namespace FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats
                 TimeSpan dureeGolden = (isGoldenScore && tEffectif > tNominal) ? tEffectif - tNominal : TimeSpan.Zero;
 
                 // Ajout des paramètres etatJudoka et etatAdversaire pour l'analyse précise des victoires
-                void AppliquerStats(IVueJudoka judoka, IEnumerable<GroupeStatistiques> groupesDuJudoka, bool estVainqueur, bool hikiwake, int score, bool adversaireEstHansoku, int nbPenalitesRecues, EtatCombattantEnum etatJudoka, EtatCombattantEnum etatAdversaire)
+                void AppliquerStats(IVueJudoka judoka, IEnumerable<GroupeStatistiques> groupesDuJudoka, bool estVainqueur, bool hikiwake, int scoreJudoka, int scoreAdversaire, bool adversaireEstHansoku, int nbPenalitesRecues, EtatCombattantEnum etatJudoka, EtatCombattantEnum etatAdversaire)
                 {
                     // Met a jour un compteur spécifique
                     void UpdateCompteur(CompteurStatistiques c)
@@ -221,7 +226,7 @@ namespace FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats
                         {
                             c.NbVictoires++;
                             // Le judoka étant le vainqueur, on passe son état (etatVainqueur) et celui de l'adversaire (etatPerdant)
-                            AnalyserVictoire(c, score, adversaireEstHansoku, etatJudoka, etatAdversaire);
+                            AnalyserVictoire(c, scoreJudoka, scoreAdversaire, adversaireEstHansoku, etatJudoka, etatAdversaire);
                         }
                         else if (hikiwake)
                         {
@@ -247,8 +252,9 @@ namespace FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats
                 }
 
                 // Appel de la méthode en passant les états respectifs (combat.etatJ1 et combat.etatJ2)
-                AppliquerStats(p1, groupesP1, p1Gagne, estHikiwake, combat.score1, p2Hansoku, pen1Count, combat.etatJ1, combat.etatJ2);
-                AppliquerStats(p2, groupesP2, p2Gagne, estHikiwake, combat.score2, p1Hansoku, pen2Count, combat.etatJ2, combat.etatJ1);
+                AppliquerStats(p1, groupesP1, p1Gagne, estHikiwake, combat.score1, combat.score2, p2Hansoku, pen1Count, combat.etatJ1, combat.etatJ2);
+                AppliquerStats(p2, groupesP2, p2Gagne, estHikiwake, combat.score2, combat.score1, p1Hansoku, pen2Count, combat.etatJ2, combat.etatJ1);
+
             } // Fin du foreach (var combat in combatsSnap)
 
             outGroupes = groupesUniques.ToList();
@@ -294,12 +300,13 @@ namespace FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats
         /// <summary>
         /// Cette méthode analyse le type de victoire d'un combattant et met à jour les compteurs correspondants dans l'objet CompteurStatistiques.
         /// </summary>
-        /// <param name="c"></param>
-        /// <param name="score"></param>
-        /// <param name="adversaireEstHansoku"></param>
-        /// <param name="etatVainqueur"></param>
-        /// <param name="etatPerdant"></param>
-        private void AnalyserVictoire(CompteurStatistiques c, int score, bool adversaireEstHansoku, EtatCombattantEnum etatVainqueur, EtatCombattantEnum etatPerdant)
+        /// <param name="c">L'objet compteur de statistiques à mettre à jour</param>
+        /// <param name="scoreVainqueur">Le score du vainqueur</param>
+        /// <param name="scorePerdant">Le score du perdant</param>
+        /// <param name="adversaireEstHansoku">Indique si l'adversaire est en hansoku</param>
+        /// <param name="etatVainqueur">L'état du vainqueur</param>
+        /// <param name="etatPerdant">L'état du perdant</param>
+        private void AnalyserVictoire(CompteurStatistiques c, int scoreVainqueur, int scorePerdant, bool adversaireEstHansoku, EtatCombattantEnum etatVainqueur, EtatCombattantEnum etatPerdant)
         {
             // 1. Victoire par décision (Assurez-vous que la valeur 7 possède bien un nom dans votre enum, ex: Decision)
             if (etatVainqueur == EtatCombattantEnum.Decision)
@@ -327,14 +334,29 @@ namespace FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats
             }
 
             // 4. Victoires par points techniques (Ippon, Waza-ari, Yuko)
-            int ipponV = score / 100;
-            int wazaV = (score / 10) % 10;
-            int yukoV = score % 10;
+            int ipponV = scoreVainqueur / 100;
+            int wazaV = (scoreVainqueur / 10) % 10;
+            int yukoV = scoreVainqueur % 10;
 
-            if (ipponV >= 1) c.NbVictoireIpponDirect++;
-            else if (wazaV >= 2) c.NbVictoireWazaAriAwaseteIppon++;
-            else if (wazaV == 1) c.NbVictoireWazaAri++;
-            else if (yukoV >= 1) c.NbVictoireYuko++;
+            int wazaP = (scorePerdant / 10) % 10;
+            int yukoP = scorePerdant % 10;
+            // Application stricte de la valeur décisive :
+            if (ipponV >= 1)
+            {
+                c.NbVictoireIpponDirect++;
+            }
+            else if (wazaV >= 2)
+            {
+                c.NbVictoireWazaAriAwaseteIppon++;
+            }
+            else if (wazaV > wazaP) // On gagne par Waza-ari SEULEMENT si on en a strictement plus que l'adversaire
+            {
+                c.NbVictoireWazaAri++;
+            }
+            else if (yukoV > yukoP) // En cas d'égalité de Waza-ari, c'est la différence de Yuko qui qualifie la victoire
+            {
+                c.NbVictoireYuko++;
+            }
         }
     }
 
@@ -366,7 +388,7 @@ namespace FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats
         public TimeSpan DureeMaximaleGoldenScoreInterne { get; set; }
 
         public TimeSpan TotalDureeCombat { get; set; }
-        public TimeSpan DureeCombatMaxInterne { get; set; }
+        public TimeSpan DureeCombatMaxInterne { get; set; } = TimeSpan.MinValue;
 
         public TimeSpan DureeCombatMinInterne { get; set; } = TimeSpan.MaxValue;
 

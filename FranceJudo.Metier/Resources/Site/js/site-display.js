@@ -2,7 +2,7 @@
 
 var gReloading;                 // Pour les gestion de l'autoreload
 var gUseAutoReload = true;      // Pour activer ou desactiver l'autoreload
-var gDelayAutoReloadSec = 60;   // Pour definir le delai de l'autoreload en secondes
+var gDelayAutoReloadSec = typeof gDelayAutoReloadSec !== 'undefined' ? gDelayAutoReloadSec : 60;   // Pour definir le delai de l'autoreload en secondes
 var gDefaultAutoReload = typeof gDefaultAutoReload !== 'undefined' ? gDefaultAutoReload : false;    // Activation autoreload par defaut (si la variable est definie dans le script de la page)
 
 window.onload = windowOnLoad;   // Gestionnaire d'evenements pour le chargement de la page par defaut
@@ -46,8 +46,19 @@ function checkReloading() {
     }
 
     // 3. Lancer le timer si le rechargement est actif
+    // 3. Lancer le timer si le rechargement est actif
     if (isEnabled) {
-        gReloading = setTimeout(function () { window.location.reload(); }, timeoutms);
+        gReloading = setTimeout(function () {
+            // --- DÉBUT MODIFICATION ANTI-CACHE ---
+            // On sépare l'URL des paramètres (?) et du hash (#)
+            var urlBase = window.location.href.split('?')[0].split('#')[0];
+            var currentHash = window.location.hash; // Sauvegarde l'ancre éventuelle
+            var timestamp = new Date().getTime(); // Génère le jeton unique
+
+            // Redirection forcée (le .replace évite de remplir l'historique "Précédent" du navigateur)
+            window.location.replace(urlBase + "?t=" + timestamp + currentHash);
+            // --- FIN MODIFICATION ANTI-CACHE ---
+        }, timeoutms);
     }
 }
 
@@ -72,6 +83,22 @@ function toggleAutoRefresh(cb) {
     }
 }
 
+// Restauration de l'état de la modale après un rechargement
+function initModals() {
+    var savedId = sessionStorage.getItem('tas_stat_active_judoka_id');
+
+    if (savedId) {
+        var rows = document.getElementsByClassName('tas-stat-clickable-row');
+        for (var i = 0; i < rows.length; i++) {
+            if (rows[i].getAttribute('data-id') === savedId) {
+                // On rouvre la modale avec la ligne html correspondante
+                openJudokaStatsModal(rows[i], true);
+                break;
+            }
+        }
+    }
+}
+
 // ========== Gestion des evenements ==========
 
 // Callback pour le chargement de la page
@@ -84,6 +111,9 @@ function windowOnLoad() {
 
     // Les barres d'onglets
     initTabs();
+
+    // Restaure si une modale etait ouverte
+    initModals();
 }
 
 // ========== Gestion des onglets ==========
@@ -255,7 +285,7 @@ function setJauge(lblId, barId, valueStr) {
 /**
  * Charge les données du judoka cliqué dans la modale et l'affiche.
  */
-function openJudokaStatsModal(rowElement) {
+function openJudokaStatsModal(rowElement, skipAnimation) {
     // 1. En-tête de la modale
     setModalText('m-nom', rowElement.getAttribute('data-nom'));
     setModalText('m-cat', rowElement.getAttribute('data-cat'));
@@ -288,12 +318,29 @@ function openJudokaStatsModal(rowElement) {
     // 6. Discipline
     setModalText('d-pen', formatFr(rowElement.getAttribute('data-pen')));
 
+    // --- NOUVEAU : Gestion de l'animation ---
+    var modalContent = document.querySelector('#statsModal .w3-modal-content');
+    if (modalContent) {
+        if (skipAnimation) {
+            modalContent.classList.remove('w3-animate-right'); // On supprime l'effet
+        } else {
+            // On s'assure que l'effet est bien là pour les clics manuels
+            if (!modalContent.classList.contains('w3-animate-right')) {
+                modalContent.classList.add('w3-animate-right');
+            }
+        }
+    }
+    // ----------------------------------------
+
     // Bloquer le défilement de <body> ET de <html> (Correction du double ascenseur)
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
 
     // Afficher la modale
     document.getElementById('statsModal').style.display = 'block';
+
+    // --- NOUVEAU : On mémorise le judoka actuellement consulté ---
+    sessionStorage.setItem('tas_stat_active_judoka_id', rowElement.getAttribute('data-id'));
 }
 
 /**
@@ -306,4 +353,7 @@ function closeJudokaStatsModal() {
     // Restaurer le défilement normal de la page
     document.body.style.overflow = '';
     document.documentElement.style.overflow = '';
+
+    // --- NOUVEAU : On efface la mémoire à la fermeture ---
+    sessionStorage.removeItem('tas_stat_active_judoka_id');
 }

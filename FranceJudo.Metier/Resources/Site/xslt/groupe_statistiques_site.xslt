@@ -787,6 +787,8 @@
 											</xsl:variable>
 
 											<tr class="tas-stat-clickable-row" onclick="openJudokaStatsModal(this)">
+												<xsl:attribute name="data-id">
+													<xsl:value-of select="@id"/> </xsl:attribute>
 												<xsl:attribute name="data-nom">
 													<xsl:value-of select="@nom"/>&nbsp;<xsl:value-of select="@prenom"/>
 												</xsl:attribute>
@@ -938,7 +940,7 @@
 													</strong>
 													<br/>
 													<span class="w3-text-grey w3-tiny">
-														<xsl:value-of select="@nom_cateage"/>
+														<xsl:value-of select="@libepreuve"/>
 													</span>
 												</td>
 												<td class="w3-center">

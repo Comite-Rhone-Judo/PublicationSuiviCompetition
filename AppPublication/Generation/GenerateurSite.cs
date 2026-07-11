@@ -185,7 +185,7 @@ namespace AppPublication.Generation
                 // On pré-calcule les données lourdes maintenant pour ne pas figer 
                 // la barre de progression plus tard dans le TaskBatcher.
 
-             if (snapshotConfig.PublierStatistiques)
+                if (snapshotConfig.PublierStatistiques)
                 {
                     _extendedJudoData.EnsureStatistiquesLoaded();
                 }

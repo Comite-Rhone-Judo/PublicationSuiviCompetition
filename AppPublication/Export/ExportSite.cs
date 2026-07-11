@@ -130,8 +130,8 @@ namespace AppPublication.Export
                     var phaseParams = new List<(string, object)>();
                     if (isPoule)
                     {
-                        int typePoule = config.PouleEnColonnes ? (config.PouleToujoursEnColonnes ? (int)TypePouleEnum.Colonnes : (int)TypePouleEnum.Auto) : (int)TypePouleEnum.Diagonale;
-                        phaseParams.Add(("typePoule", typePoule));
+                        TypePouleEnum typePoule = config.PouleEnColonnes ? (config.PouleToujoursEnColonnes ? TypePouleEnum.Colonnes : TypePouleEnum.Auto) : TypePouleEnum.Diagonale;
+                        phaseParams.Add(("typePoule", (int)typePoule));
                         phaseParams.Add(("tailleMaxPouleColonne", config.TailleMaxPouleColonnes));
                     }
 

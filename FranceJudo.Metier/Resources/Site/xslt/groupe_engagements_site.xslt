@@ -948,7 +948,7 @@
 		<xsl:variable name="apos">'</xsl:variable>
 
 		<xsl:if test="count($lesAbsents) > 0">
-			<div class="w3-container w3-large w3-bar w3-cell-middle tas-entete-section w3-taupe">
+			<div class="w3-container w3-large w3-bar w3-cell-middle tas-entete-section w3-taupe w3-margin-top">
 				<button class="w3-bar-item w3-button" style="width: 100%; text-align: left; background-color: inherit;">
 							<xsl:attribute name="onclick">
 						<xsl:value-of select="concat('togglePanel(',$apos,'bloc-absents',$apos,')')"/>
