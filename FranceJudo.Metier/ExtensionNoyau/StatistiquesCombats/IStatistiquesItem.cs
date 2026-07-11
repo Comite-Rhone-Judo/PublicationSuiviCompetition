@@ -48,10 +48,11 @@ namespace FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats
         double? MoyennePenalitesParCombat { get; }
 
         // --- Golden Score (STAT28 à STAT31) ---
-        int NbCombatsGoldenScore { get; }
-        double? PctCombatsGoldenScore { get; } // Nullable si NbCombats == 0
-        TimeSpan? DureeMoyenneGoldenScore { get; } // Nullable si NbCombatsGoldenScore == 0
-        TimeSpan? DureeMaximaleGoldenScore { get; } // Nullable si NbCombatsGoldenScore == 0
+        // Mis de cote pour le moment, manque de donnees TAS
+        // int NbCombatsGoldenScore { get; }
+        // double? PctCombatsGoldenScore { get; } // Nullable si NbCombats == 0
+        // TimeSpan? DureeMoyenneGoldenScore { get; } // Nullable si NbCombatsGoldenScore == 0
+        // TimeSpan? DureeMaximaleGoldenScore { get; } // Nullable si NbCombatsGoldenScore == 0
 
         // --- Temps de combat (STAT32 à STAT34) ---
         // Nullables si NbCombats == 0

@@ -309,11 +309,14 @@ function openJudokaStatsModal(rowElement, skipAnimation) {
     setModalText('d-tmoy', rowElement.getAttribute('data-tmoy') || '-');
     setModalText('d-tmax', rowElement.getAttribute('data-tmax') || '-');
 
+    // Mis de cote suite a manque de donnees TAS
+    /*
     // 5. Golden Score
     let gsCbt = rowElement.getAttribute('data-gscbt') || '0';
     let gsPct = formatFr(rowElement.getAttribute('data-gspct'));
     setModalText('d-gscbt_pct', gsCbt + ' (' + gsPct + ' %)');
     setModalText('d-gsmoy', rowElement.getAttribute('data-gsmoy') || '-');
+    */
 
     // 6. Discipline
     setModalText('d-pen', formatFr(rowElement.getAttribute('data-pen')));

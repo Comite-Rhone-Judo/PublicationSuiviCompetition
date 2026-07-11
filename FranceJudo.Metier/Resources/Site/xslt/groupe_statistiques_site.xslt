@@ -578,8 +578,11 @@
 									<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
 										<p style="margin: 2px 0;">
 											Temps de combat effectif (minimum, moyen, maximum) du groupe.<br/>
+											<!-- Mis de cote par manque de donnees TAS -->
+											<!--
 											<strong>Golden Score</strong>: Nombre et pourcentage de combats ayant eu un Golden Score pour les combattants du groupe.<br/>
 											<strong>Moy. Golden Score</strong>: Durée moyenne des Golden Score pour les combattants du groupe.<br/>											
+											-->
 										</p>
 									</div>
 								</div>
@@ -624,6 +627,8 @@
 										</div>
 									</div>
 
+									<!-- Mis de cote par manque de donnees TAS -->
+									<!--
 									<xsl:if test="$typeCompetition != '1'">
 										<div class="w3-col s6 w3-margin-top">
 											<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-amber">
@@ -660,6 +665,7 @@
 											</div>
 										</div>
 									</xsl:if>
+								-->
 								</div>
 							</div>
 
@@ -751,10 +757,13 @@
 									<p style="margin: 2px 0;">
 										<strong>Cbts :</strong> Total des combats<br/>
 										<strong>Moy. Pén. :</strong> Moyenne de shidos<br/>
+										<!-- Mis de cote par manque de donnees TAS -->
+										<!--
 										<xsl:if test="$typeCompetition != '1'">
 											<strong>% GS :</strong> Fréquence des Golden Score<br/>
 											<strong>Moy. GS :</strong> Durée moyenne des Golden Score
 										</xsl:if>
+										-->
 										<strong>Moy. Cbt :</strong> Durée moyenne des combats<br/>
 										<strong>% Vic. :</strong> Taux de victoires
 									</p>
@@ -767,10 +776,13 @@
 											<th>Judoka</th>
 											<th class="w3-center">Cbts</th>
 											<th class="w3-center">Moy. Pén.</th>
+											<!-- Mis de cote par manque de donnees TAS -->
+											<!--
 											<xsl:if test="$typeCompetition != '1'">
 												<th class="w3-center">% GS</th>
 												<th class="w3-center">Moy. GS</th>
 											</xsl:if>
+											-->
 											<th class="w3-center">Moy. Cbt</th>
 											<th class="w3-center">% Vic.</th>
 										</tr>
@@ -901,7 +913,9 @@
 													</xsl:choose>
 												</xsl:attribute>
 
-												<xsl:attribute name="data-gscbt">
+												<!-- Mis de cote par manque de donnees TAS -->
+												<!--
+													<xsl:attribute name="data-gscbt">
 													<xsl:choose>
 														<xsl:when test="$jStat/@nbCombatsGoldenScore != ''">
 															<xsl:value-of select="$jStat/@nbCombatsGoldenScore"/>
@@ -925,6 +939,7 @@
 														<xsl:otherwise>-</xsl:otherwise>
 													</xsl:choose>
 												</xsl:attribute>
+												-->
 												<xsl:attribute name="data-pen">
 													<xsl:choose>
 														<xsl:when test="$jStat/@moyennePenalitesParCombat != ''">
@@ -959,8 +974,9 @@
 														<xsl:otherwise>0</xsl:otherwise>
 													</xsl:choose>
 												</td>
-
-												<xsl:if test="$typeCompetition != '1'">
+												<!-- Mis de cote par manque de donnees TAS -->
+												<!--
+													<xsl:if test="$typeCompetition != '1'">
 													<td class="w3-center">
 														<xsl:choose>
 															<xsl:when test="$jStat/@pctCombatsGoldenScore != ''">
@@ -978,6 +994,7 @@
 														</xsl:choose>
 													</td>
 												</xsl:if>
+												-->
 
 												<td class="w3-center">
 													<xsl:choose>
@@ -1222,8 +1239,11 @@
 									<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
 										<p style="margin: 2px 0;">
 											Temps de combat effectif (minimum, moyen, maximum) du judoka.<br/>
+											<!-- Mis de cote par manque de donnees TAS -->
+											<!--
 											<strong>Golden Score</strong>: Nombre et pourcentage de combats ayant eu un Golden Score.<br/>
 											<strong>Moy. Golden Score</strong>: Durée moyenne des Golden Score.<br/>		
+											-->
 										</p>
 									</div>
 								</div>
@@ -1246,7 +1266,8 @@
 											<div class="tas-stat-value" id="d-tmax">-</div>
 										</div>
 									</div>
-
+									<!-- Mis de cote par manque de donnees TAS -->
+									<!-- 
 									<div class="w3-col s6 w3-margin-top">
 										<xsl:if test="$typeCompetition = '1'">
 											<xsl:attribute name="style">display:none;</xsl:attribute>
@@ -1265,6 +1286,7 @@
 											<div class="tas-stat-value" id="d-gsmoy">-</div>
 										</div>
 									</div>
+									-->
 								</div>
 							</div>
 

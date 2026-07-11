@@ -205,9 +205,12 @@ namespace FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats
 
                 TimeSpan tEffectif = combat.fin - combat.debut;
                 if (tEffectif < TimeSpan.Zero) tEffectif = TimeSpan.Zero;
+                // Mis de cote par manque de donnees TAS
+                /*
                 TimeSpan tNominal = TimeSpan.FromMinutes(combat.temps);
                 bool isGoldenScore = combat.goldenScore || tEffectif > tNominal;
                 TimeSpan dureeGolden = (isGoldenScore && tEffectif > tNominal) ? tEffectif - tNominal : TimeSpan.Zero;
+                */
 
                 // Ajout des paramètres etatJudoka et etatAdversaire pour l'analyse précise des victoires
                 void AppliquerStats(IVueJudoka judoka, IEnumerable<GroupeStatistiques> groupesDuJudoka, bool estVainqueur, bool hikiwake, int scoreJudoka, int scoreAdversaire, bool adversaireEstHansoku, int nbPenalitesRecues, EtatCombattantEnum etatJudoka, EtatCombattantEnum etatAdversaire)
@@ -233,12 +236,15 @@ namespace FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats
                             c.NbHikiwake++;
                         }
 
+                        // Mis de cote par manque de donnees TAS
+                        /*
                         if (isGoldenScore)
                         {
                             c.NbCombatsGoldenScore++;
                             c.TotalDureeGoldenScore += dureeGolden;
                             if (dureeGolden > c.DureeMaximaleGoldenScoreInterne) c.DureeMaximaleGoldenScoreInterne = dureeGolden;
                         }
+                        */
                     }
 
                     // A. On met à jour les stats individuelles du Judoka
@@ -418,9 +424,10 @@ namespace FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats
         public double? PctVictoireDecision => NbCombats == 0 ? null : (double)NbVictoireDecision / NbCombats;
 
         public double? MoyennePenalitesParCombat => NbCombats == 0 ? null : (double)TotalPenalites / NbCombats;
-        public double? PctCombatsGoldenScore => NbCombats == 0 ? null : (double)NbCombatsGoldenScore / NbCombats;
-        public TimeSpan? DureeMoyenneGoldenScore => NbCombatsGoldenScore == 0 ? null : TimeSpan.FromTicks(TotalDureeGoldenScore.Ticks / NbCombatsGoldenScore);
-        public TimeSpan? DureeMaximaleGoldenScore => NbCombatsGoldenScore == 0 ? null : DureeMaximaleGoldenScoreInterne;
+        // Mis de cote par manque de donnees TAS
+        // public double? PctCombatsGoldenScore => NbCombats == 0 ? null : (double)NbCombatsGoldenScore / NbCombats;
+        // public TimeSpan? DureeMoyenneGoldenScore => NbCombatsGoldenScore == 0 ? null : TimeSpan.FromTicks(TotalDureeGoldenScore.Ticks / NbCombatsGoldenScore);
+        // public TimeSpan? DureeMaximaleGoldenScore => NbCombatsGoldenScore == 0 ? null : DureeMaximaleGoldenScoreInterne;
         public TimeSpan? DureeCombatMin => NbCombats == 0 ? null : (DureeCombatMinInterne == TimeSpan.MaxValue ? TimeSpan.Zero : DureeCombatMinInterne);
         public TimeSpan? DureeCombatMax => NbCombats == 0 ? null : DureeCombatMaxInterne;
         public TimeSpan? DureeCombatMoy => NbCombats == 0 ? null : TimeSpan.FromTicks(TotalDureeCombat.Ticks / NbCombats);
