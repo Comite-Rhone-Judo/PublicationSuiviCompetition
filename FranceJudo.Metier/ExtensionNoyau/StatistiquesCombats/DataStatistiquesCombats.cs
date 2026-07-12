@@ -79,11 +79,7 @@ namespace FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats
             return dict;
         }
 
-        private void BuildStatistiques(IJudoData data,
-            out Dictionary<int, IStatistiquesItem> outStatsJudokas,
-            out Dictionary<GroupeStatistiques, IStatistiquesItem> outStatsStructures,
-            out Dictionary<GroupeStatistiques, List<IVueJudoka>> outJudokasParGroupe,
-            out List<GroupeStatistiques> outGroupes)
+        private void BuildStatistiques(IJudoData data, out Dictionary<int, IStatistiquesItem> outStatsJudokas, out Dictionary<GroupeStatistiques, IStatistiquesItem> outStatsStructures, out Dictionary<GroupeStatistiques, List<IVueJudoka>> outJudokasParGroupe, out List<GroupeStatistiques> outGroupes)
         {
             var statsJudokas = new Dictionary<int, CompteurStatistiques>();
             var statsStructures = new Dictionary<GroupeStatistiques, CompteurStatistiques>();
@@ -176,97 +172,176 @@ namespace FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats
                 var groupesP1 = GetGroupesCascadePourParticipant(p1, typesP1);
                 var groupesP2 = GetGroupesCascadePourParticipant(p2, typesP2);
 
-                // --- ANALYSE DES ÉTATS VIA ENUM ---
-                EtatCombattantEnum etatP1 = combat.etatJ1;
-                EtatCombattantEnum etatP2 = combat.etatJ2;
-
-                // Détection des Hansoku-Make
-                bool p1Hansoku = etatP1 == EtatCombattantEnum.HansokuMakeH || etatP1 == EtatCombattantEnum.HansokuMakeX;
-                bool p2Hansoku = etatP2 == EtatCombattantEnum.HansokuMakeH || etatP2 == EtatCombattantEnum.HansokuMakeX;
-
-                // Fonction locale pour vérifier si l'état est un motif de fin exceptionnel (A, M, F, H, X)
-                bool EstFinExceptionnelle(EtatCombattantEnum etat)
-                {
-                    return etat == EtatCombattantEnum.Abandon ||
-                           etat == EtatCombattantEnum.Medical ||
-                           etat == EtatCombattantEnum.Forfait ||
-                           etat == EtatCombattantEnum.HansokuMakeH ||
-                           etat == EtatCombattantEnum.HansokuMakeX;
-                }
-
-                // Les Shidos techniques ne sont comptés que si ce n'est pas une fin exceptionnelle
-                int pen1Count = !EstFinExceptionnelle(etatP1) ? combat.penalite1 : 0;
-                int pen2Count = !EstFinExceptionnelle(etatP2) ? combat.penalite2 : 0;
-
-                bool p1Gagne = combat.vainqueur == combat.participant1;
-                bool p2Gagne = combat.vainqueur == combat.participant2;
-                // On détecte explicitement le Hikiwake avec la valeur spéciale
-                bool estHikiwake = combat.vainqueur == int.MinValue;
-
+                // 1. Calcul du temps de combat
                 TimeSpan tEffectif = combat.fin - combat.debut;
                 if (tEffectif < TimeSpan.Zero) tEffectif = TimeSpan.Zero;
-                // Mis de cote par manque de donnees TAS
-                /*
-                TimeSpan tNominal = TimeSpan.FromMinutes(combat.temps);
-                bool isGoldenScore = combat.goldenScore || tEffectif > tNominal;
-                TimeSpan dureeGolden = (isGoldenScore && tEffectif > tNominal) ? tEffectif - tNominal : TimeSpan.Zero;
-                */
 
-                // Ajout des paramètres etatJudoka et etatAdversaire pour l'analyse précise des victoires
-                void AppliquerStats(IVueJudoka judoka, IEnumerable<GroupeStatistiques> groupesDuJudoka, bool estVainqueur, bool hikiwake, int scoreJudoka, int scoreAdversaire, bool adversaireEstHansoku, int nbPenalitesRecues, EtatCombattantEnum etatJudoka, EtatCombattantEnum etatAdversaire)
-                {
-                    // Met a jour un compteur spécifique
-                    void UpdateCompteur(CompteurStatistiques c)
-                    {
-                        c.NbCombats++;
-                        c.TotalPenalites += nbPenalitesRecues;
-                        c.TotalDureeCombat += tEffectif;
+                // 2. Détermination de l'issue brute
+                bool p1Gagne = combat.vainqueur == combat.participant1;
+                bool p2Gagne = combat.vainqueur == combat.participant2;
+                bool estHikiwake = combat.vainqueur == int.MinValue;
 
-                        if (tEffectif < c.DureeCombatMinInterne) c.DureeCombatMinInterne = tEffectif;
-                        if (tEffectif > c.DureeCombatMaxInterne) c.DureeCombatMaxInterne = tEffectif;
+                // 3. On délègue l'application des statistiques
+                AppliquerStats(p1, groupesP1, statsJudokas, statsStructures, p1Gagne, estHikiwake, tEffectif,
+                    combat.score1, combat.penalite1, combat.etatJ1,
+                    combat.score2, combat.penalite2, combat.etatJ2);
 
-                        if (estVainqueur)
-                        {
-                            c.NbVictoires++;
-                            // Le judoka étant le vainqueur, on passe son état (etatVainqueur) et celui de l'adversaire (etatPerdant)
-                            AnalyserVictoire(c, scoreJudoka, scoreAdversaire, adversaireEstHansoku, etatJudoka, etatAdversaire);
-                        }
-                        else if (hikiwake)
-                        {
-                            c.NbHikiwake++;
-                        }
-
-                        // Mis de cote par manque de donnees TAS
-                        /*
-                        if (isGoldenScore)
-                        {
-                            c.NbCombatsGoldenScore++;
-                            c.TotalDureeGoldenScore += dureeGolden;
-                            if (dureeGolden > c.DureeMaximaleGoldenScoreInterne) c.DureeMaximaleGoldenScoreInterne = dureeGolden;
-                        }
-                        */
-                    }
-
-                    // A. On met à jour les stats individuelles du Judoka
-                    if (statsJudokas.TryGetValue(judoka.id, out var cIndiv)) UpdateCompteur(cIndiv);
-
-                    // B. On met à jour les stats structurelles (en ignorant le groupe Alphabétique = Aucun)
-                    foreach (var groupe in groupesDuJudoka.Where(g => g.Type != EchelonEnum.Aucun))
-                    {
-                        if (statsStructures.TryGetValue(groupe, out var cStruct)) UpdateCompteur(cStruct);
-                    }
-                }
-
-                // Appel de la méthode en passant les états respectifs (combat.etatJ1 et combat.etatJ2)
-                AppliquerStats(p1, groupesP1, p1Gagne, estHikiwake, combat.score1, combat.score2, p2Hansoku, pen1Count, combat.etatJ1, combat.etatJ2);
-                AppliquerStats(p2, groupesP2, p2Gagne, estHikiwake, combat.score2, combat.score1, p1Hansoku, pen2Count, combat.etatJ2, combat.etatJ1);
-
+                AppliquerStats(p2, groupesP2, statsJudokas, statsStructures, p2Gagne, estHikiwake, tEffectif,
+                    combat.score2, combat.penalite2, combat.etatJ2,
+                    combat.score1, combat.penalite1, combat.etatJ1);
             } // Fin du foreach (var combat in combatsSnap)
 
             outGroupes = groupesUniques.ToList();
             outStatsJudokas = statsJudokas.ToDictionary(k => k.Key, v => (IStatistiquesItem)v.Value);
             outStatsStructures = statsStructures.ToDictionary(k => k.Key, v => (IStatistiquesItem)v.Value);
             outJudokasParGroupe = judokasParGroupe;
+        }
+
+        /// <summary>
+        /// Applique les statistiques génériques (durée, pénalités globales, compteurs de base) 
+        /// et déclenche l'analyse fine en cas de victoire.
+        /// </summary>
+        /// <param name="judoka">Le judoka concerné</param>
+        /// <param name="groupes">Les groupes statistiques</param>
+        /// <param name="statsJudokas">Les statistiques individuelles</param>
+        /// <param name="statsStructures">Les statistiques de structure</param>
+        /// <param name="estVainqueur">Indique si le judoka est le vainqueur</param>
+        /// <param name="estHikiwake">Indique si le judoka est un hikiwake</param>
+        /// <param name="tEffectif">Le temps de combat effectif</param>
+        /// <param name="myScore">Le score du judoka</param>
+        /// <param name="myPenRaw">Les pénalités du judoka</param>
+        /// <param name="myEtat">L'état du judoka</param>
+        /// <param name="oppScore">Le score de l'adversaire</param>
+        /// <param name="oppPenRaw">Les pénalités de l'adversaire</param>
+        /// <param name="oppEtat">L'état de l'adversaire</param>
+        private void AppliquerStats(IVueJudoka judoka, IEnumerable<GroupeStatistiques> groupes, Dictionary<int, CompteurStatistiques> statsJudokas, Dictionary<GroupeStatistiques, CompteurStatistiques> statsStructures, bool estVainqueur, bool estHikiwake, TimeSpan tEffectif, int myScore, int myPenRaw, EtatCombattantEnum myEtat, int oppScore, int oppPenRaw, EtatCombattantEnum oppEtat)
+        {
+            // Filtrage des pénalités pour ne pas polluer la moyenne globale
+            int myPenEffectives = EstFinExceptionnelle(myEtat) ? 0 : myPenRaw;
+
+            // Fonction locale ultra-légère (capturant les variables sans allouer de mémoire supplémentaire)
+            void UpdateCompteur(CompteurStatistiques c)
+            {
+                c.NbCombats++;
+                c.TotalPenalites += myPenEffectives;
+                c.TotalDureeCombat += tEffectif;
+
+                if (tEffectif < c.DureeCombatMinInterne) c.DureeCombatMinInterne = tEffectif;
+                if (tEffectif > c.DureeCombatMaxInterne) c.DureeCombatMaxInterne = tEffectif;
+
+                if (estVainqueur)
+                {
+                    c.NbVictoires++;
+                    AnalyserVictoire(c, myScore, myPenRaw, myEtat, oppScore, oppPenRaw, oppEtat);
+                }
+                else if (estHikiwake)
+                {
+                    c.NbHikiwake++;
+                }
+            }
+
+            // 1. Mise à jour directe du compteur individuel
+            if (statsJudokas.TryGetValue(judoka.id, out var cIndiv))
+            {
+                UpdateCompteur(cIndiv);
+            }
+
+            // 2. Mise à jour directe des compteurs de structure (SANS Linq ni instanciation)
+            foreach (var groupe in groupes)
+            {
+                // Un simple 'if' remplace le .Where() et évite la création d'un Enumerator LINQ
+                if (groupe.Type == EchelonEnum.Aucun) continue;
+
+                if (statsStructures.TryGetValue(groupe, out var cStruct))
+                {
+                    UpdateCompteur(cStruct);
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Interprète les règles du Judo pour classifier le type de victoire
+        /// en se basant sur l'intégralité des données du vainqueur et du perdant.
+        /// </summary>
+        /// <param name="c">Le compteur de statistiques à mettre à jour</param>
+        /// <param name="scoreVainqueur">Le score du vainqueur</param>
+        /// <param name="penVainqueur">Les pénalités du vainqueur</param>
+        /// <param name="etatVainqueur">L'état du vainqueur</param>
+        /// <param name="scorePerdant">Le score du perdant</param>
+        /// <param name="penPerdant">Les pénalités du perdant</param>
+        /// <param name="etatPerdant">L'état du perdant</param>
+        private void AnalyserVictoire(CompteurStatistiques c, int scoreVainqueur, int penVainqueur, EtatCombattantEnum etatVainqueur, int scorePerdant, int penPerdant, EtatCombattantEnum etatPerdant)
+        {
+            // 1. Victoire par décision
+            if (etatVainqueur == EtatCombattantEnum.Decision)
+            {
+                c.NbVictoireDecision++;
+                return;
+            }
+
+            // 2. Victoire par Abandon, Forfait ou Médical du perdant
+            if (etatPerdant == EtatCombattantEnum.Abandon ||
+                etatPerdant == EtatCombattantEnum.Forfait ||
+                etatPerdant == EtatCombattantEnum.Medical)
+            {
+                c.NbVictoireAbandonForfaitMedical++;
+                return;
+            }
+
+            // 3. Victoire par accumulation de 3 Shidos (Sogo Gachi)
+            if (penPerdant >= 3)
+            {
+                c.NbVictoireSogoGachi++;
+                return;
+            }
+
+            // 4. Victoires par Hansoku-Make direct (H ou X)
+            if (etatPerdant == EtatCombattantEnum.HansokuMakeH ||
+                etatPerdant == EtatCombattantEnum.HansokuMakeX)
+            {
+                c.NbVictoireHansokuMake++;
+                return;
+            }
+
+            // 5. Victoires par points techniques (Ippon, Waza-ari, Yuko)
+            int ipponV = scoreVainqueur / 100;
+            int wazaV = (scoreVainqueur / 10) % 10;
+            int yukoV = scoreVainqueur % 10;
+
+            int wazaP = (scorePerdant / 10) % 10;
+            int yukoP = scorePerdant % 10;
+
+            // Évaluation de l'avantage décisif
+            if (ipponV >= 1)
+            {
+                c.NbVictoireIpponDirect++;
+            }
+            else if (wazaV >= 2)
+            {
+                c.NbVictoireWazaAriAwaseteIppon++;
+            }
+            else if (wazaV > wazaP)
+            {
+                c.NbVictoireWazaAri++;
+            }
+            else if (yukoV > yukoP)
+            {
+                c.NbVictoireYuko++;
+            }
+        }
+
+        /// <summary>
+        /// Indique si l'état du combattant correspond à une fin de match exceptionnelle
+        /// </summary>
+        /// <param name="etat">L'état du combattant</param>
+        /// <returns>true si l'état correspond à une fin de match exceptionnelle, false sinon</returns>
+        private bool EstFinExceptionnelle(EtatCombattantEnum etat)
+        {
+            return etat == EtatCombattantEnum.Abandon ||
+                   etat == EtatCombattantEnum.Medical ||
+                   etat == EtatCombattantEnum.Forfait ||
+                   etat == EtatCombattantEnum.HansokuMakeH ||
+                   etat == EtatCombattantEnum.HansokuMakeX;
         }
 
         /// <summary>
@@ -303,67 +378,6 @@ namespace FranceJudo.Metier.ExtensionNoyau.StatistiquesCombats
             return groupes;
         }
 
-        /// <summary>
-        /// Cette méthode analyse le type de victoire d'un combattant et met à jour les compteurs correspondants dans l'objet CompteurStatistiques.
-        /// </summary>
-        /// <param name="c">L'objet compteur de statistiques à mettre à jour</param>
-        /// <param name="scoreVainqueur">Le score du vainqueur</param>
-        /// <param name="scorePerdant">Le score du perdant</param>
-        /// <param name="adversaireEstHansoku">Indique si l'adversaire est en hansoku</param>
-        /// <param name="etatVainqueur">L'état du vainqueur</param>
-        /// <param name="etatPerdant">L'état du perdant</param>
-        private void AnalyserVictoire(CompteurStatistiques c, int scoreVainqueur, int scorePerdant, bool adversaireEstHansoku, EtatCombattantEnum etatVainqueur, EtatCombattantEnum etatPerdant)
-        {
-            // 1. Victoire par décision (Assurez-vous que la valeur 7 possède bien un nom dans votre enum, ex: Decision)
-            if (etatVainqueur == EtatCombattantEnum.Decision)
-            {
-                c.NbVictoireDecision++;
-                return;
-            }
-
-            // 2. Victoire par Abandon, Forfait ou Médical du perdant
-            if (etatPerdant == EtatCombattantEnum.Abandon ||
-                etatPerdant == EtatCombattantEnum.Forfait ||
-                etatPerdant == EtatCombattantEnum.Medical)
-            {
-                c.NbVictoireAbandonForfaitMedical++;
-                return;
-            }
-
-            // 3. Victoires par pénalités du perdant
-            if (etatPerdant == EtatCombattantEnum.HansokuMakeH ||
-                etatPerdant == EtatCombattantEnum.HansokuMakeX ||
-                adversaireEstHansoku)
-            {
-                c.NbVictoireHansokuMake++;
-                return;
-            }
-
-            // 4. Victoires par points techniques (Ippon, Waza-ari, Yuko)
-            int ipponV = scoreVainqueur / 100;
-            int wazaV = (scoreVainqueur / 10) % 10;
-            int yukoV = scoreVainqueur % 10;
-
-            int wazaP = (scorePerdant / 10) % 10;
-            int yukoP = scorePerdant % 10;
-            // Application stricte de la valeur décisive :
-            if (ipponV >= 1)
-            {
-                c.NbVictoireIpponDirect++;
-            }
-            else if (wazaV >= 2)
-            {
-                c.NbVictoireWazaAriAwaseteIppon++;
-            }
-            else if (wazaV > wazaP) // On gagne par Waza-ari SEULEMENT si on en a strictement plus que l'adversaire
-            {
-                c.NbVictoireWazaAri++;
-            }
-            else if (yukoV > yukoP) // En cas d'égalité de Waza-ari, c'est la différence de Yuko qui qualifie la victoire
-            {
-                c.NbVictoireYuko++;
-            }
-        }
     }
 
     internal class CompteurStatistiques : IStatistiquesItem

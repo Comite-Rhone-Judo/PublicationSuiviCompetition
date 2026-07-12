@@ -838,8 +838,9 @@ namespace AppPublication.Export
             var itemNode = new XElement(nodeName,
                 new XAttribute(ConstantXML.Statistiques_NbCombats, stats.NbCombats),
                 new XAttribute(ConstantXML.Statistiques_NbVictoires, stats.NbVictoires),
-                new XAttribute(ConstantXML.Statistiques_NbHikiwake, stats.NbHikiwake),
-                new XAttribute(ConstantXML.Statistiques_NbCombatsGoldenScore, stats.NbCombatsGoldenScore)
+                new XAttribute(ConstantXML.Statistiques_NbHikiwake, stats.NbHikiwake)
+                // Mis de cote suite manque de donnees TAS
+                // new XAttribute(ConstantXML.Statistiques_NbCombatsGoldenScore, stats.NbCombatsGoldenScore)
             );
 
             void AddInt(string nomAttribut, int? valeur)
@@ -883,9 +884,12 @@ namespace AppPublication.Export
 
             AddRawDouble(ConstantXML.Statistiques_MoyennePenalitesParCombat, stats.MoyennePenalitesParCombat);
 
+            // Mis de cote suite manque de donnees TAS
+            /*
             AddPct(ConstantXML.Statistiques_PctCombatsGoldenScore, stats.PctCombatsGoldenScore);
             AddTime(ConstantXML.Statistiques_DureeMoyenneGoldenScore, stats.DureeMoyenneGoldenScore);
             AddTime(ConstantXML.Statistiques_DureeMaximaleGoldenScore, stats.DureeMaximaleGoldenScore);
+            */
 
             AddTime(ConstantXML.Statistiques_DureeCombatMin, stats.DureeCombatMin);
             AddTime(ConstantXML.Statistiques_DureeCombatMax, stats.DureeCombatMax);
