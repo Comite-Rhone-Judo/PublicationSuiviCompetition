@@ -58,3 +58,56 @@ div.colorized-img-black {
         filter: drop-shadow(0px 100px 0 black);
         transform: translateY(-100px);
     }
+
+
+/* --- Panneaux d'information (ex: Info Absents) --- */
+
+/* Conteneur aligné à droite pour le bouton Info */
+div.tas-info-btn-container {
+    margin: 0;
+    padding: 4px 8px 0 0;
+    line-height: 0;
+}
+
+/* Bouton Info (l'icône) */
+button.tas-info-btn {
+    padding: 0;
+    margin: 0;
+    min-height: auto;
+}
+
+/* Le panneau d'information dépliant */
+div.tas-info-panel {
+    padding: 4px 8px;
+    margin: 0 8px 6px 8px;
+}
+
+/* Le bouton de fermeture (croix) du panneau */
+span.tas-info-close-btn {
+    padding: 2px 8px;
+    background: transparent;
+}
+
+/* Conteneur du texte d'information */
+div.tas-info-text-container {
+    margin-right: 20px;
+}
+
+/* Texte d'information (paragraphe) */
+p.tas-info-text {
+    margin: 2px 0;
+}
+
+/* Conteneur du nom et du club du judoka dans les en-têtes repliables */
+div.tas-judoka-identity {
+    display: inline-block;
+    vertical-align: middle;
+    text-align: left;
+    padding-left: 4px;
+    line-height: 0.9;
+}
+
+/* Correction de l'espacement pour remplacer les classes non standards */
+.tas-margin-none {
+    margin: 0 !important;
+}

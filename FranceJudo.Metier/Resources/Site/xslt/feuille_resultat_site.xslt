@@ -5,10 +5,11 @@
 ]>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:import href="FranceJudo.Metier/Resources/Site/xslt/entete.xslt"/>
+	<xsl:import href="FranceJudo.Metier/Resources/Site/xslt/nom_structure.xslt"/>
 	
 	<xsl:output method="html" indent="yes" />
-	<xsl:param name="style"></xsl:param>
-	<xsl:param name="js"></xsl:param>
+	<xsl:param name="style"/>
+	<xsl:param name="js"/>
 	<xsl:param name="imgPath"/>
 	<xsl:param name="jsPath"/>
 	<xsl:param name="cssPath"/>
@@ -23,6 +24,7 @@
 	<xsl:key name="participants" match="participant" use="@poule"/>
 	
 	<xsl:variable name="typeCompetition" select="/docroot/competition/@type"/>
+	<xsl:variable name="niveauCompetition" select="/docroot/competition/@niveau"/>
 
 	<xsl:variable select="/docroot/SiteConfiguration/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
@@ -295,7 +297,7 @@
 			  </xsl:attribute>
 
 			  <!-- Affichage de la categorie commencant en cas d'equipe -->
-			  <xsl:if test="$typeCompetition = 1">
+			  <xsl:if test="$typeCompetition = '1'">
 				  <div>
 					  <xsl:attribute name="class">
 						  w3-container w3-margin-left w3-center w3-cell-middle w3-tag w3-round-large w3-left-align
@@ -330,7 +332,7 @@
 									<!-- Calcul les positions des judokas -->
 									<xsl:variable name="posj1">
 										<xsl:choose>
-											<xsl:when test="$typeCompetition = 1">
+											<xsl:when test="$typeCompetition = '1'">
 												<xsl:call-template name="positionEquipe">
 													<xsl:with-param name="noPoule" select="$numeroPoule"/>
 													<xsl:with-param name="idEquipe" select="./score[1]/@judoka"/>
@@ -347,7 +349,7 @@
 
 									<xsl:variable name="posj2">
 										<xsl:choose>
-											<xsl:when test="$typeCompetition = 1">
+											<xsl:when test="$typeCompetition = '1'">
 												<xsl:call-template name="positionEquipe">
 													<xsl:with-param name="noPoule" select="$numeroPoule"/>
 													<xsl:with-param name="idEquipe" select="./score[2]/@judoka"/>
@@ -419,7 +421,7 @@
 
 						  <xsl:variable name="posj1">
 							  <xsl:choose>
-								  <xsl:when test="$typeCompetition = 1">
+								  <xsl:when test="$typeCompetition = '1'">
 									  <xsl:call-template name="positionEquipe">
 										  <xsl:with-param name="noPoule" select="$numeroPoule"/>
 										  <xsl:with-param name="idEquipe" select="./score[1]/@judoka"/>
@@ -436,7 +438,7 @@
 
 						  <xsl:variable name="posj2">
 							  <xsl:choose>
-								  <xsl:when test="$typeCompetition = 1">
+								  <xsl:when test="$typeCompetition = '1'">
 									  <xsl:call-template name="positionEquipe">
 										  <xsl:with-param name="noPoule" select="$numeroPoule"/>
 										  <xsl:with-param name="idEquipe" select="./score[2]/@judoka"/>
@@ -467,40 +469,32 @@
 		<xsl:param name="dispositionPoule"/>
 
 		<xsl:variable name="participant1" select="@judoka"/>
-		<xsl:variable name="j1"
-			select="//participants/participant[@judoka = $participant1]/descendant::*[1]"/>
+		<xsl:variable name="j1" select="//participant[@judoka = $participant1]/descendant::*[1]"/>
+		<xsl:variable name="club1" select="$RefData/structures/clubs/club[@ID = $j1/@club]"/>
+		<xsl:variable name="comite1" select="$RefData/structures/comites/comite[@ID = $club1/@comite]"/>
+		<xsl:variable name="ligue1" select="$RefData/structures/ligues/ligue[@ID = $comite1/@ligue]"/>
+		<xsl:variable name="pays1" select="$RefData/structures/lesPays/pays[@ID = $j1/@pays]"/>
+
 		<xsl:variable name="grade" select="$j1/@grade"/>
 		<tr>
 			<td>
                 <div class="w3-card w3-container w3-pale-yellow w3-border w3-right-align">
                     <header class="w3-small">
 						<xsl:value-of select="$j1/@nom"/>
-						<xsl:if test="$typeCompetition != 1">
+						<xsl:if test="$typeCompetition != '1'">
 							<xsl:text disable-output-escaping="yes">&#032;</xsl:text>
 							<xsl:value-of select="$j1/@prenom"/>
 						</xsl:if>
 					</header>					 
                     <footer class="w3-tiny">
-						<xsl:variable name="club" select="$j1/@club"/>
-						<xsl:variable name="clubN" select="$RefData/structures/clubs/club[@ID = $club]"/>
-						<xsl:variable name="comite" select="$clubN/@comite"/>
-						<xsl:variable name="ligue" select="$clubN/@ligue"/>
-
-
-						<xsl:variable name="ecartement" select="ancestor::phase[1]/@ecartement"/>
-						<xsl:choose>
-							<xsl:when test="$ecartement = '3'">
-								<xsl:value-of select="$clubN/nomCourt"/> - <xsl:value-of select="$comite"/>
-							</xsl:when>
-										
-							<xsl:when test="$ecartement = '4'">
-								<xsl:value-of select="$clubN/nomCourt"/> - <xsl:value-of select="//ligue[@ID = $ligue]/nomCourt"/>
-							</xsl:when>
-
-							<xsl:otherwise>
-								<xsl:value-of select="$clubN/nomCourt"/>
-							</xsl:otherwise>
-						</xsl:choose>
+						<xsl:call-template name="LibelleStructure">
+							<xsl:with-param name="ecartement" select="$niveauCompetition" />
+							<xsl:with-param name="typeCompetition" select="$typeCompetition" />
+							<xsl:with-param name="club" select="$club1/nomCourt" />
+							<xsl:with-param name="comite" select="$comite1/@ID" />
+							<xsl:with-param name="ligue" select="$ligue1/nomCourt" />
+							<xsl:with-param name="pays" select="$pays1/@abr3" />
+						</xsl:call-template>
 					</footer>
                 </div>
             </td>

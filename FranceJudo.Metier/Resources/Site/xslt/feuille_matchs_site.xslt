@@ -6,10 +6,11 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:import href="FranceJudo.Metier/Resources/Site/xslt/entete.xslt"/>
 	<xsl:import href="FranceJudo.Metier/Resources/Site/xslt/niveau_tour_combat.xslt"/>
+	<xsl:import href="FranceJudo.Metier/Resources/Site/xslt/nom_structure.xslt"/>
 
 	<xsl:output method="html" indent="yes" />
-	<xsl:param name="style"></xsl:param>
-	<xsl:param name="js"></xsl:param>
+	<xsl:param name="style"/>
+	<xsl:param name="js"/>
 	<xsl:param name="istapis"/>
 	<xsl:param name="useIntituleCommun"/>
 	<xsl:param name="imgPath"/>
@@ -22,10 +23,11 @@
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 	
-	<xsl:variable name="couleur1" select="/docroot/competition/@couleur1"> </xsl:variable>
-	<xsl:variable name="couleur2" select="/docroot/competition/@couleur2"> </xsl:variable>
-	<xsl:variable name="idCompetition" select="/docroot/competition/@ID"> </xsl:variable>
-	<xsl:variable name="typeCompetition" select="/docroot/competition/@type"> </xsl:variable>
+	<xsl:variable name="couleur1" select="/docroot/competition/@couleur1"/>
+	<xsl:variable name="couleur2" select="/docroot/competition/@couleur2"/>
+	<xsl:variable name="idCompetition" select="/docroot/competition/@ID"/>
+	<xsl:variable name="typeCompetition" select="/docroot/competition/@type"/>
+	<xsl:variable name="niveauCompetition" select="/docroot/competition/@niveau"/>
 
 	<xsl:variable select="/docroot/SiteConfiguration/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
@@ -259,7 +261,6 @@
 	<!-- TEMPLATE UN COMBAT -->
 	<xsl:template name="UnCombat">
 		<xsl:param name="combat"/>
-		<xsl:param name="img"/>
 
 		<xsl:variable name="epreuve" select="$combat/@epreuve"/>
 		<xsl:variable name="phase" select="$combat/@phase"/>
@@ -267,16 +268,17 @@
 
 		<xsl:variable name="participant1" select="$combat/score[1]/@judoka"/>
 		<xsl:variable name="judoka1" select="//participant[@judoka = $participant1]/descendant::*[1]"/>
-		<xsl:variable name="club1" select="$judoka1/@club"/>
-		<xsl:variable name="comite1" select="$RefData/structures/clubs/club[@ID = $club1]/@comite"/>
-		<xsl:variable name="ligue1" select="$RefData/structures/clubs/club[@ID = $club1]/@ligue"/>
+		<xsl:variable name="club1" select="$RefData/structures/clubs/club[@ID = $judoka1/@club]"/>
+		<xsl:variable name="comite1" select="$RefData/structures/comites/comite[@ID = $club1/@comite]"/>
+		<xsl:variable name="ligue1" select="$RefData/structures/ligues/ligue[@ID = $comite1/@ligue]"/>
+		<xsl:variable name="pays1" select="$RefData/structures/lesPays/pays[@ID = $judoka1/@pays]"/>
 
 		<xsl:variable name="participant2" select="$combat/score[2]/@judoka"/>
 		<xsl:variable name="judoka2" select="//participant[@judoka = $participant2]/descendant::*[1]"/>
-		<xsl:variable name="club2" select="$judoka2/@club"/>
-		<xsl:variable name="comite2" select="$RefData/structures/clubs/club[@ID = $club2]/@comite"/>
-		<xsl:variable name="ligue2" select="$RefData/structures/clubs/club[@ID = $club2]/@ligue"/>
-
+		<xsl:variable name="club2" select="$RefData/structures/clubs/club[@ID = $judoka2/@club]"/>
+		<xsl:variable name="comite2" select="$RefData/structures/comites/comite[@ID = $club2/@comite]"/>
+		<xsl:variable name="ligue2" select="$RefData/structures/ligues/ligue[@ID = $comite2/@ligue]"/>
+		<xsl:variable name="pays2" select="$RefData/structures/lesPays/pays[@ID = $judoka2/@pays]"/>
 				<!--
 		ECARTEMENT
 		Aucun = 1,
@@ -349,59 +351,21 @@
 						</xsl:when>
 						<xsl:otherwise>
 							<header>
-								<xsl:value-of select="ancestor::tapis[1]/participants/participant[@judoka = $participant1]/descendant::*[1]/@nom"/>
-								<xsl:if test="$typeCompetition != 1">
+								<xsl:value-of select="$judoka1/@nom"/>
+								<xsl:if test="$typeCompetition != '1'">
 									<xsl:text disable-output-escaping="yes">&#032;</xsl:text>
-									<xsl:value-of select="ancestor::tapis[1]/participants/participant[@judoka = $participant1]/descendant::*[1]/@prenom"/>
+									<xsl:value-of select="$judoka1/@prenom"/>
 								</xsl:if>
 							</header>
 							<footer class="w3-tiny">
-								<xsl:variable name="ecartement1"
-									select="//phase[@id = $phase]/@ecartement"/>
-								<xsl:choose>
-									<!-- Departement -->
-									<xsl:when test="$ecartement1 = '3'">
-										<xsl:if test="$typeCompetition != '1'">
-											<!-- Individuel = {Nom Club} - {no comite} -->
-											<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club1]/nomCourt"/>
-											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="$comite1"/>
-										</xsl:if>
-										<xsl:if test="$typeCompetition = '1'">
-											<!-- Equipe = {no comite} -->
-											<xsl:value-of select="$comite1"/>
-										</xsl:if>
-
-									</xsl:when>
-
-									<!-- Ligue -->
-									<xsl:when test="$ecartement1 = '4'">
-										<xsl:if test="$typeCompetition != '1'">
-											<!-- Individuel = {Nom Club} - {nom Ligue} -->
-											<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club1]/nomCourt"/>
-											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="$RefData/structures/ligues/ligue[@ID = $ligue1]/nomCourt"/>
-										</xsl:if>
-										<xsl:if test="$typeCompetition = '1'">
-											<!-- Equipe = {Nom Ligue} -->
-											<xsl:value-of select="$RefData/structures/ligues/ligue[@ID = $ligue1]/nomCourt"/>
-										</xsl:if>
-									</xsl:when>
-
-									<!-- Club, Secteur, National, International -->
-									<xsl:otherwise>
-										<xsl:if test="$typeCompetition != '1'">
-											<!-- Individuel = {Nom Club} - {no comite} -->
-											<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club1]/nomCourt"/>
-											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="$comite1"/>
-										</xsl:if>
-											<!-- Equipe = {no comite} -->
-										<xsl:if test="$typeCompetition = '1'">
-											<xsl:value-of select="$comite1"/>
-										</xsl:if>
-									</xsl:otherwise>
-								</xsl:choose>
+								<xsl:call-template name="LibelleStructure">
+									<xsl:with-param name="ecartement" select="$niveauCompetition" />
+									<xsl:with-param name="typeCompetition" select="$typeCompetition" />
+									<xsl:with-param name="club" select="$club1/nomCourt" />
+									<xsl:with-param name="comite" select="$comite1/@ID" />
+									<xsl:with-param name="ligue" select="$ligue1/nomCourt" />
+									<xsl:with-param name="pays" select="$pays1/@abr3" />
+								</xsl:call-template>
 							</footer>
 						</xsl:otherwise>
 					</xsl:choose>
@@ -422,7 +386,7 @@
 					</header>
 					<footer class="w3-tiny">
 						<!-- Pour les equipes, affiche la catégorie qui commence -->
-						<xsl:if test="$typeCompetition = 1">
+						<xsl:if test="$typeCompetition = '1'">
 							<div>
 								<xsl:attribute name="class">tas-prochain-combat-premiere-categorie w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align <xsl:value-of select="$firstrencontreclass"/></xsl:attribute>
 								<img class="img" width="20">
@@ -486,49 +450,21 @@
 						</xsl:when>
 						<xsl:otherwise>
 							<header>
-								<xsl:value-of select="ancestor::tapis[1]/participants/participant[@judoka = $participant2]/descendant::*[1]/@nom"/>
-								<xsl:if test="$typeCompetition != 1">
+								<xsl:value-of select="$judoka2/@nom"/>
+								<xsl:if test="$typeCompetition != '1'">
 									<xsl:text disable-output-escaping="yes">&#032;</xsl:text>
-									<xsl:value-of select="ancestor::tapis[1]/participants/participant[@judoka = $participant2]/descendant::*[1]/@prenom"/>
+									<xsl:value-of select="$judoka2/@prenom"/>
 								</xsl:if>
 							</header>
 							<footer class="w3-tiny">
-								<xsl:variable name="ecartement2"
-											select="//phase[@id = $phase]/@ecartement"/>
-								<xsl:choose>
-									<xsl:when test="$ecartement2 = '3'">
-										<xsl:if test="$typeCompetition != '1'">
-											<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club2]/nomCourt"/>
-											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="$comite2"/>
-										</xsl:if>
-										<xsl:if test="$typeCompetition = '1'">
-											<xsl:value-of select="$comite2"/>
-										</xsl:if>
-									</xsl:when>
-
-									<xsl:when test="$ecartement2 = '4'">
-										<xsl:if test="$typeCompetition != '1'">
-											<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club2]/nomCourt"/>
-											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="$RefData/structures/ligues/ligue[@ID = $ligue2]/nomCourt"/>
-										</xsl:if>
-										<xsl:if test="$typeCompetition = '1'">
-											<xsl:value-of select="$RefData/structures/ligues/ligue[@ID = $ligue2]/nomCourt"/>
-										</xsl:if>
-									</xsl:when>
-
-									<xsl:otherwise>
-										<xsl:if test="$typeCompetition != '1'">
-											<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club2]/nomCourt"/>
-											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="$comite2"/>
-										</xsl:if>
-										<xsl:if test="$typeCompetition = '1'">
-											<xsl:value-of select="$comite2"/>
-										</xsl:if>
-									</xsl:otherwise>
-								</xsl:choose>
+								<xsl:call-template name="LibelleStructure">
+									<xsl:with-param name="ecartement" select="$niveauCompetition" />
+									<xsl:with-param name="typeCompetition" select="$typeCompetition" />
+									<xsl:with-param name="club" select="$club2/nomCourt" />
+									<xsl:with-param name="comite" select="$comite2/@ID" />
+									<xsl:with-param name="ligue" select="$ligue2/nomCourt" />
+									<xsl:with-param name="pays" select="$pays2/@abr3" />
+								</xsl:call-template>
 							</footer>
 						</xsl:otherwise>
 					</xsl:choose>

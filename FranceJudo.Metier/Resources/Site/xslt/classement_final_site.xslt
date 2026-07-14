@@ -7,8 +7,8 @@
 	<xsl:import href="FranceJudo.Metier/Resources/Site/xslt/entete.xslt"/>
 	
 	<xsl:output method="html" indent="yes" />
-	<xsl:param name="style"></xsl:param>
-	<xsl:param name="js"></xsl:param>
+	<xsl:param name="style"/>
+	<xsl:param name="js"/>
 	<xsl:param name="imgPath"/>
 	<xsl:param name="jsPath"/>
 	<xsl:param name="cssPath"/>
@@ -26,6 +26,7 @@
 	<xsl:variable select="/docroot/SiteConfiguration/@ActualisationClientDefaut = 'true'" name="actualisationClientDefaut"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@Logo" name="logo"/>
 	<xsl:variable name="typeCompetition" select="/docroot/competition/@type"/>
+	<xsl:variable name="niveauCompetition" select="/docroot/competition/@niveau"/>
 	
 	<xsl:template match="docroot">
 		<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
@@ -120,7 +121,7 @@
 							<tr class="w3-light-blue w3-text-indigo">
 								<th>&nbsp;</th>
 								<xsl:choose>
-									<xsl:when test="$typeCompetition = 1">
+									<xsl:when test="$typeCompetition = '1'">
 										<th>NOM</th>
 									</xsl:when>
 									<xsl:otherwise>
@@ -128,9 +129,17 @@
 									</xsl:otherwise>
 								</xsl:choose>
 								<th>Club</th>
-								<th>Comité</th>
-								<th>Ligue</th>
-								<th>Pays</th>
+								<xsl:if test="$niveauCompetition = '3' or $niveauCompetition = '4'">
+									<th>Comité</th>
+								</xsl:if>
+
+								<xsl:if test="$niveauCompetition = '4'">
+									<th>Ligue</th>
+								</xsl:if>
+
+								<xsl:if test="$niveauCompetition = '5' or $niveauCompetition = '6'">
+									<th>Pays</th>
+								</xsl:if>
 							</tr>
 						</thead>
 						<tbody>
@@ -158,11 +167,11 @@
 		<xsl:variable name="participant1" select="@judoka" />
 		<!-- En cas d'equipe, le 1er descendant est l'equipe, sinon, un judoka-->
 		<xsl:variable name="j1" select="//participants/participant[@judoka=$participant1]/descendant::*[1]" />
-
-		<xsl:variable name="club" select="$j1/@club"/>
-		<xsl:variable name="clubN" select="$RefData/structures/clubs/club[@ID=$club]"/>
-		<xsl:variable name="comite" select="$clubN/@comite"/>
-		<xsl:variable name="ligue" select="$clubN/@ligue"/>
+		
+		<xsl:variable name="club" select="$RefData/structures/clubs/club[@ID=$j1/@club]"/>
+		<xsl:variable name="comite" select="$RefData/structures/comites/comite[@ID=$club/@comite]"/>
+		<xsl:variable name="ligue" select="$RefData/structures/ligues/ligue[@ID=$club/@ligue]"/>
+		<xsl:variable name="pays" select="$RefData/structures/lesPays/pays[@ID=$j1/judoka/@pays]"/>
 		<xsl:variable name="position" select="position()"/>
 
 		<tr>
@@ -179,20 +188,30 @@
 			<td>
 				<xsl:value-of select="$j1/@nom"/>
 				<!-- Ajoute le prenom uniquement en individuel/Shiai -->
-				<xsl:if test="$typeCompetition != 1">
+				<xsl:if test="$typeCompetition != '1'">
 					&nbsp;<xsl:value-of select="$j1/@prenom"/>
 				</xsl:if>
 			</td>
 			<td>
-				<xsl:value-of select="$clubN/nomCourt"/>
+				<xsl:value-of select="$club/nomCourt"/>
 			</td>
-			<td>
-				<xsl:value-of select="$comite"/>
-			</td>
-			<td>
-				<xsl:value-of select="$RefData/structures/ligues/ligue[@ID=$ligue]/nomCourt"/>
-			</td>
-			<td>&nbsp;</td>
+
+			<xsl:if test="$niveauCompetition = '3' or $niveauCompetition = '4'">
+				<td>
+					<xsl:value-of select="$comite/@ID"/>
+				</td>
+			</xsl:if>
+			<xsl:if test="$niveauCompetition = '4'">
+				<td>
+					<xsl:value-of select="$ligue/nomCourt"/>
+				</td>
+			</xsl:if>
+
+			<xsl:if test="$niveauCompetition = '5' or $niveauCompetition = '6'">
+				<td>
+					<xsl:value-of select="$pays/@nom"/>
+				</td>
+			</xsl:if>
 		</tr>
 	</xsl:template>
 </xsl:stylesheet>

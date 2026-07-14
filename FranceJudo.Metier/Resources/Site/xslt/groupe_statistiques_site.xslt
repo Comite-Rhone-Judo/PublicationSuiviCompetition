@@ -7,12 +7,13 @@
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:import href="FranceJudo.Metier/Resources/Site/xslt/entete.xslt"/>
+	<xsl:import href="FranceJudo.Metier/Resources/Site/xslt/nom_structure.xslt"/>
 
 	<xsl:output method="html" indent="yes" />
-	<xsl:param name="style"></xsl:param>
-	<xsl:param name="js"></xsl:param>
-	<xsl:param name="idgroupe"></xsl:param>
-	<xsl:param name="idcompetition"></xsl:param>
+	<xsl:param name="style"/>
+	<xsl:param name="js"/>
+	<xsl:param name="idgroupe"/>
+	<xsl:param name="idcompetition"/>
 	<xsl:param name="imgPath"/>
 	<xsl:param name="jsPath"/>
 	<xsl:param name="cssPath"/>
@@ -25,6 +26,7 @@
 
 	<xsl:variable name="selectedCompetition" select="/docroot/competitions/competition[@ID = $idcompetition]"/>
 	<xsl:variable select="$selectedCompetition/@type" name="typeCompetition"/>
+	<xsl:variable select="$selectedCompetition/@niveau" name="niveauCompetition"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@DelaiActualisationClientSec" name="delayActualisationClient"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@ActualisationClientDefaut = 'true'" name="actualisationClientDefaut"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@Logo" name="logo"/>
@@ -88,31 +90,22 @@
 
 					<div class="w3-container w3-blue w3-center tas-competition-bandeau">
 						<div>
-							<h4 class="w3-margin-0 w3-padding-small">
+							<h4 class="w3-padding-small">
 								<xsl:value-of select="$selectedCompetition/titre"/>
 							</h4>
 						</div>
 						<div class="w3-card w3-indigo">
-							<h5 class="w3-margin-0 w3-padding-small">
+							<h5 class="w3-padding-small">
 								<xsl:if test="$selectedGroupe/@sexe = 'F'">Féminines,&nbsp;</xsl:if>
 								<xsl:if test="$selectedGroupe/@sexe = 'M'">Masculins,&nbsp;</xsl:if>
-								<xsl:choose>
-									<xsl:when test="$selectedGroupe/@type = 1">
-										Nom commençant par <xsl:value-of select="$selectedGroupe/@entite"/>
-									</xsl:when>
-									<xsl:when test="$selectedGroupe/@type = 2">
-										Club <xsl:value-of select="$RefData/structures/clubs/club[@ID = $selectedGroupe/@entite]/nom"/>
-									</xsl:when>
-									<xsl:when test="$selectedGroupe/@type = 3">
-										Comité <xsl:value-of select="$RefData/structures/comites/comite[@ID = $selectedGroupe/@entite]/nom"/>
-									</xsl:when>
-									<xsl:when test="$selectedGroupe/@type = 4">
-										Ligue <xsl:value-of select="$RefData/structures/ligues/ligue[@ID = $selectedGroupe/@entite]/nom"/>
-									</xsl:when>
-									<xsl:when test="$selectedGroupe/@type = 5 or $selectedGroupe/@type = 6">
-										<xsl:value-of select="$RefData/structures/lesPays/pays[@ID = $selectedGroupe/@entite]/@nom"/>
-									</xsl:when>
-								</xsl:choose>
+								<!-- Intitulé via la template -->
+								<xsl:call-template name="LibelleGroupeStructure">
+									<xsl:with-param name="typeGroupe" select="$selectedGroupe/@type"/>
+									<xsl:with-param name="niveauCompetition" select="$niveauCompetition"/>
+									<xsl:with-param name="entiteId" select="$selectedGroupe/@entite"/>
+									<xsl:with-param name="RefData" select="$RefData"/>
+									<xsl:with-param name="avecPrefixe" select="'true'"/>
+								</xsl:call-template>
 							</h5>
 						</div>
 					</div>
@@ -798,6 +791,23 @@
 												</xsl:choose>
 											</xsl:variable>
 
+											<xsl:variable name="clubNode" select="$RefData/structures/clubs/club[@ID = current()/@club]"/>
+											<xsl:variable name="comiteNode" select="$RefData/structures/comites/comite[@ID = $clubNode/@comite]"/>
+											<xsl:variable name="ligueNode" select="$RefData/structures/ligues/ligue[@ID = $comiteNode/@ligue]"/>
+											<xsl:variable name="paysNode" select="$RefData/structures/lesPays/pays[@ID = current()/@pays]"/>
+
+											<!-- On stocke le résultat dans une variable pour l'utiliser 2 fois -->
+											<xsl:variable name="structureLibelle">
+												<xsl:call-template name="LibelleStructure">
+													<xsl:with-param name="ecartement" select="$niveauCompetition" />
+													<xsl:with-param name="typeCompetition" select="$typeCompetition" />
+													<xsl:with-param name="club" select="$clubNode/nomCourt" />
+													<xsl:with-param name="comite" select="$comiteNode/@ID" />
+													<xsl:with-param name="ligue" select="$ligueNode/nomCourt" />
+													<xsl:with-param name="pays" select="$paysNode/@abr3" />
+												</xsl:call-template>
+											</xsl:variable>
+
 											<tr class="tas-stat-clickable-row" onclick="openJudokaStatsModal(this)">
 												<xsl:attribute name="data-id">
 													<xsl:value-of select="@id"/> </xsl:attribute>
@@ -806,6 +816,11 @@
 												</xsl:attribute>
 												<xsl:attribute name="data-cat">
 													<xsl:value-of select="$sexeStr"/> / <xsl:value-of select="@libepreuve"/>
+												</xsl:attribute>
+
+												<!-- NOUVEL ATTRIBUT POUR LE CLUB -->
+												<xsl:attribute name="data-club">
+													<xsl:value-of select="$structureLibelle"/>
 												</xsl:attribute>
 												<xsl:attribute name="data-cbts">
 													<xsl:choose>
@@ -949,14 +964,18 @@
 													</xsl:choose>
 												</xsl:attribute>
 
-												<td>
-													<strong>
-														<xsl:value-of select="@nom"/>&nbsp;<xsl:value-of select="substring(@prenom,1,1)"/>.
-													</strong>
-													<br/>
-													<span class="w3-text-grey w3-tiny">
+												<td class="tas-compact-cell">
+													<div>
+														<strong>
+															<xsl:value-of select="@nom"/>&nbsp;<xsl:value-of select="substring(@prenom,1,1)"/>.
+														</strong>
+													</div>
+													<div class="w3-text-dark-grey w3-tiny">
+														<xsl:value-of select="$structureLibelle"/>
+													</div>
+													<div class="w3-text-grey w3-tiny">
 														<xsl:value-of select="@libepreuve"/>
-													</span>
+													</div>
 												</td>
 												<td class="w3-center">
 													<xsl:choose>
@@ -1037,8 +1056,12 @@
 
 						<header class="w3-container w3-blue w3-padding-small tas-stat-modal-header">
 							<span onclick="closeJudokaStatsModal()" class="w3-button w3-display-topright w3-xlarge w3-blue" style="padding: 4px 16px;">&times;</span>
-							<h4 class="w3-margin-0" id="m-nom">-</h4>
-							<div class="w3-small w3-opacity" id="m-cat">-</div>
+							<h4 class="tas-margin-none" id="m-nom">-</h4>
+
+							<!-- NOUVELLE LIGNE POUR LE CLUB -->
+							<div class="w3-tiny w3-text-light-grey" id="m-club">-</div>
+
+							<div class="w3-tiny w3-opacity" id="m-cat">-</div>
 						</header>
 
 						<div class="tas-stat-modal-body">

@@ -120,3 +120,12 @@
     padding-bottom: 40px;
     background: white;
 }
+
+/* Cellules de tableau compactées verticalement (3 lignes) */
+td.tas-compact-cell {
+    line-height: 1.1;
+}
+
+    td.tas-compact-cell div + div {
+        margin-top: 2px;
+    }

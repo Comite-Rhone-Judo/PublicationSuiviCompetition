@@ -289,6 +289,7 @@ function openJudokaStatsModal(rowElement, skipAnimation) {
     // 1. En-tête de la modale
     setModalText('m-nom', rowElement.getAttribute('data-nom'));
     setModalText('m-cat', rowElement.getAttribute('data-cat'));
+    setModalText('m-club', rowElement.getAttribute('data-club'));
 
     // 2. Résultats globaux
     setModalText('d-combats', rowElement.getAttribute('data-cbts') || '0');

@@ -8,12 +8,13 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:import href="FranceJudo.Metier/Resources/Site/xslt/entete.xslt"/>
 	<xsl:import href="FranceJudo.Metier/Resources/Site/xslt/niveau_tour_combat.xslt"/>
+	<xsl:import href="FranceJudo.Metier/Resources/Site/xslt/nom_structure.xslt"/>
 
 	<xsl:output method="html" indent="yes" />
-	<xsl:param name="style"></xsl:param>
-	<xsl:param name="js"></xsl:param>
-	<xsl:param name="idgroupe"></xsl:param>
-	<xsl:param name="idcompetition"></xsl:param>
+	<xsl:param name="style"/>
+	<xsl:param name="js"/>
+	<xsl:param name="idgroupe"/>
+	<xsl:param name="idcompetition"/>
 	<xsl:param name="imgPath"/>
 	<xsl:param name="jsPath"/>
 	<xsl:param name="cssPath"/>
@@ -46,6 +47,7 @@
 	<xsl:variable select="/docroot/SiteConfiguration/@Logo" name="logo"/>
 
 	<xsl:variable select="$selectedCompetition/@type" name="typeCompetition"/>
+	<xsl:variable select="$selectedCompetition/@niveau" name="niveauCompetition"/>
 
 	<!-- En jujitsu, on affiche la discpline -->
 	<xsl:variable select="$selectedCompetition/@discipline != 'C_COMPETITION'" name="affDiscipline"/>
@@ -130,33 +132,15 @@
 							<xsl:if test="$selectedGroupeEngagements/@sexe = 'M'">
 								<xsl:text disable-output-escaping="yes">Masculins,</xsl:text>&nbsp;
 							</xsl:if>
-							<xsl:choose>
-								<!-- Niveau Aucun (par Nom) 1 -->
-								<xsl:when test="$selectedGroupeEngagements/@type = 1">
-									<xsl:text disable-output-escaping="yes">Nom commençant par</xsl:text>&nbsp;<xsl:value-of select="$selectedGroupeEngagements/@entite"/>
-								</xsl:when>
-								<!-- Niveau Club 2 -->
-								<xsl:when test="$selectedGroupeEngagements/@type = 2">
-									<xsl:text disable-output-escaping="yes">Club</xsl:text>&nbsp;<xsl:value-of select="$RefData/structures/clubs/club[@ID = $selectedGroupeEngagements/@entite]/nom"/>
-								</xsl:when>
-								<!-- Niveau Departement 3 -->
-								<xsl:when test="$selectedGroupeEngagements/@type = 3">
-									<xsl:text disable-output-escaping="yes">Comité</xsl:text>&nbsp;<xsl:value-of select="$RefData/structures/comites/comite[@ID = $selectedGroupeEngagements/@entite]/nom"/>
-								</xsl:when>
-								<!-- Niveau Ligue 3 -->
-								<xsl:when test="$selectedGroupeEngagements/@type = 4">
-									<xsl:text disable-output-escaping="yes">Ligue</xsl:text>&nbsp;<xsl:value-of select="$RefData/structures/ligues/ligue[@ID = $selectedGroupeEngagements/@entite]/nom"/>
-								</xsl:when>
-								<!-- Niveau National 5 -->
-								<!-- Niveau International 6 -->
-								<xsl:when test="$selectedGroupeEngagements/@type = 5 or $selectedGroupeEngagements/@type = 6">
-									<xsl:value-of select="$RefData/structures/lesPays/pays[@ID = $selectedGroupeEngagements/@entite]/@nom"/>
-								</xsl:when>
-								<!-- Par defaut, on prend le club -->
-								<xsl:otherwise>
-									<xsl:text disable-output-escaping="yes">Club</xsl:text>&nbsp;<xsl:value-of select="$RefData/structures/clubs/club[@ID = $selectedGroupeEngagements/@entite]/nom"/>
-								</xsl:otherwise>
-							</xsl:choose>
+
+							<!-- Determine le nom du groupe a afficher -->
+							<xsl:call-template name="LibelleGroupeStructure">
+								<xsl:with-param name="typeGroupe" select="$selectedGroupeEngagements/@type"/>
+								<xsl:with-param name="niveauCompetition" select="$niveauCompetition"/>
+								<xsl:with-param name="entiteId" select="$selectedGroupeEngagements/@entite"/>
+								<xsl:with-param name="RefData" select="$RefData"/>
+								<xsl:with-param name="avecPrefixe" select="'true'" />
+							</xsl:call-template>
 						</h5>
 					</div>
 				</div>
@@ -226,7 +210,7 @@
 
 		<!-- Bandeau repliable du judoka (ferme par defaut) -->
 		<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-			<button class="w3-bar-item w3-light-blue">
+			<button class="w3-bar-item w3-light-blue w3-left-align">
 				<xsl:attribute name="onclick">
 					<xsl:value-of select="concat('togglePanel(',$apos,'judoka',@id,$apos,')')"/>
 				</xsl:attribute>
@@ -246,7 +230,25 @@
 						<xsl:value-of select="concat('judoka',$idJudoka,'Expand')"/>
 					</xsl:attribute>
 				</img>
-				<xsl:value-of select="@nom"/>&nbsp;<xsl:value-of select="@prenom"/>
+				<div class="tas-judoka-identity">
+					<xsl:value-of select="@nom"/>&nbsp;<xsl:value-of select="@prenom"/><br/>
+
+					<span class="w3-tiny w3-opacity w3-text-dark-grey">
+						<xsl:variable name="clubNode" select="$RefData/structures/clubs/club[@ID = ./@club]"/>
+						<xsl:variable name="comiteNode" select="$RefData/structures/comites/comite[@ID = $clubNode/@comite]"/>
+						<xsl:variable name="ligueNode" select="$RefData/structures/ligues/ligue[@ID = $comiteNode/@ligue]"/>
+						<xsl:variable name="paysNode" select="$RefData/structures/lesPays/pays[@ID = @pays]"/>
+
+						<xsl:call-template name="LibelleStructure">
+							<xsl:with-param name="ecartement" select="$niveauCompetition" />
+							<xsl:with-param name="typeCompetition" select="$typeCompetition" />
+							<xsl:with-param name="club" select="$clubNode/nomCourt" />
+							<xsl:with-param name="comite" select="$comiteNode/@ID" />
+							<xsl:with-param name="ligue" select="$ligueNode/nomCourt" />
+							<xsl:with-param name="pays" select="$paysNode/@abr3" />
+						</xsl:call-template>
+					</span>
+				</div>
 			</button>
 		</div>
 		<!-- Le contenu du Judoka -->
@@ -337,24 +339,25 @@
 
 	<!-- TEMPLATE UN COMBAT -->
 	<xsl:template name="UnCombat" match="combat">
-		<xsl:param name="niveau"></xsl:param>
+		<xsl:param name="niveau"/>
 
 		<xsl:variable name="epreuve" select="./@epreuve"/>
 		<xsl:variable name="phase" select="./@phase"/>
 		<xsl:variable name="typePhase" select="ancestor::competition/phases/phase[@id = $phase]/@typePhase"/>
 
-
 		<xsl:variable name="judoka1" select="./score[1]/@judoka"/>
-		<xsl:variable name="club1" select="ancestor::competition/judokas/judoka[@id = $judoka1]/@club"/>
-		<xsl:variable name="comite1" select="ancestor::competition/judokas/judoka[@id = $judoka1]/@comite"/>
-		<xsl:variable name="ligue1" select="ancestor::competition/judokas/judoka[@id = $judoka1]/@ligue"/>
-		<xsl:variable name="pays1" select="ancestor::competition/judokas/judoka[@id = $judoka1]/@pays"/>
+		<xsl:variable name="j1" select="ancestor::competition/judokas/judoka[@id = $judoka1]"/>
+		<xsl:variable name="club1" select="$RefData/structures/clubs/club[@ID = $j1/@club]"/>
+		<xsl:variable name="comite1" select="$RefData/structures/comites/comite[@ID = $club1/@comite]"/>
+		<xsl:variable name="ligue1" select="$RefData/structures/ligues/ligue[@ID = $comite1/@ligue]"/>
+		<xsl:variable name="pays1" select="$RefData/structures/lesPays/pays[@ID = $j1/@pays]"/>
 
 		<xsl:variable name="judoka2" select="./score[2]/@judoka"/>
-		<xsl:variable name="club2" select="ancestor::competition/judokas/judoka[@id = $judoka2]/@club"/>
-		<xsl:variable name="comite2" select="ancestor::competition/judokas/judoka[@id = $judoka2]/@comite"/>
-		<xsl:variable name="ligue2" select="ancestor::competition/judokas/judoka[@id = $judoka2]/@ligue"/>
-		<xsl:variable name="pays2" select="ancestor::competition/judokas/judoka[@id = $judoka2]/@pays"/>
+		<xsl:variable name="j2" select="ancestor::competition/judokas/judoka[@id = $judoka2]"/>
+		<xsl:variable name="club2" select="$RefData/structures/clubs/club[@ID = $j2/@club]"/>
+		<xsl:variable name="comite2" select="$RefData/structures/comites/comite[@ID = $club2/@comite]"/>
+		<xsl:variable name="ligue2" select="$RefData/structures/ligues/ligue[@ID = $comite2/@ligue]"/>
+		<xsl:variable name="pays2" select="$RefData/structures/lesPays/pays[@ID = $j2/@pays]"/>
 
 		<!-- Si un des ID judoka vaut zero, c'est une place vide. Si judoka est null, c'est pas encore de combattant, on n'affiche rien -->
 		<xsl:if test="count(./score[@judoka = 0]) = 0">
@@ -426,9 +429,9 @@
 										<xsl:text disable-output-escaping="yes">&#032;En Attente</xsl:text>
 									</xsl:when>
 									<xsl:otherwise>
-										<xsl:value-of select="ancestor::competition/judokas/judoka[@id = $judoka1]/@nom"/>
+										<xsl:value-of select="$j1/@nom"/>
 										<xsl:text disable-output-escaping="yes">&#032;</xsl:text>
-										<xsl:value-of select="ancestor::competition/judokas/judoka[@id = $judoka1]/@prenom"/>
+										<xsl:value-of select="$j1/@prenom"/>
 									</xsl:otherwise>
 								</xsl:choose>
 							</td>
@@ -437,33 +440,14 @@
 							<xsl:if test="not($judoka1 = 'null')">
 								<tr>
 									<td class="w3-tiny">
-										<xsl:choose>
-											<!-- Niveau Club 2 -->
-											<xsl:when test="$niveau = 2">
-												<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club1]/nomCourt"/>
-											</xsl:when>
-											<!-- Niveau Departement 3 -->
-											<xsl:when test="$niveau = 3">
-												<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club1]/nomCourt"/>
-												<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-												<xsl:value-of select="$RefData/structures/comites/comite[@ID = $comite1]/nomCourt"/>
-											</xsl:when>
-											<!-- Niveau Ligue 4 -->
-											<xsl:when test="$niveau = 4">
-												<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club1]/nomCourt"/>
-												<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-												<xsl:value-of select="$RefData/structures/ligues/ligue[@ID = $ligue1]/nomCourt"/>
-											</xsl:when>
-											<!-- Niveau National 5 -->
-											<!-- Niveau International 6 -->
-											<xsl:when test="$niveau = 5 or $niveau = 6">
-												<xsl:value-of select="$RefData/structures/lesPays/pays[@ID = $pays1]/@abr3"/>
-											</xsl:when>
-											<!-- Par defaut, on prend le club -->
-											<xsl:otherwise>
-												<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club1]/nomCourt"/>
-											</xsl:otherwise>
-										</xsl:choose>
+										<xsl:call-template name="LibelleStructure">
+											<xsl:with-param name="ecartement" select="$niveauCompetition" />
+											<xsl:with-param name="typeCompetition" select="$typeCompetition"/>
+											<xsl:with-param name="club" select="$club1/nomCourt"  />
+											<xsl:with-param name="comite" select="$comite1/@ID" />
+											<xsl:with-param name="ligue" select="$ligue1/nomCourt"/>
+											<xsl:with-param name="pays" select="$pays1/@abr3"/>
+										</xsl:call-template>
 									</td>
 								</tr>
 							</xsl:if>
@@ -581,9 +565,9 @@
 										<xsl:text disable-output-escaping="yes">&#032;En Attente</xsl:text>
 									</xsl:when>
 									<xsl:otherwise>
-										<xsl:value-of select="ancestor::competition/judokas/judoka[@id = $judoka2]/@nom"/>
+										<xsl:value-of select="$j2/@nom"/>
 										<xsl:text disable-output-escaping="yes">&#032;</xsl:text>
-										<xsl:value-of select="ancestor::competition/judokas/judoka[@id = $judoka2]/@prenom"/>
+										<xsl:value-of select="$j2/@prenom"/>
 									</xsl:otherwise>
 								</xsl:choose>
 							</td>
@@ -620,33 +604,14 @@
 						<xsl:if test="not($judoka2 = 'null')">
 							<tr>
 								<td class="w3-tiny">
-									<xsl:choose>
-										<!-- Niveau Club 2 -->
-										<xsl:when test="$niveau = 2">
-											<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club2]/nomCourt"/>
-										</xsl:when>
-										<!-- Niveau Departement 3 -->
-										<xsl:when test="$niveau = 3">
-											<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club2]/nomCourt"/>
-											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="$RefData/structures/comites/comite[@ID = $comite2]/nomCourt"/>
-										</xsl:when>
-										<!-- Niveau Ligue 4 -->
-										<xsl:when test="$niveau = 4">
-											<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club2]/nomCourt"/>
-											<xsl:text disable-output-escaping="yes">&#032;-&#032;</xsl:text>
-											<xsl:value-of select="$RefData/structures/ligues/ligue[@ID = $ligue2]/nomCourt"/>
-										</xsl:when>
-										<!-- Niveau National 5 -->
-										<!-- Niveau International 6 -->
-										<xsl:when test="$niveau = 5 or $niveau = 6">
-											<xsl:value-of select="$RefData/structures/lesPays/pays[@ID = $pays2]/@abr3"/>
-										</xsl:when>
-										<!-- Par defaut, on prend le club -->
-										<xsl:otherwise>
-											<xsl:value-of select="$RefData/structures/clubs/club[@ID = $club2]/nomCourt"/>
-										</xsl:otherwise>
-									</xsl:choose>
+									<xsl:call-template name="LibelleStructure">
+										<xsl:with-param name="ecartement" select="$niveauCompetition" />
+										<xsl:with-param name="typeCompetition" select="$typeCompetition"/>
+										<xsl:with-param name="club" select="$club2/nomCourt"  />
+										<xsl:with-param name="comite" select="$comite2/@ID" />
+										<xsl:with-param name="ligue" select="$ligue2/nomCourt"/>
+										<xsl:with-param name="pays" select="$pays2/@abr3"/>
+									</xsl:call-template>
 								</td>
 							</tr>
 						</xsl:if>
@@ -975,8 +940,8 @@
 
 			<div id="bloc-absents" class="tasClosedPanelType" style="display: none;">
 
-				<div class="w3-right-align" style="margin: 0; padding: 4px 8px 0 0; line-height: 0;">
-					<button id="info-bloc-absentsExpand" class="w3-button w3-transparent" style="padding: 0; margin: 0; min-height: auto;" onclick="togglePanel('info-bloc-absents')">
+				<div class="w3-right-align tas-info-btn-container">
+					<button id="info-bloc-absentsExpand" class="w3-button w3-transparent tas-info-btn" onclick="togglePanel('info-bloc-absents')">
 						<img width="18" alt="Info">
 							<xsl:attribute name="src">
 								<xsl:value-of select="concat($imgPath, 'info-32.png')"/>
@@ -984,11 +949,11 @@
 						</img>
 					</button>
 				</div>
-
-				<div id="info-bloc-absents" class="tasClosedPanelType w3-panel w3-leftbar w3-border-taupe w3-paper w3-display-container" style="display: none; padding: 4px 8px; margin: 0 8px 6px 8px;">
-					<span onclick="togglePanel('info-bloc-absents')" class="w3-button w3-display-topright w3-hover-taupe" style="padding: 2px 8px; background: transparent;">&times;</span>
-					<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
-						<p style="margin: 2px 0;">Ces judokas sont déclarés absents ou leur pesée n'a pas encore été validée.</p>
+				
+				<div id="info-bloc-absents" class="tasClosedPanelType w3-panel w3-leftbar w3-border-taupe w3-paper w3-display-container tas-info-panel" style="display: none;">
+					<span onclick="togglePanel('info-bloc-absents')" class="w3-button w3-display-topright w3-hover-taupe tas-info-close-btn">&times;</span>
+					<div class="w3-tiny w3-text-dark-grey tas-info-text-container">
+						<p class="tas-info-text">Ces judokas sont déclarés absents ou leur pesée n'a pas encore été validée.</p>
 					</div>
 				</div>
 
@@ -1002,6 +967,23 @@
 										<strong>
 											<xsl:value-of select="@nom"/>&nbsp;<xsl:value-of select="@prenom"/>
 										</strong>
+									</td>
+									<td class="w3-cell-middle w3-left-align">
+										<span class="w3-tiny w3-opacity">
+											<xsl:variable name="clubNode" select="$RefData/structures/clubs/club[@ID = current()/@club]"/>
+											<xsl:variable name="comiteNode" select="$RefData/structures/comites/comite[@ID = $clubNode/@comite]"/>
+											<xsl:variable name="ligueNode" select="$RefData/structures/ligues/ligue[@ID = $comiteNode/@ligue]"/>
+											<xsl:variable name="paysNode" select="$RefData/structures/lesPays/pays[@ID = current()/@pays]"/>
+
+											<xsl:call-template name="LibelleStructure">
+												<xsl:with-param name="ecartement" select="$niveauCompetition" />
+												<xsl:with-param name="typeCompetition" select="$typeCompetition" />
+												<xsl:with-param name="club" select="$clubNode/nomCourt" />
+												<xsl:with-param name="comite" select="$comiteNode/@ID" />
+												<xsl:with-param name="ligue" select="$ligueNode/nomCourt" />
+												<xsl:with-param name="pays" select="$paysNode/@abr3" />
+											</xsl:call-template>
+										</span>
 									</td>
 									<td class="w3-right-align w3-cell-middle">
 										<span class="w3-tiny w3-opacity">

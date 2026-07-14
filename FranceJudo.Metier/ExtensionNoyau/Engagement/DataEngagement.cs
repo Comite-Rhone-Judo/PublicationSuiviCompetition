@@ -45,6 +45,7 @@ namespace FranceJudo.Metier.ExtensionNoyau.Engagement
                         listEchelon.Add(EchelonEnum.Departement);
                         listEchelon.Add(EchelonEnum.Ligue);
                         break;
+                        // TODO En international, on n'est pas sur que les informations Dep & Ligue existe on ne va garder que Club et Pays 
                     case (int)EchelonEnum.National:
                     case (int)EchelonEnum.International:
                         listEchelon.Add(EchelonEnum.Club);
