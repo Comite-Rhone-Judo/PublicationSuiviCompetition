@@ -20,7 +20,15 @@ namespace AppPublication.Views.Configuration
 
         private void ButOk_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            EcransAppelGrid?.CommitEdit();
+            if (EcransAppelGrid != null)
+            {
+                // 1. On valide la cellule en cours (le 'true' force la sortie du mode édition)
+                EcransAppelGrid.CommitEdit(System.Windows.Controls.DataGridEditingUnit.Cell, true);
+
+                // 2. On valide la ligne entière pour fermer la transaction globale
+                EcransAppelGrid.CommitEdit(System.Windows.Controls.DataGridEditingUnit.Row, true);
+            }
+
             DialogResult = true;
         }
     }

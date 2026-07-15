@@ -574,6 +574,9 @@
             <DataTrigger Binding="{Binding Path=State}" Value="3">
                 <Setter Property="Fill" Value="BlueViolet"/>
             </DataTrigger>
+            <DataTrigger Binding="{Binding Path=State}" Value="6">
+                <Setter Property="Fill" Value="Coral"/>
+            </DataTrigger>
         </Style.Triggers>
     </Style>
 

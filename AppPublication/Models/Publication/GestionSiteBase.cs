@@ -327,10 +327,11 @@ namespace AppPublication.Models.Publication
 
         /// <summary>Hook exécuté lorsque l'ID de compétition change</summary>
         protected abstract void OnIdCompetitionChanged(string newValue);
-        #endregion
 
         /// <summary>Force le recalcul et le rafraîchissement des URLs de publication pour l'interface</summary>
         public abstract void ForceRefreshUrls();
+        #endregion
+
         #region METHODES COMMUNES
 
         /// <summary>
@@ -405,6 +406,17 @@ namespace AppPublication.Models.Publication
                     cpy.NextGenerationSec = (int)evt.DelaiNextSec;
                 }
             });
+        }
+
+        /// <summary>
+        /// Met à jour l'état de la connexion réseau pour le scheduler
+        /// </summary>
+        public virtual void SetConnectionStatus(bool isConnected)
+        {
+            if (_schedulerSite != null)
+            {
+                _schedulerSite.IsClientConnected = isConnected;
+            }
         }
         #endregion
     }

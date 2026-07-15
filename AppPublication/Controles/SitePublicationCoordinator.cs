@@ -400,6 +400,15 @@ namespace AppPublication.Controles
             _gestionSiteInterne.InitFromConfigFile();
         }
 
+        /// <summary>
+        /// Propage le statut de connexion réseau aux gestionnaires de sites
+        /// </summary>
+        public void SetConnectionStatus(bool isConnected)
+        {
+            GestionnaireSitePublique?.SetConnectionStatus(isConnected);
+            GestionnaireSiteInterne?.SetConnectionStatus(isConnected);
+        }
+
         #endregion
 
         #region METHODES PRIVEES

@@ -51,6 +51,9 @@ namespace AppPublication.Generation
         readonly private IGenerateurSite _generateur;            // le generateur de site
 
         private long _generationCounter = 0;                        // Nombre de generation realisees depuis le demarrage
+
+        private bool _isClientConnected = true;
+        private bool _derniereGenerationDeSecuriteEffectuee = false;
         // --- Événement unique pour tout _statMgr d'état (Interne ou Métier) ---
         public event EventHandler<SchedulerStateEventArgs> StateChanged;
 
@@ -86,6 +89,31 @@ namespace AppPublication.Generation
         #endregion
 
         #region PROPRIETES
+
+        /// <summary>
+        /// Indique si le client est actuellement connecté au réseau
+        /// </summary>
+        public bool IsClientConnected
+        {
+            get { return _isClientConnected; }
+            set
+            {
+                if (_isClientConnected != value)
+                {
+                    _isClientConnected = value;
+                    if (_isClientConnected)
+                    {
+                        // Reconnexion : On RAZ le drapeau pour la prochaine boucle
+                        _derniereGenerationDeSecuriteEffectuee = false;
+                        LogTools.Logger?.Info("Connexion rétablie. Reprise de la génération planifiée.");
+                    }
+                    else
+                    {
+                        LogTools.Logger?.Warn("Perte de connexion. Une dernière génération de sécurité sera effectuée.");
+                    }
+                }
+            }
+        }
 
         TaskExecutionInformation _statGeneration;
         /// <summary>
@@ -356,6 +384,31 @@ namespace AppPublication.Generation
             {
                 if (DateTime.Now >= wakeUpTime)
                 {
+                    // --- LOGIQUE DE PAUSE ACTIVE ---
+                    if (!IsClientConnected)
+                    {
+                        if (_derniereGenerationDeSecuriteEffectuee)
+                        {
+                            // On utilise le délai normal de génération pour le prochain essai de reconnexion
+                            wakeUpTime = DateTime.Now.AddSeconds(DelaiGenerationSec);
+
+                            // ON MET À JOUR UNIQUEMENT LA PROCHAINE DATE
+                            // La date de dernière génération (DateDemarrage) reste intacte !
+                            DerniereGeneration.DateProchaineGeneration = wakeUpTime;
+
+                            // On notifie l'IHM (le Converter fera le reste automatiquement)
+                            await RaiseStateAsync(StateGenerationEnum.Suspended, DerniereGeneration, -1);
+
+                            continue;
+                        }
+                        else
+                        {
+                            LogTools.Logger?.Debug("Exécution de la génération de sécurité post-déconnexion.");
+                            _derniereGenerationDeSecuriteEffectuee = true;
+                        }
+                    }
+                    // ----------------------------------------
+
                     // Pour controler la duree total par rapport au timer
                     Stopwatch watcherTotal = new Stopwatch();
                     watcherTotal.Start();
@@ -376,7 +429,7 @@ namespace AppPublication.Generation
                                 // Enregistre le demarrage de la generation via StatExecution
                                 TaskExecutionInformation statGeneration = new TaskExecutionInformation();
 
-                                // Lance la tache du generateyr en mesurant son temps de travail
+                                // Lance la tache du generateur en mesurant son temps de travail
                                 TimedResult<ResultatOperation> genTime = await ActionWatcher.ExecuteAsync(async () =>
                                 {
                                     return await _generateur.ExecuteGeneration();

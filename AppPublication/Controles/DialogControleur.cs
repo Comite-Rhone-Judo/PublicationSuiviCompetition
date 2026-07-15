@@ -1190,6 +1190,9 @@ namespace AppPublication.Controles
         private void OnClientReady(object sender, ClientReadyEventArgs e)
         {
             LogTools.Logger?.Info("Client connecte et pret: {0}", e.Client.NetworkClient.IP);
+
+            // --- NOUVEAU : Signale le retour du réseau ---
+            SiteCoordinator?.SetConnectionStatus(true);
         }
 
         /// <summary>
@@ -1197,7 +1200,7 @@ namespace AppPublication.Controles
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
+        private async void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
         {
             LogTools.Logger?.Info("Client deconnecte a {0}", e.DisconnectionTime);
 
@@ -1206,6 +1209,9 @@ namespace AppPublication.Controles
                 this.IsBusy = false;
                 this.BusyStatus = BusyStatusEnum.None;
             });
+
+            // --- NOUVEAU : Signale la perte du réseau ---
+            SiteCoordinator?.SetConnectionStatus(false);
         }
         #endregion
 
