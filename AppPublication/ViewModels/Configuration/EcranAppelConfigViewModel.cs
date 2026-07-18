@@ -157,7 +157,26 @@ namespace AppPublication.ViewModels.Configuration
             }
         }
 
+        /// <summary>
+        /// Indique si on doit afficher la catégorie d'âge sur l'écran d'appel
+        /// </summary>
+        public bool AfficheCategorieAge
+        {
+            get => _model.AfficheCategorieAge;
+            set
+            {
+                if (_model.AfficheCategorieAge != value)
+                {
+                    _model.AfficheCategorieAge = value;
+                    NotifyPropertyChanged();
+                    var cfg = GetConfigElement();
+                    cfg?.AfficheCategorieAge = value;
+                    _onModelChanged?.Invoke();
+                }
+            }
+        }
 
+      
         /// <summary>
         /// Options pour la Dropdown de disposition (extraites dynamiquement de l'enum)
         /// </summary>

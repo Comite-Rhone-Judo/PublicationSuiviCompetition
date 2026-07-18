@@ -413,8 +413,11 @@ namespace AppPublication.Generation
                             // Extrait les fichiers generes qui sont differents du cache
                             List<FileWithChecksum> chkToSync = _checksumGenere.Except(_checksumCache, new FileWithChecksumComparer()).ToList();
                             filesToSync = chkToSync.Select(o => o.File).ToList();
+                            
+                            
+                            // TODO Avoir une trace en debug pour s'assurer que les fichiers sont bien pris en diff
                             // For Debug only
-                            if (filesToSync.Count <= 0)
+                            if (filesToSync.Count > 0)
                             {
                                 LogTools.Logger?.Debug("Fichiers a synchroniser: {0}", string.Join(",", filesToSync.Select(f => f.Name)));
                             }

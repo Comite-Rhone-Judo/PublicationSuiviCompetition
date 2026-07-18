@@ -73,11 +73,10 @@
                 </Button>
 
                 <StackPanel Grid.Row="2" Grid.Column="4" Orientation="Horizontal" Margin="0 -5 0 0">
-                    <CheckBox Style="{StaticResource CheckboxStyle}"
+                    <CheckBox Content="Effacer au démarrage" Style="{StaticResource CheckboxStyle}"
                             IsChecked="{Binding Path=EffacerAuDemarrage}"
-                            Margin="0 0 0 0">
+                            Margin="0 0 10 0">
                     </CheckBox>
-                    <Label HorizontalAlignment="Right" Content="Effacer au démarrage" Style="{StaticResource LabelStyle}"/>
                     <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, supprime tout le contenu préalable du répertoire au démarrage. Le site distant sera également effacé."/>
                 </StackPanel>
 

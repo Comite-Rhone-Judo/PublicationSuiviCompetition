@@ -32,6 +32,9 @@ namespace AppPublication.Models.EcransAppel
         public List<int> TapisIds { get; set; }
 
         public bool AjusteTailleTexte { get; set; }
+
+        public bool AfficheCategorieAge { get; set; } = false;
+
         public int NbCombatsPage { get; set; }
 
         public int Groupement { get; set; }
@@ -42,7 +45,7 @@ namespace AppPublication.Models.EcransAppel
         #endregion
 
         #region CONSTRUCTEUR
-        public EcranAppelModel(int id = 0, string description = "Nouvel Écran", string hostname = "", IPAddress adresseIP = null, List<int> tapisIds = null, int groupement = 1, DispositionAffichage disposition = DispositionAffichage.Colonne, DispositionAffichage dispositionCombat = DispositionAffichage.Colonne, bool ajusteTexte = false, int nbCombatPage = 8)
+        public EcranAppelModel(int id = 0, string description = "Nouvel Écran", string hostname = "", IPAddress adresseIP = null, List<int> tapisIds = null, int groupement = 1, DispositionAffichage disposition = DispositionAffichage.Colonne, DispositionAffichage dispositionCombat = DispositionAffichage.Colonne, bool ajusteTexte = false, int nbCombatPage = 8, bool afficheCategorieAge = false)
         {
             Id = id;
             Description = description;
@@ -54,6 +57,7 @@ namespace AppPublication.Models.EcransAppel
             DispositionCombat = dispositionCombat; // Initialisation
             AjusteTailleTexte = ajusteTexte;
             NbCombatsPage = nbCombatPage;
+            AfficheCategorieAge = false;
         }
         #endregion
 
@@ -71,7 +75,8 @@ namespace AppPublication.Models.EcransAppel
                 Disposition = this.Disposition,
                 DispositionCombat = this.DispositionCombat,
                 AjusteTailleTexte = this.AjusteTailleTexte,
-                NbCombatsPage = this.NbCombatsPage
+                NbCombatsPage = this.NbCombatsPage,
+                AfficheCategorieAge = this.AfficheCategorieAge
             };
         }
         #endregion

@@ -144,6 +144,8 @@ namespace AppPublication.Export
                 // Option d'auto ajustement du texte en fonction de la taille du groupe
                 ecransParams.Add(("ajusteTexteAuto", ecran.AjusteTailleTexte ? "true" : "false"));
 
+                ecransParams.Add(("afficheCategorieAge", ecran.AfficheCategorieAge ? "true" : "false"));
+
                 // Les arguments XSLT (inclut la structure du site et le chemin cible)
                 var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, ecransParams.ToArray());
 

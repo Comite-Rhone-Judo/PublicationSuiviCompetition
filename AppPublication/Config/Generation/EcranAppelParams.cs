@@ -15,6 +15,7 @@ namespace AppPublication.Config.Generation
         private DispositionAffichage _dispositionCombat = DispositionAffichage.Colonne;
         private bool _ajusteTexteAuto = false;
         private int _nbCombatsPage = 5;
+        private bool _afficheCategorieAge = false;
 
         public string Hostname { get => _hostname; set => SetValue(ref _hostname, value); }
         public int Id { get => _id; set => SetValue(ref _id, value); }
@@ -26,5 +27,7 @@ namespace AppPublication.Config.Generation
         public DispositionAffichage DispositionCombat { get => _dispositionCombat; set => SetValue(ref _dispositionCombat, value); }
         public bool AjusteTexteAuto { get => _ajusteTexteAuto; set => SetValue(ref _ajusteTexteAuto, value); }
         public int NbCombatsPage { get => _nbCombatsPage; set => SetValue(ref _nbCombatsPage, value); }
+
+        public bool AfficheCategorieAge { get => _afficheCategorieAge; set => SetValue(ref _afficheCategorieAge, value); }
     }
 }

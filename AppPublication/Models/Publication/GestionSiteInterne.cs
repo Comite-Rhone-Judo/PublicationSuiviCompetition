@@ -313,6 +313,7 @@ namespace AppPublication.Models.Publication
                             Disposition = cfg.Disposition,
                             DispositionCombat = cfg.DispositionCombat,
                             AjusteTailleTexte = cfg.AjusteTexteAuto,
+                            AfficheCategorieAge = cfg.AfficheCategorieAge,
                             NbCombatsPage = cfg.NbCombatsPage
                         };
 

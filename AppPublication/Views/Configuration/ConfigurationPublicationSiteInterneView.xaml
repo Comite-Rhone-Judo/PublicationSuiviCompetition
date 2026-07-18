@@ -8,7 +8,7 @@
             xmlns:local="clr-namespace:AppPublication.Views.Configuration"
             xmlns:fj="clr-namespace:FranceJudo.UI.Wpf.Controls;assembly=FranceJudo.UI"
             mc:Ignorable="d"
-            Title="Configuration de la chambre d'appel" Height="540" Width="960" Background="Black">
+            Title="Configuration de la chambre d'appel" Height="540" Width="1030" Background="Black">
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding GestionnaireSiteInterne.ConfigurationEcransViewModel.CmdOnLoaded}" />
@@ -32,7 +32,7 @@
             <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource Header1Style}" Margin="10 10 10 5" Visibility="Visible" >
                 <TextBlock Text="Publication" Style="{StaticResource Header1TextStyle}"/>
             </StackPanel>
-        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="White" Margin="10,0,10,10" Width="920" Height="50">
+        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="White" Margin="10,0,10,10" Width="1010" Height="50">
             <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="0 0 0 0" HorizontalAlignment="Center">
                 <StackPanel Orientation="Horizontal" Margin="0 0 0 0">
                     <Label  HorizontalAlignment="Right" Content="Déroulement :" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
@@ -62,7 +62,7 @@
             <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource Header1Style}" Margin="10 0 10 5" Visibility="Visible" >
                 <TextBlock Text="Ecrans d'appel" Style="{StaticResource Header1TextStyle}"/>
             </StackPanel>
-        <Border BorderThickness="1" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="White" Margin="10,0,10,10" Width="920" Height="300">
+        <Border BorderThickness="1" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="White" Margin="10,0,10,10" Width="1010" Height="300">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
@@ -96,7 +96,7 @@
           EnableColumnVirtualization="True"
           Margin="10,10,0,10"
           ScrollViewer.VerticalScrollBarVisibility="Auto"
-          Width="890">
+          Width="985">
 
                     <DataGrid.Columns>
 
@@ -280,6 +280,37 @@
                                             <Setter TargetName="ComboDispositionCombat" Property="IsEnabled" Value="False" />
                                         </DataTrigger>
                                     </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellEditingTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Width="85">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="Cat. age" ToolTip="Affiche la catégorie d'âge dans les informations du combat" />
+                            </DataGridTemplateColumn.Header>
+
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="Masquée" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding AfficheCategorieAge}" Value="True">
+                                                        <Setter Property="Text" Value="Affichée" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+
+                            <DataGridTemplateColumn.CellEditingTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding AfficheCategorieAge, Mode=TwoWay}"
+                              Content="Affichée"
+                              VerticalAlignment="Center" HorizontalAlignment="Center" Margin="2"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellEditingTemplate>
                         </DataGridTemplateColumn>

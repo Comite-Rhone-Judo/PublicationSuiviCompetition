@@ -26,6 +26,7 @@
 	<xsl:param name="combatsParPageEff"/>
 	<xsl:param name="isAffichageCombatLigne" select="'false'"/>
 	<xsl:param name="ajusteTexteAuto" select="'false'"/>
+	<xsl:param name="afficheCategorieAge" select="'false'"/>
 	
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 
@@ -442,13 +443,13 @@
 				<div>
 					<xsl:attribute name="class">
 						<xsl:text>w3-card w3-pale-yellow w3-round-small cat-box</xsl:text>
-						<xsl:if test="$typeCompetition = '1' or $affDiscipline"> cat-box-equipe</xsl:if>
+						<xsl:if test="$typeCompetition = '1' or $affDiscipline or $afficheCategorieAge = 'true'"> cat-box-equipe</xsl:if>
 					</xsl:attribute>
 					<div class="dyn-txt-cat-titre">
 						<xsl:value-of select="$docPrincipal//epreuve[@ID = $epreuve]/@sexe"/>
 						<xsl:text>&#32;</xsl:text>
 						<xsl:value-of select="$docPrincipal//epreuve[@ID = $epreuve]/@nom"/>
-					</div>
+					</div>					
 					<div class="dyn-txt-cat-sub">
 						(<xsl:call-template name="NiveauTourCombat">
 							<xsl:with-param name="combat" select="$combat"/>
@@ -494,6 +495,14 @@
 										<xsl:when test="$docPrincipal//epreuve[@ID = $epreuve]/@discipline_competition = 3">NeWaza</xsl:when>
 									</xsl:choose>
 									<xsl:text> - </xsl:text>
+									<xsl:value-of select="$docPrincipal//epreuve[@ID = $epreuve]/@nom_cateage"/>
+								</div>
+							</div>
+						</xsl:when>
+						<!-- Catégorie d'âge seule (Judo classique) -->
+						<xsl:when test="$afficheCategorieAge = 'true'">
+							<div class="cartouche-equipe-wrapper">
+								<div class="cartouche-equipe w3-text-dark-grey" style="font-weight: bold; opacity: 0.85;">
 									<xsl:value-of select="$docPrincipal//epreuve[@ID = $epreuve]/@nom_cateage"/>
 								</div>
 							</div>

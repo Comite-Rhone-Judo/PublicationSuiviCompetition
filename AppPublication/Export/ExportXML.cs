@@ -167,7 +167,7 @@ namespace AppPublication.Export
                 LogTools.Logger?.Debug(ex);
                 return new XElement(ConstantXML.Ceintures);
             }
-        } 
+        }
 
         #endregion
 

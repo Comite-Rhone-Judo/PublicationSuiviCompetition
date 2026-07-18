@@ -19,6 +19,7 @@ namespace AppPublication.Tests.Config.Generation
             Assert.Equal(1, ecran.Groupement);
             Assert.Equal(string.Empty, ecran.TapisIds);
             Assert.False(ecran.AjusteTexteAuto);
+            Assert.False(ecran.AfficheCategorieAge);
             Assert.Equal(5, ecran.NbCombatsPage);
         }
 
