@@ -32,7 +32,7 @@
             <Button x:Name="ButOk" Click="ButOk_Click" Width="70" Height="25" >
                 <Grid>
                     <!--<Image Source="pack://application:,,,/FranceJudo.UI.Wpf;component/Resources/Media/Icons/black/ok-32.png" Height="25" Margin="5 0"/>-->
-                    <TextBlock x:Name="ButOkLabel"  Text="Ok" Foreground="White"/>
+                    <TextBlock x:Name="ButOkLabel"  Text="OK" Foreground="White"/>
                 </Grid>
             </Button>
             <Button x:Name="ButAnnuler" Click="ButAnnuler_Click" Margin="10 0 0 0"  Width="70" Height="25" >

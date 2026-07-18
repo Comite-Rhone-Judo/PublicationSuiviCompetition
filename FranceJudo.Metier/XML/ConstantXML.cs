@@ -452,6 +452,7 @@
         public const string Phase_Ecartement = "ecartement";
         public const string Phase_Date_Tirage = "date_tirage";
         public const string Phase_Time_Tirage = "time_tirage";
+        public const string Phase_Ordre = "ordre";
 
 
         //Feuilles 

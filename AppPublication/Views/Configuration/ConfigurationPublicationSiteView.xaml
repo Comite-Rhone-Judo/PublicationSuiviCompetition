@@ -44,7 +44,7 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-                    <Label HorizontalAlignment="Right" Content="Actualisation du site:" Style="{StaticResource LabelStyle}" />
+                    <Label HorizontalAlignment="Right" Content="Actualisation du site :" Style="{StaticResource LabelStyle}" />
                     <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en secondes entre 2 générations du site pour le grand public."/>
                     <hc:NumericUpDown Value="{Binding GestionnaireSitePublique.DelaiGenerationSec}" 
                                        Width="100" Height="20" 
@@ -55,8 +55,8 @@
                 </StackPanel>
                
                 <StackPanel Grid.Row="0" Grid.Column="2"  Orientation="Horizontal" Margin="0 0 0 0">
-                    <Label  HorizontalAlignment="Right" Content="Actualisation du client:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
-                    <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en secondes d'actualisation automatique du site coté client si l'utilisateur coche la case 'Actualiser'."/>
+                    <Label  HorizontalAlignment="Right" Content="Actualisation du client :" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
+                    <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en secondes d'actualisation automatique du site côté client si l'utilisateur coche la case 'Actualiser'."/>
                     <hc:NumericUpDown   Value="{Binding GestionnaireSitePublique.DelaiActualisationClientSec}" 
                                        Width="100" Height="20" 
                                        Minimum="10" Maximum="600" 
@@ -80,10 +80,10 @@
                     IsChecked="{Binding Path=GestionnaireSitePublique.PouleToujoursEnColonnes, Converter={StaticResource BoolNotConverter}}"
                     IsEnabled="{Binding Path=GestionnaireSitePublique.PouleEnColonnes, Mode=OneWay}"
                     Margin="0 0 0 0"
-                    Content="taille max. poule en colonne:">
+                    Content="taille max. poule en colonne :">
                         </CheckBox>
                         <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0"
-                       ToolTip="Taille minimale de la poule au dessus de laquelle la disposition est en diagonale."/>
+                       ToolTip="Taille minimale de la poule au-dessus de laquelle la disposition est en diagonale."/>
                         <hc:NumericUpDown Grid.Row="2" Grid.Column="3" 
                        Value="{Binding GestionnaireSitePublique.TailleMaxPouleColonnes}" 
                        Width="80" Height="20" 
@@ -122,8 +122,8 @@
                     </StackPanel>
                     <StackPanel Orientation="Vertical" VerticalAlignment="Top">
                         <StackPanel Orientation="Horizontal" Margin="30 0 0 -5">
-                            <Label HorizontalAlignment="Right" Content="Profondeur chambre d'appel:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
-                            <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Nombres de combats à afficher dans la chambre d'appel."/>
+                            <Label HorizontalAlignment="Right" Content="Profondeur chambre d'appel :" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
+                            <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Nombre de combats à afficher dans la chambre d'appel."/>
                             <hc:NumericUpDown IsEnabled="{Binding Path=GestionnaireSitePublique.PublierProchainsCombats, Mode=OneWay}" 
                                                Value="{Binding GestionnaireSitePublique.NbProchainsCombats}" 
                                                Width="80" MinHeight="26" 
@@ -133,7 +133,7 @@
                         </StackPanel>
                         <StackPanel Orientation="Vertical" Margin="30 0 0 -5">
                             <StackPanel Orientation="Horizontal" >
-                                <Label HorizontalAlignment="Right" Content="Message d'avertissement:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
+                                <Label HorizontalAlignment="Right" Content="Message d'avertissement :" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
                                 <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Message d'avertissement affiché au début des pages 'Prochains combats' et 'Se prépare'."/>
                             </StackPanel>
                             <TextBox  TextWrapping="Wrap" Height="24" VerticalScrollBarVisibility="Auto" Margin="5 5 5 5" MinWidth="300"
@@ -146,7 +146,7 @@
                 <StackPanel Grid.Row="4" Grid.Column="2"  Orientation="Vertical" Visibility="{Binding Path=GestionnaireSitePublique.CanPublierEngagements, Converter={StaticResource BoolToVisibilityConverter}}">
                     <StackPanel  Orientation="Horizontal">
                         <CheckBox   Content="Publier 'Engagements'" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=GestionnaireSitePublique.PublierEngagements}"/>
-                        <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, provoque l'ajout du menu 'Engagements' qui liste les engagés, leurs statuts et leurs combats à venir. Disponible uniquement en compétition Individuelle ou Shiai.&#x0a;ATTENTION, cette option augmente sensiblement le temps de génération et le nombre de fichiers a transférer."/>
+                        <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, provoque l'ajout du menu 'Engagements' qui liste les engagés, leurs statuts et leurs combats à venir. Disponible uniquement en compétition Individuelle ou Shiai.&#x0a;ATTENTION, cette option augmente sensiblement le temps de génération et le nombre de fichiers à transférer."/>
                     </StackPanel>
 
                     <StackPanel Orientation="Vertical" Margin="25 0 0 0">
@@ -212,7 +212,7 @@
         <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Top" Orientation="Horizontal" Grid.Row="2" Margin="0,0,0,0" Grid.ColumnSpan="2" Grid.Column="0" >
             <Button x:Name="ButOk" Width="70" Height="30"  Click="ButOk_Click">
                 <Grid>
-                    <TextBlock x:Name="ButOkLabel"  Text="Ok" Style="{StaticResource ButtonLabelStyle}" Foreground="White"/>
+                    <TextBlock x:Name="ButOkLabel"  Text="OK" Style="{StaticResource ButtonLabelStyle}" Foreground="White"/>
                 </Grid>
             </Button>
         </WrapPanel>

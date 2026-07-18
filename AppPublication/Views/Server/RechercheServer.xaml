@@ -7,7 +7,7 @@
             Title="Recherche d'un serveur" WindowStartupLocation="CenterScreen" 
             ResizeMode="CanResize" 
             Background="Black"
-            WindowState="Normal" Name="UI" Width="800" Height="600" Closed="UI_Closed">
+            WindowState="Normal" Name="UI" Width="800" Height="320" Closed="UI_Closed">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>

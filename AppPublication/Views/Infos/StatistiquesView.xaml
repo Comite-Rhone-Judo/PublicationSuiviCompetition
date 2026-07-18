@@ -87,7 +87,7 @@
         <Border BorderThickness="1" Grid.Row="1" Grid.Column="1" BorderBrush="White" Margin="10 0 10 10" >
             <StackPanel Orientation="Vertical">
                 <!-- SECTION SYNCHRONISATION COMPLETE -->
-                <Label HorizontalAlignment="Left" Content="Synchronisation Complète" Style="{StaticResource HeaderStyle}" />
+                <Label HorizontalAlignment="Left" Content="Synchronisation complète" Style="{StaticResource HeaderStyle}" />
                 <DataGrid ItemsSource="{Binding Synchronisation.CompteursSynchronisationComplete}" AutoGenerateColumns="False" Style="{StaticResource GridViewStyle1}"
                     CanUserDeleteRows="False" CanUserAddRows="False">
                     <DataGrid.Columns>

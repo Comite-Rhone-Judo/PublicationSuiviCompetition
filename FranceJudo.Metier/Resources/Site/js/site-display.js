@@ -77,9 +77,17 @@ function toggleAutoRefresh(cb) {
         // 1er refresh quasi-immédiat (comme dans votre ancien code)
         gReloading = setTimeout(function () { window.location.reload(); }, 100);
     } else {
-        // On nettoie l'URL et on coupe le timer
-        window.location.replace("#");
+        // On coupe le timer IMMÉDIATEMENT
         clearTimeout(gReloading);
+        gReloading = null;
+
+        // On nettoie l'URL (retrait du #) SANS provoquer de rechargement
+        if (window.history && window.history.replaceState) {
+            // Conserve l'URL exacte (avec le paramètre anti-cache ?t=...) mais retire le hash
+            history.replaceState(null, null, window.location.pathname + window.location.search);
+        } else {
+            window.location.hash = ""; // Fallback pour très vieux navigateurs
+        }
     }
 }
 

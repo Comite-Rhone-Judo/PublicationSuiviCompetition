@@ -155,9 +155,136 @@
 
 	<!-- Bouton avancement par epreuve -->
 	<xsl:template name="avancement_epreuve" match="epreuve">
-		<!-- <xsl:variable select="number(./@typePhase)" name="type1"/> -->
-		<!--<xsl:variable select="number(./@typePhase)" name="type2"/>-->
+		<!-- Préparation du nom de l'épreuve (ex: "Seniors M -73kg") -->
+		<xsl:variable name="nomEpreuve" select="./@nom"/>
 
+		<!-- On sauvegarde le répertoire avant la boucle -->
+		<xsl:variable name="dirEpreuve" select="./@directory" />
+
+		<!-- Comptage du nombre de phases pour déterminer l'affichage -->
+		<xsl:variable name="nbPhases" select="count(./phases/phase)" />
+
+		<xsl:choose>
+			<!-- ========================================== -->
+			<!-- CAS 1 : L'ÉPREUVE N'A QU'UNE SEULE PHASE   -->
+			<!-- ========================================== -->
+			<xsl:when test="$nbPhases = 1">
+				<xsl:for-each select="./phases/phase">
+
+					<xsl:variable name="etat" select="number(@etat)" />
+					<xsl:variable name="typePhase" select="number(@typePhase)" />
+
+					<xsl:variable name="libellePhase">
+						<xsl:choose>
+							<xsl:when test="$typePhase = 1">Poules</xsl:when>
+							<xsl:when test="$typePhase = 2">Tableau</xsl:when>
+							<xsl:otherwise>Phase</xsl:otherwise>
+						</xsl:choose>
+					</xsl:variable>
+
+					<xsl:variable name="page">
+						<xsl:choose>
+							<xsl:when test="$typePhase = 1">poules_resultats.html</xsl:when>
+							<xsl:otherwise>tableau_competition.html</xsl:otherwise>
+						</xsl:choose>
+					</xsl:variable>
+
+					<xsl:choose>
+						<xsl:when test="$etat &gt;= 2">
+							<!-- Actif : Tirage Effectué ou + -->
+							<!-- CORRECTION LIENS CASSÉS : Utilisation de la variable $dirEpreuve -->
+							<a class="w3-button w3-panel w3-card w3-block w3-pale-yellow w3-large w3-round-large w3-padding-small" href="{concat($competitionPath, $dirEpreuve, $page)}">
+								<xsl:value-of select="$nomEpreuve"/>
+								<xsl:text> - </xsl:text>
+								<xsl:value-of select="$libellePhase"/>
+							</a>
+						</xsl:when>
+						<xsl:otherwise>
+							<!-- Inactif (Grisé) : Créé ou Non Créé -->
+							<div class="w3-panel w3-card w3-block w3-paper w3-text-dark-grey w3-large w3-round-large w3-padding-small w3-center w3-opacity" style="cursor: not-allowed; margin-bottom: 16px;">
+								<div>
+									<xsl:value-of select="$nomEpreuve"/>
+									<xsl:text> - </xsl:text>
+									<xsl:value-of select="$libellePhase"/>
+								</div>
+								<div class="w3-tiny">
+									<i>(Tirage en attente)</i>
+								</div>
+							</div>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:for-each>
+			</xsl:when>
+
+			<!-- ========================================== -->
+			<!-- CAS 2 : L'ÉPREUVE A PLUSIEURS PHASES       -->
+			<!-- ========================================== -->
+			<xsl:when test="$nbPhases &gt; 1">
+				<div class="w3-card w3-round-large w3-margin-bottom" style="overflow: hidden">
+
+					<!-- En-tête de l'épreuve -->
+					<div class="w3-center w3-padding-small w3-large w3-border-bottom w3-pale-yellow">
+							<xsl:value-of select="$nomEpreuve"/>
+					</div>
+
+					<!-- Conteneur vertical -->
+					<div class="w3-padding">
+
+						<xsl:for-each select="./phases/phase">
+							<!-- SÉCURITÉ : Tri garanti par l'attribut calculé en C# -->
+							<xsl:sort select="@ordre" data-type="number" order="ascending"/>
+
+							<xsl:variable name="etat" select="number(@etat)" />
+							<xsl:variable name="typePhase" select="number(@typePhase)" />
+
+							<xsl:variable name="libellePhase">
+								<xsl:choose>
+									<xsl:when test="$typePhase = 1">Phase de Poules</xsl:when>
+									<xsl:when test="$typePhase = 2">Phase de Tableau</xsl:when>
+									<xsl:otherwise>Phase</xsl:otherwise>
+								</xsl:choose>
+							</xsl:variable>
+
+							<xsl:variable name="page">
+								<xsl:choose>
+									<xsl:when test="$typePhase = 1">poules_resultats.html</xsl:when>
+									<xsl:otherwise>tableau_competition.html</xsl:otherwise>
+								</xsl:choose>
+							</xsl:variable>
+
+							<!-- Ligne de la phase -->
+							<div>
+								<!-- Marge inférieure pour espacer les boutons, sauf sur le dernier -->
+								<xsl:if test="position() != last()">
+									<xsl:attribute name="style">margin-bottom: 8px;</xsl:attribute>
+								</xsl:if>
+
+								<xsl:choose>
+									<xsl:when test="$etat &gt;= 2">
+										<!-- Actif -->
+										<!-- CORRECTION LIENS CASSÉS : Utilisation de la variable $dirEpreuve -->
+										<a class="w3-button w3-block w3-sand w3-card w3-round w3-padding-small" href="{concat($competitionPath, $dirEpreuve, $page)}">
+											<xsl:value-of select="$libellePhase"/>
+										</a>
+									</xsl:when>
+									<xsl:otherwise>
+										<!-- Inactif (Grisé) -->
+										<div class="w3-paper w3-text-dark-grey w3-card w3-round w3-padding-small w3-center w3-opacity" style="cursor: not-allowed;">
+												<xsl:value-of select="$libellePhase"/>
+											<div class="w3-tiny">
+												<i>(Tirage en attente)</i>
+											</div>
+										</div>
+									</xsl:otherwise>
+								</xsl:choose>
+							</div>
+						</xsl:for-each>
+					</div>
+				</div>
+			</xsl:when>
+		</xsl:choose>
+		
+		<!--
 		<xsl:if test="count(./phases/phase[number(@typePhase) = 1]) > 0">
 			<a class="w3-button w3-panel w3-card w3-block w3-pale-yellow w3-large w3-round-large w3-padding-small">
 				<xsl:attribute name="href">
@@ -165,10 +292,9 @@
 				</xsl:attribute>
 				<xsl:value-of select="./@libelle"/>
 				<xsl:value-of select="./@nom"/>
-				<xsl:text>&#32;Poules</xsl:text>
+				<xsl:text>&#32;Poules</xsl:text> 
 			</a>
 		</xsl:if>
-		<!-- Pour les tableaux, on tient compte du cas des Poule/tableau dont le tirage n'a pas encore ete fait (poule pas terminees) -->
 		<xsl:if test="count(./phases/phase[number(@typePhase) = 2 and number(@etat) > 0]) > 0">
 			<a class="w3-button w3-panel w3-card w3-block w3-pale-yellow w3-large w3-round-large w3-padding-small">
 				<xsl:attribute name="href">
@@ -179,5 +305,6 @@
 				<xsl:text>&#32;Tableau</xsl:text>
 			</a>
 		</xsl:if>
+		-->
 	</xsl:template>
 </xsl:stylesheet>

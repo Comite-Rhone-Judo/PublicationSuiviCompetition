@@ -35,7 +35,7 @@
         <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="White" Margin="10,0,10,10" Width="920" Height="50">
             <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="0 0 0 0" HorizontalAlignment="Center">
                 <StackPanel Orientation="Horizontal" Margin="0 0 0 0">
-                    <Label  HorizontalAlignment="Right" Content="Déroulement:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
+                    <Label  HorizontalAlignment="Right" Content="Déroulement :" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
                     <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0"
                        ToolTip="Délai en secondes de déroulement des informations."/>
                     <hc:NumericUpDown  Value="{Binding GestionnaireSiteInterne.DelaiDeroulementSec}" Width="100" Height="20" Minimum="1" Maximum="600" Increment="1" DecimalPlaces="0" Margin="10 0 0 0"/>
@@ -43,14 +43,14 @@
                 </StackPanel>
                 <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                 <StackPanel Orientation="Horizontal" Margin="0 0 10 0">
-                    <Label  HorizontalAlignment="Right" Content="Profondeur:" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
+                    <Label  HorizontalAlignment="Right" Content="Profondeur :" Style="{StaticResource LabelStyle}" Margin="0 0 0 0"/>
                     <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0"
                        ToolTip="Nombre de combats à prendre en compte dans la chambre d'appel"/>
                     <hc:NumericUpDown  Value="{Binding GestionnaireSiteInterne.NbProchainsCombats}" Width="100" Height="20" Minimum="1" Maximum="99" Increment="1" DecimalPlaces="0" Margin="10 0 0 0"/>
                 </StackPanel>
                 <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                 <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal">
-                    <Label HorizontalAlignment="Right" Content="Actualisation du site:" Style="{StaticResource LabelStyle}" />
+                    <Label HorizontalAlignment="Right" Content="Actualisation du site :" Style="{StaticResource LabelStyle}" />
                     <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Délai en secondes entre 2 générations du site interne."/>
                     <hc:NumericUpDown  Value="{Binding GestionnaireSiteInterne.DelaiGenerationSec}" Width="100" Height="20" Minimum="10" Maximum="600" Increment="10" DecimalPlaces="0" Margin="10 0 0 0"/>
                     <Label HorizontalAlignment="Right" Content="Sec." Style="{StaticResource LabelStyle}" />
@@ -102,7 +102,7 @@
 
                         <DataGridTextColumn Binding="{Binding Id}" IsReadOnly="True" Width="30">
                             <DataGridTextColumn.Header>
-                                <TextBlock Text="N°" ToolTip="ID autogénéré de l'écran" />
+                                <TextBlock Text="N°" ToolTip="ID de l'écran (généré automatiquement)" />
                             </DataGridTextColumn.Header>
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -286,7 +286,7 @@
 
                         <DataGridTemplateColumn Width="85">
                             <DataGridTemplateColumn.Header>
-                                <TextBlock Text="Ajustement" ToolTip="Calcul la taille des textes et la disposition des combats automatiquement pour maximiser l'affichage en fonction de la place disponibe. Peut ne pas fonctionner sur certains navigateurs, notamment SmartTV" />
+                                <TextBlock Text="Ajustement" ToolTip="Calcule la taille des textes et la disposition des combats automatiquement pour maximiser l'affichage en fonction de la place disponible. Peut ne pas fonctionner sur certains navigateurs, notamment SmartTV" />
                             </DataGridTemplateColumn.Header>
 
                             <DataGridTemplateColumn.CellTemplate>
@@ -383,7 +383,7 @@
             <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Grid.Row="4" Margin="5" Grid.ColumnSpan="2" >
                 <Button x:Name="ButOk" Width="70" Height="30" Click="ButOk_Click">
                     <Grid>
-                        <TextBlock x:Name="ButOkLabel"  Text="Ok" Style="{StaticResource ButtonLabelStyle}"/>
+                        <TextBlock x:Name="ButOkLabel"  Text="OK" Style="{StaticResource ButtonLabelStyle}"/>
                     </Grid>
                 </Button>
             </WrapPanel>

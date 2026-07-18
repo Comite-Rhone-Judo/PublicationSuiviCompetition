@@ -325,6 +325,41 @@ namespace AppPublication.Export
             IJudoData DC = ctx.DataContext;
             IExtendedJudoData EDC = ctx.ExtendedDataContext;
 
+            // --- FONCTION LOCALE : Tri la liste chaînée et injecte l'ordre ---
+            IEnumerable<XElement> SortAndGeneratePhasesXml(IEnumerable<IPhase> unsortedPhases)
+            {
+                var list = unsortedPhases.ToList();
+                if (list.Count == 0) yield break;
+
+                // 1. Trouver le premier maillon (celui qui n'est le "suivant" d'aucune autre phase)
+                var current = list.FirstOrDefault(p => !list.Any(other => other.suivant == p.id));
+
+                // Fallback si la liste est circulaire ou mal formée
+                if (current == null) current = list.First();
+
+                int currentOrder = 1;
+                var visited = new HashSet<int>(); // Protection anti-boucle infinie
+
+                while (current != null && !visited.Contains(current.id))
+                {
+                    visited.Add(current.id);
+
+                    // Génère l'élément XML de la phase
+                    XElement xPhase = current.ToXml();
+
+                    // Force l'ajout de l'attribut dans le XML 
+                    xPhase.SetAttributeValue(ConstantXML.Phase_Ordre, currentOrder);
+
+                    yield return xPhase;
+
+                    currentOrder++;
+
+                    // Cherche le maillon suivant
+                    current = list.FirstOrDefault(p => p.id == current.suivant);
+                }
+            }
+            // -----------------------------------------------------------------
+
             // 1. On charge UNIQUEMENT ce qui est nécessaire en mémoire pour éviter le N+1
             var phasesByEpreuve = DC.Deroulement.Phases.ToLookup(p => p.epreuve);
 
@@ -366,10 +401,10 @@ namespace AppPublication.Export
 
                                         // Ajout de la balise Phases avec les données EN MÉMOIRE
                                         // Utilisation de l'index ILookup pour l'extraction
+                                        // On utilise notre fonction locale pour trier et injecter l'ordre
                                         xepreuve.Add(new XElement(ConstantXML.Phases,
-                                            phasesByEpreuve[ep.id].Select(phase => phase.ToXml())
-                                            ));
-
+                                            SortAndGeneratePhasesXml(phasesByEpreuve[ep.id])
+                                        ));
                                         return xepreuve;
                                     })
                             );

@@ -46,6 +46,7 @@ namespace KernelImpl.Noyau.Deroulement
         public int niveauRepechage2 { get; set; }
         public int niveauRepeches2 { get; set; }
 
+        public int ordre { get; set; }
 
         public i_vue_epreuve_interface GetVueEpreuve(IJudoData DC)
         {
@@ -91,6 +92,7 @@ namespace KernelImpl.Noyau.Deroulement
             xphase.SetAttributeValue(ConstantXML.Phase_Date_Tirage, date.HasValue ? ((DateTime)date).ToString("ddMMyyyy") : "");
             xphase.SetAttributeValue(ConstantXML.Phase_Time_Tirage, date.HasValue ? ((DateTime)date).ToString("HHmmss") : "");
 
+            xphase.SetAttributeValue(ConstantXML.Phase_Ordre, ordre);
             return xphase;
         }
 
@@ -125,7 +127,6 @@ namespace KernelImpl.Noyau.Deroulement
             this.date =
                 XMLTools.LectureDate(xinfo.Attribute(ConstantXML.Phase_Date_Tirage), "ddMMyyyy", DateTime.Now) +
                 XMLTools.LectureTime(xinfo.Attribute(ConstantXML.Phase_Time_Tirage), "HHmmss");
-
         }
 
         /// <summary>

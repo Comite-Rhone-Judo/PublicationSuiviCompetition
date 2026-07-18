@@ -28,7 +28,7 @@
         <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="2" Margin="10" >
             <Button x:Name="ButOk" Click="ButOk_Click" Width="70" Height="25" VerticalAlignment="Bottom">
                 <Grid>
-                    <TextBlock x:Name="ButOkLabel"  Text="Ok" Foreground="White"/>
+                    <TextBlock x:Name="ButOkLabel"  Text="OK" Foreground="White"/>
                 </Grid>
             </Button>         
         </StackPanel>

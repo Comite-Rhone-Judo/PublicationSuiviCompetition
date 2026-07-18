@@ -7,7 +7,7 @@
         xmlns:fj="clr-namespace:FranceJudo.UI.Wpf.Controls;assembly=FranceJudo.UI"
         Closing="MainWindow1_Closing"  Closed="MainWin_Closed_1" 
         Background="Black" Title="{Binding AppInformation.AppVersion, StringFormat=Application Publication Suivi de Compétition - {0}}" Name="MainWin" Focusable="True"
-        mc:Ignorable="d" SizeToContent="Width" Height="930"
+        mc:Ignorable="d" SizeToContent="Width" Height="900"
         DataContextChanged="Window_DataContextChanged">
     <!-- SizeToContent="Width" Height="900" -->
 
@@ -49,7 +49,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Button Name="NetworkConnecte" 
-                                    ToolTip="Connecté au serveur (Cliquer pour acquitter)" 
+                                    ToolTip="Connecté au serveur (Cliquez pour acquitter)" 
                                     Grid.Column="0"
                                     Command="{Binding Path=CmdAcquitterErreurCommunication}"
                                     Visibility="{Binding Connection.Client, Converter={StaticResource ClientConverter}}"
@@ -91,7 +91,7 @@
                                     VerticalAlignment="Top"
                                     Margin="0,-10,40,0"
                                     IsHitTestVisible="False"
-                                        ToolTip="Erreur de transmission détectée. Cliquer sur l'icone de connexion pour acquitter"
+                                        ToolTip="Erreur de transmission détectée. Cliquer sur l'icône de connexion pour acquitter"
                                         Visibility="{Binding Connection.HasErreurTransmission, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <Rectangle Fill="White" 
                                                Width="10" 
@@ -144,7 +144,7 @@
                                 </Grid>
                             </Button>
 
-                            <Button Focusable="False" Command="{Binding Path=CmdAfficherInformations}" Margin="25,0,0,0" Style="{StaticResource ButtonStyleToolbar}" ToolTip="Information sur le logiciel">
+                            <Button Focusable="False" Command="{Binding Path=CmdAfficherInformations}" Margin="25,0,0,0" Style="{StaticResource ButtonStyleToolbar}" ToolTip="Informations sur le logiciel">
                                 <Grid>
                                     <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" />
                                 </Grid>
@@ -211,7 +211,7 @@
                                 </StackPanel>
                                 <!-- Etat -->
                                 <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
-                                    <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
+                                    <Label HorizontalAlignment="Left" Content="Etat :" Style="{StaticResource LabelStyle}" />
                                     <Rectangle  Style="{StaticResource AnimatedStatusStyle}"
                                                     DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique}"
                                                     Tag="{Binding Path=IsGenerationActive, Converter={StaticResource ValueToBoolConverter}}"/>
@@ -221,7 +221,7 @@
                                 <Line Grid.Row="0" Grid.Column="2" StrokeThickness="1" Margin="0 2 0 2" Stroke="White" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                 <!-- Statut -->
                                 <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal">
-                                    <Label HorizontalAlignment="Left" Content="Statut:" Style="{StaticResource LabelStyle}" />
+                                    <Label HorizontalAlignment="Left" Content="Statut :" Style="{StaticResource LabelStyle}" />
                                     <Ellipse Margin="0" Height="15" Width="15" Style="{StaticResource OperationStatusStyle}" DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique.Status, Mode=OneWay}"/>
                                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                                         <Label HorizontalAlignment="Left" Width="140" Content="{Binding SiteCoordinator.GestionnaireSitePublique.Status.Message, Mode=OneWay}" Style="{StaticResource LabelStyleValue}" />
@@ -239,7 +239,7 @@
                                 <Line Grid.Row="0" Grid.Column="4" StrokeThickness="1" Margin="0 2 0 2" Stroke="White" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                 <!-- Mise a jour-->
                                 <StackPanel Grid.Row="0" Grid.Column="5" Orientation="Horizontal">
-                                    <Label HorizontalAlignment="Left" Content="Mise à jour:" Style="{StaticResource LabelStyle}" />
+                                    <Label HorizontalAlignment="Left" Content="Mise à jour :" Style="{StaticResource LabelStyle}" />
                                     <Label HorizontalAlignment="Left"  IsEnabled="{Binding SiteCoordinator.GestionnaireSitePublique.SiteGenere}" Style="{StaticResource LabelStyleValue}">
                                         <Label.Content>
                                             <MultiBinding Converter="{StaticResource StatGenerationConverter}" Mode="OneWay">
@@ -284,7 +284,7 @@
 
                                 <!-- Etat -->
                                 <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
-                                    <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
+                                    <Label HorizontalAlignment="Left" Content="Etat :" Style="{StaticResource LabelStyle}" />
                                     <Rectangle  Style="{StaticResource AnimatedStatusStyle}"
                                                     DataContext="{Binding Path=SiteCoordinator.GestionnaireSiteInterne}"
                                                     Tag="{Binding Path=IsGenerationActive, Converter={StaticResource ValueToBoolConverter}}"/>
@@ -294,7 +294,7 @@
                                 <Line Grid.Row="2" Grid.Column="2" StrokeThickness="1" Margin="0 2 0 2" Stroke="White" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                 <!-- Statut -->
                                 <StackPanel Grid.Row="2" Grid.Column="3" Orientation="Horizontal" >
-                                    <Label HorizontalAlignment="Left" Content="Statut:" Style="{StaticResource LabelStyle}" />
+                                    <Label HorizontalAlignment="Left" Content="Statut :" Style="{StaticResource LabelStyle}" />
                                     <Ellipse Margin="0" Height="15" Width="15" Style="{StaticResource OperationStatusStyle}" DataContext="{Binding Path=SiteCoordinator.GestionnaireSiteInterne.Status, Mode=OneWay}"/>
                                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                                         <Label HorizontalAlignment="Left" Width="140" Content="{Binding SiteCoordinator.GestionnaireSiteInterne.Status.Message, Mode=OneWay}" Style="{StaticResource LabelStyleValue}" />
@@ -312,7 +312,7 @@
                                 <Line Grid.Row="2" Grid.Column="4" StrokeThickness="1" Margin="0 2 0 2" Stroke="White" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                 <!-- Mise a jour-->
                                 <StackPanel Grid.Row="2" Grid.Column="5" Orientation="Horizontal" >
-                                    <Label HorizontalAlignment="Left" Content="Mise à jour:" Style="{StaticResource LabelStyle}" />
+                                    <Label HorizontalAlignment="Left" Content="Mise à jour :" Style="{StaticResource LabelStyle}" />
                                     <Label HorizontalAlignment="Left"  IsEnabled="{Binding SiteCoordinator.GestionnaireSiteInterne.SiteGenere}" Style="{StaticResource LabelStyleValue}">
                                         <Label.Content>
                                             <MultiBinding Converter="{StaticResource StatGenerationConverter}" Mode="OneWay">
@@ -342,7 +342,7 @@
                                         Command="{Binding Path=CmdAfficherConfigurationSiteInterne}" Height="35">
                                         <WrapPanel Orientation="Horizontal">
                                             <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/settings2-32.png" Height="25" Margin="5 0"/>
-                                            <TextBlock Text="Configurer ..." Style="{StaticResource ButtonLabelStyle}"/>
+                                            <TextBlock Text="Configurer..." Style="{StaticResource ButtonLabelStyle}"/>
                                         </WrapPanel>
                                     </Button>
                                 </StackPanel>
@@ -374,7 +374,7 @@
                                     </Grid.RowDefinitions>
                                     <Line Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" StrokeThickness="2" Stroke="LawnGreen" Margin="2 2 2 2" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                     <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="1">
-                                        <Label HorizontalAlignment="Left" Content="QRCode et adresse du site Coachs &amp; Public:" Style="{StaticResource HeaderStyle}" />
+                                        <Label HorizontalAlignment="Left" Content="QRCode et adresse du site Coachs &amp; Public :" Style="{StaticResource HeaderStyle}" />
                                         <WrapPanel>
                                             <WrapPanel Background="White" Margin="50 0 0 0">
                                                 <Image x:Name="QRCodeLocalImage" Width="100" Height="100" Margin="5" 
@@ -409,7 +409,7 @@
                                         </WrapPanel>
                                         <StackPanel Orientation="Horizontal" >
                                             <StackPanel Orientation="Horizontal" >
-                                                <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
+                                                <Label HorizontalAlignment="Left" Content="Etat :" Style="{StaticResource LabelStyle}" />
                                                 <Rectangle  Style="{StaticResource AnimatedStatusStyle}"
                                                             DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteLocal}"
                                                             Tag="{Binding Path=IsActif, Converter={StaticResource ValueToBoolConverter}}"/>
@@ -417,15 +417,15 @@
                                             </StackPanel>
                                             <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                             <StackPanel Orientation="Horizontal" >
-                                                <Label HorizontalAlignment="Left" Content="Statut:" Style="{StaticResource LabelStyle}" />
+                                                <Label HorizontalAlignment="Left" Content="Statut :" Style="{StaticResource LabelStyle}" />
                                                 <Label HorizontalAlignment="Left" Content="{Binding SiteCoordinator.GestionnaireSitePublique.SiteLocal.Status.Message}" Style="{StaticResource LabelStyleValue}" />
                                             </StackPanel>
                                         </StackPanel>
                                         <Line StrokeThickness="1" Stroke="White" Margin="5" X1="0" X2="1" Stretch="Fill"/>
                                         <StackPanel Orientation="Horizontal" >
-                                            <Label HorizontalAlignment="Left" Content="Parametres:" Style="{StaticResource HeaderStyle}" />
+                                            <Label HorizontalAlignment="Left" Content="Paramètres :" Style="{StaticResource HeaderStyle}" />
                                             <StackPanel Orientation="Horizontal" >
-                                                <Label Content="Adresse de publication:" Margin="0 0 0 0" Style="{StaticResource LabelStyle}"/>
+                                                <Label Content="Adresse de publication :" Margin="0 0 0 0" Style="{StaticResource LabelStyle}"/>
                                                 <ComboBox Height="22" MinWidth="200" Style="{StaticResource DropDownStyle}"
                                                                       ItemsSource="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteLocal.InterfacesLocal}"
                                                                       SelectedItem = "{Binding Path=SiteCoordinator.GestionnaireSitePublique.InterfaceLocalPublication}"
@@ -463,7 +463,7 @@
                                     </Grid.RowDefinitions>
                                     <Line Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" StrokeThickness="2" Stroke="DeepSkyBlue" Margin="2 2 2 2" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                     <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="1">
-                                        <Label HorizontalAlignment="Left" Content="QRCode et adresse de la chambre d'appel" Style="{StaticResource HeaderStyle}" />
+                                        <Label HorizontalAlignment="Left" Content="QRCode et adresse de la chambre d'appel :" Style="{StaticResource HeaderStyle}" />
                                         <WrapPanel>
                                             <WrapPanel Background="White" Margin="50 0 0 0">
                                                 <Image x:Name="QRCodeEcransAppelImage" Width="100" Height="100" Margin="5" 
@@ -496,7 +496,7 @@
                                         </WrapPanel>
                                         <StackPanel Orientation="Horizontal" >
                                             <StackPanel Orientation="Horizontal" >
-                                                <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
+                                                <Label HorizontalAlignment="Left" Content="Etat :" Style="{StaticResource LabelStyle}" />
                                                 <Rectangle  Style="{StaticResource AnimatedStatusStyle}"
                                                             DataContext="{Binding Path=SiteCoordinator.GestionnaireSiteInterne.SiteLocal}"
                                                             Tag="{Binding Path=IsActif, Converter={StaticResource ValueToBoolConverter}}"/>
@@ -504,15 +504,15 @@
                                             </StackPanel>
                                             <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                             <StackPanel Orientation="Horizontal" >
-                                                <Label HorizontalAlignment="Left" Content="Statut:" Style="{StaticResource LabelStyle}" />
+                                                <Label HorizontalAlignment="Left" Content="Statut :" Style="{StaticResource LabelStyle}" />
                                                 <Label HorizontalAlignment="Left" Content="{Binding SiteCoordinator.GestionnaireSiteInterne.SiteLocal.Status.Message}" Style="{StaticResource LabelStyleValue}" />
                                             </StackPanel>
                                         </StackPanel>
                                         <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="1" Stretch="Fill"/>
                                         <StackPanel Orientation="Horizontal" >
-                                            <Label HorizontalAlignment="Left" Content="Parametres:" Style="{StaticResource HeaderStyle}" />
+                                            <Label HorizontalAlignment="Left" Content="Parametres :" Style="{StaticResource HeaderStyle}" />
                                             <StackPanel Orientation="Horizontal" >
-                                                <Label Content="Adresse de publication:" Margin="0 0 0 0" Style="{StaticResource LabelStyle}"/>
+                                                <Label Content="Adresse de publication :" Margin="0 0 0 0" Style="{StaticResource LabelStyle}"/>
                                                 <ComboBox Height="22" MinWidth="200" Style="{StaticResource DropDownStyle}"
                                                                       ItemsSource="{Binding Path=SiteCoordinator.GestionnaireSiteInterne.SiteLocal.InterfacesLocal}"
                                                                       SelectedItem = "{Binding Path=SiteCoordinator.GestionnaireSiteInterne.InterfaceLocalPublication}"
@@ -556,7 +556,7 @@
                                 </Grid.RowDefinitions>
                                 <Line Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" StrokeThickness="2" Stroke="LawnGreen" Margin="2 2 2 2" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                 <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="1" >
-                                    <Label HorizontalAlignment="Left" Content="QRCode et adresse du site Coachs &amp; Public:" Style="{StaticResource HeaderStyle}" />
+                                    <Label HorizontalAlignment="Left" Content="QRCode et adresse du site Coachs &amp; Public :" Style="{StaticResource HeaderStyle}" />
                                     <WrapPanel>
                                         <WrapPanel Background="White" Margin="50 0 0 0">
                                             <Image  x:Name="QRCodeDistantImage" Width="100" Height="100" Margin="5" 
@@ -591,7 +591,7 @@
                                     </WrapPanel>
                                     <StackPanel Orientation="Horizontal" >
                                         <StackPanel Orientation="Horizontal" >
-                                            <Label HorizontalAlignment="Left" Content="Etat:" Style="{StaticResource LabelStyle}" />
+                                            <Label HorizontalAlignment="Left" Content="Etat :" Style="{StaticResource LabelStyle}" />
                                             <Rectangle  Style="{StaticResource AnimatedStatusStyle}"
                                                             DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne, Mode=OneWay}"
                                                             Tag="{Binding Path=IsActif, Converter={StaticResource ValueToBoolConverter}}"/>
@@ -599,7 +599,7 @@
                                         </StackPanel>
                                         <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                         <StackPanel Orientation="Horizontal" >
-                                            <Label HorizontalAlignment="Left" Content="Statut:" Style="{StaticResource LabelStyle}" />
+                                            <Label HorizontalAlignment="Left" Content="Statut :" Style="{StaticResource LabelStyle}" />
                                             <Ellipse Margin="0" Height="15" Width="15" Style="{StaticResource OperationStatusStyle}" DataContext="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.Status, Mode=OneWay}"/>
                                             <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                                                 <Label HorizontalAlignment="Left" Width="140" Content="{Binding SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.Status.Message, Mode=OneWay}" Style="{StaticResource LabelStyleValue}" />
@@ -616,7 +616,7 @@
                                         </StackPanel>
                                         <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="0" Y1="0" Y2="1" Stretch="Fill"/>
                                         <StackPanel Orientation="Horizontal" >
-                                            <Label HorizontalAlignment="Left" Content="Synchronisation:" Style="{StaticResource LabelStyle}" />
+                                            <Label HorizontalAlignment="Left" Content="Synchronisation :" Style="{StaticResource LabelStyle}" />
                                             <Label HorizontalAlignment="Left" Style="{StaticResource LabelStyleValue}" >
                                                 <MultiBinding Converter="{StaticResource StatGenerationConverter}" Mode="OneWay">
                                                     <Binding Path="SiteCoordinator.GestionnaireSitePublique.DerniereSynchronisation" Mode="OneWay"/>
@@ -633,7 +633,7 @@
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
 
-                                        <Label Grid.Column="0" HorizontalAlignment="Left" Content="Parametres:" Style="{StaticResource HeaderStyle}" />
+                                        <Label Grid.Column="0" HorizontalAlignment="Left" Content="Parametres :" Style="{StaticResource HeaderStyle}" />
 
                                         <CheckBox Grid.Column="1" Margin="5 5 0 0" Content="Configuration avancée" IsChecked="{Binding Path=SiteCoordinator.GestionnaireSitePublique.AdvancedConfig}" Style="{StaticResource CheckboxStyle}">
                                             <CheckBox.IsEnabled>
@@ -669,21 +669,21 @@
                                                 <RowDefinition Height="auto"/>
                                             </Grid.RowDefinitions>
 
-                                            <Label Grid.Column="0" Content="Niveau de publication:" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right"/>
+                                            <Label Grid.Column="0" Content="Niveau de publication :" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right"/>
                                             <ComboBox   Grid.Column="1" Style="{StaticResource DropDownStyle}" MinWidth="120"
                                                     ItemsSource="{Binding Path=SiteCoordinator.GestionnaireSitePublique.ListeNiveauxPublicationFFJudo}"
                                                     SelectedValue="{Binding Path=SiteCoordinator.GestionnaireSitePublique.NiveauPublicationFFJudo}" Margin="5,0,0,0"
                                                     IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.IsActif, Converter={StaticResource BoolNotConverter}}"/>
-                                            <Label Grid.Column="0" Grid.Row="1" Content="Entité de publication:" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right"/>
+                                            <Label Grid.Column="0" Grid.Row="1" Content="Entité de publication :" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right"/>
                                             <ComboBox   Grid.Column="1" Grid.Row="1" Style="{StaticResource DropDownStyle}" MinWidth="180"
                                                     ItemsSource="{Binding Path=SiteCoordinator.GestionnaireSitePublique.ListeEntitesPublicationFFJudo}" DisplayMemberPath="Libelle"
                                                     SelectedItem="{Binding Path=SiteCoordinator.GestionnaireSitePublique.EntitePublicationFFJudo}" Margin="5,0,0,0"
                                                     IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.IsActif, Converter={StaticResource BoolNotConverter}}"/>
-                                            <Label Grid.Column="0" Grid.Row="2" Content="Mot de passe:" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right"/>
+                                            <Label Grid.Column="0" Grid.Row="2" Content="Mot de passe :" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right"/>
                                             <hc:PasswordBox Name="EasyConfigPwd" 
                                                         Grid.Column="1" Grid.Row="2" 
                                                         Height="26" Margin="5" MinWidth="300"
-                                                        hc:InfoElement.Placeholder="Entrer votre mot de passe"
+                                                        hc:InfoElement.Placeholder="Entrez votre mot de passe"
                                                         ShowEyeButton="True"
                                                         IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.IsActif, Converter={StaticResource BoolNotConverter}}"/>
                                         </Grid>
@@ -703,28 +703,28 @@
                                                 <RowDefinition Height="auto"/>
                                                 <RowDefinition Height="auto"/>
                                             </Grid.RowDefinitions>
-                                            <Label Grid.Column="0" Content="Racine du site de publication:" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2" HorizontalAlignment="Center"/>
+                                            <Label Grid.Column="0" Content="Racine du site de publication :" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2" HorizontalAlignment="Center"/>
                                             <TextBox Grid.Row="0" Grid.Column="2" TextWrapping="Wrap" Height="22" Margin="5,13,10,14" MinWidth="250"
                                          Text = "{Binding Path=SiteCoordinator.GestionnaireSitePublique.URLDistant}"
                                          IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
-                                            <Label Grid.Row="1" Grid.Column="0" Content="Adresse du site FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
+                                            <Label Grid.Row="1" Grid.Column="0" Content="Adresse du site FTP :" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
                                             <TextBox Grid.Row="1" Grid.Column="2" TextWrapping="Wrap" Height="22" Margin="5,13,10,13" MinWidth="250"
                                          Text = "{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.SiteFTPDistant}"
                                          IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
-                                            <Label Grid.Row="2" Grid.Column="0" Content="Répertoire distant FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
+                                            <Label Grid.Row="2" Grid.Column="0" Content="Répertoire distant FTP :" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
                                             <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="0,48,0,48" Grid.RowSpan="3">
                                                 <TextBox  TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
                                          Text = "{Binding Path=SiteCoordinator.GestionnaireSitePublique.RepertoireRacineSiteFTPDistant}"
                                          IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
                                             </StackPanel>
-                                            <Label Grid.Row="3" Grid.Column="0" Content="Login FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
+                                            <Label Grid.Row="3" Grid.Column="0" Content="Login FTP :" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
                                             <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal">
                                                 <TextBox TextWrapping="Wrap" Height="22" Margin="5" MinWidth="300"
                                             Text = "{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.LoginSiteFTPDistant}"
                                             IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
                                                 <CheckBox Content="Mode FTP Actif" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.ModeActifFTPDistant}" IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" />
                                             </StackPanel>
-                                            <Label Grid.Row="4" Grid.Column="0" Content="Mot de passe FTP:" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
+                                            <Label Grid.Row="4" Grid.Column="0" Content="Mot de passe FTP :" Margin="10,0,0,0" Style="{StaticResource LabelStyle}" Grid.ColumnSpan="2"/>
                                             <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal" Margin="0,48,0,0" Grid.RowSpan="2">
                                                 <hc:PasswordBox Name="AdvancedPwd" 
                                                             Grid.Row="4" Grid.Column="2"
@@ -732,7 +732,7 @@
                                                             hc:InfoElement.Placeholder="Entrez votre mot de passe"
                                                             ShowEyeButton="True"
                                                             IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
-                                                <CheckBox Content="Sync. les differences" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.SynchroniseDifferences}" IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" />
+                                                <CheckBox Content="Sync. les différences" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.SynchroniseDifferences}" IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" />
                                             </StackPanel>
                                         </Grid>
                                     </StackPanel>
