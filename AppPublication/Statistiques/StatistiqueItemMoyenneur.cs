@@ -10,7 +10,7 @@ namespace AppPublication.Statistiques
         #endregion
 
         #region CONSTRUCTEURS
-        public StatistiqueItemMoyenneur(string name, string libelle) : base(name, libelle)
+        public StatistiqueItemMoyenneur(string name, string libelle, string unite = "") : base(name, libelle, unite)
         {
 
         }

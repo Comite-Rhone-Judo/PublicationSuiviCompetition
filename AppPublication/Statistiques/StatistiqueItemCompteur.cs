@@ -3,7 +3,7 @@
     internal class StatistiqueItemCompteur : StatistiqueItem
     {
         #region CONSTRUCTEURS
-        public StatistiqueItemCompteur(string name, string libelle) : base(name, libelle)
+        public StatistiqueItemCompteur(string name, string libelle, string unite = "") : base(name, libelle, unite)
         {
             Valeur = 0;
         }

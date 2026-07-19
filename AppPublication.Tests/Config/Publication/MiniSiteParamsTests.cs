@@ -37,20 +37,20 @@ namespace AppPublication.Tests.Config.Publication
         }
 
         [Fact]
-        public void FtpPassword_SetEtGet_AppliqueLeCryptage()
+        public void FtpPassword_SetEtGet_ConserveLaValeurEnMemoire()
         {
             // Arrange
             MiniSiteParams parametres = new MiniSiteParams();
-            string motDePasseClair = "MonMotDePasseSecret123";
+            string motDePasse = "MonMotDePasseSecret123";
 
             // Act
-            parametres.FtpPassword = motDePasseClair;
+            parametres.FtpPassword = motDePasse;
             string motDePasseRecupere = parametres.FtpPassword;
 
             // Assert
-            // Si la classe Encryption fonctionne correctement en isolation, 
-            // le mot de passe doit faire un aller-retour parfait.
-            Assert.Equal(motDePasseClair, motDePasseRecupere);
+            // La propriété en mémoire reste en clair.
+            // Le chiffrement est désormais assuré par Newtonsoft à la sérialisation.
+            Assert.Equal(motDePasse, motDePasseRecupere);
         }
 
         [Fact]

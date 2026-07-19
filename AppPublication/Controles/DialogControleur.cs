@@ -318,9 +318,6 @@ namespace AppPublication.Controles
                 _cmdAfficherTestFtp ??= new RelayCommand(
                         o =>
                         {
-                            // Extrait le mode de passe des controles passes en parametres (1er = FranceJudo, 2nd = Advanced)
-                            ExtractPasswordFromParameters(o);
-
                             // Lecture directe de la propriété courante du ViewModel
                             MiniSite siteToTest = SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne;
 
@@ -570,9 +567,6 @@ namespace AppPublication.Controles
 
                                     try
                                     {
-                                        // 3. LECTURE DES DONNÉES UI (Doit obligatoirement rester ici, hors du Task.Run)
-                                        ExtractPasswordFromParameters(o);
-
                                         // 4. TRAITEMENT LONG EN ARRIÈRE-PLAN
                                         // Demarre le site distant selectione sans figer l'interface
                                         await Task.Run(() =>
@@ -1229,31 +1223,6 @@ namespace AppPublication.Controles
                 {
                     UseShellExecute = true // <-- Indispensable pour ouvrir une URL dans le navigateur par defaut
                 });
-            }
-        }
-
-        /// <summary>
-        /// Extrait le mode de passe des controles passes en parametres (1er = FranceJudo, 2nd = Advanced)
-        /// </summary>
-        /// <param name="o"></param>
-        private void ExtractPasswordFromParameters(object o)
-        {
-            // On vérifie directement si 'o' est un Tuple, et on l'assigne à la variable 'tuple' si c'est le cas
-            if (o is Tuple<object, object> tuple)
-            {
-                // On vérifie si l'Item1 est bien le PasswordBox de HandyControl
-                if (tuple.Item1 is HandyControl.Controls.PasswordBox easyPwdBox)
-                {
-                    SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.PasswordSiteFTPDistant =
-                        Encryption.ToInsecureString(easyPwdBox.SecurePassword);
-                }
-
-                // On vérifie si l'Item2 est bien le PasswordBox de HandyControl
-                if (tuple.Item2 is HandyControl.Controls.PasswordBox advancedPwdBox)
-                {
-                    SiteCoordinator.GestionnaireSitePublique.SiteDistant.PasswordSiteFTPDistant =
-                        Encryption.ToInsecureString(advancedPwdBox.SecurePassword);
-                }
             }
         }
 

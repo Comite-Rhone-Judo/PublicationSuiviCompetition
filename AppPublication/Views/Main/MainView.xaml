@@ -7,8 +7,7 @@
         xmlns:fj="clr-namespace:FranceJudo.UI.Wpf.Controls;assembly=FranceJudo.UI"
         Closing="MainWindow1_Closing"  Closed="MainWin_Closed_1" 
         Background="Black" Title="{Binding AppInformation.AppVersion, StringFormat=Application Publication Suivi de Compétition - {0}}" Name="MainWin" Focusable="True"
-        mc:Ignorable="d" SizeToContent="Width" Height="900"
-        DataContextChanged="Window_DataContextChanged">
+        mc:Ignorable="d" SizeToContent="Width" Height="900">
     <!-- SizeToContent="Width" Height="900" -->
 
     <hc:Window.Resources>
@@ -644,14 +643,7 @@
                                             </CheckBox.IsEnabled>
                                         </CheckBox>
 
-                                        <Button Grid.Column="2" HorizontalAlignment="Right" Margin="0 0 10 0" Width="35" Height="35" Padding="0 0 0 0"
-                                            Command="{Binding Path=CmdAfficherTestFtp}">
-                                            <Button.CommandParameter>
-                                                <MultiBinding Converter="{StaticResource PassthroughConverter}" Mode="OneWay">
-                                                    <Binding ElementName="EasyConfigPwd"/>
-                                                    <Binding ElementName="AdvancedPwd"/>
-                                                </MultiBinding>
-                                            </Button.CommandParameter>
+                                        <Button Grid.Column="2" HorizontalAlignment="Right" Margin="0 0 10 0" Width="35" Height="35" Padding="0 0 0 0" Command="{Binding Path=CmdAfficherTestFtp}">
                                             <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/check_book-32.png" Height="20" Width="20" ToolTip="Tester la connexion FTP"/>
                                         </Button>
                                     </Grid>
@@ -685,7 +677,8 @@
                                                         Height="26" Margin="5" MinWidth="300"
                                                         hc:InfoElement.Placeholder="Entrez votre mot de passe"
                                                         ShowEyeButton="True"
-                                                        IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                                        IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.IsActif, Converter={StaticResource BoolNotConverter}}"
+                                                        UnsafePassword="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.PasswordSiteFTPDistant, UpdateSourceTrigger=PropertyChanged}"/>
                                         </Grid>
                                     </StackPanel>
                                     <!-- ZONE CONFIG AVANCEE -->
@@ -731,7 +724,8 @@
                                                             Height="26" Margin="5" MinWidth="300"
                                                             hc:InfoElement.Placeholder="Entrez votre mot de passe"
                                                             ShowEyeButton="True"
-                                                            IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"/>
+                                                            IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"
+                                                            UnsafePassword="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.PasswordSiteFTPDistant, UpdateSourceTrigger=PropertyChanged}"/>
                                                 <CheckBox Content="Sync. les différences" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.SynchroniseDifferences}" IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" />
                                             </StackPanel>
                                         </Grid>

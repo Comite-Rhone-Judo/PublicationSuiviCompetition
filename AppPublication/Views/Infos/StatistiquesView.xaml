@@ -38,10 +38,36 @@
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Binding="{Binding Value.Libelle}" Header="Compteur" Width="180"/>
                                         <DataGridTextColumn Binding="{Binding Value.Valeur, StringFormat=F0}" Header="Nb" Width="50"/>
-                                        <DataGridTextColumn Binding="{Binding Value.Min, StringFormat=F2}" Header="Min." Width="50"/>
-                                        <DataGridTextColumn Binding="{Binding Value.Moy, StringFormat=F2}" Header="Moy." Width="50"/>
-                                        <DataGridTextColumn Binding="{Binding Value.Max, StringFormat=F2}" Header="Max." Width="50"/>
-                                    </DataGrid.Columns>
+                                            <DataGridTemplateColumn Header="Min." SortMemberPath="Value.Min" Width="50">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock>
+                                        <Run Text="{Binding Value.Min, StringFormat=F2, Mode=OneWay}" /><Run Text="{Binding Value.Unite, Mode=OneWay}" />
+                                                        </TextBlock>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+
+                                            <DataGridTemplateColumn Header="Moy." SortMemberPath="Value.Moy" Width="50">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock>
+                                        <Run Text="{Binding Value.Moy, StringFormat=F2, Mode=OneWay}" /><Run Text="{Binding Value.Unite, Mode=OneWay}" />
+                                                        </TextBlock>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+
+                                            <DataGridTemplateColumn Header="Max." SortMemberPath="Value.Max" Width="50">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock>
+                                        <Run Text="{Binding Value.Max, StringFormat=F2, Mode=OneWay}" /><Run Text="{Binding Value.Unite, Mode=OneWay}" />
+                                                        </TextBlock>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                        </DataGrid.Columns>
                                 </DataGrid>
                             </Border>
                             </Grid>
@@ -72,10 +98,35 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Binding="{Binding Value.Libelle}" Header="Compteur" Width="180"/>
                         <DataGridTextColumn Binding="{Binding Value.Valeur, StringFormat=F0}" Header="Nb" Width="50"/>
-                        <DataGridTextColumn Binding="{Binding Value.Min, StringFormat=F2}" Header="Min." Width="50"/>
-                        <DataGridTextColumn Binding="{Binding Value.Moy, StringFormat=F2}" Header="Moy." Width="50"/>
-                        <DataGridTextColumn Binding="{Binding Value.Max, StringFormat=F2}" Header="Max." Width="50"/>
-                    </DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Min." SortMemberPath="Value.Min" Width="50">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <Run Text="{Binding Value.Min, StringFormat=F2, Mode=OneWay}" /><Run Text="{Binding Value.Unite, Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="Moy." SortMemberPath="Value.Moy" Width="50">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <Run Text="{Binding Value.Moy, StringFormat=F2, Mode=OneWay}" /><Run Text="{Binding Value.Unite, Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="Max." SortMemberPath="Value.Max" Width="50">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <Run Text="{Binding Value.Max, StringFormat=F2, Mode=OneWay}" /><Run Text="{Binding Value.Unite, Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>                    </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>
         </Border>
@@ -93,10 +144,35 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Binding="{Binding Value.Libelle}" Header="Compteur" Width="180"/>
                         <DataGridTextColumn Binding="{Binding Value.Valeur, StringFormat=F0}" Header="Nb" Width="50"/>
-                        <DataGridTextColumn Binding="{Binding Value.Min, StringFormat=F2}" Header="Min." Width="50"/>
-                        <DataGridTextColumn Binding="{Binding Value.Moy, StringFormat=F2}" Header="Moy." Width="50"/>
-                        <DataGridTextColumn Binding="{Binding Value.Max, StringFormat=F2}" Header="Max." Width="50"/>
-                    </DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Min." SortMemberPath="Value.Min" Width="50">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <Run Text="{Binding Value.Min, StringFormat=F2, Mode=OneWay}" /><Run Text="{Binding Value.Unite, Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="Moy." SortMemberPath="Value.Moy" Width="50">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <Run Text="{Binding Value.Moy, StringFormat=F2, Mode=OneWay}" /><Run Text="{Binding Value.Unite, Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="Max." SortMemberPath="Value.Max" Width="50">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <Run Text="{Binding Value.Max, StringFormat=F2, Mode=OneWay}" /><Run Text="{Binding Value.Unite, Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>                    </DataGrid.Columns>
                 </DataGrid>
                 <!-- SECTION SYNCHRONISATION DIFFERENCE -->
                 <Line StrokeThickness="1" Stroke="White" Margin="10" X1="0" X2="1" Y1="0" Y2="0" Stretch="Fill"/>
@@ -106,9 +182,36 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Binding="{Binding Value.Libelle}" Header="Compteur" Width="180"/>
                         <DataGridTextColumn Binding="{Binding Value.Valeur, StringFormat=F0}" Header="Nb" Width="50"/>
-                        <DataGridTextColumn Binding="{Binding Value.Min, StringFormat=F2}" Header="Min." Width="50"/>
-                        <DataGridTextColumn Binding="{Binding Value.Moy, StringFormat=F2}" Header="Moy." Width="50"/>
-                        <DataGridTextColumn Binding="{Binding Value.Max, StringFormat=F2}" Header="Max." Width="50"/>
+
+                        <DataGridTemplateColumn Header="Min." SortMemberPath="Value.Min" Width="50">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <Run Text="{Binding Value.Min, StringFormat=F2, Mode=OneWay}" /><Run Text="{Binding Value.Unite, Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="Moy." SortMemberPath="Value.Moy" Width="50">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <Run Text="{Binding Value.Moy, StringFormat=F2, Mode=OneWay}" /><Run Text="{Binding Value.Unite, Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="Max." SortMemberPath="Value.Max" Width="50">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <Run Text="{Binding Value.Max, StringFormat=F2, Mode=OneWay}" /><Run Text="{Binding Value.Unite, Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>

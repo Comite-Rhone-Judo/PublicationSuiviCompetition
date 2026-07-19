@@ -55,7 +55,7 @@ namespace AppPublication.Statistiques
                 cptSyncD.Add(CompteurSynchronisationEnum.NbFichierSynchronisation, new StatistiqueItemMoyenneur(CompteurSynchronisationEnum.NbFichierSynchronisation.ToString(), "Nb de fichiers synchronisés"));
                 cptSyncD.Add(CompteurSynchronisationEnum.NbErreurSynchronisation, new StatistiqueItemCompteur(CompteurSynchronisationEnum.NbErreurSynchronisation.ToString(), "Nb d'erreurs de synchronisation"));
                 // Compteur de % avec le moyenneur
-                cptSyncD.Add(CompteurSynchronisationEnum.TauxTransfertDifferentiel, new StatistiqueItemMoyenneur(CompteurSynchronisationEnum.TauxTransfertDifferentiel.ToString(), "Volume transféré (%)"));
+                cptSyncD.Add(CompteurSynchronisationEnum.TauxTransfertDifferentiel, new StatistiqueItemMoyenneur(CompteurSynchronisationEnum.TauxTransfertDifferentiel.ToString(), "Volume transféré (%)", "%"));
                 CompteursSynchronisationDifference = cptSyncD;
             }
             catch (System.Exception ex)

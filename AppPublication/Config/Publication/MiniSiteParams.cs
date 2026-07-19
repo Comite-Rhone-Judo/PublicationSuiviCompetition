@@ -11,7 +11,7 @@ namespace AppPublication.Config.Publication
 
         // --- Propriétés FTP (Distant) ---
         private string _ftpLogin = string.Empty;
-        private string _ftpPasswordEncrypted = string.Empty;
+        private string _ftpPassword = string.Empty;
         private string _ftpSite = string.Empty;
         private bool _ftpModeActif = false;
         private bool _syncDiff = true; // Oublié précédemment
@@ -35,22 +35,11 @@ namespace AppPublication.Config.Publication
         private string _interfaceLocalPublication = string.Empty;
         public string InterfaceLocalPublication { get => _interfaceLocalPublication; set => SetValue(ref _interfaceLocalPublication, value); }
 
-        [JsonProperty(nameof(FtpPassword))]
+        [JsonConverter(typeof(EncryptedStringConverter))]
         public string FtpPassword
         {
-            get
-            {
-                if (string.IsNullOrEmpty(_ftpPasswordEncrypted)) return string.Empty;
-                try { return Encryption.ToInsecureString(Encryption.DecryptString(_ftpPasswordEncrypted)); }
-                catch { return string.Empty; }
-            }
-            set
-            {
-                string encrypted = string.Empty;
-                if (!string.IsNullOrEmpty(value))
-                    encrypted = Encryption.EncryptString(Encryption.ToSecureString(value));
-                SetValue(ref _ftpPasswordEncrypted, encrypted);
-            }
+            get => _ftpPassword;
+            set => SetValue(ref _ftpPassword, value);
         }
 
         #endregion

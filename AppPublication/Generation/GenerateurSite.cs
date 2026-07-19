@@ -422,7 +422,7 @@ namespace AppPublication.Generation
                                 var relativeFileNames = filesToSync.Select(f =>
                                     _siteUrlGenerator.PhysicalStructure.GetRelativePath(f.FullName));
 
-                                LogTools.Logger?.Debug("{0}/{1} fichiers à synchroniser : {2}",
+                                LogTools.Logger?.Debug("{0}/{1} fichiers a synchroniser : {2}",
                                     filesToSync.Count,
                                     totalFiles,
                                     string.Join(", ", relativeFileNames));

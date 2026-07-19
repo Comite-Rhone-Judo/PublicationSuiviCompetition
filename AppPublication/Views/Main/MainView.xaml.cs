@@ -77,17 +77,6 @@ namespace AppPublication.Views.Main
         {
             WindowHelper.CopyVisualToClipboard(QRCodeDistantImage);
         }
-
-        private void Window_DataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
-        {
-            // On doit configurer les mots de passe par defaut ici car le composant Password ne supporte pas le Binding sur cette propriete
-            if (e.NewValue != null && e.NewValue.GetType() == typeof(DialogControleur))
-            {
-                DialogControleur dc = (DialogControleur)e.NewValue;
-                AdvancedPwd.Password = dc.SiteCoordinator.GestionnaireSitePublique.SiteDistant.PasswordSiteFTPDistant;
-                EasyConfigPwd.Password = dc.SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.PasswordSiteFTPDistant;
-            }
-        }
     }
 }
 
