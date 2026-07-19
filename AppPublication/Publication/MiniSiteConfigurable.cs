@@ -257,8 +257,7 @@ namespace AppPublication.Publication
                 return base.PasswordSiteFTPDistant;
             }
             set
-            {
-                if (base.PasswordSiteFTPDistant != value)
+            {                if (base.PasswordSiteFTPDistant != value)
                 {
                     // Mise à jour de la valeur en mémoire
                     base.PasswordSiteFTPDistant = value;

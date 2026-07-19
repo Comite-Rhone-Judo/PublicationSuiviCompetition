@@ -677,6 +677,7 @@
                                                         Height="26" Margin="5" MinWidth="300"
                                                         hc:InfoElement.Placeholder="Entrez votre mot de passe"
                                                         ShowEyeButton="True"
+                                                        IsSafeEnabled="false"
                                                         IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.IsActif, Converter={StaticResource BoolNotConverter}}"
                                                         UnsafePassword="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.PasswordSiteFTPDistant, UpdateSourceTrigger=PropertyChanged}"/>
                                         </Grid>
@@ -724,8 +725,9 @@
                                                             Height="26" Margin="5" MinWidth="300"
                                                             hc:InfoElement.Placeholder="Entrez votre mot de passe"
                                                             ShowEyeButton="True"
+                                                            IsSafeEnabled="false"
                                                             IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}"
-                                                            UnsafePassword="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.PasswordSiteFTPDistant, UpdateSourceTrigger=PropertyChanged}"/>
+                                                            UnsafePassword="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.PasswordSiteFTPDistant, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                                 <CheckBox Content="Sync. les différences" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.SynchroniseDifferences}" IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistant.IsActif, Converter={StaticResource BoolNotConverter}}" />
                                             </StackPanel>
                                         </Grid>
