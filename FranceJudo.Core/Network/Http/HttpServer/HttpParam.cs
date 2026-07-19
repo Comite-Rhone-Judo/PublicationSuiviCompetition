@@ -15,7 +15,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer
         private IHttpInput _form;
         private IHttpInput _query;
 
-        private List<HttpInputItem> _items = new List<HttpInputItem>();
+        private readonly List<HttpInputItem> _items = new List<HttpInputItem>();
 
         /// <summary>Initialises the class to hold a value either from a post request or a querystring request</summary>		
         public HttpParam(IHttpInput form, IHttpInput query)

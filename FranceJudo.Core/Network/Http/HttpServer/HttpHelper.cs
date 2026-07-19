@@ -54,8 +54,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer
             string name = null;
             for (int i = 0; i < queryString.Length; ++i)
             {
-                int newIndexPos;
-                if (state == 0 && IsEqual(queryString, ref i, out newIndexPos))
+                if (state == 0 && IsEqual(queryString, ref i, out int newIndexPos))
                 {
                     name = queryString.Substring(startpos, i - startpos);
                     i = newIndexPos;

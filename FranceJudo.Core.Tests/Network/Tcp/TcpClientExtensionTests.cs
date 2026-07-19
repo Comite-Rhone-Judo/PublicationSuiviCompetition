@@ -60,7 +60,7 @@ namespace FranceJudo.Core.Tests.Network.Tcp
 
                 // Le port distant assigné par l'OS au client est aléatoire, on vérifie juste le format IP_PORT
                 var parts = result.Split('_');
-                parts.Should().HaveCount(2, "Le format attendu est '{ipAddr}_{port}'.");
+                parts.Should().HaveCount(2, "Le format attendu est '(ipAddr)_(port)'.");
                 int.TryParse(parts[1], out _).Should().BeTrue("La deuxième partie après l'underscore doit être un numéro de port valide.");
             }
             finally

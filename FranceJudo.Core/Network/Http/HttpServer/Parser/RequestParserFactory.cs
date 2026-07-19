@@ -1,6 +1,6 @@
 ﻿using FranceJudo.Core.Network.Http.HttpServer.Parser;
 
-namespace FranceJudo.Core.Network.Http.HttpServer
+namespace FranceJudo.Core.Network.Http.HttpServer.Parser
 {
     /// <summary>
     /// Creates request parsers when needed.

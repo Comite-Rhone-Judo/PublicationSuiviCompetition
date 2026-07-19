@@ -136,7 +136,7 @@ namespace FranceJudo.Core.Network.Http
                     FindAvailablePort(PortMin, PortMax);
 
                     // Ecoute sur l'adresse specifiee, sur toutes sinon
-                    IPAddress adr = (ListeningIpAddress != null) ? ListeningIpAddress : IPAddress.Any;
+                    IPAddress adr = ListeningIpAddress ?? IPAddress.Any;
 
                     // Demarre le serveur d'ecoute (les modules doivent etre ajoutes avant)
                     _server.Start(adr, _port);
@@ -196,7 +196,7 @@ namespace FranceJudo.Core.Network.Http
         /// <param name="module"></param>
         public void AddModule(object module)
         {
-            if (!(module is HttpModule)) { throw new ArgumentException("Le module doit etre de type HttpModule", nameof(module)); }
+            if (module is not HttpModule) { throw new ArgumentException("Le module doit etre de type HttpModule", nameof(module)); }
 
             AddModule(module as HttpModule);
         }
@@ -214,7 +214,7 @@ namespace FranceJudo.Core.Network.Http
                 try
                 {
                     //LogTools.Trace("GestionSite PORT " + port, LogTools.Level.DEBUG);
-                    IPAddress adr = (ListeningIpAddress != null) ? ListeningIpAddress : IPAddress.Any;
+                    IPAddress adr = ListeningIpAddress ?? IPAddress.Any;
                     // HttpListener listener = HttpListener.Create(System.Net.IPAddress.Any, port);
                     HttpListener listener = HttpListener.Create(adr, port);
 

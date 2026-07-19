@@ -70,13 +70,7 @@ namespace AppPublication.Tests.Config.Generation
             // Arrange
             GenerationConfig config = new GenerationConfig();
             bool notificationRecue = false;
-            Action methodeNotification = delegate ()
-            {
-                notificationRecue = true;
-            };
-
-            // Act
-            config.InitializeSync(methodeNotification);
+            config.InitializeSync(() => notificationRecue = true);
 
             // Assert
             Assert.NotNull(config.OnChanged);

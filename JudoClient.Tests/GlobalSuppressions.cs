@@ -5,6 +5,5 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Style", "IDE0090:Utiliser 'new(...)'", Justification = "<En attente>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0090:Utiliser 'new(...)'", Justification = "<En attente>", Scope = "member", Target = "~M:JudoClient.Tests.Communication.DeroulementSenderTests.MethodesAvecListesXElement_InjectentTousLesElements")]
 [assembly: SuppressMessage("Performance", "CA1822:Marquer les membres comme étant static", Justification = "<En attente>", Scope = "module")]
-[assembly: SuppressMessage("Style", "IDE0300:Simplifier l'initialisation des collections", Justification = "<En attente>", Scope = "module")]

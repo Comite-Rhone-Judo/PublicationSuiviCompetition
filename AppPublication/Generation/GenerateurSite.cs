@@ -413,13 +413,23 @@ namespace AppPublication.Generation
                             // Extrait les fichiers generes qui sont differents du cache
                             List<FileWithChecksum> chkToSync = _checksumGenere.Except(_checksumCache, new FileWithChecksumComparer()).ToList();
                             filesToSync = chkToSync.Select(o => o.File).ToList();
-                            
-                            
-                            // TODO Avoir une trace en debug pour s'assurer que les fichiers sont bien pris en diff
-                            // For Debug only
+
+                            /// For Debug only
+                            int totalFiles = _checksumGenere.Count;
                             if (filesToSync.Count > 0)
                             {
-                                LogTools.Logger?.Debug("Fichiers a synchroniser: {0}", string.Join(",", filesToSync.Select(f => f.Name)));
+                                // Utilisation de notre nouvelle méthode propre de la structure physique
+                                var relativeFileNames = filesToSync.Select(f =>
+                                    _siteUrlGenerator.PhysicalStructure.GetRelativePath(f.FullName));
+
+                                LogTools.Logger?.Debug("{0}/{1} fichiers à synchroniser : {2}",
+                                    filesToSync.Count,
+                                    totalFiles,
+                                    string.Join(", ", relativeFileNames));
+                            }
+                            else
+                            {
+                                LogTools.Logger?.Debug("0/{0} fichier à synchroniser (le site distant est déjà à jour).", totalFiles);
                             }
                         }
 
@@ -445,7 +455,7 @@ namespace AppPublication.Generation
             }
 
             _etapeCourante = EtapeGenerateurSiteEnum.None;
-            return new ResultatOperation(EtapeGenerateurSiteEnum.ExecuteSynchronisation, uploadOut.IsSuccess, uploadOut.IsComplet, uploadOut.nbUpload);
+            return new ResultatOperation(EtapeGenerateurSiteEnum.ExecuteSynchronisation, uploadOut.IsSuccess, uploadOut.IsComplet, uploadOut.nbUpload, _checksumGenere?.Count ?? 0);
         }
 
         #endregion

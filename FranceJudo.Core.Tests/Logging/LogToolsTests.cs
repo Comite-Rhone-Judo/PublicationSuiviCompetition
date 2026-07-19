@@ -120,11 +120,11 @@ namespace FranceJudo.Core.Tests.Logging
         {
             bool eventFired = false;
             string messageAttendu = "Test d'erreur critique";
-            EventHandler<ExceptionEventArgs> handler = (sender, args) =>
+            void handler(object? sender, ExceptionEventArgs args)
             {
                 eventFired = true;
                 args.Message.Should().Be(messageAttendu);
-            };
+            }
 
             LogTools.OnCriticalErrorLogged += handler;
             try

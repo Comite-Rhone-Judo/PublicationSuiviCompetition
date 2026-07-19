@@ -4,6 +4,7 @@ using FranceJudo.Core.Network.Http.HttpServer.FormDecoders;
 using FranceJudo.Core.Network.Http.HttpServer.HttpModules;
 using FranceJudo.Core.Network.Http.HttpServer.Rules;
 using FranceJudo.Core.Network.Http.HttpServer.Sessions;
+using FranceJudo.Core.Network.Http.HttpServer.Parser;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -64,7 +65,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer
         private int _backLog = 10;
         private ExceptionHandler _exceptionHandler;
         private readonly IComponentProvider _components;
-        private RequestQueue _requestQueue;
+        private readonly RequestQueue _requestQueue;
         [ThreadStatic]
         private static HttpServer _current;
 
@@ -194,8 +195,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer
         {
             get
             {
-                if (_formDecodersProvider == null)
-                    _formDecodersProvider = _components.Get<FormDecoderProvider>() ?? new FormDecoderProvider();
+                _formDecodersProvider ??= _components.Get<FormDecoderProvider>() ?? new FormDecoderProvider();
                 return _formDecodersProvider;
             }
         }
@@ -774,8 +774,10 @@ namespace FranceJudo.Core.Network.Http.HttpServer
 
             Init();
             _httpsListener = new HttpListener(address, port, _components.Get<IHttpContextFactory>(), certificate, clientCertCallback,
-                protocol, requireClientCerts);
-            _httpsListener.LogWriter = LogWriter;
+                protocol, requireClientCerts)
+            {
+                LogWriter = LogWriter
+            };
             _httpsListener.RequestReceived += OnRequest;
             _httpsListener.Start(5);
             _httpsListener.ExceptionThrown += _exceptionHandler;

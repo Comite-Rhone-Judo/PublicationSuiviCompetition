@@ -101,11 +101,10 @@ namespace FranceJudo.Core.Network.Http.HttpServer
         public void Start()
         {
             _canRun = true;
-            if (_workerThread == null)
-            {
-                _workerThread = new Thread(QueueThread);
-                _workerThread.IsBackground = true;
-            }
+            _workerThread ??= new Thread(QueueThread)
+                {
+                    IsBackground = true
+                };
 
 
             if (!_workerThread.IsAlive)

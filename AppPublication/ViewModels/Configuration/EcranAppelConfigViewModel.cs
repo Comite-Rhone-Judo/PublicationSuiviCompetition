@@ -180,7 +180,7 @@ namespace AppPublication.ViewModels.Configuration
         /// <summary>
         /// Options pour la Dropdown de disposition (extraites dynamiquement de l'enum)
         /// </summary>
-        public IEnumerable<DispositionAffichage> DispositionOptions => Enum.GetValues(typeof(DispositionAffichage)).Cast<DispositionAffichage>();
+        public IEnumerable<DispositionAffichage> DispositionOptions => Enum.GetValues<DispositionAffichage>().Cast<DispositionAffichage>();
 
         /// <summary>
         /// Disposition de l'écran (Ligne ou Colonne)

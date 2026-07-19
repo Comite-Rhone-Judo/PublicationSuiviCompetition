@@ -19,3 +19,5 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Style", "IDE0301:Simplifier l'initialisation des collections", Justification = "<En attente>", Scope = "module")]
 [assembly: SuppressMessage("Usage", "CA2208:Instancier les exceptions d'argument correctement", Justification = "<En attente>", Scope = "module")]
 [assembly: SuppressMessage("Style", "IDE0057:Utiliser l'opérateur de plage", Justification = "<En attente>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0300:Simplifier l'initialisation des collections", Justification = "<En attente>", Scope = "module")]
+[assembly: SuppressMessage("Performance", "CA1861:Éviter les tableaux constants en tant qu’arguments", Justification = "<En attente>", Scope = "module")]

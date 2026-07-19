@@ -13,7 +13,7 @@ namespace AppPublication.Config
     public class AppConfigRoot : JsonConfigSection
     {
         private const string kConfigFileName = "appsettings.json";
-        private static readonly object _initLock = new object();
+        private static readonly System.Threading.Lock _initLock = new();
         private static JsonConfigurationService<AppConfigRoot> _service;
 
         /// <summary>

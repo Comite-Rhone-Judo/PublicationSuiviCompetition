@@ -29,15 +29,10 @@ namespace FranceJudo.Core.Network.Http.HttpServer.HttpModules
         /// </example>
         public ReverseProxyModule(string source, string destination)
         {
-            if (destination == null)
-                throw new ArgumentNullException("destination");
-            if (source == null)
-                throw new ArgumentNullException("source");
-
-            _destinationUrl = destination;
+            _destinationUrl = destination ?? throw new ArgumentNullException("destination");
             if (!_destinationUrl.EndsWith("/"))
                 _destinationUrl += "/";
-            _sourceUrl = source;
+            _sourceUrl = source ?? throw new ArgumentNullException("source");
         }
 
         /// <summary>
@@ -82,8 +77,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.HttpModules
                 response.ContentType = content;
 
                 string contentLengthStr = client.ResponseHeaders[HttpResponseHeader.ContentLength];
-                int contentLength;
-                int.TryParse(contentLengthStr, out contentLength);
+                int.TryParse(contentLengthStr, out int contentLength);
                 response.ContentLength = contentLength;
 
                 if (content.StartsWith("text/html"))

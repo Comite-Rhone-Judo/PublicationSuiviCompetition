@@ -8,7 +8,7 @@ using FranceJudo.Core.Media.Images;
 // Attention: Nécessite le package NuGet System.Drawing.Common pour .NET Core / .NET 10
 #pragma warning disable CA1416 // Valider la compatibilité de la plateforme (GDI+ est Windows-only, assumé pour WPF)
 
-namespace FranceJudo.Core.Tests.Media
+namespace FranceJudo.Core.Tests.Media.Images
 {
     public class ImageHelperTests : IDisposable
     {

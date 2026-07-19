@@ -135,8 +135,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.HttpModules
                 int index = parameter.Value.IndexOf(":");
                 if (index == -1)
                     throw new FormatException("Hostname is missing port: " + parameter.Value);
-                int port;
-                if (!int.TryParse(parameter.Value.Substring(index + 1), out port))
+                if (!int.TryParse(parameter.Value.Substring(index + 1), out int port))
                     throw new FormatException("Port number is not numeric: " + parameter.Value);
 
 

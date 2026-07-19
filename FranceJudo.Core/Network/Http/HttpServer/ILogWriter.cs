@@ -108,23 +108,16 @@ namespace FranceJudo.Core.Network.Http.HttpServer
         /// <returns>A <see cref="ConsoleColor"/> for the prio</returns>
         public static ConsoleColor GetColor(LogPrio prio)
         {
-            switch (prio)
+            return prio switch
             {
-                case LogPrio.Trace:
-                    return ConsoleColor.DarkGray;
-                case LogPrio.Debug:
-                    return ConsoleColor.Gray;
-                case LogPrio.Info:
-                    return ConsoleColor.White;
-                case LogPrio.Warning:
-                    return ConsoleColor.DarkMagenta;
-                case LogPrio.Error:
-                    return ConsoleColor.Magenta;
-                case LogPrio.Fatal:
-                    return ConsoleColor.Red;
-            }
-
-            return ConsoleColor.Yellow;
+                LogPrio.Trace => ConsoleColor.DarkGray,
+                LogPrio.Debug => ConsoleColor.Gray,
+                LogPrio.Info => ConsoleColor.White,
+                LogPrio.Warning => ConsoleColor.DarkMagenta,
+                LogPrio.Error => ConsoleColor.Magenta,
+                LogPrio.Fatal => ConsoleColor.Red,
+                _ => ConsoleColor.Yellow,
+            };
         }
     }
 

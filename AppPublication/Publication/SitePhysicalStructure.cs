@@ -86,6 +86,20 @@ namespace AppPublication.Publication
 
             return GetAndCreateDirectory(folderName);
         }
+
+        /// <summary>
+        /// Retourne le chemin relatif d'un fichier par rapport à la racine de la compétition.
+        /// </summary>
+        /// <param name="absoluteFilePath">Le chemin absolu du fichier</param>
+        /// <returns>Le chemin relatif propre (ex: "css\style.css")</returns>
+        public string GetRelativePath(string absoluteFilePath)
+        {
+            if (string.IsNullOrWhiteSpace(absoluteFilePath))
+                return string.Empty;
+
+            // Utilisation native de .NET 10
+            return Path.GetRelativePath(RepertoireCompetition, absoluteFilePath);
+        }
         #endregion
     }
 }

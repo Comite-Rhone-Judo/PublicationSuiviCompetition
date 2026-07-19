@@ -40,11 +40,12 @@ namespace AppPublication.Views.Main
             var confirmDialog = new FranceJudo.UI.Wpf.Dialogs.ConfirmWindow(
                 "Fermeture de l'application",
                 "Voulez-vous vraiment fermer l'application ?"
-            );
-
-            // 2. On lie la boîte de dialogue à la fenêtre principale. 
-            // Cela empêche l'utilisateur de cliquer derrière et garantit le centrage.
-            confirmDialog.Owner = this;
+            )
+            {
+                // 2. On lie la boîte de dialogue à la fenêtre principale. 
+                // Cela empêche l'utilisateur de cliquer derrière et garantit le centrage.
+                Owner = this
+            };
 
             // 3. Affichage modal (bloque le code ici tant que l'utilisateur n'a pas répondu)
             bool? result = confirmDialog.ShowDialog();

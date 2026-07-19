@@ -22,10 +22,8 @@ namespace FranceJudo.Core.Network.Http.HttpServer
         public RequestCookie(string id, string content)
         {
             if (string.IsNullOrEmpty(id)) throw new ArgumentNullException("id");
-            if (content == null) throw new ArgumentNullException("content");
-
             _name = id;
-            _value = content;
+            _value = content ?? throw new ArgumentNullException("content");
         }
 
 

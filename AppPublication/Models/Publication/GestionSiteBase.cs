@@ -413,10 +413,7 @@ namespace AppPublication.Models.Publication
         /// </summary>
         public virtual void SetConnectionStatus(bool isConnected)
         {
-            if (_schedulerSite != null)
-            {
-                _schedulerSite.IsClientConnected = isConnected;
-            }
+            _schedulerSite?.IsClientConnected = isConnected;
         }
         #endregion
     }

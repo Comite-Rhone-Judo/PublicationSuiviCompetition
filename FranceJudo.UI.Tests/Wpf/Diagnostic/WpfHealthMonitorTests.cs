@@ -7,7 +7,7 @@ using FranceJudo.UI.Wpf.Diagnostic;
 
 namespace FranceJudo.UI.Tests.Wpf.Diagnostic
 {
-    public class WpfHealthMonitorTests : WpfTestBase, IDisposable
+    public sealed class WpfHealthMonitorTests : WpfTestBase, IDisposable
     {
         public WpfHealthMonitorTests()
         {

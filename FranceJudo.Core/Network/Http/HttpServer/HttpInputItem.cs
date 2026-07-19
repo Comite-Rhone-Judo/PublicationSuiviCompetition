@@ -87,9 +87,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer
             get { return _name; }
             set
             {
-                if (value == null)
-                    throw new ArgumentNullException("Name");
-                _name = value;
+                _name = value ?? throw new ArgumentNullException("Name");
             }
         }
 

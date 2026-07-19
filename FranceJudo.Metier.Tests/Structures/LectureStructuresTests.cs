@@ -42,13 +42,13 @@ namespace FranceJudo.Metier.Tests.Structures
                 var comites = result.Where(s => s.Type == TypeStructureEnum.Comite).ToList();
 
                 // On vérifie le préfixe ajouté par la méthode
-                if (ligues.Any())
+                if (ligues.Count != 0)
                 {
                     ligues.First().Nom.Should().StartWith("LIGUE ");
                     ligues.First().Ordre.Should().Be(2);
                 }
 
-                if (comites.Any())
+                if (comites.Count != 0)
                 {
                     comites.First().Nom.Should().StartWith("COMITE ");
                     comites.First().Ordre.Should().Be(3);

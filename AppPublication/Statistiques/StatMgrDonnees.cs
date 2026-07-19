@@ -140,9 +140,9 @@ namespace AppPublication.Statistiques
         {
             try
             {
-                if (_compteursDonnees != null && _compteursDonnees.ContainsKey(idCpt))
+                // TryGetValue fait le ContainsKey et l'extraction en une seule opération
+                if (_compteursDonnees != null && _compteursDonnees.TryGetValue(idCpt, out StatistiqueItem item))
                 {
-                    StatistiqueItem item = _compteursDonnees[idCpt];
                     item?.EnregistrerValeur();
                 }
             }

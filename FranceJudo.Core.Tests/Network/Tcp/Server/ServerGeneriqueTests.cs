@@ -87,7 +87,7 @@ namespace FranceJudo.Core.Tests.Network.Tcp.Server
                 byte[] bytes = Encoding.UTF8.GetBytes(rawPayload);
 
                 // Utilisation stricte de la surcharge (byte[], offset, count, CancellationToken)
-                await stream.WriteAsync(bytes, 0, bytes.Length, CancellationToken.None);
+                await stream.WriteAsync(bytes, CancellationToken.None);
                 await stream.FlushAsync(CancellationToken.None);
 
                 var delayTask = Task.Delay(3000, TestContext.Current.CancellationToken);
@@ -131,7 +131,7 @@ namespace FranceJudo.Core.Tests.Network.Tcp.Server
                 byte[] buffer = new byte[1024];
 
                 // Utilisation stricte de la surcharge (byte[], offset, count, CancellationToken)
-                int bytesRead = await testClient.GetStream().ReadAsync(buffer, 0, buffer.Length, CancellationToken.None);
+                int bytesRead = await testClient.GetStream().ReadAsync(buffer, CancellationToken.None);
                 string receivedByClient = Encoding.UTF8.GetString(buffer, 0, bytesRead);
 
                 receivedByClient.Should().Be("<msg>test</msg>\n<EOF>");

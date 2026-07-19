@@ -1,6 +1,7 @@
 ﻿using AppPublication.Generation;
 using FranceJudo.Core.Foundation;
 using FranceJudo.Core.Logging;
+using Microsoft.VisualBasic.Devices;
 using System.Collections.Generic;
 
 namespace AppPublication.Statistiques
@@ -12,7 +13,8 @@ namespace AppPublication.Statistiques
             TempsSynchronisation = 0,
             // NbSynchronisation = 1,
             NbErreurSynchronisation = 2,
-            NbFichierSynchronisation = 3
+            NbFichierSynchronisation = 3,
+            TauxTransfertDifferentiel = 4 // Mesure le % de fichiers transférés
         }
 
         #region PROPRIETES
@@ -52,6 +54,8 @@ namespace AppPublication.Statistiques
                 cptSyncD.Add(CompteurSynchronisationEnum.TempsSynchronisation, new StatistiqueItemMoyenneur(CompteurSynchronisationEnum.TempsSynchronisation.ToString(), "Durée de Synchronisation (Sec.)"));
                 cptSyncD.Add(CompteurSynchronisationEnum.NbFichierSynchronisation, new StatistiqueItemMoyenneur(CompteurSynchronisationEnum.NbFichierSynchronisation.ToString(), "Nb de fichiers synchronisés"));
                 cptSyncD.Add(CompteurSynchronisationEnum.NbErreurSynchronisation, new StatistiqueItemCompteur(CompteurSynchronisationEnum.NbErreurSynchronisation.ToString(), "Nb d'erreurs de synchronisation"));
+                // Compteur de % avec le moyenneur
+                cptSyncD.Add(CompteurSynchronisationEnum.TauxTransfertDifferentiel, new StatistiqueItemMoyenneur(CompteurSynchronisationEnum.TauxTransfertDifferentiel.ToString(), "Volume transféré (%)"));
                 CompteursSynchronisationDifference = cptSyncD;
             }
             catch (System.Exception ex)
@@ -72,28 +76,38 @@ namespace AppPublication.Statistiques
                 // Selectionne le dictionnaire en fonction du type de synchronisation (Logique d'origine)
                 Dictionary<CompteurSynchronisationEnum, StatistiqueItem> statDict = (syncStatus.IsComplete) ? _compteursSynchronisationComplete : _compteursSynchronisationDifference;
 
-                // Enregistre les donnees dans les compteurs respectifs
-                if (statDict.ContainsKey(CompteurSynchronisationEnum.TempsSynchronisation))
+                // 1. Enregistre le temps
+                if (statDict.TryGetValue(CompteurSynchronisationEnum.TempsSynchronisation, out StatistiqueItem itemTemps))
                 {
-                    StatistiqueItem item = statDict[CompteurSynchronisationEnum.TempsSynchronisation];
-                    item?.EnregistrerValeur(duree);
+                    itemTemps?.EnregistrerValeur(duree);
                 }
 
+                // 2. Enregistre les erreurs
                 if (!syncStatus.IsSuccess)
                 {
-                    if (statDict.ContainsKey(CompteurSynchronisationEnum.NbErreurSynchronisation))
+                    if (statDict.TryGetValue(CompteurSynchronisationEnum.NbErreurSynchronisation, out StatistiqueItem itemErreur))
                     {
-                        StatistiqueItem item = statDict[CompteurSynchronisationEnum.NbErreurSynchronisation];
-                        item?.EnregistrerValeur();
+                        itemErreur?.EnregistrerValeur();
                     }
                 }
 
+                // 3. Enregistre le nombre de fichiers
                 if (syncStatus.NbElements > 0)
                 {
-                    if (statDict.ContainsKey(CompteurSynchronisationEnum.NbFichierSynchronisation))
+                    if (statDict.TryGetValue(CompteurSynchronisationEnum.NbFichierSynchronisation, out StatistiqueItem itemFichier))
                     {
-                        StatistiqueItem item = statDict[CompteurSynchronisationEnum.NbFichierSynchronisation];
-                        item?.EnregistrerValeur(syncStatus.NbElements);
+                        itemFichier?.EnregistrerValeur(syncStatus.NbElements);
+                    }
+                }
+
+                // 4. Calcul et enregistrement de l'efficacité (uniquement en différentiel)
+                if (!syncStatus.IsComplete && syncStatus.NbElementsTotal > 0)
+                {
+                    if (statDict.TryGetValue(CompteurSynchronisationEnum.TauxTransfertDifferentiel, out StatistiqueItem itemTaux))
+                    {
+                        // On utilise syncStatus.NbElementsTotal directement
+                        float pourcentage = (syncStatus.NbElements / (float)syncStatus.NbElementsTotal) * 100f;
+                        itemTaux?.EnregistrerValeur(pourcentage);
                     }
                 }
             }

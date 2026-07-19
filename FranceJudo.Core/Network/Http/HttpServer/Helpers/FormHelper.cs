@@ -236,9 +236,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Helpers
 
             foreach (object o in collection)
             {
-                object value;
-                string title;
-                getIdTitle(o, out value, out title);
+                getIdTitle(o, out object value, out string title);
                 sb.Append("<option value=\"");
                 if (value != null)
                     sb.Append(value);
@@ -306,7 +304,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Helpers
             sb.Append(value);
             sb.Append("\"");
 
-            if (isChecked is bool && (bool)isChecked)
+            if (isChecked is bool v && v)
                 sb.Append("checked=\"checked\"");
             else if (isChecked == value)
                 sb.Append("checked=\"checked\"");
@@ -374,7 +372,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Helpers
             sb.Append(value);
             sb.Append("\"");
 
-            if (isSelected is bool && (bool)isSelected)
+            if (isSelected is bool v && v)
                 sb.Append("checked=\"checked\"");
             else if (isSelected.Equals(value))
                 sb.Append("checked=\"checked\"");

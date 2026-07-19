@@ -13,7 +13,7 @@ namespace AppPublication.Tools.Converter
             string output = "-";
 
             // Verifie le type des donnees en entree
-            if (values.Count() >= 2)
+            if (values.Length >= 2)
             {
                 TaskExecutionInformation theStat = null;
                 bool genere = false;

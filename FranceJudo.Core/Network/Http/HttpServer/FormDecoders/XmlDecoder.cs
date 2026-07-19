@@ -39,8 +39,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.FormDecoders
                 return null;
             if (!CanParse(contentType))
                 return null;
-            if (encoding == null)
-                encoding = Encoding.UTF8;
+            encoding ??= Encoding.UTF8;
 
             HttpForm form = new HttpForm();
 

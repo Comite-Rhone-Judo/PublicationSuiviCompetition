@@ -29,7 +29,7 @@ namespace FranceJudo.Metier.Tests.ExtensionNoyau.Engagement
 
             // Format attendu: {Competition}-{sexe}-{ID entite}-{Type entite}
             // Utilisation de l'interpolation de chaîne pour un test 100% robuste
-            Assert.Equal($"10-M-JudoClubParis-{type}", groupe.Id);
+            Assert.Equal($"10-M-JudoClubParis-{(int)type}", groupe.Id);
         }
 
         [Fact]
@@ -39,7 +39,7 @@ namespace FranceJudo.Metier.Tests.ExtensionNoyau.Engagement
             GroupeEngagements groupe = new GroupeEngagements(1, new EpreuveSexe(EpreuveSexeEnum.Feminine), "Entite1", EchelonEnum.Club);
 
             // Assert
-            Assert.Equal("1-F-Entite2-1", groupe.Id);
+            Assert.Equal("1-F-Entite1-2", groupe.Id);
         }
 
         [Fact]
@@ -55,9 +55,9 @@ namespace FranceJudo.Metier.Tests.ExtensionNoyau.Engagement
             Assert.NotNull(xml);
             Assert.Equal(ConstantXML.GroupeEngagements_Groupe, xml.Name.LocalName);
             Assert.Equal("100", xml.Attribute(ConstantXML.GroupeEngagements_Competition)?.Value);
-            Assert.Equal("100-X-LigueIDF-5", xml.Attribute(ConstantXML.GroupeEngagements_Id)?.Value);
+            Assert.Equal("100-X-LigueIDF-4", xml.Attribute(ConstantXML.GroupeEngagements_Id)?.Value);
             Assert.Equal("X", xml.Attribute(ConstantXML.GroupeEngagements_Sexe)?.Value);
-            Assert.Equal("5", xml.Attribute(ConstantXML.GroupeEngagements_Type)?.Value);
+            Assert.Equal("4", xml.Attribute(ConstantXML.GroupeEngagements_Type)?.Value);
             Assert.Equal("LigueIDF", xml.Attribute(ConstantXML.GroupeEngagements_Entite)?.Value);
         }
     }

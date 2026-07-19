@@ -22,8 +22,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Helpers
         {
             get
             {
-                IniFileSection section;
-                return _sections.TryGetValue(name, out section) ? section : null;
+                return _sections.TryGetValue(name, out IniFileSection section) ? section : null;
             }
         }
 
@@ -201,9 +200,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Helpers
         /// <param name="name">The name.</param>
         public IniFileSection(string name)
         {
-            if (name == null)
-                throw new ArgumentNullException("name");
-            Name = name;
+            Name = name ?? throw new ArgumentNullException("name");
         }
 
         /// <summary>
@@ -215,8 +212,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Helpers
         {
             get
             {
-                string value;
-                return _values.TryGetValue(name, out value) ? value : null;
+                return _values.TryGetValue(name, out string value) ? value : null;
             }
             set { _values[name] = value; }
         }

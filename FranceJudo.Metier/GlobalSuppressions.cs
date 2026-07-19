@@ -16,3 +16,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Style", "IDE0305:Simplify collection initialization", Justification = "<Pending>", Scope = "module")]
 [assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "module")]
 [assembly: SuppressMessage("Style", "IDE0306:Simplifier l'initialisation des collections", Justification = "<En attente>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0060:Supprimer le paramètre inutilisé", Justification = "<En attente>", Scope = "module")]

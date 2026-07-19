@@ -44,7 +44,7 @@ namespace FranceJudo.Core.Tests.Foundation
             };
 
             // Abonnement statique global
-            Action globalHandler = () => globalEventFired = true;
+            void globalHandler() => globalEventFired = true;
             NotificationBase.OnPropertyModifiedGlobally += globalHandler;
 
             try

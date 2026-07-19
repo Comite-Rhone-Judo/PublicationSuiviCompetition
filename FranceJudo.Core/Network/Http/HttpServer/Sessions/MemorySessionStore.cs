@@ -12,7 +12,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Sessions
         private readonly IDictionary<string, IHttpSession> _sessions = new Dictionary<string, IHttpSession>();
         private readonly Queue<IHttpSession> _unusedSessions = new Queue<IHttpSession>();
         private int _expireTime = 20;
-        private Timer _expireTimer;
+        private readonly Timer _expireTimer;
 
         /// <summary>
         /// Initializes the class setting the expirationtimer to clean the session every minute

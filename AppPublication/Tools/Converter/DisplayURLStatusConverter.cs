@@ -11,7 +11,7 @@ namespace AppPublication.Tools.Converter
         {
             string output = "URL indéfinie";
             // Verifie le type des donnees en entree
-            if (values.Count() >= 2)
+            if (values.Length >= 2)
             {
                 string url = "URL indéfinie";
                 bool actif = false;

@@ -43,7 +43,7 @@ namespace AppPublication.Publication
                 // On s'assure que le dossier parent se termine par un slash Web 
                 // pour que Uri ne remplace pas "ecrans-appel" par "go"
                 string baseUriStr = UrlEcransAppel.AbsoluteUri;
-                if (!baseUriStr.EndsWith("/")) baseUriStr += "/";
+                if (!baseUriStr.EndsWith('/')) baseUriStr += "/";
 
                 return new Uri(new Uri(baseUriStr), SiteInternePhysicalStructure.kRedirectorTag);
             }
@@ -64,7 +64,7 @@ namespace AppPublication.Publication
             string baseRelative = GetRelativeUrlEcransAppel(targetFile);
 
             // On s'assure de la présence du slash pour éviter "../../ecrans-appelgo"
-            if (!baseRelative.EndsWith("/")) baseRelative += "/";
+            if (!baseRelative.EndsWith('/')) baseRelative += "/";
 
             return baseRelative + SiteInternePhysicalStructure.kRedirectorTag;
         }

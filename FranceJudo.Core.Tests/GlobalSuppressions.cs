@@ -13,3 +13,6 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Style", "IDE0290:Utiliser le constructeur principal", Justification = "<En attente>", Scope = "module")]
 [assembly: SuppressMessage("Usage", "CA1816:Les méthodes Dispose doivent appeler SuppressFinalize", Justification = "<En attente>", Scope = "module")]
 [assembly: SuppressMessage("Performance", "CA1822:Marquer les membres comme étant static", Justification = "<En attente>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0063:Utiliser une instruction 'using' simple", Justification = "<En attente>", Scope = "module")]
+[assembly: SuppressMessage("Design", "CA1061:Ne pas masquer les méthodes de classe de base", Justification = "<En attente>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0060:Supprimer le paramètre inutilisé", Justification = "<En attente>", Scope = "module")]

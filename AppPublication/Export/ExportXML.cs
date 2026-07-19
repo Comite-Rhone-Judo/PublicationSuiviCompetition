@@ -335,7 +335,7 @@ namespace AppPublication.Export
                 var current = list.FirstOrDefault(p => !list.Any(other => other.suivant == p.id));
 
                 // Fallback si la liste est circulaire ou mal formée
-                if (current == null) current = list.First();
+                current ??= list.First();
 
                 int currentOrder = 1;
                 var visited = new HashSet<int>(); // Protection anti-boucle infinie
