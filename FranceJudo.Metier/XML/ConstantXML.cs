@@ -72,6 +72,7 @@
         public const string DateGeneration = "DateGeneration";
         public const string AppVersion = "AppVersion";
         public const string Logo = "Logo";
+        public const string LogoDark = "LogoDark";
         public const string urlRedirecteur = "urlRedirecteur";
 
         public const string TapisEpreuve = "TapisEpreuve";

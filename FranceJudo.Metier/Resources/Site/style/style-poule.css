@@ -1,48 +1,163 @@
-﻿div.tas-panel-poule-combat {
-    overflow: auto;
-    overflow-x: scroll;
+﻿/* ==========================================================================
+   Conteneur avec Scroller Horizontal
+   ========================================================================== */
+div.tas-panel-poule-combat {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     white-space: nowrap;
+    padding-bottom: 12px;
 }
 
+/* ==========================================================================
+   Grille de la Poule (Séparation claire Entêtes / Grille)
+   ========================================================================== */
 table.tas-poule-combat {
-    border: 0px;
     border-collapse: collapse;
-    border-spacing: 0px;
+    border-spacing: 0;
+    margin: 0 auto; /* Centre le tableau si l'écran est grand */
 }
 
-    table.tas-poule-combat td {
-        padding: 0px;
+    /* Les En-têtes (Flottants, sans bordure) */
+    table.tas-poule-combat th {
+        border: none;
+        padding: 8px 0;
+        text-align: center;
+        vertical-align: bottom;
     }
 
-        table.tas-poule-combat td.tas-poule-heading {
-            font-weight: bold;
-            width: 30px;
-        }
+.tas-poule-heading-text {
+    font-weight: 700;
+    font-size: 0.9em;
+    color: var(--text-color);
+}
 
-        table.tas-poule-combat td.tas-poule-heading-combat {
-            width: 75px;
-        }
+/* Première colonne (Athlète) : Sans bordure */
+table.tas-poule-combat td.tas-cell-athlete {
+    border: none;
+    padding: 4px 12px 4px 0;
+    vertical-align: middle;
+}
 
-            table.tas-poule-combat td.tas-poule-heading-combat div {
-                width: 100%;
-            }
+/* Cellules de la grille de combat (Carrés avec bordures sombres) */
+table.tas-poule-combat td.tas-cell-score {
+    width: 64px;
+    min-width: 64px;
+    max-width: 64px;
+    height: 64px;
+    border: 1px solid var(--border-color); /* Utilisation de la bordure du thème */
+    padding: 0;
+    vertical-align: middle;
+    text-align: center;
+    background-color: var(--card-bg);
+}
 
-        table.tas-poule-combat td.tas-poule-combat {
-            height: 85px;
-            width: 85px;
-        }
+    /* On masque les anciens tableaux internes s'il en reste */
+    table.tas-poule-combat td.tas-cell-score table {
+        display: none;
+    }
 
-            table.tas-poule-combat td.tas-poule-combat div {
-                width: 85px;
-                height: 85px;
-                text-align: center
-            }
+/* ==========================================================================
+   Design des Éléments Internes (Cartes, Badges, Scores)
+   ========================================================================== */
+/* Flexbox pour l'alignement de l'athlète et de son numéro */
+.tas-athlete-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Pousse tout à droite */
+    gap: 12px;
+}
 
-            table.tas-poule-combat td.tas-poule-combat table {
-                width: 100%;
-                height: 100%;
-            }
+/* La carte du combattant (Design iOS propre et moderne) */
+.tas-athlete-card {
+    /* Mélange 5% de la variable FJ-blue avec 95% de transparent */
+    background-color: color-mix(in srgb, var(--fj-blue) 5%, transparent);
+    /* Mélange 10% de la variable FJ-blue avec 90% de transparent */
+    border: 1px solid color-mix(in srgb, var(--fj-blue) 10%, transparent);
+    border-radius: 8px;
+    padding: 6px 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    /* Uniformisation des tailles et alignement */
+    width: 200px;
+    min-width: 200px;
+    box-sizing: border-box;
+    text-align: right;
+}
 
-            table.tas-poule-combat td.tas-poule-combat td.tas-poule-combat-gagnant {
-                border-bottom: .1em solid #000;
-            }
+body.dark-mode .tas-athlete-card {
+    /* Utilise le bleu alternatif défini pour le mode sombre, à 15% d'opacité */
+    background-color: color-mix(in srgb, var(--fj-blue) 25%, transparent);
+    border-color: color-mix(in srgb, var(--fj-blue) 40%, transparent);
+}
+
+.tas-athlete-name {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 0.9em;
+    display: block;
+}
+
+.tas-athlete-club {
+    font-size: 0.7em;
+    color: var(--text-muted);
+    margin-top: 2px;
+    display: block;
+}
+
+/* Les pastilles grises (Numéros) */
+.tas-position-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background-color: var(--fj-blue); /* Bleu au lieu du gris */
+    color: #FFFFFF;
+    font-size: 0.85em;
+    font-weight: bold;
+}
+
+/* Case Vide (Diagonale grise unie) */
+body.dark-mode .tas-position-badge {
+    background-color: var(--fj-blue-alt);
+}
+
+.tas-cell-empty {
+    background-color: rgba(118, 118, 128, 0.08) !important;
+}
+
+/* Le "X" du perdant */
+.tas-poule-loser {
+    font-size: 3em;
+    color: var(--text-muted); /* Utilise directement le nuancier global */
+    font-family: Arial, sans-serif;
+    line-height: 1;
+}
+
+/* Le score (Gagnant / Perdant) */
+.tas-poule-winner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.tas-score-top {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--text-muted); /* Trait compatible mode clair/sombre */
+    margin: 0 10px; /* Marge pour détacher le trait des bords verticaux */
+    font-weight: 600;
+    font-size: 0.95em;
+}
+
+.tas-score-bottom {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.95em;
+}

@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Xunit;
 
-namespace AppPublication.Tests.Config.Json
+namespace FranceJudo.Core.Tests.Configuration.Json
 {
     public class EncryptedStringConverterTests
     {

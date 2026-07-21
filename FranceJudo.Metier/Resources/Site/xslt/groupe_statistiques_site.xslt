@@ -30,6 +30,7 @@
 	<xsl:variable select="/docroot/SiteConfiguration/@DelaiActualisationClientSec" name="delayActualisationClient"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@ActualisationClientDefaut = 'true'" name="actualisationClientDefaut"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@Logo" name="logo"/>
+	<xsl:variable select="/docroot/SiteConfiguration/@LogoDark" name="logoDark"/>
 
 	<xsl:variable select="//groupeStatistiques[@id = $idgroupe]" name="selectedGroupe"/>
 
@@ -43,21 +44,9 @@
 				<meta http-equiv="Pragma" content="no-cache"/>
 				<meta http-equiv="Expires" content="0"/>
 
-				<link type="text/css" rel="stylesheet">
-					<xsl:attribute name="href">
-						<xsl:value-of select="concat($cssPath, 'w3.css')"/>
-					</xsl:attribute>
-				</link>
-				<link type="text/css" rel="stylesheet">
-					<xsl:attribute name="href">
-						<xsl:value-of select="concat($cssPath, 'style-common.css')"/>
-					</xsl:attribute>
-				</link>
-				<link type="text/css" rel="stylesheet">
-					<xsl:attribute name="href">
-						<xsl:value-of select="concat($cssPath, 'style-statistiques.css')"/>
-					</xsl:attribute>
-				</link>
+				<link type="text/css" rel="stylesheet" href="{concat($cssPath, 'w3.css')}"/>
+				<link type="text/css" rel="stylesheet" href="{concat($cssPath, 'style-common.css')}"/>
+				<link type="text/css" rel="stylesheet" href="{concat($cssPath, 'style-statistiques.css')}"/>
 
 				<script type="text/javascript">
 					<xsl:value-of select="$js"/>
@@ -65,17 +54,14 @@
 					gDefaultAutoReload = <xsl:value-of select="$actualisationClientDefaut"/>;
 				</script>
 
-				<script>
-					<xsl:attribute name="src">
-						<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
-					</xsl:attribute>
-				</script>
+				<script src="{concat($jsPath, 'site-display.js')}"/>
 
 				<title>Suivi Compétition - Statistiques</title>
 			</head>
 			<body>
 				<xsl:call-template name="entete">
 					<xsl:with-param name="logo" select="$logo"/>
+					<xsl:with-param name="logoDark" select="$logoDark"/>
 					<xsl:with-param name="affProchainCombats" select="/docroot/SiteConfiguration/@PublierProchainsCombats = 'true'"/>
 					<xsl:with-param name="affAffectationTapis" select="/docroot/SiteConfiguration/@PublierAffectationTapis = 'true'"/>
 					<xsl:with-param name="affEngagements" select="/docroot/SiteConfiguration/@PublierEngagements = 'true'"/>
@@ -88,73 +74,57 @@
 
 				<div class="tas-stat-container">
 
-					<div class="w3-container w3-blue w3-center tas-competition-bandeau">
-						<div>
-							<h4 class="w3-padding-small">
-								<xsl:value-of select="$selectedCompetition/titre"/>
-							</h4>
-						</div>
-						<div class="w3-card w3-indigo">
-							<h5 class="w3-padding-small">
-								<xsl:if test="$selectedGroupe/@sexe = 'F'">Féminines,&nbsp;</xsl:if>
-								<xsl:if test="$selectedGroupe/@sexe = 'M'">Masculins,&nbsp;</xsl:if>
-								<!-- Intitulé via la template -->
-								<xsl:call-template name="LibelleGroupeStructure">
-									<xsl:with-param name="typeGroupe" select="$selectedGroupe/@type"/>
-									<xsl:with-param name="niveauCompetition" select="$niveauCompetition"/>
-									<xsl:with-param name="entiteId" select="$selectedGroupe/@entite"/>
-									<xsl:with-param name="RefData" select="$RefData"/>
-									<xsl:with-param name="avecPrefixe" select="'true'"/>
-								</xsl:call-template>
-							</h5>
-						</div>
+					<!-- Bandeau Modernisé -->
+					<div class="tas-competition-bandeau">
+						<h4>
+							<xsl:value-of select="$selectedCompetition/titre"/>
+						</h4>
+						<h5>
+							<xsl:if test="$selectedGroupe/@sexe = 'F'">Féminines,&nbsp;</xsl:if>
+							<xsl:if test="$selectedGroupe/@sexe = 'M'">Masculins,&nbsp;</xsl:if>
+							<xsl:call-template name="LibelleGroupeStructure">
+								<xsl:with-param name="typeGroupe" select="$selectedGroupe/@type"/>
+								<xsl:with-param name="niveauCompetition" select="$niveauCompetition"/>
+								<xsl:with-param name="entiteId" select="$selectedGroupe/@entite"/>
+								<xsl:with-param name="RefData" select="$RefData"/>
+								<xsl:with-param name="avecPrefixe" select="'true'"/>
+							</xsl:call-template>
+						</h5>
 					</div>
 
-					<div>
+					<div class="w3-padding-small">
 
 						<xsl:if test="$selectedGroupe/@type != 1 and $selectedGroupe/StatsStructure">
 							<xsl:variable name="sStat" select="$selectedGroupe/StatsStructure" />
 
-
 							<!-- Bloc PARTICIPATION -->
-							<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-								<button class="tas-stat-accordion-btn" onclick="togglePanel('club-part')">
-									<img width="20" style="display: none; margin-right: 8px;" id="club-partCollapse">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
-										</xsl:attribute>
-									</img>
-									<img width="20" style="margin-right: 8px;" id="club-partExpand">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
-										</xsl:attribute>
-									</img>
-									Participation
-								</button>
-							</div>
-							<div id="club-part" class="tasClosedPanelType w3-container w3-padding-small" style="display: none;">
-								<div class="w3-right-align" style="margin: 0; padding: 0; line-height: 0;">
-									<button id="info-bloc-club-partExpand" class="w3-button w3-transparent" style="padding: 0; margin: 0; min-height: auto;" onclick="togglePanel('info-bloc-club-part')">
-										<img width="18" alt="Info">
-											<xsl:attribute name="src">
-												<xsl:value-of select="concat($imgPath, 'info-32.png')"/>
-											</xsl:attribute>
-										</img>
+							<button class="ios-accordion-btn" onclick="togglePanel('club-part')">
+								<span>Participation</span>
+								<div>
+									<img class="tas-accordion-icon tas-icon-hidden" id="club-partCollapse" src="{$imgPath}up_circular-32.png"/>
+									<img class="tas-accordion-icon tas-icon-visible" id="club-partExpand" src="{$imgPath}down_circular-32.png"/>
+								</div>
+							</button>
+
+							<div id="club-part" class="tasClosedPanelType tas-accordion-content-hidden">
+								<div class="w3-right-align tas-info-btn-container">
+									<button id="info-bloc-club-partExpand" class="w3-button w3-transparent tas-info-btn" onclick="togglePanel('info-bloc-club-part')">
+										<img width="18" alt="Info" src="{$imgPath}info-32.png" class="tas-theme-icon"/>
 									</button>
 								</div>
-								<div id="info-bloc-club-part" class="tasClosedPanelType w3-panel w3-leftbar w3-border-grey w3-paper w3-display-container" style="display: none; padding: 4px 8px; margin-top: 0; margin-bottom: 6px;">
-									<span onclick="togglePanel('info-bloc-club-part')" class="w3-button w3-display-topright w3-hover-grey" style="padding: 2px 8px; background: transparent;">&times;</span>
-									<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
-										<p style="margin: 2px 0;">
-											<strong>Inscrits :</strong> Enregistrés à la compétition.<br/>
-											<strong>Présents :</strong> Ayant passé la pesée.<br/>
-											<strong>Participation :</strong> Taux de présence effectif.
-										</p>
+
+								<div id="info-bloc-club-part" class="tasClosedPanelType tas-callout" style="display: none;">
+									<button onclick="togglePanel('info-bloc-club-part')" class="tas-callout-close">&times;</button>
+									<div>
+										<strong>Inscrits :</strong> Enregistrés à la compétition.<br/>
+										<strong>Présents :</strong> Ayant passé la pesée.<br/>
+										<strong>Participation :</strong> Taux de présence effectif.
 									</div>
 								</div>
-								<div class="w3-row-padding w3-margin-top w3-margin-bottom">
+
+								<div class="w3-row-padding">
 									<div class="w3-col s4">
-										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-blue">
+										<div class="ios-card tas-stat-card tas-stat-border-blue">
 											<div class="tas-stat-label">
 												<xsl:choose>
 													<xsl:when test="$selectedGroupe/@sexe = 'F'">Inscrites</xsl:when>
@@ -172,7 +142,7 @@
 										</div>
 									</div>
 									<div class="w3-col s4">
-										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-blue">
+										<div class="ios-card tas-stat-card tas-stat-border-blue">
 											<div class="tas-stat-label">
 												<xsl:choose>
 													<xsl:when test="$selectedGroupe/@sexe = 'F'">Présentes</xsl:when>
@@ -190,7 +160,7 @@
 										</div>
 									</div>
 									<div class="w3-col s4">
-										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-blue">
+										<div class="ios-card tas-stat-card tas-stat-border-blue">
 											<div class="tas-stat-label">Participation</div>
 											<div class="tas-stat-value">
 												<xsl:choose>
@@ -206,45 +176,34 @@
 							</div>
 
 							<!-- Bloc RESULTATS -->
-							<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-								<button class="tas-stat-accordion-btn" onclick="togglePanel('club-res')">
-									<img width="20" style="display: none; margin-right: 8px;" id="club-resCollapse">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
-										</xsl:attribute>
-									</img>
-									<img width="20" style="margin-right: 8px;" id="club-resExpand">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
-										</xsl:attribute>
-									</img>
-									Résultats
-								</button>
-							</div>
-							<div id="club-res" class="tasClosedPanelType w3-container w3-padding-small" style="display: none;">
-								<div class="w3-right-align" style="margin: 0; padding: 0; line-height: 0;">
-									<button id="info-bloc-club-resExpand" class="w3-button w3-transparent" style="padding: 0; margin: 0; min-height: auto;" onclick="togglePanel('info-bloc-club-res')">
-										<img width="18" alt="Info">
-											<xsl:attribute name="src">
-												<xsl:value-of select="concat($imgPath, 'info-32.png')"/>
-											</xsl:attribute>
-										</img>
+							<button class="ios-accordion-btn" onclick="togglePanel('club-res')">
+								<span>Résultats</span>
+								<div>
+									<img class="tas-accordion-icon tas-icon-hidden" id="club-resCollapse" src="{$imgPath}up_circular-32.png"/>
+									<img class="tas-accordion-icon tas-icon-visible" id="club-resExpand" src="{$imgPath}down_circular-32.png"/>
+								</div>
+							</button>
+
+							<div id="club-res" class="tasClosedPanelType tas-accordion-content-hidden">
+								<div class="w3-right-align tas-info-btn-container">
+									<button id="info-bloc-club-resExpand" class="w3-button w3-transparent tas-info-btn" onclick="togglePanel('info-bloc-club-res')">
+										<img width="18" alt="Info" src="{$imgPath}info-32.png" class="tas-theme-icon"/>
 									</button>
 								</div>
-								<div id="info-bloc-club-res" class="tasClosedPanelType w3-panel w3-leftbar w3-border-grey w3-paper w3-display-container" style="display: none; padding: 4px 8px; margin-top: 0; margin-bottom: 6px;">
-									<span onclick="togglePanel('info-bloc-club-res')" class="w3-button w3-display-topright w3-hover-grey" style="padding: 2px 8px; background: transparent;">&times;</span>
-									<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
-										<p style="margin: 2px 0;">
-											<strong>Total combats :</strong> Cumul du nombre de combats disputés par les combattants du groupe.<br/>
-											<strong>Combats/judoka :</strong> Nombre moyen de combats disputés par combattant du groupe.<br/>
-											<strong>% Victoire :</strong> Pourcentage de victoire par combattant du groupe.<br/>
-											<strong>Hikiwake :</strong> Pourcentage de matchs nuls.
-										</p>
+
+								<div id="info-bloc-club-res" class="tasClosedPanelType tas-callout" style="display: none;">
+									<button onclick="togglePanel('info-bloc-club-res')" class="tas-callout-close">&times;</button>
+									<div>
+										<strong>Total combats :</strong> Cumul du nombre de combats disputés par les combattants du groupe.<br/>
+										<strong>Combats/judoka :</strong> Nombre moyen de combats disputés par combattant du groupe.<br/>
+										<strong>% Victoire :</strong> Pourcentage de victoire par combattant du groupe.<br/>
+										<strong>Hikiwake :</strong> Pourcentage de matchs nuls.
 									</div>
 								</div>
-								<div class="w3-row-padding w3-margin-top w3-margin-bottom">
+
+								<div class="w3-row-padding">
 									<div class="w3-col s6">
-										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-green">
+										<div class="ios-card tas-stat-card tas-stat-border-green">
 											<div class="tas-stat-label">Total Combats</div>
 											<div class="tas-stat-value">
 												<xsl:choose>
@@ -257,7 +216,7 @@
 										</div>
 									</div>
 									<div class="w3-col s6">
-										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-green">
+										<div class="ios-card tas-stat-card tas-stat-border-green">
 											<div class="tas-stat-label">Combats/judoka</div>
 											<div class="tas-stat-value">
 												<xsl:choose>
@@ -270,7 +229,7 @@
 										</div>
 									</div>
 									<div class="w3-col s6 w3-margin-top">
-										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-green">
+										<div class="ios-card tas-stat-card tas-stat-border-green">
 											<div class="tas-stat-label">% Victoires</div>
 											<div class="tas-stat-value">
 												<xsl:choose>
@@ -283,7 +242,7 @@
 										</div>
 									</div>
 									<div class="w3-col s6 w3-margin-top">
-										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-green">
+										<div class="ios-card tas-stat-card tas-stat-border-green">
 											<div class="tas-stat-label">% Hikiwake</div>
 											<div class="tas-stat-value">
 												<xsl:choose>
@@ -299,240 +258,159 @@
 							</div>
 
 							<!-- Bloc PROFILS VICTOIRES -->
-							<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-								<button class="tas-stat-accordion-btn" onclick="togglePanel('club-vic')">
-									<img width="20" style="display: none; margin-right: 8px;" id="club-vicCollapse">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
-										</xsl:attribute>
-									</img>
-									<img width="20" style="margin-right: 8px;" id="club-vicExpand">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
-										</xsl:attribute>
-									</img>
-									Profil des victoires
-								</button>
-							</div>
-							<div id="club-vic" class="tasClosedPanelType w3-container w3-padding-small" style="display: none;">
-								<div class="w3-right-align" style="margin: 0; padding: 0; line-height: 0;">
-									<button id="info-bloc-club-vicExpand" class="w3-button w3-transparent" style="padding: 0; margin: 0; min-height: auto;" onclick="togglePanel('info-bloc-club-vic')">
-										<img width="18" alt="Info">
-											<xsl:attribute name="src">
-												<xsl:value-of select="concat($imgPath, 'info-32.png')"/>
-											</xsl:attribute>
-										</img>
+							<button class="ios-accordion-btn" onclick="togglePanel('club-vic')">
+								<span>Profil des victoires</span>
+								<div>
+									<img class="tas-accordion-icon tas-icon-hidden" id="club-vicCollapse" src="{$imgPath}up_circular-32.png"/>
+									<img class="tas-accordion-icon tas-icon-visible" id="club-vicExpand" src="{$imgPath}down_circular-32.png"/>
+								</div>
+							</button>
+
+							<div id="club-vic" class="tasClosedPanelType tas-accordion-content-hidden">
+								<div class="w3-right-align tas-info-btn-container">
+									<button id="info-bloc-club-vicExpand" class="w3-button w3-transparent tas-info-btn" onclick="togglePanel('info-bloc-club-vic')">
+										<img width="18" alt="Info" src="{$imgPath}info-32.png" class="tas-theme-icon"/>
 									</button>
 								</div>
-								<div id="info-bloc-club-vic" class="tasClosedPanelType w3-panel w3-leftbar w3-border-grey w3-paper w3-display-container" style="display: none; padding: 4px 8px; margin-top: 0; margin-bottom: 6px;">
-									<span onclick="togglePanel('info-bloc-club-vic')" class="w3-button w3-display-topright w3-hover-grey" style="padding: 2px 8px; background: transparent;">&times;</span>
-									<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
-										<p style="margin: 2px 0;">
-											Répartition de toutes les victoires du groupe selon <strong>l'avantage décisif marqué</strong> (Ippon, Waza-ari...) ou la <strong>sanction de l'adversaire</strong> (Hansoku-make, Shidos, forfait).
-										</p>
+
+								<div id="info-bloc-club-vic" class="tasClosedPanelType tas-callout" style="display: none;">
+									<button onclick="togglePanel('info-bloc-club-vic')" class="tas-callout-close">&times;</button>
+									<div>
+										Répartition de toutes les victoires du groupe selon <strong>l'avantage décisif marqué</strong> (Ippon, Waza-ari...) ou la <strong>sanction de l'adversaire</strong> (Hansoku-make, Shidos, forfait).
 									</div>
 								</div>
-								<div class="w3-row-padding w3-margin-top w3-padding-bottom">
-									<div class="w3-col m6 s12">
-										<div class="w3-margin-bottom">
-											<div class="w3-row w3-small">
-												<div class="w3-col s9">Ippon direct</div>
-												<div class="w3-col s3 w3-right-align w3-strong">
-													<xsl:choose>
-														<xsl:when test="$sStat/@pctVictoireIpponDirect != ''">
-															<xsl:value-of select="translate($sStat/@pctVictoireIpponDirect, '.', ',')"/> %
-														</xsl:when>
-														<xsl:otherwise>0 %</xsl:otherwise>
-													</xsl:choose>
-												</div>
-											</div>
-											<div class="w3-light-grey tas-stat-bar">
-												<div class="w3-indigo tas-stat-bar">
-													<xsl:attribute name="style">
-														width:<xsl:choose>
+
+								<div class="ios-card w3-padding w3-margin-top">
+									<div class="w3-row-padding">
+										<div class="w3-col m6 s12">
+											<div class="w3-margin-bottom">
+												<div class="w3-row w3-small" style="margin-bottom: 2px;">
+													<div class="w3-col s9">Ippon direct</div>
+													<div class="w3-col s3 w3-right-align" style="font-weight: 600;">
+														<xsl:choose>
 															<xsl:when test="$sStat/@pctVictoireIpponDirect != ''">
-																<xsl:value-of select="$sStat/@pctVictoireIpponDirect"/>
+																<xsl:value-of select="translate($sStat/@pctVictoireIpponDirect, '.', ',')"/> %
 															</xsl:when>
-															<xsl:otherwise>0</xsl:otherwise>
-														</xsl:choose>%;
-													</xsl:attribute>
+															<xsl:otherwise>0 %</xsl:otherwise>
+														</xsl:choose>
+													</div>
+												</div>
+												<div class="tas-stat-bar" style="background-color: var(--border-color);">
+													<div class="tas-stat-bar fj-bg-blue" style="width:{normalize-space($sStat/@pctVictoireIpponDirect)}%;"></div>
 												</div>
 											</div>
-										</div>
-										<div class="w3-margin-bottom">
-											<div class="w3-row w3-small">
-												<div class="w3-col s9">Waza-ari awasete ippon</div>
-												<div class="w3-col s3 w3-right-align w3-strong">
-													<xsl:choose>
-														<xsl:when test="$sStat/@pctVictoireWazaAriAwaseteIppon != ''">
-															<xsl:value-of select="translate($sStat/@pctVictoireWazaAriAwaseteIppon, '.', ',')"/> %
-														</xsl:when>
-														<xsl:otherwise>0 %</xsl:otherwise>
-													</xsl:choose>
-												</div>
-											</div>
-											<div class="w3-light-grey tas-stat-bar">
-												<div class="w3-indigo tas-stat-bar">
-													<xsl:attribute name="style">
-														width:<xsl:choose>
+											<div class="w3-margin-bottom">
+												<div class="w3-row w3-small" style="margin-bottom: 2px;">
+													<div class="w3-col s9">Waza-ari awasete ippon</div>
+													<div class="w3-col s3 w3-right-align" style="font-weight: 600;">
+														<xsl:choose>
 															<xsl:when test="$sStat/@pctVictoireWazaAriAwaseteIppon != ''">
-																<xsl:value-of select="$sStat/@pctVictoireWazaAriAwaseteIppon"/>
+																<xsl:value-of select="translate($sStat/@pctVictoireWazaAriAwaseteIppon, '.', ',')"/> %
 															</xsl:when>
-															<xsl:otherwise>0</xsl:otherwise>
-														</xsl:choose>%;
-													</xsl:attribute>
+															<xsl:otherwise>0 %</xsl:otherwise>
+														</xsl:choose>
+													</div>
+												</div>
+												<div class="tas-stat-bar" style="background-color: var(--border-color);">
+													<div class="tas-stat-bar fj-bg-blue" style="width:{normalize-space($sStat/@pctVictoireWazaAriAwaseteIppon)}%;"></div>
 												</div>
 											</div>
-										</div>
-										<div class="w3-margin-bottom">
-											<div class="w3-row w3-small">
-												<div class="w3-col s9">Waza-ari</div>
-												<div class="w3-col s3 w3-right-align w3-strong">
-													<xsl:choose>
-														<xsl:when test="$sStat/@pctVictoireWazaAri != ''">
-															<xsl:value-of select="translate($sStat/@pctVictoireWazaAri, '.', ',')"/> %
-														</xsl:when>
-														<xsl:otherwise>0 %</xsl:otherwise>
-													</xsl:choose>
-												</div>
-											</div>
-											<div class="w3-light-grey tas-stat-bar">
-												<div class="w3-indigo tas-stat-bar">
-													<xsl:attribute name="style">
-														width:<xsl:choose>
+											<div class="w3-margin-bottom">
+												<div class="w3-row w3-small" style="margin-bottom: 2px;">
+													<div class="w3-col s9">Waza-ari</div>
+													<div class="w3-col s3 w3-right-align" style="font-weight: 600;">
+														<xsl:choose>
 															<xsl:when test="$sStat/@pctVictoireWazaAri != ''">
-																<xsl:value-of select="$sStat/@pctVictoireWazaAri"/>
+																<xsl:value-of select="translate($sStat/@pctVictoireWazaAri, '.', ',')"/> %
 															</xsl:when>
-															<xsl:otherwise>0</xsl:otherwise>
-														</xsl:choose>%;
-													</xsl:attribute>
+															<xsl:otherwise>0 %</xsl:otherwise>
+														</xsl:choose>
+													</div>
+												</div>
+												<div class="tas-stat-bar" style="background-color: var(--border-color);">
+													<div class="tas-stat-bar fj-bg-blue" style="width:{normalize-space($sStat/@pctVictoireWazaAri)}%;"></div>
 												</div>
 											</div>
-										</div>
-										<div class="w3-margin-bottom">
-											<div class="w3-row w3-small">
-												<div class="w3-col s9">Yuko</div>
-												<div class="w3-col s3 w3-right-align w3-strong">
-													<xsl:choose>
-														<xsl:when test="$sStat/@pctVictoireYuko != ''">
-															<xsl:value-of select="translate($sStat/@pctVictoireYuko, '.', ',')"/> %
-														</xsl:when>
-														<xsl:otherwise>0 %</xsl:otherwise>
-													</xsl:choose>
-												</div>
-											</div>
-											<div class="w3-light-grey tas-stat-bar">
-												<div class="w3-indigo tas-stat-bar">
-													<xsl:attribute name="style">
-														width:<xsl:choose>
+											<div class="w3-margin-bottom">
+												<div class="w3-row w3-small" style="margin-bottom: 2px;">
+													<div class="w3-col s9">Yuko</div>
+													<div class="w3-col s3 w3-right-align" style="font-weight: 600;">
+														<xsl:choose>
 															<xsl:when test="$sStat/@pctVictoireYuko != ''">
-																<xsl:value-of select="$sStat/@pctVictoireYuko"/>
+																<xsl:value-of select="translate($sStat/@pctVictoireYuko, '.', ',')"/> %
 															</xsl:when>
-															<xsl:otherwise>0</xsl:otherwise>
-														</xsl:choose>%;
-													</xsl:attribute>
+															<xsl:otherwise>0 %</xsl:otherwise>
+														</xsl:choose>
+													</div>
+												</div>
+												<div class="tas-stat-bar" style="background-color: var(--border-color);">
+													<div class="tas-stat-bar fj-bg-blue" style="width:{normalize-space($sStat/@pctVictoireYuko)}%;"></div>
 												</div>
 											</div>
 										</div>
-									</div>
-									<div class="w3-col m6 s12">
-										<div class="w3-margin-bottom">
-											<div class="w3-row w3-small">
-												<div class="w3-col s9">3 shidos</div>
-												<div class="w3-col s3 w3-right-align w3-strong">
-													<xsl:choose>
-														<xsl:when test="$sStat/@pctVictoireSogoGachi != ''">
-															<xsl:value-of select="translate($sStat/@pctVictoireSogoGachi, '.', ',')"/> %
-														</xsl:when>
-														<xsl:otherwise>0 %</xsl:otherwise>
-													</xsl:choose>
-												</div>
-											</div>
-											<div class="w3-light-grey tas-stat-bar">
-												<div class="w3-indigo tas-stat-bar">
-													<xsl:attribute name="style">
-														width:<xsl:choose>
+										<div class="w3-col m6 s12">
+											<div class="w3-margin-bottom">
+												<div class="w3-row w3-small" style="margin-bottom: 2px;">
+													<div class="w3-col s9">3 shidos</div>
+													<div class="w3-col s3 w3-right-align" style="font-weight: 600;">
+														<xsl:choose>
 															<xsl:when test="$sStat/@pctVictoireSogoGachi != ''">
-																<xsl:value-of select="$sStat/@pctVictoireSogoGachi"/>
+																<xsl:value-of select="translate($sStat/@pctVictoireSogoGachi, '.', ',')"/> %
 															</xsl:when>
-															<xsl:otherwise>0</xsl:otherwise>
-														</xsl:choose>%;
-													</xsl:attribute>
+															<xsl:otherwise>0 %</xsl:otherwise>
+														</xsl:choose>
+													</div>
+												</div>
+												<div class="tas-stat-bar" style="background-color: var(--border-color);">
+													<div class="tas-stat-bar fj-bg-blue" style="width:{normalize-space($sStat/@pctVictoireSogoGachi)}%;"></div>
 												</div>
 											</div>
-										</div>
-										<div class="w3-margin-bottom">
-											<div class="w3-row w3-small">
-												<div class="w3-col s9">Hansoku-make</div>
-												<div class="w3-col s3 w3-right-align w3-strong">
-													<xsl:choose>
-														<xsl:when test="$sStat/@pctVictoireHansokuMake != ''">
-															<xsl:value-of select="translate($sStat/@pctVictoireHansokuMake, '.', ',')"/> %
-														</xsl:when>
-														<xsl:otherwise>0 %</xsl:otherwise>
-													</xsl:choose>
-												</div>
-											</div>
-											<div class="w3-light-grey tas-stat-bar">
-												<div class="w3-indigo tas-stat-bar">
-													<xsl:attribute name="style">
-														width:<xsl:choose>
+											<div class="w3-margin-bottom">
+												<div class="w3-row w3-small" style="margin-bottom: 2px;">
+													<div class="w3-col s9">Hansoku-make</div>
+													<div class="w3-col s3 w3-right-align" style="font-weight: 600;">
+														<xsl:choose>
 															<xsl:when test="$sStat/@pctVictoireHansokuMake != ''">
-																<xsl:value-of select="$sStat/@pctVictoireHansokuMake"/>
+																<xsl:value-of select="translate($sStat/@pctVictoireHansokuMake, '.', ',')"/> %
 															</xsl:when>
-															<xsl:otherwise>0</xsl:otherwise>
-														</xsl:choose>%;
-													</xsl:attribute>
+															<xsl:otherwise>0 %</xsl:otherwise>
+														</xsl:choose>
+													</div>
+												</div>
+												<div class="tas-stat-bar" style="background-color: var(--border-color);">
+													<div class="tas-stat-bar fj-bg-blue" style="width:{normalize-space($sStat/@pctVictoireHansokuMake)}%;"></div>
 												</div>
 											</div>
-										</div>
-										<div class="w3-margin-bottom">
-											<div class="w3-row w3-small">
-												<div class="w3-col s9">Abandon / Forfait / Médical</div>
-												<div class="w3-col s3 w3-right-align w3-strong">
-													<xsl:choose>
-														<xsl:when test="$sStat/@pctVictoireAbandonForfaitMedical != ''">
-															<xsl:value-of select="translate($sStat/@pctVictoireAbandonForfaitMedical, '.', ',')"/> %
-														</xsl:when>
-														<xsl:otherwise>0 %</xsl:otherwise>
-													</xsl:choose>
-												</div>
-											</div>
-											<div class="w3-light-grey tas-stat-bar">
-												<div class="w3-indigo tas-stat-bar">
-													<xsl:attribute name="style">
-														width:<xsl:choose>
+											<div class="w3-margin-bottom">
+												<div class="w3-row w3-small" style="margin-bottom: 2px;">
+													<div class="w3-col s9">Abandon / Forfait / Médical</div>
+													<div class="w3-col s3 w3-right-align" style="font-weight: 600;">
+														<xsl:choose>
 															<xsl:when test="$sStat/@pctVictoireAbandonForfaitMedical != ''">
-																<xsl:value-of select="$sStat/@pctVictoireAbandonForfaitMedical"/>
+																<xsl:value-of select="translate($sStat/@pctVictoireAbandonForfaitMedical, '.', ',')"/> %
 															</xsl:when>
-															<xsl:otherwise>0</xsl:otherwise>
-														</xsl:choose>%;
-													</xsl:attribute>
+															<xsl:otherwise>0 %</xsl:otherwise>
+														</xsl:choose>
+													</div>
+												</div>
+												<div class="tas-stat-bar" style="background-color: var(--border-color);">
+													<div class="tas-stat-bar fj-bg-blue" style="width:{normalize-space($sStat/@pctVictoireAbandonForfaitMedical)}%;"></div>
 												</div>
 											</div>
-										</div>
-										<div class="w3-margin-bottom">
-											<div class="w3-row w3-small">
-												<div class="w3-col s9">Décision</div>
-												<div class="w3-col s3 w3-right-align w3-strong">
-													<xsl:choose>
-														<xsl:when test="$sStat/@pctVictoireDecision != ''">
-															<xsl:value-of select="translate($sStat/@pctVictoireDecision, '.', ',')"/> %
-														</xsl:when>
-														<xsl:otherwise>0 %</xsl:otherwise>
-													</xsl:choose>
-												</div>
-											</div>
-											<div class="w3-light-grey tas-stat-bar">
-												<div class="w3-indigo tas-stat-bar">
-													<xsl:attribute name="style">
-														width:<xsl:choose>
+											<div class="w3-margin-bottom">
+												<div class="w3-row w3-small" style="margin-bottom: 2px;">
+													<div class="w3-col s9">Décision</div>
+													<div class="w3-col s3 w3-right-align" style="font-weight: 600;">
+														<xsl:choose>
 															<xsl:when test="$sStat/@pctVictoireDecision != ''">
-																<xsl:value-of select="$sStat/@pctVictoireDecision"/>
+																<xsl:value-of select="translate($sStat/@pctVictoireDecision, '.', ',')"/> %
 															</xsl:when>
-															<xsl:otherwise>0</xsl:otherwise>
-														</xsl:choose>%;
-													</xsl:attribute>
+															<xsl:otherwise>0 %</xsl:otherwise>
+														</xsl:choose>
+													</div>
+												</div>
+												<div class="tas-stat-bar" style="background-color: var(--border-color);">
+													<div class="tas-stat-bar fj-bg-blue" style="width:{normalize-space($sStat/@pctVictoireDecision)}%;"></div>
 												</div>
 											</div>
 										</div>
@@ -541,47 +419,31 @@
 							</div>
 
 							<!-- Bloc DUREE -->
-							<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-								<button class="tas-stat-accordion-btn" onclick="togglePanel('club-temps')">
-									<img width="20" style="display: none; margin-right: 8px;" id="club-tempsCollapse">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
-										</xsl:attribute>
-									</img>
-									<img width="20" style="margin-right: 8px;" id="club-tempsExpand">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
-										</xsl:attribute>
-									</img>
-									Durée
-								</button>
-							</div>
-							<div id="club-temps" class="tasClosedPanelType w3-container w3-padding-small" style="display: none;">
-								<div class="w3-right-align" style="margin: 0; padding: 0; line-height: 0;">
-									<button id="info-bloc-club-tempsExpand" class="w3-button w3-transparent" style="padding: 0; margin: 0; min-height: auto;" onclick="togglePanel('info-bloc-club-temps')">
-										<img width="18" alt="Info">
-											<xsl:attribute name="src">
-												<xsl:value-of select="concat($imgPath, 'info-32.png')"/>
-											</xsl:attribute>
-										</img>
+							<button class="ios-accordion-btn" onclick="togglePanel('club-temps')">
+								<span>Durée</span>
+								<div>
+									<img class="tas-accordion-icon tas-icon-hidden" id="club-tempsCollapse" src="{$imgPath}up_circular-32.png"/>
+									<img class="tas-accordion-icon tas-icon-visible" id="club-tempsExpand" src="{$imgPath}down_circular-32.png"/>
+								</div>
+							</button>
+
+							<div id="club-temps" class="tasClosedPanelType tas-accordion-content-hidden">
+								<div class="w3-right-align tas-info-btn-container">
+									<button id="info-bloc-club-tempsExpand" class="w3-button w3-transparent tas-info-btn" onclick="togglePanel('info-bloc-club-temps')">
+										<img width="18" alt="Info" src="{$imgPath}info-32.png" class="tas-theme-icon"/>
 									</button>
 								</div>
-								<div id="info-bloc-club-temps" class="tasClosedPanelType w3-panel w3-leftbar w3-border-grey w3-paper w3-display-container" style="display: none; padding: 4px 8px; margin-top: 0; margin-bottom: 6px;">
-									<span onclick="togglePanel('info-bloc-club-temps')" class="w3-button w3-display-topright w3-hover-grey" style="padding: 2px 8px; background: transparent;">&times;</span>
-									<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
-										<p style="margin: 2px 0;">
-											Temps de combat effectif (minimum, moyen, maximum) du groupe.<br/>
-											<!-- Mis de cote par manque de donnees TAS -->
-											<!--
-											<strong>Golden Score</strong>: Nombre et pourcentage de combats ayant eu un Golden Score pour les combattants du groupe.<br/>
-											<strong>Moy. Golden Score</strong>: Durée moyenne des Golden Score pour les combattants du groupe.<br/>											
-											-->
-										</p>
+
+								<div id="info-bloc-club-temps" class="tasClosedPanelType tas-callout" style="display: none;">
+									<button onclick="togglePanel('info-bloc-club-temps')" class="tas-callout-close">&times;</button>
+									<div>
+										Temps de combat effectif (minimum, moyen, maximum) du groupe.
 									</div>
 								</div>
-								<div class="w3-row-padding w3-margin-top w3-margin-bottom">
+
+								<div class="w3-row-padding">
 									<div class="w3-col s4">
-										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-teal">
+										<div class="ios-card tas-stat-card tas-stat-border-teal">
 											<div class="tas-stat-label">Min</div>
 											<div class="tas-stat-value">
 												<xsl:choose>
@@ -594,7 +456,7 @@
 										</div>
 									</div>
 									<div class="w3-col s4">
-										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-teal">
+										<div class="ios-card tas-stat-card tas-stat-border-teal">
 											<div class="tas-stat-label">Moyenne</div>
 											<div class="tas-stat-value">
 												<xsl:choose>
@@ -607,7 +469,7 @@
 										</div>
 									</div>
 									<div class="w3-col s4">
-										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-teal">
+										<div class="ios-card tas-stat-card tas-stat-border-teal">
 											<div class="tas-stat-label">Max</div>
 											<div class="tas-stat-value">
 												<xsl:choose>
@@ -619,86 +481,35 @@
 											</div>
 										</div>
 									</div>
-
-									<!-- Mis de cote par manque de donnees TAS -->
-									<!--
-									<xsl:if test="$typeCompetition != '1'">
-										<div class="w3-col s6 w3-margin-top">
-											<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-amber">
-												<div class="tas-stat-label">Golden Score</div>
-												<div class="tas-stat-value">
-													<xsl:choose>
-														<xsl:when test="$sStat/@nbCombatsGoldenScore != ''">
-															<xsl:value-of select="$sStat/@nbCombatsGoldenScore"/>
-														</xsl:when>
-														<xsl:otherwise>0</xsl:otherwise>
-													</xsl:choose>
-													<span class="w3-small w3-text-grey">
-														&nbsp;(<xsl:choose>
-															<xsl:when test="$sStat/@pctCombatsGoldenScore != ''">
-																<xsl:value-of select="translate($sStat/@pctCombatsGoldenScore, '.', ',')"/> %
-															</xsl:when>
-															<xsl:otherwise>0 %</xsl:otherwise>
-														</xsl:choose>)
-													</span>
-												</div>
-											</div>
-										</div>
-										<div class="w3-col s6 w3-margin-top">
-											<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-amber">
-												<div class="tas-stat-label">Moy. Golden Score</div>
-												<div class="tas-stat-value">
-													<xsl:choose>
-														<xsl:when test="string-length($sStat/@dureeMoyenneGoldenScore) >= 8">
-															<xsl:value-of select="substring($sStat/@dureeMoyenneGoldenScore, 4, 5)"/>
-														</xsl:when>
-														<xsl:otherwise>-</xsl:otherwise>
-													</xsl:choose>
-												</div>
-											</div>
-										</div>
-									</xsl:if>
-								-->
 								</div>
 							</div>
 
 							<!-- Bloc DISCIPLINE -->
-							<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-								<button class="tas-stat-accordion-btn" onclick="togglePanel('club-discip')">
-									<img width="20" style="display: none; margin-right: 8px;" id="club-discipCollapse">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
-										</xsl:attribute>
-									</img>
-									<img width="20" style="margin-right: 8px;" id="club-discipExpand">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
-										</xsl:attribute>
-									</img>
-									Discipline
-								</button>
-							</div>
-							<div id="club-discip" class="tasClosedPanelType w3-container w3-padding-small" style="display: none;">
-								<div class="w3-right-align" style="margin: 0; padding: 0; line-height: 0;">
-									<button id="info-bloc-club-discipExpand" class="w3-button w3-transparent" style="padding: 0; margin: 0; min-height: auto;" onclick="togglePanel('info-bloc-club-discip')">
-										<img width="18" alt="Info">
-											<xsl:attribute name="src">
-												<xsl:value-of select="concat($imgPath, 'info-32.png')"/>
-											</xsl:attribute>
-										</img>
+							<button class="ios-accordion-btn" onclick="togglePanel('club-discip')">
+								<span>Discipline</span>
+								<div>
+									<img class="tas-accordion-icon tas-icon-hidden" id="club-discipCollapse" src="{$imgPath}up_circular-32.png"/>
+									<img class="tas-accordion-icon tas-icon-visible" id="club-discipExpand" src="{$imgPath}down_circular-32.png"/>
+								</div>
+							</button>
+
+							<div id="club-discip" class="tasClosedPanelType tas-accordion-content-hidden">
+								<div class="w3-right-align tas-info-btn-container">
+									<button id="info-bloc-club-discipExpand" class="w3-button w3-transparent tas-info-btn" onclick="togglePanel('info-bloc-club-discip')">
+										<img width="18" alt="Info" src="{$imgPath}info-32.png" class="tas-theme-icon"/>
 									</button>
 								</div>
-								<div id="info-bloc-club-discip" class="tasClosedPanelType w3-panel w3-leftbar w3-border-grey w3-paper w3-display-container" style="display: none; padding: 4px 8px; margin-top: 0; margin-bottom: 6px;">
-									<span onclick="togglePanel('info-bloc-club-discip')" class="w3-button w3-display-topright w3-hover-grey" style="padding: 2px 8px; background: transparent;">&times;</span>
-									<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
-										<p style="margin: 2px 0;">
-											<strong>Moyenne de pénalités :</strong> Nombre moyen de Shidos reçus par combat pour les membres de ce groupe.
-										</p>
+
+								<div id="info-bloc-club-discip" class="tasClosedPanelType tas-callout" style="display: none;">
+									<button onclick="togglePanel('info-bloc-club-discip')" class="tas-callout-close">&times;</button>
+									<div>
+										<strong>Moyenne de pénalités :</strong> Nombre moyen de Shidos reçus par combat pour les membres de ce groupe.
 									</div>
 								</div>
-								<div class="w3-row-padding w3-margin-top w3-margin-bottom">
+
+								<div class="w3-row-padding">
 									<div class="w3-col s12">
-										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-orange">
+										<div class="ios-card tas-stat-card tas-stat-border-orange">
 											<div class="tas-stat-label">Moyenne de shidos</div>
 											<div class="tas-stat-value">
 												<xsl:choose>
@@ -715,67 +526,43 @@
 						</xsl:if>
 
 						<!-- Bloc COMBATTANTS -->
-						<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-							<button class="tas-stat-accordion-btn" onclick="togglePanel('club-com')">
-								<img width="20" style="display: none; margin-right: 8px;" id="club-comCollapse">
-									<xsl:attribute name="src">
-										<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
-									</xsl:attribute>
-								</img>
-								<img width="20" style="margin-right: 8px;" id="club-comExpand">
-									<xsl:attribute name="src">
-										<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
-									</xsl:attribute>
-								</img>
+						<button class="ios-accordion-btn" onclick="togglePanel('club-com')">
+							<span>
 								<xsl:choose>
 									<xsl:when test="$selectedGroupe/@sexe = 'F'">Combattantes</xsl:when>
 									<xsl:otherwise>Combattants</xsl:otherwise>
 								</xsl:choose>
-							</button>
-						</div>
-						<div id="club-com" class="tasClosedPanelType w3-container w3-padding-small" style="display: none;">
-							<div class="w3-right-align" style="margin: 0; padding: 0; line-height: 0;">
-								<button id="info-bloc-club-comExpand" class="w3-button w3-transparent" style="padding: 0; margin: 0; min-height: auto;" onclick="togglePanel('info-bloc-club-com')">
-									<img width="18" alt="Info">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'info-32.png')"/>
-										</xsl:attribute>
-									</img>
+							</span>
+							<div>
+								<img class="tas-accordion-icon tas-icon-hidden" id="club-comCollapse" src="{$imgPath}up_circular-32.png"/>
+								<img class="tas-accordion-icon tas-icon-visible" id="club-comExpand" src="{$imgPath}down_circular-32.png"/>
+							</div>
+						</button>
+
+						<div id="club-com" class="tasClosedPanelType tas-accordion-content-hidden">
+							<div class="w3-right-align tas-info-btn-container">
+								<button id="info-bloc-club-comExpand" class="w3-button w3-transparent tas-info-btn" onclick="togglePanel('info-bloc-club-com')">
+									<img width="18" alt="Info" src="{$imgPath}info-32.png" class="tas-theme-icon"/>
 								</button>
 							</div>
 
-							<div id="info-bloc-club-com" class="tasClosedPanelType w3-panel w3-leftbar w3-border-grey w3-paper w3-display-container" style="display: none; padding: 4px 8px; margin-top: 0; margin-bottom: 6px;">
-								<span onclick="togglePanel('info-bloc-club-com')" class="w3-button w3-display-topright w3-hover-grey" style="padding: 2px 8px; background: transparent;">&times;</span>
-								<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
-									<p style="margin: 2px 0;">
-										<strong>Cbts :</strong> Total des combats<br/>
-										<strong>Moy. Pén. :</strong> Moyenne de shidos<br/>
-										<!-- Mis de cote par manque de donnees TAS -->
-										<!--
-										<xsl:if test="$typeCompetition != '1'">
-											<strong>% GS :</strong> Fréquence des Golden Score<br/>
-											<strong>Moy. GS :</strong> Durée moyenne des Golden Score
-										</xsl:if>
-										-->
-										<strong>Moy. Cbt :</strong> Durée moyenne des combats<br/>
-										<strong>% Vic. :</strong> Taux de victoires
-									</p>
+							<div id="info-bloc-club-com" class="tasClosedPanelType tas-callout" style="display: none;">
+								<button onclick="togglePanel('info-bloc-club-com')" class="tas-callout-close">&times;</button>
+								<div>
+									<strong>Cbts :</strong> Total des combats<br/>
+									<strong>Moy. Pén. :</strong> Moyenne de shidos<br/>
+									<strong>Moy. Cbt :</strong> Durée moyenne des combats<br/>
+									<strong>% Vic. :</strong> Taux de victoires
 								</div>
 							</div>
-							<div class="w3-responsive w3-card w3-small w3-margin-top w3-margin-bottom">
-								<table class="w3-table-all">
-									<thead>
-										<tr class="w3-light-blue w3-text-indigo">
+
+							<div class="ios-card w3-responsive w3-margin-top w3-margin-bottom" style="border-radius: 8px;">
+								<table class="w3-table w3-bordered w3-small" style="background: transparent;">
+									<thead style="background-color: var(--bg-color); color: var(--text-color);">
+										<tr>
 											<th>Judoka</th>
 											<th class="w3-center">Cbts</th>
 											<th class="w3-center">Moy. Pén.</th>
-											<!-- Mis de cote par manque de donnees TAS -->
-											<!--
-											<xsl:if test="$typeCompetition != '1'">
-												<th class="w3-center">% GS</th>
-												<th class="w3-center">Moy. GS</th>
-											</xsl:if>
-											-->
 											<th class="w3-center">Moy. Cbt</th>
 											<th class="w3-center">% Vic.</th>
 										</tr>
@@ -796,7 +583,6 @@
 											<xsl:variable name="ligueNode" select="$RefData/structures/ligues/ligue[@ID = $comiteNode/@ligue]"/>
 											<xsl:variable name="paysNode" select="$RefData/structures/lesPays/pays[@ID = current()/@pays]"/>
 
-											<!-- On stocke le résultat dans une variable pour l'utiliser 2 fois -->
 											<xsl:variable name="structureLibelle">
 												<xsl:call-template name="LibelleStructure">
 													<xsl:with-param name="ecartement" select="$niveauCompetition" />
@@ -810,15 +596,14 @@
 
 											<tr class="tas-stat-clickable-row" onclick="openJudokaStatsModal(this)">
 												<xsl:attribute name="data-id">
-													<xsl:value-of select="@id"/> </xsl:attribute>
+													<xsl:value-of select="@id"/>
+												</xsl:attribute>
 												<xsl:attribute name="data-nom">
 													<xsl:value-of select="@nom"/>&nbsp;<xsl:value-of select="@prenom"/>
 												</xsl:attribute>
 												<xsl:attribute name="data-cat">
 													<xsl:value-of select="$sexeStr"/> / <xsl:value-of select="@libepreuve"/>
 												</xsl:attribute>
-
-												<!-- NOUVEL ATTRIBUT POUR LE CLUB -->
 												<xsl:attribute name="data-club">
 													<xsl:value-of select="$structureLibelle"/>
 												</xsl:attribute>
@@ -902,7 +687,6 @@
 														<xsl:otherwise>0</xsl:otherwise>
 													</xsl:choose>
 												</xsl:attribute>
-
 												<xsl:attribute name="data-tmin">
 													<xsl:choose>
 														<xsl:when test="string-length($jStat/@dureeCombatMin) >= 8">
@@ -927,34 +711,6 @@
 														<xsl:otherwise>-</xsl:otherwise>
 													</xsl:choose>
 												</xsl:attribute>
-
-												<!-- Mis de cote par manque de donnees TAS -->
-												<!--
-													<xsl:attribute name="data-gscbt">
-													<xsl:choose>
-														<xsl:when test="$jStat/@nbCombatsGoldenScore != ''">
-															<xsl:value-of select="$jStat/@nbCombatsGoldenScore"/>
-														</xsl:when>
-														<xsl:otherwise>0</xsl:otherwise>
-													</xsl:choose>
-												</xsl:attribute>
-												<xsl:attribute name="data-gspct">
-													<xsl:choose>
-														<xsl:when test="$jStat/@pctCombatsGoldenScore != ''">
-															<xsl:value-of select="$jStat/@pctCombatsGoldenScore"/>
-														</xsl:when>
-														<xsl:otherwise>0</xsl:otherwise>
-													</xsl:choose>
-												</xsl:attribute>
-												<xsl:attribute name="data-gsmoy">
-													<xsl:choose>
-														<xsl:when test="string-length($jStat/@dureeMoyenneGoldenScore) >= 8">
-															<xsl:value-of select="substring($jStat/@dureeMoyenneGoldenScore, 4, 5)"/>
-														</xsl:when>
-														<xsl:otherwise>-</xsl:otherwise>
-													</xsl:choose>
-												</xsl:attribute>
-												-->
 												<xsl:attribute name="data-pen">
 													<xsl:choose>
 														<xsl:when test="$jStat/@moyennePenalitesParCombat != ''">
@@ -970,7 +726,7 @@
 															<xsl:value-of select="@nom"/>&nbsp;<xsl:value-of select="substring(@prenom,1,1)"/>.
 														</strong>
 													</div>
-													<div class="w3-text-dark-grey w3-tiny">
+													<div class="text-muted w3-tiny">
 														<xsl:value-of select="$structureLibelle"/>
 													</div>
 													<div class="w3-text-grey w3-tiny">
@@ -993,28 +749,6 @@
 														<xsl:otherwise>0</xsl:otherwise>
 													</xsl:choose>
 												</td>
-												<!-- Mis de cote par manque de donnees TAS -->
-												<!--
-													<xsl:if test="$typeCompetition != '1'">
-													<td class="w3-center">
-														<xsl:choose>
-															<xsl:when test="$jStat/@pctCombatsGoldenScore != ''">
-																<xsl:value-of select="translate($jStat/@pctCombatsGoldenScore, '.', ',')"/> %
-															</xsl:when>
-															<xsl:otherwise>-</xsl:otherwise>
-														</xsl:choose>
-													</td>
-													<td class="w3-center">
-														<xsl:choose>
-															<xsl:when test="string-length($jStat/@dureeMoyenneGoldenScore) >= 8">
-																<xsl:value-of select="substring($jStat/@dureeMoyenneGoldenScore, 4, 5)"/>
-															</xsl:when>
-															<xsl:otherwise>-</xsl:otherwise>
-														</xsl:choose>
-													</td>
-												</xsl:if>
-												-->
-
 												<td class="w3-center">
 													<xsl:choose>
 														<xsl:when test="string-length($jStat/@dureeCombatMoy) >= 8">
@@ -1037,7 +771,7 @@
 								</table>
 							</div>
 
-							<div class="w3-center w3-margin-bottom w3-tiny w3-text-grey">
+							<div class="w3-center w3-margin-bottom w3-tiny text-muted">
 								<i>
 									<xsl:choose>
 										<xsl:when test="$selectedGroupe/@sexe = 'F'">Cliquez sur une combattante pour afficher ses statistiques détaillées.</xsl:when>
@@ -1051,65 +785,50 @@
 
 				<!-- MODALE JUDOKA INDIVIDUEL -->
 				<div id="statsModal" class="w3-modal" style="padding-top:0; z-index: 999;">
-					<div class="w3-modal-content w3-animate-right tas-stat-modal-flex"
-							 style="width: 100%; height: 100%; margin: 0; max-width: none; background-color: #f1f1f1;">
+					<div class="w3-modal-content w3-animate-right tas-stat-modal-flex">
 
-						<header class="w3-container w3-blue w3-padding-small tas-stat-modal-header">
-							<span onclick="closeJudokaStatsModal()" class="w3-button w3-display-topright w3-xlarge w3-blue" style="padding: 4px 16px;">&times;</span>
-							<h4 class="tas-margin-none" id="m-nom">-</h4>
-
-							<!-- NOUVELLE LIGNE POUR LE CLUB -->
-							<div class="w3-tiny w3-text-light-grey" id="m-club">-</div>
-
-							<div class="w3-tiny w3-opacity" id="m-cat">-</div>
+						<header class="tas-stat-modal-header">
+							<button onclick="closeJudokaStatsModal()" class="w3-button w3-display-topright w3-xlarge" style="background: transparent; padding: 4px 16px;">&times;</button>
+							<h4 class="tas-margin-none" id="m-nom" style="font-weight: 600;">-</h4>
+							<div class="w3-tiny text-muted" id="m-club">-</div>
+							<div class="w3-tiny text-muted" id="m-cat">-</div>
 						</header>
 
 						<div class="tas-stat-modal-body">
 
-							<!-- Bloc RESULTATS -->
-							<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-								<button class="tas-stat-accordion-btn" onclick="togglePanel('j-res')">
-									<img width="20" style="display: none; margin-right: 8px;" id="j-resCollapse">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
-										</xsl:attribute>
-									</img>
-									<img width="20" style="margin-right: 8px;" id="j-resExpand">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
-										</xsl:attribute>
-									</img>
-									Résultats
-								</button>
-							</div>
-							<div id="j-res" class="tasClosedPanelType w3-container w3-padding-small" style="display: none;">
-								<div class="w3-right-align" style="margin: 0; padding: 0; line-height: 0;">
-									<button id="info-bloc-j-resExpand" class="w3-button w3-transparent" style="padding: 0; margin: 0; min-height: auto;" onclick="togglePanel('info-bloc-j-res')">
-										<img width="18" alt="Info">
-											<xsl:attribute name="src">
-												<xsl:value-of select="concat($imgPath, 'info-32.png')"/>
-											</xsl:attribute>
-										</img>
+							<!-- Bloc RESULTATS MODALE -->
+							<button class="ios-accordion-btn" onclick="togglePanel('j-res')">
+								<span>Résultats</span>
+								<div>
+									<img class="tas-accordion-icon tas-icon-hidden" id="j-resCollapse" src="{$imgPath}up_circular-32.png"/>
+									<img class="tas-accordion-icon tas-icon-visible" id="j-resExpand" src="{$imgPath}down_circular-32.png"/>
+								</div>
+							</button>
+
+							<div id="j-res" class="tasClosedPanelType tas-accordion-content-hidden">
+								<div class="w3-right-align tas-info-btn-container">
+									<button id="info-bloc-j-resExpand" class="w3-button w3-transparent tas-info-btn" onclick="togglePanel('info-bloc-j-res')">
+										<img width="18" alt="Info" src="{$imgPath}info-32.png" class="tas-theme-icon"/>
 									</button>
 								</div>
-								<div id="info-bloc-j-res" class="tasClosedPanelType w3-panel w3-leftbar w3-border-grey w3-paper w3-display-container" style="display: none; padding: 4px 8px; margin-top: 0; margin-bottom: 6px;">
-									<span onclick="togglePanel('info-bloc-j-res')" class="w3-button w3-display-topright w3-hover-grey" style="padding: 2px 8px; background: transparent;">&times;</span>
-									<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
-										<p style="margin: 2px 0;">
-											<strong>Total Combats :</strong> Nombre de matchs disputés.<br/>
-											<strong>% Victoires :</strong> Ratio des matchs remportés.
-										</p>
+
+								<div id="info-bloc-j-res" class="tasClosedPanelType tas-callout" style="display: none;">
+									<button onclick="togglePanel('info-bloc-j-res')" class="tas-callout-close">&times;</button>
+									<div>
+										<strong>Total Combats :</strong> Nombre de matchs disputés.<br/>
+										<strong>% Victoires :</strong> Ratio des matchs remportés.
 									</div>
 								</div>
-								<div class="w3-row-padding w3-margin-top w3-margin-bottom">
+
+								<div class="w3-row-padding">
 									<div class="w3-col s6">
-										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-green">
+										<div class="ios-card tas-stat-card tas-stat-border-green">
 											<div class="tas-stat-label">Total Combats</div>
 											<div class="tas-stat-value" id="d-combats">0</div>
 										</div>
 									</div>
 									<div class="w3-col s6">
-										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-green">
+										<div class="ios-card tas-stat-card tas-stat-border-green">
 											<div class="tas-stat-label">% Victoires</div>
 											<div class="tas-stat-value" id="d-tauxvic">0 %</div>
 										</div>
@@ -1117,239 +836,182 @@
 								</div>
 							</div>
 
-							<!-- Bloc PROFILS VICTOIRES -->
-							<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-								<button class="tas-stat-accordion-btn" onclick="togglePanel('j-vic')">
-									<img width="20" style="display: none; margin-right: 8px;" id="j-vicCollapse">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
-										</xsl:attribute>
-									</img>
-									<img width="20" style="margin-right: 8px;" id="j-vicExpand">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
-										</xsl:attribute>
-									</img>
-									Profil des victoires
-								</button>
-							</div>
-							<div id="j-vic" class="tasClosedPanelType w3-container w3-padding-small" style="display: none;">
-								<div class="w3-right-align" style="margin: 0; padding: 0; line-height: 0;">
-									<button id="info-bloc-j-vicExpand" class="w3-button w3-transparent" style="padding: 0; margin: 0; min-height: auto;" onclick="togglePanel('info-bloc-j-vic')">
-										<img width="18" alt="Info">
-											<xsl:attribute name="src">
-												<xsl:value-of select="concat($imgPath, 'info-32.png')"/>
-											</xsl:attribute>
-										</img>
+							<!-- Bloc PROFILS VICTOIRES MODALE -->
+							<button class="ios-accordion-btn" onclick="togglePanel('j-vic')">
+								<span>Profil des victoires</span>
+								<div>
+									<img class="tas-accordion-icon tas-icon-hidden" id="j-vicCollapse" src="{$imgPath}up_circular-32.png"/>
+									<img class="tas-accordion-icon tas-icon-visible" id="j-vicExpand" src="{$imgPath}down_circular-32.png"/>
+								</div>
+							</button>
+
+							<div id="j-vic" class="tasClosedPanelType tas-accordion-content-hidden">
+								<div class="w3-right-align tas-info-btn-container">
+									<button id="info-bloc-j-vicExpand" class="w3-button w3-transparent tas-info-btn" onclick="togglePanel('info-bloc-j-vic')">
+										<img width="18" alt="Info" src="{$imgPath}info-32.png" class="tas-theme-icon"/>
 									</button>
 								</div>
-								<div id="info-bloc-j-vic" class="tasClosedPanelType w3-panel w3-leftbar w3-border-grey w3-paper w3-display-container" style="display: none; padding: 4px 8px; margin-top: 0; margin-bottom: 6px;">
-									<span onclick="togglePanel('info-bloc-j-vic')" class="w3-button w3-display-topright w3-hover-grey" style="padding: 2px 8px; background: transparent;">&times;</span>
-									<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
-										<p style="margin: 2px 0;">
-											Proportion des victoires du combattant selon <strong>l'avantage décisif marqué</strong> (ex: Ippon) ou la <strong>sanction de l'adversaire</strong> (ex: Hansoku-make).
-										</p>
+
+								<div id="info-bloc-j-vic" class="tasClosedPanelType tas-callout" style="display: none;">
+									<button onclick="togglePanel('info-bloc-j-vic')" class="tas-callout-close">&times;</button>
+									<div>
+										Proportion des victoires du combattant selon <strong>l'avantage décisif marqué</strong> (ex: Ippon) ou la <strong>sanction de l'adversaire</strong> (ex: Hansoku-make).
 									</div>
 								</div>
-								<div class="w3-row-padding w3-margin-top w3-padding-bottom">
-									<div class="w3-col m6 s12">
-										<div class="w3-margin-bottom">
-											<div class="w3-row w3-small">
-												<div class="w3-col s9">Ippon direct</div>
-												<div class="w3-col s3 w3-right-align w3-strong" id="lbl-ippon">0 %</div>
+
+								<div class="ios-card w3-padding w3-margin-top">
+									<div class="w3-row-padding">
+										<div class="w3-col m6 s12">
+											<div class="w3-margin-bottom">
+												<div class="w3-row w3-small" style="margin-bottom: 2px;">
+													<div class="w3-col s9">Ippon direct</div>
+													<div class="w3-col s3 w3-right-align" style="font-weight: 600;" id="lbl-ippon">0 %</div>
+												</div>
+												<div class="tas-stat-bar" style="background-color: var(--border-color);">
+													<div id="bar-ippon" class="tas-stat-bar fj-bg-blue" style="width:0%"></div>
+												</div>
 											</div>
-											<div class="w3-light-grey tas-stat-bar">
-												<div id="bar-ippon" class="w3-indigo tas-stat-bar" style="width:0%"></div>
+											<div class="w3-margin-bottom">
+												<div class="w3-row w3-small" style="margin-bottom: 2px;">
+													<div class="w3-col s9">Waza-ari awasete ippon</div>
+													<div class="w3-col s3 w3-right-align" style="font-weight: 600;" id="lbl-wazaawa">0 %</div>
+												</div>
+												<div class="tas-stat-bar" style="background-color: var(--border-color);">
+													<div id="bar-wazaawa" class="tas-stat-bar fj-bg-blue" style="width:0%"></div>
+												</div>
 											</div>
-										</div>
-										<div class="w3-margin-bottom">
-											<div class="w3-row w3-small">
-												<div class="w3-col s9">Waza-ari awasete ippon</div>
-												<div class="w3-col s3 w3-right-align w3-strong" id="lbl-wazaawa">0 %</div>
+											<div class="w3-margin-bottom">
+												<div class="w3-row w3-small" style="margin-bottom: 2px;">
+													<div class="w3-col s9">Waza-ari</div>
+													<div class="w3-col s3 w3-right-align" style="font-weight: 600;" id="lbl-waza">0 %</div>
+												</div>
+												<div class="tas-stat-bar" style="background-color: var(--border-color);">
+													<div id="bar-waza" class="tas-stat-bar fj-bg-blue" style="width:0%"></div>
+												</div>
 											</div>
-											<div class="w3-light-grey tas-stat-bar">
-												<div id="bar-wazaawa" class="w3-indigo tas-stat-bar" style="width:0%"></div>
-											</div>
-										</div>
-										<div class="w3-margin-bottom">
-											<div class="w3-row w3-small">
-												<div class="w3-col s9">Waza-ari</div>
-												<div class="w3-col s3 w3-right-align w3-strong" id="lbl-waza">0 %</div>
-											</div>
-											<div class="w3-light-grey tas-stat-bar">
-												<div id="bar-waza" class="w3-indigo tas-stat-bar" style="width:0%"></div>
-											</div>
-										</div>
-										<div class="w3-margin-bottom">
-											<div class="w3-row w3-small">
-												<div class="w3-col s9">Yuko</div>
-												<div class="w3-col s3 w3-right-align w3-strong" id="lbl-yuko">0 %</div>
-											</div>
-											<div class="w3-light-grey tas-stat-bar">
-												<div id="bar-yuko" class="w3-indigo tas-stat-bar" style="width:0%"></div>
-											</div>
-										</div>
-									</div>
-									<div class="w3-col m6 s12">
-										<div class="w3-margin-bottom">
-											<div class="w3-row w3-small">
-												<div class="w3-col s9">3 shidos</div>
-												<div class="w3-col s3 w3-right-align w3-strong" id="lbl-shido3">0 %</div>
-											</div>
-											<div class="w3-light-grey tas-stat-bar">
-												<div id="bar-shido3" class="w3-indigo tas-stat-bar" style="width:0%"></div>
+											<div class="w3-margin-bottom">
+												<div class="w3-row w3-small" style="margin-bottom: 2px;">
+													<div class="w3-col s9">Yuko</div>
+													<div class="w3-col s3 w3-right-align" style="font-weight: 600;" id="lbl-yuko">0 %</div>
+												</div>
+												<div class="tas-stat-bar" style="background-color: var(--border-color);">
+													<div id="bar-yuko" class="tas-stat-bar fj-bg-blue" style="width:0%"></div>
+												</div>
 											</div>
 										</div>
-										<div class="w3-margin-bottom">
-											<div class="w3-row w3-small">
-												<div class="w3-col s9">Hansoku-make</div>
-												<div class="w3-col s3 w3-right-align w3-strong" id="lbl-hansoku">0 %</div>
+										<div class="w3-col m6 s12">
+											<div class="w3-margin-bottom">
+												<div class="w3-row w3-small" style="margin-bottom: 2px;">
+													<div class="w3-col s9">3 shidos</div>
+													<div class="w3-col s3 w3-right-align" style="font-weight: 600;" id="lbl-shido3">0 %</div>
+												</div>
+												<div class="tas-stat-bar" style="background-color: var(--border-color);">
+													<div id="bar-shido3" class="tas-stat-bar fj-bg-blue" style="width:0%"></div>
+												</div>
 											</div>
-											<div class="w3-light-grey tas-stat-bar">
-												<div id="bar-hansoku" class="w3-indigo tas-stat-bar" style="width:0%"></div>
+											<div class="w3-margin-bottom">
+												<div class="w3-row w3-small" style="margin-bottom: 2px;">
+													<div class="w3-col s9">Hansoku-make</div>
+													<div class="w3-col s3 w3-right-align" style="font-weight: 600;" id="lbl-hansoku">0 %</div>
+												</div>
+												<div class="tas-stat-bar" style="background-color: var(--border-color);">
+													<div id="bar-hansoku" class="tas-stat-bar fj-bg-blue" style="width:0%"></div>
+												</div>
 											</div>
-										</div>
-										<div class="w3-margin-bottom">
-											<div class="w3-row w3-small">
-												<div class="w3-col s9">Abandon / Forfait / Médical</div>
-												<div class="w3-col s3 w3-right-align w3-strong" id="lbl-amf">0 %</div>
+											<div class="w3-margin-bottom">
+												<div class="w3-row w3-small" style="margin-bottom: 2px;">
+													<div class="w3-col s9">Abandon / Forfait / Médical</div>
+													<div class="w3-col s3 w3-right-align" style="font-weight: 600;" id="lbl-amf">0 %</div>
+												</div>
+												<div class="tas-stat-bar" style="background-color: var(--border-color);">
+													<div id="bar-amf" class="tas-stat-bar fj-bg-blue" style="width:0%"></div>
+												</div>
 											</div>
-											<div class="w3-light-grey tas-stat-bar">
-												<div id="bar-amf" class="w3-indigo tas-stat-bar" style="width:0%"></div>
-											</div>
-										</div>
-										<div class="w3-margin-bottom">
-											<div class="w3-row w3-small">
-												<div class="w3-col s9">Décision</div>
-												<div class="w3-col s3 w3-right-align w3-strong" id="lbl-decision">0 %</div>
-											</div>
-											<div class="w3-light-grey tas-stat-bar">
-												<div id="bar-decision" class="w3-indigo tas-stat-bar" style="width:0%"></div>
+											<div class="w3-margin-bottom">
+												<div class="w3-row w3-small" style="margin-bottom: 2px;">
+													<div class="w3-col s9">Décision</div>
+													<div class="w3-col s3 w3-right-align" style="font-weight: 600;" id="lbl-decision">0 %</div>
+												</div>
+												<div class="tas-stat-bar" style="background-color: var(--border-color);">
+													<div id="bar-decision" class="tas-stat-bar fj-bg-blue" style="width:0%"></div>
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
 
-							<!-- Bloc DUREE -->
-							<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-								<button class="tas-stat-accordion-btn" onclick="togglePanel('j-temps')">
-									<img width="20" style="display: none; margin-right: 8px;" id="j-tempsCollapse">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
-										</xsl:attribute>
-									</img>
-									<img width="20" style="margin-right: 8px;" id="j-tempsExpand">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
-										</xsl:attribute>
-									</img>
-									Durée
-								</button>
-							</div>
-							<div id="j-temps" class="tasClosedPanelType w3-container w3-padding-small" style="display: none;">
-								<div class="w3-right-align" style="margin: 0; padding: 0; line-height: 0;">
-									<button id="info-bloc-j-tempsExpand" class="w3-button w3-transparent" style="padding: 0; margin: 0; min-height: auto;" onclick="togglePanel('info-bloc-j-temps')">
-										<img width="18" alt="Info">
-											<xsl:attribute name="src">
-												<xsl:value-of select="concat($imgPath, 'info-32.png')"/>
-											</xsl:attribute>
-										</img>
+							<!-- Bloc DUREE MODALE -->
+							<button class="ios-accordion-btn" onclick="togglePanel('j-temps')">
+								<span>Durée</span>
+								<div>
+									<img class="tas-accordion-icon tas-icon-hidden" id="j-tempsCollapse" src="{$imgPath}up_circular-32.png"/>
+									<img class="tas-accordion-icon tas-icon-visible" id="j-tempsExpand" src="{$imgPath}down_circular-32.png"/>
+								</div>
+							</button>
+
+							<div id="j-temps" class="tasClosedPanelType tas-accordion-content-hidden">
+								<div class="w3-right-align tas-info-btn-container">
+									<button id="info-bloc-j-tempsExpand" class="w3-button w3-transparent tas-info-btn" onclick="togglePanel('info-bloc-j-temps')">
+										<img width="18" alt="Info" src="{$imgPath}info-32.png" class="tas-theme-icon"/>
 									</button>
 								</div>
-								<div id="info-bloc-j-temps" class="tasClosedPanelType w3-panel w3-leftbar w3-border-grey w3-paper w3-display-container" style="display: none; padding: 4px 8px; margin-top: 0; margin-bottom: 6px;">
-									<span onclick="togglePanel('info-bloc-j-temps')" class="w3-button w3-display-topright w3-hover-grey" style="padding: 2px 8px; background: transparent;">&times;</span>
-									<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
-										<p style="margin: 2px 0;">
-											Temps de combat effectif (minimum, moyen, maximum) du judoka.<br/>
-											<!-- Mis de cote par manque de donnees TAS -->
-											<!--
-											<strong>Golden Score</strong>: Nombre et pourcentage de combats ayant eu un Golden Score.<br/>
-											<strong>Moy. Golden Score</strong>: Durée moyenne des Golden Score.<br/>		
-											-->
-										</p>
+
+								<div id="info-bloc-j-temps" class="tasClosedPanelType tas-callout" style="display: none;">
+									<button onclick="togglePanel('info-bloc-j-temps')" class="tas-callout-close">&times;</button>
+									<div>
+										Temps de combat effectif (minimum, moyen, maximum) du judoka.
 									</div>
 								</div>
-								<div class="w3-row-padding w3-margin-top w3-margin-bottom">
+
+								<div class="w3-row-padding">
 									<div class="w3-col s4">
-										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-teal">
+										<div class="ios-card tas-stat-card tas-stat-border-teal">
 											<div class="tas-stat-label">Min</div>
 											<div class="tas-stat-value" id="d-tmin">-</div>
 										</div>
 									</div>
 									<div class="w3-col s4">
-										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-teal">
+										<div class="ios-card tas-stat-card tas-stat-border-teal">
 											<div class="tas-stat-label">Moyenne</div>
 											<div class="tas-stat-value" id="d-tmoy">-</div>
 										</div>
 									</div>
 									<div class="w3-col s4">
-										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-teal">
+										<div class="ios-card tas-stat-card tas-stat-border-teal">
 											<div class="tas-stat-label">Max</div>
 											<div class="tas-stat-value" id="d-tmax">-</div>
 										</div>
 									</div>
-									<!-- Mis de cote par manque de donnees TAS -->
-									<!-- 
-									<div class="w3-col s6 w3-margin-top">
-										<xsl:if test="$typeCompetition = '1'">
-											<xsl:attribute name="style">display:none;</xsl:attribute>
-										</xsl:if>
-										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-amber">
-											<div class="tas-stat-label">Golden Score</div>
-											<div class="tas-stat-value" id="d-gscbt_pct">0 (0%)</div>
-										</div>
-									</div>
-									<div class="w3-col s6 w3-margin-top">
-										<xsl:if test="$typeCompetition = '1'">
-											<xsl:attribute name="style">display:none;</xsl:attribute>
-										</xsl:if>
-										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-amber">
-											<div class="tas-stat-label">Moy. Golden Score</div>
-											<div class="tas-stat-value" id="d-gsmoy">-</div>
-										</div>
-									</div>
-									-->
 								</div>
 							</div>
 
-							<!-- Bloc DISCIPLINE -->
-							<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-								<button class="tas-stat-accordion-btn" onclick="togglePanel('j-discip')">
-									<img width="20" style="display: none; margin-right: 8px;" id="j-discipCollapse">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
-										</xsl:attribute>
-									</img>
-									<img width="20" style="margin-right: 8px;" id="j-discipExpand">
-										<xsl:attribute name="src">
-											<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
-										</xsl:attribute>
-									</img>
-									Discipline
-								</button>
-							</div>
-							<div id="j-discip" class="tasClosedPanelType w3-container w3-padding-small" style="display: none;">
-								<div class="w3-right-align" style="margin: 0; padding: 0; line-height: 0;">
-									<button id="info-bloc-j-discipExpand" class="w3-button w3-transparent" style="padding: 0; margin: 0; min-height: auto;" onclick="togglePanel('info-bloc-j-discip')">
-										<img width="18" alt="Info">
-											<xsl:attribute name="src">
-												<xsl:value-of select="concat($imgPath, 'info-32.png')"/>
-											</xsl:attribute>
-										</img>
+							<!-- Bloc DISCIPLINE MODALE -->
+							<button class="ios-accordion-btn" onclick="togglePanel('j-discip')">
+								<span>Discipline</span>
+								<div>
+									<img class="tas-accordion-icon tas-icon-hidden" id="j-discipCollapse" src="{$imgPath}up_circular-32.png"/>
+									<img class="tas-accordion-icon tas-icon-visible" id="j-discipExpand" src="{$imgPath}down_circular-32.png"/>
+								</div>
+							</button>
+
+							<div id="j-discip" class="tasClosedPanelType tas-accordion-content-hidden">
+								<div class="w3-right-align tas-info-btn-container">
+									<button id="info-bloc-j-discipExpand" class="w3-button w3-transparent tas-info-btn" onclick="togglePanel('info-bloc-j-discip')">
+										<img width="18" alt="Info" src="{$imgPath}info-32.png" class="tas-theme-icon"/>
 									</button>
 								</div>
-								<div id="info-bloc-j-discip" class="tasClosedPanelType w3-panel w3-leftbar w3-border-grey w3-paper w3-display-container" style="display: none; padding: 4px 8px; margin-top: 0; margin-bottom: 6px;">
-									<span onclick="togglePanel('info-bloc-j-discip')" class="w3-button w3-display-topright w3-hover-grey" style="padding: 2px 8px; background: transparent;">&times;</span>
-									<div class="w3-tiny w3-text-dark-grey" style="margin-right: 20px;">
-										<p style="margin: 2px 0;">
-											<strong>Moyenne :</strong> Nombre moyen de Shidos reçus.
-										</p>
+
+								<div id="info-bloc-j-discip" class="tasClosedPanelType tas-callout" style="display: none;">
+									<button onclick="togglePanel('info-bloc-j-discip')" class="tas-callout-close">&times;</button>
+									<div>
+										<strong>Moyenne :</strong> Nombre moyen de Shidos reçus.
 									</div>
 								</div>
-								<div class="w3-row-padding w3-margin-top w3-margin-bottom">
+
+								<div class="w3-row-padding">
 									<div class="w3-col s12">
-										<div class="w3-card w3-white w3-padding-small w3-round-small tas-stat-card tas-stat-border-orange">
+										<div class="ios-card tas-stat-card tas-stat-border-orange">
 											<div class="tas-stat-label">Moyenne de shidos</div>
 											<div class="tas-stat-value" id="d-pen">0.0</div>
 										</div>
@@ -1361,12 +1023,8 @@
 					</div>
 				</div>
 
-				<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
-					<script>
-						<xsl:attribute name="src">
-							<xsl:value-of select="concat($jsPath, 'footer_script.js')"/>
-						</xsl:attribute>
-					</script>
+				<div class="w3-container w3-center w3-tiny text-muted tas-footnote">
+					<script src="{concat($jsPath, 'footer_script.js')}"/>
 				</div>
 			</body>
 		</html>

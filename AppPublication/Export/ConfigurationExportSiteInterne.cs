@@ -20,6 +20,7 @@ namespace AppPublication.Export
         }
 
         public string Logo { get; set; } = MetierResources.Files.DefaultLogo;
+
         public long DelaiDeroulementSec { get; set; } = 10;
         public int NbProchainsCombats { get; set; } = 6;
         public string UrlRedirecteur { get; set; } = string.Empty;

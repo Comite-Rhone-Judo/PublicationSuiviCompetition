@@ -96,7 +96,7 @@ namespace AppPublication.Tests.Config.Publication
             static string selecteur(string s) { return s; }
 
             // Act
-            string resultat = parametres.GetLogo<string>(null, selecteur);
+            string resultat = parametres.GetLogo<string>(parametres.Logo, null, selecteur);
 
             // Assert
             Assert.Null(resultat);

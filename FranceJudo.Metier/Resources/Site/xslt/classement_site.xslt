@@ -6,7 +6,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:import href="FranceJudo.Metier/Resources/Site/xslt/entete.xslt"/>
 	<xsl:import href="FranceJudo.Metier/Resources/Site/xslt/panel_epreuve.xslt"/>
-	
+
 	<xsl:output method="html" indent="yes"/>
 	<xsl:param name="style"/>
 	<xsl:param name="js"/>
@@ -16,15 +16,14 @@
 	<xsl:param name="commonPath"/>
 	<xsl:param name="competitionPath"/>
 
-
 	<xsl:key name="combats" match="combat" use="@niveau"/>
-	
+
 	<xsl:variable select="/docroot/SiteConfiguration/@PublierProchainsCombats = 'true'" name="affProchainCombats"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@PublierAffectationTapis = 'true'" name="affAffectationTapis"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@PublierEngagements = 'true'" name="affEngagements"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@PublierStatistiques = 'true'" name="affStatistiques"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@Logo" name="logo"/>
-
+	<xsl:variable select="/docroot/SiteConfiguration/@LogoDark" name="logoDark"/>
 
 	<xsl:template match="docroot">
 		<xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
@@ -37,7 +36,6 @@
 				<meta http-equiv="Pragma" content="no-cache"/>
 				<meta http-equiv="Expires" content="0"/>
 
-				<!-- Feuille de style W3.CSS -->
 				<link type="text/css" rel="stylesheet">
 					<xsl:attribute name="href">
 						<xsl:value-of select="concat($cssPath, 'w3.css')"/>
@@ -49,26 +47,23 @@
 					</xsl:attribute>
 				</link>
 
-				<!-- Script de navigation par defaut -->
 				<script>
 					<xsl:attribute name="src">
 						<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
 					</xsl:attribute>
 				</script>
 
-				<!-- Script ajoute en parametre -->
 				<script type="text/javascript">
 					<xsl:value-of select="$js"/>
 					gUseAutoReload = false;
 				</script>
-				<title>
-					Suivi Compétition - Classement
-				</title>
+				<title>Suivi Compétition - Classement</title>
 			</head>
 			<body>
 				<!-- ENTETE -->
 				<xsl:call-template name="entete">
 					<xsl:with-param name="logo" select="$logo"/>
+					<xsl:with-param name="logoDark" select="$logoDark"/>
 					<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
 					<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
 					<xsl:with-param name="affEngagements" select="$affEngagements"/>
@@ -79,11 +74,10 @@
 					<xsl:with-param name="pathToCommon" select="$commonPath"/>
 				</xsl:call-template>
 
-
 				<!-- CONTENU -->
 				<xsl:if test="count(competitions/competition)=0 or count(//epreuve)=0">
-					<div class="w3-container w3-border">
-						<div class="w3-panel w3-pale-green w3-bottombar w3-border-green w3-border w3-center w3-large"> Veuillez patienter le tirage des épreuves </div>
+					<div class="w3-padding">
+						<div class="ios-card tas-empty-state">Veuillez patienter, le tirage des épreuves est en cours...</div>
 					</div>
 				</xsl:if>
 
@@ -98,7 +92,7 @@
 				</xsl:for-each>
 
 				<xsl:if test="count(competitions/competition)>0">
-					<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
+					<div class="w3-container w3-center w3-tiny text-muted tas-footnote">
 						<script>
 							<xsl:attribute name="src">
 								<xsl:value-of select="concat($jsPath, 'footer_script.js')"/>
@@ -111,7 +105,6 @@
 		</html>
 	</xsl:template>
 
-	<!-- TEMPLATES -->
 	<!-- Un bloc -->
 	<xsl:template name="competition">
 		<xsl:param name="idcompetition"/>
@@ -119,30 +112,24 @@
 			<xsl:value-of select="concat('ClassementComp',$idcompetition,'ContentPanel')"/>
 		</xsl:variable>
 
-		<!-- Nom de la competition -->
-		<div class="w3-container w3-blue w3-center tas-competition-bandeau">
+		<div class="tas-competition-bandeau">
 			<h4>
 				<xsl:value-of select="./titre"/>
 			</h4>
 		</div>
 
-		<div id="Classement" class="w3-container w3-border pane w3-animate-left">
-			<!-- une ligne de cellule pour occuper toute le largeur de l'ecran -->
+		<div id="Classement" class="w3-container pane w3-animate-left tas-competition-panels">
 			<div class="w3-cell-row">
-				<!-- Chaque panneau est un panel contenant une carte, utilise cell + mobile pour gerer horizontal/vertical selon la taille de l'ecran -->
-				<!-- Categorie F -->
 				<xsl:call-template name="panelEpreuve">
 					<xsl:with-param name="sexeCode" select="'F'"/>
 					<xsl:with-param name="prefixPanel" select="$prefixCompetition"/>
 					<xsl:with-param name="imgPath" select="$imgPath"/>
 				</xsl:call-template>
-				<!-- Categorie M -->
 				<xsl:call-template name="panelEpreuve">
 					<xsl:with-param name="sexeCode" select="'M'"/>
 					<xsl:with-param name="prefixPanel" select="$prefixCompetition"/>
 					<xsl:with-param name="imgPath" select="$imgPath"/>
 				</xsl:call-template>
-				<!-- Mixte -->
 				<xsl:call-template name="panelEpreuve">
 					<xsl:with-param name="sexeCode" select="'X'"/>
 					<xsl:with-param name="prefixPanel" select="$prefixCompetition"/>
@@ -154,15 +141,10 @@
 
 	<!-- Bouton classement par epreuve -->
 	<xsl:template name="classement_epreuve" match="epreuve">
-
-		<!--<xsl:variable select="number(./@typePhase)" name="type1"/>-->
-		<!--<xsl:variable select="number(./@typePhase)" name="type2"/>-->
-
-		<a class="w3-button w3-panel w3-card w3-block w3-pale-yellow w3-large w3-round-large w3-padding-small">
-			<xsl:attribute name="href">
-				<xsl:value-of select="concat($competitionPath, @directory, 'classement_final.html')"/>
-			</xsl:attribute>
+		<!-- Simplification totale pour un design iOS cliquable -->
+		<a class="ios-list-item" href="{concat($competitionPath, @directory, 'classement_final.html')}">
 			<xsl:value-of select="./@libelle"/>
+			<xsl:text> </xsl:text>
 			<xsl:value-of select="./@nom"/>
 		</a>
 	</xsl:template>

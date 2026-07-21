@@ -10,7 +10,7 @@ namespace AppPublication.Export
 {
     public class ConfigurationExportSite : IReadOnlyConfigurationExportSite, ICloneableObject<ConfigurationExportSite>
     {
-        public ConfigurationExportSite(bool pubPC = false, bool pubAT = true, bool pubP = true, bool pubS = false, bool partAbsent = false, bool partTC = false, bool scoreGP = false, bool affPosC = false, long delAC = 30, bool defAC = false, int nbPC = 6, string pMsg = "", string pLogo = "", bool pec = false, bool ptec = false, int maxpc = 5, bool pUseIC = false, string pIC = "")
+        public ConfigurationExportSite(bool pubPC = false, bool pubAT = true, bool pubP = true, bool pubS = false, bool partAbsent = false, bool partTC = false, bool scoreGP = false, bool affPosC = false, long delAC = 30, bool defAC = false, int nbPC = 6, string pMsg = "", string pLogo = "", string pLogoDark = "", bool pec = false, bool ptec = false, int maxpc = 5, bool pUseIC = false, string pIC = "")
         {
             PublierProchainsCombats = pubPC;
             PublierAffectationTapis = pubAT;
@@ -25,6 +25,7 @@ namespace AppPublication.Export
             NbProchainsCombats = nbPC;
             MsgProchainsCombats = pMsg;
             Logo = string.IsNullOrEmpty(pLogo) ? MetierResources.Files.DefaultLogo : pLogo;
+            LogoDark = string.IsNullOrEmpty(pLogoDark) ? MetierResources.Files.DefaultLogo : pLogoDark;
             PouleEnColonnes = pec;
             PouleToujoursEnColonnes = ptec;
             TailleMaxPouleColonnes = maxpc;
@@ -46,7 +47,7 @@ namespace AppPublication.Export
         public int NbProchainsCombats { get; set; } = 6;
         public string MsgProchainsCombats { get; set; } = string.Empty;
         public string Logo { get; set; } = MetierResources.Files.DefaultLogo;
-
+        public string LogoDark { get; set; } = MetierResources.Files.DefaultLogo;
         public bool PouleEnColonnes { get; set; } = false;
         public bool PouleToujoursEnColonnes { get; set; } = false;
         public int TailleMaxPouleColonnes { get; set; } = 5;
@@ -86,6 +87,7 @@ namespace AppPublication.Export
                 new XAttribute(ConstantXML.AppVersion, AppInformation.Instance.AppVersion ?? string.Empty),
                 new XAttribute(ConstantXML.msgProchainsCombats, MsgProchainsCombats ?? string.Empty),
                 new XAttribute(ConstantXML.Logo, Logo ?? string.Empty),
+                new XAttribute(ConstantXML.LogoDark, LogoDark ?? string.Empty),
                 new XAttribute(ConstantXML.intituleCommun, IntituleCommun ?? string.Empty)
                 );
         }

@@ -107,12 +107,51 @@ function initModals() {
     }
 }
 
+// ========== Gestion du Thème Sombre ==========
+
+// Vérifie et applique le thème au chargement
+function checkDarkMode() {
+    // Utilisation directe de sessionStorage pour que le choix soit global à toutes les pages
+    var isDark = sessionStorage.getItem('tas_global_dark_mode') === 'true';
+
+    // Met à jour la case à cocher si le menu est présent
+    var cb = document.getElementById('cbDarkMode');
+    if (cb) {
+        cb.checked = isDark;
+    }
+
+    // Applique la classe sur le body
+    if (isDark) {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.remove('dark-mode');
+    }
+}
+
+// Action au clic sur la case à cocher
+function toggleDarkMode(cb) {
+    var isDark = cb.checked;
+
+    // Sauvegarde globale
+    sessionStorage.setItem('tas_global_dark_mode', isDark ? 'true' : 'false');
+
+    // Bascule visuelle immédiate
+    if (isDark) {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.remove('dark-mode');
+    }
+}
+
 // ========== Gestion des evenements ==========
 
 // Callback pour le chargement de la page
 function windowOnLoad() {
     // Verifie la gestion de l'actualisation automatique (auto-reload)
     checkReloading();
+
+    // Vérifie et applique le thème sombre
+    checkDarkMode();
 
     // Charge les panels (categories, etc.)
     initPanels();

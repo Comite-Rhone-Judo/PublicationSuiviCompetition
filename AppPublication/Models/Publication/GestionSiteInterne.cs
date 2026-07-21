@@ -219,6 +219,16 @@ namespace AppPublication.Models.Publication
             } );
         }
 
+        protected override void OnUseLogoUniqueChanged(bool newValue)
+        {
+            // Pas utilisé sur le site interne
+        }
+
+        protected override void OnSelectedLogoDarkChanged(string logoName)
+        {
+            // Pas utilisé sur le site interne
+        }
+
         protected override void OnInterfaceLocalPublicationChanged()
         {
             URLLocalPublication = CalculURLSiteLocal();

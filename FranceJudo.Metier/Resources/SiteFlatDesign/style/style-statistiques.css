@@ -1,0 +1,131 @@
+/* ========================================================================= */
+/* Fichier : style-statistiques.css                                          */
+/* ========================================================================= */
+
+/* Conteneur principal fluide */
+.tas-stat-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    min-height: 100vh;
+}
+
+/* Boutons d'accordéons spécifiques aux statistiques */
+.tas-stat-accordion-btn {
+    padding: 10px 16px;
+    font-size: 0.95em;
+    display: flex;
+    align-items: center;
+    background: transparent !important;
+    width: 100%;
+    text-align: left;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+    .tas-stat-accordion-btn:hover {
+        background-color: rgba(0,0,0,0.05) !important;
+    }
+
+/* Jauges et Cartes */
+.tas-stat-bar {
+    height: 10px;
+    border-radius: 5px;
+}
+
+.tas-stat-card {
+    border-left: 4px solid transparent;
+    margin-bottom: 8px;
+}
+
+/* Typographie condensée */
+.tas-stat-label {
+    font-size: 0.7em;
+    text-transform: uppercase;
+    color: #666;
+    /* font-weight: bold; */
+    line-height: 1.1;
+    margin-bottom: 2px;
+}
+
+.tas-stat-value {
+    font-size: 1.1em;
+    font-weight: bold;
+    line-height: 1;
+    color: #333;
+}
+
+/* Couleurs de liserets (Borders) */
+.tas-stat-border-blue {
+    border-left-color: #2196F3 !important;
+}
+
+.tas-stat-border-green {
+    border-left-color: #4CAF50 !important;
+}
+
+.tas-stat-border-orange {
+    border-left-color: #ff9800 !important;
+}
+
+.tas-stat-border-red {
+    border-left-color: #f44336 !important;
+}
+
+.tas-stat-border-teal {
+    border-left-color: #009688 !important;
+}
+
+.tas-stat-border-amber {
+    border-left-color: #ffc107 !important;
+}
+
+/* Lignes du tableau cliquables */
+.tas-stat-clickable-row {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+    .tas-stat-clickable-row:hover {
+        background-color: #e0e0e0 !important;
+    }
+
+    .tas-stat-clickable-row td {
+        vertical-align: middle !important;
+        white-space: nowrap;
+    }
+
+/* Modale */
+.tas-stat-modal-flex {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 800px;
+    margin: auto;
+    background-color: #f4f4f4;
+}
+
+.tas-stat-modal-header {
+    flex: 0 0 auto;
+    position: relative;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.tas-stat-modal-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding-bottom: 40px;
+    background: white;
+}
+
+/* Cellules de tableau compactées verticalement (3 lignes) */
+td.tas-compact-cell {
+    line-height: 1.1;
+}
+
+    td.tas-compact-cell div + div {
+        margin-top: 2px;
+    }

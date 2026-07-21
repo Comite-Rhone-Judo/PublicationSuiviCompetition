@@ -1,85 +1,80 @@
 /* ========================================================================= */
-/* Fichier : style-statistiques.css                                          */
+/* Fichier : style-statistiques.css (Modernisé iOS / Dark Mode)              */
 /* ========================================================================= */
 
 /* Conteneur principal fluide */
 .tas-stat-container {
     max-width: 1000px;
     margin: 0 auto;
-    background: white;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    /* Le fond et l'ombre sont gérés par le body et les cartes, plus besoin de forcer du blanc ici */
     min-height: 100vh;
 }
 
-/* Boutons d'accordéons spécifiques aux statistiques */
-.tas-stat-accordion-btn {
-    padding: 10px 16px;
-    font-size: 0.95em;
-    display: flex;
-    align-items: center;
-    background: transparent !important;
-    width: 100%;
-    text-align: left;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
 
-    .tas-stat-accordion-btn:hover {
-        background-color: rgba(0,0,0,0.05) !important;
-    }
-
+/* ==========================================================================
+   Jauges et barres de progression 
+   ========================================================================== */
 /* Jauges et Cartes */
 .tas-stat-bar {
     height: 10px;
     border-radius: 5px;
+    overflow: hidden;
 }
 
+/* Mode Sombre */
+body.dark-mode .fj-bg-blue,
+body.dark-mode div.tas-stat-bar .fj-bg-blue {
+    /* Éclaircit le bleu de référence en le mélangeant avec 40% de blanc pur */
+    background-color: color-mix(in srgb, var(--fj-blue) 60%, white) !important;
+}
+
+/* On utilise ios-card comme base, tas-stat-card ajoute juste le liseret */
 .tas-stat-card {
     border-left: 4px solid transparent;
-    margin-bottom: 8px;
+    padding: 12px 16px;
 }
 
 /* Typographie condensée */
 .tas-stat-label {
-    font-size: 0.7em;
+    font-size: 0.75em;
     text-transform: uppercase;
-    color: #666;
-    /* font-weight: bold; */
+    color: var(--text-muted); /* Rendu adaptatif */
+    letter-spacing: 0.5px;
     line-height: 1.1;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
 }
 
 .tas-stat-value {
-    font-size: 1.1em;
-    font-weight: bold;
+    font-size: 1.3em;
+    font-weight: 600;
     line-height: 1;
-    color: #333;
+    color: var(--text-color); /* Rendu adaptatif */
 }
 
 /* Couleurs de liserets (Borders) */
+/* Remplacement des liserés en dur par le nuancier source */
 .tas-stat-border-blue {
-    border-left-color: #2196F3 !important;
+    border-left-color: var(--fj-blue) !important;
 }
 
 .tas-stat-border-green {
-    border-left-color: #4CAF50 !important;
+    border-left-color: var(--fj-green) !important;
 }
 
 .tas-stat-border-orange {
-    border-left-color: #ff9800 !important;
+    border-left-color: var(--fj-taupe) !important; /* Ou une variable d'avertissement dérivée */
 }
 
 .tas-stat-border-red {
-    border-left-color: #f44336 !important;
+    border-left-color: var(--fj-red) !important;
 }
 
 .tas-stat-border-teal {
-    border-left-color: #009688 !important;
+    border-left-color: var(--fj-blue-alt) !important;
 }
 
 .tas-stat-border-amber {
-    border-left-color: #ffc107 !important;
+    border-left-color: var(--fj-grey) !important;
 }
 
 /* Lignes du tableau cliquables */
@@ -89,41 +84,49 @@
 }
 
     .tas-stat-clickable-row:hover {
-        background-color: #e0e0e0 !important;
+        background-color: rgba(0,0,0,0.05) !important;
     }
 
-    .tas-stat-clickable-row td {
-        vertical-align: middle !important;
-        white-space: nowrap;
-    }
+body.dark-mode .tas-stat-clickable-row:hover {
+    background-color: rgba(255,255,255,0.08) !important;
+}
 
-/* Modale */
+.tas-stat-clickable-row td {
+    vertical-align: middle !important;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Modale (Adaptée au mode sombre) */
 .tas-stat-modal-flex {
     display: flex;
     flex-direction: column;
     height: 100vh;
     max-width: 800px;
     margin: auto;
-    background-color: #f4f4f4;
+    background-color: var(--bg-color); /* Fond global adaptatif */
 }
 
 .tas-stat-modal-header {
     flex: 0 0 auto;
     position: relative;
     z-index: 100;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    padding: 16px;
+    text-align: center;
 }
 
 .tas-stat-modal-body {
     flex: 1 1 auto;
     overflow-y: auto;
-    padding-bottom: 40px;
-    background: white;
+    padding: 16px;
+    background: transparent;
 }
 
 /* Cellules de tableau compactées verticalement (3 lignes) */
 td.tas-compact-cell {
-    line-height: 1.1;
+    line-height: 1.2;
 }
 
     td.tas-compact-cell div + div {

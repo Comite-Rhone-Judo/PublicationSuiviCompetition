@@ -6,7 +6,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:import href="FranceJudo.Metier/Resources/Site/xslt/entete.xslt"/>
 	<xsl:import href="FranceJudo.Metier/Resources/Site/xslt/nom_structure.xslt"/>
-	
+
 	<xsl:output method="html" indent="yes" />
 	<xsl:param name="style"/>
 	<xsl:param name="js"/>
@@ -16,13 +16,12 @@
 	<xsl:param name="commonPath"/>
 	<xsl:param name="competitionPath"/>
 	<xsl:param name="RefData"/>
-	
-	<!-- Type de la poule: 1 = Diagonale, 2 = Colonnes, 3 = auto -->
+
 	<xsl:param name="typePoule"/>
 	<xsl:param name="tailleMaxPouleColonne"/>
 
 	<xsl:key name="participants" match="participant" use="@poule"/>
-	
+
 	<xsl:variable name="typeCompetition" select="/docroot/competition/@type"/>
 	<xsl:variable name="niveauCompetition" select="/docroot/competition/@niveau"/>
 
@@ -34,57 +33,35 @@
 	<xsl:variable select="/docroot/SiteConfiguration/@ActualisationClientDefaut = 'true'" name="actualisationClientDefaut"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@kinzas" name="affKinzas"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@Logo" name="logo"/>
-	
+	<xsl:variable select="/docroot/SiteConfiguration/@LogoDark" name="logoDark"/>
+
 	<xsl:template match="docroot">
 		<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
 		<html>
 			<head>
 				<META http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-				<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 				<meta name="viewport" content="width=device-width,initial-scale=1"/>
 				<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 				<meta http-equiv="Pragma" content="no-cache"/>
 				<meta http-equiv="Expires" content="0"/>
 
-				<!-- Feuille de style W3.CSS -->
-				<link type="text/css" rel="stylesheet">
-					<xsl:attribute name="href">
-						<xsl:value-of select="concat($cssPath, 'w3.css')"/>
-					</xsl:attribute>
-				</link>
-				<link type="text/css" rel="stylesheet">
-					<xsl:attribute name="href">
-						<xsl:value-of select="concat($cssPath, 'style-common.css')"/>
-					</xsl:attribute>
-				</link>
-				<link type="text/css" rel="stylesheet">
-					<xsl:attribute name="href">
-						<xsl:value-of select="concat($cssPath, 'style-poule.css')"/>
-					</xsl:attribute>
-				</link>
-				
-				<!-- Script ajoute en parametre -->
+				<link type="text/css" rel="stylesheet" href="{concat($cssPath, 'w3.css')}"/>
+				<link type="text/css" rel="stylesheet" href="{concat($cssPath, 'style-common.css')}"/>
+				<link type="text/css" rel="stylesheet" href="{concat($cssPath, 'style-poule.css')}"/>
+
 				<script type="text/javascript">
 					<xsl:value-of select="$js"/>
 					gDelayAutoReloadSec = <xsl:value-of select="$delayActualisationClient"/>;
 					gDefaultAutoReload = <xsl:value-of select="$actualisationClientDefaut"/>;
 				</script>
-				<!-- Script de navigation par defaut -->
-				<script>
-					<xsl:attribute name="src">
-						<xsl:value-of select="concat($jsPath, 'site-display.js')"/>
-					</xsl:attribute>
-				</script>
+				<script src="{concat($jsPath, 'site-display.js')}"></script>
 
-
-				<title>
-					Suivi Compétition - Avancement
-				</title>
+				<title>Suivi Compétition - Poules</title>
 			</head>
 			<body>
-				<!-- ENTETE -->
 				<xsl:call-template name="entete">
 					<xsl:with-param name="logo" select="$logo"/>
+					<xsl:with-param name="logoDark" select="$logoDark"/>
 					<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
 					<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
 					<xsl:with-param name="affEngagements" select="$affEngagements"/>
@@ -95,63 +72,38 @@
 					<xsl:with-param name="pathToCommon" select="$commonPath"/>
 				</xsl:call-template>
 
-				<!-- Div vide pour aligner le contenu avec le bandeau de titre de taille fixe -->
-				<div class="w3-container tas-filler-div">&nbsp;</div>
-
-				<!-- CONTENU -->
-				<!-- Nom de la competition + Catégorie -->
-				<div class="w3-container w3-blue w3-center tas-competition-bandeau">
-					<div>
-						<h4>
-							<xsl:value-of select="competition/titre"/>
-						</h4>
-					</div>
-					<div class="w3-card w3-indigo">
-						<h5>
-
-							<xsl:if test="//epreuve[1]/@sexe='F'">
-								Féminines&nbsp;
-							</xsl:if>
-							<xsl:if test="//epreuve[1]/@sexe='M'">
-								Masculins&nbsp;
-							</xsl:if>
-							<xsl:if test="//epreuve[1]/@sexe='X'">
-								Mixte&nbsp;
-							</xsl:if>
-							<xsl:value-of select="//epreuve[1]/@nom"/>
-						</h5>
-					</div>
+				<div class="tas-competition-bandeau">
+					<h4>
+						<xsl:value-of select="competition/titre"/>
+					</h4>
+					<h5>
+						<xsl:if test="//epreuve[1]/@sexe='F'">Féminines&nbsp;</xsl:if>
+						<xsl:if test="//epreuve[1]/@sexe='M'">Masculins&nbsp;</xsl:if>
+						<xsl:if test="//epreuve[1]/@sexe='X'">Mixte&nbsp;</xsl:if>
+						<xsl:value-of select="//epreuve[1]/@nom"/>
+					</h5>
 				</div>
 
-				<!-- Les poules -->
-				<div class="w3-card">
+				<div>
 					<xsl:for-each select="//phase/poules/poule">
-						<xsl:variable name="noPoule" >
-							<xsl:value-of select="./@numero"/>
-						</xsl:variable>
+						<xsl:variable name="noPoule" select="./@numero"/>
 						<xsl:variable name="phasePoule" select="./@phase"/>
 						<xsl:variable name="nbParticipantsPoule" select="count(//participant[@poule = $noPoule and @phase = $phasePoule])"/>
 
-						<!-- Determine la disposition de la poule en fonction du type et de la taille de la poule -->
 						<xsl:variable name="dispositionPoule">
 							<xsl:choose>
-								<!-- Calcul en fonction de la taille de la poule -->
 								<xsl:when test="$typePoule = 3">
 									<xsl:choose>
-										<!-- Diagonal si > max -->
 										<xsl:when test="$nbParticipantsPoule > $tailleMaxPouleColonne">1</xsl:when>
-										<!-- Colonne si <= max -->
 										<xsl:otherwise>2</xsl:otherwise>
 									</xsl:choose>
 								</xsl:when>
-								<!-- Choix force -->
 								<xsl:otherwise>
 									<xsl:value-of select="$typePoule"/>
 								</xsl:otherwise>
 							</xsl:choose>
 						</xsl:variable>
 
-						<!-- En fonction de la presence de combats de niveau 2, on affiche ou pas la poule complementaire -->
 						<xsl:choose>
 							<xsl:when test="count(//combats/combat[@niveau = '2' and @phase = $phasePoule and @reference  = $noPoule]) > 0">
 								<xsl:call-template name="templatePoule">
@@ -176,32 +128,22 @@
 								</xsl:call-template>
 							</xsl:otherwise>
 						</xsl:choose>
-
 					</xsl:for-each>
 				</div>
 
-				<!-- Info d'actualisation -->
-				<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
-					<script>
-						<xsl:attribute name="src">
-							<xsl:value-of select="concat($jsPath, 'footer_script.js')"/>
-						</xsl:attribute>
-					</script>
+				<div class="w3-container w3-center w3-tiny text-muted tas-footnote">
+					<script src="{concat($jsPath, 'footer_script.js')}"></script>
 				</div>
 			</body>
 		</html>
 	</xsl:template>
 
-	<!-- TEMPLATES -->
-	<!-- Les Poules -->
 	<xsl:template name="templatePoule" match="poule">
-		<!-- niveau: 0 = poule simple, 1 = poule principale, 2 = Poule complementaire -->
 		<xsl:param name="niveau"/>
 		<xsl:param name="numeroPoule"/>
 		<xsl:param name="phase"/>
 		<xsl:param name="dispositionPoule"/>
-		
-		<xsl:variable name="apos">'</xsl:variable>
+
 		<xsl:variable name="niveauCombat">
 			<xsl:choose>
 				<xsl:when test="$niveau = '2'">2</xsl:when>
@@ -209,259 +151,184 @@
 			</xsl:choose>
 		</xsl:variable>
 
-		<xsl:variable name="poulefirstrencontre">
-			<xsl:value-of select="//combat[ @niveau = $niveauCombat and @phase = $phase and @reference = $numeroPoule][1]/@firstrencontrelib"/>
-		</xsl:variable>
+		<xsl:variable name="poulefirstrencontre" select="//combat[ @niveau = $niveauCombat and @phase = $phase and @reference = $numeroPoule][1]/@firstrencontrelib"/>
 
-		<!-- Extrait la couleur en fonction de la categorie-->
-		<xsl:variable name="firstrencontreclass">
+		<xsl:variable name="panelId">
 			<xsl:choose>
-				<xsl:when test="substring($poulefirstrencontre, 1, 1) = 'M'">
-					w3-blue colorized-img-white
+				<xsl:when test="$niveau > 1">
+					<xsl:value-of select="concat('pouleCompl', $numeroPoule)"/>
 				</xsl:when>
-				<xsl:when test="substring($poulefirstrencontre, 1, 1) = 'F'">
-					w3-purple colorized-img-white
-				</xsl:when>
-				<xsl:otherwise>w3-lime colorized-img-black</xsl:otherwise>
+				<xsl:otherwise>
+					<xsl:value-of select="concat('poule', $numeroPoule)"/>
+				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
 
-		<!-- Bandeau repliable de la poule -->
-		<div class="w3-container w3-light-blue w3-text-indigo w3-large w3-bar w3-cell-middle tas-entete-section">
-			<button class="w3-bar-item w3-light-blue">
-				<xsl:attribute name="onclick">
+		<div class="w3-padding-small">
+			<button class="ios-accordion-btn" onclick="togglePanel('{$panelId}')">
+				<span>
 					<xsl:choose>
 						<xsl:when test="$niveau > 1">
-							<xsl:value-of select="concat('togglePanel(',$apos,'pouleCompl',$numeroPoule,$apos,')')"/>
+							Poule <xsl:value-of select="$numeroPoule"/> (Complémentaire)
+						</xsl:when>
+						<xsl:when test="$niveau = 1">
+							Poule <xsl:value-of select="$numeroPoule"/> (Principale)
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:value-of select="concat('togglePanel(',$apos,'poule',$numeroPoule,$apos,')')"/>
+							Poule <xsl:value-of select="$numeroPoule"/>
 						</xsl:otherwise>
 					</xsl:choose>
-				</xsl:attribute>
-				<img class="img" width="25">
-					<xsl:attribute name="src">
-						<xsl:value-of select="concat($imgPath, 'up_circular-32.png')"/>
-					</xsl:attribute>
-					<xsl:attribute name="id">
-						<xsl:choose>
-							<xsl:when test="$niveau > 1">
-								<xsl:value-of select="concat('pouleCompl',$numeroPoule,'Collapse')"/>
-							</xsl:when>
-							<xsl:otherwise>
-								<xsl:value-of select="concat('poule',$numeroPoule,'Collapse')"/>
-							</xsl:otherwise>
-						</xsl:choose>
-					</xsl:attribute>
-				</img>
-				<img class="img" width="25" style="display: none;" >
-					<xsl:attribute name="src">
-						<xsl:value-of select="concat($imgPath, 'down_circular-32.png')"/>
-					</xsl:attribute>
-					<xsl:attribute name="id">
-						<xsl:choose>
-							<xsl:when test="$niveau > 1">
-								<xsl:value-of select="concat('pouleCompl',$numeroPoule,'Expand')"/>
-							</xsl:when>
-							<xsl:otherwise>
-								<xsl:value-of select="concat('poule',$numeroPoule,'Expand')"/>
-							</xsl:otherwise>
-						</xsl:choose>
-					</xsl:attribute>
-				</img>
-				<xsl:choose>
-					<xsl:when test="$niveau > 1">
-						<xsl:value-of select="concat('Poule&nbsp;',$numeroPoule, ' (Complémentaire)')"/>
-					</xsl:when>
-					<xsl:when test="$niveau = 1">
-						<xsl:value-of select="concat('Poule&nbsp;',$numeroPoule, ' (Principale)')"/>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:value-of select="concat('Poule&nbsp;',$numeroPoule)"/>
-					</xsl:otherwise>
-				</xsl:choose>
+				</span>
+				<div>
+					<img class="tas-accordion-icon tas-icon-hidden" src="{$imgPath}up_circular-32.png" id="{concat($panelId, 'Collapse')}"/>
+					<img class="tas-accordion-icon tas-icon-visible" src="{$imgPath}down_circular-32.png" id="{concat($panelId, 'Expand')}"/>
+				</div>
 			</button>
-		</div>
-			
-		<!-- La poule -->
-		  <div class="tasOpenedPanelType w3-container tas-panel-poule-combat">
-			  <xsl:attribute name="id">
-				  <xsl:choose>
-					  <xsl:when test="$niveau > 1">
-						  <xsl:value-of select="concat('pouleCompl',$numeroPoule)"/>
-					  </xsl:when>
-					  <xsl:otherwise>
-						  <xsl:value-of select="concat('poule',$numeroPoule)"/>
-					  </xsl:otherwise>
-				  </xsl:choose>
-			  </xsl:attribute>
 
-			  <!-- Affichage de la categorie commencant en cas d'equipe -->
-			  <xsl:if test="$typeCompetition = '1'">
-				  <div>
-					  <xsl:attribute name="class">
-						  w3-container w3-margin-left w3-center w3-cell-middle w3-tag w3-round-large w3-left-align
-						  <xsl:value-of select="$firstrencontreclass"/>
-					  </xsl:attribute>
-					  <img class="img" width="32">
-						  <xsl:attribute name="src">
-							  <xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
-						  </xsl:attribute>
-					  </img>
-					  &nbsp;
-					  1<sup>ère</sup> catégorie:&nbsp;<xsl:value-of select="$poulefirstrencontre"/>
-				  </div>
-			  </xsl:if>
-			  <table border="0" class="w3-centered tas-poule-combat">				
-				<!-- 1ere ligne entete -->
-                <tbody>
-                    <tr>
-                        <td class="w3-small tas-poule-heading">
-							<xsl:choose>
-								<xsl:when test="$typeCompetition != '1'">Combattants</xsl:when>
-								<xsl:when test="$typeCompetition = '1'">Equipes</xsl:when>
-							</xsl:choose>
-						</td>
-                        <td></td>
-						<xsl:choose>
-							<xsl:when test="$dispositionPoule = 2">
-								<!-- Disposition en colonne, les entetes sont les combats -->
-								<xsl:for-each select="//combat[ @niveau = $niveauCombat and @phase = $phase and @reference = $numeroPoule]">
-									<xsl:sort select="@numero" data-type="number" order="ascending"/>
+			<div class="tasOpenedPanelType tas-accordion-content-visible" id="{$panelId}">
 
-									<!-- Calcul les positions des judokas -->
-									<xsl:variable name="posj1">
-										<xsl:choose>
-											<xsl:when test="$typeCompetition = '1'">
-												<xsl:call-template name="positionEquipe">
-													<xsl:with-param name="noPoule" select="$numeroPoule"/>
-													<xsl:with-param name="idEquipe" select="./score[1]/@judoka"/>
-												</xsl:call-template>
-											</xsl:when>
-											<xsl:otherwise>
-												<xsl:call-template name="positionJudoka">
-													<xsl:with-param name="noPoule" select="$numeroPoule"/>
-													<xsl:with-param name="idJudoka" select="./score[1]/@judoka"/>
-												</xsl:call-template>
-											</xsl:otherwise>
-										</xsl:choose>
-									</xsl:variable>
+				<xsl:if test="$typeCompetition = '1'">
+					<div class="w3-container w3-margin-top w3-small w3-text-muted w3-center">
+						<span class="w3-tag w3-round w3-light-grey">
+							1<sup>ère</sup> catégorie:&nbsp;<xsl:value-of select="$poulefirstrencontre"/>
+						</span>
+					</div>
+				</xsl:if>
 
-									<xsl:variable name="posj2">
-										<xsl:choose>
-											<xsl:when test="$typeCompetition = '1'">
-												<xsl:call-template name="positionEquipe">
-													<xsl:with-param name="noPoule" select="$numeroPoule"/>
-													<xsl:with-param name="idEquipe" select="./score[2]/@judoka"/>
-												</xsl:call-template>
-											</xsl:when>
-											<xsl:otherwise>
-												<xsl:call-template name="positionJudoka">
-													<xsl:with-param name="noPoule" select="$numeroPoule"/>
-													<xsl:with-param name="idJudoka" select="./score[2]/@judoka"/>
-												</xsl:call-template>
-											</xsl:otherwise>
-										</xsl:choose>
-									</xsl:variable>
-
-									<!-- Affiche les positions judokas du combat en entete -->
-									<td class="tas-poule-heading-combat">
-										<div class="w3-center w3-padding-small">
-											<span class="w3-tag w3-round-large w3-light-grey">
-												<xsl:value-of select="$posj1"/> - <xsl:value-of select="$posj2"/>
-											</span>
-										</div>
-									</td>
-								</xsl:for-each>
-							</xsl:when>
-							<xsl:otherwise>
-								<!-- Disposition en diagonale, les entetes sont les participants -->
-								<xsl:for-each select="key('participants', $numeroPoule)">
-									<td class="tas-poule-heading-combat">
-										<div class="w3-center w3-padding-small">
-											<span class="w3-badge w3-light-grey">
-												<xsl:value-of select="position()"/>
-											</span>
-										</div>
-									</td>
-								</xsl:for-each>
-							</xsl:otherwise>
-						</xsl:choose>
-                        <td class="w3-small tas-poule-heading">
-                            <div class="w3-center w3-padding-small">
-                                V
-                            </div>
-                        </td>
-                        <td class="w3-small tas-poule-heading">
-                            <div class="w3-center w3-padding-small">
-
+				<!-- Grille des combats (Bloc scrollable) -->
+				<div class="tas-panel-poule-combat">
+					<table class="tas-poule-combat">
+						<thead>
+							<tr>
+								<th class="tas-poule-heading-text">
+									<xsl:choose>
+										<xsl:when test="$typeCompetition != '1'">Combattants</xsl:when>
+										<xsl:when test="$typeCompetition = '1'">Équipes</xsl:when>
+									</xsl:choose>
+								</th>
+								<!-- La colonne # est totalement supprimée ! -->
 								<xsl:choose>
-									<xsl:when test="$typeCompetition != '1'">Pt</xsl:when>
-									<xsl:when test="$typeCompetition = '1'">Score</xsl:when>
+									<xsl:when test="$dispositionPoule = 2">
+										<xsl:for-each select="//combat[ @niveau = $niveauCombat and @phase = $phase and @reference = $numeroPoule]">
+											<xsl:sort select="@numero" data-type="number" order="ascending"/>
+											<xsl:variable name="posj1">
+												<xsl:choose>
+													<xsl:when test="$typeCompetition = '1'">
+														<xsl:call-template name="positionEquipe">
+															<xsl:with-param name="noPoule" select="$numeroPoule"/>
+															<xsl:with-param name="idEquipe" select="./score[1]/@judoka"/>
+														</xsl:call-template>
+													</xsl:when>
+													<xsl:otherwise>
+														<xsl:call-template name="positionJudoka">
+															<xsl:with-param name="noPoule" select="$numeroPoule"/>
+															<xsl:with-param name="idJudoka" select="./score[1]/@judoka"/>
+														</xsl:call-template>
+													</xsl:otherwise>
+												</xsl:choose>
+											</xsl:variable>
+											<xsl:variable name="posj2">
+												<xsl:choose>
+													<xsl:when test="$typeCompetition = '1'">
+														<xsl:call-template name="positionEquipe">
+															<xsl:with-param name="noPoule" select="$numeroPoule"/>
+															<xsl:with-param name="idEquipe" select="./score[2]/@judoka"/>
+														</xsl:call-template>
+													</xsl:when>
+													<xsl:otherwise>
+														<xsl:call-template name="positionJudoka">
+															<xsl:with-param name="noPoule" select="$numeroPoule"/>
+															<xsl:with-param name="idJudoka" select="./score[2]/@judoka"/>
+														</xsl:call-template>
+													</xsl:otherwise>
+												</xsl:choose>
+											</xsl:variable>
+
+											<th>
+												<span class="tas-position-badge">
+													<xsl:value-of select="$posj1"/>-<xsl:value-of select="$posj2"/>
+												</span>
+											</th>
+										</xsl:for-each>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:for-each select="key('participants', $numeroPoule)">
+											<th>
+												<span class="tas-position-badge">
+													<xsl:value-of select="position()"/>
+												</span>
+											</th>
+										</xsl:for-each>
+									</xsl:otherwise>
 								</xsl:choose>
-                            </div>
-                        </td>
-                    </tr>
+								<th class="tas-poule-heading-text">V</th>
+								<th class="tas-poule-heading-text">
+									<xsl:choose>
+										<xsl:when test="$typeCompetition != '1'">Pt</xsl:when>
+										<xsl:when test="$typeCompetition = '1'">Score</xsl:when>
+									</xsl:choose>
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<xsl:apply-templates select="key('participants', $numeroPoule)">
+								<xsl:sort select="@position" data-type="number" order="ascending"/>
+								<xsl:with-param name="poule" select="$numeroPoule"/>
+								<xsl:with-param name="phase" select="$phase"/>
+								<xsl:with-param name="dispositionPoule" select="$dispositionPoule"/>
+								<xsl:with-param name="niveauCombat" select="$niveauCombat"/>
+							</xsl:apply-templates>
+						</tbody>
+					</table>
+				</div>
 
-					<!-- Template par ligne de participant -->
-					<xsl:apply-templates select="key('participants', $numeroPoule)">
-							<xsl:sort select="@position" data-type="number" order="ascending"/>
-							<xsl:with-param name="poule" select="$numeroPoule"/>
-							<xsl:with-param name="phase" select="$phase"/>
-							<xsl:with-param name="dispositionPoule" select="$dispositionPoule"/>
-							<xsl:with-param name="niveauCombat" select="$niveauCombat"/>
-					</xsl:apply-templates>
-                </tbody>
-            </table>
-			  <xsl:if test="$dispositionPoule != 2">
-				  <div class="w3-container w3-padding-small w3-small w3-left-align">
-					  <strong>Ordre : </strong>
-					  <xsl:for-each select="//combat[ @niveau = $niveauCombat and @phase = $phase and @reference = $numeroPoule]">
-						  <xsl:sort select="@numero" data-type="number" order="ascending"/>
-
-						  <xsl:variable name="posj1">
-							  <xsl:choose>
-								  <xsl:when test="$typeCompetition = '1'">
-									  <xsl:call-template name="positionEquipe">
-										  <xsl:with-param name="noPoule" select="$numeroPoule"/>
-										  <xsl:with-param name="idEquipe" select="./score[1]/@judoka"/>
-									  </xsl:call-template>
-								  </xsl:when>
-								  <xsl:otherwise>
-									  <xsl:call-template name="positionJudoka">
-										  <xsl:with-param name="noPoule" select="$numeroPoule"/>
-										  <xsl:with-param name="idJudoka" select="./score[1]/@judoka"/>
-									  </xsl:call-template>
-								  </xsl:otherwise>
-							  </xsl:choose>
-						  </xsl:variable>
-
-						  <xsl:variable name="posj2">
-							  <xsl:choose>
-								  <xsl:when test="$typeCompetition = '1'">
-									  <xsl:call-template name="positionEquipe">
-										  <xsl:with-param name="noPoule" select="$numeroPoule"/>
-										  <xsl:with-param name="idEquipe" select="./score[2]/@judoka"/>
-									  </xsl:call-template>
-								  </xsl:when>
-								  <xsl:otherwise>
-									  <xsl:call-template name="positionJudoka">
-										  <xsl:with-param name="noPoule" select="$numeroPoule"/>
-										  <xsl:with-param name="idJudoka" select="./score[2]/@judoka"/>
-									  </xsl:call-template>
-								  </xsl:otherwise>
-							  </xsl:choose>
-						  </xsl:variable>
-
-						  <xsl:value-of select="concat($posj1, '-', $posj2)"/>
-						  <xsl:if test="position() != last()">, </xsl:if>
-					  </xsl:for-each>
-				  </div>
-			  </xsl:if>
-        </div>
+				<xsl:if test="$dispositionPoule != 2">
+					<div class="w3-container w3-padding-small w3-small text-muted w3-center">
+						<strong>Ordre : </strong>
+						<xsl:for-each select="//combat[ @niveau = $niveauCombat and @phase = $phase and @reference = $numeroPoule]">
+							<xsl:sort select="@numero" data-type="number" order="ascending"/>
+							<xsl:variable name="posj1">
+								<xsl:choose>
+									<xsl:when test="$typeCompetition = '1'">
+										<xsl:call-template name="positionEquipe">
+											<xsl:with-param name="noPoule" select="$numeroPoule"/>
+											<xsl:with-param name="idEquipe" select="./score[1]/@judoka"/>
+										</xsl:call-template>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:call-template name="positionJudoka">
+											<xsl:with-param name="noPoule" select="$numeroPoule"/>
+											<xsl:with-param name="idJudoka" select="./score[1]/@judoka"/>
+										</xsl:call-template>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:variable>
+							<xsl:variable name="posj2">
+								<xsl:choose>
+									<xsl:when test="$typeCompetition = '1'">
+										<xsl:call-template name="positionEquipe">
+											<xsl:with-param name="noPoule" select="$numeroPoule"/>
+											<xsl:with-param name="idEquipe" select="./score[2]/@judoka"/>
+										</xsl:call-template>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:call-template name="positionJudoka">
+											<xsl:with-param name="noPoule" select="$numeroPoule"/>
+											<xsl:with-param name="idJudoka" select="./score[2]/@judoka"/>
+										</xsl:call-template>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:variable>
+							<xsl:value-of select="concat($posj1, '-', $posj2)"/>
+							<xsl:if test="position() != last()">, </xsl:if>
+						</xsl:for-each>
+					</div>
+				</xsl:if>
+			</div>
+		</div>
 	</xsl:template>
-	
-	<!-- Les participants -->
+
+	<!-- Ligne d'un participant -->
 	<xsl:template match="participant">
 		<xsl:param name="poule"/>
 		<xsl:param name="phase"/>
@@ -475,206 +342,163 @@
 		<xsl:variable name="ligue1" select="$RefData/structures/ligues/ligue[@ID = $comite1/@ligue]"/>
 		<xsl:variable name="pays1" select="$RefData/structures/lesPays/pays[@ID = $j1/@pays]"/>
 
-		<xsl:variable name="grade" select="$j1/@grade"/>
 		<tr>
-			<td>
-                <div class="w3-card w3-container w3-pale-yellow w3-border w3-right-align">
-                    <header class="w3-small">
-						<xsl:value-of select="$j1/@nom"/>
-						<xsl:if test="$typeCompetition != '1'">
-							<xsl:text disable-output-escaping="yes">&#032;</xsl:text>
-							<xsl:value-of select="$j1/@prenom"/>
-						</xsl:if>
-					</header>					 
-                    <footer class="w3-tiny">
-						<xsl:call-template name="LibelleStructure">
-							<xsl:with-param name="ecartement" select="$niveauCompetition" />
-							<xsl:with-param name="typeCompetition" select="$typeCompetition" />
-							<xsl:with-param name="club" select="$club1/nomCourt" />
-							<xsl:with-param name="comite" select="$comite1/@ID" />
-							<xsl:with-param name="ligue" select="$ligue1/nomCourt" />
-							<xsl:with-param name="pays" select="$pays1/@abr3" />
-						</xsl:call-template>
-					</footer>
-                </div>
-            </td>
-			<td class="w3-center w3-padding-small">
-                <div class="w3-badge w3-light-grey">
-					<xsl:value-of select="position()"/>
+			<!-- Colonne UNIQUE pour Athlète ET Badge (Plus de superposition) -->
+			<td class="tas-cell-athlete">
+				<div class="tas-athlete-container">
+					<div class="tas-athlete-card">
+						<span class="tas-athlete-name">
+							<xsl:value-of select="$j1/@nom"/>
+							<xsl:if test="$typeCompetition != '1'">
+								<xsl:text disable-output-escaping="yes">&#032;</xsl:text>
+								<xsl:value-of select="$j1/@prenom"/>
+							</xsl:if>
+						</span>
+						<span class="tas-athlete-club">
+							<xsl:call-template name="LibelleStructure">
+								<xsl:with-param name="ecartement" select="$niveauCompetition" />
+								<xsl:with-param name="typeCompetition" select="$typeCompetition" />
+								<xsl:with-param name="club" select="$club1/nomCourt" />
+								<xsl:with-param name="comite" select="$comite1/@ID" />
+								<xsl:with-param name="ligue" select="$ligue1/nomCourt" />
+								<xsl:with-param name="pays" select="$pays1/@abr3" />
+							</xsl:call-template>
+						</span>
+					</div>
+					<!-- Le badge est aligné horizontalement à côté via Flexbox -->
+					<span class="tas-position-badge">
+						<xsl:value-of select="position()"/>
+					</span>
 				</div>
-            </td>
-			<!-- Les combats de la ligne du participant -->
+			</td>
+
+			<!-- La grille de combat -->
 			<xsl:choose>
-				<!-- Disposition en colonnes -->
 				<xsl:when test="$dispositionPoule = 2">
 					<xsl:for-each select="//combat[ @niveau = $niveauCombat and @phase = $phase and @reference = $poule]">
 						<xsl:sort select="@numero" data-type="number" order="ascending"/>
-
 						<xsl:variable name="combatj1" select="./score[1]/@judoka"/>
 						<xsl:variable name="combatj2" select="./score[2]/@judoka"/>
 
-						<!-- Case ne correspondant pas au combat -->
 						<xsl:if test="$participant1 != $combatj1 and $participant1 != $combatj2">
-							<td class="w3-center w3-border w3-border-black w3-grey tas-poule-combat">
-								&nbsp;
-							</td>
+							<td class="tas-cell-score tas-cell-empty"></td>
 						</xsl:if>
-						
-						<!-- Case correspondant a un des judokas du combat -->
 						<xsl:if test="$participant1 = $combatj1 or $participant1 = $combatj2">
-							<td class="w3-center w3-border w3-border-black tas-poule-combat">
+							<td class="tas-cell-score">
 								<xsl:apply-templates select=".">
 									<xsl:with-param name="participant1" select="$participant1"/>
 								</xsl:apply-templates>
 							</td>
-						</xsl:if>						
+						</xsl:if>
 					</xsl:for-each>
 				</xsl:when>
-				<!-- Disposition en diagonale -->
 				<xsl:otherwise>
 					<xsl:for-each select="key('participants', $poule)">
 						<xsl:sort select="@position" data-type="number" order="ascending"/>
 						<xsl:variable name="participant2" select="@judoka"/>
 
 						<xsl:if test="$participant1 = $participant2">
-							<td class="w3-center w3-border w3-border-black w3-grey tas-poule-combat">
-								&nbsp;
-							</td>
+							<td class="tas-cell-score tas-cell-empty"></td>
 						</xsl:if>
 						<xsl:if test="$participant1 != $participant2">
-							<td class="w3-center w3-border w3-border-black tas-poule-combat">
-								<xsl:apply-templates
-									select="//combat[ @niveau = $niveauCombat and ((score[1][@judoka = $participant1] and score[2][@judoka = $participant2]) or (score[2][@judoka = $participant1] and score[1][@judoka = $participant2]))][1]">
+							<td class="tas-cell-score">
+								<xsl:apply-templates select="//combat[ @niveau = $niveauCombat and ((score[1][@judoka = $participant1] and score[2][@judoka = $participant2]) or (score[2][@judoka = $participant1] and score[1][@judoka = $participant2]))][1]">
 									<xsl:with-param name="participant1" select="$participant1"/>
 								</xsl:apply-templates>
 							</td>
 						</xsl:if>
 					</xsl:for-each>
 				</xsl:otherwise>
-			</xsl:choose>			
-			<td class="w3-panel">
-                    <span>
-						<xsl:value-of select="@nbVictoires"/>					 
-					</span>
-                </td>
-			<td class="w3-panel">
-                    <span>
-						<xsl:value-of select="@cumulPoints"/>
-					</span>
-                </td>
+			</xsl:choose>
+
+			<!-- Victoires & Points -->
+			<td class="tas-cell-score font-weight-bold">
+				<xsl:value-of select="@nbVictoires"/>
+			</td>
+			<td class="tas-cell-score font-weight-bold">
+				<xsl:value-of select="@cumulPoints"/>
+			</td>
 		</tr>
 	</xsl:template>
-	
-	<!-- Combat sans resultat -->
+
 	<xsl:template match="combat[not(@vainqueur) or @vainqueur = '-1']">
-		<div class="w3-padding-small w3-xxlarge">
-            &nbsp;
-        </div>
-	</xsl:template>	
-	
-	<!-- Combat avec resultat -->
+		<!-- Vide -->
+	</xsl:template>
+
+	<!-- Affichage du Score (Gagnant et Perdant) -->
 	<xsl:template match="combat[@vainqueur and @vainqueur != '-1']">
 		<xsl:param name="participant1"/>
-		
+
 		<xsl:variable name="kinzavainqueur" select="./score[@judoka = ancestor::combat/@vainqueur]/@kinza"/>
 		<xsl:variable name="kinzaperdant" select="./score[@judoka != ancestor::combat/@vainqueur]/@kinza"/>
 
-		<xsl:variable name="participant2">
-			<xsl:if test="$participant1 != ./score[1]/@judoka">
-				<xsl:value-of select="./score[1]/@judoka"/>		
-			</xsl:if>
-			<xsl:if test="$participant1 != ./score[2]/@judoka">
-				<xsl:value-of select="./score[2]/@judoka"/>
-			</xsl:if>
-		</xsl:variable>
-		
-		<div class="w3-padding-small">
-			<xsl:if test="$participant1 != @vainqueur">
-				<xsl:attribute name="class">w3-xxxlarge </xsl:attribute>
-				<xsl:text>X</xsl:text>
-			</xsl:if>
-			<xsl:if test="$participant1 = @vainqueur">
-				<table class="w3-centered">
-					<tr>
-						<td class="tas-poule-combat-gagnant">
-							<span>
-								<xsl:choose>
-									<!-- Individuelle ou Shiai -->
-									<xsl:when test="$typeCompetition != '1'">
-										<!-- Les marques -->
-										<xsl:choose>
-											<xsl:when test="$affKinzas = 'Oui'">
-												<!-- Les marques avec Kinzas, on ignore le Yuko -->
-												<xsl:value-of select="substring(./@scorevainqueur, 1, 2)"/>
-												<!-- Les kinzas -->
-												<span class="w3-small w3-text-green">(<xsl:value-of select="$kinzavainqueur"/>)</span>
-											</xsl:when>
-											<!-- Les marques sans Kinzas -->
-											<xsl:otherwise>
-												<xsl:value-of select="substring(./@scorevainqueur, 1, 3)"/>
-											</xsl:otherwise>
-										</xsl:choose>
-										<!-- Penalites -->
-										<span class="w3-text-red">
-											<xsl:value-of select="./@penvainqueur"/>
-										</span>
-									</xsl:when>
-									<!-- Equipes -->
-									<xsl:otherwise>
-										<!-- Uniquement les marques -->
-										<xsl:value-of select="./@scorevainqueur"/>
-										<!-- Ajoute le V en cas de combat decisif dans la rencontre -->
-										<xsl:if test="count(./rencontre[@estDecisif='true']) != 0">
-											<span class="w3-tiny w3-text-orange"> (V)</span>
-										</xsl:if>
-									</xsl:otherwise>
-								</xsl:choose>
+		<xsl:if test="$participant1 != @vainqueur">
+			<!-- Le gros X majuscule du perdant -->
+			<div class="tas-poule-loser">X</div>
+		</xsl:if>
+
+		<xsl:if test="$participant1 = @vainqueur">
+			<!-- RESTAURATION DU BLOC GAGNANT COMPLET (Haut et Bas) -->
+			<div class="tas-poule-winner">
+				<xsl:choose>
+					<xsl:when test="$typeCompetition != '1'">
+						<div class="tas-score-top">
+							<xsl:choose>
+								<xsl:when test="$affKinzas = 'Oui'">
+									<xsl:value-of select="substring(./@scorevainqueur, 1, 2)"/>
+									<span class="w3-small w3-text-green">
+										(<xsl:value-of select="$kinzavainqueur"/>)
+									</span>
+								</xsl:when>
+								<xsl:otherwise>
+									<!-- Score du vainqueur (ex: 110) -->
+									<xsl:value-of select="substring(./@scorevainqueur, 1, 3)"/>
+								</xsl:otherwise>
+							</xsl:choose>
+							<!-- Pénalité (ex: -1) -->
+							<span class="w3-text-red">
+								<xsl:value-of select="./@penvainqueur"/>
 							</span>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<span>
-								<xsl:choose>
-									<!-- Individuelle ou Shiai -->
-									<xsl:when test="$typeCompetition != '1'">
-										<!-- Les marques -->
-										<xsl:choose>
-											<xsl:when test="$affKinzas = 'Oui'">
-												<!-- Les marques avec Kinzas, on ignore le Yuko -->
-												<xsl:value-of select="substring(./@scoreperdant, 1, 2)"/>
-												<!-- Les kinzas -->
-												<span class="w3-small w3-text-green">(<xsl:value-of select="$kinzaperdant"/>)</span>
-											</xsl:when>
-											<!-- Les marques sans Kinzas -->
-											<xsl:otherwise>
-												<xsl:value-of select="substring(./@scoreperdant, 1, 3)"/>
-											</xsl:otherwise>
-										</xsl:choose>
-										<!-- Penalites -->
-										<span class="w3-text-red">
-											<xsl:value-of select="./@penperdant"/>
-										</span>
-									</xsl:when>
-									<!-- Equipes -->
-									<xsl:otherwise>
-										<!-- Uniquement les marques -->
-										<xsl:value-of select="./@scoreperdant"/>
-									</xsl:otherwise>
-								</xsl:choose>								
+						</div>
+						<div class="tas-score-bottom">
+							<xsl:choose>
+								<xsl:when test="$affKinzas = 'Oui'">
+									<xsl:value-of select="substring(./@scoreperdant, 1, 2)"/>
+									<span class="w3-small w3-text-green">
+										(<xsl:value-of select="$kinzaperdant"/>)
+									</span>
+								</xsl:when>
+								<xsl:otherwise>
+									<!-- Score du perdant (ex: 000) -->
+									<xsl:value-of select="substring(./@scoreperdant, 1, 3)"/>
+								</xsl:otherwise>
+							</xsl:choose>
+							<!-- Pénalité perdant (ex: -0) -->
+							<span class="w3-text-red">
+								<xsl:value-of select="./@penperdant"/>
 							</span>
-						</td>
-					</tr>
-				</table>
-			</xsl:if>
-		</div>
+						</div>
+					</xsl:when>
+					<xsl:otherwise>
+						<div class="tas-score-top">
+							<xsl:value-of select="./@scorevainqueur"/>
+							<xsl:if test="count(./rencontre[@estDecisif='true']) != 0">
+								<span class="w3-tiny w3-text-orange"> (V)</span>
+							</xsl:if>
+						</div>
+						<div class="tas-score-bottom">
+							<xsl:value-of select="./@scoreperdant"/>
+						</div>
+					</xsl:otherwise>
+				</xsl:choose>
+			</div>
+		</xsl:if>
 	</xsl:template>
 
-	<!-- Calcul de  la position d'un judoka dans la liste des participants -->
+	<!-- Utilitaires de position -->
 	<xsl:template name="positionJudoka">
 		<xsl:param name="noPoule"/>
 		<xsl:param name="idJudoka"/>
-
 		<xsl:variable name="tempVar">
 			<xsl:for-each select="key('participants', $noPoule)">
 				<xsl:sort select="@position" data-type="number" order="ascending"/>
@@ -683,7 +507,6 @@
 				</xsl:if>
 			</xsl:for-each>
 		</xsl:variable>
-
 		<xsl:choose>
 			<xsl:when test="$tempVar">
 				<xsl:value-of select="$tempVar"/>
@@ -692,11 +515,9 @@
 		</xsl:choose>
 	</xsl:template>
 
-	<!-- Calcul de  la position d'une equipe dans la liste des participants -->
 	<xsl:template name="positionEquipe">
 		<xsl:param name="noPoule"/>
 		<xsl:param name="idEquipe"/>
-
 		<xsl:variable name="tempVar">
 			<xsl:for-each select="key('participants', $noPoule)">
 				<xsl:sort select="@position" data-type="number" order="ascending"/>
@@ -705,7 +526,6 @@
 				</xsl:if>
 			</xsl:for-each>
 		</xsl:variable>
-
 		<xsl:choose>
 			<xsl:when test="$tempVar">
 				<xsl:value-of select="$tempVar"/>
@@ -713,5 +533,4 @@
 			<xsl:otherwise>-1</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-	
 </xsl:stylesheet>

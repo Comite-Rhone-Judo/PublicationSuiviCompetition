@@ -90,7 +90,47 @@ namespace AppPublication.Models.Publication
                     _selectedLogo = value;
                     string logoName = (value != null) ? value.Name : string.Empty;
                     OnSelectedLogoChanged(logoName); // Hook pour propager au générateur
+                 
                     NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private FilteredFileInfo _selectedLogoDark = null;
+        /// <summary>
+        /// Le fichier logo sélectionné pour le mode sombre
+        /// </summary>
+        public FilteredFileInfo SelectedLogoDark
+        {
+            get { return _selectedLogoDark; }
+            set
+            {
+                if (_selectedLogoDark != value)
+                {
+                    _selectedLogoDark = value;
+                    string logoName = (value != null) ? value.Name : string.Empty;
+                    OnSelectedLogoDarkChanged(logoName); // Hook pour propager au générateur
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private bool _useLogoUnique = true;
+        /// <summary>
+        /// Indique si on doit utiliser un logo unique pour le site (true) ou un logo différent pour le mode sombre (false)
+        /// </summary>
+        public bool UseLogoUnique
+        {
+            get { return _useLogoUnique; }
+            set
+            {
+                if (_useLogoUnique != value)
+                {
+                    _useLogoUnique = value;
+                    OnUseLogoUniqueChanged(value); // Hook pour propager au générateur
+                    NotifyPropertyChanged();
+
+                    // Note: on ne modifie pas la valeur du logo sélectionné pour ne pas perdre la valeur si l'utilisateur revient en arrière.
                 }
             }
         }
@@ -312,6 +352,12 @@ namespace AppPublication.Models.Publication
 
         /// <summary>Hook exécuté lorsque le logo sélectionné change</summary>
         protected abstract void OnSelectedLogoChanged(string logoName);
+
+        /// <summary>Hook exécuté lorsque le logo sélectionné change</summary>
+        protected abstract void OnSelectedLogoDarkChanged(string logoName);
+
+        /// <summary>Hook exécuté lorsque le flag de logo unique change</summary>
+        protected abstract void OnUseLogoUniqueChanged(bool newValue);
 
         /// <summary>Hook exécuté lorsque le flag d'utilisation de l'intitulé commun change</summary>
         protected abstract void OnUseIntituleCommunChanged(bool newValue);

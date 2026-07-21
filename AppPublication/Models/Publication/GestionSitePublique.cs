@@ -863,7 +863,25 @@ namespace AppPublication.Models.Publication
             _generateurSite?.ExportConfigurationManager?.Modifier(c =>
             {
                 c.Logo = logoName;
+                // On passe le meme logo pour le mode sombre si on n'utilise pas de logo unique
+                c.LogoDark = UseLogoUnique ? logoName : SelectedLogoDark?.Name;
             } );
+        }
+
+        protected override void OnUseLogoUniqueChanged(bool newValue)
+        {
+                _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+                {
+                    c.LogoDark =  newValue ? SelectedLogo?.Name : SelectedLogo?.Name;
+                });
+        }
+
+        protected override void OnSelectedLogoDarkChanged(string logoName)
+        {
+            _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+            {
+                c.LogoDark = logoName;
+            });
         }
 
         protected override void OnUseIntituleCommunChanged(bool newValue)

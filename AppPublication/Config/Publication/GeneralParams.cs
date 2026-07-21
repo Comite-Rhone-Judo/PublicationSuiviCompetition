@@ -21,6 +21,8 @@ namespace AppPublication.Config.Publication
         private string _repertoireRacine = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
         private string _logo = null;
+        private string _logoDark = null;
+        private bool _useLogoUnique = true;
         private bool _easyConfig = true;
         private string _urlDistant = string.Empty;
         private bool _isolerCompetition = false;
@@ -59,6 +61,18 @@ namespace AppPublication.Config.Publication
         {
             get => _logo;
             set => SetValue(ref _logo, value);
+        }
+
+        public string LogoDark  
+        {
+            get => _logoDark;
+            set => SetValue(ref _logoDark, value);
+        }
+
+        public bool UseLogoUnique
+        {
+            get => _useLogoUnique;
+            set => SetValue(ref _useLogoUnique, value);
         }
 
         public bool EasyConfig
@@ -127,13 +141,18 @@ namespace AppPublication.Config.Publication
         /// <summary>
         /// Recherche le logo configuré dans la liste des fichiers disponibles.
         /// </summary>
-        public T GetLogo<T>(IEnumerable<T> candidates, Func<T, string> valueSelector)
+        /// <typeparam name="T"></typeparam>
+        /// <param name="logoName">Le nom du logo à rechercher</param>
+        /// <param name="candidates">La liste des fichiers disponibles</param>
+        /// <param name="valueSelector">La fonction de sélection de la valeur</param>
+        /// <returns></returns>
+        public T GetLogo<T>(string logoName, IEnumerable<T> candidates, Func<T, string> valueSelector)
         {
             if (candidates == null) return default;
 
-            if (!string.IsNullOrWhiteSpace(Logo))
+            if (!string.IsNullOrWhiteSpace(logoName))
             {
-                var match = candidates.FirstOrDefault(c => string.Equals(valueSelector(c), Logo, StringComparison.OrdinalIgnoreCase));
+                var match = candidates.FirstOrDefault(c => string.Equals(valueSelector(c), logoName, StringComparison.OrdinalIgnoreCase));
                 if (match != null) return match;
             }
 

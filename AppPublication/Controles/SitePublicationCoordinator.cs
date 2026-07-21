@@ -164,6 +164,34 @@ namespace AppPublication.Controles
             }
         }
 
+        FilteredFileInfo _selectedLogoDark = null;
+        /// <summary>
+        /// Le fichier logo sélectionné
+        /// </summary>
+        public FilteredFileInfo SelectedLogoDark
+        {
+            get
+            {
+                return _selectedLogoDark;
+            }
+            set
+            {
+                if (_selectedLogoDark != value)
+                {
+                    _selectedLogoDark = value;
+
+                    // Sauvegarde la valeur
+                    string logoName = (value != null) ? value.Name : string.Empty;
+                    AppConfigRoot.Instance.Publication.General.LogoDark = logoName;
+
+                    // Propage le logo selectionne dans les gestionnaires de site
+                    _gestionSite.SelectedLogoDark = value;
+
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         private string _repertoireRacine;
         /// <summary>
         /// Le répertoire Racine configuré oar l'utilisateur
@@ -227,6 +255,26 @@ namespace AppPublication.Controles
 
                     GestionnaireSiteInterne.UseIntituleCommun = value;
                     GestionnaireSitePublique.UseIntituleCommun = value;
+                }
+            }
+        }
+
+        private bool _useLogoUnique;
+        /// <summary>
+        /// Flag indiquant si on doit utiliser un logo unique pour le mode dark
+        /// </summary>
+        public bool UseLogoUnique
+        {
+            get { return _useLogoUnique; }
+            set
+            {
+                if (_useLogoUnique != value)
+                {
+                    // propage la valeur au generateur de site
+                    AppConfigRoot.Instance.Publication.General.UseLogoUnique = (_useLogoUnique = value);
+                    NotifyPropertyChanged();
+
+                    GestionnaireSitePublique.UseLogoUnique = value;
                 }
             }
         }
@@ -391,7 +439,8 @@ namespace AppPublication.Controles
         {
             // Recupere les donnees mutualisee
             RepertoireRacine = AppConfigRoot.Instance.Publication.General.RepertoireRacine;
-            SelectedLogo = AppConfigRoot.Instance.Publication.General.GetLogo(FichiersLogo.ToList(), o => o.Name);
+            SelectedLogo = AppConfigRoot.Instance.Publication.General.GetLogo(AppConfigRoot.Instance.Publication.General.Logo, FichiersLogo.ToList(), o => o.Name);
+            SelectedLogoDark = AppConfigRoot.Instance.Publication.General.GetLogo(AppConfigRoot.Instance.Publication.General.LogoDark, FichiersLogo.ToList(), o => o.Name);
             UseIntituleCommun = AppConfigRoot.Instance.Publication.General.UseIntituleCommun;
             IntituleCommun = AppConfigRoot.Instance.Publication.General.IntituleCommun;
 

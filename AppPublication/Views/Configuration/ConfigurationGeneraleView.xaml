@@ -6,7 +6,7 @@
             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
             xmlns:local="clr-namespace:AppPublication.Views.Configuration"
             mc:Ignorable="d"
-            Title="Configuration Générale" Height="330" Width="920" Background="Black">
+            Title="Configuration Générale" Height="350" Width="920" Background="Black">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
@@ -26,7 +26,7 @@
         <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Style="{StaticResource Header1Style}" Margin="10 10 10 5" Visibility="Visible" >
             <TextBlock Text="Général" Style="{StaticResource Header1TextStyle}"/>
         </StackPanel>
-        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" BorderBrush="White" Margin="10,0,10,10" Width="880" Height="200">
+        <Border BorderThickness="1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" BorderBrush="White" Margin="10,0,10,10" Width="880" Height="215">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -48,7 +48,7 @@
                     <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Logo à afficher dans le bandeau d'entête du site"/>
                 </StackPanel>
                 <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
-                    <ComboBox ItemsSource="{Binding FichiersLogo}" Height="20" Width="130" DisplayMemberPath="Name" Name="LogoList" Margin="10 0 0 0" IsSynchronizedWithCurrentItem="True" SelectedItem="{Binding SelectedLogo}"/>
+                    <ComboBox ItemsSource="{Binding FichiersLogo}" Height="20" Width="130" DisplayMemberPath="Name" Name="LogoList" Margin="10 0 0 0" SelectedItem="{Binding SelectedLogo}"/>
                     <Button ToolTip="Ajouter un logo: Format: png, taille max.: 200x200. Le fichier doit contenir 'logo' dans son nom" Height="28" Width="28" Padding="0 0 0 0"
                             Focusable="False" Margin="5 0 0 0"
                             Command="{Binding Path=CmdAjouterLogo}">
@@ -57,10 +57,37 @@
                         </Grid>
                     </Button>
                 </StackPanel>
-                <Border Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" Background="LightGray" Width="120" Margin="0 10 0 0" VerticalAlignment="Center">
-                    <Image  Source="{Binding ElementName=LogoList, Path=SelectedItem.FullName}" Width="120" Height="120"/>
+                <Border Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Background="LightGray" Width="80" Height="80" Margin="0 10 0 0" VerticalAlignment="Center">
+                    <Image  Source="{Binding ElementName=LogoList, Path=SelectedItem.FullName}" Width="80" Height="80"/>
                 </Border>
 
+                <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Margin="0 10 0 0">
+                    <Label  HorizontalAlignment="Right" Content="Sélection du logo mode sombre :" Style="{StaticResource LabelStyle}" />
+                    <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Logo à afficher dans le bandeau d'entête du site en mode sombre"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Vertical">
+                    <CheckBox   Content="Utiliser le même logo" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=UseLogoUnique}" Margin="10 0 0 10"/>
+                    <StackPanel Orientation="Horizontal">
+                        <ComboBox ItemsSource="{Binding FichiersLogo}" Height="20" Width="130" DisplayMemberPath="Name" Name="LogoListDark" Margin="10 0 0 0" SelectedItem="{Binding SelectedLogoDark}"
+                                  IsEnabled="{Binding Path=UseLogoUnique, Converter={StaticResource BoolNotConverter}}"/>
+                        <Button ToolTip="Ajouter un logo: Format: png, taille max.: 200x200. Le fichier doit contenir 'logo' dans son nom" Height="28" Width="28" Padding="0 0 0 0"
+                            Focusable="False" Margin="5 0 0 0"
+                            Command="{Binding Path=CmdAjouterLogo}"
+                                IsEnabled="{Binding Path=UseLogoUnique, Converter={StaticResource BoolNotConverter}}">
+                            <Grid>
+                                <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/add_image-32.png" Height="20" Width="20"/>
+                            </Grid>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+                <Border Grid.Column="1" Grid.Row="2" Grid.RowSpan="2" Background="LightGray" Width="80" Height="80" Margin="0 10 0 0" VerticalAlignment="Center">
+                    <Image  Source="{Binding ElementName=LogoListDark, Path=SelectedItem.FullName}" Width="80" Height="80"
+                            IsEnabled="{Binding Path=UseLogoUnique, Converter={StaticResource BoolNotConverter}}"/>
+                </Border>
+
+                <!-- TODO gérer le Logo Mode dark et mode normal -->
+                
                 <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal" Margin="0 10 0 0">
                     <Label HorizontalAlignment="Right" Content="Répertoire d'export :" Style="{StaticResource LabelStyle}" />
                     <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Répertoire racine dans lequel les données du site sont générées et publiées"/>
@@ -80,7 +107,7 @@
                     <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="0 0 0 0" ToolTip="Si cochée, supprime tout le contenu préalable du répertoire au démarrage. Le site distant sera également effacé."/>
                 </StackPanel>
 
-                <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="6" Orientation="Vertical">
+                <StackPanel Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2" Orientation="Vertical" Margin="0 10 0 0">
                     <StackPanel Orientation="Horizontal">
                         <CheckBox   Content="Utiliser un intitulé de compétition commun" Style="{StaticResource CheckboxStyle}" IsChecked="{Binding Path=UseIntituleCommun}"/>
                         <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/info-32.png" Height="20" Margin="5 0 0 0" ToolTip="Si cochée, en cas de gestion avec plusieurs compétitions simultanément (ex. Districts),  utilise l'intitulé commun configuré au lieu du titre de la 1ère compétition."/>

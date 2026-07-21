@@ -25,6 +25,8 @@
 	<xsl:variable select="/docroot/SiteConfiguration/@DelaiActualisationClientSec" name="delayActualisationClient"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@ActualisationClientDefaut = 'true'" name="actualisationClientDefaut"/>
 	<xsl:variable select="/docroot/SiteConfiguration/@Logo" name="logo"/>
+	<!-- NOUVEAU : Récupération du logo pour le thème sombre -->
+	<xsl:variable select="/docroot/SiteConfiguration/@LogoDark" name="logoDark"/>
 
 	<xsl:template match="docroot">
 		<xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
@@ -48,14 +50,14 @@
 						<xsl:value-of select="concat($cssPath, 'style-common.css')"/>
 					</xsl:attribute>
 				</link>
-				
+
 				<!-- Script ajoute en parametre -->
 				<script type="text/javascript">
 					<xsl:value-of select="$js"/>
 					gDelayAutoReloadSec = <xsl:value-of select="$delayActualisationClient"/>;
 					gDefaultAutoReload = <xsl:value-of select="$actualisationClientDefaut"/>;
 				</script>
-				
+
 				<!-- Script de navigation par defaut -->
 				<script>
 					<xsl:attribute name="src">
@@ -72,6 +74,7 @@
 				<!-- ENTETE -->
 				<xsl:call-template name="entete">
 					<xsl:with-param name="logo" select="$logo"/>
+					<xsl:with-param name="logoDark" select="$logoDark"/>
 					<xsl:with-param name="affProchainCombats" select="$affProchainCombats"/>
 					<xsl:with-param name="affAffectationTapis" select="$affAffectationTapis"/>
 					<xsl:with-param name="affActualiser" select="true()"/>
@@ -84,8 +87,11 @@
 
 				<!-- CONTENU -->
 				<xsl:if test="count(competitions/competition)=0 or count(//epreuve)=0">
-					<div class="w3-container w3-border">
-						<div class="w3-panel w3-pale-green w3-bottombar w3-border-green w3-border w3-center w3-large"> Veuillez patienter le tirage des épreuves </div>
+					<!-- Remplacement par l'Empty State structuré -->
+					<div class="w3-padding">
+						<div class="ios-card tas-empty-state">
+							Veuillez patienter, le tirage des épreuves est en cours...
+						</div>
 					</div>
 				</xsl:if>
 
@@ -100,7 +106,7 @@
 				</xsl:for-each>
 
 				<xsl:if test="count(competitions/competition)>0">
-					<div class="w3-container w3-center w3-tiny w3-text-grey tas-footnote">
+					<div class="w3-container w3-center w3-tiny text-muted tas-footnote">
 						<script>
 							<xsl:attribute name="src">
 								<xsl:value-of select="concat($jsPath, 'footer_script.js')"/>
@@ -121,14 +127,14 @@
 			<xsl:value-of select="concat('AffectationComp',$idcompetition,'ContentPanel')"/>
 		</xsl:variable>
 
-		<!-- Nom de la competition -->
-		<div class="w3-container w3-blue w3-center tas-competition-bandeau">
+		<!-- Nom de la competition (Nettoyé des couleurs W3.CSS natives) -->
+		<div class="tas-competition-bandeau">
 			<h4>
 				<xsl:value-of select="./titre"/>
 			</h4>
 		</div>
 
-		<div id="Affectations" class="w3-container w3-border pane w3-animate-left">
+		<div id="Affectations" class="w3-container pane w3-animate-left tas-competition-panels">
 			<!-- une ligne de cellule pour occuper toute le largeur de l'ecran -->
 			<div class="w3-cell-row">
 				<!-- Chaque panneau est un panel contenant une carte, utilise cell + mobile pour gerer horizontal/vertical selon la taille de l'ecran -->
@@ -154,15 +160,16 @@
 		</div>
 	</xsl:template>
 
-	<!-- Bouton affectations par epreuve -->
+	<!-- Bouton affectations par epreuve (Refonte style Carte iOS) -->
 	<xsl:template name="affectation_epreuve" match="epreuve">
-		<div class="w3-panel">
-			<div class="w3-card">
-				<header class="w3-container w3-pale-yellow w3-large w3-padding-small">
+		<div class="w3-padding-small">
+			<div class="ios-card">
+				<div class="tas-card-header">
 					<xsl:value-of select="./@libelle"/>
+					<xsl:text> </xsl:text>
 					<xsl:value-of select="./@nom"/>
-				</header>
-				<div class="w3-container w3-cell w3-cell-middle w3-padding">
+				</div>
+				<div class="tas-card-body">
 					<xsl:choose>
 						<xsl:when test="count(./TapisEpreuve/tapis) > 1">
 							<xsl:text>Tapis&#32;</xsl:text>

@@ -22,7 +22,9 @@ namespace AppPublication.Tests.Models.Publication
         public override void ForceRefreshUrls() { }
         protected override void OnInterfaceLocalPublicationChanged() { }
         protected override void OnSelectedLogoChanged(string logoName) { }
+        protected override void OnSelectedLogoDarkChanged(string logoName) { }
         protected override void UpdateDelaiGenerationConfig(int newValue) { }
+        protected override void OnUseLogoUniqueChanged(bool newValue) { }
 
         protected override void OnUseIntituleCommunChanged(bool newValue) { }
 

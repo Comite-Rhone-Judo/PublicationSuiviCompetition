@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<!DOCTYPE xsl:stylesheet [
+	<!ENTITY nbsp "&#160;">
+	<!ENTITY times "&#215;">
+]>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+	<xsl:template name="entete">
+		<xsl:param name="logo"/>
+		<xsl:param name="affProchainCombats"/>
+		<xsl:param name="affAffectationTapis"/>
+		<xsl:param name="affEngagements"/>
+		<xsl:param name="affStatistiques"/>
+		<xsl:param name="affActualiser"/>
+		<xsl:param name="selectedItem"/>
+		<xsl:param name="pathToImg"/>
+		<xsl:param name="pathToCommon"/>
+		<xsl:variable name="apos">'</xsl:variable>
+		
+		<!-- BANDEAU DE TITRE -->
+		<div class="w3-top tas-titre-app">
+			<div class="w3-cell-row w3-light-grey">
+				<button class="w3-cell w3-button w3-xlarge w3-cell-left" onclick="openElement('navigationPanel')">☰</button>
+				<div class="w3-cell w3-cell-middle w3-center">
+					<h3>Suivi compétition</h3>
+				</div>
+				<div class="w3-cell w3-cell-middle bandeau-titre">
+					<img class="img img-bandeau-titre">
+						<xsl:attribute name="src">
+							<xsl:value-of select="concat($pathToImg, $logo)"/>
+						</xsl:attribute>
+					</img>
+				</div>
+			</div>
+		</div>
+
+		<!-- PANNEAU DE NAVIGATION -->
+		<div class="w3-sidebar w3-bar-block w3-border-right w3-animate-left tas-navigation-panel" id="navigationPanel">
+			<button onclick="closeElement('navigationPanel')" class="w3-bar-item w3-large">Fermer &times;</button>
+			<xsl:if test="$affActualiser">
+				<button class="w3-bar-item w3-button navButton">
+					<input class="w3-check" type="checkbox" id="cbActualiser" onclick="toggleAutoRefresh(this);"/> Actualiser
+				</button>
+			</xsl:if>
+			<xsl:if test="$affProchainCombats">
+				<a>
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($pathToCommon, 'se_prepare.html')"/>
+					</xsl:attribute>
+					<xsl:attribute name="class">
+						<xsl:choose>
+							<xsl:when test="$selectedItem = 'se_prepare'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
+							<xsl:otherwise>w3-bar-item w3-button navButton</xsl:otherwise>
+						</xsl:choose>
+					</xsl:attribute>
+					Se prépare
+				</a>
+				<a>
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($pathToCommon, 'prochains_combats.html')"/>
+					</xsl:attribute>
+					<xsl:attribute name="class">
+						<xsl:choose>
+							<xsl:when test="$selectedItem = 'prochains_combats'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
+							<xsl:otherwise>w3-bar-item w3-button navButton</xsl:otherwise>
+						</xsl:choose>
+					</xsl:attribute>
+					Prochains combats
+				</a>
+			</xsl:if>
+			<xsl:if test="$affAffectationTapis">
+				<a>
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($pathToCommon, 'affectation_tapis.html')"/>
+					</xsl:attribute>
+					<xsl:attribute name="class">
+						<xsl:choose>
+							<xsl:when test="$selectedItem = 'affectations_tapis'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
+							<xsl:otherwise>w3-bar-item w3-button navButton</xsl:otherwise>
+						</xsl:choose>
+					</xsl:attribute>
+					Affectations
+				</a>
+			</xsl:if>
+			<a>
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($pathToCommon, 'avancement.html')"/>
+				</xsl:attribute>
+				<xsl:attribute name="class">
+					<xsl:choose>
+						<xsl:when test="$selectedItem = 'avancement'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
+						<xsl:otherwise>w3-bar-item w3-button navButton</xsl:otherwise>
+					</xsl:choose>
+				</xsl:attribute>
+				Avancements
+			</a>
+			<a>
+				<xsl:attribute name="href">
+					<xsl:value-of select="concat($pathToCommon, 'classement.html')"/>
+				</xsl:attribute>
+				<xsl:attribute name="class">
+					<xsl:choose>
+						<xsl:when test="$selectedItem = 'classement'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
+						<xsl:otherwise>w3-bar-item w3-button navButton</xsl:otherwise>
+					</xsl:choose>
+				</xsl:attribute>
+				Classements
+			</a>
+			<xsl:if test="$affEngagements">
+				<a>
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($pathToCommon, 'engagements.html')"/>
+					</xsl:attribute>
+					<xsl:attribute name="class">
+						<xsl:choose>
+							<xsl:when test="$selectedItem = 'engagements'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
+							<xsl:otherwise>w3-bar-item w3-button navButton</xsl:otherwise>
+						</xsl:choose>
+					</xsl:attribute>
+					Engagements
+				</a>
+			</xsl:if>
+			<xsl:if test="$affStatistiques">
+				<a>
+					<xsl:attribute name="href">
+						<xsl:value-of select="concat($pathToCommon, 'statistiques.html')"/>
+					</xsl:attribute>
+					<xsl:attribute name="class">
+						<xsl:choose>
+							<xsl:when test="$selectedItem = 'statistiques'">w3-bar-item w3-button navButton w3-indigo</xsl:when>
+							<xsl:otherwise>w3-bar-item w3-button navButton</xsl:otherwise>
+						</xsl:choose>
+					</xsl:attribute>
+					Statistiques
+				</a>
+			</xsl:if>
+		</div>
+
+		<!-- Div vide pour aligner le contenu avec le bandeau de titre de taille fixe -->
+		<div class="w3-container tas-filler-div">&nbsp;</div>
+	</xsl:template>
+</xsl:stylesheet>
