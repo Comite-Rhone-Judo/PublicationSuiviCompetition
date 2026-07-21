@@ -1376,7 +1376,7 @@
 										<!-- Les marques avec Kinzas, on ignore le Yuko -->
 										<xsl:value-of select="substring($combat/@scorevainqueur, 1, 2)"/>
 										<!-- Les kinzas -->
-										<span class="w3-small w3-text-green">
+										<span class="w3-small fj-green">
 											(<xsl:value-of select="$kinzavainqueur"/>)
 										</span>
 									</xsl:when>
@@ -1396,7 +1396,7 @@
 								<xsl:value-of select="$combat/@scorevainqueur"/>
 								<!-- Ajoute le V en cas de combat decisif dans la rencontre -->
 								<xsl:if test="count($combat/rencontre[@estDecisif='true']) != 0">
-									<span class="w3-text-orange"> (V)</span>
+									<span style="color: var(--fj-warning);"> (V)</span>
 								</xsl:if>
 							</xsl:otherwise>
 						</xsl:choose>
@@ -1409,7 +1409,7 @@
 										<!-- Les marques avec Kinzas, on ignore le Yuko -->
 										<xsl:value-of select="substring($combat/@scoreperdant, 1, 2)"/>
 										<!-- Les kinzas -->
-										<span class="w3-small w3-text-green">
+										<span class="w3-small fj-green">
 											(<xsl:value-of select="$kinzaperdant"/>)
 										</span>
 									</xsl:when>

@@ -607,7 +607,7 @@
 												<!-- Les marques avec Kinzas, on ignore le Yuko -->
 												<xsl:value-of select="substring(./@scorevainqueur, 1, 2)"/>
 												<!-- Les kinzas -->
-												<span class="w3-small w3-text-green">(<xsl:value-of select="$kinzavainqueur"/>)</span>
+												<span class="w3-small fj-green">(<xsl:value-of select="$kinzavainqueur"/>)</span>
 											</xsl:when>
 											<!-- Les marques sans Kinzas -->
 											<xsl:otherwise>
@@ -644,7 +644,7 @@
 												<!-- Les marques avec Kinzas, on ignore le Yuko -->
 												<xsl:value-of select="substring(./@scoreperdant, 1, 2)"/>
 												<!-- Les kinzas -->
-												<span class="w3-small w3-text-green">(<xsl:value-of select="$kinzaperdant"/>)</span>
+												<span class="w3-small fj-green">(<xsl:value-of select="$kinzaperdant"/>)</span>
 											</xsl:when>
 											<!-- Les marques sans Kinzas -->
 											<xsl:otherwise>

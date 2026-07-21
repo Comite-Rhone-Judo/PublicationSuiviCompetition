@@ -518,14 +518,6 @@
 			</xsl:choose>
 		</xsl:variable>
 
-		<xsl:variable name="firstrencontreclass">
-			<xsl:choose>
-				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'M'">w3-blue colorized-img-white</xsl:when>
-				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'F'">w3-purple colorized-img-white</xsl:when>
-				<xsl:otherwise>w3-lime colorized-img-black</xsl:otherwise>
-			</xsl:choose>
-		</xsl:variable>
-
 		<div class="tas-combat-niveau">
 			<xsl:attribute name="style">
 				height:<xsl:value-of select="$hdiv"/>px;
@@ -551,21 +543,11 @@
 									<header class="w3-small">
 										<div class="w3-cell-row">
 											<xsl:if test="$typeCompetition = '1' and ($combat/@niveau != $niveaumax or $judoka2/@nom)">
-												<div>
-													<xsl:attribute name="class">
-														w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align <xsl:value-of select="$firstrencontreclass"/>
-														<xsl:choose>
-															<xsl:when test="$combat/@niveau = $niveaumax"> tas-participant-premiere-categorie</xsl:when>
-															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
-														</xsl:choose>
-													</xsl:attribute>
-													<img class="img" width="20">
-														<xsl:attribute name="src">
-															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
-														</xsl:attribute>
-													</img>
-													<xsl:value-of select="$combat/@firstrencontrelib"/>
-												</div>
+												<xsl:call-template name="BadgePremiereCategorie">
+													<xsl:with-param name="combat" select="$combat"/>
+													<xsl:with-param name="niveaumax" select="$niveaumax"/>
+													<xsl:with-param name="imgPath" select="$imgPath"/>
+												</xsl:call-template>
 											</xsl:if>
 											<div class="w3-cell">
 												<xsl:value-of select="$judoka1/@nom"/>
@@ -615,17 +597,11 @@
 									<header class="w3-small">
 										<div class="w3-cell-row">
 											<xsl:if test="$typeCompetition = '1' and $combat/@niveau != $niveaumax">
-												<div>
-													<xsl:attribute name="class">
-														w3-cell tas-combat-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align <xsl:value-of select="$firstrencontreclass"/>
-													</xsl:attribute>
-													<img class="img" width="20">
-														<xsl:attribute name="src">
-															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
-														</xsl:attribute>
-													</img>
-													<xsl:value-of select="$combat/@firstrencontrelib"/>
-												</div>
+												<xsl:call-template name="BadgePremiereCategorie">
+													<xsl:with-param name="combat" select="$combat"/>
+													<xsl:with-param name="niveaumax" select="$niveaumax"/>
+													<xsl:with-param name="imgPath" select="$imgPath"/>
+												</xsl:call-template>
 											</xsl:if>
 											<div class="w3-cell">&nbsp;</div>
 										</div>
@@ -678,21 +654,11 @@
 									<header class="w3-small">
 										<div class="w3-cell-row">
 											<xsl:if test="$typeCompetition = '1' and ($combat/@niveau != $niveaumax or $judoka1/@nom)">
-												<div>
-													<xsl:attribute name="class">
-														w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align <xsl:value-of select="$firstrencontreclass"/>
-														<xsl:choose>
-															<xsl:when test="$combat/@niveau = $niveaumax"> tas-participant-premiere-categorie</xsl:when>
-															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
-														</xsl:choose>
-													</xsl:attribute>
-													<img class="img" width="20">
-														<xsl:attribute name="src">
-															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
-														</xsl:attribute>
-													</img>
-													<xsl:value-of select="$combat/@firstrencontrelib"/>
-												</div>
+												<xsl:call-template name="BadgePremiereCategorie">
+													<xsl:with-param name="combat" select="$combat"/>
+													<xsl:with-param name="niveaumax" select="$niveaumax"/>
+													<xsl:with-param name="imgPath" select="$imgPath"/>
+												</xsl:call-template>
 											</xsl:if>
 											<div class="w3-cell">
 												<xsl:value-of select="$judoka2/@nom"/>
@@ -741,17 +707,11 @@
 									<header class="w3-small">
 										<div class="w3-cell-row">
 											<xsl:if test="$typeCompetition = '1' and $combat/@niveau != $niveaumax">
-												<div>
-													<xsl:attribute name="class">
-														w3-cell tas-combat-premiere-categorie w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align <xsl:value-of select="$firstrencontreclass"/>
-													</xsl:attribute>
-													<img class="img" width="20">
-														<xsl:attribute name="src">
-															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
-														</xsl:attribute>
-													</img>
-													<xsl:value-of select="$combat/@firstrencontrelib"/>
-												</div>
+												<xsl:call-template name="BadgePremiereCategorie">
+													<xsl:with-param name="combat" select="$combat"/>
+													<xsl:with-param name="niveaumax" select="$niveaumax"/>
+													<xsl:with-param name="imgPath" select="$imgPath"/>
+												</xsl:call-template>
 											</xsl:if>
 											<div class="w3-cell">&nbsp;</div>
 										</div>
@@ -842,21 +802,11 @@
 									<header class="w3-small">
 										<div class="w3-cell-row">
 											<xsl:if test="$typeCompetition = '1'">
-												<div>
-													<xsl:attribute name="class">
-														w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align <xsl:value-of select="$firstrencontreclass"/>
-														<xsl:choose>
-															<xsl:when test="$combat/@niveau = $niveaumax"> tas-participant-premiere-categorie</xsl:when>
-															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
-														</xsl:choose>
-													</xsl:attribute>
-													<img class="img" width="20">
-														<xsl:attribute name="src">
-															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
-														</xsl:attribute>
-													</img>
-													<xsl:value-of select="$combat/@firstrencontrelib"/>
-												</div>
+												<xsl:call-template name="BadgePremiereCategorie">
+													<xsl:with-param name="combat" select="$combat"/>
+													<xsl:with-param name="niveaumax" select="$niveaumax"/>
+													<xsl:with-param name="imgPath" select="$imgPath"/>
+												</xsl:call-template>
 											</xsl:if>
 											<div class="w3-cell">
 												<xsl:value-of select="$judoka1/@nom"/>
@@ -905,21 +855,11 @@
 									<header class="w3-small">
 										<div class="w3-cell-row">
 											<xsl:if test="$typeCompetition = '1'">
-												<div>
-													<xsl:attribute name="class">
-														w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align <xsl:value-of select="$firstrencontreclass"/>
-														<xsl:choose>
-															<xsl:when test="$combat/@niveau = $niveaumax"> tas-participant-premiere-categorie</xsl:when>
-															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
-														</xsl:choose>
-													</xsl:attribute>
-													<img class="img" width="20">
-														<xsl:attribute name="src">
-															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
-														</xsl:attribute>
-													</img>
-													<xsl:value-of select="$combat/@firstrencontrelib"/>
-												</div>
+												<xsl:call-template name="BadgePremiereCategorie">
+													<xsl:with-param name="combat" select="$combat"/>
+													<xsl:with-param name="niveaumax" select="$niveaumax"/>
+													<xsl:with-param name="imgPath" select="$imgPath"/>
+												</xsl:call-template>
 											</xsl:if>
 											<div class="w3-cell">&nbsp;</div>
 										</div>
@@ -979,21 +919,11 @@
 									<header class="w3-small">
 										<div class="w3-cell-row">
 											<xsl:if test="$typeCompetition = '1'">
-												<div>
-													<xsl:attribute name="class">
-														w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align <xsl:value-of select="$firstrencontreclass"/>
-														<xsl:choose>
-															<xsl:when test="$combat/@niveau = $niveaumax"> tas-participant-premiere-categorie</xsl:when>
-															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
-														</xsl:choose>
-													</xsl:attribute>
-													<img class="img" width="20">
-														<xsl:attribute name="src">
-															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
-														</xsl:attribute>
-													</img>
-													<xsl:value-of select="$combat/@firstrencontrelib"/>
-												</div>
+												<xsl:call-template name="BadgePremiereCategorie">
+													<xsl:with-param name="combat" select="$combat"/>
+													<xsl:with-param name="niveaumax" select="$niveaumax"/>
+													<xsl:with-param name="imgPath" select="$imgPath"/>
+												</xsl:call-template>
 											</xsl:if>
 											<div class="w3-cell">
 												<xsl:value-of select="$judoka2/@nom"/>
@@ -1049,21 +979,11 @@
 									<header class="w3-small">
 										<div class="w3-cell-row">
 											<xsl:if test="$typeCompetition = '1'">
-												<div>
-													<xsl:attribute name="class">
-														w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align <xsl:value-of select="$firstrencontreclass"/>
-														<xsl:choose>
-															<xsl:when test="$combat/@niveau = $niveaumax"> tas-participant-premiere-categorie</xsl:when>
-															<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
-														</xsl:choose>
-													</xsl:attribute>
-													<img class="img" width="20">
-														<xsl:attribute name="src">
-															<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
-														</xsl:attribute>
-													</img>
-													<xsl:value-of select="$combat/@firstrencontrelib"/>
-												</div>
+												<xsl:call-template name="BadgePremiereCategorie">
+													<xsl:with-param name="combat" select="$combat"/>
+													<xsl:with-param name="niveaumax" select="$niveaumax"/>
+													<xsl:with-param name="imgPath" select="$imgPath"/>
+												</xsl:call-template>
 											</xsl:if>
 											<div class="w3-cell">&nbsp;</div>
 										</div>
@@ -1106,7 +1026,7 @@
 								<xsl:choose>
 									<xsl:when test="$affKinzas = 'Oui'">
 										<xsl:value-of select="substring($combat/@scorevainqueur, 1, 2)"/>
-										<span class="w3-small w3-text-green">
+										<span class="w3-small fj-green">
 											(<xsl:value-of select="$kinzavainqueur"/>)
 										</span>
 									</xsl:when>
@@ -1114,7 +1034,7 @@
 										<xsl:value-of select="substring($combat/@scorevainqueur, 1, 3)"/>
 									</xsl:otherwise>
 								</xsl:choose>
-								<span class="w3-text-red">
+								<span class="fj-red">
 									<xsl:value-of select="$combat/@penvainqueur"/>
 								</span>
 							</xsl:when>
@@ -1131,7 +1051,7 @@
 								<xsl:choose>
 									<xsl:when test="$affKinzas = 'Oui'">
 										<xsl:value-of select="substring($combat/@scoreperdant, 1, 2)"/>
-										<span class="w3-small w3-text-green">
+										<span class="w3-small fj-green">
 											(<xsl:value-of select="$kinzaperdant"/>)
 										</span>
 									</xsl:when>
@@ -1139,7 +1059,7 @@
 										<xsl:value-of select="substring($combat/@scoreperdant, 1, 3)"/>
 									</xsl:otherwise>
 								</xsl:choose>
-								<span class="w3-text-red">
+								<span class="fj-red">
 									<xsl:value-of select="$combat/@penperdant"/>
 								</span>
 							</xsl:when>
@@ -1270,4 +1190,39 @@
 		</xsl:choose>
 	</xsl:template>
 
+
+	<!-- ===================================================================== -->
+	<!-- TEMPLATE : Badge 1ère catégorie pour les équipes                      -->
+	<!-- ===================================================================== -->
+	<xsl:template name="BadgePremiereCategorie">
+		<xsl:param name="combat"/>
+		<xsl:param name="niveaumax"/>
+		<xsl:param name="imgPath"/>
+
+		<!-- Calcul de la couleur intégré au template -->
+		<xsl:variable name="firstrencontreclass">
+			<xsl:choose>
+				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'M'">tas-badge-team-m</xsl:when>
+				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'F'">tas-badge-team-f</xsl:when>
+				<xsl:otherwise>tas-badge-team-x</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+
+		<div>
+			<xsl:attribute name="class">
+				w3-cell w3-center w3-cell-middle w3-tiny tas-badge-team <xsl:value-of select="$firstrencontreclass"/>
+				<xsl:choose>
+					<xsl:when test="$combat/@niveau = $niveaumax"> tas-participant-premiere-categorie</xsl:when>
+					<xsl:otherwise> tas-combat-premiere-categorie</xsl:otherwise>
+				</xsl:choose>
+			</xsl:attribute>
+			<img class="tas-theme-icon" width="14" style="vertical-align: middle; margin-right: 4px;">
+				<xsl:attribute name="src">
+					<xsl:value-of select="concat($imgPath, 'starter-32.png')"/>
+				</xsl:attribute>
+			</img>
+			<xsl:value-of select="$combat/@firstrencontrelib"/>
+		</div>
+	</xsl:template>
+	
 </xsl:stylesheet>

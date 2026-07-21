@@ -136,7 +136,7 @@
 
 		<div id="Affectations" class="w3-container pane w3-animate-left tas-competition-panels">
 			<!-- une ligne de cellule pour occuper toute le largeur de l'ecran -->
-			<div class="w3-cell-row">
+			<div class="w3-row-padding">
 				<!-- Chaque panneau est un panel contenant une carte, utilise cell + mobile pour gerer horizontal/vertical selon la taille de l'ecran -->
 				<!-- Categorie F -->
 				<xsl:call-template name="panelEpreuve">

@@ -271,7 +271,8 @@ body.dark-mode .tas-athlete-card {
 
 /* Carte Combattant vide (Remplace w3-light-grey) */
 .tas-athlete-card-empty {
-    background-color: rgba(118, 118, 128, 0.05);
+    /* Remplace rgba(118, 118, 128, 0.05) */
+    background-color: color-mix(in srgb, var(--text-muted) 5%, transparent);
     border: 1px dashed var(--border-color);
     color: var(--text-muted);
 }
@@ -336,7 +337,8 @@ body.dark-mode .tas-athlete-card-winner {
 
 /* État "En Attente" */
 .tas-upcoming-card-waiting {
-    background-color: rgba(118, 118, 128, 0.05);
+    /* Remplace rgba(118, 118, 128, 0.05) */
+    background-color: color-mix(in srgb, var(--text-muted) 5%, transparent);
     border: 1px dashed var(--border-color);
     color: var(--text-muted);
     display: flex;

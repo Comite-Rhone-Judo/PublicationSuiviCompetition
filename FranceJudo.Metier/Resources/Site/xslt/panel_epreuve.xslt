@@ -39,7 +39,7 @@
 		<xsl:param name="imgPath"/>
 
 		<xsl:if test="count(./epreuve[@sexe = $sexeCode]) > 0">
-			<div class="w3-cell w3-mobile w3-padding-small">
+			<div class="w3-col l4 m6 s12 w3-margin-bottom w3-padding-small">
 
 				<!-- 1. Appel du composant visuel -->
 				<xsl:call-template name="AccordionButton">

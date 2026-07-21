@@ -25,13 +25,20 @@
 				<button class="w3-button w3-transparent tas-adaptive-icon w3-large tas-margin-none" onclick="openElement('navigationPanel')">☰</button>
 				<h3>Suivi compétition</h3>
 				<div class="bandeau-titre">
-					<!-- Logo Mode Clair -->
-					<img class="img-bandeau-titre tas-logo-light">
+					<!-- Logo principal (Classe dynamique selon la présence du logo sombre) -->
+					<img>
+						<xsl:attribute name="class">
+							<xsl:choose>
+								<xsl:when test="$logoDark != ''">img-bandeau-titre tas-logo-light</xsl:when>
+								<xsl:otherwise>img-bandeau-titre tas-logo-auto-invert</xsl:otherwise>
+							</xsl:choose>
+						</xsl:attribute>
 						<xsl:attribute name="src">
 							<xsl:value-of select="concat($pathToImg, $logo)"/>
 						</xsl:attribute>
 					</img>
-					<!-- Logo Mode Sombre -->
+
+					<!-- Logo Mode Sombre spécifique (si fourni) -->
 					<xsl:if test="$logoDark != ''">
 						<img class="img-bandeau-titre tas-logo-dark">
 							<xsl:attribute name="src">

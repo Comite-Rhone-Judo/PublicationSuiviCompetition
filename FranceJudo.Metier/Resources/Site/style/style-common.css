@@ -17,6 +17,8 @@
     --fj-grey: #bfbfbf;
     --fj-green: #358f6c;
     --fj-taupe: #8B8682; /* Nouvelle couleur de référence : Taupe classique */
+    --fj-warning: #FFCC00; /* Jaune d'avertissement officiel */
+    --fj-pink: #E91E63; /* Rose officiel pour les catégories féminines */
 }
 
 body.dark-mode {
@@ -29,13 +31,15 @@ body.dark-mode {
     --nav-bg: #1C1C1E;
     --nav-active-bg: #2C2C2E;
     /* Adaptation des pivots pour garantir la lisibilité et le contraste en mode sombre */
-    --fj-blue: hsl(244, 100%, 45%);
+    --fj-blue: hsl(244, 100%, 25%);
     --fj-blue-alt: #423d98; /* Maintenu ou convertible en hsl(243, 43%, 42%) */
     --nav-active-bg: #E5E5EA; /* Indispensable pour que le texte bleu reste lisible ! */
     --fj-red: #FF453A; /* Rouge vif optimisé fond noir */
     --fj-grey: #8E8E93;
     --fj-green: #34C759;
     --fj-taupe: #ADA39C; /* Taupe légèrement plus clair et sableux pour le mode sombre */
+    --fj-warning: #FFD60A; /* Jaune d'avertissement optimisé mode sombre */
+    --fj-pink: #FF4081; /* Rose optimisé et lumineux pour le mode sombre */
 }
 
 /* ==========================================================================
@@ -122,6 +126,13 @@ div.bandeau-titre {
 
 img.img-bandeau-titre {
     height: 32px;
+}
+
+/* ==========================================================================
+   Inversion automatique du logo de base en mode sombre (si pas de LogoDark)
+   ========================================================================== */
+body.dark-mode img.img-bandeau-titre.tas-logo-auto-invert {
+    filter: brightness(0) invert(1);
 }
 
 /* ==========================================================================
@@ -707,16 +718,18 @@ body.dark-mode .ios-phase-btn-disabled {
    ========================================================================== */
 .ios-segmented-control {
     display: flex;
-    background-color: rgba(118, 118, 128, 0.12); /* Gris standard iOS */
+    /* Remplace rgba(118, 118, 128, 0.12) */
+    background-color: color-mix(in srgb, var(--text-muted) 12%, transparent);
     padding: 3px;
     border-radius: 9px;
     margin: 8px 0 16px 0;
-    overflow-x: auto; /* Permet le scroll horizontal s'il y a beaucoup d'onglets */
+    overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 }
 
 body.dark-mode .ios-segmented-control {
-    background-color: rgba(118, 118, 128, 0.24);
+    /* Remplace rgba(118, 118, 128, 0.24) */
+    background-color: color-mix(in srgb, var(--text-muted) 24%, transparent);
 }
 
 .ios-segment {
@@ -786,40 +799,11 @@ body.dark-mode .ios-circle-btn {
 }
 
 /* ==========================================================================
-   MESSAGES D'INFORMATION (Callouts)
+   Callout d'Avertissement (Sémantique Jaune/Alerte)
    ========================================================================== */
-.tas-callout {
-    position: relative;
-    padding: 6px 36px 6px 8px; /* Espace prévu à droite pour la croix */
-    margin: 8px 16px;
-    /* Jaune très atténué (8%) mélangé au fond de la carte */
-    background-color: color-mix(in srgb, #FFCC00 8%, var(--card-bg));
-    border-left: 4px solid #FFCC00; /* Liseré d'avertissement */
-    /* Arrondis à droite, mais droit à gauche (côté liseré) */
-    border-radius: 0 8px 8px 0;
-    color: var(--text-color);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    font-size: 0.9em;
-}
-
-body.dark-mode .tas-callout {
-    /* Jaune légèrement plus contrasté en mode sombre */
-    background-color: color-mix(in srgb, #FFD60A 12%, var(--card-bg));
-    border-left-color: #FFD60A;
-}
-
-/* Bouton de fermeture intégré */
-.tas-callout-close {
-    position: absolute;
-    top: 10px;
-    right: 12px;
-    background: none;
-    border: none;
-    font-size: 1.4em;
-    color: var(--text-muted);
-    cursor: pointer;
-    padding: 0;
-    line-height: 1;
+.tas-callout.tas-callout-warning {
+    background-color: color-mix(in srgb, var(--fj-warning) 12%, var(--card-bg));
+    border-left-color: var(--fj-warning);
 }
 
 /* ==========================================================================
@@ -888,4 +872,51 @@ body.dark-mode .tas-callout {
     cursor: pointer;
     padding: 0;
     line-height: 1;
+}
+
+/* ==========================================================================
+   Badges "Première Catégorie" par Équipes (Masculin / Féminin / Mixte)
+   ========================================================================== */
+.tas-badge-team {
+    padding: 2px 6px; /* Ajusté pour respirer sans déborder de la grille */
+    border-radius: 10px;
+    font-weight: 600;
+    /* Nettoyage total pour un rendu 100% Flat */
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* Masculin (Bleu) - 25% d'intensité */
+.tas-badge-team-m {
+    background-color: color-mix(in srgb, var(--fj-blue) 25%, transparent);
+    color: var(--fj-blue);
+}
+
+/* Féminin (Rose) - 25% d'intensité */
+.tas-badge-team-f {
+    background-color: color-mix(in srgb, var(--fj-pink) 25%, transparent);
+    color: var(--fj-pink);
+}
+
+/* Mixte / Autre (Vert) - 25% d'intensité */
+.tas-badge-team-x {
+    background-color: color-mix(in srgb, var(--fj-green) 25%, transparent);
+    color: var(--fj-green);
+}
+
+/* Adaptation Mode Sombre (Fond intense à 75%, texte blanc pour le contraste) */
+body.dark-mode .tas-badge-team-m {
+    background-color: color-mix(in srgb, var(--fj-blue) 75%, transparent);
+    color: #FFFFFF;
+}
+
+body.dark-mode .tas-badge-team-f {
+    background-color: color-mix(in srgb, var(--fj-pink) 75%, transparent);
+    color: #FFFFFF;
+}
+
+body.dark-mode .tas-badge-team-x {
+    background-color: color-mix(in srgb, var(--fj-green) 75%, transparent);
+    color: #FFFFFF;
 }

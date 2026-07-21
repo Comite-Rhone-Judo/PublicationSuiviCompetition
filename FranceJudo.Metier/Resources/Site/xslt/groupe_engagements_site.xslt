@@ -541,7 +541,7 @@
 							</xsl:otherwise>
 						</xsl:choose>
 						<xsl:if test="$typeCompetition != '1'">
-							<span class="w3-text-red">
+							<span class="fj-red">
 								<xsl:choose>
 									<xsl:when test="substring($penalitevainqueur, 1, 1) = '-' ">
 										<xsl:value-of select="$penalitevainqueur"/>
@@ -567,7 +567,7 @@
 							</xsl:otherwise>
 						</xsl:choose>
 						<xsl:if test="$typeCompetition != '1'">
-							<span class="w3-text-red">
+							<span class="fj-red">
 								<xsl:choose>
 									<xsl:when test="substring($penaliteperdant, 1, 1) = '-' ">
 										<xsl:value-of select="$penaliteperdant"/>
@@ -665,7 +665,7 @@
 							</xsl:otherwise>
 						</xsl:choose>
 						<xsl:if test="$typeCompetition != '1'">
-							<span class="w3-text-red">
+							<span class="fj-red">
 								<xsl:choose>
 									<xsl:when test="substring($penalitepremier, 1, 1) = '-' ">
 										<xsl:value-of select="$penalitepremier"/>
@@ -691,7 +691,7 @@
 							</xsl:otherwise>
 						</xsl:choose>
 						<xsl:if test="$typeCompetition != '1'">
-							<span class="w3-text-red">
+							<span class="fj-red">
 								<xsl:choose>
 									<xsl:when test="substring($penalitesecond, 1, 1) = '-' ">
 										<xsl:value-of select="$penalitesecond"/>

@@ -77,8 +77,8 @@ table.tas-poule-combat td.tas-cell-score {
     padding: 6px 12px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     /* Uniformisation des tailles et alignement */
-    width: 200px;
-    min-width: 200px;
+    width: 100%;
+    white-space: nowrap; /* Interdit formellement tout retour à la ligne */
     box-sizing: border-box;
     text-align: right;
 }
@@ -94,6 +94,7 @@ body.dark-mode .tas-athlete-card {
     color: var(--text-color);
     font-size: 0.9em;
     display: block;
+    white-space: nowrap; /* Sécurité anti-retour à la ligne */
 }
 
 .tas-athlete-club {
@@ -101,6 +102,7 @@ body.dark-mode .tas-athlete-card {
     color: var(--text-muted);
     margin-top: 2px;
     display: block;
+    white-space: nowrap; /* Sécurité anti-retour à la ligne */
 }
 
 /* Les pastilles grises (Numéros) */
@@ -123,7 +125,8 @@ body.dark-mode .tas-position-badge {
 }
 
 .tas-cell-empty {
-    background-color: rgba(118, 118, 128, 0.08) !important;
+    /* Remplace rgba(118, 118, 128, 0.08) */
+    background-color: color-mix(in srgb, var(--text-muted) 8%, transparent) !important;
 }
 
 /* Le "X" du perdant */
@@ -160,4 +163,18 @@ body.dark-mode .tas-position-badge {
     justify-content: center;
     font-weight: 600;
     font-size: 0.95em;
+}
+
+/* ==========================================================================
+   Badge "1ère catégorie" adaptatif (Mode Clair / Mode Sombre)
+   ========================================================================== */
+.tas-category-badge {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 4px 12px;
+    border-radius: 12px;
+    display: inline-block;
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
 }

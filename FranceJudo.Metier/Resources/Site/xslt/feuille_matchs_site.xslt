@@ -141,7 +141,7 @@
 				</div>
 
 				<xsl:if test="not($msgProchainsCombats = '')">
-					<div class="tas-callout">
+					<div class="tas-callout tas-callout-warning">
 						<button onclick="this.parentElement.style.display='none'" class="tas-callout-close">&times;</button>
 						<div>
 							<xsl:value-of select="$msgProchainsCombats"/>
@@ -298,9 +298,9 @@
 							<xsl:if test="$typeCompetition = '1'">
 								<div>
 									<xsl:attribute name="class">
-										tas-prochain-combat-premiere-categorie w3-cell w3-center w3-cell-middle w3-tag w3-round-large w3-tiny w3-left-align <xsl:value-of select="$firstrencontreclass"/>
+										tas-prochain-combat-premiere-categorie w3-cell w3-center w3-cell-middle w3-tiny tas-badge-team <xsl:value-of select="$firstrencontreclass"/>
 									</xsl:attribute>
-									<img class="img" width="20" src="{$imgPath}starter-32.png"/>
+									<img class="tas-theme-icon" width="14" style="vertical-align: middle; margin-right: 4px;" src="{$imgPath}starter-32.png"/>
 									<xsl:value-of select="$combat/@firstrencontrelib"/>
 								</div>
 							</xsl:if>
@@ -361,5 +361,4 @@
 			</tr>
 		</xsl:if>
 	</xsl:template>
-
 </xsl:stylesheet>

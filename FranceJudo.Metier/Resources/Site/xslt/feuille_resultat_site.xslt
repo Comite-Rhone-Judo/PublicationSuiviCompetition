@@ -188,8 +188,8 @@
 			<div class="tasOpenedPanelType tas-accordion-content-visible" id="{$panelId}">
 
 				<xsl:if test="$typeCompetition = '1'">
-					<div class="w3-container w3-margin-top w3-small w3-text-muted w3-center">
-						<span class="w3-tag w3-round w3-light-grey">
+					<div class="w3-container w3-margin-top w3-small w3-center">
+						<span class="tas-category-badge">
 							1<sup>ère</sup> catégorie:&nbsp;<xsl:value-of select="$poulefirstrencontre"/>
 						</span>
 					</div>
@@ -446,7 +446,7 @@
 							<xsl:choose>
 								<xsl:when test="$affKinzas = 'Oui'">
 									<xsl:value-of select="substring(./@scorevainqueur, 1, 2)"/>
-									<span class="w3-small w3-text-green">
+									<span class="w3-small fj-green">
 										(<xsl:value-of select="$kinzavainqueur"/>)
 									</span>
 								</xsl:when>
@@ -456,7 +456,7 @@
 								</xsl:otherwise>
 							</xsl:choose>
 							<!-- Pénalité (ex: -1) -->
-							<span class="w3-text-red">
+							<span class="fj-red">
 								<xsl:value-of select="./@penvainqueur"/>
 							</span>
 						</div>
@@ -464,7 +464,7 @@
 							<xsl:choose>
 								<xsl:when test="$affKinzas = 'Oui'">
 									<xsl:value-of select="substring(./@scoreperdant, 1, 2)"/>
-									<span class="w3-small w3-text-green">
+									<span class="w3-small fj-green">
 										(<xsl:value-of select="$kinzaperdant"/>)
 									</span>
 								</xsl:when>
@@ -474,7 +474,7 @@
 								</xsl:otherwise>
 							</xsl:choose>
 							<!-- Pénalité perdant (ex: -0) -->
-							<span class="w3-text-red">
+							<span class="fj-red">
 								<xsl:value-of select="./@penperdant"/>
 							</span>
 						</div>
@@ -483,7 +483,7 @@
 						<div class="tas-score-top">
 							<xsl:value-of select="./@scorevainqueur"/>
 							<xsl:if test="count(./rencontre[@estDecisif='true']) != 0">
-								<span class="w3-tiny w3-text-orange"> (V)</span>
+								<span class="w3-tiny" style="color: var(--fj-warning);"> (V)</span>
 							</xsl:if>
 						</div>
 						<div class="tas-score-bottom">

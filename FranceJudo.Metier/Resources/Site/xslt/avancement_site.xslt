@@ -119,7 +119,7 @@
 		</div>
 
 		<div id="Avancements" class="w3-container pane w3-animate-left tas-competition-panels">
-			<div class="w3-cell-row">
+			<div class="w3-row-padding">
 				<xsl:call-template name="panelEpreuve">
 					<xsl:with-param name="sexeCode" select="'F'"/>
 					<xsl:with-param name="prefixPanel" select="$prefixCompetition"/>

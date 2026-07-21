@@ -62,9 +62,6 @@
 					<xsl:with-param name="pathToCommon" select="$commonPath"/>
 				</xsl:call-template>
 
-				<!-- Div vide pour aligner le contenu avec le bandeau de titre de taille fixe -->
-				<div class="w3-container tas-filler-div">&nbsp;</div>
-
 				<!-- CONTENU : Zone "Empty State" modernisée -->
 				<xsl:if test="count(competitions/competition)=0 or count(//epreuve)=0">
 					<div class="w3-padding">
@@ -106,7 +103,7 @@
 		</div>
 
 		<div id="Avancements" class="w3-container pane w3-animate-left">
-			<div class="w3-cell-row">
+			<div class="w3-row-padding">
 				<!-- Categorie F -->
 				<xsl:call-template name="panelEpreuve">
 					<xsl:with-param name="sexeCode" select="'F'"/>
@@ -134,21 +131,13 @@
 	<!-- On ne tient compte que des epreuves pour lesquelles les phases sont créées et sans classement validé -->
 	<xsl:template name="prochains_combats_epreuve" match="epreuve">
 		<xsl:if test="count(./phases/phase[number(@typePhase) = 1 and number(@etat) > 0 and number(@etat) != 5]) > 0">
-			<!-- Bouton style carte iOS (Remplace w3-pale-yellow) -->
-			<a class="w3-button w3-block ios-card w3-margin-bottom" href="{concat($competitionPath, @directory, 'feuille_combats.html')}">
-				<xsl:value-of select="./@libelle"/>
-				<xsl:text>&#32;</xsl:text>
-				<xsl:value-of select="./@nom"/>
-				<xsl:text>&#32;Poules</xsl:text>
+			<a class="ios-list-item" href="{concat($competitionPath, @directory, 'feuille_combats.html')}">
+				<xsl:value-of select="./@libelle"/>&#32;<xsl:value-of select="./@nom"/>&#32;Poules
 			</a>
 		</xsl:if>
 		<xsl:if test="count(./phases/phase[number(@typePhase) = 2 and number(@etat) > 0 and number(@etat) != 5]) > 0">
-			<!-- Bouton style carte iOS (Remplace w3-pale-yellow) -->
-			<a class="w3-button w3-block ios-card w3-margin-bottom" href="{concat($competitionPath, @directory, 'feuille_combats.html')}">
-				<xsl:value-of select="./@libelle"/>
-				<xsl:text>&#32;</xsl:text>
-				<xsl:value-of select="./@nom"/>
-				<xsl:text>&#32;Tableau</xsl:text>
+			<a class="ios-list-item" href="{concat($competitionPath, @directory, 'feuille_combats.html')}">
+				<xsl:value-of select="./@libelle"/>&#32;<xsl:value-of select="./@nom"/>&#32;Tableau
 			</a>
 		</xsl:if>
 	</xsl:template>
