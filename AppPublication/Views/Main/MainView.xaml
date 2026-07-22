@@ -562,13 +562,23 @@
                                                 Source="{Binding ElementName=TxtUrlDistant, Path=Text, Converter={StaticResource StringToQrCodeConverter}}" />
                                         </WrapPanel>
                                         <WrapPanel Orientation="Vertical" >
-                                            <Button Margin="10 0 0 0" Width="35" Height="35" Padding="0 0 0 0" HorizontalAlignment="Left"
+                                            <WrapPanel Orientation="Horizontal">
+                                                <Button Margin="10 0 0 0" Width="35" Height="35" Padding="0 0 0 0" HorizontalAlignment="Left"
                                                 Click="QRCodeDistantCopy_Click"
                                                 IsEnabled="{Binding Path=SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne.IsActif}">
-                                                <Grid>
-                                                    <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/copy-32.png" Height="20" Width="20" ToolTip="Copier le QRCode"/>
-                                                </Grid>
-                                            </Button>
+                                                    <Grid>
+                                                        <Image Source="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/copy-32.png" Height="20" Width="20" ToolTip="Copier le QRCode"/>
+                                                    </Grid>
+                                                </Button>
+                                                <Rectangle  Fill="OrangeRed" 
+                                                            Width="20"  Height="20" Margin="5 0 0 0" 
+                                                            ToolTip="L'URL est incorrecte, vérifiez votre saisie."
+                                                            Visibility="{Binding Path=SiteCoordinator.GestionnaireSitePublique.UrlDistantPublicationIsValid, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=not}">
+                                                    <Rectangle.OpacityMask>
+                                                        <ImageBrush ImageSource="pack://application:,,,/FranceJudo.UI;component/Wpf/Resources/Media/Icons/black/error-32.png" Stretch="Uniform"/>
+                                                    </Rectangle.OpacityMask>
+                                                </Rectangle>
+                                            </WrapPanel>
                                             <WrapPanel Orientation="Horizontal" >
                                                 <Border BorderThickness="1" BorderBrush="Gray" Margin="10 10 10 10">
                                                     <TextBlock x:Name="TxtUrlDistant" Style="{StaticResource TextBoxTextStyle}" Width="430" Margin=" 0 0 0 0">

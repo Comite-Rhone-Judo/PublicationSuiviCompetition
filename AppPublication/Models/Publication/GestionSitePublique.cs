@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Xml.Linq;
 
 namespace AppPublication.Models.Publication
@@ -516,6 +517,23 @@ namespace AppPublication.Models.Publication
             private set
             {
                 _urlDistantPublication = value;
+                NotifyPropertyChanged();
+
+                UrlDistantPublicationIsValid = Uri.TryCreate(value, UriKind.Absolute, out _);
+            }
+        }
+
+        private bool _urlDistantPublicationIsValid;
+
+        /// <summary>
+        /// Indique si l'URL de publication sur le site distant est valide ou non (True = valide)
+        /// </summary>
+        public bool UrlDistantPublicationIsValid
+        {
+            get { return _urlDistantPublicationIsValid; }
+            private set
+            {
+                _urlDistantPublicationIsValid = value;
                 NotifyPropertyChanged();
             }
         }
@@ -1106,17 +1124,9 @@ namespace AppPublication.Models.Publication
                 if (EasyConfig)
                 {
                     // Extrait l'URL EasyConfig si possible
-                    try
+                    if (Uri.TryCreate(_httpEasyConfig, EntitePublicationFFJudo?.RacineHttp, out Uri fullUri))
                     {
-                        if (EntitePublicationFFJudo != null)
-                        {
-                            Uri fullUri = new Uri(_httpEasyConfig, EntitePublicationFFJudo.RacineHttp);
-                            urlBase = fullUri.ToString();
-                        }
-                    }
-                    catch
-                    {
-                        urlBase = string.Empty;
+                        urlBase = fullUri.ToString();
                     }
                 }
                 else
