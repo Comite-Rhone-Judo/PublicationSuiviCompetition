@@ -22,8 +22,7 @@
 		<!-- BANDEAU DE TITRE -->
 		<div class="tas-titre-app">
 			<div class="w3-cell-row">
-				<button class="w3-button w3-transparent tas-adaptive-icon w3-large tas-margin-none" onclick="openElement('navigationPanel')">☰</button>
-				<h3>Suivi compétition</h3>
+				<button class="w3-button w3-transparent tas-adaptive-icon tas-margin-none tas-menu-btn" onclick="openElement('navigationPanel')">☰</button>				<h3>Suivi compétition</h3>
 				<div class="bandeau-titre">
 					<!-- Logo principal (Classe dynamique selon la présence du logo sombre) -->
 					<img>

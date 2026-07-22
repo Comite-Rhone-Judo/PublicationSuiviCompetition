@@ -69,10 +69,8 @@ table.tas-poule-combat td.tas-cell-score {
 
 /* La carte du combattant (Design iOS propre et moderne) */
 .tas-athlete-card {
-    /* Mélange 5% de la variable FJ-blue avec 95% de transparent */
-    background-color: color-mix(in srgb, var(--fj-blue) 5%, transparent);
-    /* Mélange 10% de la variable FJ-blue avec 90% de transparent */
-    border: 1px solid color-mix(in srgb, var(--fj-blue) 10%, transparent);
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-accent-border); /* La variable fait la bascule Bleu / Blanc atténué */
     border-radius: 8px;
     padding: 6px 12px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.02);
@@ -81,12 +79,6 @@ table.tas-poule-combat td.tas-cell-score {
     white-space: nowrap; /* Interdit formellement tout retour à la ligne */
     box-sizing: border-box;
     text-align: right;
-}
-
-body.dark-mode .tas-athlete-card {
-    /* Utilise le bleu alternatif défini pour le mode sombre, à 15% d'opacité */
-    background-color: color-mix(in srgb, var(--fj-blue) 25%, transparent);
-    border-color: color-mix(in srgb, var(--fj-blue) 40%, transparent);
 }
 
 .tas-athlete-name {
@@ -117,10 +109,26 @@ body.dark-mode .tas-athlete-card {
     color: #FFFFFF;
     font-size: 0.85em;
     font-weight: bold;
+    flex-shrink: 0; /* CORRECTION : Interdit formellement l'écrasement horizontal ! */
 }
 
-/* Case Vide (Diagonale grise unie) */
-body.dark-mode .tas-position-badge {
+/* Nouveau : Badges rectangulaires pour les entêtes en mode colonne (ex: 1-2) */
+.tas-position-badge-rect {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 8px; /* Marges internes pour laisser respirer le texte */
+    border-radius: 8px; /* Bords arrondis façon carte iOS */
+    background-color: var(--fj-blue);
+    color: #FFFFFF;
+    font-size: 0.85em;
+    font-weight: bold;
+    white-space: nowrap; /* Empêche le texte de passer à la ligne */
+}
+
+/* Application du bleu alternatif en Mode Sombre pour les deux badges */
+body.dark-mode .tas-position-badge,
+body.dark-mode .tas-position-badge-rect {
     background-color: var(--fj-blue-alt);
 }
 
@@ -128,8 +136,7 @@ body.dark-mode .tas-position-badge {
     /* Remplace rgba(118, 118, 128, 0.08) */
     background-color: color-mix(in srgb, var(--text-muted) 8%, transparent) !important;
 }
-
-/* Le "X" du perdant */
+    /* Le "X" du perdant */
 .tas-poule-loser {
     font-size: 3em;
     color: var(--text-muted); /* Utilise directement le nuancier global */
@@ -137,7 +144,7 @@ body.dark-mode .tas-position-badge {
     line-height: 1;
 }
 
-/* Le score (Gagnant / Perdant) */
+    /* Le score (Gagnant / Perdant) */
 .tas-poule-winner {
     display: flex;
     flex-direction: column;
@@ -165,7 +172,7 @@ body.dark-mode .tas-position-badge {
     font-size: 0.95em;
 }
 
-/* ==========================================================================
+    /* ==========================================================================
    Badge "1ère catégorie" adaptatif (Mode Clair / Mode Sombre)
    ========================================================================== */
 .tas-category-badge {

@@ -245,7 +245,7 @@
 											</xsl:variable>
 
 											<th>
-												<span class="tas-position-badge">
+												<span class="tas-position-badge-rect">
 													<xsl:value-of select="$posj1"/>-<xsl:value-of select="$posj2"/>
 												</span>
 											</th>

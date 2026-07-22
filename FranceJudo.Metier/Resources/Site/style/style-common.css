@@ -19,6 +19,9 @@
     --fj-taupe: #8B8682; /* Nouvelle couleur de référence : Taupe classique */
     --fj-warning: #FFCC00; /* Jaune d'avertissement officiel */
     --fj-pink: #E91E63; /* Rose officiel pour les catégories féminines */
+    /* Nouvelles variables sémantiques de bordures */
+    --card-accent-border: color-mix(in srgb, var(--fj-blue) 40%, transparent); /* Bleu FJ bien visible de jour */
+    --belt-neutral: color-mix(in srgb, var(--text-color) 35%, transparent); /* Gris neutre de jour */
 }
 
 body.dark-mode {
@@ -26,7 +29,8 @@ body.dark-mode {
     --card-bg: #1C1C1E; /* Gris sombre pour les conteneurs/cartes */
     --text-color: #F2F2F7;
     --text-muted: #98989F;
-    --border-color: #38383A;
+    /*--border-color: #38383A;*/
+    --border-color: #545458;
     --header-bg: rgba(28, 28, 30, 0.85);
     --nav-bg: #1C1C1E;
     --nav-active-bg: #2C2C2E;
@@ -40,6 +44,9 @@ body.dark-mode {
     --fj-taupe: #ADA39C; /* Taupe légèrement plus clair et sableux pour le mode sombre */
     --fj-warning: #FFD60A; /* Jaune d'avertissement optimisé mode sombre */
     --fj-pink: #FF4081; /* Rose optimisé et lumineux pour le mode sombre */
+    /* Le --text-color étant blanc (#F2F2F7) en mode sombre, on s'en sert intelligemment : */
+    --card-accent-border: color-mix(in srgb, var(--text-color) 25%, transparent); /* Liseré "blanc" atténué */
+    --belt-neutral: var(--text-color); /* Blanc pur (ou presque) de nuit */
 }
 
 /* ==========================================================================
@@ -118,6 +125,22 @@ div.tas-titre-app {
         text-align: center;
         color: var(--text-color);
     }
+
+/* ==========================================================================
+   Ajustement du Bouton Menu (Ergonomie Smartphone)
+   ========================================================================== */
+.tas-menu-btn {
+    font-size: 28px !important; /* Taille généreuse pour le doigt */
+    padding: 0 12px !important; /* Annule le padding vertical natif qui déforme le bandeau */
+    line-height: 1 !important; /* Empêche la police de créer un espace fantôme */
+    height: 38px !important; /* Hauteur fixe verrouillée */
+    /* Centrage parfait de l'icône dans sa boîte */
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    /* Suppression du contour tactile peu esthétique sur mobile */
+    outline: none !important;
+}
 
 div.bandeau-titre {
     text-align: right;
@@ -887,36 +910,39 @@ body.dark-mode .tas-callout {
     outline: none !important;
 }
 
-/* Masculin (Bleu) - 25% d'intensité */
+/* Masculin (Bleu) - 25% d'intensité sur fond opaque */
 .tas-badge-team-m {
-    background-color: color-mix(in srgb, var(--fj-blue) 25%, transparent);
+    background-color: color-mix(in srgb, var(--fj-blue) 25%, var(--card-bg));
     color: var(--fj-blue);
 }
 
-/* Féminin (Rose) - 25% d'intensité */
+/* Féminin (Rose) - 25% d'intensité sur fond opaque */
 .tas-badge-team-f {
-    background-color: color-mix(in srgb, var(--fj-pink) 25%, transparent);
+    background-color: color-mix(in srgb, var(--fj-pink) 25%, var(--card-bg));
     color: var(--fj-pink);
 }
 
-/* Mixte / Autre (Vert) - 25% d'intensité */
+/* Mixte / Autre (Vert) - 25% d'intensité sur fond opaque */
 .tas-badge-team-x {
-    background-color: color-mix(in srgb, var(--fj-green) 25%, transparent);
+    background-color: color-mix(in srgb, var(--fj-green) 25%, var(--card-bg));
     color: var(--fj-green);
 }
 
-/* Adaptation Mode Sombre (Fond intense à 75%, texte blanc pour le contraste) */
+/* Adaptation Mode Sombre (Fond opaque et lumineux) */
 body.dark-mode .tas-badge-team-m {
-    background-color: color-mix(in srgb, var(--fj-blue) 75%, transparent);
+    /* On utilise le bleu alternatif (plus clair) éclairé par 25% de blanc pur */
+    background-color: color-mix(in srgb, var(--fj-blue-alt) 75%, #FFFFFF);
     color: #FFFFFF;
 }
 
 body.dark-mode .tas-badge-team-f {
-    background-color: color-mix(in srgb, var(--fj-pink) 75%, transparent);
+    /* Le rose pur optimisé avec 15% de blanc pour le "pop" et l'opacité */
+    background-color: color-mix(in srgb, var(--fj-pink) 85%, #FFFFFF);
     color: #FFFFFF;
 }
 
 body.dark-mode .tas-badge-team-x {
-    background-color: color-mix(in srgb, var(--fj-green) 75%, transparent);
+    /* Le vert pur optimisé avec 15% de blanc pour le "pop" et l'opacité */
+    background-color: color-mix(in srgb, var(--fj-green) 85%, #FFFFFF);
     color: #FFFFFF;
 }

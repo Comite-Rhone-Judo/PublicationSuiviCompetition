@@ -259,21 +259,16 @@ td.tas-combat-repechage-vertical div {
 
 /* Carte Combattant standard (Remplace w3-pale-yellow) */
 .tas-athlete-card {
-    background-color: color-mix(in srgb, var(--fj-blue) 5%, transparent);
-    border: 1px solid color-mix(in srgb, var(--fj-blue) 15%, transparent);
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-accent-border); /* Bascule automatique Bleu/Blanc atténué */
     color: var(--text-color);
-}
-
-body.dark-mode .tas-athlete-card {
-    background-color: color-mix(in srgb, var(--fj-blue) 20%, transparent);
-    border-color: color-mix(in srgb, var(--fj-blue) 40%, transparent);
 }
 
 /* Carte Combattant vide (Remplace w3-light-grey) */
 .tas-athlete-card-empty {
     /* Remplace rgba(118, 118, 128, 0.05) */
     background-color: color-mix(in srgb, var(--text-muted) 5%, transparent);
-    border: 1px dashed var(--border-color);
+    border: 1px dashed var(--card-accent-border);
     color: var(--text-muted);
 }
 
@@ -315,7 +310,7 @@ body.dark-mode .tas-athlete-card-winner {
     }
 
     .tas-upcoming-card.belt-right-neutral {
-        border-right: 6px solid color-mix(in srgb, var(--text-color) 35%, transparent);
+        border-right: 6px solid var(--belt-neutral); /* Bascule automatique Gris/Blanc pur */
         text-align: right;
     }
 
@@ -331,7 +326,7 @@ body.dark-mode .tas-athlete-card-winner {
     }
 
     .tas-upcoming-card.belt-left-neutral {
-        border-left: 6px solid color-mix(in srgb, var(--text-color) 35%, transparent);
+        border-left: 6px solid var(--belt-neutral); /* Bascule automatique Gris/Blanc pur */
         text-align: left;
     }
 
@@ -339,7 +334,7 @@ body.dark-mode .tas-athlete-card-winner {
 .tas-upcoming-card-waiting {
     /* Remplace rgba(118, 118, 128, 0.05) */
     background-color: color-mix(in srgb, var(--text-muted) 5%, transparent);
-    border: 1px dashed var(--border-color);
+    border: 1px dashed var(--card-accent-border);
     color: var(--text-muted);
     display: flex;
     justify-content: center;
@@ -351,14 +346,9 @@ body.dark-mode .tas-athlete-card-winner {
 
 /* Bloc central d'information du combat */
 .tas-upcoming-info {
-    background-color: color-mix(in srgb, var(--fj-blue) 4%, transparent);
-    border: 1px solid color-mix(in srgb, var(--fj-blue) 10%, transparent);
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-accent-border); /* Bascule automatique Bleu/Blanc atténué */
     border-radius: 8px;
     padding: 8px;
     color: var(--text-color);
-}
-
-body.dark-mode .tas-upcoming-info {
-    background-color: color-mix(in srgb, var(--fj-blue) 25%, transparent);
-    border-color: color-mix(in srgb, var(--fj-blue) 40%, transparent);
 }

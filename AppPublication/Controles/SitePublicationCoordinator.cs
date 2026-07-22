@@ -441,6 +441,7 @@ namespace AppPublication.Controles
             RepertoireRacine = AppConfigRoot.Instance.Publication.General.RepertoireRacine;
             SelectedLogo = AppConfigRoot.Instance.Publication.General.GetLogo(AppConfigRoot.Instance.Publication.General.Logo, FichiersLogo.ToList(), o => o.Name);
             SelectedLogoDark = AppConfigRoot.Instance.Publication.General.GetLogo(AppConfigRoot.Instance.Publication.General.LogoDark, FichiersLogo.ToList(), o => o.Name);
+            UseLogoUnique = AppConfigRoot.Instance.Publication.General.UseLogoUnique;
             UseIntituleCommun = AppConfigRoot.Instance.Publication.General.UseIntituleCommun;
             IntituleCommun = AppConfigRoot.Instance.Publication.General.IntituleCommun;
 
