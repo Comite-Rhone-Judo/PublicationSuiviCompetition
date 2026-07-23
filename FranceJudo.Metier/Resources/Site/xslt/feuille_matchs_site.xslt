@@ -158,7 +158,6 @@
 							<xsl:value-of select="$msgProchainsCombats"/>
 						</div>
 					</div>
-
 				</xsl:if>
 
 				<!-- Parcours tous les tapis trouves -->
