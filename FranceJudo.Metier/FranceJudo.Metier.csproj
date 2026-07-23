@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Resources\Site\img\info-32.png" />
+    <None Remove="Resources\Site\img\speech_bubble-32.png" />
     <None Remove="Resources\Site\style\style-statistiques.css" />
     <None Remove="Resources\Site\xslt\groupe_statistiques_site.xslt" />
     <None Remove="Resources\Site\xslt\nom_structure.xslt" />
@@ -60,6 +61,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Site\img\info-32.png" />
+    <EmbeddedResource Include="Resources\Site\img\speech_bubble-32.png" />
     <EmbeddedResource Include="Resources\Site\style\style-statistiques.css" />
     <EmbeddedResource Include="Resources\Site\xslt\groupe_statistiques_site.xslt" />
     <EmbeddedResource Include="Resources\Site\xslt\nom_structure.xslt" />

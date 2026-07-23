@@ -352,3 +352,11 @@ body.dark-mode .tas-athlete-card-winner {
     padding: 8px;
     color: var(--text-color);
 }
+
+/* ==========================================================================
+   CORRECTION : Modificateur exclusif pour le Mode Équipe
+   ========================================================================== */
+
+.tas-mode-equipe .tas-upcoming-info {
+    padding: 6px 8px; /* Réduit l'espace car le badge prend de la place */
+}

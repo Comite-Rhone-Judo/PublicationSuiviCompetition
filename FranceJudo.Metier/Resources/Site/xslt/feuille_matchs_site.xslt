@@ -140,13 +140,25 @@
 					</xsl:if>
 				</div>
 
+
 				<xsl:if test="not($msgProchainsCombats = '')">
-					<div class="tas-callout tas-callout-warning">
-						<button onclick="this.parentElement.style.display='none'" class="tas-callout-close">&times;</button>
+
+					<!-- Icône pour rouvrir le message (masquée par défaut) -->
+					<!-- L'ID doit impérativement être {nomDuPanel}Expand pour que site-display.js le gère tout seul -->
+					<div class="w3-right-align tas-info-btn-container" style="padding-right: 16px; margin-top: 8px;">
+						<button id="msgCalloutExpand" class="w3-button w3-transparent tas-info-btn" onclick="togglePanel('msgCallout')" style="display: none;">
+							<img width="18" alt="Message" src="{$imgPath}speech_bubble-32.png" class="tas-theme-icon"/>
+						</button>
+					</div>
+
+					<!-- La zone de message (ouverte par défaut grâce à tasOpenedPanelType) -->
+					<div id="msgCallout" class="tasOpenedPanelType tas-callout tas-callout-warning">
+						<button onclick="togglePanel('msgCallout')" class="tas-callout-close">&times;</button>
 						<div>
 							<xsl:value-of select="$msgProchainsCombats"/>
 						</div>
 					</div>
+
 				</xsl:if>
 
 				<!-- Parcours tous les tapis trouves -->
@@ -193,7 +205,12 @@
 			<!-- Le contenu du tapis -->
 			<div class="tasOpenedPanelType w3-container tas-panel-tableau-combat" id="{$panelId}">
 				<!-- La liste des combats -->
-				<table class="tas-tableau-prochain-combat w3-margin-top" style="width:100%">
+				<table>
+					<xsl:attribute name="class">
+						<xsl:text>tas-tableau-prochain-combat w3-margin-top</xsl:text>
+						<xsl:if test="$typeCompetition = '1'"> tas-mode-equipe</xsl:if>
+					</xsl:attribute>
+					<xsl:attribute name="style">width:100%</xsl:attribute>
 					<tbody>
 						<xsl:for-each select="//tapis/combats/combat[ ancestor::tapis/@tapis = $notapis and count(score[@judoka = 0]) = 0]">
 							<xsl:sort select="@time_programmation" data-type="number" order="ascending"/>
@@ -234,9 +251,9 @@
 
 		<xsl:variable name="firstrencontreclass">
 			<xsl:choose>
-				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'M'">w3-blue colorized-img-white</xsl:when>
-				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'F'">w3-purple colorized-img-white</xsl:when>
-				<xsl:otherwise>w3-lime colorized-img-black</xsl:otherwise>
+				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'M'">tas-badge-team-m</xsl:when>
+				<xsl:when test="substring($combat/@firstrencontrelib, 1, 1) = 'F'">tas-badge-team-f</xsl:when>
+				<xsl:otherwise>tas-badge-team-x</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
 
@@ -298,22 +315,29 @@
 							<xsl:if test="$typeCompetition = '1'">
 								<div>
 									<xsl:attribute name="class">
-										tas-prochain-combat-premiere-categorie w3-cell w3-center w3-cell-middle w3-tiny tas-badge-team <xsl:value-of select="$firstrencontreclass"/>
+										tas-prochain-combat-premiere-categorie w3-center w3-tiny tas-badge-team <xsl:value-of select="$firstrencontreclass"/>
 									</xsl:attribute>
-									<img class="tas-theme-icon" width="14" style="vertical-align: middle; margin-right: 4px;" src="{$imgPath}starter-32.png"/>
+									<img class="tas-theme-icon" src="{$imgPath}starter-32.png"/>
 									<xsl:value-of select="$combat/@firstrencontrelib"/>
 								</div>
 							</xsl:if>
-							<xsl:if test="$affDetailCompetition">
-								<xsl:value-of select="//epreuve[@ID = $epreuve]/@nom_competition"/>
-							</xsl:if>
-							<xsl:if test="$affDiscipline">
-								<xsl:choose>
-									<xsl:when test="//epreuve[@ID = $epreuve]/@discipline_competition = 2">Combat</xsl:when>
-									<xsl:when test="//epreuve[@ID = $epreuve]/@discipline_competition = 3">NeWaza</xsl:when>
-								</xsl:choose>
-								- <xsl:value-of select="//epreuve[@ID = $epreuve]/@nom_cateage"/>
-							</xsl:if>
+							<xsl:choose>
+								<xsl:when test="$affDetailCompetition or $affDiscipline">
+									<xsl:if test="$affDetailCompetition">
+										<xsl:value-of select="//epreuve[@ID = $epreuve]/@nom_competition"/>
+									</xsl:if>
+									<xsl:if test="$affDiscipline">
+										<xsl:choose>
+											<xsl:when test="//epreuve[@ID = $epreuve]/@discipline_competition = 2">Combat</xsl:when>
+											<xsl:when test="//epreuve[@ID = $epreuve]/@discipline_competition = 3">NeWaza</xsl:when>
+										</xsl:choose>
+										- <xsl:value-of select="//epreuve[@ID = $epreuve]/@nom_cateage"/>
+									</xsl:if>
+								</xsl:when>
+								<xsl:when test="$typeCompetition != '1'">
+									<xsl:text disable-output-escaping="yes">&amp;nbsp;</xsl:text>
+								</xsl:when>
+							</xsl:choose>
 						</footer>
 					</div>
 				</td>

@@ -829,6 +829,13 @@ body.dark-mode .ios-circle-btn {
     border-left-color: var(--fj-warning);
 }
 
+body.dark-mode .tas-callout.tas-callout-warning {
+    /* Fond translucide teinté de jaune/orange */
+    background-color: color-mix(in srgb, var(--fj-warning) 15%, transparent);
+    /* Bordure jaune/orange conservée */
+    border-left-color: var(--fj-warning);
+}
+
 /* ==========================================================================
    Grille Alphabétique (Filtre par Nom)
    ========================================================================== */
@@ -908,41 +915,43 @@ body.dark-mode .tas-callout {
     border: none !important;
     box-shadow: none !important;
     outline: none !important;
+    color: var(--text-color);
 }
+
+    /* LA CORRECTION : Gestion centralisée de l'icône du badge */
+    .tas-badge-team .tas-theme-icon {
+        width: 14px;
+        vertical-align: middle;
+        margin-right: 4px;
+    }
 
 /* Masculin (Bleu) - 25% d'intensité sur fond opaque */
 .tas-badge-team-m {
     background-color: color-mix(in srgb, var(--fj-blue) 25%, var(--card-bg));
-    color: var(--fj-blue);
 }
 
 /* Féminin (Rose) - 25% d'intensité sur fond opaque */
 .tas-badge-team-f {
     background-color: color-mix(in srgb, var(--fj-pink) 25%, var(--card-bg));
-    color: var(--fj-pink);
 }
 
 /* Mixte / Autre (Vert) - 25% d'intensité sur fond opaque */
 .tas-badge-team-x {
     background-color: color-mix(in srgb, var(--fj-green) 25%, var(--card-bg));
-    color: var(--fj-green);
 }
 
 /* Adaptation Mode Sombre (Fond opaque et lumineux) */
 body.dark-mode .tas-badge-team-m {
     /* On utilise le bleu alternatif (plus clair) éclairé par 25% de blanc pur */
     background-color: color-mix(in srgb, var(--fj-blue-alt) 75%, #FFFFFF);
-    color: #FFFFFF;
 }
 
 body.dark-mode .tas-badge-team-f {
     /* Le rose pur optimisé avec 15% de blanc pour le "pop" et l'opacité */
     background-color: color-mix(in srgb, var(--fj-pink) 85%, #FFFFFF);
-    color: #FFFFFF;
 }
 
 body.dark-mode .tas-badge-team-x {
     /* Le vert pur optimisé avec 15% de blanc pour le "pop" et l'opacité */
     background-color: color-mix(in srgb, var(--fj-green) 85%, #FFFFFF);
-    color: #FFFFFF;
 }

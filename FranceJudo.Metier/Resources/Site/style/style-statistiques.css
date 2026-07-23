@@ -62,7 +62,7 @@ body.dark-mode div.tas-stat-bar .fj-bg-blue {
 }
 
 .tas-stat-border-orange {
-    border-left-color: var(--fj-taupe) !important; /* Ou une variable d'avertissement dérivée */
+    border-left-color: var(--fj-red) !important;
 }
 
 .tas-stat-border-red {

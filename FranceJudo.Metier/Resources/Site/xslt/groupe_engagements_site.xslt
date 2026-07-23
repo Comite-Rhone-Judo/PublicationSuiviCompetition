@@ -140,11 +140,13 @@
 							</xsl:for-each>
 						</xsl:when>
 						<xsl:otherwise>
-							<div class="ios-card tas-empty-state">
-								Veuillez patienter, la pesée des participants est en cours...
-							</div>
-						</xsl:otherwise>
-					</xsl:choose>
+							<!-- Le message de "vide" ne s'affiche QUE si l'option des absents est fausse -->
+							<xsl:if test="not($affEngagementsAbsents)">
+								<div class="ios-card tas-empty-state">
+									Aucun judoka pour ce groupe. Vérifiez si les pesées correspondantes ont été effectuées.
+								</div>
+							</xsl:if>
+						</xsl:otherwise>					</xsl:choose>
 
 					<xsl:if test="$affEngagementsAbsents">
 						<xsl:call-template name="BlocAbsents">

@@ -863,8 +863,6 @@ namespace AppPublication.Models.Publication
             _generateurSite?.ExportConfigurationManager?.Modifier(c =>
             {
                 c.Logo = logoName;
-                // On passe le meme logo pour le mode sombre si on n'utilise pas de logo unique
-                c.LogoDark = UseLogoUnique ? logoName : SelectedLogoDark?.Name;
             } );
         }
 
@@ -872,7 +870,8 @@ namespace AppPublication.Models.Publication
         {
                 _generateurSite?.ExportConfigurationManager?.Modifier(c =>
                 {
-                    c.LogoDark =  newValue ? SelectedLogo?.Name : SelectedLogo?.Name;
+                    // Si on utilise un seul logo, on ne specifie pas le logoDark, il sera calcule lors de la generation
+                    c.LogoDark =  newValue ? String.Empty : SelectedLogoDark?.Name;
                 });
         }
 
@@ -880,7 +879,8 @@ namespace AppPublication.Models.Publication
         {
             _generateurSite?.ExportConfigurationManager?.Modifier(c =>
             {
-                c.LogoDark = logoName;
+                /// On ne propage que si on n'est pas en mode logo Unique
+                c.LogoDark = UseLogoUnique ? string.Empty : logoName;
             });
         }
 
