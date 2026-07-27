@@ -22,6 +22,13 @@
     /* Nouvelles variables sémantiques de bordures */
     --card-accent-border: color-mix(in srgb, var(--fj-blue) 40%, transparent); /* Bleu FJ bien visible de jour */
     --belt-neutral: color-mix(in srgb, var(--text-color) 35%, transparent); /* Gris neutre de jour */
+    /* Nouvelles références pour éliminer les couleurs en dur (Rendu strictement identique) */
+    --text-inverse: #FFFFFF; /* Blanc pur pour les textes sur fond sombre/bleu */
+    --shadow-base: 0, 0, 0; /* Base RVB pour les box-shadow (Noir) */
+    --hover-overlay: rgba(0, 0, 0, 0.05); /* Overlay standard au survol */
+    --hover-overlay-light: rgba(0, 0, 0, 0.02); /* Overlay très léger au survol */
+    --phase-bg: rgba(10, 0, 150, 0.05); /* Fond spécifique des boutons phases */
+    --phase-bg-hover: rgba(10, 0, 150, 0.1);
 }
 
 body.dark-mode {
@@ -47,6 +54,13 @@ body.dark-mode {
     /* Le --text-color étant blanc (#F2F2F7) en mode sombre, on s'en sert intelligemment : */
     --card-accent-border: color-mix(in srgb, var(--text-color) 25%, transparent); /* Liseré "blanc" atténué */
     --belt-neutral: var(--text-color); /* Blanc pur (ou presque) de nuit */
+    /* Adaptation des nouvelles références pour le mode sombre */
+    --text-inverse: #FFFFFF; /* Reste blanc */
+    --shadow-base: 0, 0, 0; /* Les ombres restent noires la nuit (ou transparentes) */
+    --hover-overlay: rgba(255, 255, 255, 0.08); /* Overlay standard au survol */
+    --hover-overlay-light: rgba(255, 255, 255, 0.05); /* Overlay très léger au survol */
+    --phase-bg: hsla(244, 100%, 65%, 0.12); /* Fond spécifique conservé */
+    --phase-bg-hover: hsla(244, 100%, 65%, 0.20);
 }
 
 /* ==========================================================================
@@ -69,7 +83,7 @@ body {
 
 .fj-bg-blue {
     background-color: var(--fj-blue) !important;
-    color: #FFFFFF !important;
+    color: var(--text-inverse) !important;
 }
 
 .fj-blue-alt {
@@ -78,7 +92,7 @@ body {
 
 .fj-bg-blue-alt {
     background-color: var(--fj-blue-alt) !important;
-    color: #FFFFFF !important;
+    color: var(--text-inverse) !important;
 }
 
 .fj-red {
@@ -164,7 +178,7 @@ body.dark-mode img.img-bandeau-titre.tas-logo-auto-invert {
 div.tas-navigation-panel {
     background-color: var(--nav-bg);
     z-index: 100;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+    box-shadow: 2px 0 10px rgba(var(--shadow-base),0.2);
     width: 280px;
     display: none;
     /* LA CORRECTION EST ICI : On force l'ancrage en haut à gauche */
@@ -208,7 +222,7 @@ div.tas-navigation-panel {
 .tas-navigation-panel button:hover,
 .tas-nav-footer:hover,
 .tas-nav-toggle-item:hover {
-    background-color: rgba(0, 0, 0, 0.05) !important;
+    background-color: var(--hover-overlay) !important;
 }
 
 /* 3. Mode Sombre : Hover subtil (blanc à 8% d'opacité) pour ne pas agresser l'œil */
@@ -217,7 +231,7 @@ body.dark-mode .tas-navigation-panel a:hover,
 body.dark-mode .tas-navigation-panel button:hover,
 body.dark-mode .tas-nav-footer:hover,
 body.dark-mode .tas-nav-toggle-item:hover {
-    background-color: rgba(255, 255, 255, 0.08) !important;
+    background-color: var(--hover-overlay) !important;
 }
 
 /* 4. Maintenir l'intégrité de l'élément actif au survol */
@@ -316,7 +330,7 @@ div.tas-judoka-identity {
     z-index: 1;
     /* Nouvelles propriétés visuelles iOS / France Judo */
     background-color: var(--fj-blue) !important;
-    color: #FFFFFF !important;
+    color: var(--text-inverse) !important;
     padding: 20px 16px;
     text-align: center;
 }
@@ -336,8 +350,8 @@ div.tas-judoka-identity {
         margin: 12px 0 0 0;
         font-weight: 500;
         font-size: 0.9em;
-        color: #FFFFFF;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-inverse);
+        border: 1px solid color-mix(in srgb, var(--text-inverse) 10%, transparent);
     }
 
 /* ==========================================================================
@@ -440,7 +454,7 @@ div.tas-judoka-identity {
         background-color: white;
         transition: .3s;
         border-radius: 50%;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        box-shadow: 0 2px 4px rgba(var(--shadow-base), 0.2);
     }
 
 input:checked + .tas-slider {
@@ -479,7 +493,7 @@ body.dark-mode .tas-logo-dark {
 }
 
 body.dark-mode .tas-adaptive-icon {
-    color: #FFFFFF !important; /* Blanc pur en mode sombre */
+    color: var(--text-inverse) !important; /* Blanc pur en mode sombre */
 }
 
 /* ==========================================================================
@@ -488,7 +502,7 @@ body.dark-mode .tas-adaptive-icon {
 .ios-card {
     background: var(--card-bg);
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    box-shadow: 0 2px 8px rgba(var(--shadow-base),0.04);
     overflow: hidden;
     position: relative;
     z-index: 10;
@@ -563,7 +577,7 @@ body.dark-mode .tas-empty-state {
 /* 3. Le bouton (Mode Sombre) */
 body.dark-mode .ios-accordion-btn {
     background-color: var(--fj-blue-alt) !important; /* Le !important force la couleur */
-    color: #FFFFFF !important; /* Le !important force le texte en blanc */
+    color: var(--text-inverse) !important; /* Le !important force le texte en blanc */
 }
 
     /* 4. L'effet au survol (Mode Sombre) */
@@ -638,18 +652,18 @@ body.dark-mode .ios-accordion-btn.ios-accordion-btn-absent {
     text-decoration: none;
     font-weight: 500;
     font-size: 1em;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    box-shadow: 0 1px 3px rgba(var(--shadow-base),0.02);
     transition: background-color 0.2s ease, transform 0.1s ease;
     text-align: center;
 }
 
     .ios-list-item:hover {
-        background-color: rgba(0, 0, 0, 0.02);
+        background-color: var(--hover-overlay-light);
         color: var(--text-color);
     }
 
 body.dark-mode .ios-list-item:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--hover-overlay-light);
 }
 
 .ios-list-item:active {
@@ -679,7 +693,7 @@ body.dark-mode .ios-list-item:hover {
     border-radius: 12px;
     margin-bottom: 8px;
     overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    box-shadow: 0 1px 3px rgba(var(--shadow-base),0.02);
 }
 
 .ios-multiphase-header {
@@ -701,7 +715,7 @@ body.dark-mode .ios-list-item:hover {
 /* Bouton interne pour une phase */
 .ios-phase-btn {
     display: block;
-    background-color: rgba(10, 0, 150, 0.05); /* Fond très léger basé sur le bleu FJ */
+    background-color: var(--phase-bg);
     color: var(--fj-blue);
     text-align: center;
     padding: 10px 12px;
@@ -712,16 +726,16 @@ body.dark-mode .ios-list-item:hover {
 }
 
     .ios-phase-btn:hover {
-        background-color: rgba(10, 0, 150, 0.1);
+        background-color: var(--phase-bg-hover);
     }
 
 body.dark-mode .ios-phase-btn {
-    background-color: hsla(244, 100%, 65%, 0.12);
+    background-color: var(--phase-bg);
     color: var(--text-color);
 }
 
     body.dark-mode .ios-phase-btn:hover {
-        background-color: hsla(244, 100%, 65%, 0.20);
+        background-color: var(--phase-bg-hover);
     }
 
 .ios-phase-btn-disabled {
@@ -773,14 +787,14 @@ body.dark-mode .ios-segmented-control {
     /* Compatibilité avec votre JS (qui ajoute "w3-indigo" sur l'onglet actif) */
     .ios-segment.w3-indigo {
         background-color: var(--card-bg) !important;
-        box-shadow: 0 3px 1px rgba(0,0,0,0.04), 0 3px 8px rgba(0,0,0,0.12) !important;
+        box-shadow: 0 3px 1px rgba(var(--shadow-base),0.04), 0 3px 8px rgba(var(--shadow-base),0.12) !important;
         color: var(--fj-blue) !important;
         font-weight: 600 !important;
     }
 
 body.dark-mode .ios-segment.w3-indigo {
     background-color: var(--fj-blue-alt) !important;
-    color: #FFFFFF !important;
+    color: var(--text-inverse) !important;
 }
 
 /* ==========================================================================
@@ -806,15 +820,15 @@ body.dark-mode .ios-segment.w3-indigo {
     font-size: 1.2em;
     font-weight: 600;
     text-decoration: none;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 6px rgba(var(--shadow-base),0.05);
     border: 1px solid var(--border-color);
     transition: transform 0.1s, background-color 0.2s;
 }
 
 body.dark-mode .ios-circle-btn {
-    color: #FFFFFF;
+    color: var(--text-inverse);
     background-color: var(--fj-blue-alt);
-    border-color: rgba(255,255,255,0.1);
+    border-color: color-mix(in srgb, var(--text-inverse) 10%, transparent);
 }
 
 .ios-circle-btn:active {
@@ -864,7 +878,7 @@ body.dark-mode .tas-callout.tas-callout-warning {
     font-size: 1.1em;
     font-weight: 600;
     text-decoration: none;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 6px rgba(var(--shadow-base),0.05);
     border: 1px solid var(--border-color);
     transition: transform 0.1s, background-color 0.2s;
 }
@@ -882,7 +896,7 @@ body.dark-mode .tas-callout.tas-callout-warning {
 
     border-radius: 0 8px 8px 0;
     color: var(--text-color);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    box-shadow: 0 1px 3px rgba(var(--shadow-base),0.04);
     font-size: 0.9em;
 }
 
@@ -943,15 +957,113 @@ body.dark-mode .tas-callout {
 /* Adaptation Mode Sombre (Fond opaque et lumineux) */
 body.dark-mode .tas-badge-team-m {
     /* On utilise le bleu alternatif (plus clair) éclairé par 25% de blanc pur */
-    background-color: color-mix(in srgb, var(--fj-blue-alt) 75%, #FFFFFF);
+    background-color: color-mix(in srgb, var(--fj-blue-alt) 75%, var(--text-inverse));
 }
 
 body.dark-mode .tas-badge-team-f {
     /* Le rose pur optimisé avec 15% de blanc pour le "pop" et l'opacité */
-    background-color: color-mix(in srgb, var(--fj-pink) 85%, #FFFFFF);
+    background-color: color-mix(in srgb, var(--fj-pink) 85%, var(--text-inverse));
 }
 
 body.dark-mode .tas-badge-team-x {
     /* Le vert pur optimisé avec 15% de blanc pour le "pop" et l'opacité */
-    background-color: color-mix(in srgb, var(--fj-green) 85%, #FFFFFF);
+    background-color: color-mix(in srgb, var(--fj-green) 85%, var(--text-inverse));
 }
+
+/* ==========================================================================
+   Comportement interactif des Cartes (Liens et Bouton Icône)
+   ========================================================================== */
+
+/* On force le flexbox et on interdit formellement le passage à la ligne */
+.tas-card-header-flex {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap !important;
+}
+
+    /* Le conteneur du texte prend l'espace disponible, mais laisse une marge */
+    .tas-card-header-flex > div:first-child {
+        flex: 1 1 auto;
+        padding-right: 15px; /* Évite que le texte ne colle à l'icône */
+    }
+
+/* Bouton d'icône (zone tactile élargie pour mobile) */
+.tas-icon-btn {
+    flex: 0 0 auto; /* L'icône conserve sa taille et ne peut pas être compressée */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    margin-right: -8px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background-color 0.2s ease, transform 0.1s;
+}
+
+    /* Opacité de l'icône à l'intérieur du lien */
+    .tas-icon-btn .tas-theme-icon {
+        opacity: 0.5;
+    }
+
+    /* ==========================================================================
+   Effets de survol (Hover) adaptatifs sans couleurs "en dur"
+   ========================================================================== */
+
+    .tas-icon-btn:hover {
+        /* Utilise la couleur du texte (noir le jour) à 5% d'opacité */
+        background-color: color-mix(in srgb, var(--text-color) 5%, transparent);
+    }
+
+body.dark-mode .tas-icon-btn:hover {
+    /* Utilise la couleur du texte (blanc la nuit) à 10% d'opacité */
+    background-color: color-mix(in srgb, var(--text-color) 10%, transparent);
+}
+
+.tas-icon-btn:active {
+    transform: scale(0.90);
+}
+
+/* ==========================================================================
+   Bandeau Compétition - Ajouts pour le bouton Statistiques
+   ========================================================================== */
+
+/* Surcharge propre du h5 pour aligner le texte et l'icône sans casser l'existant */
+.tas-competition-bandeau h5.tas-groupe-titre-container {
+    display: inline-flex; /* Passe en flexbox tout en gardant le comportement inline */
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding-right: 8px; /* On réduit un peu le padding droit natif pour compenser la largeur du bouton */
+}
+
+/* Le bouton de statistiques intégré dans le h5 */
+.tas-btn-statistiques {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    margin: 0;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: background-color 0.2s ease, transform 0.1s;
+}
+
+    /* 
+   L'icône à l'intérieur du bouton : 
+   Puisque le fond du h5 est toujours bleu (fj-blue-alt), on force l'icône en blanc pur 
+   indépendamment du mode clair/sombre.
+*/
+    .tas-btn-statistiques .tas-theme-icon {
+        filter: brightness(0) invert(1) !important;
+    }
+
+    /* Effet de survol : On utilise le blanc pur (--text-inverse) à 15% d'opacité */
+    .tas-btn-statistiques:hover {
+        background-color: color-mix(in srgb, var(--text-inverse) 15%, transparent) !important;
+    }
+
+    /* Effet d'enfoncement (tactile) façon iOS */
+    .tas-btn-statistiques:active {
+        transform: scale(0.90);
+    }

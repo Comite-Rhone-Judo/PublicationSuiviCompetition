@@ -15,8 +15,8 @@
 	<xsl:param name="jsPath"/>
 	<xsl:param name="cssPath"/>
 	<xsl:param name="commonPath"/>
-	<xsl:param name="competitionPath"/>
 	<xsl:param name="RefData"/>
+	<xsl:param name="SiteRoutes"/>
 
 	<xsl:variable name="apos">'</xsl:variable>
 
@@ -244,6 +244,9 @@
 	<xsl:template name="groupement" match="groupeEngagements">
 		<xsl:param name="niveauCompetition"/>
 
+		<!-- 1. Interrogation du dictionnaire de routage -->
+		<xsl:variable name="urlGroupe" select="$SiteRoutes//routeGroupe[@groupe = current()/@id and @typeGroupe = 'engagement']/@urlGroupe" />
+
 		<xsl:variable name="entiteNom">
 			<xsl:call-template name="LibelleGroupeStructure">
 				<xsl:with-param name="typeGroupe" select="./@type"/>
@@ -257,13 +260,13 @@
 		<xsl:choose>
 			<!-- Pastille circulaire pur Flexbox -->
 			<xsl:when test="./@type = '1'">
-				<a class="ios-circle-btn" href="{concat($competitionPath, 'engagements/', @id, '/groupe_engagements.html')}">
+				<a class="ios-circle-btn" href="{$urlGroupe}">
 					<xsl:value-of select="$entiteNom"/>
 				</a>
 			</xsl:when>
 			<!-- Bouton de liste classique -->
 			<xsl:otherwise>
-				<a class="ios-list-item" href="{concat($competitionPath, 'engagements/', @id, '/groupe_engagements.html')}">
+				<a class="ios-list-item" href="{$urlGroupe}">
 					<xsl:value-of select="$entiteNom"/>
 				</a>
 			</xsl:otherwise>

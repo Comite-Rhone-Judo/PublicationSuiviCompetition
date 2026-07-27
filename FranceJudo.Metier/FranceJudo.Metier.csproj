@@ -11,6 +11,8 @@
   <ItemGroup>
     <None Remove="Resources\Site\img\info-32.png" />
     <None Remove="Resources\Site\img\speech_bubble-32.png" />
+    <None Remove="Resources\Site\img\statistics-32.png" />
+    <None Remove="Resources\Site\img\tree_structure-32.png" />
     <None Remove="Resources\Site\style\style-statistiques.css" />
     <None Remove="Resources\Site\xslt\groupe_statistiques_site.xslt" />
     <None Remove="Resources\Site\xslt\nom_structure.xslt" />
@@ -62,6 +64,8 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Site\img\info-32.png" />
     <EmbeddedResource Include="Resources\Site\img\speech_bubble-32.png" />
+    <EmbeddedResource Include="Resources\Site\img\statistics-32.png" />
+    <EmbeddedResource Include="Resources\Site\img\tree_structure-32.png" />
     <EmbeddedResource Include="Resources\Site\style\style-statistiques.css" />
     <EmbeddedResource Include="Resources\Site\xslt\groupe_statistiques_site.xslt" />
     <EmbeddedResource Include="Resources\Site\xslt\nom_structure.xslt" />

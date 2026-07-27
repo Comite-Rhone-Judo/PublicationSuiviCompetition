@@ -14,7 +14,7 @@
 	<xsl:param name="jsPath"/>
 	<xsl:param name="cssPath"/>
 	<xsl:param name="commonPath"/>
-	<xsl:param name="competitionPath"/>
+	<xsl:param name="SiteRoutes"/>
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 
@@ -130,13 +130,16 @@
 	<!-- Bouton avancement par epreuve -->
 	<!-- On ne tient compte que des epreuves pour lesquelles les phases sont créées et sans classement validé -->
 	<xsl:template name="prochains_combats_epreuve" match="epreuve">
+		<xsl:variable name="idEpreuve" select="@ID" />
+		<xsl:variable name="urlProchainsCombats" select="$SiteRoutes//routeEpreuve[@epreuve = $idEpreuve]/@urlProchainsCombats" />
+		
 		<xsl:if test="count(./phases/phase[number(@typePhase) = 1 and number(@etat) > 0 and number(@etat) != 5]) > 0">
-			<a class="ios-list-item" href="{concat($competitionPath, @directory, 'feuille_combats.html')}">
+			<a class="ios-list-item" href="{$urlProchainsCombats}">
 				<xsl:value-of select="./@libelle"/>&#32;<xsl:value-of select="./@nom"/>&#32;Poules
 			</a>
 		</xsl:if>
 		<xsl:if test="count(./phases/phase[number(@typePhase) = 2 and number(@etat) > 0 and number(@etat) != 5]) > 0">
-			<a class="ios-list-item" href="{concat($competitionPath, @directory, 'feuille_combats.html')}">
+			<a class="ios-list-item" href="{$urlProchainsCombats}">
 				<xsl:value-of select="./@libelle"/>&#32;<xsl:value-of select="./@nom"/>&#32;Tableau
 			</a>
 		</xsl:if>

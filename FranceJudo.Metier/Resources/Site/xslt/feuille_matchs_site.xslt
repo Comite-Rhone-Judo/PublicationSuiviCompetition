@@ -17,7 +17,6 @@
 	<xsl:param name="jsPath"/>
 	<xsl:param name="cssPath"/>
 	<xsl:param name="commonPath"/>
-	<xsl:param name="competitionPath"/>
 	<xsl:param name="RefData"/>
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
@@ -162,18 +161,32 @@
 
 				<!-- Parcours tous les tapis trouves -->
 				<div class="w3-padding-small">
-					<xsl:for-each select="//tapis">
-						<xsl:sort select="@tapis" data-type="number" order="ascending"/>
 
-						<!-- On ne prend en compte que les tapis avec des combats -->
-						<xsl:if test="@tapis != 0 and ($istapis != 'epreuve' or count(./combats/combat) &gt; 0)">
-							<xsl:variable name="tapis" select="@tapis"/>
+					<!-- 1. On compte le nombre de tapis qui correspondent à nos critères d'affichage -->
+					<xsl:variable name="nbTapisAffiches" select="count(//tapis[@tapis != 0 and ($istapis != 'epreuve' or count(./combats/combat) > 0)])" />
 
-							<xsl:call-template name="UnTapis">
-								<xsl:with-param name="notapis" select="$tapis"/>
-							</xsl:call-template>
-						</xsl:if>
-					</xsl:for-each>
+					<xsl:choose>
+						<xsl:when test="$nbTapisAffiches = 0">
+							<!-- 2A. Cas "Empty State" : Aucun tapis à afficher -->
+							<div class="ios-card tas-empty-state w3-margin-top w3-margin-bottom">
+								Aucun combat n'est actuellement prévu sur les tapis pour cette épreuve (affectation en attente ou épreuve terminée).
+							</div>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:for-each select="//tapis">
+								<xsl:sort select="@tapis" data-type="number" order="ascending"/>
+
+								<!-- On ne prend en compte que les tapis avec des combats -->
+								<xsl:if test="@tapis != 0 and ($istapis != 'epreuve' or count(./combats/combat) &gt; 0)">
+									<xsl:variable name="tapis" select="@tapis"/>
+
+									<xsl:call-template name="UnTapis">
+										<xsl:with-param name="notapis" select="$tapis"/>
+									</xsl:call-template>
+								</xsl:if>
+							</xsl:for-each>
+						</xsl:otherwise>
+					</xsl:choose>
 				</div>
 
 				<div class="w3-container w3-center w3-tiny text-muted tas-footnote">

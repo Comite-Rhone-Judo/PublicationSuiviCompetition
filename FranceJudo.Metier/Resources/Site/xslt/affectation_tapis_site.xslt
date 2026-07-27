@@ -14,7 +14,7 @@
 	<xsl:param name="jsPath"/>
 	<xsl:param name="cssPath"/>
 	<xsl:param name="commonPath"/>
-	<xsl:param name="competitionPath"/>
+	<xsl:param name="SiteRoutes"/>
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 
@@ -164,10 +164,23 @@
 	<xsl:template name="affectation_epreuve" match="epreuve">
 		<div class="w3-padding-small">
 			<div class="ios-card">
-				<div class="tas-card-header">
-					<xsl:value-of select="./@libelle"/>
-					<xsl:text> </xsl:text>
-					<xsl:value-of select="./@nom"/>
+				<!-- En-tête avec la classe Flexbox pour aligner le texte et le bouton -->
+				<div class="tas-card-header tas-card-header-flex">
+					<div>
+						<xsl:value-of select="./@libelle"/>
+						<xsl:text> </xsl:text>
+						<xsl:value-of select="./@nom"/>
+					</div>
+
+					<xsl:variable name="idEpreuve" select="@ID" />
+					<xsl:variable name="urlAvancement" select="$SiteRoutes//routeEpreuve[@epreuve = $idEpreuve]/@urlAvancement" />
+					
+					<!-- Le lien est placé UNIQUEMENT autour de l'icône avec sa zone tactile élargie -->
+					<xsl:if test="$urlAvancement != ''">
+						<a href="{$urlAvancement}" class="tas-icon-btn" title="Voir le tableau">
+							<img width="18" src="{$imgPath}tree_structure-32.png" class="tas-theme-icon" alt="Voir l'avancement"/>
+						</a>
+					</xsl:if>
 				</div>
 				<div class="tas-card-body">
 					<xsl:choose>

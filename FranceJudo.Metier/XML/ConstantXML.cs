@@ -1,4 +1,6 @@
-﻿namespace FranceJudo.Metier.XML
+﻿using FranceJudo.Metier.Noyau.Organisation;
+
+namespace FranceJudo.Metier.XML
 {
     /// <summary>
     /// Enumération des constants pour la construction des fichiers XML
@@ -31,11 +33,6 @@
         public const string JudoTV_Port = "port";
         public const string JudoTV_Envoie1 = "judotven1";
         public const string JudoTV_Envoie2 = "judotven2";
-
-        public const string Directory = "directory";
-        public const string FileName = "filename";
-
-
 
         public const string Event_ID = "ID";
         public const string Event_Nom = "libelle";
@@ -103,6 +100,8 @@
         public const string GroupeStatistiques_Sexe = "sexe";
         public const string GroupeStatistiques_Type = "type";
         public const string GroupeStatistiques_Entite = "entite";
+        public const string GroupeStatistiques_Judokas = "judokas";
+        public const string GroupeStatistiques_UrlGroupe = "urlGroupe";
 
         public const string Statistiques_ExportStatistiques = "statistiques";
         public const string Statistiques_Items = "items";
@@ -157,6 +156,7 @@
         public const string GroupeEngagements_Combats = "combats";
         public const string GroupeEngagements_Type = "type";
         public const string GroupeEngagements_Competition = "competition";
+        public const string GroupeEngagements_UrlGroupe = "urlGroupe";
 
         //Compétition 
         public const string Competition = "competition";
@@ -327,6 +327,10 @@
         public const string Epreuve_CatePoids_Nom = "nom_catepoids";
         public const string Epreuve_CatePoids_RemoteId = "remoteId_catepoids";
 
+        public const string Epreuve_UrlAvancement = "urlAvancement";
+        public const string Epreuve_UrlClassement = "urlClassement";
+        public const string Epreuve_UrlProchainsCombats = "urlProchainsCombats";
+
         //Epreuves_Equipe
 
         public const string Epreuve_Equipes = "epreuve_equipes";
@@ -454,7 +458,7 @@
         public const string Phase_Date_Tirage = "date_tirage";
         public const string Phase_Time_Tirage = "time_tirage";
         public const string Phase_Ordre = "ordre";
-
+        public const string Phase_UrlAvancement = "urlAvancement";
 
         //Feuilles 
         public const string Feuille = "feuille";
@@ -754,5 +758,23 @@
         public const string EasyConfig_Entite_RacineFtp = "racineFtp";
         public const string EasyConfig_Entite_RacineHttp = "racineHttp";
 
+
+        // Dictionnaire de Routage
+        public const string Routing_SiteRoutes = "siteRoutes";
+        public const string Routing_RouteEpreuve = "routeEpreuve";
+        public const string Routing_EpreuveId = "epreuve";
+        public const string Routing_EpreuveUrlClassement = "urlClassement";
+        public const string Routing_EpreuveUrlProchainsCombats = "urlProchainsCombats";
+        public const string Routing_EpreuveUrlAvancement = "urlAvancement";
+
+        public const string Routing_RoutePhase = "routePhase";
+        public const string Routing_PhaseId = "phase";
+        public const string Routing_PhaseUrlAvancement = "urlAvancement";
+        public const string Routing_RouteGroupe = "routeGroupe";
+        public const string Routing_GroupeId = "groupe";
+        public const string Routing_TypeGroupe = "typeGroupe";
+        public const string Routing_TypeEngagement = "engagement";
+        public const string Routing_TypeStatistique = "statistique";
+        public const string Routing_UrlGroupe = "urlGroupe";
     }
 }

@@ -61,7 +61,7 @@ namespace AppPublication.Export
         /// <returns>Le chemin complet du fichier (sans l'extension)</returns>
         protected virtual string GetFileSavePath(string targetDirectory, ExportEnum exportType, string suffix = "")
         {
-            string filename = $"{SiteExportEngine.GetFileName(exportType).Replace("/", "_")}{(string.IsNullOrEmpty(suffix) ? "" : $"-{suffix}")}";
+            string filename = $"{SiteExportEngine.GetSanitizedFileName(exportType)}{(string.IsNullOrEmpty(suffix) ? "" : $"-{suffix}")}";
             return Path.Combine(targetDirectory, filename);
         }
 
@@ -77,7 +77,6 @@ namespace AppPublication.Export
             argsList.AddParam("imgPath", "", urlGen.GetRelativeUrlImg(targetFile));
             argsList.AddParam("jsPath", "", urlGen.GetRelativeUrlJs(targetFile));
             argsList.AddParam("cssPath", "", urlGen.GetRelativeUrlCss(targetFile));
-            argsList.AddParam("competitionPath", "", urlGen.GetRelativeUrlCompetition(targetFile));
         }
     }
 }

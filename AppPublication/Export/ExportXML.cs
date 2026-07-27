@@ -263,7 +263,7 @@ namespace AppPublication.Export
                                                       // C. La liste des judokas et leurs statistiques individuelles (Pour le tableau HTML et la Pop-up)
                                                       if (dataStats.JudokasParGroupe.TryGetValue(groupe, out var judokasDuGroupe))
                                                       {
-                                                          XElement xjudokas = new XElement("judokas");
+                                                          XElement xjudokas = new XElement(ConstantXML.GroupeStatistiques_Judokas);
                                                           foreach (var judoka in judokasDuGroupe)
                                                           {
                                                               XElement xjudoka = judoka.ToXml(DC);
@@ -320,7 +320,7 @@ namespace AppPublication.Export
         /// <param name="ctx">Contexte en lecture seule pour l'export</param>
         /// <param name="siteStructure">Générateur d'URL pour le site</param>
         /// <returns>Tuple contenant le document XML et un indicateur si le document est volumineux</returns>
-        public static XDocument CreateDocumentMenu(IReadOnlyExportContext ctx, SiteUrlGenerator siteStructure)
+        public static XDocument CreateDocumentMenu(IReadOnlyExportContext ctx, SiteUrlGenerator siteStructure, bool genererEngagements, bool genererStatistiques)
         {
             IJudoData DC = ctx.DataContext;
             IExtendedJudoData EDC = ctx.ExtendedDataContext;
@@ -395,9 +395,7 @@ namespace AppPublication.Export
                                     .Where(ep => phasesByEpreuve[ep.id].Any(o => o.etat > EtatPhaseEnum.Cree))
                                     .Select(ep =>
                                     {
-                                        string webPathEpreuve = siteStructure.GetRelativeUrlEpreuveFromCompetition(ep.id.ToString(), ep.nom);
                                         XElement xepreuve = ep.ToXml(DC);
-                                        xepreuve.SetAttributeValue(ConstantXML.Directory, webPathEpreuve);
 
                                         // Ajout de la balise Phases avec les données EN MÉMOIRE
                                         // Utilisation de l'index ILookup pour l'extraction
@@ -409,26 +407,26 @@ namespace AppPublication.Export
                                     })
                             );
 
-                            // --- C. Ajout des Groupes d'engagements ---
-                            // Sécurité : On vérifie que la compétition existe dans le dictionnaire avant d'y accéder
-                            if (EDC.Engagement.TypesGroupes.TryGetValue(competition.id, out var typesGroupes))
-                            {
-                                xcompetition.Add(
-                                    typesGroupes.Select(typeGroupe =>
-                                        new XElement(ConstantXML.GroupeEngagements_Groupes,
-                                            new XAttribute(ConstantXML.GroupeEngagements_Type, (int)typeGroupe),
+                           // --- C. Ajout des Groupes d'engagements ---
+                           // Sécurité : On vérifie que la compétition existe dans le dictionnaire avant d'y accéder
+                           if (genererEngagements && EDC.Engagement.TypesGroupes.TryGetValue(competition.id, out var typesGroupes))
+                           {
+                               xcompetition.Add(
+                                   typesGroupes.Select(typeGroupe =>
+                                       new XElement(ConstantXML.GroupeEngagements_Groupes,
+                                           new XAttribute(ConstantXML.GroupeEngagements_Type, (int)typeGroupe),
 
-                                            // On injecte les groupes directement à l'intérieur
-                                            EDC.Engagement.GroupesEngages
-                                                .Where(g => g.Competition == competition.id && g.Type == typeGroupe)
-                                                .Select(grp => grp.ToXml())
-                                        )
-                                    )
-                                );
-                            }
+                                           // On injecte les groupes directement à l'intérieur
+                                           EDC.Engagement.GroupesEngages
+                                               .Where(g => g.Competition == competition.id && g.Type == typeGroupe)
+                                               .Select(grp => grp.ToXml())
+                                       )
+                                   )
+                               );
+                           }
 
                            // --- D. Ajout des Groupes de Statistiques ---
-                           if (EDC.StatistiquesCombats.TypesGroupes.TryGetValue(competition.id, out var typesGroupesStats))
+                           if (genererStatistiques && EDC.StatistiquesCombats.TypesGroupes.TryGetValue(competition.id, out var typesGroupesStats))
                            {
                                xcompetition.Add(
                                    typesGroupesStats.Select(typeGroupe =>

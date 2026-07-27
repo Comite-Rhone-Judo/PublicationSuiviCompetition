@@ -19,8 +19,8 @@
 	<xsl:param name="jsPath"/>
 	<xsl:param name="cssPath"/>
 	<xsl:param name="commonPath"/>
-	<xsl:param name="competitionPath"/>
 	<xsl:param name="RefData"/>
+	<xsl:param name="SiteRoutes"/>
 
 	<xsl:variable name="lowercase" select="'abcdefghijklmnopqrstuvwxyz'" />
 	<xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
@@ -95,23 +95,42 @@
 
 				<!-- CONTENU -->
 
+				<!-- Récupération de l'URL des statistiques pour CE groupe -->
+				<xsl:variable name="urlStatistiques" select="$SiteRoutes//routeGroupe[@groupe = $idgroupe and @typeGroupe = 'statistique']/@urlGroupe" />
+				
 				<!-- Nom de la competition + Groupe (Modernisé) -->
+				<!-- Nom de la competition + Groupe (Modernisé avec Flexbox) -->
 				<div class="tas-competition-bandeau">
-					<h4>
-						<xsl:value-of select="$selectedCompetition/titre"/>
-					</h4>
-					<h5>
-						<xsl:if test="$selectedGroupeEngagements/@sexe = 'F'">Féminines,&nbsp;</xsl:if>
-						<xsl:if test="$selectedGroupeEngagements/@sexe = 'M'">Masculins,&nbsp;</xsl:if>
-						<!-- Determine le nom du groupe a afficher -->
-						<xsl:call-template name="LibelleGroupeStructure">
-							<xsl:with-param name="typeGroupe" select="$selectedGroupeEngagements/@type"/>
-							<xsl:with-param name="niveauCompetition" select="$niveauCompetition"/>
-							<xsl:with-param name="entiteId" select="$selectedGroupeEngagements/@entite"/>
-							<xsl:with-param name="RefData" select="$RefData"/>
-							<xsl:with-param name="avecPrefixe" select="'true'" />
-						</xsl:call-template>
-					</h5>
+					<!-- Bloc de gauche : Titres -->
+					<div>
+						<h4>
+							<xsl:value-of select="$selectedCompetition/titre"/>
+						</h4>
+						<!-- Conteneur pour cibler le Flexbox dans ton CSS externe -->
+						<h5 class="tas-groupe-titre-container">
+							<span>
+								<xsl:if test="$selectedGroupeEngagements/@sexe = 'F'">Féminines,&nbsp;</xsl:if>
+								<xsl:if test="$selectedGroupeEngagements/@sexe = 'M'">Masculins,&nbsp;</xsl:if>
+
+								<!-- Determine le nom du groupe a afficher -->
+								<xsl:call-template name="LibelleGroupeStructure">
+									<xsl:with-param name="typeGroupe" select="$selectedGroupeEngagements/@type"/>
+									<xsl:with-param name="niveauCompetition" select="$niveauCompetition"/>
+									<xsl:with-param name="entiteId" select="$selectedGroupeEngagements/@entite"/>
+									<xsl:with-param name="RefData" select="$RefData"/>
+									<xsl:with-param name="avecPrefixe" select="'true'" />
+								</xsl:call-template>
+							</span>
+
+							<!-- Bouton Statistiques propre -->
+							<xsl:if test="$urlStatistiques != ''">
+								<a href="{$urlStatistiques}" class="w3-button w3-circle tas-icon-btn tas-btn-statistiques" title="Voir les statistiques de ce groupe">
+									<!-- Ajustez le nom de l'image selon votre nomenclature -->
+									<img class="tas-theme-icon" src="{$imgPath}statistics-32.png" width="20" />
+								</a>
+							</xsl:if>
+						</h5>
+					</div>
 				</div>
 
 				<!-- Calcul le regroupement des judokas-->
@@ -216,6 +235,10 @@
 					<xsl:when test="$nbCombatsJudoka > 0">
 						<xsl:for-each select="$selectedCompetition/epreuves/epreuve">
 							<xsl:variable name="idEpreuve" select="@ID"/>
+
+							<!-- Récupération de l'URL de la phase active pour CETTE épreuve -->
+							<xsl:variable name="urlAvancement" select="$SiteRoutes//routeEpreuve[@epreuve = $idEpreuve]/@urlAvancement" />
+							
 							<xsl:variable name="nbCombatsJudokaEpreuve">
 								<xsl:choose>
 									<xsl:when test="$affTousCombats">
@@ -229,19 +252,31 @@
 
 							<xsl:if test="$nbCombatsJudokaEpreuve > 0">
 								<div class="ios-card w3-margin-bottom">
-									<div class="tas-card-header w3-small">
-										<xsl:choose>
-											<xsl:when test="@sexe = 'F'">Féminines, </xsl:when>
-											<xsl:when test="@sexe = 'M'">Masculins, </xsl:when>
-										</xsl:choose>
-										<xsl:value-of select="@nom"/>
-										<xsl:if test="$affDiscipline">
-											&nbsp;(<xsl:choose>
-												<xsl:when test="./@discipline_competition = 2">Combat</xsl:when>
-												<xsl:when test="./@discipline_competition = 3">NeWaza</xsl:when>
+									<div class="tas-card-header w3-small" style="display: flex; justify-content: space-between; align-items: center;">
+
+										<!-- Titre de l'épreuve (à gauche) -->
+										<div>
+											<xsl:choose>
+												<xsl:when test="@sexe = 'F'">Féminines, </xsl:when>
+												<xsl:when test="@sexe = 'M'">Masculins, </xsl:when>
 											</xsl:choose>
-											- <xsl:value-of select="./@nom_cateage"/>)
+											<xsl:value-of select="@nom"/>
+											<xsl:if test="$affDiscipline">
+												&nbsp;(<xsl:choose>
+													<xsl:when test="./@discipline_competition = 2">Combat</xsl:when>
+													<xsl:when test="./@discipline_competition = 3">NeWaza</xsl:when>
+												</xsl:choose>
+												- <xsl:value-of select="./@nom_cateage"/>)
+											</xsl:if>
+										</div>
+
+										<!-- Bouton d'accès à l'avancement (à droite) -->
+										<xsl:if test="$urlAvancement != ''">
+											<a href="{$urlAvancement}" class="w3-button w3-circle tas-icon-btn" style="padding: 4px;" title="Voir l'avancement de l'épreuve">
+												<img class="tas-theme-icon" src="{$imgPath}tree_structure-32.png" width="16" style="vertical-align: middle;"/>
+											</a>
 										</xsl:if>
+
 									</div>
 									<div class="w3-padding-small">
 										<table class="tas-tableau-combat-participant">

@@ -14,7 +14,7 @@
 	<xsl:param name="jsPath"/>
 	<xsl:param name="cssPath"/>
 	<xsl:param name="commonPath"/>
-	<xsl:param name="competitionPath"/>
+	<xsl:param name="SiteRoutes"/>
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 
@@ -141,10 +141,11 @@
 
 	<!-- Bouton avancement par epreuve -->
 	<xsl:template name="avancement_epreuve" match="epreuve">
+		
 		<xsl:variable name="nomEpreuve" select="./@nom"/>
-		<xsl:variable name="dirEpreuve" select="./@directory" />
 		<xsl:variable name="nbPhases" select="count(./phases/phase)" />
-
+		<xsl:variable name="idEpreuve" select="./@ID" />
+		
 		<xsl:choose>
 			<!-- CAS 1 : L'ÉPREUVE N'A QU'UNE SEULE PHASE -->
 			<xsl:when test="$nbPhases = 1">
@@ -158,16 +159,12 @@
 							<xsl:otherwise>Phase</xsl:otherwise>
 						</xsl:choose>
 					</xsl:variable>
-					<xsl:variable name="page">
-						<xsl:choose>
-							<xsl:when test="$typePhase = 1">poules_resultats.html</xsl:when>
-							<xsl:otherwise>tableau_competition.html</xsl:otherwise>
-						</xsl:choose>
-					</xsl:variable>
-
+					<xsl:variable name="idPhase" select="./@id" />
+					<xsl:variable name="urlAvancement" select="$SiteRoutes//routePhase[@epreuve = $idEpreuve and @phase = $idPhase]/@urlAvancement" />
+					
 					<xsl:choose>
 						<xsl:when test="$etat &gt;= 2">
-							<a class="ios-list-item" href="{concat($competitionPath, $dirEpreuve, $page)}">
+							<a class="ios-list-item" href="{$urlAvancement}">
 								<xsl:value-of select="$nomEpreuve"/>
 								<xsl:text> - </xsl:text>
 								<xsl:value-of select="$libellePhase"/>
@@ -198,6 +195,7 @@
 					<div class="ios-multiphase-body">
 						<xsl:for-each select="./phases/phase">
 							<xsl:sort select="@ordre" data-type="number" order="ascending"/>
+							
 							<xsl:variable name="etat" select="number(@etat)" />
 							<xsl:variable name="typePhase" select="number(@typePhase)" />
 							<xsl:variable name="libellePhase">
@@ -213,10 +211,12 @@
 									<xsl:otherwise>tableau_competition.html</xsl:otherwise>
 								</xsl:choose>
 							</xsl:variable>
+							<xsl:variable name="idPhase" select="./@id" />
+							<xsl:variable name="urlAvancement" select="$SiteRoutes//routePhase[@epreuve = $idEpreuve and @phase = $idPhase]/@urlAvancement" />
 
 							<xsl:choose>
 								<xsl:when test="$etat &gt;= 2">
-									<a class="ios-phase-btn" href="{concat($competitionPath, $dirEpreuve, $page)}">
+									<a class="ios-phase-btn" href="{$urlAvancement}">
 										<xsl:value-of select="$libellePhase"/>
 									</a>
 								</xsl:when>

@@ -14,7 +14,7 @@
 	<xsl:param name="jsPath"/>
 	<xsl:param name="cssPath"/>
 	<xsl:param name="commonPath"/>
-	<xsl:param name="competitionPath"/>
+	<xsl:param name="SiteRoutes"/>
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 
@@ -142,7 +142,10 @@
 	<!-- Bouton classement par epreuve -->
 	<xsl:template name="classement_epreuve" match="epreuve">
 		<!-- Simplification totale pour un design iOS cliquable -->
-		<a class="ios-list-item" href="{concat($competitionPath, @directory, 'classement_final.html')}">
+		<xsl:variable name="idEpreuve" select="@ID" />
+		<xsl:variable name="urlClassement" select="$SiteRoutes//routeEpreuve[@epreuve = $idEpreuve]/@urlClassement" />
+		
+		<a class="ios-list-item" href="{$urlClassement}">
 			<xsl:value-of select="./@libelle"/>
 			<xsl:text> </xsl:text>
 			<xsl:value-of select="./@nom"/>

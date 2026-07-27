@@ -13,7 +13,6 @@
 	<xsl:param name="jsPath"/>
 	<xsl:param name="cssPath"/>
 	<xsl:param name="commonPath"/>
-	<xsl:param name="competitionPath"/>
 	<xsl:param name="RefData" />
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
@@ -100,8 +99,8 @@
 				</div>
 
 				<!-- Le classement (Carte iOS avec débordement géré) -->
-				<div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
-					<div class="ios-card">
+				<div class="ios-card">
+					<div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
 						<table class="w3-table-all">
 							<thead>
 								<tr>

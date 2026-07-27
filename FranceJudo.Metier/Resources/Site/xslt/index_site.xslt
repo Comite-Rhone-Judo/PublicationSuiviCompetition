@@ -9,7 +9,6 @@
 	<xsl:param name="jsPath"/>
 	<xsl:param name="cssPath"/>
 	<xsl:param name="commonPath"/>
-	<xsl:param name="competitionPath"/>
 
 
 	<xsl:variable name="apos">'</xsl:variable>

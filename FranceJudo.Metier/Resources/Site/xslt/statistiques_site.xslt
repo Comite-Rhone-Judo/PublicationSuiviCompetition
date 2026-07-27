@@ -15,8 +15,8 @@
 	<xsl:param name="jsPath"/>
 	<xsl:param name="cssPath"/>
 	<xsl:param name="commonPath"/>
-	<xsl:param name="competitionPath"/>
 	<xsl:param name="RefData"/>
+	<xsl:param name="SiteRoutes"/>
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 
@@ -241,6 +241,10 @@
 	<!-- TEMPLATE Bouton groupement (Nettoyé des w3-col défectueux) -->
 	<xsl:template name="groupement" match="groupeStatistiques">
 		<xsl:param name="niveauCompetition"/>
+
+		<!-- 1. Interrogation du dictionnaire de routage (type: statistique) -->
+		<xsl:variable name="urlGroupe" select="$SiteRoutes//routeGroupe[@groupe = current()/@id and @typeGroupe = 'statistique']/@urlGroupe" />
+		
 		<xsl:variable name="entiteNom">
 			<xsl:call-template name="LibelleGroupeStructure">
 				<xsl:with-param name="typeGroupe" select="./@type"/>
@@ -254,13 +258,13 @@
 		<xsl:choose>
 			<!-- Pastille circulaire pour les Lettres de l'alphabet (pur Flexbox) -->
 			<xsl:when test="./@type = '1'">
-				<a class="ios-circle-btn" href="{concat($competitionPath, 'statistiques/', @id, '/groupe_statistiques.html')}">
+				<a class="ios-circle-btn" href="{$urlGroupe}">
 					<xsl:value-of select="$entiteNom"/>
 				</a>
 			</xsl:when>
 			<!-- Bouton de liste classique pour les Clubs, Comités, etc. -->
 			<xsl:otherwise>
-				<a class="ios-list-item" href="{concat($competitionPath, 'statistiques/', @id, '/groupe_statistiques.html')}">
+				<a class="ios-list-item" href="{$urlGroupe}">
 					<xsl:value-of select="$entiteNom"/>
 				</a>
 			</xsl:otherwise>
