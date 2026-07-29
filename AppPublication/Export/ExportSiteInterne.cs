@@ -7,6 +7,7 @@ using FranceJudo.Core.Threading;
 using FranceJudo.Metier.Export;
 using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Site;
+using FranceJudo.Metier.XML;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,6 +27,8 @@ namespace AppPublication.Export
         {
         }
         #endregion
+
+        #region METHODES PUBLIQUES
 
         /// <summary>
         /// Génère la page d'index du site, les scripts de mise à jour et exporte les ressources statiques.
@@ -124,8 +127,13 @@ namespace AppPublication.Export
             {
                 // Le fichier de destination
                 string savePath = GetFileSavePath(targetDirectory, exportType, (ecran.Id >= 0) ? $"{ecran.Id:00}" : "default");
+                
+                // --- NOUVEAU : Création du routage XML ---
+                string fullHtmlPath = $"{savePath}.html";
+                XElement routingNode = GenerateSiteRoutes(ctx, siteStructure, fullHtmlPath);
 
                 var ecransParams = new List<(string, object)>();
+                ecransParams.Add(("SiteRoutes", routingNode.CreateNavigator()));
                 ecransParams.Add(("useIntituleCommun", useIntituleCommun.ToString().ToLower()));
                 ecransParams.Add(("idEcran", ecran.Id));                 // Le numero de l'ecran d'appel
                 ecransParams.Add(("tailleGroupe", ecran.Groupement));     // La taille du groupe
@@ -159,6 +167,31 @@ namespace AppPublication.Export
             return output;
         }
 
+        #endregion
+
+        #region METHODES PRIVEES (Ajout)
+
+        /// <summary>
+        /// Génère un dictionnaire de routage XML indépendant contenant toutes les URLs pré-calculées du site interne.
+        /// </summary>
+        private XElement GenerateSiteRoutes(ExportSharedContextInterne ctx, SiteInterneUrlGenerator siteStructure, string sourcePhysicalFile)
+        {
+            XElement rootRoutes = new XElement(ConstantXML.Routing_SiteRoutes);
+
+            // Génération des chemins transversaux via les propriétés natives de PhysicalStructureBase
+            string imgWebPath = siteStructure.GetRelativeWebPath(sourcePhysicalFile, siteStructure.PhysicalStructure.RepertoireImg(), true);
+            string jsWebPath = siteStructure.GetRelativeWebPath(sourcePhysicalFile, siteStructure.PhysicalStructure.RepertoireJs(), true);
+            string cssWebPath = siteStructure.GetRelativeWebPath(sourcePhysicalFile, siteStructure.PhysicalStructure.RepertoireCss(), true);
+
+            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlImg, imgWebPath));
+            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlJs, jsWebPath));
+            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlCss, cssWebPath));
+
+            return rootRoutes;
+        }
+
+       
+
         /// <summary>
         /// Ajoute les arguments de structure du site pour les templates xslt
         /// </summary>
@@ -172,5 +205,7 @@ namespace AppPublication.Export
             // Ajoute les repertoires de base de la structure
             base.AddStructureArgument(argsList, urlGen, targetFile);
         }
+
+        #endregion
     }
 }

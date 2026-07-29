@@ -761,6 +761,19 @@ namespace FranceJudo.Metier.XML
 
         // Dictionnaire de Routage
         public const string Routing_SiteRoutes = "siteRoutes";
+
+        public const string Routing_UrlCommon = "urlCommon";
+        public const string Routing_UrlImg = "urlImg";
+        public const string Routing_UrlJs = "urlJs";
+        public const string Routing_UrlCss = "urlCss";
+        public const string Routing_UrlSePrepare = "urlSePrepare";
+        public const string Routing_UrlProchainsCombats = "urlProchainsCombats";
+        public const string Routing_UrlAffectationTapis = "urlAffectationTapis";
+        public const string Routing_UrlAvancement = "urlAvancement";
+        public const string Routing_UrlClassement = "urlClassement";
+        public const string Routing_UrlEngagements = "urlEngagements";
+        public const string Routing_UrlStatistiques = "urlStatistiques";
+
         public const string Routing_RouteEpreuve = "routeEpreuve";
         public const string Routing_EpreuveId = "epreuve";
         public const string Routing_EpreuveUrlClassement = "urlClassement";

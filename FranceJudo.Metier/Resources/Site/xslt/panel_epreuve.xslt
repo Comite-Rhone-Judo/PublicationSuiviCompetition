@@ -11,7 +11,9 @@
 	<xsl:template name="AccordionButton">
 		<xsl:param name="sexeCode"/>
 		<xsl:param name="targetId"/>
-		<xsl:param name="imgPath"/>
+		<xsl:param name="SiteRoutes"/>
+		
+		<xsl:variable name="imgPath" select="$SiteRoutes/*/@urlImg"/>
 
 		<!-- CORRECTION : Suppression de $apos et utilisation directe des apostrophes -->
 		<button class="ios-accordion-btn" onclick="togglePanel('{$targetId}')">

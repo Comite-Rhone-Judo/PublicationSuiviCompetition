@@ -11,13 +11,9 @@
 
 	<xsl:param name="style"/>
 	<xsl:param name="js"/>
-	<xsl:param name="imgPath"/>
-	<xsl:param name="jsPath"/>
-	<xsl:param name="cssPath"/>
-	<xsl:param name="commonPath"/>
 	<xsl:param name="RefData"/>
 	<xsl:param name="useIntituleCommun" select="'false'"/>
-
+	<xsl:param name="SiteRoutes"/>
 	<xsl:param name="tailleGroupe"/>
 	<xsl:param name="idEcran"/>
 	<xsl:param name="tapisAffiches"/>
@@ -29,6 +25,10 @@
 	
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 
+	<xsl:variable name="imgPath" select="$SiteRoutes/*/@urlImg"/>
+	<xsl:variable name="jsPath" select="$SiteRoutes/*/@urlJs"/>
+	<xsl:variable name="cssPath" select="$SiteRoutes/*/@urlCss"/>
+	
 	<xsl:variable name="docPrincipal" select="/" />
 
 	<xsl:variable select="/docroot/SiteConfiguration/@DelaiDeroulementSec" name="delaiDeroulementSec"/>

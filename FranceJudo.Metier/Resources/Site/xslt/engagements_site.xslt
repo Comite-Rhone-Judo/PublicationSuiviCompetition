@@ -11,14 +11,15 @@
 	<xsl:output method="html" indent="yes"/>
 	<xsl:param name="style"/>
 	<xsl:param name="js"/>
-	<xsl:param name="imgPath"/>
-	<xsl:param name="jsPath"/>
-	<xsl:param name="cssPath"/>
-	<xsl:param name="commonPath"/>
 	<xsl:param name="RefData"/>
 	<xsl:param name="SiteRoutes"/>
 
 	<xsl:variable name="apos">'</xsl:variable>
+
+	<xsl:variable name="imgPath" select="$SiteRoutes/*/@urlImg"/>
+	<xsl:variable name="jsPath" select="$SiteRoutes/*/@urlJs"/>
+	<xsl:variable name="cssPath" select="$SiteRoutes/*/@urlCss"/>
+	<xsl:variable name="commonPath" select="$SiteRoutes/*/@UrlCommon"/>
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 
@@ -60,8 +61,7 @@
 					<xsl:with-param name="affStatistiques" select="$affStatistiques"/>
 					<xsl:with-param name="affActualiser" select="false()"/>
 					<xsl:with-param name="selectedItem" select="'engagements'"/>
-					<xsl:with-param name="pathToImg" select="$imgPath"/>
-					<xsl:with-param name="pathToCommon" select="$commonPath"/>
+					<xsl:with-param name="SiteRoutes" select="$SiteRoutes"/>
 				</xsl:call-template>
 
 				<!-- CONTENU -->
@@ -140,7 +140,7 @@
 			<xsl:call-template name="AccordionButton">
 				<xsl:with-param name="sexeCode" select="$categorie"/>
 				<xsl:with-param name="targetId" select="$panelId"/>
-				<xsl:with-param name="imgPath" select="$imgPath"/>
+				<xsl:with-param name="SiteRoutes" select="$SiteRoutes"/>
 			</xsl:call-template>
 
 			<div class="tasClosedPanelType tas-accordion-content-hidden w3-container" id="{$panelId}">

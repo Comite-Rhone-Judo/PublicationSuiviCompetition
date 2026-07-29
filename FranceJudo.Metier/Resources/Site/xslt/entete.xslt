@@ -15,9 +15,19 @@
 		<xsl:param name="affStatistiques"/>
 		<xsl:param name="affActualiser"/>
 		<xsl:param name="selectedItem"/>
-		<xsl:param name="pathToImg"/>
-		<xsl:param name="pathToCommon"/>
+		<xsl:param name="SiteRoutes"/>
+		
 		<xsl:variable name="apos">'</xsl:variable>
+		<!-- 3. REAFFECTATION des chemins depuis la racine du dictionnaire XML -->
+		<xsl:variable name="pathToImg" select="$SiteRoutes/*/@urlImg"/>
+		<xsl:variable name="pathToCommon" select="$SiteRoutes/*/@UrlCommon"/>
+		<xsl:variable name="urlSePrepare" select="$SiteRoutes/*/@urlSePrepare"/>
+		<xsl:variable name="urlProchainsCombats" select="$SiteRoutes/*/@urlProchainsCombats"/>
+		<xsl:variable name="urlAffectationTapis" select="$SiteRoutes/*/@urlAffectationTapis"/>
+		<xsl:variable name="urlAvancement" select="$SiteRoutes/*/@urlAvancement"/>
+		<xsl:variable name="urlClassement" select="$SiteRoutes/*/@urlClassement"/>
+		<xsl:variable name="urlEngagements" select="$SiteRoutes/*/@urlEngagements"/>
+		<xsl:variable name="urlStatistiques" select="$SiteRoutes/*/@urlStatistiques"/>
 
 		<!-- BANDEAU DE TITRE -->
 		<div class="tas-titre-app">
@@ -70,7 +80,7 @@
 				<xsl:if test="$affProchainCombats">
 					<a>
 						<xsl:attribute name="href">
-							<xsl:value-of select="concat($pathToCommon, 'se_prepare.html')"/>
+							<xsl:value-of select="$urlSePrepare"/>
 						</xsl:attribute>
 						<xsl:attribute name="class">
 							<xsl:choose>
@@ -82,7 +92,7 @@
 					</a>
 					<a>
 						<xsl:attribute name="href">
-							<xsl:value-of select="concat($pathToCommon, 'prochains_combats.html')"/>
+							<xsl:value-of select="$urlProchainsCombats"/>
 						</xsl:attribute>
 						<xsl:attribute name="class">
 							<xsl:choose>
@@ -97,7 +107,7 @@
 				<xsl:if test="$affAffectationTapis">
 					<a>
 						<xsl:attribute name="href">
-							<xsl:value-of select="concat($pathToCommon, 'affectation_tapis.html')"/>
+							<xsl:value-of select="$urlAffectationTapis"/>
 						</xsl:attribute>
 						<xsl:attribute name="class">
 							<xsl:choose>
@@ -111,7 +121,7 @@
 
 				<a>
 					<xsl:attribute name="href">
-						<xsl:value-of select="concat($pathToCommon, 'avancement.html')"/>
+						<xsl:value-of select="$urlAvancement"/>
 					</xsl:attribute>
 					<xsl:attribute name="class">
 						<xsl:choose>
@@ -124,7 +134,7 @@
 
 				<a>
 					<xsl:attribute name="href">
-						<xsl:value-of select="concat($pathToCommon, 'classement.html')"/>
+						<xsl:value-of select="$urlClassement"/>
 					</xsl:attribute>
 					<xsl:attribute name="class">
 						<xsl:choose>
@@ -138,7 +148,7 @@
 				<xsl:if test="$affEngagements">
 					<a>
 						<xsl:attribute name="href">
-							<xsl:value-of select="concat($pathToCommon, 'engagements.html')"/>
+							<xsl:value-of select="$urlEngagements"/>
 						</xsl:attribute>
 						<xsl:attribute name="class">
 							<xsl:choose>
@@ -153,7 +163,7 @@
 				<xsl:if test="$affStatistiques">
 					<a>
 						<xsl:attribute name="href">
-							<xsl:value-of select="concat($pathToCommon, 'statistiques.html')"/>
+							<xsl:value-of select="$urlStatistiques"/>
 						</xsl:attribute>
 						<xsl:attribute name="class">
 							<xsl:choose>

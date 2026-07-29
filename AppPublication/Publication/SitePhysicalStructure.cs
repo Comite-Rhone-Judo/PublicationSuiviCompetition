@@ -1,5 +1,6 @@
 ﻿using FranceJudo.Core.Network.Url;
 using FranceJudo.Core.Utils;
+using FranceJudo.Metier.Export;
 using FranceJudo.Metier.Site;
 using System;
 using System.IO;
@@ -38,6 +39,28 @@ namespace AppPublication.Publication
             // La clé "index" permet de ne calculer le Path.Combine qu'une seule fois par compétition
             return GetFilePath("index", () => Path.Combine(RepertoireCommon(), kIndex));
         }
+
+        public string FichierSePrepare() =>
+            GetFilePath("se_prepare", () => Path.Combine(RepertoireCommon(), $"{SiteExportEngine.GetSanitizedFileName(ExportEnum.Site_FeuilleCombatTapis)}.html"));
+
+        public string FichierProchainsCombats() =>
+            GetFilePath("prochains_combats", () => Path.Combine(RepertoireCommon(), $"{SiteExportEngine.GetSanitizedFileName(ExportEnum.Site_MenuProchainCombats)}.html"));
+
+        public string FichierAffectationTapis() =>
+            GetFilePath("affectation_tapis", () => Path.Combine(RepertoireCommon(), $"{SiteExportEngine.GetSanitizedFileName(ExportEnum.Site_AffectationTapis)}.html"));
+
+        public string FichierAvancement() =>
+            GetFilePath("avancement", () => Path.Combine(RepertoireCommon(), $"{SiteExportEngine.GetSanitizedFileName(ExportEnum.Site_MenuAvancement)}.html"));
+
+        public string FichierClassement() =>
+            GetFilePath("classement", () => Path.Combine(RepertoireCommon(), $"{SiteExportEngine.GetSanitizedFileName(ExportEnum.Site_MenuClassement)}.html"));
+
+        // Utilisation stricte des énumérations de type "Menu" pour les liens transversaux
+        public string FichierMenuEngagements() =>
+            GetFilePath("menu_engagements", () => Path.Combine(RepertoireCommon(), $"{SiteExportEngine.GetSanitizedFileName(ExportEnum.Site_MenuEngagements)}.html"));
+
+        public string FichierMenuStatistiques() =>
+            GetFilePath("menu_statistiques", () => Path.Combine(RepertoireCommon(), $"{SiteExportEngine.GetSanitizedFileName(ExportEnum.Site_MenuStatistiques)}.html"));
 
         /// <summary>
         /// Retourne le repertoire pour un groupe d'engagement
@@ -100,6 +123,8 @@ namespace AppPublication.Publication
             // Utilisation native de .NET 10
             return Path.GetRelativePath(RepertoireCompetition, absoluteFilePath);
         }
+
+
         #endregion
     }
 }

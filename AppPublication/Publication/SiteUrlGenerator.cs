@@ -34,6 +34,14 @@ namespace AppPublication.Publication
         public Uri UrlCommon => GetUrlFromPhysicalPath(PhysicalStructure.RepertoireCommon());
         public Uri UrlIndex => GetUrlFromPhysicalPath(PhysicalStructure.FichierIndex());
 
+        public string GetRelativeUrlSePrepare(string targetFile) => GetRelativeWebPath(targetFile, PhysicalStructure.FichierSePrepare());
+        public string GetRelativeUrlProchainsCombats(string targetFile) => GetRelativeWebPath(targetFile, PhysicalStructure.FichierProchainsCombats());
+        public string GetRelativeUrlAffectationTapis(string targetFile) => GetRelativeWebPath(targetFile, PhysicalStructure.FichierAffectationTapis());
+        public string GetRelativeUrlAvancement(string targetFile) => GetRelativeWebPath(targetFile, PhysicalStructure.FichierAvancement());
+        public string GetRelativeUrlClassement(string targetFile) => GetRelativeWebPath(targetFile, PhysicalStructure.FichierClassement());
+        public string GetRelativeUrlMenuEngagements(string targetFile) => GetRelativeWebPath(targetFile, PhysicalStructure.FichierMenuEngagements());
+        public string GetRelativeUrlMenuStatistiques(string targetFile) => GetRelativeWebPath(targetFile, PhysicalStructure.FichierMenuStatistiques());
+
         public Uri GetUrlGroupeEngagements(string idGroupe)
             => GetUrlFromPhysicalPath(PhysicalStructure.RepertoireGroupeEngagements(idGroupe));
         public Uri GetUrlGroupeStatistiques(string idGroupe)

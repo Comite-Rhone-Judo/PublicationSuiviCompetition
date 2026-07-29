@@ -4,14 +4,12 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xsl:output method="xml" indent="yes"/>
-  <xsl:param name="style"/>
-	<xsl:param name="imgPath"/>
-	<xsl:param name="jsPath"/>
-	<xsl:param name="cssPath"/>
-	<xsl:param name="commonPath"/>
+    <xsl:param name="style"/>
+	<xsl:param name="SiteRoutes"/>
 
 
 	<xsl:variable name="apos">'</xsl:variable>
+	<xsl:variable name="urlAvancement" select="$SiteRoutes/*/@urlAvancement"/>
 	
 	<xsl:template match="/">
     <html>
@@ -25,7 +23,7 @@
       <title>Suivi Compétition</title>
 
       <script type="text/javascript">
-		  <xsl:value-of disable-output-escaping="yes" select="concat('window.location.href = ', $apos, $commonPath, 'avancement.html', $apos, ';')"/>
+		  <xsl:value-of disable-output-escaping="yes" select="concat('window.location.href = ', $apos, $urlAvancement, $apos, ';')"/>
        </script>
     </head>
     <body> </body>

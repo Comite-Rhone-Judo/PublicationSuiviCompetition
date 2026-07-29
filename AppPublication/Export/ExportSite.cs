@@ -46,9 +46,6 @@ namespace AppPublication.Export
 
             // Ajoute les repertoires de base de la structure
             base.AddStructureArgument(argsList, siteStruct, targetFile);
-
-            // Ajoute le repertoire common
-            argsList.AddParam("commonPath", "", theStruct.GetRelativeUrlCommon(targetFile));
         }
 
         /// <summary>
@@ -386,8 +383,10 @@ namespace AppPublication.Export
                 ExportEnum indexType = ExportEnum.Site_Index;
                 string indexFilename = SiteExportEngine.GetSanitizedFileName(indexType);
                 string indexSavePath = Path.Combine(siteStructure.PhysicalStructure.RepertoireCommon(), indexFilename);
+                string fullIndexHtmlPath = $"{indexSavePath}.html";
+                XElement routingNode = GenerateSiteRoutes(ctx, siteStructure, fullIndexHtmlPath, false);
 
-                var indexArgs = CreateAllXsltArgs(siteStructure, indexSavePath);
+                var indexArgs = CreateAllXsltArgs(siteStructure, indexSavePath, ("SiteRoutes", routingNode.CreateNavigator()));
 
                 using (var source = new XmlSource(outDoc))
                 {
@@ -746,6 +745,24 @@ namespace AppPublication.Export
             // Récupération des caches O(1) depuis le contexte
             IJudoData DC = ctx.DataContext;
             var phasesByEpreuve = DC.Deroulement.Phases.ToLookup(p => p.epreuve);
+
+            // --- NOUVEAU : Ajout des chemins globaux à la racine du routage via ConstantXML ---
+            string commonWebPath = siteStructure.GetRelativeWebPath(sourcePhysicalFile, siteStructure.PhysicalStructure.RepertoireCommon(), true);
+            string imgWebPath = siteStructure.GetRelativeWebPath(sourcePhysicalFile, siteStructure.PhysicalStructure.RepertoireImg(), true);
+            string jsWebPath = siteStructure.GetRelativeWebPath(sourcePhysicalFile, siteStructure.PhysicalStructure.RepertoireJs(), true);
+            string cssWebPath = siteStructure.GetRelativeWebPath(sourcePhysicalFile, siteStructure.PhysicalStructure.RepertoireCss(), true);
+
+            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlCommon, commonWebPath));
+            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlImg, imgWebPath));
+            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlJs, jsWebPath));
+            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlCss, cssWebPath));
+            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlSePrepare, siteStructure.GetRelativeUrlSePrepare(sourcePhysicalFile)));
+            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlProchainsCombats, siteStructure.GetRelativeUrlProchainsCombats(sourcePhysicalFile)));
+            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlAffectationTapis, siteStructure.GetRelativeUrlAffectationTapis(sourcePhysicalFile)));
+            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlAvancement, siteStructure.GetRelativeUrlAvancement(sourcePhysicalFile)));
+            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlClassement, siteStructure.GetRelativeUrlClassement(sourcePhysicalFile)));
+            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlEngagements, siteStructure.GetRelativeUrlMenuEngagements(sourcePhysicalFile)));
+            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlStatistiques, siteStructure.GetRelativeUrlMenuStatistiques(sourcePhysicalFile)));
 
             // =========================================================================
             // 1. ROUTES DES COMPETITIONS, EPREUVES ET LEURS PHASES

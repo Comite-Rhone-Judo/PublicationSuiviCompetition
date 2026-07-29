@@ -10,11 +10,12 @@
 	<xsl:output method="html" indent="yes"/>
 	<xsl:param name="style"/>
 	<xsl:param name="js"/>
-	<xsl:param name="imgPath"/>
-	<xsl:param name="jsPath"/>
-	<xsl:param name="cssPath"/>
-	<xsl:param name="commonPath"/>
 	<xsl:param name="SiteRoutes"/>
+
+	<xsl:variable name="imgPath" select="$SiteRoutes/*/@urlImg"/>
+	<xsl:variable name="jsPath" select="$SiteRoutes/*/@urlJs"/>
+	<xsl:variable name="cssPath" select="$SiteRoutes/*/@urlCss"/>
+	<xsl:variable name="commonPath" select="$SiteRoutes/*/@UrlCommon"/>
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>
 
@@ -70,8 +71,7 @@
 					<xsl:with-param name="affStatistiques" select="$affStatistiques"/>
 					<xsl:with-param name="affActualiser" select="false()"/>
 					<xsl:with-param name="selectedItem" select="'classement'"/>
-					<xsl:with-param name="pathToImg" select="$imgPath"/>
-					<xsl:with-param name="pathToCommon" select="$commonPath"/>
+					<xsl:with-param name="SiteRoutes" select="$SiteRoutes"/>
 				</xsl:call-template>
 
 				<!-- CONTENU -->
@@ -123,17 +123,17 @@
 				<xsl:call-template name="panelEpreuve">
 					<xsl:with-param name="sexeCode" select="'F'"/>
 					<xsl:with-param name="prefixPanel" select="$prefixCompetition"/>
-					<xsl:with-param name="imgPath" select="$imgPath"/>
+					<xsl:with-param name="SiteRoutes" select="$SiteRoutes"/>
 				</xsl:call-template>
 				<xsl:call-template name="panelEpreuve">
 					<xsl:with-param name="sexeCode" select="'M'"/>
 					<xsl:with-param name="prefixPanel" select="$prefixCompetition"/>
-					<xsl:with-param name="imgPath" select="$imgPath"/>
+					<xsl:with-param name="SiteRoutes" select="$SiteRoutes"/>
 				</xsl:call-template>
 				<xsl:call-template name="panelEpreuve">
 					<xsl:with-param name="sexeCode" select="'X'"/>
 					<xsl:with-param name="prefixPanel" select="$prefixCompetition"/>
-					<xsl:with-param name="imgPath" select="$imgPath"/>
+					<xsl:with-param name="SiteRoutes" select="$SiteRoutes"/>
 				</xsl:call-template>
 			</div>
 		</div>
