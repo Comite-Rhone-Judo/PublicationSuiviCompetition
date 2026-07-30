@@ -18,9 +18,9 @@
 	<xsl:param name="RefData"/>
 	<xsl:param name="SiteRoutes"/>
 
-	<xsl:variable name="imgPath" select="$SiteRoutes/*/@urlImg"/>
-	<xsl:variable name="jsPath" select="$SiteRoutes/*/@urlJs"/>
-	<xsl:variable name="cssPath" select="$SiteRoutes/*/@urlCss"/>
+	<xsl:variable name="imgPath" select="$SiteRoutes/@urlImg"/>
+	<xsl:variable name="jsPath" select="$SiteRoutes/@urlJs"/>
+	<xsl:variable name="cssPath" select="$SiteRoutes/@urlCss"/>
 	<xsl:variable name="commonPath" select="$SiteRoutes/*/@UrlCommon"/>
 	
 	<xsl:variable name="lowercase" select="'abcdefghijklmnopqrstuvwxyz'" />

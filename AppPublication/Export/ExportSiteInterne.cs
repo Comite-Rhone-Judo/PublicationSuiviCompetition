@@ -131,6 +131,7 @@ namespace AppPublication.Export
                 // --- NOUVEAU : Création du routage XML ---
                 string fullHtmlPath = $"{savePath}.html";
                 XElement routingNode = GenerateSiteRoutes(ctx, siteStructure, fullHtmlPath);
+                LogTools.DebugLogData(routingNode);
 
                 var ecransParams = new List<(string, object)>();
                 ecransParams.Add(("SiteRoutes", routingNode.CreateNavigator()));

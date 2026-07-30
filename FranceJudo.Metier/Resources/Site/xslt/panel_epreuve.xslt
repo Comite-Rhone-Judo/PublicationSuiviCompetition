@@ -13,7 +13,7 @@
 		<xsl:param name="targetId"/>
 		<xsl:param name="SiteRoutes"/>
 		
-		<xsl:variable name="imgPath" select="$SiteRoutes/*/@urlImg"/>
+		<xsl:variable name="imgPath" select="$SiteRoutes/@urlImg"/>
 
 		<!-- CORRECTION : Suppression de $apos et utilisation directe des apostrophes -->
 		<button class="ios-accordion-btn" onclick="togglePanel('{$targetId}')">
@@ -38,7 +38,7 @@
 	<xsl:template name="panelEpreuve">
 		<xsl:param name="sexeCode"/>
 		<xsl:param name="prefixPanel"/>
-		<xsl:param name="imgPath"/>
+		<xsl:param name="SiteRoutes"/>
 
 		<xsl:if test="count(./epreuve[@sexe = $sexeCode]) > 0">
 			<div class="w3-col l4 m6 s12 w3-margin-bottom w3-padding-small">
@@ -47,7 +47,7 @@
 				<xsl:call-template name="AccordionButton">
 					<xsl:with-param name="sexeCode" select="$sexeCode"/>
 					<xsl:with-param name="targetId" select="concat($prefixPanel, $sexeCode)"/>
-					<xsl:with-param name="imgPath" select="$imgPath"/>
+					<xsl:with-param name="SiteRoutes" select="$SiteRoutes"/>
 				</xsl:call-template>
 
 				<!-- 2. Injection de la logique spécifique (Liste d'épreuves) -->

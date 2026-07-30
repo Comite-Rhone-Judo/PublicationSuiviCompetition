@@ -19,15 +19,15 @@
 		
 		<xsl:variable name="apos">'</xsl:variable>
 		<!-- 3. REAFFECTATION des chemins depuis la racine du dictionnaire XML -->
-		<xsl:variable name="pathToImg" select="$SiteRoutes/*/@urlImg"/>
+		<xsl:variable name="pathToImg" select="$SiteRoutes/@urlImg"/>
 		<xsl:variable name="pathToCommon" select="$SiteRoutes/*/@UrlCommon"/>
-		<xsl:variable name="urlSePrepare" select="$SiteRoutes/*/@urlSePrepare"/>
-		<xsl:variable name="urlProchainsCombats" select="$SiteRoutes/*/@urlProchainsCombats"/>
-		<xsl:variable name="urlAffectationTapis" select="$SiteRoutes/*/@urlAffectationTapis"/>
-		<xsl:variable name="urlAvancement" select="$SiteRoutes/*/@urlAvancement"/>
-		<xsl:variable name="urlClassement" select="$SiteRoutes/*/@urlClassement"/>
-		<xsl:variable name="urlEngagements" select="$SiteRoutes/*/@urlEngagements"/>
-		<xsl:variable name="urlStatistiques" select="$SiteRoutes/*/@urlStatistiques"/>
+		<xsl:variable name="urlSePrepare" select="$SiteRoutes/@urlSePrepare"/>
+		<xsl:variable name="urlProchainsCombats" select="$SiteRoutes/@urlProchainsCombats"/>
+		<xsl:variable name="urlAffectationTapis" select="$SiteRoutes/@urlAffectationTapis"/>
+		<xsl:variable name="urlAvancement" select="$SiteRoutes/@urlAvancement"/>
+		<xsl:variable name="urlClassement" select="$SiteRoutes/@urlClassement"/>
+		<xsl:variable name="urlEngagements" select="$SiteRoutes/@urlEngagements"/>
+		<xsl:variable name="urlStatistiques" select="$SiteRoutes/@urlStatistiques"/>
 
 		<!-- BANDEAU DE TITRE -->
 		<div class="tas-titre-app">

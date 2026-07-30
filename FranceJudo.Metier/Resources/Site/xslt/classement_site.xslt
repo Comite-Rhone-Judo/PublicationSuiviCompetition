@@ -12,9 +12,9 @@
 	<xsl:param name="js"/>
 	<xsl:param name="SiteRoutes"/>
 
-	<xsl:variable name="imgPath" select="$SiteRoutes/*/@urlImg"/>
-	<xsl:variable name="jsPath" select="$SiteRoutes/*/@urlJs"/>
-	<xsl:variable name="cssPath" select="$SiteRoutes/*/@urlCss"/>
+	<xsl:variable name="imgPath" select="$SiteRoutes/@urlImg"/>
+	<xsl:variable name="jsPath" select="$SiteRoutes/@urlJs"/>
+	<xsl:variable name="cssPath" select="$SiteRoutes/@urlCss"/>
 	<xsl:variable name="commonPath" select="$SiteRoutes/*/@UrlCommon"/>
 
 	<xsl:key name="combats" match="combat" use="@niveau"/>

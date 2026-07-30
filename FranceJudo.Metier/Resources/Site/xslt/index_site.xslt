@@ -9,7 +9,7 @@
 
 
 	<xsl:variable name="apos">'</xsl:variable>
-	<xsl:variable name="urlAvancement" select="$SiteRoutes/*/@urlAvancement"/>
+	<xsl:variable name="urlAvancement" select="$SiteRoutes/@urlAvancement"/>
 	
 	<xsl:template match="/">
     <html>

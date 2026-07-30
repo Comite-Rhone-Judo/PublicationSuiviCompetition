@@ -145,8 +145,15 @@ namespace AppPublication.Export
 
                     ExportEnum exportType = isPoule ? ExportEnum.Site_Poule_Resultat : ExportEnum.Site_Tableau_Competition;
                     string savePath = GetFileSavePath(targetDirectory, exportType);
+                    string fullHtmlPath = $"{savePath}.html";
+
+                    // --- NOUVEAU : Routage ---
+                    XElement routingNode = GenerateSiteRoutes(ctx, siteStructure, fullHtmlPath, false);
+                    LogTools.DebugLogData(routingNode);
 
                     var phaseParams = new List<(string, object)>();
+                    phaseParams.Add(("SiteRoutes", routingNode.CreateNavigator())); // Injection ici
+
                     if (isPoule)
                     {
                         TypePouleEnum typePoule = config.PouleEnColonnes ? (config.PouleToujoursEnColonnes ? TypePouleEnum.Colonnes : TypePouleEnum.Auto) : TypePouleEnum.Diagonale;
@@ -182,8 +189,16 @@ namespace AppPublication.Export
 
                         ExportEnum exportType = ExportEnum.Site_FeuilleCombat;
                         string savePath = GetFileSavePath(targetDirectory, exportType);
+                        string fullHtmlPath = $"{savePath}.html";
 
-                        var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, ("istapis", "epreuve"));
+                        // --- NOUVEAU : Routage ---
+                        XElement routingNode = GenerateSiteRoutes(ctx, siteStructure, fullHtmlPath, false);
+                        LogTools.DebugLogData(routingNode);
+
+                        var xsltArgs = CreateAllXsltArgs(siteStructure, savePath,
+                            ("istapis", "epreuve"),
+                            ("SiteRoutes", routingNode.CreateNavigator()) // Injection ici
+                        );
 
                         XDocument outDoc = ExportXML.CreateDocumentFeuilleCombat(ctx, phase, null);
                         ctx.EnrichWithFullContext(outDoc);
@@ -250,8 +265,14 @@ namespace AppPublication.Export
 
                 // Utilisation de la méthode mutualisée pour le chemin
                 string savePath = GetFileSavePath(targetDirectory, exportType);
+                string fullHtmlPath = $"{savePath}.html";
 
-                var xsltArgs = CreateAllXsltArgs(siteStructure, savePath);
+                // --- NOUVEAU : Génération et injection du dictionnaire de routage ---
+                XElement routingNode = GenerateSiteRoutes(ctx, siteStructure, fullHtmlPath, false);
+                LogTools.DebugLogData(routingNode);
+
+                var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, ("SiteRoutes", routingNode.CreateNavigator()));
+
 
                 // 1. Génération du document de base
                 XDocument outDoc = ExportXML.CreateDocumentEpreuve(ctx, epreuve);
@@ -310,15 +331,21 @@ namespace AppPublication.Export
 
                 // Construction du chemin pour le répertoire commun
                 string savePath = GetFileSavePath(targetDirectory, exportType);
+                string fullHtmlPath = $"{savePath}.html";
+
+                // --- NOUVEAU : Génération du dictionnaire de routage ---
+                XElement routingNode = GenerateSiteRoutes(ctx, siteStructure, fullHtmlPath, false);
+                LogTools.DebugLogData(routingNode);
 
                 bool useIntituleCommun = DC.Organisation.Competitions.Count > 1
                          && ctx.Config.UseIntituleCommun
                          && !string.IsNullOrEmpty(ctx.Config.IntituleCommun);
 
                 var xsltArgs = CreateAllXsltArgs(siteStructure, savePath,
-                    ("istapis", "alltapis"),
-                    ("useIntituleCommun", useIntituleCommun.ToString().ToLower())
-                );
+                                    ("istapis", "alltapis"),
+                                    ("useIntituleCommun", useIntituleCommun.ToString().ToLower()),
+                                    ("SiteRoutes", routingNode.CreateNavigator())
+                                );
 
                 // 1. Génération du document (Utilise notre version optimisée de CreateDocumentFeuilleCombat)
                 // Les paramètres null, null indiquent qu'on veut tous les tapis et toutes les phases.
@@ -385,6 +412,7 @@ namespace AppPublication.Export
                 string indexSavePath = Path.Combine(siteStructure.PhysicalStructure.RepertoireCommon(), indexFilename);
                 string fullIndexHtmlPath = $"{indexSavePath}.html";
                 XElement routingNode = GenerateSiteRoutes(ctx, siteStructure, fullIndexHtmlPath, false);
+                LogTools.DebugLogData(routingNode);
 
                 var indexArgs = CreateAllXsltArgs(siteStructure, indexSavePath, ("SiteRoutes", routingNode.CreateNavigator()));
 
@@ -473,12 +501,10 @@ namespace AppPublication.Export
             
             // 2. Ajout de la configuration contextuelle (infos de publication, etc.)
             ctx.EnrichWithConfiguration(outDoc);
-
             LogTools.DebugLogData(outDoc);
 
             // 2. Génération du dictionnaire de routage C# indépendant
             XElement routingNode = GenerateSiteRoutes(ctx, siteStructure, sourcePhysicalFile);
-
             LogTools.DebugLogData(routingNode);
 
             using (var source = new XmlSource(outDoc))
@@ -555,6 +581,7 @@ namespace AppPublication.Export
 
             // 1. Génération du dictionnaire de routage indépendant
             XElement routingNode = GenerateSiteRoutes(ctx, siteStructure, fullHtmlPath, false);
+            LogTools.DebugLogData(routingNode);
 
             // 2. Injection du dictionnaire dans les paramètres XSLT
             var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, ("SiteRoutes", routingNode.CreateNavigator()));
@@ -623,6 +650,7 @@ namespace AppPublication.Export
             string dummySourcePath = Path.Combine(siteStructure.PhysicalStructure.RepertoireGroupeEngagements(dummyId), "page.html");
 
             XElement routingNode = GenerateSiteRoutes(ctx, siteStructure, dummySourcePath, true);
+            LogTools.DebugLogData(routingNode);
 
             int currentStep = 0;
 
@@ -703,6 +731,7 @@ namespace AppPublication.Export
             string dummySourcePath = Path.Combine(siteStructure.PhysicalStructure.RepertoireGroupeStatistiques(dummyId), "page.html");
 
             XElement routingNode = GenerateSiteRoutes(ctx, siteStructure, dummySourcePath, false);
+            LogTools.DebugLogData(routingNode);
 
             int currentStep = 0;
 
