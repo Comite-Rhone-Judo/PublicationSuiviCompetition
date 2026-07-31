@@ -829,8 +829,6 @@ namespace AppPublication.Export
                 }
             }
 
-            LogTools.DebugLogData(rootRoutes);
-
             return rootRoutes;
         }
 

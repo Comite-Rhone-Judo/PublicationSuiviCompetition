@@ -1,4 +1,5 @@
-﻿using FranceJudo.Metier.Export;
+﻿using FranceJudo.Core.Logging;
+using FranceJudo.Metier.Export;
 using FranceJudo.Metier.Site;
 using FranceJudo.Metier.XML;
 using System;
@@ -21,7 +22,7 @@ namespace AppPublication.Export
 
         // Cache de routage par profondeur ---
         // Utilise la profondeur (int) comme clé. Le Lazy garantit une instanciation thread-safe unique.
-        private readonly ConcurrentDictionary<int, Lazy<XElement>> _routesCache = new ConcurrentDictionary<int, Lazy<XElement>>();
+        private readonly ConcurrentDictionary<string, Lazy<XElement>> _routesCache = new ConcurrentDictionary<string, Lazy<XElement>>();
 
         #endregion
 
@@ -54,12 +55,15 @@ namespace AppPublication.Export
             // INJECTION DU ROUTAGE AUTOMATIQUE AVEC CACHE
             // On calcule la profondeur du fichier cible par rapport à la racine pour la clé de cache
             string relativeSource = Path.GetRelativePath(siteStruct.PhysicalStructure.RepertoireCompetition, savePath);
-            int depth = relativeSource.Split(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries).Length;
+            string cacheKey = Path.GetDirectoryName(relativeSource) ?? string.Empty;
 
-            XElement routingNode = _routesCache.GetOrAdd(depth, key => new Lazy<XElement>(() =>
+            XElement routingNode = _routesCache.GetOrAdd(cacheKey, key => new Lazy<XElement>(() =>
             {
                 // Appelle la logique spécifique à la classe enfant (Public ou Interne)
-                return GenerateSiteRoutesNode(siteStruct, savePath);
+                 XElement rootRoutes = GenerateSiteRoutesNode(siteStruct, savePath);
+                LogTools.DebugLogData(rootRoutes);
+                return rootRoutes;
+
             })).Value;
 
             args.AddParam("SiteRoutes", "", routingNode.CreateNavigator());
