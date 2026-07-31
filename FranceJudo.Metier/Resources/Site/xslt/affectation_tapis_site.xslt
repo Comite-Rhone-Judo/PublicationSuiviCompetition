@@ -173,7 +173,7 @@
 					</div>
 
 					<xsl:variable name="idEpreuve" select="@ID" />
-					<xsl:variable name="urlAvancement" select="$SiteRoutes//routeEpreuve[@epreuve = $idEpreuve]/@urlAvancement" />
+					<xsl:variable name="urlAvancement" select="$SiteRoutes/routeEpreuve[@epreuve = $idEpreuve]/@urlAvancement" />
 					
 					<!-- Le lien est placé UNIQUEMENT autour de l'icône avec sa zone tactile élargie -->
 					<xsl:if test="$urlAvancement != ''">

@@ -131,7 +131,7 @@
 	<!-- On ne tient compte que des epreuves pour lesquelles les phases sont créées et sans classement validé -->
 	<xsl:template name="prochains_combats_epreuve" match="epreuve">
 		<xsl:variable name="idEpreuve" select="@ID" />
-		<xsl:variable name="urlProchainsCombats" select="$SiteRoutes//routeEpreuve[@epreuve = $idEpreuve]/@urlProchainsCombats" />
+		<xsl:variable name="urlProchainsCombats" select="$SiteRoutes/routeEpreuve[@epreuve = $idEpreuve]/@urlProchainsCombats" />
 		
 		<xsl:if test="count(./phases/phase[number(@typePhase) = 1 and number(@etat) > 0 and number(@etat) != 5]) > 0">
 			<a class="ios-list-item" href="{$urlProchainsCombats}">

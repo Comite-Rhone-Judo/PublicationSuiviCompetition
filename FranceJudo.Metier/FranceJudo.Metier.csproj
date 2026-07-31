@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Resources\Site\img\info-32.png" />
+    <None Remove="Resources\Site\img\list_ingredients-32.png" />
     <None Remove="Resources\Site\img\speech_bubble-32.png" />
     <None Remove="Resources\Site\img\statistics-32.png" />
     <None Remove="Resources\Site\img\tree_structure-32.png" />
@@ -63,6 +64,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Site\img\info-32.png" />
+    <EmbeddedResource Include="Resources\Site\img\list_ingredients-32.png" />
     <EmbeddedResource Include="Resources\Site\img\speech_bubble-32.png" />
     <EmbeddedResource Include="Resources\Site\img\statistics-32.png" />
     <EmbeddedResource Include="Resources\Site\img\tree_structure-32.png" />

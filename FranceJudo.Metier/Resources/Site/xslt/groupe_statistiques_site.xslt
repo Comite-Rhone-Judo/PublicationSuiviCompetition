@@ -21,6 +21,9 @@
 	<xsl:variable name="jsPath" select="$SiteRoutes/@urlJs"/>
 	<xsl:variable name="cssPath" select="$SiteRoutes/@urlCss"/>
 	<xsl:variable name="commonPath" select="$SiteRoutes/*/@UrlCommon"/>
+	<!-- Récupération de l'URL des statistiques pour CE groupe -->
+	<xsl:variable name="urlEngagements" select="$SiteRoutes/routeGroupe[@groupe = $idgroupe and @typeGroupe = 'engagement']/@urlGroupe" />
+
 
 	<xsl:variable name="lowercase" select="'abcdefghijklmnopqrstuvwxyz'" />
 	<xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
@@ -76,20 +79,31 @@
 
 					<!-- Bandeau Modernisé -->
 					<div class="tas-competition-bandeau">
-						<h4>
-							<xsl:value-of select="$selectedCompetition/titre"/>
-						</h4>
-						<h5>
-							<xsl:if test="$selectedGroupe/@sexe = 'F'">Féminines,&nbsp;</xsl:if>
-							<xsl:if test="$selectedGroupe/@sexe = 'M'">Masculins,&nbsp;</xsl:if>
-							<xsl:call-template name="LibelleGroupeStructure">
-								<xsl:with-param name="typeGroupe" select="$selectedGroupe/@type"/>
-								<xsl:with-param name="niveauCompetition" select="$niveauCompetition"/>
-								<xsl:with-param name="entiteId" select="$selectedGroupe/@entite"/>
-								<xsl:with-param name="RefData" select="$RefData"/>
-								<xsl:with-param name="avecPrefixe" select="'true'"/>
-							</xsl:call-template>
-						</h5>
+						<div>
+							<h4>
+								<xsl:value-of select="$selectedCompetition/titre"/>
+							</h4>
+							<h5 class="tas-groupe-titre-container">
+								<span>
+									<xsl:if test="$selectedGroupe/@sexe = 'F'">Féminines,&nbsp;</xsl:if>
+									<xsl:if test="$selectedGroupe/@sexe = 'M'">Masculins,&nbsp;</xsl:if>
+									<xsl:call-template name="LibelleGroupeStructure">
+										<xsl:with-param name="typeGroupe" select="$selectedGroupe/@type"/>
+										<xsl:with-param name="niveauCompetition" select="$niveauCompetition"/>
+										<xsl:with-param name="entiteId" select="$selectedGroupe/@entite"/>
+										<xsl:with-param name="RefData" select="$RefData"/>
+										<xsl:with-param name="avecPrefixe" select="'true'"/>
+									</xsl:call-template>
+								</span>
+
+								<!-- Bouton d'accès aux Engagements -->
+								<xsl:if test="$urlEngagements != ''">
+									<a href="{$urlEngagements}" class="w3-button w3-circle tas-icon-btn tas-btn-statistiques" title="Voir les engagements de ce groupe">
+										<img class="tas-theme-icon" src="{$imgPath}list_ingredients-32.png" width="20" />
+									</a>
+								</xsl:if>
+							</h5>
+						</div>
 					</div>
 
 					<div class="w3-padding-small">
@@ -296,7 +310,16 @@
 													</div>
 												</div>
 												<div class="tas-stat-bar" style="background-color: var(--border-color);">
-													<div class="tas-stat-bar fj-bg-blue" style="width:{normalize-space($sStat/@pctVictoireIpponDirect)}%;"></div>
+													<div class="tas-stat-bar fj-bg-blue">
+														<xsl:attribute name="style">
+															<xsl:choose>
+																<xsl:when test="$sStat/@pctVictoireIpponDirect != ''">
+																	width:<xsl:value-of select="normalize-space($sStat/@pctVictoireIpponDirect)"/>%;
+																</xsl:when>
+																<xsl:otherwise>width:0%;</xsl:otherwise>
+															</xsl:choose>
+														</xsl:attribute>
+													</div>
 												</div>
 											</div>
 											<div class="w3-margin-bottom">
@@ -312,7 +335,16 @@
 													</div>
 												</div>
 												<div class="tas-stat-bar" style="background-color: var(--border-color);">
-													<div class="tas-stat-bar fj-bg-blue" style="width:{normalize-space($sStat/@pctVictoireWazaAriAwaseteIppon)}%;"></div>
+													<div class="tas-stat-bar fj-bg-blue">
+														<xsl:attribute name="style">
+															<xsl:choose>
+																<xsl:when test="$sStat/@pctVictoireWazaAriAwaseteIppon != ''">
+																	width:<xsl:value-of select="normalize-space($sStat/@pctVictoireWazaAriAwaseteIppon)"/>%;
+																</xsl:when>
+																<xsl:otherwise>width:0%;</xsl:otherwise>
+															</xsl:choose>
+														</xsl:attribute>
+													</div>
 												</div>
 											</div>
 											<div class="w3-margin-bottom">
@@ -328,7 +360,16 @@
 													</div>
 												</div>
 												<div class="tas-stat-bar" style="background-color: var(--border-color);">
-													<div class="tas-stat-bar fj-bg-blue" style="width:{normalize-space($sStat/@pctVictoireWazaAri)}%;"></div>
+													<div class="tas-stat-bar fj-bg-blue">
+														<xsl:attribute name="style">
+															<xsl:choose>
+																<xsl:when test="$sStat/@pctVictoireWazaAri != ''">
+																	width:<xsl:value-of select="normalize-space($sStat/@pctVictoireWazaAri)"/>%;
+																</xsl:when>
+																<xsl:otherwise>width:0%;</xsl:otherwise>
+															</xsl:choose>
+														</xsl:attribute>
+													</div>
 												</div>
 											</div>
 											<div class="w3-margin-bottom">
@@ -344,7 +385,16 @@
 													</div>
 												</div>
 												<div class="tas-stat-bar" style="background-color: var(--border-color);">
-													<div class="tas-stat-bar fj-bg-blue" style="width:{normalize-space($sStat/@pctVictoireYuko)}%;"></div>
+													<div class="tas-stat-bar fj-bg-blue">
+														<xsl:attribute name="style">
+															<xsl:choose>
+																<xsl:when test="$sStat/@pctVictoireYuko != ''">
+																	width:<xsl:value-of select="normalize-space($sStat/@pctVictoireYuko)"/>%;
+																</xsl:when>
+																<xsl:otherwise>width:0%;</xsl:otherwise>
+															</xsl:choose>
+														</xsl:attribute>
+													</div>
 												</div>
 											</div>
 										</div>
@@ -362,7 +412,16 @@
 													</div>
 												</div>
 												<div class="tas-stat-bar" style="background-color: var(--border-color);">
-													<div class="tas-stat-bar fj-bg-blue" style="width:{normalize-space($sStat/@pctVictoireSogoGachi)}%;"></div>
+													<div class="tas-stat-bar fj-bg-blue">
+														<xsl:attribute name="style">
+															<xsl:choose>
+																<xsl:when test="$sStat/@pctVictoireSogoGachi != ''">
+																	width:<xsl:value-of select="normalize-space($sStat/@pctVictoireSogoGachi)"/>%;
+																</xsl:when>
+																<xsl:otherwise>width:0%;</xsl:otherwise>
+															</xsl:choose>
+														</xsl:attribute>
+													</div>
 												</div>
 											</div>
 											<div class="w3-margin-bottom">
@@ -378,7 +437,16 @@
 													</div>
 												</div>
 												<div class="tas-stat-bar" style="background-color: var(--border-color);">
-													<div class="tas-stat-bar fj-bg-blue" style="width:{normalize-space($sStat/@pctVictoireHansokuMake)}%;"></div>
+													<div class="tas-stat-bar fj-bg-blue">
+														<xsl:attribute name="style">
+															<xsl:choose>
+																<xsl:when test="$sStat/@pctVictoireHansokuMake != ''">
+																	width:<xsl:value-of select="normalize-space($sStat/@pctVictoireHansokuMake)"/>%;
+																</xsl:when>
+																<xsl:otherwise>width:0%;</xsl:otherwise>
+															</xsl:choose>
+														</xsl:attribute>
+													</div>
 												</div>
 											</div>
 											<div class="w3-margin-bottom">
@@ -394,7 +462,16 @@
 													</div>
 												</div>
 												<div class="tas-stat-bar" style="background-color: var(--border-color);">
-													<div class="tas-stat-bar fj-bg-blue" style="width:{normalize-space($sStat/@pctVictoireAbandonForfaitMedical)}%;"></div>
+													<div class="tas-stat-bar fj-bg-blue">
+														<xsl:attribute name="style">
+															<xsl:choose>
+																<xsl:when test="$sStat/@pctVictoireAbandonForfaitMedical != ''">
+																	width:<xsl:value-of select="normalize-space($sStat/@pctVictoireAbandonForfaitMedical)"/>%;
+																</xsl:when>
+																<xsl:otherwise>width:0%;</xsl:otherwise>
+															</xsl:choose>
+														</xsl:attribute>
+													</div>
 												</div>
 											</div>
 											<div class="w3-margin-bottom">
@@ -410,7 +487,16 @@
 													</div>
 												</div>
 												<div class="tas-stat-bar" style="background-color: var(--border-color);">
-													<div class="tas-stat-bar fj-bg-blue" style="width:{normalize-space($sStat/@pctVictoireDecision)}%;"></div>
+													<div class="tas-stat-bar fj-bg-blue">
+														<xsl:attribute name="style">
+															<xsl:choose>
+																<xsl:when test="$sStat/@pctVictoireDecision != ''">
+																	width:<xsl:value-of select="normalize-space($sStat/@pctVictoireDecision)"/>%;
+																</xsl:when>
+																<xsl:otherwise>width:0%;</xsl:otherwise>
+															</xsl:choose>
+														</xsl:attribute>
+													</div>
 												</div>
 											</div>
 										</div>

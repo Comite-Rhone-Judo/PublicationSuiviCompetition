@@ -243,7 +243,7 @@
 		<xsl:param name="niveauCompetition"/>
 
 		<!-- 1. Interrogation du dictionnaire de routage (type: statistique) -->
-		<xsl:variable name="urlGroupe" select="$SiteRoutes//routeGroupe[@groupe = current()/@id and @typeGroupe = 'statistique']/@urlGroupe" />
+		<xsl:variable name="urlGroupe" select="$SiteRoutes/routeGroupe[@groupe = current()/@id and @typeGroupe = 'statistique']/@urlGroupe" />
 		
 		<xsl:variable name="entiteNom">
 			<xsl:call-template name="LibelleGroupeStructure">

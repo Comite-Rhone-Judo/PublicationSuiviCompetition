@@ -26,6 +26,10 @@ namespace AppPublication.Export
 {
     public class ExportSite<TContext> : ExportSiteBase<TContext> where TContext : ExportSharedContextBase
     {
+        #region MEMBRES
+
+        #endregion
+
         #region CONSTRUCTEURS
         public ExportSite(TContext context) : base(context)
         {
@@ -33,20 +37,6 @@ namespace AppPublication.Export
         #endregion
 
         #region METHODES PRIVEES
-
-        /// <summary>
-        /// Ajoute les arguments de structure du site pour les templates xslt
-        /// </summary>
-        /// <param name="argsList">La liste d'argument a actualiser</param>
-        /// <param name="siteStruct">La structure du site</param>
-        /// <param name="targetFile">Le fichier HTML cible</param>
-        protected override void AddStructureArgument<T>(XsltArgumentList argsList, UrlGeneratorBase<T> siteStruct, string targetFile)
-        {
-            SiteUrlGenerator theStruct = siteStruct as SiteUrlGenerator;
-
-            // Ajoute les repertoires de base de la structure
-            base.AddStructureArgument(argsList, siteStruct, targetFile);
-        }
 
         /// <summary>
         /// Génère un fichier de menu spécifique à partir d'un XmlSource classique.
@@ -57,12 +47,12 @@ namespace AppPublication.Export
         /// <param name="docMenu">le document XML du menu</param>
         /// <param name="routingNode">le nœud de routage</param>
         /// <returns>le fichier généré avec son checksum</returns>
-        private FileWithChecksum GenerateMenuFile(ExportEnum exportType, string targetDirectory, SiteUrlGenerator siteStructure, XmlSource docMenu, XElement routingNode)
+        private FileWithChecksum GenerateMenuFile(ExportEnum exportType, string targetDirectory, SiteUrlGenerator siteStructure, XmlSource docMenu)
         {
             string savePath = GetFileSavePath(targetDirectory, exportType);
 
             // Injection du dictionnaire de routage externe
-            var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, ("SiteRoutes", routingNode.CreateNavigator()));
+            var xsltArgs = CreateAllXsltArgs(siteStructure, savePath);
 
             SiteExportEngine.GenererHtmlSite(docMenu, exportType, savePath, xsltArgs);
 
@@ -78,12 +68,12 @@ namespace AppPublication.Export
         /// <param name="docMenu">le document XPath du menu</param>
         /// <param name="routingNode">le nœud de routage</param>
         /// <returns>le fichier généré avec son checksum</returns>
-        private FileWithChecksum GenerateMenuFile(ExportEnum exportType, string targetDirectory, SiteUrlGenerator siteStructure, XPathDocument docMenu, XElement routingNode)
+        private FileWithChecksum GenerateMenuFile(ExportEnum exportType, string targetDirectory, SiteUrlGenerator siteStructure, XPathDocument docMenu)
         {
             string savePath = GetFileSavePath(targetDirectory, exportType);
 
             // Injection du dictionnaire de routage externe
-            var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, ("SiteRoutes", routingNode.CreateNavigator()));
+            var xsltArgs = CreateAllXsltArgs(siteStructure, savePath);
 
             SiteExportEngine.GenererHtmlSite(docMenu, exportType, savePath, xsltArgs);
 
@@ -145,14 +135,8 @@ namespace AppPublication.Export
 
                     ExportEnum exportType = isPoule ? ExportEnum.Site_Poule_Resultat : ExportEnum.Site_Tableau_Competition;
                     string savePath = GetFileSavePath(targetDirectory, exportType);
-                    string fullHtmlPath = $"{savePath}.html";
-
-                    // --- NOUVEAU : Routage ---
-                    XElement routingNode = GenerateSiteRoutes(ctx, siteStructure, fullHtmlPath, false);
-                    LogTools.DebugLogData(routingNode);
 
                     var phaseParams = new List<(string, object)>();
-                    phaseParams.Add(("SiteRoutes", routingNode.CreateNavigator())); // Injection ici
 
                     if (isPoule)
                     {
@@ -161,7 +145,7 @@ namespace AppPublication.Export
                         phaseParams.Add(("tailleMaxPouleColonne", config.TailleMaxPouleColonnes));
                     }
 
-                    // Utilisation de la fabrique (AddStructureArgument est inclus dedans)
+                    // Utilisation de la fabrique 
                     var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, phaseParams.ToArray());
 
                     XDocument outDoc = ExportXML.CreateDocumentPhase(ctx, vueEpreuve, phase);
@@ -189,16 +173,10 @@ namespace AppPublication.Export
 
                         ExportEnum exportType = ExportEnum.Site_FeuilleCombat;
                         string savePath = GetFileSavePath(targetDirectory, exportType);
-                        string fullHtmlPath = $"{savePath}.html";
 
-                        // --- NOUVEAU : Routage ---
-                        XElement routingNode = GenerateSiteRoutes(ctx, siteStructure, fullHtmlPath, false);
-                        LogTools.DebugLogData(routingNode);
 
                         var xsltArgs = CreateAllXsltArgs(siteStructure, savePath,
-                            ("istapis", "epreuve"),
-                            ("SiteRoutes", routingNode.CreateNavigator()) // Injection ici
-                        );
+                            ("istapis", "epreuve"));
 
                         XDocument outDoc = ExportXML.CreateDocumentFeuilleCombat(ctx, phase, null);
                         ctx.EnrichWithFullContext(outDoc);
@@ -265,13 +243,7 @@ namespace AppPublication.Export
 
                 // Utilisation de la méthode mutualisée pour le chemin
                 string savePath = GetFileSavePath(targetDirectory, exportType);
-                string fullHtmlPath = $"{savePath}.html";
-
-                // --- NOUVEAU : Génération et injection du dictionnaire de routage ---
-                XElement routingNode = GenerateSiteRoutes(ctx, siteStructure, fullHtmlPath, false);
-                LogTools.DebugLogData(routingNode);
-
-                var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, ("SiteRoutes", routingNode.CreateNavigator()));
+                var xsltArgs = CreateAllXsltArgs(siteStructure, savePath);
 
 
                 // 1. Génération du document de base
@@ -331,11 +303,6 @@ namespace AppPublication.Export
 
                 // Construction du chemin pour le répertoire commun
                 string savePath = GetFileSavePath(targetDirectory, exportType);
-                string fullHtmlPath = $"{savePath}.html";
-
-                // --- NOUVEAU : Génération du dictionnaire de routage ---
-                XElement routingNode = GenerateSiteRoutes(ctx, siteStructure, fullHtmlPath, false);
-                LogTools.DebugLogData(routingNode);
 
                 bool useIntituleCommun = DC.Organisation.Competitions.Count > 1
                          && ctx.Config.UseIntituleCommun
@@ -343,9 +310,7 @@ namespace AppPublication.Export
 
                 var xsltArgs = CreateAllXsltArgs(siteStructure, savePath,
                                     ("istapis", "alltapis"),
-                                    ("useIntituleCommun", useIntituleCommun.ToString().ToLower()),
-                                    ("SiteRoutes", routingNode.CreateNavigator())
-                                );
+                                    ("useIntituleCommun", useIntituleCommun.ToString().ToLower()));
 
                 // 1. Génération du document (Utilise notre version optimisée de CreateDocumentFeuilleCombat)
                 // Les paramètres null, null indiquent qu'on veut tous les tapis et toutes les phases.
@@ -411,10 +376,8 @@ namespace AppPublication.Export
                 string indexFilename = SiteExportEngine.GetSanitizedFileName(indexType);
                 string indexSavePath = Path.Combine(siteStructure.PhysicalStructure.RepertoireCommon(), indexFilename);
                 string fullIndexHtmlPath = $"{indexSavePath}.html";
-                XElement routingNode = GenerateSiteRoutes(ctx, siteStructure, fullIndexHtmlPath, false);
-                LogTools.DebugLogData(routingNode);
 
-                var indexArgs = CreateAllXsltArgs(siteStructure, indexSavePath, ("SiteRoutes", routingNode.CreateNavigator()));
+                var indexArgs = CreateAllXsltArgs(siteStructure, indexSavePath);
 
                 using (var source = new XmlSource(outDoc))
                 {
@@ -494,7 +457,6 @@ namespace AppPublication.Export
 
             // Le répertoire cible est défini une seule fois pour tous les menus (racine du site)
             string targetDirectory = siteStructure.PhysicalStructure.RepertoireCommon();
-            string sourcePhysicalFile = Path.Combine(targetDirectory, "menu.html");
 
             // 1. Création du document XML de base
             XDocument outDoc = ExportXML.CreateDocumentMenu(ctx, siteStructure, config.PublierEngagements, config.PublierStatistiques);
@@ -503,37 +465,33 @@ namespace AppPublication.Export
             ctx.EnrichWithConfiguration(outDoc);
             LogTools.DebugLogData(outDoc);
 
-            // 2. Génération du dictionnaire de routage C# indépendant
-            XElement routingNode = GenerateSiteRoutes(ctx, siteStructure, sourcePhysicalFile);
-            LogTools.DebugLogData(routingNode);
-
             using (var source = new XmlSource(outDoc))
             {
-                output.Add(GenerateMenuFile(ExportEnum.Site_MenuClassement, targetDirectory, siteStructure, source, routingNode));
+                output.Add(GenerateMenuFile(ExportEnum.Site_MenuClassement, targetDirectory, siteStructure, source));
                 progress?.Report(BatchProgressInfo.Step(++currentStep));
 
                 // 3. Génération des menus de base (toujours présents)
-                output.Add(GenerateMenuFile(ExportEnum.Site_MenuAvancement, targetDirectory, siteStructure, source, routingNode));
+                output.Add(GenerateMenuFile(ExportEnum.Site_MenuAvancement, targetDirectory, siteStructure, source));
                 progress?.Report(BatchProgressInfo.Step(++currentStep));
 
                 // 4. Génération du menu des prochains combats
                 if (config.PublierProchainsCombats)
                 {
-                    output.Add(GenerateMenuFile(ExportEnum.Site_MenuProchainCombats, targetDirectory, siteStructure, source, routingNode));
+                    output.Add(GenerateMenuFile(ExportEnum.Site_MenuProchainCombats, targetDirectory, siteStructure, source));
                     progress?.Report(BatchProgressInfo.Step(++currentStep));
                 }
 
                 // 5. Génération du menu des engagements
                 if (config.PublierEngagements)
                 {
-                    output.Add(GenerateMenuFile(ExportEnum.Site_MenuEngagements, targetDirectory, siteStructure, source, routingNode));
+                    output.Add(GenerateMenuFile(ExportEnum.Site_MenuEngagements, targetDirectory, siteStructure, source));
                     progress?.Report(BatchProgressInfo.Step(++currentStep));
                 }
 
                 // 6. Génération du menu des statistiques (optionnel)
                 if (config.PublierStatistiques)
                 {
-                    output.Add(GenerateMenuFile(ExportEnum.Site_MenuStatistiques, targetDirectory, siteStructure, source, routingNode));
+                    output.Add(GenerateMenuFile(ExportEnum.Site_MenuStatistiques, targetDirectory, siteStructure, source));
                     progress?.Report(BatchProgressInfo.Step(++currentStep));
                 }
             }
@@ -576,15 +534,9 @@ namespace AppPublication.Export
 
             // Appel unifié avec notre méthode utilitaire
             string savePath = GetFileSavePath(targetDirectory, exportType);
-            // Le chemin physique final réel (avec extension)
-            string fullHtmlPath = $"{savePath}.html";
-
-            // 1. Génération du dictionnaire de routage indépendant
-            XElement routingNode = GenerateSiteRoutes(ctx, siteStructure, fullHtmlPath, false);
-            LogTools.DebugLogData(routingNode);
 
             // 2. Injection du dictionnaire dans les paramètres XSLT
-            var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, ("SiteRoutes", routingNode.CreateNavigator()));
+            var xsltArgs = CreateAllXsltArgs(siteStructure, savePath);
 
             // Génération du document et enrichissement via le contexte
             XDocument outDoc = ExportXML.CreateDocumentAffectationTapis(ctx);
@@ -646,12 +598,6 @@ namespace AppPublication.Export
                 return output; // Retourne une liste vide si le document n'est pas disponible
             }
 
-            string dummyId = grps.FirstOrDefault()?.Id ?? "0";
-            string dummySourcePath = Path.Combine(siteStructure.PhysicalStructure.RepertoireGroupeEngagements(dummyId), "page.html");
-
-            XElement routingNode = GenerateSiteRoutes(ctx, siteStructure, dummySourcePath, true);
-            LogTools.DebugLogData(routingNode);
-
             int currentStep = 0;
 
             // Remplacement de la boucle 'for' par un 'foreach' plus lisible
@@ -663,9 +609,7 @@ namespace AppPublication.Export
 
                 var xsltArgs = CreateAllXsltArgs(siteStructure, savePath,
                     ("idgroupe", grp.Id),
-                    ("idcompetition", grp.Competition),
-                    ("SiteRoutes", routingNode.CreateNavigator())
-                );
+                    ("idcompetition", grp.Competition));
 
                 // Transformation HTML à partir du document contextuel
                 SiteExportEngine.GenererHtmlSite(xpathEngagements, exportType, savePath, xsltArgs);
@@ -727,14 +671,7 @@ namespace AppPublication.Export
                 return output;
             }
 
-            string dummyId = grps.FirstOrDefault()?.Id ?? "0";
-            string dummySourcePath = Path.Combine(siteStructure.PhysicalStructure.RepertoireGroupeStatistiques(dummyId), "page.html");
-
-            XElement routingNode = GenerateSiteRoutes(ctx, siteStructure, dummySourcePath, false);
-            LogTools.DebugLogData(routingNode);
-
             int currentStep = 0;
-
             foreach (var grp in grps)
             {
                 // Détermination du répertoire cible dynamique pour ce groupe de statistiques
@@ -743,8 +680,7 @@ namespace AppPublication.Export
 
                 var xsltArgs = CreateAllXsltArgs(siteStructure, savePath,
                     ("idgroupe", grp.Id),
-                    ("idcompetition", grp.Competition),
-                    ("SiteRoutes", routingNode.CreateNavigator())
+                    ("idcompetition", grp.Competition)
                 );
 
                 // Transformation HTML à partir du document contextuel
@@ -767,31 +703,29 @@ namespace AppPublication.Export
         /// Génère un dictionnaire de routage XML indépendant contenant toutes les URLs pré-calculées du site.
         /// Ce dictionnaire est destiné à être injecté en tant que paramètre XSLT.
         /// </summary>
-        private XElement GenerateSiteRoutes(ExportSharedContext ctx, SiteUrlGenerator siteStructure, string sourcePhysicalFile, bool includeGroupes = true)
+        protected override XElement GenerateSiteRoutesNode<T>(UrlGeneratorBase<T> siteStruct, string sourcePhysicalFile)
         {
-            XElement rootRoutes = new XElement(ConstantXML.Routing_SiteRoutes);
+            // 1. Récupération des routes transversales (CSS, JS, IMG)
+            XElement rootRoutes = base.GenerateSiteRoutesNode(siteStruct, sourcePhysicalFile);
+
+            SiteUrlGenerator urlGen = siteStruct as SiteUrlGenerator;
+            var ctx = _context as ExportSharedContext;
 
             // Récupération des caches O(1) depuis le contexte
             IJudoData DC = ctx.DataContext;
             var phasesByEpreuve = DC.Deroulement.Phases.ToLookup(p => p.epreuve);
 
             // --- NOUVEAU : Ajout des chemins globaux à la racine du routage via ConstantXML ---
-            string commonWebPath = siteStructure.GetRelativeWebPath(sourcePhysicalFile, siteStructure.PhysicalStructure.RepertoireCommon(), true);
-            string imgWebPath = siteStructure.GetRelativeWebPath(sourcePhysicalFile, siteStructure.PhysicalStructure.RepertoireImg(), true);
-            string jsWebPath = siteStructure.GetRelativeWebPath(sourcePhysicalFile, siteStructure.PhysicalStructure.RepertoireJs(), true);
-            string cssWebPath = siteStructure.GetRelativeWebPath(sourcePhysicalFile, siteStructure.PhysicalStructure.RepertoireCss(), true);
+            string commonWebPath = urlGen.GetRelativeWebPath(sourcePhysicalFile, urlGen.PhysicalStructure.RepertoireCommon(), true);
 
             rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlCommon, commonWebPath));
-            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlImg, imgWebPath));
-            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlJs, jsWebPath));
-            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlCss, cssWebPath));
-            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlSePrepare, siteStructure.GetRelativeUrlSePrepare(sourcePhysicalFile)));
-            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlProchainsCombats, siteStructure.GetRelativeUrlProchainsCombats(sourcePhysicalFile)));
-            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlAffectationTapis, siteStructure.GetRelativeUrlAffectationTapis(sourcePhysicalFile)));
-            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlAvancement, siteStructure.GetRelativeUrlAvancement(sourcePhysicalFile)));
-            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlClassement, siteStructure.GetRelativeUrlClassement(sourcePhysicalFile)));
-            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlEngagements, siteStructure.GetRelativeUrlMenuEngagements(sourcePhysicalFile)));
-            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlStatistiques, siteStructure.GetRelativeUrlMenuStatistiques(sourcePhysicalFile)));
+            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlSePrepare, urlGen.GetRelativeUrlSePrepare(sourcePhysicalFile)));
+            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlProchainsCombats, urlGen.GetRelativeUrlProchainsCombats(sourcePhysicalFile)));
+            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlAffectationTapis, urlGen.GetRelativeUrlAffectationTapis(sourcePhysicalFile)));
+            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlAvancement, urlGen.GetRelativeUrlAvancement(sourcePhysicalFile)));
+            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlClassement, urlGen.GetRelativeUrlClassement(sourcePhysicalFile)));
+            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlEngagements, urlGen.GetRelativeUrlMenuEngagements(sourcePhysicalFile)));
+            rootRoutes.Add(new XAttribute(ConstantXML.Routing_UrlStatistiques, urlGen.GetRelativeUrlMenuStatistiques(sourcePhysicalFile)));
 
             // =========================================================================
             // 1. ROUTES DES COMPETITIONS, EPREUVES ET LEURS PHASES
@@ -809,8 +743,8 @@ namespace AppPublication.Export
 
                 foreach (var epreuve in epreuvesFiltrees)
                 {
-                    string targetPhysicalDir = siteStructure.PhysicalStructure.RepertoireEpreuve(epreuve.id.ToString(), epreuve.nom);
-                    string webPath = siteStructure.GetRelativeWebPath(sourcePhysicalFile, targetPhysicalDir, true);
+                    string targetPhysicalDir = urlGen.PhysicalStructure.RepertoireEpreuve(epreuve.id.ToString(), epreuve.nom);
+                    string webPath = urlGen.GetRelativeWebPath(sourcePhysicalFile, targetPhysicalDir, true);
 
                     string classementFichier = SiteExportEngine.GetSanitizedFileName(ExportEnum.Site_ClassementFinal);
                     string prochainsCombatsFichier = SiteExportEngine.GetSanitizedFileName(ExportEnum.Site_FeuilleCombat);
@@ -860,13 +794,13 @@ namespace AppPublication.Export
             // =========================================================================
             // 2. ROUTES DES GROUPES (Engagements)
             // =========================================================================
-            if (includeGroupes && ctx.Config.PublierEngagements)
+            if (ctx.Config.PublierEngagements)
             {
                 string fileNameEngagements = SiteExportEngine.GetSanitizedFileName(ExportEnum.Site_Engagements);
                 foreach (var grp in ctx.ExtendedDataContext.Engagement.GroupesEngages)
                 {
-                    string targetPhysicalDir = siteStructure.PhysicalStructure.RepertoireGroupeEngagements(grp.Id);
-                    string webPath = siteStructure.GetRelativeWebPath(sourcePhysicalFile, targetPhysicalDir, true);
+                    string targetPhysicalDir = urlGen.PhysicalStructure.RepertoireGroupeEngagements(grp.Id);
+                    string webPath = urlGen.GetRelativeWebPath(sourcePhysicalFile, targetPhysicalDir, true);
 
                     rootRoutes.Add(new XElement(ConstantXML.Routing_RouteGroupe,
                         new XAttribute(ConstantXML.Routing_GroupeId, grp.Id),
@@ -879,13 +813,13 @@ namespace AppPublication.Export
             // =========================================================================
             // 3. ROUTES DES GROUPES (Statistiques)
             // =========================================================================
-            if (includeGroupes && ctx.Config.PublierStatistiques)
+            if (ctx.Config.PublierStatistiques)
             {
                 string fileNameStats = SiteExportEngine.GetSanitizedFileName(ExportEnum.Site_Statistiques);
                 foreach (var grp in ctx.ExtendedDataContext.StatistiquesCombats.GroupesStatistiques)
                 {
-                    string targetPhysicalDir = siteStructure.PhysicalStructure.RepertoireGroupeStatistiques(grp.Id);
-                    string webPath = siteStructure.GetRelativeWebPath(sourcePhysicalFile, targetPhysicalDir, true);
+                    string targetPhysicalDir = urlGen.PhysicalStructure.RepertoireGroupeStatistiques(grp.Id);
+                    string webPath = urlGen.GetRelativeWebPath(sourcePhysicalFile, targetPhysicalDir, true);
 
                     rootRoutes.Add(new XElement(ConstantXML.Routing_RouteGroupe,
                         new XAttribute(ConstantXML.Routing_GroupeId, grp.Id),
@@ -894,6 +828,8 @@ namespace AppPublication.Export
                     ));
                 }
             }
+
+            LogTools.DebugLogData(rootRoutes);
 
             return rootRoutes;
         }

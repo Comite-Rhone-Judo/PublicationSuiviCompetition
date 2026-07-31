@@ -143,7 +143,7 @@
 	<xsl:template name="classement_epreuve" match="epreuve">
 		<!-- Simplification totale pour un design iOS cliquable -->
 		<xsl:variable name="idEpreuve" select="@ID" />
-		<xsl:variable name="urlClassement" select="$SiteRoutes//routeEpreuve[@epreuve = $idEpreuve]/@urlClassement" />
+		<xsl:variable name="urlClassement" select="$SiteRoutes/routeEpreuve[@epreuve = $idEpreuve]/@urlClassement" />
 		
 		<a class="ios-list-item" href="{$urlClassement}">
 			<xsl:value-of select="./@libelle"/>

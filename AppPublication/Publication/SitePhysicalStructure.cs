@@ -115,7 +115,7 @@ namespace AppPublication.Publication
         /// </summary>
         /// <param name="absoluteFilePath">Le chemin absolu du fichier</param>
         /// <returns>Le chemin relatif propre (ex: "css\style.css")</returns>
-        public string GetRelativePath(string absoluteFilePath)
+        public override string GetRelativePath(string absoluteFilePath)
         {
             if (string.IsNullOrWhiteSpace(absoluteFilePath))
                 return string.Empty;
@@ -123,8 +123,6 @@ namespace AppPublication.Publication
             // Utilisation native de .NET 10
             return Path.GetRelativePath(RepertoireCompetition, absoluteFilePath);
         }
-
-
         #endregion
     }
 }

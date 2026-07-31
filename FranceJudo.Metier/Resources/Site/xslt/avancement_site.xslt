@@ -160,7 +160,7 @@
 						</xsl:choose>
 					</xsl:variable>
 					<xsl:variable name="idPhase" select="./@id" />
-					<xsl:variable name="urlAvancement" select="$SiteRoutes//routePhase[@epreuve = $idEpreuve and @phase = $idPhase]/@urlAvancement" />
+					<xsl:variable name="urlAvancement" select="$SiteRoutes/routePhase[@epreuve = $idEpreuve and @phase = $idPhase]/@urlAvancement" />
 					
 					<xsl:choose>
 						<xsl:when test="$etat &gt;= 2">
@@ -212,7 +212,7 @@
 								</xsl:choose>
 							</xsl:variable>
 							<xsl:variable name="idPhase" select="./@id" />
-							<xsl:variable name="urlAvancement" select="$SiteRoutes//routePhase[@epreuve = $idEpreuve and @phase = $idPhase]/@urlAvancement" />
+							<xsl:variable name="urlAvancement" select="$SiteRoutes/routePhase[@epreuve = $idEpreuve and @phase = $idPhase]/@urlAvancement" />
 
 							<xsl:choose>
 								<xsl:when test="$etat &gt;= 2">

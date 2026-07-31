@@ -96,7 +96,7 @@
 				<!-- CONTENU -->
 
 				<!-- Récupération de l'URL des statistiques pour CE groupe -->
-				<xsl:variable name="urlStatistiques" select="$SiteRoutes//routeGroupe[@groupe = $idgroupe and @typeGroupe = 'statistique']/@urlGroupe" />
+				<xsl:variable name="urlStatistiques" select="$SiteRoutes/routeGroupe[@groupe = $idgroupe and @typeGroupe = 'statistique']/@urlGroupe" />
 				
 				<!-- Nom de la competition + Groupe (Modernisé) -->
 				<!-- Nom de la competition + Groupe (Modernisé avec Flexbox) -->
@@ -237,7 +237,7 @@
 							<xsl:variable name="idEpreuve" select="@ID"/>
 
 							<!-- Récupération de l'URL de la phase active pour CETTE épreuve -->
-							<xsl:variable name="urlAvancement" select="$SiteRoutes//routeEpreuve[@epreuve = $idEpreuve]/@urlAvancement" />
+							<xsl:variable name="urlAvancement" select="$SiteRoutes/routeEpreuve[@epreuve = $idEpreuve]/@urlAvancement" />
 							
 							<xsl:variable name="nbCombatsJudokaEpreuve">
 								<xsl:choose>
