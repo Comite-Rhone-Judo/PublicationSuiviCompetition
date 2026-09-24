@@ -235,8 +235,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Helpers
         private string GetValue(string propertyName)
         {
             Type type = _object.GetType();
-            PropertyInfo pi = type.GetProperty(propertyName);
-            if (pi == null) throw new ArgumentException("Property " + propertyName + " not found for type " + type);
+            PropertyInfo pi = type.GetProperty(propertyName) ?? throw new ArgumentException("Property " + propertyName + " not found for type " + type);
             object o = pi.GetValue(_object, null);
             if (o == null)
                 return string.Empty;

@@ -23,8 +23,8 @@ namespace KernelImpl.Noyau.Organisation
             this.siteInternet = "";
             this.remoteId = "";
             this.codeAcces = "";
-            this.type = 2;
-            this.type2 = 2;
+            this.type = CompetitionTypeEnum.Individuel;
+            this.type2 = CompetitionType2Enum.Officielle;
             this.discipline = CompetitionDisciplineEnum.Judo.ToString2();
             this.nbTapis = 6;
             this.tempsCombat = 600;
@@ -53,8 +53,8 @@ namespace KernelImpl.Noyau.Organisation
 
         public string remoteId { get; set; }
         public string codeAcces { get; set; }
-        public int type { get; set; }
-        public int type2 { get; set; }
+        public CompetitionTypeEnum type { get; set; }
+        public CompetitionType2Enum type2 { get; set; }
 
         private string _discipline;
         private CompetitionDisciplineEnum _disciplineEnum;
@@ -105,10 +105,14 @@ namespace KernelImpl.Noyau.Organisation
 
             this.id = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_ID));
 
+            this.tempsCombat = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_TempsCombat));
+            this.siteInternet = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_SiteInternet));
+            this.codeAcces = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_CodeAcces));
+
             this.date = XMLTools.LectureDate(xinfo.Attribute(ConstantXML.Competition_Date), "ddMMyyyy", DateTime.Now);
             this.remoteId = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_RemoteID));
-            this.type = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_Type));
-            this.type2 = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_Type2));
+            this.type = (CompetitionTypeEnum)XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_Type));
+            this.type2 = (CompetitionType2Enum)XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Competition_Type2));
 
             this.discipline = XMLTools.LectureString(xinfo.Attribute(ConstantXML.Competition_Discipline));
 
@@ -135,8 +139,8 @@ namespace KernelImpl.Noyau.Organisation
             xcompetition.SetAttributeValue(ConstantXML.Competition_ID, id.ToString());
             xcompetition.SetAttributeValue(ConstantXML.Competition_RemoteID, remoteId.ToString());
             xcompetition.SetAttributeValue(ConstantXML.Competition_Date, date.ToString("ddMMyyyy"));
-            xcompetition.SetAttributeValue(ConstantXML.Competition_Type, type.ToString());
-            xcompetition.SetAttributeValue(ConstantXML.Competition_Type2, type2.ToString());
+            xcompetition.SetAttributeValue(ConstantXML.Competition_Type, (int) type);
+            xcompetition.SetAttributeValue(ConstantXML.Competition_Type2, (int) type2);
 
             xcompetition.SetAttributeValue(ConstantXML.Competition_Discipline, discipline);
             xcompetition.SetAttributeValue(ConstantXML.Competition_DisciplineId, (int)disciplineId);
@@ -154,35 +158,39 @@ namespace KernelImpl.Noyau.Organisation
             xcompetition.SetAttributeValue(ConstantXML.Competition_Tapis, nbTapis.ToString());
             xcompetition.SetAttributeValue(ConstantXML.Competition_TempsMedical, tempsMedical.ToString());
 
+            xcompetition.SetAttributeValue(ConstantXML.Competition_TempsCombat, tempsCombat);
+            xcompetition.SetAttributeValue(ConstantXML.Competition_SiteInternet, siteInternet ?? string.Empty);
+            xcompetition.SetAttributeValue(ConstantXML.Competition_CodeAcces, codeAcces ?? string.Empty);
+
             xcompetition.Add(new XElement(ConstantXML.Competition_Titre, nom));
             xcompetition.Add(new XElement(ConstantXML.Competition_Lieu, lieu));
-            xcompetition.SetAttributeValue(ConstantXML.Competition_ReglementEquipe, reglementEquipe.ToString());
+            xcompetition.SetAttributeValue(ConstantXML.Competition_ReglementEquipe, (int) reglementEquipe);
             return xcompetition;
         }
 
 
         public bool IsOfficielle()
         {
-            return this.type2 == 2;
+            return this.type2 == CompetitionType2Enum.Officielle;
         }
 
         public bool IsProLeague()
         {
-            return this.type2 == 3;
+            return this.type2 == CompetitionType2Enum.ProLeague;
         }
         public bool IsIndividuelle()
         {
-            return this.type == (int)CompetitionTypeEnum.Individuel;
+            return this.type == CompetitionTypeEnum.Individuel;
         }
 
         public bool IsShiai()
         {
-            return this.type == (int)CompetitionTypeEnum.Shiai;
+            return this.type == CompetitionTypeEnum.Shiai;
         }
 
         public bool IsEquipe()
         {
-            return this.type == (int)CompetitionTypeEnum.Equipe;
+            return this.type == CompetitionTypeEnum.Equipe;
         }
 
 

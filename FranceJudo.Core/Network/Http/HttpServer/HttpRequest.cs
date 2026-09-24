@@ -244,8 +244,10 @@ namespace FranceJudo.Core.Network.Http.HttpServer
         {
             // this method was mainly created for testing.
             // dont use it that much...
-            var request = new HttpRequest();
-            request.Method = _method;
+            var request = new HttpRequest
+            {
+                Method = _method
+            };
             if (AcceptTypes != null)
             {
                 request.AcceptTypes = new string[AcceptTypes.Length];

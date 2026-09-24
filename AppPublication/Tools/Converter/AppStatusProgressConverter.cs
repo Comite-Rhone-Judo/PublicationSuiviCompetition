@@ -28,7 +28,7 @@ namespace AppPublication.Tools.Converter
                 // 8 - Arbitres (Dem/Rep)
 
                 // Nombre d'etapes declare dans l'enum
-                int nbStep = (int)System.Enum.GetValues(typeof(BusyStatusEnum)).Cast<BusyStatusEnum>().Max() + 1;
+                int nbStep = (int)System.Enum.GetValues<BusyStatusEnum>().Cast<BusyStatusEnum>().Max() + 1;
 
                 if (statusVal >= 0)
                 {

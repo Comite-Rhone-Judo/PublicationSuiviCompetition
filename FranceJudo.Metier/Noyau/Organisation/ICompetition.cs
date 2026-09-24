@@ -16,8 +16,8 @@ namespace FranceJudo.Metier.Noyau.Organisation
 
         public string remoteId { get; set; }
         public string codeAcces { get; set; }
-        public int type { get; set; }
-        public int type2 { get; set; }
+        public CompetitionTypeEnum type { get; set; }
+        public CompetitionType2Enum type2 { get; set; }
 
         public string discipline { get; set; }
 

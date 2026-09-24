@@ -66,7 +66,7 @@ namespace KernelImpl.Noyau.Organisation
             xrencontre.SetAttributeValue(ConstantXML.Epreuve_Equipe_AnneeMin, anneeMin);
             xrencontre.SetAttributeValue(ConstantXML.Epreuve_Equipe_AnneeMax, anneeMax);
             xrencontre.SetAttributeValue(ConstantXML.Epreuve_Equipe_EpreuveRef, epreuveRef);
-            xrencontre.SetAttributeValue(ConstantXML.Epreuve_Equipe_Type, type);
+            xrencontre.SetAttributeValue(ConstantXML.Epreuve_Equipe_Type, (int) type);
 
             return xrencontre;
         }

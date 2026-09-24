@@ -28,8 +28,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.FormDecoders
             if (_decoders.Count == 0 && _defaultDecoder == null)
                 return HttpForm.EmptyForm;
 
-            if (encoding == null)
-                encoding = Encoding.UTF8;
+            encoding ??= Encoding.UTF8;
             if (stream == null || !stream.CanRead)
                 throw new ArgumentException("Stream is null or not readable.");
 

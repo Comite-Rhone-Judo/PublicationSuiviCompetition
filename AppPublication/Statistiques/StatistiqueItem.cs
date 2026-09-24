@@ -6,10 +6,11 @@ namespace AppPublication.Statistiques
     public abstract class StatistiqueItem : NotificationBase
     {
         #region CONSTRUCTEUR
-        public StatistiqueItem(string name, string libelle)
+        public StatistiqueItem(string name, string libelle, string unite = "")
         {
             Nom = name;
             Libelle = libelle;
+            Unite = unite;
         }
 
         #endregion
@@ -58,6 +59,12 @@ namespace AppPublication.Statistiques
             }
         }
 
+        private string _unite = string.Empty;
+        public string Unite
+        {
+            get { return _unite; }
+            protected set { _unite = value; NotifyPropertyChanged(); }
+        }
 
         private float? _max = null;
         public float? Max

@@ -62,22 +62,23 @@ namespace FranceJudo.Core.Export
         private static void ExecuteTransform(string fileSave, string xslt_st, AssemblyResourceDictionary resDict, string fileExtension, bool useCache, Action<XslCompiledTransform, FileStream> transformAction)
         {
             XslCompiledTransform xslt = null;
-
-            if (useCache)
-            {
-                var lazyXslt = _xsltCache.GetOrAdd(xslt_st, key => new Lazy<XslCompiledTransform>(() => GetXsltFromResource(key, resDict)));
-                xslt = lazyXslt.Value;
-            }
-            else
-            {
-                // Lit directement sans passer par le cache
-                xslt = GetXsltFromResource(xslt_st, resDict);
-            }
-
-            string fileSaveWithExt = Path.ChangeExtension(fileSave, fileExtension);
+            string fileSaveWithExt = string.Empty;
 
             try
             {
+
+                if (useCache)
+                {
+                    var lazyXslt = _xsltCache.GetOrAdd(xslt_st, key => new Lazy<XslCompiledTransform>(() => GetXsltFromResource(key, resDict)));
+                    xslt = lazyXslt.Value;
+                }
+                else
+                {
+                    // Lit directement sans passer par le cache
+                    xslt = GetXsltFromResource(xslt_st, resDict);
+                }
+
+                fileSaveWithExt = Path.ChangeExtension(fileSave, fileExtension);
                 FileSystemHelper.NeedAccessFile(fileSaveWithExt);
                 using (FileStream fs = new FileStream(fileSaveWithExt, FileMode.Create))
                 {
@@ -88,11 +89,11 @@ namespace FranceJudo.Core.Export
             catch (TimeoutException tex)
             {
                 // C'est fréquent donc on ne va pas polluer en mode normal, on ne trace qu'en mode debug
-                LogTools.Logger.Debug(tex, $"Le fichier '{fileSaveWithExt}' est actuellement utilise par un autre processus et n'a pas pu etre accede dans le delai imparti.");
+                LogTools.Logger?.Debug(tex, $"Le fichier '{fileSaveWithExt}' est actuellement utilise par un autre processus et n'a pas pu etre accede dans le delai imparti.");
             }
             catch (Exception ex)
             {
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
             finally
             {

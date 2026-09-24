@@ -112,7 +112,7 @@ namespace FranceJudo.Core.Network.Http
             }
             catch (Exception ex)
             {
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
         }
         #endregion
@@ -136,7 +136,7 @@ namespace FranceJudo.Core.Network.Http
                     FindAvailablePort(PortMin, PortMax);
 
                     // Ecoute sur l'adresse specifiee, sur toutes sinon
-                    IPAddress adr = (ListeningIpAddress != null) ? ListeningIpAddress : IPAddress.Any;
+                    IPAddress adr = ListeningIpAddress ?? IPAddress.Any;
 
                     // Demarre le serveur d'ecoute (les modules doivent etre ajoutes avant)
                     _server.Start(adr, _port);
@@ -145,7 +145,7 @@ namespace FranceJudo.Core.Network.Http
             catch (Exception ex)
             {
                 _isStart = false;
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
         }
 
@@ -161,7 +161,7 @@ namespace FranceJudo.Core.Network.Http
             }
             catch (Exception ex)
             {
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
         }
 
@@ -196,7 +196,7 @@ namespace FranceJudo.Core.Network.Http
         /// <param name="module"></param>
         public void AddModule(object module)
         {
-            if (!(module is HttpModule)) { throw new ArgumentException("Le module doit etre de type HttpModule", nameof(module)); }
+            if (module is not HttpModule) { throw new ArgumentException("Le module doit etre de type HttpModule", nameof(module)); }
 
             AddModule(module as HttpModule);
         }
@@ -214,7 +214,7 @@ namespace FranceJudo.Core.Network.Http
                 try
                 {
                     //LogTools.Trace("GestionSite PORT " + port, LogTools.Level.DEBUG);
-                    IPAddress adr = (ListeningIpAddress != null) ? ListeningIpAddress : IPAddress.Any;
+                    IPAddress adr = ListeningIpAddress ?? IPAddress.Any;
                     // HttpListener listener = HttpListener.Create(System.Net.IPAddress.Any, port);
                     HttpListener listener = HttpListener.Create(adr, port);
 
@@ -223,7 +223,7 @@ namespace FranceJudo.Core.Network.Http
                     listener.Stop();
 
                     freePort = true;
-                    LogTools.Logger.Debug($"Port d'ecoute disponible: {port}");
+                    LogTools.Logger?.Debug($"Port d'ecoute disponible: {port}");
                 }
                 catch /*(Exception ex)*/
                 {
@@ -235,7 +235,7 @@ namespace FranceJudo.Core.Network.Http
 
             if (!freePort)
             {
-                LogTools.Logger.Error("Impossible de trouver un port disponible");
+                LogTools.Logger?.Error("Impossible de trouver un port disponible");
                 throw new ArgumentOutOfRangeException("Impossible de trouver un port disponible");
             }
 

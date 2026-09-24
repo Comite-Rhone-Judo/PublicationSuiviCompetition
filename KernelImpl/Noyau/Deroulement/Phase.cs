@@ -22,7 +22,7 @@ namespace KernelImpl.Noyau.Deroulement
 
         public int id { get; set; }
         public string libelle { get; set; }
-        public int typePhase { get; set; }
+        public TypePhaseEnum typePhase { get; set; }
         public int nbPoules { get; set; }
         public int niveauRepechage { get; set; }
         public bool bresilien { get; set; }
@@ -30,7 +30,7 @@ namespace KernelImpl.Noyau.Deroulement
         public int suivant { get; set; }
         public Nullable<int> epreuve { get; set; }
         public int niveauRepeches { get; set; }
-        public int etat { get; set; }
+        public EtatPhaseEnum etat { get; set; }
         public int nbCombatsFinalistes { get; set; }
         public int nbCombatsTotal { get; set; }
         public int nbJudoka { get; set; }
@@ -46,6 +46,7 @@ namespace KernelImpl.Noyau.Deroulement
         public int niveauRepechage2 { get; set; }
         public int niveauRepeches2 { get; set; }
 
+        public int ordre { get; set; }
 
         public i_vue_epreuve_interface GetVueEpreuve(IJudoData DC)
         {
@@ -68,8 +69,8 @@ namespace KernelImpl.Noyau.Deroulement
             xphase.SetAttributeValue(ConstantXML.Phase_ID, id);
             xphase.SetAttributeValue(ConstantXML.Phase_Epreuve, epreuve);
             xphase.SetAttributeValue(ConstantXML.Phase_Libelle, libelle);
-            xphase.SetAttributeValue(ConstantXML.Phase_Etat, etat);
-            xphase.SetAttributeValue(ConstantXML.Phase_TypePhase, typePhase);
+            xphase.SetAttributeValue(ConstantXML.Phase_Etat, (int) etat);
+            xphase.SetAttributeValue(ConstantXML.Phase_TypePhase, (int) typePhase);
             xphase.SetAttributeValue(ConstantXML.Phase_NiveauRepechage, niveauRepechage);
             xphase.SetAttributeValue(ConstantXML.Phase_Bresilien, bresilien);
             xphase.SetAttributeValue(ConstantXML.Phase_NiveauRepeches, niveauRepeches);
@@ -91,19 +92,20 @@ namespace KernelImpl.Noyau.Deroulement
             xphase.SetAttributeValue(ConstantXML.Phase_Date_Tirage, date.HasValue ? ((DateTime)date).ToString("ddMMyyyy") : "");
             xphase.SetAttributeValue(ConstantXML.Phase_Time_Tirage, date.HasValue ? ((DateTime)date).ToString("HHmmss") : "");
 
+            xphase.SetAttributeValue(ConstantXML.Phase_Ordre, ordre);
             return xphase;
         }
 
         public void LoadXml(XElement xinfo)
         {
             this.id = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Phase_ID));
-            this.typePhase = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Phase_TypePhase));
+            this.typePhase = (TypePhaseEnum)XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Phase_TypePhase));
             this.nbPoules = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Phase_NbPoules));
             this.niveauRepechage = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Phase_NiveauRepechage));
             this.niveauRepeches = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Phase_NiveauRepeches));
             this.precedent = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Phase_Precedent));
             this.suivant = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Phase_Suivant));
-            this.etat = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Phase_Etat));
+            this.etat = (EtatPhaseEnum)XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Phase_Etat));
             this.nbCombatsFinalistes = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Phase_NbCombatsFinalistes));
             this.nbCombatsTotal = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Phase_NbCombatsTotal));
             this.nbJudoka = XMLTools.LectureInt(xinfo.Attribute(ConstantXML.Phase_NbJudoka));
@@ -125,7 +127,6 @@ namespace KernelImpl.Noyau.Deroulement
             this.date =
                 XMLTools.LectureDate(xinfo.Attribute(ConstantXML.Phase_Date_Tirage), "ddMMyyyy", DateTime.Now) +
                 XMLTools.LectureTime(xinfo.Attribute(ConstantXML.Phase_Time_Tirage), "HHmmss");
-
         }
 
         /// <summary>

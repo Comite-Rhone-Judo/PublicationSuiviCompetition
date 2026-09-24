@@ -1,38 +1,44 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Windows;
-using Telerik.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace FranceJudo.UI.Wpf.Behaviors
 {
-    public class WindowHelper
+    public static class WindowHelper
     {
 
         /// <summary>
-        /// Affiche une RadWindow dans la TaskBar de Windows
+        /// Capture un élément visuel WPF et le place dans le presse-papier
         /// </summary>
-        /// <param name="control"></param>
-
-        public static void ShowInTaskbar(RadWindow control)
+        public static void CopyVisualToClipboard(FrameworkElement element)
         {
-            control.Loaded += new RoutedEventHandler(TaskbarRadWindow_Loaded);
+            if (element == null) return;
 
-        }
-
-        static void TaskbarRadWindow_Loaded(object sender, System.Windows.RoutedEventArgs e)
-        {
-            var window = ((RadWindow)sender).ParentOfType<System.Windows.Window>();
-            if (window != null)
+            try
             {
-                window.ShowInTaskbar = true;
-                window.Title = ((RadWindow)sender).Header.ToString();
-                //window.StateChanged += new EventHandler(window_StateChanged);
-            }
-        }
+                // 1. Calculer la taille réelle de l'élément
+                double width = element.ActualWidth;
+                double height = element.ActualHeight;
 
-        static void Window_StateChanged(object sender, EventArgs e)
-        {
-            var window = ((RadWindow)sender).ParentOfType<System.Windows.Window>();
-            ((RadWindow)sender).WindowState = window.WindowState;
+                // Cas particulier : si l'élément n'est pas encore rendu
+                if (width == 0 || height == 0) return;
+
+                // 2. Créer un rendu bitmap de l'élément visuel (96 DPI standard)
+                RenderTargetBitmap bmp = new RenderTargetBitmap(
+                    (int)width, (int)height, 96, 96, PixelFormats.Pbgra32);
+
+                bmp.Render(element);
+
+                // 3. Envoyer directement au presse-papier
+                Clipboard.SetImage(bmp);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Erreur lors de la copie de l'image.", ex);
+            }
         }
     }
 }

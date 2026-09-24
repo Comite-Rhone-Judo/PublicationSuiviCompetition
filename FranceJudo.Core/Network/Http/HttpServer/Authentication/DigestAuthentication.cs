@@ -69,8 +69,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Authentication
         {
             lock (_nonces)
             {
-                if (_timer == null)
-                    _timer = new Timer(ManageNonces, null, 15000, 15000);
+                _timer ??= new Timer(ManageNonces, null, 15000, 15000);
             }
 
             if (!authenticationHeader.StartsWith("Digest", true, CultureInfo.CurrentCulture))
@@ -87,9 +86,8 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Authentication
 
             string username = reqInfo["username"];
             string password = string.Empty;
-            object state;
 
-            if (!CheckAuthentication(realm, username, ref password, out state))
+            if (!CheckAuthentication(realm, username, ref password, out object state))
                 return null;
 
             string HA1;

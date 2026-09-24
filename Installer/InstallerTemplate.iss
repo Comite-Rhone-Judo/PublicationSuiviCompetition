@@ -4,9 +4,12 @@
 #define MyAppName "Publication Suivi Competition"
 #define MyAppPublisher "Comité du Rhone-Lyon Metropole Judo"
 #define MyAppExeName "AppPublication.exe"
-#define MyAppConfig MyAppExeName + ".config"
+#define MyAppConfig "appsettings.json"
 #define InstallerName "PublicationSuiviCompetitionInstaller_v" + MyAppVersion
-#define MinVersionCompatible "2.0.0.0"
+#define MinVersionCompatible "2.1.0.0"
+
+; Ajout du sous-dossier lié au Target Framework .NET 10
+#define TargetFramework "net10.0-windows8.0"
 
 ; ################# WARNING ##############
 ; Do Not configure MyAppVersion, it will be added automatically using PreBuild Event
@@ -43,21 +46,31 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "useroverrideConfig"; Description: "{cm:OverrideConfig}"; GroupDescription: "{cm:PreviousInstall}"; Flags: checkedonce; Check: IsVersionCompatible
 
 [Files]
-Source: "..\..\..\AppPublication\bin\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\..\AppPublication\bin\Release\*"; Excludes:"*.log, *.pdb, {#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\..\AppPublication\bin\Release\{#TargetFramework}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\..\AppPublication\bin\Release\{#TargetFramework}\*"; Excludes:"*.log, *.pdb, {#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+
 ; Deploit le fichier de configuration s'il n'existe pas
-Source: "..\..\..\AppPublication\bin\Release\{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
+Source: "..\..\..\AppPublication\bin\Release\{#TargetFramework}\{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
+
 ; Deploit le fichier de configuration au choix de l'utilisateur (la tache peut etre desactivee si elle n'est pas compatible avec la version du fichier)
-Source: "..\..\..\AppPublication\bin\Release\{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion; Tasks: useroverrideConfig
+Source: "..\..\..\AppPublication\bin\Release\{#TargetFramework}\{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion; Tasks: useroverrideConfig
+
 ; Force le deploiement du fichier de configuration s'il n'est pas compatible
-Source: "..\..\..\AppPublication\bin\Release\{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion; Check: IsForceConfigOverride
+Source: "..\..\..\AppPublication\bin\Release\{#TargetFramework}\{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion; Check: IsForceConfigOverride
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+
+; Dépendance .NET 10 Desktop Runtime
+Source: "..\..\Dependancies\windowsdesktop-runtime-10.0.12-win-x64.exe"; DestDir: "{tmp}"; Flags: ignoreversion d
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
+; Installation silencieuse du framework si manquant (s'exécute de façon séquentielle grâce au flag waituntilterminated)
+Filename: "{tmp}\windowsdesktop-runtime-10.0.12-win-x64.exe"; Parameters: "/quiet /norestart"; StatusMsg: "Installation de Microsoft .NET 10 Desktop Runtime en cours..."; Check: NeedsDotNet10; Flags: waituntilterminated
+
+; Votre lancement d'application existant
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}";Flags:runascurrentuser nowait postinstall skipifsilent;
 
 [CustomMessages]
@@ -116,7 +129,7 @@ begin
       NoteHeight
     );
     Note.Font.Color := clRed;
-    Note.Caption := 'Activez <Effacer la configuration existante> si la version précédente' + #13#10 + 'est antérieure a la version 1.3.0.0. Dans le cas contraire' + #13#10 + 'des dysfonctionnements peuvent apparaitre.';
+    Note.Caption := 'Activez <Effacer la configuration existante> si la version précédente' + #13#10 + 'est antérieure a la version ' + ExpandConstant('{#MinVersionCompatible}') + '.' + #13#10 + 'Dans le cas contraire' + #13#10 + 'des dysfonctionnements peuvent apparaitre.';
   end;
 end; }
 
@@ -232,4 +245,21 @@ begin
   end;
 
   Result := True;
+end;
+
+{ Vérifie si le .NET 10 Desktop Runtime (x64) est installé }
+function NeedsDotNet10: Boolean;
+begin
+  // Depuis .NET 5, Microsoft logge les installations sous cette clé.
+  // On utilise HKLM64 car votre exécutable cible un runtime x64.
+  if RegValueExists(HKLM64, 'SOFTWARE\dotnet\Setup\InstalledVersions\x64\sharedfx\Microsoft.WindowsDesktop.App', '10.0.12') then
+  begin
+    Log('.NET 10 Desktop Runtime x64 est déjà installé.');
+    Result := False;
+  end
+  else
+  begin
+    Log('.NET 10 Desktop Runtime x64 manquant. Planification de l''installation.');
+    Result := True;
+  end;
 end;

@@ -10,7 +10,6 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web.UI.WebControls;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -47,7 +46,10 @@ namespace AppPublication.ViewModels.Configuration
             {
                 _selectedInterface = value;
                 // Mémorisation du choix de l'utilisateur dans le contexte
-                if (value != null) _context.LastSelectedInterfaceId = value.Interface.Id;
+                if (value?.Interface != null)
+                {
+                    _context.LastSelectedInterfaceId = value.Interface.Id;
+                }
                 NotifyPropertyChanged();
             }
         }
@@ -229,7 +231,7 @@ namespace AppPublication.ViewModels.Configuration
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors de la lecture des cartes reseau.");
+                LogTools.Logger?.Error(ex, "Erreur lors de la lecture des cartes reseau.");
             }
         }
 
@@ -270,7 +272,7 @@ namespace AppPublication.ViewModels.Configuration
             catch (OperationCanceledException) { }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur inattendue lors du scan reseau.");
+                LogTools.Logger?.Error(ex, "Erreur inattendue lors du scan reseau.");
             }
             finally
             {

@@ -1,103 +1,67 @@
-﻿using FranceJudo.Core.IO;
-using FranceJudo.Core.Logging;
+﻿#nullable enable
 using System;
 using System.Net.Sockets;
+using System.Text;
+using FranceJudo.Core.Logging;
+// Note : J'utilise Encoding.UTF8 au lieu de ton FileSystemHelper.TheEncoding pour être standard.
 
 namespace FranceJudo.Core.Network.Udp
 {
-    /// <summary>
-    /// Outils de client UDP (Outils vidéo Fédération)
-    /// </summary>
-    public class ClientUDP
+    public class ClientUDP : IDisposable
     {
-        readonly int _port = 8484;
-        readonly string _ip = "127.0.0.1";
-        UdpClient _udpClient = null;
+        public string IP { get; }
+        public int Port { get; }
 
-        /// <summary>
-        /// IP du server
-        /// </summary>
-        public string IP
-        {
-            get
-            {
-                return _ip;
-            }
-        }
+        private UdpClient? _udpClient;
 
-        /// <summary>
-        /// Port de com du server
-        /// </summary>
-        public int Port
-        {
-            get
-            {
-                return _port;
-            }
-        }
-
-
-
-        /// <summary>
-        /// Contructeur
-        /// </summary>
-        /// <param name="hostNameOrAddress"></param>
-        /// <param name="port"></param>
         public ClientUDP(string hostNameOrAddress, int port)
         {
-            _ip = hostNameOrAddress;
-            _port = port;
+            IP = hostNameOrAddress;
+            Port = port;
+            InitClient();
+        }
 
-            //if(!string.IsNullOrWhiteSpace(hostNameOrAddress))
-            //{
+        private void InitClient()
+        {
+            _udpClient?.Dispose();
             _udpClient = new UdpClient();
             try
             {
-                _udpClient.Connect(_ip, _port);
+                _udpClient.Connect(IP, Port);
             }
             catch (Exception ex)
             {
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex, $"[UDP CLIENT] Impossible de configurer la connexion vers {IP}:{Port}");
+                // On laisse l'exception remonter, le métier doit savoir s'il y a un souci DNS/IP
+                throw;
             }
-
-            //}           
         }
 
-        /// <summary>
-        /// Envoie de données
-        /// </summary>
-        /// <param name="message"></param>
         public void Send(string message)
         {
+            if (_udpClient == null) throw new ObjectDisposedException(nameof(ClientUDP));
+
             try
             {
-                // LogTools.Trace("[UDP]    " + message, LogTools.Level.INFO);
-                LogTools.Info("[UDP]    " + message);
-
-                //UdpClient udpClient = new UdpClient();
-                //udpClient.Connect(_ip, _port);
-
-                Byte[] senddata = FileSystemHelper.TheEncoding.GetBytes(message);
+                LogTools.Logger?.Info($"[UDP CLIENT] Envoi : {message}");
+                byte[] senddata = Encoding.UTF8.GetBytes(message);
                 _udpClient.Send(senddata, senddata.Length);
-
-                //_udpClient.Close();
             }
-            catch
+            catch (Exception ex)
             {
-                try
-                {
-                    _udpClient = new UdpClient();
-                    _udpClient.Connect(_ip, _port);
+                LogTools.Logger?.Warn(ex, "[UDP CLIENT] Échec de l'envoi. Tentative de reconnexion...");
 
-                    Byte[] senddata = FileSystemHelper.TheEncoding.GetBytes(message);
-                    _udpClient.Send(senddata, senddata.Length);
-                }
-                catch (Exception ex2)
-                {
-                    LogTools.Error(ex2);
-                }
+                // Mécanisme de résilience : on recrée et on retente UNE fois.
+                InitClient();
+                byte[] senddata = Encoding.UTF8.GetBytes(message);
+                _udpClient.Send(senddata, senddata.Length); // Si ça recrashe ici, ça remonte à l'appelant (C'EST VOULU)
             }
         }
 
+        public void Dispose()
+        {
+            _udpClient?.Dispose();
+            _udpClient = null;
+        }
     }
 }

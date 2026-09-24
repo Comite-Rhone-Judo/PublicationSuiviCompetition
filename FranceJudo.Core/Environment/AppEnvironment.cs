@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Deployment.Application;
+using System.Linq;
 using System.Reflection;
 
 namespace FranceJudo.Core.Environment
@@ -13,24 +13,19 @@ namespace FranceJudo.Core.Environment
 
         public static String GetVersionInformation()
         {
-            if (ApplicationDeployment.IsNetworkDeployed)
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            String version = assembly.GetName().Version?.ToString() ?? "";
+
+            // On cherche la métadonnée "VersionBeta" injectée par Directory.Build.props
+            var metadataAttributes = assembly.GetCustomAttributes<AssemblyMetadataAttribute>();
+            var betaAttr = metadataAttributes.FirstOrDefault(a => a.Key == "VersionBeta");
+
+            if (betaAttr != null && int.TryParse(betaAttr.Value, out int betaValue) && betaValue > 0)
             {
-                return ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
+                version += String.Format("-beta{0:00}", betaValue);
             }
-            else
-            {
-                Assembly assembly = Assembly.GetExecutingAssembly();
 
-                String version = assembly.GetName().Version.ToString();
-
-                var myAttr = Attribute.GetCustomAttribute(assembly, typeof(AssemblyVersionBeta)) as AssemblyVersionBeta;
-                if (myAttr.Value > 0)
-                {
-                    version += String.Format("-beta{0:00}", myAttr.Value);
-                }
-
-                return version; // assembly.GetName().Version;
-            }
+            return version;
         }
 
         public static string GetCompanyInformation()
@@ -88,14 +83,7 @@ namespace FranceJudo.Core.Environment
 
         public static string GetDataDirectory()
         {
-            if (ApplicationDeployment.IsNetworkDeployed)
-            {
-                return ApplicationDeployment.CurrentDeployment.DataDirectory + "/";
-            }
-            else
-            {
-                return AppDomain.CurrentDomain.BaseDirectory.Replace(@"\", "/");
-            }
+            return AppDomain.CurrentDomain.BaseDirectory.Replace(@"\", "/");
         }
 
         /// <summary>

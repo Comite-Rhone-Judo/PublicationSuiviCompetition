@@ -181,7 +181,7 @@ namespace KernelImpl.Noyau.Participants
                 datePesee = DateTime.Now,
                 categorie = epreuve.categorieAge,
                 ceinture = epreuve.ceintureMin,
-                etat = (int)EtatJudokaEnum.Inscrit,
+                etat = EtatJudokaEnum.Inscrit,
                 present = false
             };
 

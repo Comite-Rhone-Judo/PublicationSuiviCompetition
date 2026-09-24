@@ -12,7 +12,7 @@ namespace FranceJudo.Core.Network.Ftp.Test
     {
         public DnsResolutionTest() { Name = "Résolution du nom de domaine (DNS)"; }
 
-        public override bool Execute(IFtpConfiguration site, FtpClient client, CancellationToken token)
+        public override bool Execute(IFtpConfiguration site, IFtpClient client, CancellationToken token)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace FranceJudo.Core.Network.Ftp.Test
     {
         public ProfileCheckTest() { Name = "Vérification du profil de configuration FTP"; }
 
-        public override bool Execute(IFtpConfiguration site, FtpClient client, CancellationToken token)
+        public override bool Execute(IFtpConfiguration site, IFtpClient client, CancellationToken token)
         {
             try
             {
@@ -64,7 +64,7 @@ namespace FranceJudo.Core.Network.Ftp.Test
     {
         public ConnectionTest() { Name = "Connexion au serveur FTP"; }
 
-        public override bool Execute(IFtpConfiguration site, FtpClient client, CancellationToken token)
+        public override bool Execute(IFtpConfiguration site, IFtpClient client, CancellationToken token)
         {
             try
             {
@@ -101,7 +101,7 @@ namespace FranceJudo.Core.Network.Ftp.Test
     {
         public RemoteDirectoryTest() { Name = "Vérification et lecture du répertoire distant"; }
 
-        public override bool Execute(IFtpConfiguration site, FtpClient client, CancellationToken token)
+        public override bool Execute(IFtpConfiguration site, IFtpClient client, CancellationToken token)
         {
             // Ici, il faut faire attention, le répertoire final peut ne pas exister avant le 1er upload de la competition
             // donc on va tester l'existence du répertoire Parent dans lequel la compétition sera publiée
@@ -136,7 +136,7 @@ namespace FranceJudo.Core.Network.Ftp.Test
     {
         public FileTransferTest() { Name = "Transfert et suppression d'un fichier de test"; }
 
-        public override bool Execute(IFtpConfiguration site, FtpClient client, CancellationToken token)
+        public override bool Execute(IFtpConfiguration site, IFtpClient client, CancellationToken token)
         {
             try
             {
@@ -172,7 +172,7 @@ namespace FranceJudo.Core.Network.Ftp.Test
     {
         public DisconnectTest() { Name = "Fermeture propre de la connexion"; }
 
-        public override bool Execute(IFtpConfiguration site, FtpClient client, CancellationToken token)
+        public override bool Execute(IFtpConfiguration site, IFtpClient client, CancellationToken token)
         {
             try
             {

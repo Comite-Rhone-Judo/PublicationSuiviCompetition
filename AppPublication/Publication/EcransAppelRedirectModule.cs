@@ -56,7 +56,7 @@ namespace AppPublication.Publication
         {
             if (_provider == null)
             {
-                LogTools.Logger.Error("EcransAppelRedirectModule: Le fournisseur de contexte n'a pas ete initialise.");
+                LogTools.Logger?.Error("EcransAppelRedirectModule: Le fournisseur de contexte n'a pas ete initialise.");
                 throw new InternalServerException();
             }
 
@@ -64,7 +64,7 @@ namespace AppPublication.Publication
             _structInterne = _provider.GetContext<SiteInterneUrlGenerator>();
             if (_structInterne == null)
             {
-                LogTools.Logger.Error("EcransAppelRedirectModule: Le contexte n'a pas ete initialise. ExportSiteInterneUrls manquant");
+                LogTools.Logger?.Error("EcransAppelRedirectModule: Le contexte n'a pas ete initialise. ExportSiteInterneUrls manquant");
                 throw new InternalServerException();
             }
             ReferencePath = _structInterne.UrlEcransAppelRedirecteur.AbsolutePath;
@@ -73,7 +73,7 @@ namespace AppPublication.Publication
             _manager ??= _provider.GetContext<EcranCollectionManager>();
             if (_manager == null)
             {
-                LogTools.Logger.Error("EcransAppelRedirectModule: Le contexte n'a pas ete initialise. ExportSiteInterneUrls manquant");
+                LogTools.Logger?.Error("EcransAppelRedirectModule: Le contexte n'a pas ete initialise. ExportSiteInterneUrls manquant");
                 throw new InternalServerException();
             }
         }
@@ -83,14 +83,14 @@ namespace AppPublication.Publication
             // Vérifie que le chemin est défini
             if (string.IsNullOrEmpty(this.ReferencePath))
             {
-                LogTools.Logger.Error("EcransAppelRedirectModule: Le Path n'est pas defini.");
+                LogTools.Logger?.Error("EcransAppelRedirectModule: Le Path n'est pas defini.");
                 throw new InternalServerException("EcransAppelRedirectModule: Le Path n'est pas defini.");
             }
 
             // Et que le contexte existe
             if (_manager == null)
             {
-                LogTools.Logger.Error("EcransAppelRedirectModule: Le contexte n'est pas defini.");
+                LogTools.Logger?.Error("EcransAppelRedirectModule: Le contexte n'est pas defini.");
                 throw new InternalServerException("EcransAppelRedirectModule: Le context n'est pas defini.");
             }
 
@@ -110,13 +110,13 @@ namespace AppPublication.Publication
                 // 2. Déterminer la cible en fonction de l'IP
                 var ecranToRedirect = currentSnapshot.Ecrans.FirstOrDefault(e => e.AdresseIP.MapToIPv4().Equals(clientIp.MapToIPv4()));
 
-                LogTools.Logger.Debug($"EcransAppelRedirectModule: Client IP {clientIp} redirige vers ecran {ecranToRedirect?.Id}");
+                LogTools.Logger?.Debug($"EcransAppelRedirectModule: Client IP {clientIp} redirige vers ecran {ecranToRedirect?.Id}");
 
                 // 3. Rediriger vers la page correspondante ou une page par défaut
                 ecranToRedirect ??= currentSnapshot.Default;
                 if (ecranToRedirect == null)
                 {
-                    LogTools.Logger.Error("EcransAppelRedirectModule: Aucun écran d'appel trouvé pour l'IP {0} et aucun écran par défaut défini.", clientIp);
+                    LogTools.Logger?.Error("EcransAppelRedirectModule: Aucun écran d'appel trouvé pour l'IP {0} et aucun écran par défaut défini.", clientIp);
                     throw new InternalServerException("EcransAppelRedirectModule: Aucun écran d'appel trouvé pour l'IP et aucun écran par défaut défini.");
                 }
 
@@ -138,7 +138,7 @@ namespace AppPublication.Publication
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors d e la redirection EcransAppel");
+                LogTools.Logger?.Error(ex, "Erreur lors d e la redirection EcransAppel");
                 // Log l'erreur ici via ton ILogWriter si disponible
                 throw new InternalServerException();
             }

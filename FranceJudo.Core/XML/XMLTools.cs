@@ -32,7 +32,7 @@ namespace FranceJudo.Core.XML
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Exception lors de la lecture de '{0}'", ladate.Value);
+                LogTools.Logger?.Error(ex, "Exception lors de la lecture de '{0}'", ladate.Value);
                 return default_value;
             }
         }
@@ -56,7 +56,7 @@ namespace FranceJudo.Core.XML
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Exception lors de la lecture de '{0}'", ladate.Value);
+                LogTools.Logger?.Error(ex, "Exception lors de la lecture de '{0}'", ladate.Value);
                 return DateTime.Now;
             }
         }
@@ -117,7 +117,7 @@ namespace FranceJudo.Core.XML
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Exception lors de la lecture de '{0}'", ladate.Value);
+                LogTools.Logger?.Error(ex, "Exception lors de la lecture de '{0}'", ladate.Value);
                 return DateTime.Now.TimeOfDay;
             }
         }
@@ -135,12 +135,15 @@ namespace FranceJudo.Core.XML
             {
                 if (xattribute != null && !String.IsNullOrWhiteSpace(xattribute.Value))
                 {
-                    int.TryParse(xattribute.Value, out result);
+                    if(int.TryParse(xattribute.Value, out int parsedValue))
+                    {
+                        return parsedValue;
+                    }
                 }
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Exception lors de la lecture de '{0}'", xattribute.Value);
+                LogTools.Logger?.Error(ex, "Exception lors de la lecture de '{0}'", xattribute.Value);
             }
             return result;
         }
@@ -158,12 +161,15 @@ namespace FranceJudo.Core.XML
             {
                 if (xattribute != null && !String.IsNullOrWhiteSpace(xattribute.Value))
                 {
-                    double.TryParse(xattribute.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out result);
+                    if (double.TryParse(xattribute.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedValue))
+                    {
+                        return parsedValue;
+                    }
                 }
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Exception lors de la lecture de '{0}'", xattribute.Value);
+                LogTools.Logger?.Error(ex, "Exception lors de la lecture de '{0}'", xattribute.Value);
             }
             return result;
         }
@@ -173,7 +179,6 @@ namespace FranceJudo.Core.XML
         /// </summary>
         /// <param name="xattribute">attribut</param>
         /// <returns>valeur</returns>
-
         public static int LectureInt(XmlAttribute xattribute, int default_val = 0)
         {
             int result = default_val;
@@ -181,12 +186,15 @@ namespace FranceJudo.Core.XML
             {
                 if (xattribute != null && !String.IsNullOrWhiteSpace(xattribute.Value))
                 {
-                    int.TryParse(xattribute.Value, out result);
+                    if(int.TryParse(xattribute.Value, out int parsedValue))
+                    {
+                        return parsedValue;
+                    }
                 }
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Exception lors de la lecture de '{0}'", xattribute.Value);
+                LogTools.Logger?.Error(ex, "Exception lors de la lecture de '{0}'", xattribute.Value);
             }
             return result;
         }
@@ -222,7 +230,7 @@ namespace FranceJudo.Core.XML
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Exception lors de la lecture de '{0}'", xattribute.Value);
+                LogTools.Logger?.Error(ex, "Exception lors de la lecture de '{0}'", xattribute.Value);
                 return null;
             }
             return null;
@@ -289,7 +297,7 @@ namespace FranceJudo.Core.XML
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Exception lors de la lecture de '{0}'", xattribute.Value);
+                LogTools.Logger?.Error(ex, "Exception lors de la lecture de '{0}'", xattribute.Value);
                 return false;
             }
         }

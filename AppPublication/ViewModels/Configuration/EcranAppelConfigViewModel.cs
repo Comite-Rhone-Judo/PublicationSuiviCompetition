@@ -1,4 +1,5 @@
-﻿using AppPublication.Config.Generation;
+﻿using AppPublication.Config;
+using AppPublication.Config.Generation;
 using AppPublication.Models.EcransAppel;
 using FranceJudo.Core.Foundation;
 using FranceJudo.Core.Logging;
@@ -156,11 +157,30 @@ namespace AppPublication.ViewModels.Configuration
             }
         }
 
+        /// <summary>
+        /// Indique si on doit afficher la catégorie d'âge sur l'écran d'appel
+        /// </summary>
+        public bool AfficheCategorieAge
+        {
+            get => _model.AfficheCategorieAge;
+            set
+            {
+                if (_model.AfficheCategorieAge != value)
+                {
+                    _model.AfficheCategorieAge = value;
+                    NotifyPropertyChanged();
+                    var cfg = GetConfigElement();
+                    cfg?.AfficheCategorieAge = value;
+                    _onModelChanged?.Invoke();
+                }
+            }
+        }
 
+      
         /// <summary>
         /// Options pour la Dropdown de disposition (extraites dynamiquement de l'enum)
         /// </summary>
-        public IEnumerable<DispositionAffichage> DispositionOptions => Enum.GetValues(typeof(DispositionAffichage)).Cast<DispositionAffichage>();
+        public IEnumerable<DispositionAffichage> DispositionOptions => Enum.GetValues<DispositionAffichage>().Cast<DispositionAffichage>();
 
         /// <summary>
         /// Disposition de l'écran (Ligne ou Colonne)
@@ -452,12 +472,12 @@ namespace AppPublication.ViewModels.Configuration
         }
 
         // --- Helpers Configuration ---
-        private EcransAppelConfigElement GetConfigElement()
+        private EcranAppelParams GetConfigElement()
         {
             // On va chercher l'élément correspondant dans la config globale
-            if (GenerationConfigSection.Instance != null && GenerationConfigSection.Instance.Ecrans != null)
+            if (AppConfigRoot.Instance?.Generation != null && AppConfigRoot.Instance.Generation.Ecrans != null)
             {
-                return GenerationConfigSection.Instance.Ecrans.GetElementById(Id);
+                return AppConfigRoot.Instance.Generation.GetEcranById(Id);
             }
             return null;
         }
@@ -550,7 +570,7 @@ namespace AppPublication.ViewModels.Configuration
 
             if (string.IsNullOrWhiteSpace(saisie) || type == TypeSaisieEnum.Inconnu)
             {
-                LogTools.Logger.Debug("LancerRechercheComplementaire: saisie vide ou inconnue, pas de recherche lancee.");
+                LogTools.Logger?.Debug("LancerRechercheComplementaire: saisie vide ou inconnue, pas de recherche lancee.");
                 return;
             }
 
@@ -598,7 +618,7 @@ namespace AppPublication.ViewModels.Configuration
                     }
                     catch (Exception ex)
                     {
-                        LogTools.Logger.Warn($"LancerRechercheComplementaire: Erreur lors de la recherche DNS pour '{saisie}': {ex.Message}");
+                        LogTools.Logger?.Warn($"LancerRechercheComplementaire: Erreur lors de la recherche DNS pour '{saisie}': {ex.Message}");
                     }
                 }, token);
 
@@ -617,7 +637,7 @@ namespace AppPublication.ViewModels.Configuration
             catch (OperationCanceledException) { /* Ignoré lors de l'annulation */ }
             catch (Exception ex)
             {
-                LogTools.Logger.Warn(ex, $"Erreur DNS : {ex.Message}");
+                LogTools.Logger?.Warn(ex, $"Erreur DNS : {ex.Message}");
             }
             finally
             {

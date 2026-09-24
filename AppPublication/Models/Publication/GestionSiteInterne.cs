@@ -1,4 +1,5 @@
-﻿using AppPublication.Config.Generation;
+﻿using AppPublication.Config;
+using AppPublication.Config.Generation;
 using AppPublication.Config.Publication;
 using AppPublication.Generation;
 using AppPublication.Models.EcransAppel;
@@ -60,7 +61,7 @@ namespace AppPublication.Models.Publication
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Fatal(ex, "Impossible d'initialiser le ViewModel principal. Impossible de continuer");
+                LogTools.Logger?.Fatal(ex, "Impossible d'initialiser le ViewModel principal. Impossible de continuer");
                 AlertWindow win = new AlertWindow("Erreur fatale", "Impossible de démarrer un composant interne, l'application doit s'arrêter. Veuillez contacter le support.");
                 win?.ShowDialog();
                 // Emergency shutdown
@@ -128,7 +129,7 @@ namespace AppPublication.Models.Publication
                 {
                     _delaiDeroulementSec = value;
                     _generateurSite?.ExportConfigurationManager?.Modifier(c => { c.DelaiDeroulementSec = value; });
-                    GenerationConfigSection.Instance.GenerateurSiteInterne.DelaiDeroulementSec = _delaiDeroulementSec;
+                    AppConfigRoot.Instance.Generation.GenerateurSiteInterne.DelaiDeroulementSec = _delaiDeroulementSec;
                     NotifyPropertyChanged();
                 }
             }
@@ -150,7 +151,7 @@ namespace AppPublication.Models.Publication
                     {
                         c.NbProchainsCombats = (_nbProchainsCombats = value);
                     });
-                    GenerationConfigSection.Instance.GenerateurSiteInterne.NbProchainsCombats = _nbProchainsCombats;
+                    AppConfigRoot.Instance.Generation.GenerateurSiteInterne.NbProchainsCombats = _nbProchainsCombats;
                     NotifyPropertyChanged();
                 }
             }
@@ -167,10 +168,11 @@ namespace AppPublication.Models.Publication
                 // Note: le repertoire racine et le logo sont lus par l'orchestrateur
                 // Les autres parametres peuvent suivre
                 // Lecture des donnees specifiques de l'instance
-                SchedulerConfigElement cfgPriv = PublicationConfigSection.GetInstanceConfigElement(kCfgSiteLocalInstanceName);
+
+                var cfgPriv = AppConfigRoot.Instance.Publication.GetScheduler(kCfgSiteLocalInstanceName);
                 DelaiGenerationSec = cfgPriv.DelaiGenerationSec;
-                DelaiDeroulementSec = GenerationConfigSection.Instance.GenerateurSiteInterne.DelaiDeroulementSec;
-                NbProchainsCombats = GenerationConfigSection.Instance.GenerateurSiteInterne.NbProchainsCombats;
+                DelaiDeroulementSec = AppConfigRoot.Instance.Generation.GenerateurSiteInterne.DelaiDeroulementSec;
+                NbProchainsCombats = AppConfigRoot.Instance.Generation.GenerateurSiteInterne.NbProchainsCombats;
 
                 // L'interface local de publication a ete chargee via la configuration du minisite, il faut juste s'assurer du bon calcul des URLs
                 URLLocalPublication = CalculURLSiteLocal();
@@ -180,7 +182,7 @@ namespace AppPublication.Models.Publication
             }
             catch (Exception ex)
             {
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
         }
 
@@ -217,14 +219,43 @@ namespace AppPublication.Models.Publication
             } );
         }
 
+        protected override void OnUseLogoUniqueChanged(bool newValue)
+        {
+            // Pas utilisé sur le site interne
+        }
+
+        protected override void OnSelectedLogoDarkChanged(string logoName)
+        {
+            // Pas utilisé sur le site interne
+        }
+
         protected override void OnInterfaceLocalPublicationChanged()
         {
             URLLocalPublication = CalculURLSiteLocal();
         }
 
+        protected override void OnUseIntituleCommunChanged(bool newValue)
+        {
+            // Propage la valeur au generateur de site
+            _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+            {
+                c.UseIntituleCommun = newValue;
+            });
+        }
+        protected override void OnIntituleCommunChanged(string newValue)
+        {
+            // Propage la valeur au generateur de site
+            _generateurSite?.ExportConfigurationManager?.Modifier(c =>
+            {
+                c.IntituleCommun = newValue;
+            });
+        }
+
         protected override void UpdateDelaiGenerationConfig(int newValue)
         {
-            SchedulerConfigElement cfg = PublicationConfigSection.GetInstanceConfigElement(kCfgSiteLocalInstanceName);
+            // On récupère le paramètre depuis le JSON et on le modifie.
+            // L'affectation déclenche 'SetValue' dans le POCO, ce qui lance la sauvegarde automatique sur disque.
+            var cfg = AppConfigRoot.Instance.Publication.GetScheduler(kCfgSiteLocalInstanceName);
             cfg.DelaiGenerationSec = newValue;
         }
 
@@ -265,9 +296,9 @@ namespace AppPublication.Models.Publication
                 // Chargement des Ecrans depuis la Config vers le Modèle Runtime
                 if (_ecransAppel == null) throw new ArgumentNullException("La liste des ecrans d'appel est null");
 
-                if (GenerationConfigSection.Instance?.Ecrans != null)
+                if (AppConfigRoot.Instance?.Generation?.Ecrans != null)
                 {
-                    foreach (EcransAppelConfigElement cfg in GenerationConfigSection.Instance.Ecrans)
+                    foreach (var cfg in AppConfigRoot.Instance.Generation.Ecrans)
                     {
                         // Parsing des IDs de tapis "1;2;3" -> List<int>
                         List<int> tapisIds = new List<int>();
@@ -292,6 +323,7 @@ namespace AppPublication.Models.Publication
                             Disposition = cfg.Disposition,
                             DispositionCombat = cfg.DispositionCombat,
                             AjusteTailleTexte = cfg.AjusteTexteAuto,
+                            AfficheCategorieAge = cfg.AfficheCategorieAge,
                             NbCombatsPage = cfg.NbCombatsPage
                         };
 
@@ -305,7 +337,7 @@ namespace AppPublication.Models.Publication
             }
             catch (Exception ex)
             {
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
         }
 
@@ -335,7 +367,7 @@ namespace AppPublication.Models.Publication
                     // 2. Chemin absolu (Agnostique du port/IP, pour le script de redirection JS)
                     string absolutePathForJs = _siteInterneUrlGenerator.UrlEcransAppelRedirecteur.AbsolutePath;
 
-                    LogTools.Logger.Debug($"[CalculURLSiteLocal] UI URL = {output} | JS Path = {absolutePathForJs}");
+                    LogTools.Logger?.Debug($"[CalculURLSiteLocal] UI URL = {output} | JS Path = {absolutePathForJs}");
 
                     // Met a jour le contexte pour la generation UNIQUEMENT avec le chemin absolu
                     _generateurSite?.ExportConfigurationManager?.Modifier(c => { c.UrlRedirecteur = absolutePathForJs; });
@@ -344,7 +376,7 @@ namespace AppPublication.Models.Publication
             catch (Exception ex)
             {
                 output = string.Empty;
-                LogTools.Logger.Error(ex, "Impossible de calculer l'URL du site des ecrans d'appel");
+                LogTools.Logger?.Error(ex, "Impossible de calculer l'URL du site des ecrans d'appel");
             }
             return output;
         }

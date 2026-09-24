@@ -71,8 +71,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Helpers
                 if (_resources.ContainsKey(info.Uri))
                     throw new InvalidOperationException("A resource has already been mapped to the uri: " + info.Uri);
 
-                List<ResourceInfo> mapped;
-                if (!_mappedResources.TryGetValue(info.ExtensionLessUri + ".*", out mapped))
+                if (!_mappedResources.TryGetValue(info.ExtensionLessUri + ".*", out List<ResourceInfo> mapped))
                     _mappedResources.Add(info.ExtensionLessUri + ".*", new List<ResourceInfo> { info });
                 else
                     mapped.Add(info);
@@ -98,8 +97,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Helpers
         /// <returns>A stream or null if the resource couldn't be found</returns>
         public Stream GetResourceStream(string path)
         {
-            ResourceInfo info;
-            if (!_resources.TryGetValue(FormatPath(path), out info))
+            if (!_resources.TryGetValue(FormatPath(path), out ResourceInfo info))
                 return null;
 
             return info.GetStream();
@@ -118,12 +116,10 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Helpers
             Check.NotEmpty(path, "path");
             if (!path.EndsWith(".*"))
             {
-                ResourceInfo info;
-                return _resources.TryGetValue(FormatPath(path), out info) ? new[] { path } : new string[] { };
+                return _resources.TryGetValue(FormatPath(path), out ResourceInfo info) ? new[] { path } : new string[] { };
             }
 
-            List<ResourceInfo> resources;
-            if (!_mappedResources.TryGetValue(FormatPath(path), out resources))
+            if (!_mappedResources.TryGetValue(FormatPath(path), out List<ResourceInfo> resources))
                 return new string[] { };
 
             path = path.TrimEnd('*');

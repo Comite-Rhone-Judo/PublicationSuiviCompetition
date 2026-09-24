@@ -1,6 +1,6 @@
 ﻿using AppPublication.Export;
-using AppPublication.ExtensionNoyau;
-using AppPublication.ExtensionNoyau.Engagement;
+using FranceJudo.Metier.ExtensionNoyau;
+using FranceJudo.Metier.ExtensionNoyau.Engagement;
 using AppPublication.Publication;
 using FranceJudo.Core.Export;
 using FranceJudo.Core.IO;
@@ -18,8 +18,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
-
 
 namespace AppPublication.Generation
 {
@@ -107,7 +105,7 @@ namespace AppPublication.Generation
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Fatal(ex, "Impossible d'initialiser le generateur de Site interne. Impossible de continuer");
+                LogTools.Logger?.Fatal(ex, "Impossible d'initialiser le generateur de Site interne. Impossible de continuer");
                 throw new NotSupportedException("Impossible d'initialiser le generateur de Site interne. Impossible de continuer", ex);
             }
         }
@@ -135,7 +133,7 @@ namespace AppPublication.Generation
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors du nettoyage initial du site");
+                LogTools.Logger?.Error(ex, "Erreur lors du nettoyage initial du site");
                 return new ResultatOperation(EtapeGenerateurSiteEnum.CleanupInitial, false, true, -1);
             }
 
@@ -169,7 +167,7 @@ namespace AppPublication.Generation
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Exception lors du controle de la consistance donnees recues.");
+                LogTools.Logger?.Error(ex, "Exception lors du controle de la consistance donnees recues.");
             }
 
             if (dataConsistent)
@@ -181,9 +179,21 @@ namespace AppPublication.Generation
                 _extendedJudoData =  new ExtendedJudoData(_snapshot);
 
                 // Clone la configuration
-                ConfigurationExportSite snapshotConfig;
+                ConfigurationExportSite snapshotConfig = ExportConfigurationManager.Snapshot;
 
-                snapshotConfig = ExportConfigurationManager.Snapshot;
+                // --- PRÉ-CHARGEMENT CONDITIONNEL ---
+                // On pré-calcule les données lourdes maintenant pour ne pas figer 
+                // la barre de progression plus tard dans le TaskBatcher.
+
+                if (snapshotConfig.PublierStatistiques)
+                {
+                    _extendedJudoData.EnsureStatistiquesLoaded();
+                }
+
+                if (snapshotConfig.PublierEngagements)
+                {
+                    _extendedJudoData.EnsureEngagementsLoaded();
+                }
 
                 // Initialise les donnees partagees de generation (ces donnees sont statiques et communes a toutes les taches)
                 _currentContext = ExportSharedContext.Create(_snapshot, _extendedJudoData, snapshotConfig);
@@ -194,7 +204,7 @@ namespace AppPublication.Generation
             else
             {
                 // Le controle d'integrite a echoue
-                LogTools.Logger.Warn("Impossible de valider l'integrite des donnees combats (Timeout ou deconnexion).");
+                LogTools.Logger?.Warn("Impossible de valider l'integrite des donnees combats (Timeout ou deconnexion).");
             }
 
             _etapeCourante = EtapeGenerateurSiteEnum.None;
@@ -215,7 +225,7 @@ namespace AppPublication.Generation
             // Si un taskbatcher en toujours en cours, ce n'est pas normal. plutot un exception que Silent car ce cas ne devrait pas arriver
             if (_taskBatcher.HasPendingWork)
             {
-                LogTools.Logger.Debug("Batch precedent toujours en cours, exception levee");
+                LogTools.Logger?.Debug("Batch precedent toujours en cours, exception levee");
                 throw new InvalidOperationException("Batch precedent toujours en cours");
             }
 
@@ -255,7 +265,7 @@ namespace AppPublication.Generation
                     }
 
                     if (_cfgExport.PublierEngagements)
-                    {                      
+                    {
                         foreach (ICompetition comp in _snapshot.Organisation.Competitions)
                         {
                             // Recupere les groupes en fonction du type de groupement
@@ -264,24 +274,60 @@ namespace AppPublication.Generation
                             // On genere les engagements pour chaque type de groupe
                             foreach (EchelonEnum typeGrp in typesGrp)
                             {
-                                List<GroupeEngagements> groupesP = _extendedJudoData.Engagement.GroupesEngages.Where(g => g.Competition == comp.id && g.Type == (int)typeGrp).ToList();
+                                List<GroupeEngagements> groupesP = _extendedJudoData.Engagement.GroupesEngages.Where(g => g.Competition == comp.id && g.Type == typeGrp).ToList();
 
                                 int nbChunkEng = 0;
                                 int tailleChunkEngagement = Math.Max(20, groupesP.Count / (_nbCoeurs * 2)); ; // Ajuste la taille du chunk en fonction du nombre de groupes et du nombre de coeurs, avec un minimum de 1
-                                LogTools.Logger.Debug($"Taille de chunk pour Engagement Competition {comp.nom}, groupe {typeGrp} : {tailleChunkEngagement} sur {_nbCoeurs} coeurs");
-                                
+                                LogTools.Logger?.Debug($"Taille de chunk pour Engagement Competition {comp.nom}, groupe {typeGrp} : {tailleChunkEngagement} sur {_nbCoeurs} coeurs");
+
                                 // On fait un decoupe de la liste en paquet de n groupes pour limiter le nombre de taches (et donc le cout de lancement des taches) tout en gardant une bonne granularite pour le progress
-                                foreach (List<GroupeEngagements> paquet in groupesP.Chunk(tailleChunkEngagement))
+                                foreach (var paquet in groupesP.Chunk(tailleChunkEngagement))
                                 {
-                                    LogTools.Logger.Debug($"Batching chunk Engagement Competition {comp.nom}, groupe {typeGrp}: #{nbChunkEng++} (size = {paquet.Count}");
-                                    
+                                    LogTools.Logger?.Debug($"Batching chunk Engagement Competition {comp.nom}, groupe {typeGrp}: #{nbChunkEng++} (size = {paquet.Length}");
+
                                     // Ce code est plus efficace qye celui qui cree une tache par groupe
                                     // car le lancement de trop nombreuses Task est couteux
                                     // Le paquet étant gros, on passe l'initialEstimate
                                     _taskBatcher.AddWork(p =>
                                     {
                                         return exporter.GenereWebSiteEngagements(paquet, _currentContext, _siteUrlGenerator, p);
-                                    }, paquet.Count);
+                                    }, paquet.Length);
+                                }
+                            }
+                        }
+                    }
+
+                    // Ajout de la logique de génération des Statistiques
+                    if (_cfgExport.PublierStatistiques)
+                    {
+                        foreach (ICompetition comp in _snapshot.Organisation.Competitions)
+                        {
+                            // Récupère les types de groupements pour les statistiques (ex: Club, Comité, Ligue, etc.)
+                            // NOTE : Adaptez "_extendedJudoData.Statistiques" avec le nom exact de votre propriété dans ExtendedJudoData
+                            List<EchelonEnum> typesGrpStats = _extendedJudoData.StatistiquesCombats.TypesGroupes[comp.id];
+
+                            // On génère les statistiques pour chaque type de groupe
+                            foreach (EchelonEnum typeGrp in typesGrpStats)
+                            {
+                                // Récupération de la liste des statistiques à traiter
+                                var groupesStats = _extendedJudoData.StatistiquesCombats.GroupesStatistiques.Where(g => g.Competition == comp.id && g.Type == typeGrp).ToList();
+
+                                int nbChunkStat = 0;
+                                // Ajuste la taille du chunk en fonction du nombre de groupes et de coeurs, avec un minimum de 20
+                                int tailleChunkStat = Math.Max(20, groupesStats.Count / (_nbCoeurs * 2));
+                                LogTools.Logger?.Debug($"Taille de chunk pour Statistiques Competition {comp.nom}, groupe {typeGrp} : {tailleChunkStat} sur {_nbCoeurs} coeurs");
+
+                                // Découpage de la liste en paquets (chunks)
+                                foreach (var paquet in groupesStats.Chunk(tailleChunkStat))
+                                {
+                                    LogTools.Logger?.Debug($"Batching chunk Statistiques Competition {comp.nom}, groupe {typeGrp}: #{nbChunkStat++} (size = {paquet.Length})");
+
+                                    // On délègue le travail au batcher avec une estimation du travail (paquet.Length)
+                                    _taskBatcher.AddWork(p =>
+                                    {
+                                        // Appel à la méthode de l'exporteur
+                                        return exporter.GenereWebSiteStatistiques(paquet, _currentContext, _siteUrlGenerator, p);
+                                    }, paquet.Length);    
                                 }
                             }
                         }
@@ -291,14 +337,14 @@ namespace AppPublication.Generation
                     int tailleChunkPhase = Math.Max(5, _snapshot.Deroulement.Phases.Count / _nbCoeurs); ; // Ajuste la taille du chunk en fonction du nombre de groupes et du nombre de coeurs, avec un minimum
                     var chunksPhases = _snapshot.Deroulement.Phases.Chunk(tailleChunkPhase);
                     int nbChunkPhase = 0;
-                    LogTools.Logger.Debug($"Taille de chunk pour Phases : {tailleChunkPhase} sur {_nbCoeurs} coeurs");
+                    LogTools.Logger?.Debug($"Taille de chunk pour Phases : {tailleChunkPhase} sur {_nbCoeurs} coeurs");
 
-                    foreach (List<IPhase> paquet in chunksPhases)
+                    foreach (var paquet in chunksPhases)
                     {
                         // TRÈS IMPORTANT : Chaque phase génère 2 éléments (Phase + Classement)
                         // Donc l'estimation initiale pour ce paquet est : taille du paquet * 2
-                        int estimationsPourCePaquet = paquet.Count * 2;
-                        LogTools.Logger.Debug($"Batching chunk Phase #{nbChunkPhase++} (size = {paquet.Count}");
+                        int estimationsPourCePaquet = paquet.Length * 2;
+                        LogTools.Logger?.Debug($"Batching chunk Phase #{nbChunkPhase++} (size = {paquet.Length}");
 
                         _taskBatcher.AddWork(p =>
                         {
@@ -326,12 +372,12 @@ namespace AppPublication.Generation
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Error(ex, "Erreur lors de la generation");
+                    LogTools.Logger?.Error(ex, "Erreur lors de la generation");
                 }
             }
             else
             {
-                LogTools.Logger.Debug("Aucune competition presente dans le snapshot, generation avortee");
+                LogTools.Logger?.Debug("Aucune competition presente dans le snapshot, generation avortee");
             }
 
             _checksumGenere = output;
@@ -367,10 +413,23 @@ namespace AppPublication.Generation
                             // Extrait les fichiers generes qui sont differents du cache
                             List<FileWithChecksum> chkToSync = _checksumGenere.Except(_checksumCache, new FileWithChecksumComparer()).ToList();
                             filesToSync = chkToSync.Select(o => o.File).ToList();
-                            // For Debug only
-                            if (filesToSync.Count <= 0)
+
+                            /// For Debug only
+                            int totalFiles = _checksumGenere.Count;
+                            if (filesToSync.Count > 0)
                             {
-                                LogTools.Logger.Debug("Fichiers a synchroniser: {0}", string.Join(",", filesToSync.Select(f => f.Name)));
+                                // Utilisation de notre nouvelle méthode propre de la structure physique
+                                var relativeFileNames = filesToSync.Select(f =>
+                                    _siteUrlGenerator.PhysicalStructure.GetRelativePath(f.FullName));
+
+                                LogTools.Logger?.Debug("{0}/{1} fichiers a synchroniser : {2}",
+                                    filesToSync.Count,
+                                    totalFiles,
+                                    string.Join(", ", relativeFileNames));
+                            }
+                            else
+                            {
+                                LogTools.Logger?.Debug("0/{0} fichier à synchroniser (le site distant est déjà à jour).", totalFiles);
                             }
                         }
 
@@ -386,17 +445,17 @@ namespace AppPublication.Generation
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Error(ex, "Une erreur est survenue pendant la tentative de synchronisation");
+                    LogTools.Logger?.Error(ex, "Une erreur est survenue pendant la tentative de synchronisation");
                 }
             }
             else
             {
-                LogTools.Logger.Debug("Site distant inactif, pas de upload FTP");
+                LogTools.Logger?.Debug("Site distant inactif, pas de upload FTP");
                 return new ResultatOperation(EtapeGenerateurSiteEnum.ExecuteSynchronisation, false);
             }
 
             _etapeCourante = EtapeGenerateurSiteEnum.None;
-            return new ResultatOperation(EtapeGenerateurSiteEnum.ExecuteSynchronisation, uploadOut.IsSuccess, uploadOut.IsComplet, uploadOut.nbUpload);
+            return new ResultatOperation(EtapeGenerateurSiteEnum.ExecuteSynchronisation, uploadOut.IsSuccess, uploadOut.IsComplet, uploadOut.nbUpload, _checksumGenere?.Count ?? 0);
         }
 
         #endregion
@@ -420,14 +479,14 @@ namespace AppPublication.Generation
                 // Recherche la racine
                 List<XElement> rootElem = doc.Descendants(FileWithChecksum.checksums).ToList();
 
-                if (rootElem.Count() >= 1)
+                if (rootElem.Count >= 1)
                 {
                     output = ExportXML.ImportChecksumFichiers(rootElem.First());
                 }
             }
             catch (Exception ex)
             {
-                LogTools.Error(ex);
+                LogTools.Logger?.Error(ex);
             }
 
             _checksumCache = output;
@@ -449,7 +508,7 @@ namespace AppPublication.Generation
                 catch (Exception ex)
                 {
                     output = string.Empty;
-                    LogTools.Logger.Error(ex, "Impossible de calculer le nom du fichier Checksum");
+                    LogTools.Logger?.Error(ex, "Impossible de calculer le nom du fichier Checksum");
                 }
 
                 return output;
@@ -466,7 +525,7 @@ namespace AppPublication.Generation
                 // On délègue totalement le nettoyage (disque + cache) à la structure physique
                 if (!_siteUrlGenerator.PhysicalStructure.EffacerRepertoireCompetition())
                 {
-                    LogTools.Logger.Error("Erreur lors de l'effacement du contenu de '{0}'", _siteUrlGenerator.PhysicalStructure.RepertoireCompetition);
+                    LogTools.Logger?.Error("Erreur lors de l'effacement du contenu de '{0}'", _siteUrlGenerator.PhysicalStructure.RepertoireCompetition);
                 }
 
                 // Charge le contenu du fichier de checksum
@@ -501,7 +560,7 @@ namespace AppPublication.Generation
                 {
                     // Si le fichier est verrouille c'est bien une erreur car on a besoin de mettre a jour le cache de checksum pour la prochaine generation,
                     // mais on ne peut pas faire grand chose de plus que logger l'erreur
-                    LogTools.Error(ex);
+                    LogTools.Logger?.Error(ex);
                 }
                 finally
                 {

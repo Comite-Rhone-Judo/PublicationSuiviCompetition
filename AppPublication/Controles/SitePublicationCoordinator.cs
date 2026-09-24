@@ -1,4 +1,5 @@
-﻿using AppPublication.Config.Publication;
+﻿using AppPublication.Config;
+using AppPublication.Config.Publication;
 using AppPublication.Models.Publication;
 using AppPublication.Models.Statistiques;
 using FranceJudo.Core.Foundation;
@@ -46,7 +47,7 @@ namespace AppPublication.Controles
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors de l'initialisation du Controleur, impossible de continuer");
+                LogTools.Logger?.Error(ex, "Erreur lors de l'initialisation du Controleur, impossible de continuer");
                 throw new InvalidOperationException("Erreur lors de l'initialisation du Controleur");
             }
         }
@@ -152,11 +153,39 @@ namespace AppPublication.Controles
 
                     // Sauvegarde la valeur
                     string logoName = (value != null) ? value.Name : string.Empty;
-                    PublicationConfigSection.Instance.General.Logo = logoName;
+                    AppConfigRoot.Instance.Publication.General.Logo = logoName;
 
                     // Propage le logo selectionne dans les gestionnaires de site
                     _gestionSite.SelectedLogo = value;
                     _gestionSiteInterne.SelectedLogo = value;
+
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        FilteredFileInfo _selectedLogoDark = null;
+        /// <summary>
+        /// Le fichier logo sélectionné
+        /// </summary>
+        public FilteredFileInfo SelectedLogoDark
+        {
+            get
+            {
+                return _selectedLogoDark;
+            }
+            set
+            {
+                if (_selectedLogoDark != value)
+                {
+                    _selectedLogoDark = value;
+
+                    // Sauvegarde la valeur
+                    string logoName = (value != null) ? value.Name : string.Empty;
+                    AppConfigRoot.Instance.Publication.General.LogoDark = logoName;
+
+                    // Propage le logo selectionne dans les gestionnaires de site
+                    _gestionSite.SelectedLogoDark = value;
 
                     NotifyPropertyChanged();
                 }
@@ -177,7 +206,7 @@ namespace AppPublication.Controles
             {
                 if (value != _repertoireRacine)
                 {
-                    PublicationConfigSection.Instance.General.RepertoireRacine = (_repertoireRacine = value);
+                    AppConfigRoot.Instance.Publication.General.RepertoireRacine = (_repertoireRacine = value);
                     NotifyPropertyChanged();
 
                     // Propage le repertoire racine dans les gestionnaires de site
@@ -200,11 +229,72 @@ namespace AppPublication.Controles
                 if (_effacerAuDemarrage != value)
                 {
                     _effacerAuDemarrage = value;
-                    PublicationConfigSection.Instance.General.EffacerAuDemarrage = value;
+                    AppConfigRoot.Instance.Publication.General.EffacerAuDemarrage = value;
                     NotifyPropertyChanged();
 
                     GestionnaireSiteInterne.EffacerAuDemarrage = value;
                     GestionnaireSitePublique.EffacerAuDemarrage = value;
+                }
+            }
+        }
+
+        private bool _useIntituleCommun;
+        /// <summary>
+        /// Flag indiquant si on doit utiliser un intitule commun en cas de poly competition
+        /// </summary>
+        public bool UseIntituleCommun
+        {
+            get { return _useIntituleCommun; }
+            set
+            {
+                if (_useIntituleCommun != value)
+                {
+                    // propage la valeur au generateur de site
+                    AppConfigRoot.Instance.Publication.General.UseIntituleCommun = (_useIntituleCommun = value);
+                    NotifyPropertyChanged();
+
+                    GestionnaireSiteInterne.UseIntituleCommun = value;
+                    GestionnaireSitePublique.UseIntituleCommun = value;
+                }
+            }
+        }
+
+        private bool _useLogoUnique;
+        /// <summary>
+        /// Flag indiquant si on doit utiliser un logo unique pour le mode dark
+        /// </summary>
+        public bool UseLogoUnique
+        {
+            get { return _useLogoUnique; }
+            set
+            {
+                if (_useLogoUnique != value)
+                {
+                    // propage la valeur au generateur de site
+                    AppConfigRoot.Instance.Publication.General.UseLogoUnique = (_useLogoUnique = value);
+                    NotifyPropertyChanged();
+
+                    GestionnaireSitePublique.UseLogoUnique = value;
+                }
+            }
+        }
+
+        private string _intituleCommun;
+        /// <summary>
+        /// intitule commun en cas de poly competition
+        /// </summary>
+        public string IntituleCommun
+        {
+            get { return _intituleCommun; }
+            set
+            {
+                if (_intituleCommun != value)
+                {
+                    AppConfigRoot.Instance.Publication.General.IntituleCommun = (_intituleCommun = value);
+                    NotifyPropertyChanged();
+
+                    GestionnaireSiteInterne.IntituleCommun = value;
+                    GestionnaireSitePublique.IntituleCommun = value;
                 }
             }
         }
@@ -244,7 +334,7 @@ namespace AppPublication.Controles
                                     {
                                         try
                                         {
-                                            if (imgFile.ToLower().Contains("logo"))
+                                            if (imgFile.Contains("logo", StringComparison.CurrentCultureIgnoreCase))
                                             {
                                                 int w, h;
 
@@ -268,20 +358,20 @@ namespace AppPublication.Controles
                                                     }
                                                     else
                                                     {
-                                                        LogTools.Logger.Debug("Fichier '{0}' ignore - taille {1}x{2} incorrecte", imgFile, w, h);
+                                                        LogTools.Logger?.Debug("Fichier '{0}' ignore - taille {1}x{2} incorrecte", imgFile, w, h);
                                                         allFileOk = false;
                                                     }
                                                 }
                                             }
                                             else
                                             {
-                                                LogTools.Logger.Debug("Fichier '{0}' ignore - Nom ne contient pas 'logo'", imgFile);
+                                                LogTools.Logger?.Debug("Fichier '{0}' ignore - Nom ne contient pas 'logo'", imgFile);
                                                 allFileOk = false;
                                             }
                                         }
                                         catch (Exception ex)
                                         {
-                                            LogTools.Logger.Debug(ex, "Fichier '{0}' ignore - Exception lors de la lecture du format", imgFile);
+                                            LogTools.Logger?.Debug(ex, "Fichier '{0}' ignore - Exception lors de la lecture du format", imgFile);
                                             allFileOk = false;
                                         }
                                     }
@@ -348,12 +438,25 @@ namespace AppPublication.Controles
         public void InitFromConfigFile()
         {
             // Recupere les donnees mutualisee
-            RepertoireRacine = PublicationConfigSection.Instance.General.RepertoireRacine;
-            SelectedLogo = PublicationConfigSection.Instance.General.GetLogo(FichiersLogo.ToList(), o => o.Name);
+            RepertoireRacine = AppConfigRoot.Instance.Publication.General.RepertoireRacine;
+            SelectedLogo = AppConfigRoot.Instance.Publication.General.GetLogo(AppConfigRoot.Instance.Publication.General.Logo, FichiersLogo.ToList(), o => o.Name);
+            SelectedLogoDark = AppConfigRoot.Instance.Publication.General.GetLogo(AppConfigRoot.Instance.Publication.General.LogoDark, FichiersLogo.ToList(), o => o.Name);
+            UseLogoUnique = AppConfigRoot.Instance.Publication.General.UseLogoUnique;
+            UseIntituleCommun = AppConfigRoot.Instance.Publication.General.UseIntituleCommun;
+            IntituleCommun = AppConfigRoot.Instance.Publication.General.IntituleCommun;
 
             // Propage la lecture du fichier de configuration dans les gestionnaires de site
             _gestionSite.InitFromConfigFile();
             _gestionSiteInterne.InitFromConfigFile();
+        }
+
+        /// <summary>
+        /// Propage le statut de connexion réseau aux gestionnaires de sites
+        /// </summary>
+        public void SetConnectionStatus(bool isConnected)
+        {
+            GestionnaireSitePublique?.SetConnectionStatus(isConnected);
+            GestionnaireSiteInterne?.SetConnectionStatus(isConnected);
         }
 
         #endregion

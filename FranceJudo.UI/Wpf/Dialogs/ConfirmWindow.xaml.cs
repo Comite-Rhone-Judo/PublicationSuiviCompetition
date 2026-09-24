@@ -1,26 +1,22 @@
-﻿using FranceJudo.UI.Wpf.Behaviors;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
-using Telerik.Windows.Controls;
 
 namespace FranceJudo.UI.Wpf.Dialogs
 {
     /// <summary>
-    /// Logique d'interaction pour ChangeLogWindow.xaml
+    /// Logique d'interaction pour ConfirmWindow.xaml
     /// </summary>
-    public partial class ConfirmWindow : RadWindow
+    public partial class ConfirmWindow : HandyControl.Controls.Window
     {
-        public static readonly RoutedUICommand OKButton = new RoutedUICommand("OK", "OK", typeof(RadWindow));
-        public static readonly RoutedUICommand CancelButton = new RoutedUICommand("Cancel", "Cancel", typeof(RadWindow));
-
+        // Correction : type typeof(ConfirmWindow) au lieu de RadWindow
+        public static readonly RoutedUICommand OKButton = new RoutedUICommand("OK", "OK", typeof(ConfirmWindow));
+        public static readonly RoutedUICommand CancelButton = new RoutedUICommand("Cancel", "Cancel", typeof(ConfirmWindow));
 
         public ConfirmWindow(string header, string message)
         {
             InitializeComponent();
-            WindowHelper.ShowInTaskbar(this);
-            this.DialogResult = false;
 
-            this.Header = header;
+            this.Title = header; // Remplace this.Header de Telerik
             LabelMessage.Text = message;
 
             InitCommand();
@@ -29,10 +25,8 @@ namespace FranceJudo.UI.Wpf.Dialogs
         public ConfirmWindow(string message)
         {
             InitializeComponent();
-            WindowHelper.ShowInTaskbar(this);
-            this.DialogResult = false;
 
-            this.Header = "";
+            this.Title = "Confirmation"; // Titre par défaut
             LabelMessage.Text = message;
 
             InitCommand();
@@ -41,15 +35,14 @@ namespace FranceJudo.UI.Wpf.Dialogs
         public ConfirmWindow(DialogParameters param)
         {
             InitializeComponent();
-            WindowHelper.ShowInTaskbar(this);
-            this.DialogResult = false;
 
-            this.Header = param.Header;
-            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            //this.WindowStartupLocation = param.DialogStartupLocation;
-            LabelMessage.Text = param.Content as string;
-            ButOkLabel.Content = param.OkButtonContent;
-            ButAnnulerLabel.Content = param.CancelButtonContent;
+            this.Title = param.Header;
+            this.WindowStartupLocation = param.DialogStartupLocation;
+            LabelMessage.Text = param.Content;
+
+            // Correction : Un TextBlock utilise .Text et non .Content
+            ButOkLabel.Text = param.OkButtonContent;
+            ButAnnulerLabel.Text = param.CancelButtonContent;
 
             InitCommand();
         }
@@ -68,10 +61,11 @@ namespace FranceJudo.UI.Wpf.Dialogs
 
         private void InitCommand()
         {
-            CommandBinding command1 = new CommandBinding() { Command = AlertWindow.OKButton };
+            // Correction : AlertWindow n'existait pas ici, on le remplace par ConfirmWindow
+            CommandBinding command1 = new CommandBinding() { Command = ConfirmWindow.OKButton };
             command1.Executed += this.CommandBinding_Ok;
             this.CommandBindings.Add(command1);
-            this.InputBindings.Add(new KeyBinding() { Command = AlertWindow.OKButton, Key = Key.Enter });
+            this.InputBindings.Add(new KeyBinding() { Command = ConfirmWindow.OKButton, Key = Key.Enter });
 
             CommandBinding command2 = new CommandBinding() { Command = ConfirmWindow.CancelButton };
             command2.Executed += this.CommandBinding_Cancel;

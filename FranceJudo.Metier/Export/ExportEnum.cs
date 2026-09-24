@@ -1,4 +1,5 @@
-﻿namespace FranceJudo.Metier.Export
+﻿
+namespace FranceJudo.Metier.Export
 {
     /// <summary>
     /// Enumération des type d'export
@@ -18,6 +19,8 @@
         Site_MenuEngagements = 117,
         Site_Engagements = 118,
         Site_FooterScript = 119,
+        Site_MenuStatistiques = 120,
+        Site_Statistiques = 121,
 
         Site_Interne_EcranAppel = 1000
     }

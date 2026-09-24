@@ -1,4 +1,5 @@
-﻿using AppPublication.ExtensionNoyau;
+﻿using FranceJudo.Core.Logging;
+using FranceJudo.Metier.ExtensionNoyau;
 using FranceJudo.Metier.Noyau;
 using System.Xml.Linq;
 
@@ -20,17 +21,39 @@ namespace AppPublication.Export
         /// </summary>
         public static ExportSharedContext Create(IJudoData DC, ExtendedJudoData EDC, ConfigurationExportSite config)
         {
-            if (DC == null) throw new System.ArgumentNullException(nameof(DC));
-            if (EDC == null) throw new System.ArgumentNullException(nameof(EDC));
-            if (config == null) throw new System.ArgumentNullException(nameof(config));
+            System.ArgumentNullException.ThrowIfNull(DC);
+            System.ArgumentNullException.ThrowIfNull(EDC);
+            System.ArgumentNullException.ThrowIfNull(config);
 
             var context = new ExportSharedContext(DC, EDC, config);
 
-            // Génération du document spécifique aux engagements
-            XDocument outDoc = ExportXML.CreateDocumentEngagements(context);
+            // Injection dans le parent générique via nameof()
+            // Le document spécifique aux engagements
+            context.RegisterLazyDocument(
+                    nameof(ExportDocumentKey.Engagements),
+                    () => {
+                        // 1. Génération
+                        XDocument doc = ExportXML.CreateDocumentEngagements(context);
+
+                        // 2. Trace unique en XDocument !
+                        LogTools.DebugLogData(doc);
+
+                        // 3. Renvoi pour compilation dans le pipeline
+                        return doc;
+                    });
+
+            context.RegisterLazyDocument(
+                    nameof(ExportDocumentKey.Statistiques),
+                    () =>
+                    {
+                        XDocument doc = ExportXML.CreateDocumentStatistiques(context);
+                        LogTools.DebugLogData(doc);
+                        return doc;
+                    }
+                );
 
             // Lancement du pipeline centralisé dans la classe mère
-            context.ExecuteExportPipeline(config.ToXml(), outDoc);
+            context.ExecuteExportPipeline(config.ToXml());
 
             return context;
         }

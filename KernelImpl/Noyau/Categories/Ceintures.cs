@@ -37,8 +37,8 @@ namespace KernelImpl.Noyau.Categories
         {
             XElement xceinture = new XElement(ConstantXML.Ceinture);
             xceinture.SetAttributeValue(ConstantXML.Ceinture_id, id.ToString());
-            xceinture.SetAttributeValue(ConstantXML.Ceinture_nom, nom.ToString());
-            xceinture.SetAttributeValue(ConstantXML.Ceinture_ordre, ordre.ToString());
+            xceinture.SetAttributeValue(ConstantXML.Ceinture_nom, nom);
+            xceinture.SetAttributeValue(ConstantXML.Ceinture_ordre, ordre);
             xceinture.SetAttributeValue(ConstantXML.Ceinture_remoteId, remoteId);
             xceinture.SetAttributeValue(ConstantXML.Ceinture_couleur1, couleur1);
             xceinture.SetAttributeValue(ConstantXML.Ceinture_couleur2, couleur2);

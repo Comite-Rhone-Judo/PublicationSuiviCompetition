@@ -21,7 +21,7 @@ namespace KernelImpl.Noyau.Deroulement
             _id = phase.id;
             _nom = phase.libelle;
             _type_phase = phase.typePhase;
-            _etat = ((EtatPhaseEnum)phase.etat).ToString();
+            _etat = phase.etat;
         }
 
         readonly int _id = 0;
@@ -33,8 +33,8 @@ namespace KernelImpl.Noyau.Deroulement
             }
         }
 
-        readonly int _type_phase = 0;
-        public int type_phase
+        readonly TypePhaseEnum _type_phase = 0;
+        public TypePhaseEnum type_phase
         {
             get
             {
@@ -51,8 +51,8 @@ namespace KernelImpl.Noyau.Deroulement
             }
         }
 
-        readonly string _etat = "";
-        public string etat
+        readonly EtatPhaseEnum _etat = 0;
+        public EtatPhaseEnum etat
         {
             get
             {

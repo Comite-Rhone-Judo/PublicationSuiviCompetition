@@ -1,6 +1,7 @@
 ﻿using FranceJudo.Core.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace FranceJudo.Core.Network.Scanner
 {
+    [ExcludeFromCodeCoverage]
     public static class NetworkScanner
     {
         [DllImport("iphlpapi.dll", ExactSpelling = true)]
@@ -24,27 +26,27 @@ namespace FranceJudo.Core.Network.Scanner
         /// </summary>
         public static async Task ScanNetworkAsync(NetworkInterface netInterface, IProgress<NetworkDevice> progress, CancellationToken cancellationToken)
         {
-            LogTools.Logger.Debug("Demarrage du scan reseau...");
+            LogTools.Logger?.Debug("Demarrage du scan reseau...");
 
             var ipInfo = netInterface.GetIPProperties().UnicastAddresses
                 .FirstOrDefault(a => a.Address.AddressFamily == AddressFamily.InterNetwork);
 
             if (ipInfo == null)
             {
-                LogTools.Logger.Error("L'interface selectionnee n'a pas d'adresse IPv4 valide.");
+                LogTools.Logger?.Error("L'interface selectionnee n'a pas d'adresse IPv4 valide.");
                 throw new InvalidOperationException("L'interface selectionnee n'a pas d'adresse IPv4.");
             }
 
-            LogTools.Logger.Debug($"Interface analysee. Adresse IP locale : {ipInfo.Address}, Masque : {ipInfo.IPv4Mask}");
+            LogTools.Logger?.Debug($"Interface analysee. Adresse IP locale : {ipInfo.Address}, Masque : {ipInfo.IPv4Mask}");
 
             // 1. Decouverte UPnP
-            LogTools.Logger.Debug("Recherche des equipements UPnP (Multicast) en cours...");
+            LogTools.Logger?.Debug("Recherche des equipements UPnP (Multicast) en cours...");
             HashSet<string> upnpDevices = await DiscoverUpnpDevicesAsync(cancellationToken);
-            LogTools.Logger.Debug($"{upnpDevices.Count} equipement(s) UPnP trouve(s) sur le reseau.");
+            LogTools.Logger?.Debug($"{upnpDevices.Count} equipement(s) UPnP trouve(s) sur le reseau.");
 
             if (cancellationToken.IsCancellationRequested)
             {
-                LogTools.Logger.Debug("Scan annule par l'utilisateur apres l'etape UPnP.");
+                LogTools.Logger?.Debug("Scan annule par l'utilisateur apres l'etape UPnP.");
                 return;
             }
 
@@ -52,14 +54,14 @@ namespace FranceJudo.Core.Network.Scanner
             IEnumerable<string> ipsToScan = NetworkCalculator.GetUsableIps(ipInfo);
             List<Task> scanTasks = new List<Task>();
 
-            LogTools.Logger.Debug("Lancement du scan Ping et Ports sur la plage d'adresses IP...");
+            LogTools.Logger?.Debug("Lancement du scan Ping et Ports sur la plage d'adresses IP...");
 
             // 3. Lancement des taches
             foreach (string ip in ipsToScan)
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    LogTools.Logger.Debug("Arret de la creation des taches de scan (Annulation demandee).");
+                    LogTools.Logger?.Debug("Arret de la creation des taches de scan (Annulation demandee).");
                     break;
                 }
 
@@ -93,12 +95,12 @@ namespace FranceJudo.Core.Network.Scanner
                 await Task.WhenAll(scanTasks);
                 if (!cancellationToken.IsCancellationRequested)
                 {
-                    LogTools.Logger.Debug("Scan reseau termine avec succes.");
+                    LogTools.Logger?.Debug("Scan reseau termine avec succes.");
                 }
             }
             catch (OperationCanceledException)
             {
-                LogTools.Logger.Debug("Taches de scan interrompues (Annulation globale).");
+                LogTools.Logger?.Debug("Taches de scan interrompues (Annulation globale).");
             }
         }
 
@@ -124,7 +126,7 @@ namespace FranceJudo.Core.Network.Scanner
                 {
                     isOnline = true;
                     type = DeviceType.SmartTvOrStreaming;
-                    LogTools.Logger.Debug($"Appareil identifie via UPnP (sans Ping) pour l'IP : {ip}");
+                    LogTools.Logger?.Debug($"Appareil identifie via UPnP (sans Ping) pour l'IP : {ip}");
                 }
                 else
                 {
@@ -137,7 +139,7 @@ namespace FranceJudo.Core.Network.Scanner
                     if (reply.Status == IPStatus.Success)
                     {
                         isOnline = true;
-                        LogTools.Logger.Debug($"Reponse au ping recue pour l'IP : {ip}");
+                        LogTools.Logger?.Debug($"Reponse au ping recue pour l'IP : {ip}");
 
                         // On détermine le type en scannant les ports
                         type = await DetermineDeviceCategoryAsync(ip, cancellationToken);
@@ -163,14 +165,14 @@ namespace FranceJudo.Core.Network.Scanner
                         Category = type
                     };
 
-                    LogTools.Logger.Debug($"Nouvel appareil detecte - IP: {ip} | Hostname: {hostname} | Type: {type}");
+                    LogTools.Logger?.Debug($"Nouvel appareil detecte - IP: {ip} | Hostname: {hostname} | Type: {type}");
 
                     progress?.Report(device);
                 }
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Debug($"Aucune reponse ou erreur lors de l'analyse de l'IP {ip} : {ex.Message}");
+                LogTools.Logger?.Debug($"Aucune reponse ou erreur lors de l'analyse de l'IP {ip} : {ex.Message}");
             }
         }
 
@@ -196,7 +198,7 @@ namespace FranceJudo.Core.Network.Scanner
                     return await resolveTask;
                 }
 
-                LogTools.Logger.Debug($"Timeout DNS inverse pour l'IP {ip}");
+                LogTools.Logger?.Debug($"Timeout DNS inverse pour l'IP {ip}");
                 return "Inconnu";
             }
             catch (Exception)
@@ -238,7 +240,7 @@ namespace FranceJudo.Core.Network.Scanner
 
                         if (discoveredIps.Add(ip))
                         {
-                            LogTools.Logger.Debug($"Reponse UPnP (SSDP) recue depuis l'adresse : {ip}");
+                            LogTools.Logger?.Debug($"Reponse UPnP (SSDP) recue depuis l'adresse : {ip}");
                         }
                     }
                 }, cancellationToken);
@@ -247,11 +249,11 @@ namespace FranceJudo.Core.Network.Scanner
             }
             catch (TaskCanceledException)
             {
-                LogTools.Logger.Debug("Decouverte UPnP interrompue par l'utilisateur.");
+                LogTools.Logger?.Debug("Decouverte UPnP interrompue par l'utilisateur.");
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur inattendue lors de l'execution de la decouverte UPnP multicast.");
+                LogTools.Logger?.Error(ex, "Erreur inattendue lors de l'execution de la decouverte UPnP multicast.");
             }
 
             return discoveredIps;
@@ -314,7 +316,7 @@ namespace FranceJudo.Core.Network.Scanner
 
                 if (SendARP(BitConverter.ToInt32(dst.GetAddressBytes(), 0), 0, macAddr, ref macAddrLen) != 0)
                 {
-                    LogTools.Logger.Debug($"Resolution ARP echouee pour l'IP {ipAddress} (appareil hors LAN ou protege par pare-feu)");
+                    LogTools.Logger?.Debug($"Resolution ARP echouee pour l'IP {ipAddress} (appareil hors LAN ou protege par pare-feu)");
                     return "Inconnue";
                 }
 
@@ -326,7 +328,7 @@ namespace FranceJudo.Core.Network.Scanner
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, $"Erreur critique lors de la recuperation MAC pour l'IP {ipAddress}");
+                LogTools.Logger?.Error(ex, $"Erreur critique lors de la recuperation MAC pour l'IP {ipAddress}");
                 return "Erreur MAC";
             }
         }

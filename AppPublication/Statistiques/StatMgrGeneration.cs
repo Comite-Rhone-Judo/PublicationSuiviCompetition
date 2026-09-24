@@ -32,7 +32,7 @@ namespace AppPublication.Statistiques
             }
             catch (System.Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors de l'initialisation des statistiques generation");
+                LogTools.Logger?.Error(ex, "Erreur lors de l'initialisation des statistiques generation");
             }
         }
 
@@ -45,7 +45,7 @@ namespace AppPublication.Statistiques
             }
             catch (System.Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors de l'enregistrement d'une erreur de generation");
+                LogTools.Logger?.Error(ex, "Erreur lors de l'enregistrement d'une erreur de generation");
             }
         }
 
@@ -58,7 +58,7 @@ namespace AppPublication.Statistiques
             }
             catch (System.Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors de l'enregistrement d'une generation");
+                LogTools.Logger?.Error(ex, "Erreur lors de l'enregistrement d'une generation");
             }
         }
 
@@ -71,7 +71,7 @@ namespace AppPublication.Statistiques
             }
             catch (System.Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors de l'enregistrement du delai de generation");
+                LogTools.Logger?.Error(ex, "Erreur lors de l'enregistrement du delai de generation");
             }
         }
     }

@@ -1,14 +1,252 @@
-﻿div.tas-filler-div {
-    height: 50px;
+﻿/* ==========================================================================
+   Définition des Thèmes (Light / Dark) via Variables CSS
+   ========================================================================== */
+:root {
+    --bg-color: #F4F4F6; /* Gris souris neutre (sans sous-ton rosé) */
+    --card-bg: #FFFFFF;
+    --text-color: #1C1C1E;
+    --text-muted: #8E8E93;
+    --border-color: #E5E5EA;
+    --header-bg: rgba(255, 255, 255, 0.85);
+    --nav-bg: #F4F4F6;
+    --nav-active-bg: #FFFFFF;
+    /* Pivots officiels France Judo (Mode Clair) */
+    --fj-blue: #0a0096;
+    --fj-blue-alt: #423d98; /* Le nouveau bleu secondaire */
+    --fj-red: #e6332a;
+    --fj-grey: #bfbfbf;
+    --fj-green: #358f6c;
+    --fj-taupe: #8B8682; /* Nouvelle couleur de référence : Taupe classique */
+    --fj-warning: #FFCC00; /* Jaune d'avertissement officiel */
+    --fj-pink: #E91E63; /* Rose officiel pour les catégories féminines */
+    /* Nouvelles variables sémantiques de bordures */
+    --card-accent-border: color-mix(in srgb, var(--fj-blue) 40%, transparent); /* Bleu FJ bien visible de jour */
+    --belt-neutral: color-mix(in srgb, var(--text-color) 35%, transparent); /* Gris neutre de jour */
+    /* Nouvelles références pour éliminer les couleurs en dur (Rendu strictement identique) */
+    --text-inverse: #FFFFFF; /* Blanc pur pour les textes sur fond sombre/bleu */
+    --shadow-base: 0, 0, 0; /* Base RVB pour les box-shadow (Noir) */
+    --hover-overlay: rgba(0, 0, 0, 0.05); /* Overlay standard au survol */
+    --hover-overlay-light: rgba(0, 0, 0, 0.02); /* Overlay très léger au survol */
+    --phase-bg: rgba(10, 0, 150, 0.05); /* Fond spécifique des boutons phases */
+    --phase-bg-hover: rgba(10, 0, 150, 0.1);
 }
+
+body.dark-mode {
+    --bg-color: #000000; /* Noir pur style OLED iOS */
+    --card-bg: #1C1C1E; /* Gris sombre pour les conteneurs/cartes */
+    --text-color: #F2F2F7;
+    --text-muted: #98989F;
+    /*--border-color: #38383A;*/
+    --border-color: #545458;
+    --header-bg: rgba(28, 28, 30, 0.85);
+    --nav-bg: #1C1C1E;
+    --nav-active-bg: #2C2C2E;
+    /* Adaptation des pivots pour garantir la lisibilité et le contraste en mode sombre */
+    --fj-blue: hsl(244, 100%, 25%);
+    --fj-blue-alt: #423d98; /* Maintenu ou convertible en hsl(243, 43%, 42%) */
+    --nav-active-bg: #E5E5EA; /* Indispensable pour que le texte bleu reste lisible ! */
+    --fj-red: #FF453A; /* Rouge vif optimisé fond noir */
+    --fj-grey: #8E8E93;
+    --fj-green: #34C759;
+    --fj-taupe: #ADA39C; /* Taupe légèrement plus clair et sableux pour le mode sombre */
+    --fj-warning: #FFD60A; /* Jaune d'avertissement optimisé mode sombre */
+    --fj-pink: #FF4081; /* Rose optimisé et lumineux pour le mode sombre */
+    /* Le --text-color étant blanc (#F2F2F7) en mode sombre, on s'en sert intelligemment : */
+    --card-accent-border: color-mix(in srgb, var(--text-color) 25%, transparent); /* Liseré "blanc" atténué */
+    --belt-neutral: var(--text-color); /* Blanc pur (ou presque) de nuit */
+    /* Adaptation des nouvelles références pour le mode sombre */
+    --text-inverse: #FFFFFF; /* Reste blanc */
+    --shadow-base: 0, 0, 0; /* Les ombres restent noires la nuit (ou transparentes) */
+    --hover-overlay: rgba(255, 255, 255, 0.08); /* Overlay standard au survol */
+    --hover-overlay-light: rgba(255, 255, 255, 0.05); /* Overlay très léger au survol */
+    --phase-bg: hsla(244, 100%, 65%, 0.12); /* Fond spécifique conservé */
+    --phase-bg-hover: hsla(244, 100%, 65%, 0.20);
+}
+
+/* ==========================================================================
+   Base App
+   ========================================================================== */
+body {
+    background-color: var(--bg-color);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: var(--text-color);
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Classes utilitaires basées sur les variables */
+.fj-blue {
+    color: var(--fj-blue) !important;
+}
+
+.fj-bg-blue {
+    background-color: var(--fj-blue) !important;
+    color: var(--text-inverse) !important;
+}
+
+.fj-blue-alt {
+    color: var(--fj-blue-alt) !important;
+}
+
+.fj-bg-blue-alt {
+    background-color: var(--fj-blue-alt) !important;
+    color: var(--text-inverse) !important;
+}
+
+.fj-red {
+    color: var(--fj-red) !important;
+}
+
+.fj-grey {
+    color: var(--fj-grey) !important;
+}
+
+.fj-green {
+    color: var(--fj-green) !important;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+    font-size: 0.85em;
+}
+
+/* ==========================================================================
+   En-tête (iOS Blur)
+   ========================================================================== */
+div.tas-titre-app {
+    position: sticky; /* Remplacera le w3-top */
+    top: 0; /* Remplacera le w3-top */
+    background: var(--header-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 50;
+}
+
+    div.tas-titre-app .w3-cell-row {
+        display: flex;
+        align-items: center;
+        padding: 10px 16px;
+    }
+
+    div.tas-titre-app h3 {
+        font-size: 1.1em;
+        font-weight: 600;
+        margin: 0;
+        flex-grow: 1;
+        text-align: center;
+        color: var(--text-color);
+    }
+
+/* ==========================================================================
+   Ajustement du Bouton Menu (Ergonomie Smartphone)
+   ========================================================================== */
+.tas-menu-btn {
+    font-size: 28px !important; /* Taille généreuse pour le doigt */
+    padding: 0 12px !important; /* Annule le padding vertical natif qui déforme le bandeau */
+    line-height: 1 !important; /* Empêche la police de créer un espace fantôme */
+    height: 38px !important; /* Hauteur fixe verrouillée */
+    /* Centrage parfait de l'icône dans sa boîte */
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    /* Suppression du contour tactile peu esthétique sur mobile */
+    outline: none !important;
+}
+
+div.bandeau-titre {
+    text-align: right;
+    width: auto;
+}
+
+img.img-bandeau-titre {
+    height: 32px;
+}
+
+/* ==========================================================================
+   Inversion automatique du logo de base en mode sombre (si pas de LogoDark)
+   ========================================================================== */
+body.dark-mode img.img-bandeau-titre.tas-logo-auto-invert {
+    filter: brightness(0) invert(1);
+}
+
+/* ==========================================================================
+   Menu de Navigation (Sidebar)
+   ========================================================================== */
+div.tas-navigation-panel {
+    background-color: var(--nav-bg);
+    z-index: 100;
+    box-shadow: 2px 0 10px rgba(var(--shadow-base),0.2);
+    width: 280px;
+    display: none;
+    /* LA CORRECTION EST ICI : On force l'ancrage en haut à gauche */
+    top: 0 !important;
+    left: 0 !important;
+}
+
+    div.tas-navigation-panel button, div.tas-navigation-panel a {
+        border-bottom: 1px solid var(--border-color);
+        padding: 12px 16px !important;
+        font-size: 1em;
+        color: var(--text-color);
+        text-decoration: none;
+        display: block;
+        background: transparent;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        width: 100%;
+        text-align: left;
+    }
+
+    div.tas-navigation-panel .nav-active {
+        background-color: var(--nav-active-bg) !important;
+        color: var(--fj-blue) !important;
+        font-weight: 600;
+    }
+
+/* ==========================================================================
+   Effets de survol (Hover) unifiés et doux (Style iOS)
+   ========================================================================== */
+
+/* 1. Neutraliser le changement de couleur du texte natif de W3.CSS au survol */
+.w3-button:hover {
+    color: inherit !important;
+}
+
+/* 2. Mode Clair : Hover subtil (noir à 5% d'opacité) pour TOUS les éléments */
+.tas-titre-app .w3-button:hover,
+.tas-navigation-panel a:hover,
+.tas-navigation-panel button:hover,
+.tas-nav-footer:hover,
+.tas-nav-toggle-item:hover {
+    background-color: var(--hover-overlay) !important;
+}
+
+/* 3. Mode Sombre : Hover subtil (blanc à 8% d'opacité) pour ne pas agresser l'œil */
+body.dark-mode .tas-titre-app .w3-button:hover,
+body.dark-mode .tas-navigation-panel a:hover,
+body.dark-mode .tas-navigation-panel button:hover,
+body.dark-mode .tas-nav-footer:hover,
+body.dark-mode .tas-nav-toggle-item:hover {
+    background-color: var(--hover-overlay) !important;
+}
+
+/* 4. Maintenir l'intégrité de l'élément actif au survol */
+.tas-navigation-panel .nav-active:hover {
+    background-color: var(--nav-active-bg) !important;
+    opacity: 0.8; /* L'élément actif devient juste un peu transparent au clic */
+}
+
+/* ==========================================================================
+   Autres classes utilitaires et structurelles
+   ========================================================================== */
 
 div.tas-msg-panel {
     height: 45px;
     z-index: 1;
-}
-
-div.tas-titre-app {
-    z-index: 2;
 }
 
 div.tas-footnote {
@@ -16,29 +254,11 @@ div.tas-footnote {
     margin-top: 5px;
 }
 
-div.tas-competition-bandeau {
-    position: relative;
-    z-index: 1;
-}
-
-div.tas-navigation-panel {
-    display: none;
-    z-index: 3;
-}
 
 div.tas-entete-section {
     font-weight: bold;
     position: relative;
     z-index: 1;
-}
-
-div.bandeau-titre {
-    text-align: left;
-    width: 100px;
-}
-
-img.img-bandeau-titre {
-    height: 35px;
 }
 
 div.colorized-img-white {
@@ -57,4 +277,793 @@ div.colorized-img-black {
     div.colorized-img-black img {
         filter: drop-shadow(0px 100px 0 black);
         transform: translateY(-100px);
+    }
+
+div.tas-info-btn-container {
+    margin: 0;
+    padding: 4px 8px 0 0;
+    line-height: 0;
+}
+
+button.tas-info-btn {
+    padding: 0;
+    margin: 0;
+    min-height: auto;
+}
+
+div.tas-info-panel {
+    padding: 4px 8px;
+    margin: 0 8px 6px 8px;
+}
+
+span.tas-info-close-btn {
+    padding: 2px 8px;
+    background: transparent;
+}
+
+div.tas-info-text-container {
+    margin-right: 20px;
+}
+
+p.tas-info-text {
+    margin: 2px 0;
+}
+
+div.tas-judoka-identity {
+    display: inline-block;
+    vertical-align: middle;
+    text-align: left;
+    padding-left: 4px;
+    line-height: 0.9;
+}
+
+.tas-margin-none {
+    margin: 0 !important;
+}
+
+/* ==========================================================================
+   Bandeau Compétition (Définition UNIQUE et complète)
+   ========================================================================== */
+.tas-competition-bandeau {
+    /* Propriétés de positionnement conservées */
+    position: relative;
+    z-index: 1;
+    /* Nouvelles propriétés visuelles iOS / France Judo */
+    background-color: var(--fj-blue) !important;
+    color: var(--text-inverse) !important;
+    padding: 20px 16px;
+    text-align: center;
+}
+
+    .tas-competition-bandeau h4 {
+        font-weight: 600;
+        margin: 0;
+        font-size: 1.2em;
+        letter-spacing: -0.3px;
+    }
+
+    .tas-competition-bandeau h5 {
+        background-color: var(--fj-blue-alt);
+        display: inline-block;
+        padding: 4px 16px;
+        border-radius: 20px;
+        margin: 12px 0 0 0;
+        font-weight: 500;
+        font-size: 0.9em;
+        color: var(--text-inverse);
+        border: 1px solid color-mix(in srgb, var(--text-inverse) 10%, transparent);
+    }
+
+/* ==========================================================================
+   Hiérarchie visuelle : Espacement entre les compétitions
+   ========================================================================== */
+.tas-competition-panels {
+    margin-bottom: 18px; /* Crée une vraie cassure visuelle avant le bandeau suivant */
+}
+
+/* ==========================================================================
+   Éléments spécifiques du menu (Toggle, Checkboxes)
+   ========================================================================== */
+.tas-nav-footer {
+    margin-top: 16px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border-color);
+}
+
+.tas-checkbox-spacing {
+    margin-right: 8px;
+}
+
+/* ==========================================================================
+   Ajustements spécifiques du menu (Fermer, Actualiser)
+   ========================================================================== */
+
+/* Bouton Fermer : forcé à droite et sans liseret en dessous */
+.tas-nav-close-btn {
+    text-align: right !important;
+    border-bottom: none !important;
+}
+
+/* Conteneur d'option Toggle (Actualiser) : avec liseret en dessous */
+.tas-nav-toggle-item {
+    border-bottom: 1px solid var(--border-color); /* Liseret avec "Se prépare" */
+    padding: 12px 16px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* ==========================================================================
+   Structure Flex pour le menu (pour pousser le footer en bas)
+   ========================================================================== */
+.tas-nav-flex-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Prend toute la hauteur de la sidebar */
+}
+
+.tas-nav-footer {
+    margin-top: auto; /* Pousse cet élément tout en bas */
+    padding: 16px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+}
+
+/* ==========================================================================
+   Toggle Switch style iOS (remplace les checkboxes)
+   ========================================================================== */
+.tas-switch-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.tas-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    margin-right: 12px;
+}
+
+    .tas-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+.tas-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--border-color);
+    transition: .3s;
+    border-radius: 24px;
+}
+
+    .tas-slider:before {
+        position: absolute;
+        content: "";
+        height: 20px;
+        width: 20px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        transition: .3s;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(var(--shadow-base), 0.2);
+    }
+
+input:checked + .tas-slider {
+    background-color: var(--fj-green); /* Le vert de votre charte */
+}
+
+    input:checked + .tas-slider:before {
+        transform: translateX(20px);
+    }
+
+.tas-switch-label {
+    font-size: 1em;
+    color: var(--text-color);
+}
+
+/* ==========================================================================
+   Logos Mode Clair / Mode Sombre
+   ========================================================================== */
+.tas-logo-dark {
+    display: none;
+}
+
+body.dark-mode .tas-logo-light {
+    display: none;
+}
+
+body.dark-mode .tas-logo-dark {
+    display: inline-block;
+}
+
+/* ==========================================================================
+   Textes et icônes adaptatifs (Menu, Fermer, etc.)
+   ========================================================================== */
+.tas-adaptive-icon {
+    color: var(--fj-blue) !important; /* Bleu officiel en mode clair */
+}
+
+body.dark-mode .tas-adaptive-icon {
+    color: var(--text-inverse) !important; /* Blanc pur en mode sombre */
+}
+
+/* ==========================================================================
+   Cartes iOS (Classements, Affectations, Poules, etc.)
+   ========================================================================== */
+.ios-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(var(--shadow-base),0.04);
+    overflow: hidden;
+    position: relative;
+    z-index: 10;
+    border: 1px solid var(--border-color); /* Indispensable pour la lisibilité en Dark Mode */
+}
+
+/* En-tête des cartes (pour les épreuves, les poules...) */
+.tas-card-header {
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: 1.1em;
+    background-color: var(--bg-color); /* Contraste léger avec le fond pur de la carte */
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+/* Corps de la carte */
+.tas-card-body {
+    padding: 16px;
+    color: var(--text-color);
+    font-size: 0.95em;
+    display: flex;
+    align-items: center;
+}
+
+/* ==========================================================================
+   ÉTATS VIDES ET MESSAGES D'ATTENTE (Empty States)
+   S'utilise en combinaison avec la classe .ios-card
+   ========================================================================== */
+.tas-empty-state {
+    border: 2px dashed var(--border-color); /* Remplace la bordure standard par des pointillés */
+    color: var(--text-muted);
+    text-align: center;
+    padding: 32px 16px;
+    font-size: 1.1em;
+    font-weight: 500;
+    /* Retire la marge si elle est déjà gérée par le conteneur parent (w3-padding) */
+    margin: 0;
+}
+
+/* Optionnel : Si vous voulez que la zone d'attente soit un peu transparente en mode sombre */
+body.dark-mode .tas-empty-state {
+    background-color: color-mix(in srgb, var(--card-bg) 50%, transparent);
+}
+
+/* ==========================================================================
+   Accordéons iOS (Panneaux d'épreuves)
+   ========================================================================== */
+/* 1. Le bouton de base (Mode Clair) */
+.ios-accordion-btn {
+    background-color: color-mix(in srgb, var(--fj-blue) 6%, transparent);
+    color: var(--fj-blue);
+    font-weight: 600;
+    font-size: 1.1em;
+    padding: 12px 14px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background-color 0.2s ease;
+}
+
+    /* 2. L'effet au survol (Mode Clair) */
+    .ios-accordion-btn:hover {
+        background-color: color-mix(in srgb, var(--fj-blue) 10%, transparent);
+    }
+
+/* 3. Le bouton (Mode Sombre) */
+body.dark-mode .ios-accordion-btn {
+    background-color: var(--fj-blue-alt) !important; /* Le !important force la couleur */
+    color: var(--text-inverse) !important; /* Le !important force le texte en blanc */
+}
+
+    /* 4. L'effet au survol (Mode Sombre) */
+    body.dark-mode .ios-accordion-btn:hover {
+        filter: brightness(1.2) !important;
+    }
+
+/* Dimensionnement propre des icônes d'accordéon */
+.tas-accordion-icon {
+    width: 25px;
+    height: 25px;
+}
+
+/* États par défaut pour l'initialisation (remplace les styles en ligne) */
+.tas-icon-hidden {
+    display: none;
+}
+
+.tas-icon-visible {
+    display: inline;
+}
+
+.tas-accordion-content-hidden {
+    display: none;
+    margin-top: 6px;
+}
+
+/* ==========================================================================
+   Inversion automatique des icônes noires en Mode Sombre
+   ========================================================================== */
+body.dark-mode .tas-accordion-icon,
+body.dark-mode .tas-theme-icon {
+    /* Transforme mathématiquement le noir pur en blanc pur */
+    filter: invert(1) brightness(2);
+}
+
+/* ==========================================================================
+   Accordéon Spécial "Absents" (Dérivé dynamiquement du Taupe)
+   ========================================================================== */
+.ios-accordion-btn.ios-accordion-btn-absent {
+    /* Fond translucide basé sur le taupe */
+    background-color: color-mix(in srgb, var(--fj-taupe) 15%, transparent);
+    color: var(--fj-taupe);
+}
+
+    .ios-accordion-btn.ios-accordion-btn-absent:hover {
+        background-color: color-mix(in srgb, var(--fj-taupe) 22%, transparent);
+    }
+
+body.dark-mode .ios-accordion-btn.ios-accordion-btn-absent {
+    background-color: color-mix(in srgb, var(--fj-taupe) 20%, transparent) !important;
+    color: var(--fj-taupe) !important;
+}
+
+    body.dark-mode .ios-accordion-btn.ios-accordion-btn-absent:hover {
+        background-color: color-mix(in srgb, var(--fj-taupe) 30%, transparent) !important;
+    }
+
+/* ==========================================================================
+   Listes interactives iOS (Boutons d'épreuves, phases, classements)
+   ========================================================================== */
+
+/* Épreuve simple (Bouton standard) */
+.ios-list-item {
+    display: block;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    padding: 12px 14px;
+    margin-bottom: 6px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1em;
+    box-shadow: 0 1px 3px rgba(var(--shadow-base),0.02);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    text-align: center;
+}
+
+    .ios-list-item:hover {
+        background-color: var(--hover-overlay-light);
+        color: var(--text-color);
+    }
+
+body.dark-mode .ios-list-item:hover {
+    background-color: var(--hover-overlay-light);
+}
+
+.ios-list-item:active {
+    transform: scale(0.98); /* Petit effet d'enfoncement au clic (iOS) */
+}
+
+/* État inactif (Tirage en attente) */
+.ios-list-item-disabled {
+    background-color: transparent;
+    color: var(--text-muted);
+    border: 1px dashed var(--border-color);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+    .ios-list-item-disabled:hover, .ios-list-item-disabled:active {
+        background-color: transparent;
+        transform: none;
+    }
+
+/* ==========================================================================
+   Épreuves à phases multiples (Cartes groupées)
+   ========================================================================== */
+.ios-multiphase-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(var(--shadow-base),0.02);
+}
+
+.ios-multiphase-header {
+    background-color: var(--bg-color);
+    padding: 10px 14px;
+    font-weight: 600;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.ios-multiphase-body {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 6px;
+}
+
+/* Bouton interne pour une phase */
+.ios-phase-btn {
+    display: block;
+    background-color: var(--phase-bg);
+    color: var(--fj-blue);
+    text-align: center;
+    padding: 10px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+    .ios-phase-btn:hover {
+        background-color: var(--phase-bg-hover);
+    }
+
+body.dark-mode .ios-phase-btn {
+    background-color: var(--phase-bg);
+    color: var(--text-color);
+}
+
+    body.dark-mode .ios-phase-btn:hover {
+        background-color: var(--phase-bg-hover);
+    }
+
+.ios-phase-btn-disabled {
+    background-color: transparent;
+    color: var(--text-muted);
+    border: 1px dashed var(--border-color);
+    cursor: not-allowed;
+}
+
+body.dark-mode .ios-phase-btn-disabled {
+    background-color: transparent;
+    color: var(--text-muted);
+}
+
+/* ==========================================================================
+   Onglets iOS (Segmented Control)
+   ========================================================================== */
+.ios-segmented-control {
+    display: flex;
+    /* Remplace rgba(118, 118, 128, 0.12) */
+    background-color: color-mix(in srgb, var(--text-muted) 12%, transparent);
+    padding: 3px;
+    border-radius: 9px;
+    margin: 8px 0 16px 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+body.dark-mode .ios-segmented-control {
+    /* Remplace rgba(118, 118, 128, 0.24) */
+    background-color: color-mix(in srgb, var(--text-muted) 24%, transparent);
+}
+
+.ios-segment {
+    flex: 1;
+    min-width: max-content;
+    padding: 6px 12px;
+    text-align: center;
+    font-size: 0.85em;
+    font-weight: 500;
+    color: var(--text-color);
+    border-radius: 7px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+    /* Compatibilité avec votre JS (qui ajoute "w3-indigo" sur l'onglet actif) */
+    .ios-segment.w3-indigo {
+        background-color: var(--card-bg) !important;
+        box-shadow: 0 3px 1px rgba(var(--shadow-base),0.04), 0 3px 8px rgba(var(--shadow-base),0.12) !important;
+        color: var(--fj-blue) !important;
+        font-weight: 600 !important;
+    }
+
+body.dark-mode .ios-segment.w3-indigo {
+    background-color: var(--fj-blue-alt) !important;
+    color: var(--text-inverse) !important;
+}
+
+/* ==========================================================================
+   Grille Alphabétique (Filtre par Nom)
+   ========================================================================== */
+.ios-alphabet-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    padding: 8px 0;
+}
+
+.ios-circle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--card-bg);
+    color: var(--fj-blue);
+    font-size: 1.2em;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 2px 6px rgba(var(--shadow-base),0.05);
+    border: 1px solid var(--border-color);
+    transition: transform 0.1s, background-color 0.2s;
+}
+
+body.dark-mode .ios-circle-btn {
+    color: var(--text-inverse);
+    background-color: var(--fj-blue-alt);
+    border-color: color-mix(in srgb, var(--text-inverse) 10%, transparent);
+}
+
+.ios-circle-btn:active {
+    transform: scale(0.92);
+}
+
+/* ==========================================================================
+   Callout d'Avertissement (Sémantique Jaune/Alerte)
+   ========================================================================== */
+.tas-callout.tas-callout-warning {
+    background-color: color-mix(in srgb, var(--fj-warning) 12%, var(--card-bg));
+    border-left-color: var(--fj-warning);
+}
+
+body.dark-mode .tas-callout.tas-callout-warning {
+    /* Fond translucide teinté de jaune/orange */
+    background-color: color-mix(in srgb, var(--fj-warning) 15%, transparent);
+    /* Bordure jaune/orange conservée */
+    border-left-color: var(--fj-warning);
+}
+
+/* ==========================================================================
+   Grille Alphabétique (Filtre par Nom)
+   ========================================================================== */
+.ios-alphabet-grid {
+    display: flex;
+    flex-wrap: wrap; /* Indispensable pour passer à la ligne */
+    gap: 10px; /* Légèrement réduit pour mieux "caser" les lettres */
+    justify-content: center;
+    padding: 8px 0;
+    /* SECURITE : Empêche la grille de forcer l'élargissement de son conteneur parent */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.ios-circle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* SECURITE : Utilisation de flex-basis pour qu'elles puissent légèrement rétrécir si besoin */
+    flex: 0 0 44px; /* Fixe la taille de base à 44px (taille tactile standard Apple) */
+    height: 44px; /* On réduit légèrement par rapport à 48px pour mieux tenir en colonne */
+
+    border-radius: 50%;
+    background-color: var(--card-bg);
+    color: var(--fj-blue);
+    font-size: 1.1em;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 2px 6px rgba(var(--shadow-base),0.05);
+    border: 1px solid var(--border-color);
+    transition: transform 0.1s, background-color 0.2s;
+}
+
+/* ==========================================================================
+   MESSAGES D'INFORMATION / AIDE (Callouts Neutres)
+   ========================================================================== */
+.tas-callout {
+    position: relative;
+    padding: 6px 36px 6px 8px;
+    margin: 8px 16px;
+    /* Gris très clair neutre (façon version initiale) */
+    background-color: var(--bg-color);
+    border-left: 4px solid var(--text-muted); /* Liseré neutre */
+
+    border-radius: 0 8px 8px 0;
+    color: var(--text-color);
+    box-shadow: 0 1px 3px rgba(var(--shadow-base),0.04);
+    font-size: 0.9em;
+}
+
+body.dark-mode .tas-callout {
+    background-color: color-mix(in srgb, var(--card-bg) 70%, transparent);
+    border-left-color: var(--text-muted);
+}
+
+.tas-callout-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 1.4em;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+/* ==========================================================================
+   Badges "Première Catégorie" par Équipes (Masculin / Féminin / Mixte)
+   ========================================================================== */
+.tas-badge-team {
+    padding: 2px 6px; /* Ajusté pour respirer sans déborder de la grille */
+    border-radius: 10px;
+    font-weight: 600;
+    /* Nettoyage total pour un rendu 100% Flat */
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    color: var(--text-color);
+}
+
+    /* LA CORRECTION : Gestion centralisée de l'icône du badge */
+    .tas-badge-team .tas-theme-icon {
+        width: 14px;
+        vertical-align: middle;
+        margin-right: 4px;
+    }
+
+/* Masculin (Bleu) - 25% d'intensité sur fond opaque */
+.tas-badge-team-m {
+    background-color: color-mix(in srgb, var(--fj-blue) 25%, var(--card-bg));
+}
+
+/* Féminin (Rose) - 25% d'intensité sur fond opaque */
+.tas-badge-team-f {
+    background-color: color-mix(in srgb, var(--fj-pink) 25%, var(--card-bg));
+}
+
+/* Mixte / Autre (Vert) - 25% d'intensité sur fond opaque */
+.tas-badge-team-x {
+    background-color: color-mix(in srgb, var(--fj-green) 25%, var(--card-bg));
+}
+
+/* Adaptation Mode Sombre (Fond opaque et lumineux) */
+body.dark-mode .tas-badge-team-m {
+    /* On utilise le bleu alternatif (plus clair) éclairé par 25% de blanc pur */
+    background-color: color-mix(in srgb, var(--fj-blue-alt) 75%, var(--text-inverse));
+}
+
+body.dark-mode .tas-badge-team-f {
+    /* Le rose pur optimisé avec 15% de blanc pour le "pop" et l'opacité */
+    background-color: color-mix(in srgb, var(--fj-pink) 85%, var(--text-inverse));
+}
+
+body.dark-mode .tas-badge-team-x {
+    /* Le vert pur optimisé avec 15% de blanc pour le "pop" et l'opacité */
+    background-color: color-mix(in srgb, var(--fj-green) 85%, var(--text-inverse));
+}
+
+/* ==========================================================================
+   Comportement interactif des Cartes (Liens et Bouton Icône)
+   ========================================================================== */
+
+/* On force le flexbox et on interdit formellement le passage à la ligne */
+.tas-card-header-flex {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap !important;
+}
+
+    /* Le conteneur du texte prend l'espace disponible, mais laisse une marge */
+    .tas-card-header-flex > div:first-child {
+        flex: 1 1 auto;
+        padding-right: 15px; /* Évite que le texte ne colle à l'icône */
+    }
+
+/* Bouton d'icône (zone tactile élargie pour mobile) */
+.tas-icon-btn {
+    flex: 0 0 auto; /* L'icône conserve sa taille et ne peut pas être compressée */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    margin-right: -8px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background-color 0.2s ease, transform 0.1s;
+}
+
+    /* Opacité de l'icône à l'intérieur du lien */
+    .tas-icon-btn .tas-theme-icon {
+        opacity: 0.5;
+    }
+
+    /* ==========================================================================
+   Effets de survol (Hover) adaptatifs sans couleurs "en dur"
+   ========================================================================== */
+
+    .tas-icon-btn:hover {
+        /* Utilise la couleur du texte (noir le jour) à 5% d'opacité */
+        background-color: color-mix(in srgb, var(--text-color) 5%, transparent);
+    }
+
+body.dark-mode .tas-icon-btn:hover {
+    /* Utilise la couleur du texte (blanc la nuit) à 10% d'opacité */
+    background-color: color-mix(in srgb, var(--text-color) 10%, transparent);
+}
+
+.tas-icon-btn:active {
+    transform: scale(0.90);
+}
+
+/* ==========================================================================
+   Bandeau Compétition - Ajouts pour le bouton Statistiques
+   ========================================================================== */
+
+/* Surcharge propre du h5 pour aligner le texte et l'icône sans casser l'existant */
+.tas-competition-bandeau h5.tas-groupe-titre-container {
+    display: inline-flex; /* Passe en flexbox tout en gardant le comportement inline */
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding-right: 8px; /* On réduit un peu le padding droit natif pour compenser la largeur du bouton */
+}
+
+/* Le bouton de statistiques intégré dans le h5 */
+.tas-btn-statistiques {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    margin: 0;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: background-color 0.2s ease, transform 0.1s;
+}
+
+    /* 
+   L'icône à l'intérieur du bouton : 
+   Puisque le fond du h5 est toujours bleu (fj-blue-alt), on force l'icône en blanc pur 
+   indépendamment du mode clair/sombre.
+*/
+    .tas-btn-statistiques .tas-theme-icon {
+        filter: brightness(0) invert(1) !important;
+    }
+
+    /* Effet de survol : On utilise le blanc pur (--text-inverse) à 15% d'opacité */
+    .tas-btn-statistiques:hover {
+        background-color: color-mix(in srgb, var(--text-inverse) 15%, transparent) !important;
+    }
+
+    /* Effet d'enfoncement (tactile) façon iOS */
+    .tas-btn-statistiques:active {
+        transform: scale(0.90);
     }

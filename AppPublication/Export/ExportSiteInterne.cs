@@ -7,6 +7,7 @@ using FranceJudo.Core.Threading;
 using FranceJudo.Metier.Export;
 using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Site;
+using FranceJudo.Metier.XML;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,6 +27,8 @@ namespace AppPublication.Export
         {
         }
         #endregion
+
+        #region METHODES PUBLIQUES
 
         /// <summary>
         /// Génère la page d'index du site, les scripts de mise à jour et exporte les ressources statiques.
@@ -53,16 +56,16 @@ namespace AppPublication.Export
                 // Export direct des styles et scripts
                 var staticFiles = SiteExportEngine.ExportEmbeddedStyleAndJS(true, siteStructure);
                 output.AddRange(staticFiles.Select(path => new FileWithChecksum(path)));
-                LogTools.Logger.Debug("GenereWebSiteIndex - Style/JS: {0} fichiers", staticFiles.Count);
+                LogTools.Logger?.Debug("GenereWebSiteIndex - Style/JS: {0} fichiers", staticFiles.Count);
 
                 // Export des images
                 var imageFiles = SiteExportEngine.ExportEmbeddedImg(true, true, siteStructure);
                 output.AddRange(imageFiles.Select(path => new FileWithChecksum(path)));
-                LogTools.Logger.Debug("GenereWebSiteIndex - Images: {0} fichiers", imageFiles.Count);
+                LogTools.Logger?.Debug("GenereWebSiteIndex - Images: {0} fichiers", imageFiles.Count);
 
                 // --- 5. GÉNÉRATION DU SCRIPT DE MISE À JOUR (FOOTER) ---
                 ExportEnum footerType = ExportEnum.Site_FooterScript;
-                string footerFilename = SiteExportEngine.GetFileName(footerType).Replace("/", "_");
+                string footerFilename = SiteExportEngine.GetSanitizedFileName(footerType);
                 string footerSavePath = Path.Combine(siteStructure.PhysicalStructure.RepertoireJs(), footerFilename);
 
                 var footerArgs = CreateAllXsltArgs(siteStructure, footerSavePath);
@@ -74,7 +77,7 @@ namespace AppPublication.Export
                 }
                 output.Add(new FileWithChecksum($"{footerSavePath}.js"));
 
-                LogTools.Logger.Debug("GenereWebSiteIndex Terminé - Total: {0} ressources", output.Count);
+                LogTools.Logger?.Debug("GenereWebSiteIndex Terminé - Total: {0} ressources", output.Count);
                 progress?.Report(BatchProgressInfo.Step(2));
             }
 
@@ -91,7 +94,7 @@ namespace AppPublication.Export
         /// <param name="ecran"></param>
         /// <param name="progress"></param>
         /// <returns></returns>
-        public List<FileWithChecksum> GenereEcransAppel(ExportSharedContextInterne ctx, SiteInterneUrlGenerator siteStructure, List<EcranAppelModel> ecrans, IProgress<BatchProgressInfo> progress)
+        public List<FileWithChecksum> GenereEcransAppel(ExportSharedContextInterne ctx, SiteInterneUrlGenerator siteStructure, IReadOnlyCollection<EcranAppelModel> ecrans, IProgress<BatchProgressInfo> progress)
         {
             IJudoData DC = ctx.DataContext;
             List<FileWithChecksum> output = new List<FileWithChecksum>();
@@ -101,11 +104,13 @@ namespace AppPublication.Export
             var targetDirectory = siteStructure.PhysicalStructure.RepertoireEcransAppel();
 
             // 1. COMPILATION XPATH (Zéro allocation pour le moteur XSLT)
-            XPathDocument xpathEcrans;
-            var settings = new XmlReaderSettings { NameTable = new NameTable(), IgnoreWhitespace = true };
-            using (var reader = XmlReader.Create(ctx.ExportDocument.CreateReader(), settings))
+            XPathDocument xpathEcrans = ctx.GetCompiledDocument(nameof(ExportDocumentKey.FeuillesCombat));
+
+            // Sécurité : vérifier que la génération a bien eu lieu
+            if (xpathEcrans == null)
             {
-                xpathEcrans = new XPathDocument(reader);
+                LogTools.Logger?.Error("Impossible de récupérer le document XPath pour les combats.");
+                return output; // Retourne une liste vide si le document n'est pas disponible
             }
 
             // Ici on ne prend que les numeros de tapis qui sont dans la limite de la competition (cas ou on a plus de tapis configures que de tapis declarés)
@@ -113,12 +118,18 @@ namespace AppPublication.Export
             int nbTapisMax = DC.Organisation.Competitions.Max(c => c.nbTapis);
             int currentStep = 0;
 
+            // Calcul si on doit prendre en compte l'intitulé commun pour les compétitions multiples
+            bool useIntituleCommun = DC.Organisation.Competitions.Count > 1
+                         && ctx.Config.UseIntituleCommun
+                         && !string.IsNullOrEmpty(ctx.Config.IntituleCommun);
+
             foreach (var ecran in ecrans)
             {
                 // Le fichier de destination
                 string savePath = GetFileSavePath(targetDirectory, exportType, (ecran.Id >= 0) ? $"{ecran.Id:00}" : "default");
 
                 var ecransParams = new List<(string, object)>();
+                ecransParams.Add(("useIntituleCommun", useIntituleCommun.ToString().ToLower()));
                 ecransParams.Add(("idEcran", ecran.Id));                 // Le numero de l'ecran d'appel
                 ecransParams.Add(("tailleGroupe", ecran.Groupement));     // La taille du groupe
                 ecransParams.Add(("dispositionAffichage", ecran.Disposition.ToString().ToLower()));
@@ -136,6 +147,8 @@ namespace AppPublication.Export
                 // Option d'auto ajustement du texte en fonction de la taille du groupe
                 ecransParams.Add(("ajusteTexteAuto", ecran.AjusteTailleTexte ? "true" : "false"));
 
+                ecransParams.Add(("afficheCategorieAge", ecran.AfficheCategorieAge ? "true" : "false"));
+
                 // Les arguments XSLT (inclut la structure du site et le chemin cible)
                 var xsltArgs = CreateAllXsltArgs(siteStructure, savePath, ecransParams.ToArray());
 
@@ -149,18 +162,6 @@ namespace AppPublication.Export
             return output;
         }
 
-        /// <summary>
-        /// Ajoute les arguments de structure du site pour les templates xslt
-        /// </summary>
-        /// <param name="argsList">La liste d'argument a actualiser</param>
-        /// <param name="siteStruct">La structure du site</param>
-        /// <param name="targetFile">Le fichier HTML cible</param>
-        protected override void AddStructureArgument<T>(XsltArgumentList argsList, UrlGeneratorBase<T> siteStruct, string targetFile)
-        {
-            SiteInterneUrlGenerator urlGen = siteStruct as SiteInterneUrlGenerator;
-
-            // Ajoute les repertoires de base de la structure
-            base.AddStructureArgument(argsList, urlGen, targetFile);
-        }
+        #endregion
     }
 }

@@ -1,7 +1,7 @@
 ﻿using AppPublication.Data;
 using AppPublication.Models.Statistiques;
 using AppPublication.Tools.Enum;
-using AppPublication.ViewModels.Configuration;
+using AppPublication.ViewModels.Main;
 using AppPublication.Views.Configuration;
 using FranceJudo.Core.Environment;
 using FranceJudo.Core.Foundation;
@@ -21,7 +21,6 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Telerik.Windows.Controls;
 
 namespace AppPublication.Controles
 {
@@ -297,7 +296,7 @@ namespace AppPublication.Controles
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Error(ex);
+                    LogTools.Logger?.Error(ex);
                 }
             }));
         }
@@ -319,9 +318,6 @@ namespace AppPublication.Controles
                 _cmdAfficherTestFtp ??= new RelayCommand(
                         o =>
                         {
-                            // Extrait le mode de passe des controles passes en parametres (1er = FranceJudo, 2nd = Advanced)
-                            ExtractPasswordFromParameters(o);
-
                             // Lecture directe de la propriété courante du ViewModel
                             MiniSite siteToTest = SiteCoordinator.GestionnaireSitePublique.SiteDistantSelectionne;
 
@@ -360,7 +356,7 @@ namespace AppPublication.Controles
                             {
                                 if (Connection != null && Connection.HasErreurTransmission)
                                 {
-                                    LogTools.Logger.Info("Erreur de transmission acquittee par l'utilisateur.");
+                                    LogTools.Logger?.Info("Erreur de transmission acquittee par l'utilisateur.");
                                     Connection.HasErreurTransmission = false;
                                 }
                             },
@@ -571,9 +567,6 @@ namespace AppPublication.Controles
 
                                     try
                                     {
-                                        // 3. LECTURE DES DONNÉES UI (Doit obligatoirement rester ici, hors du Task.Run)
-                                        ExtractPasswordFromParameters(o);
-
                                         // 4. TRAITEMENT LONG EN ARRIÈRE-PLAN
                                         // Demarre le site distant selectione sans figer l'interface
                                         await Task.Run(() =>
@@ -584,7 +577,7 @@ namespace AppPublication.Controles
                                     catch (Exception ex)
                                     {
                                         // Gérer l'erreur (Log + notification utilisateur)
-                                        LogTools.Logger.Error(ex, "Erreur lors du démarrage du site distant.");
+                                        LogTools.Logger?.Error(ex, "Erreur lors du démarrage du site distant.");
                                         Application.Current.Dispatcher.Invoke(() =>
                                         {
                                             AlertWindow win = new AlertWindow("Erreur", "Impossible de démarrer le site distant. Vérifiez les paramètres de connexion.")
@@ -679,7 +672,7 @@ namespace AppPublication.Controles
                                         }
                                         catch (Exception ex)
                                         {
-                                            LogTools.Logger.Error(ex, "Erreur interceptée lors du nettoyage distant.");
+                                            LogTools.Logger?.Error(ex, "Erreur interceptée lors du nettoyage distant.");
                                         }
                                         finally
                                         {
@@ -717,7 +710,7 @@ namespace AppPublication.Controles
                                 }
                                 catch (Exception ex)
                                 {
-                                    LogTools.Logger.Error(ex, "Erreur au lancement de la génération");
+                                    LogTools.Logger?.Error(ex, "Erreur au lancement de la génération");
                                 }
                                 },
                             o =>
@@ -754,7 +747,7 @@ namespace AppPublication.Controles
                                 }
                                 catch (Exception ex)
                                 {
-                                    LogTools.Logger.Error(ex, "Erreur lors de CmdArreterGeneration");
+                                    LogTools.Logger?.Error(ex, "Erreur lors de CmdArreterGeneration");
                                 }
                                 finally
                                 {
@@ -791,7 +784,7 @@ namespace AppPublication.Controles
                                 }
                                 catch (Exception ex)
                                 {
-                                    LogTools.Logger.Error(ex, "Erreur au lancement de la generation du site interne");
+                                    LogTools.Logger?.Error(ex, "Erreur au lancement de la generation du site interne");
                                 }
                             },
                             o =>
@@ -828,7 +821,7 @@ namespace AppPublication.Controles
                                 }
                                 catch (Exception ex)
                                 {
-                                    LogTools.Logger.Error(ex, "Erreur lors de CmdArreterGeneration");
+                                    LogTools.Logger?.Error(ex, "Erreur lors de CmdArreterGeneration");
                                 }
                                 finally
                                 {
@@ -938,13 +931,13 @@ namespace AppPublication.Controles
                                 if (_infoWindow == null)
                                 {
                                     _infoWindow = new AppPublication.Views.Infos.InformationsView();
-                                    _infoWindow?.IsTopmost = true;
+                                    _infoWindow?.Topmost = true;
                                     _infoWindow.Closed += (sender, args) => _infoWindow = null;
                                     _infoWindow.Show();
                                 }
                                 else
                                 {
-                                    _infoWindow?.IsTopmost = true;
+                                    _infoWindow?.Topmost = true;
                                     _infoWindow.Show();
                                 }
                             },
@@ -977,12 +970,12 @@ namespace AppPublication.Controles
                                         _manuelViewer = new PdfViewer(bytes, "Manuel utilisateur", false, true);
                                         _manuelViewer.Closed += (sender, args) => _manuelViewer = null;
                                         _manuelViewer.Show();
-                                        _manuelViewer.BringToFront();
+                                        _manuelViewer.Activate();
                                     }
                                 }
                                 else
                                 {
-                                    _manuelViewer.BringToFront();
+                                    _manuelViewer.Activate();
                                 }
                             },
                             o =>
@@ -1009,14 +1002,14 @@ namespace AppPublication.Controles
                                     _statWindow = new AppPublication.Views.Infos.StatistiquesView(GestionStatistiques);
                                     _statWindow.Closed += (sender, args) => _statWindow = null;
                                     _statWindow.Show();
-                                    _statWindow.BringToFront();
+                                    _statWindow.Activate();
                                 }
                                 else
                                 {
                                     if (_statWindow.WindowState == WindowState.Minimized)
                                         _statWindow.WindowState = WindowState.Normal;
 
-                                    _statWindow.BringToFront();
+                                    _statWindow.Activate();
                                 }
                             },
                             o =>
@@ -1124,7 +1117,7 @@ namespace AppPublication.Controles
                                 }
                                 catch (Exception ex)
                                 {
-                                    LogTools.Logger.Error(ex, "Impossible de creer l'archive de trace de l'application '{0}'", o);
+                                    LogTools.Logger?.Error(ex, "Impossible de creer l'archive de trace de l'application '{0}'", o);
                                     msg = string.Format("Impossibles de créer l'archive des traces de l'application. Consultez le fichier de trace ou contacter le support technique.");
                                 }
                                 finally
@@ -1133,7 +1126,7 @@ namespace AppPublication.Controles
                                     if (win != null)
                                     {
                                         // On doit la mettre TopMost car la fenêtre appelante l'est deja et pourrait la masquer.
-                                        win.IsTopmost = true;
+                                        win.Topmost = true;
                                         win.ShowDialog();
                                     }
                                 }
@@ -1175,7 +1168,7 @@ namespace AppPublication.Controles
         /// <param name="e"></param>
         private void OnDataUpdated(object sender, DataUpdateEventArgs e)
         {
-            LogTools.Logger.Debug("Donnees mises a jour pour la categorie: {0}", e.CategorieDonnee.ToString());
+            LogTools.Logger?.Debug("Donnees mises a jour pour la categorie: {0}", e.CategorieDonnee.ToString());
 
             if (e.CategorieDonnee == CategorieDonneesEnum.Organisation)
             {
@@ -1190,7 +1183,10 @@ namespace AppPublication.Controles
         /// <param name="e"></param>
         private void OnClientReady(object sender, ClientReadyEventArgs e)
         {
-            LogTools.Logger.Info("Client connecte et pret: {0}", e.Client.NetworkClient.IP);
+            LogTools.Logger?.Info("Client connecte et pret: {0}", e.Client.NetworkClient.IP);
+
+            // --- NOUVEAU : Signale le retour du réseau ---
+            SiteCoordinator?.SetConnectionStatus(true);
         }
 
         /// <summary>
@@ -1198,15 +1194,18 @@ namespace AppPublication.Controles
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
+        private async void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
         {
-            LogTools.Logger.Info("Client deconnecte a {0}", e.DisconnectionTime);
+            LogTools.Logger?.Info("Client deconnecte a {0}", e.DisconnectionTime);
 
             Application.Current.ExecOnUiThread(() =>
             {
                 this.IsBusy = false;
                 this.BusyStatus = BusyStatusEnum.None;
             });
+
+            // --- NOUVEAU : Signale la perte du réseau ---
+            SiteCoordinator?.SetConnectionStatus(false);
         }
         #endregion
 
@@ -1224,26 +1223,6 @@ namespace AppPublication.Controles
                 {
                     UseShellExecute = true // <-- Indispensable pour ouvrir une URL dans le navigateur par defaut
                 });
-            }
-        }
-
-        /// <summary>
-        /// Extrait le mode de passe des controles passes en parametres (1er = FranceJudo, 2nd = Advanced)
-        /// </summary>
-        /// <param name="o"></param>
-        private void ExtractPasswordFromParameters(object o)
-        {
-            if (o != null && o.GetType() == typeof(Tuple<object, object>))
-            {
-                Tuple<object, object> tuple = (Tuple<object, object>)o;
-                if (tuple.Item1 != null && tuple.Item1.GetType() == typeof(RadPasswordBox))
-                {
-                    SiteCoordinator.GestionnaireSitePublique.SiteFranceJudo.PasswordSiteFTPDistant = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item1).SecurePassword);
-                }
-                if (tuple.Item2 != null && tuple.Item2.GetType() == typeof(RadPasswordBox))
-                {
-                    SiteCoordinator.GestionnaireSitePublique.SiteDistant.PasswordSiteFTPDistant = Encryption.ToInsecureString(((RadPasswordBox)tuple.Item2).SecurePassword);
-                }
             }
         }
 

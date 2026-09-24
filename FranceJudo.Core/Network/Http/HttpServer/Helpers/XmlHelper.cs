@@ -28,10 +28,12 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Helpers
             ns.Add(string.Empty, string.Empty);
 
             // removing XML declaration, the default is false
-            XmlWriterSettings xmlSettings = new XmlWriterSettings();
-            xmlSettings.Indent = true;
-            xmlSettings.IndentChars = "\t";
-            xmlSettings.OmitXmlDeclaration = true;
+            XmlWriterSettings xmlSettings = new XmlWriterSettings
+            {
+                Indent = true,
+                IndentChars = "\t",
+                OmitXmlDeclaration = true
+            };
 
             StringBuilder sb = new StringBuilder();
             using (XmlWriter writer = XmlWriter.Create(sb, xmlSettings))

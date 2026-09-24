@@ -12,6 +12,7 @@ namespace AppPublication.Generation
         Cleaning = 3,       // Le nettoyage est en cours
         Starting = 4,       // La generation demarre
         Syncing = 5,        // La synchronisation demarre    
+        Suspended = 6       // NOUVEAU : La génération est suspendue (perte réseau)
     }
 
 
@@ -170,6 +171,11 @@ namespace AppPublication.Generation
                 case StateGenerationEnum.Starting:
                     {
                         msg = "Démarrage ...";
+                        break;
+                    }
+                case StateGenerationEnum.Suspended:
+                    {
+                        msg = "Génération suspendue ...";
                         break;
                     }
                 default:

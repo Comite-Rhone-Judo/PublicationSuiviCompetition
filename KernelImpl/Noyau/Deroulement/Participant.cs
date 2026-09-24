@@ -288,6 +288,8 @@ namespace KernelImpl.Noyau.Deroulement
             XElement xparticipant = new XElement(ConstantXML.Participant);
 
             // Valeurs communes
+            xparticipant.SetAttributeValue(ConstantXML.Participant_ID, id);
+            xparticipant.SetAttributeValue(ConstantXML.Participant_ID, id);
             xparticipant.SetAttributeValue(ConstantXML.Participant_Judoka, judoka);
             xparticipant.SetAttributeValue(ConstantXML.Participant_Phase, phase);
             xparticipant.SetAttributeValue(ConstantXML.Participant_Ranking, ranking);

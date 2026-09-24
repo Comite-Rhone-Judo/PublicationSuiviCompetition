@@ -149,7 +149,7 @@ namespace FranceJudo.Core.Configuration
                 {
                     // la valeur lue n'existe pas dans la liste source, on prend la valeur par defaut (1er element)
                     output = sourceList.First();
-                    LogTools.Debug(ex);
+                    LogTools.Logger?.Debug(ex);
                 }
             }
 
@@ -171,7 +171,10 @@ namespace FranceJudo.Core.Configuration
             string valCache = AppSettings.ReadRawSetting(key, prefix);
 
             bool val = defaultValue;
-            bool.TryParse(valCache, out val);
+            if(bool.TryParse(valCache, out bool parsedVal))
+            {
+                val = parsedVal;
+            }
             return (valCache == null) ? defaultValue : val;
         }
 
@@ -212,7 +215,10 @@ namespace FranceJudo.Core.Configuration
             string valCache = AppSettings.ReadRawSetting(key, prefix);
 
             int val = defaultValue;
-            int.TryParse(valCache, out val);
+            if(int.TryParse(valCache, out int parsedVal))
+            {
+                val = parsedVal;
+            }
             return (valCache == null) ? defaultValue : val;
         }
 

@@ -4,7 +4,7 @@ using FranceJudo.Core.Reflection;
 using System;
 using System.IO;
 
-namespace FranceJudo.Core.Export
+namespace FranceJudo.Core.Reflection
 {
     public static class ResourceExtractor
     {
@@ -40,7 +40,7 @@ namespace FranceJudo.Core.Export
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Error(ex, $"Echec d'extraction de la ressource '{resourceName}' vers '{destinationFilePath}'");
+                    LogTools.Logger?.Error(ex, $"Echec d'extraction de la ressource '{resourceName}' vers '{destinationFilePath}'");
                     return false;
                 }
                 finally

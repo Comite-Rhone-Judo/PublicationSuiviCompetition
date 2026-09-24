@@ -10,7 +10,7 @@ namespace FranceJudo.Metier.Noyau.Deroulement
     {
         public int id { get; set; }
         public string libelle { get; set; }
-        public int typePhase { get; set; }
+        public TypePhaseEnum typePhase { get; set; }
         public int nbPoules { get; set; }
         public int niveauRepechage { get; set; }
         public bool bresilien { get; set; }
@@ -18,7 +18,7 @@ namespace FranceJudo.Metier.Noyau.Deroulement
         public int suivant { get; set; }
         public Nullable<int> epreuve { get; set; }
         public int niveauRepeches { get; set; }
-        public int etat { get; set; }
+        public EtatPhaseEnum etat { get; set; }
         public int nbCombatsFinalistes { get; set; }
         public int nbCombatsTotal { get; set; }
         public int nbJudoka { get; set; }

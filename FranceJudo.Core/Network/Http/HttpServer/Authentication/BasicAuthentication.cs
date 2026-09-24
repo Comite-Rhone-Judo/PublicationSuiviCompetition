@@ -80,8 +80,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer.Authentication
 
             string ourPw = decoded.Substring(pos + 1, decoded.Length - pos - 1);
             string pw = ourPw;
-            object state;
-            CheckAuthentication(realm, decoded.Substring(0, pos), ref pw, out state);
+            CheckAuthentication(realm, decoded.Substring(0, pos), ref pw, out object state);
 
             return ourPw == pw ? state : null;
         }

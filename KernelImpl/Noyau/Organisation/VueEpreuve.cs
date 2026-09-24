@@ -90,31 +90,31 @@ namespace KernelImpl.Noyau.Organisation
 
             lib_sexe = epreuve.sexeEnum.ToString();
 
-            ICategoriePoids c_poids = DC.Categories.CPoids.FirstOrDefault(o => o.id == epreuve.categoriePoids);
+            ICategoriePoids c_poids = DC?.Categories?.CPoids?.FirstOrDefault(o => o.id == epreuve?.categoriePoids);
 
-            nom_catepoids = c_poids != null ? c_poids.nom : epreuve.nom;
-            remoteId_catepoids = c_poids != null ? c_poids.remoteId : String.Empty;
+            nom_catepoids = c_poids?.nom ?? epreuve.nom;
+            remoteId_catepoids = c_poids?.remoteId ?? String.Empty;
 
-            ICategorieAge c_age = DC.Categories.CAges.FirstOrDefault(o => o.id == epreuve.categorieAge);
+            ICategorieAge c_age = DC?.Categories?.CAges?.FirstOrDefault(o => o.id == epreuve?.categorieAge);
 
             nom_cateage = c_age != null ? c_age.nom : String.Empty;
             ordre = c_age != null ? c_age.ordre : "0";
             remoteId_cateage = c_age != null ? c_age.remoteId : String.Empty;
 
-            IEpreuve_Equipe ep = DC.Organisation.EpreuveEquipes.FirstOrDefault(o => o.id == epreuve.epreuve_equipe);
+            IEpreuve_Equipe ep = DC?.Organisation?.EpreuveEquipes?.FirstOrDefault(o => o.id == epreuve.epreuve_equipe);
 
-            id_epreuve_equipe = ep != null ? ep.id : 0;
-            lib_epreuve_equipe = ep != null ? ep.libelle : String.Empty;
-            type_epreuve_equipe = ep != null ? ep.type : EpreuveEquipeTypeEnum.Normal;
-            epreuveRef_epreuve_equipe = ep != null ? ep.epreuveRef : -1;
+            id_epreuve_equipe = ep?.id ?? 0;
+            lib_epreuve_equipe = ep?.libelle ?? String.Empty;
+            type_epreuve_equipe = ep?.type ?? EpreuveEquipeTypeEnum.Normal;
+            epreuveRef_epreuve_equipe = ep?.epreuveRef ?? -1;
 
             //phase1 = ;
             //phase2 = ;
 
-            ICompetition compet = DC.Organisation.Competitions.FirstOrDefault(o => o.id == epreuve.competition);
+            ICompetition compet = DC?.Organisation?.Competitions?.FirstOrDefault(o => o.id == epreuve.competition);
 
-            nom_compet = compet != null ? compet.nom : String.Empty;
-            discipline_competition = compet != null ? compet.disciplineId : CompetitionDisciplineEnum.Judo;
+            nom_compet = compet?.nom ?? String.Empty;
+            discipline_competition = compet?.disciplineId ?? CompetitionDisciplineEnum.Judo;
         }
 
 

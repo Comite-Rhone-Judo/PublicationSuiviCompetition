@@ -15,3 +15,5 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>", Scope = "module")]
 [assembly: SuppressMessage("Style", "IDE0305:Simplify collection initialization", Justification = "<Pending>", Scope = "module")]
 [assembly: SuppressMessage("Style", "IDE0340:Use unbound generic type", Justification = "<Pending>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0306:Simplifier l'initialisation des collections", Justification = "<En attente>", Scope = "module")]
+[assembly: SuppressMessage("Style", "IDE0060:Supprimer le paramètre inutilisé", Justification = "<En attente>", Scope = "module")]

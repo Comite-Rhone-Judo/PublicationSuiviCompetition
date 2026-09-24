@@ -95,7 +95,7 @@ namespace FranceJudo.Core.Threading
 
             var taskId = Guid.NewGuid();
 
-            LogTools.Logger.Debug($"Ajout d'une tache parallele au Batcher (ID: {taskId}) : {work.Method.Name}"); // Pour le debug
+            LogTools.Logger?.Debug($"Ajout d'une tache parallele au Batcher (ID: {taskId}) : {work.Method.Name}"); // Pour le debug
 
             _tasksStates.TryAdd(taskId, new TaskState { Current = 0, Total = initialEstimate});
             // On ajoute l'estimation initiale au total global
@@ -127,7 +127,7 @@ namespace FranceJudo.Core.Threading
                 catch (Exception ex)
                 {
                     // 1. TRACE : On capture l'erreur immédiate sur le thread secondaire
-                    LogTools.Logger.Error(ex, $"Erreur critique dans une tache parallele du Batcher (ID: {taskId})");
+                    LogTools.Logger?.Error(ex, $"Erreur critique dans une tache parallele du Batcher (ID: {taskId})");
 
                     // 2. RETHROW : Important pour que la Task soit marquée comme "Faulted"
                     // et que l'exception remonte jusqu'au WaitAll.
@@ -173,12 +173,12 @@ namespace FranceJudo.Core.Threading
             {
                 foreach (var innerEx in ae.Flatten().InnerExceptions)
                 {
-                    LogTools.Logger.Error(innerEx, "Erreur dans une tâche du Batcher");
+                    LogTools.Logger?.Error(innerEx, "Erreur dans une tâche du Batcher");
                 }
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur globale dans l'attente du Batcher");
+                LogTools.Logger?.Error(ex, "Erreur globale dans l'attente du Batcher");
             }
             finally
             {
@@ -217,7 +217,7 @@ namespace FranceJudo.Core.Threading
                 // 1. On logue toutes les erreurs individuelles
                 foreach (var innerEx in ae.Flatten().InnerExceptions)
                 {
-                    LogTools.Logger.Error(innerEx, "Erreur dans une tâche du Batcher");
+                    LogTools.Logger?.Error(innerEx, "Erreur dans une tâche du Batcher");
                 }
 
                 // 2. IMPORTANT : On ne fait pas "return null" ou on ne plante pas tout de suite.
@@ -316,7 +316,7 @@ namespace FranceJudo.Core.Threading
             long current = Interlocked.Read(ref _globalCurrent);
 
             if (total <= 0) total = 1;
-            LogTools.Logger.Debug($"Global progress for # task = '{states.Count}', total = {current}");
+            LogTools.Logger?.Debug($"Global progress for # task = '{states.Count}', total = {current}");
 
             float globalPercent = ((float)current) / total;
             if (globalPercent > 1.0f) globalPercent = 1.0f;
@@ -365,7 +365,7 @@ namespace FranceJudo.Core.Threading
         {
             if (_concurrencyLevel == -1)
             {
-                LogTools.Logger.Info("No limit mode: using the default .NET thread pool");
+                LogTools.Logger?.Info("No limit mode: using the default .NET thread pool");
                 // Pas de limite : on utilise le pool de threads par défaut de .NET
                 _currentScheduler = TaskScheduler.Default;
             }
@@ -373,13 +373,13 @@ namespace FranceJudo.Core.Threading
             {
                 // Mode automatique : Processeurs logiques - 1 (pour l'UI)
                 int maxConcurrency = Math.Max(1, System.Environment.ProcessorCount - 1);
-                LogTools.Logger.Info($"Automatic mode: using a limited concurrency level of {maxConcurrency}");
+                LogTools.Logger?.Info($"Automatic mode: using a limited concurrency level of {maxConcurrency}");
                 _currentScheduler = new LimitedConcurrencyLevel(maxConcurrency);
             }
             else
             {
                 // Mode manuel : Valeur stricte
-                LogTools.Logger.Info($"Manual mode: using a limited concurrency level of {_concurrencyLevel}");
+                LogTools.Logger?.Info($"Manual mode: using a limited concurrency level of {_concurrencyLevel}");
                 _currentScheduler = new LimitedConcurrencyLevel(_concurrencyLevel);
             }
         }

@@ -136,6 +136,35 @@ namespace FranceJudo.Metier.Site
             return isDeleted;
         }
 
+        /// <summary>
+        /// Retourne le chemin relatif d'un fichier par rapport à la racine de la compétition.
+        /// </summary>
+        /// <param name="absoluteFilePath">Le chemin absolu du fichier</param>
+        /// <returns>Le chemin relatif propre (ex: "css\style.css")</returns>
+        public virtual string GetRelativePath(string absoluteFilePath)
+        {
+            if (string.IsNullOrWhiteSpace(absoluteFilePath))
+                return string.Empty;
+
+            // 1. S'assurer que le dossier de base se termine bien par un séparateur
+            // pour que Uri comprenne qu'il s'agit d'un répertoire et non d'un fichier.
+            string baseFolder = RepertoireCompetition;
+            if (!baseFolder.EndsWith(Path.DirectorySeparatorChar.ToString()) &&
+                !baseFolder.EndsWith(Path.AltDirectorySeparatorChar.ToString()))
+            {
+                baseFolder += Path.DirectorySeparatorChar;
+            }
+
+            Uri folderUri = new Uri(baseFolder);
+            Uri pathUri = new Uri(absoluteFilePath);
+
+            // 2. MakeRelativeUri génère un chemin relatif encodé avec des slashs Web (/)
+            string relative = Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString());
+
+            // 3. On remet les bons séparateurs natifs de l'OS pour être homogène avec System.IO
+            return relative.Replace('/', Path.DirectorySeparatorChar);
+        }
+
         #endregion
 
         #region PROPRIETES PRIVEES
@@ -167,13 +196,13 @@ namespace FranceJudo.Metier.Site
             if (full && !_isFullyConfigured)
             {
                 // Sans accents pour les logs
-                LogTools.Logger.Debug("Tentative d'acces a une structure physique non configuree");
+                LogTools.Logger?.Debug("Tentative d'acces a une structure physique non configuree");
                 throw new InvalidOperationException("La structure physique n'est pas completement configuree.");
             }
             if (!full && !_hasRootDir)
             {
                 // Sans accents pour les logs
-                LogTools.Logger.Debug("Tentative d'acces a une structure sans racine");
+                LogTools.Logger?.Debug("Tentative d'acces a une structure sans racine");
                 throw new InvalidOperationException("La structure physique n'a pas de repertoire racine configure.");
             }
         }
@@ -233,6 +262,7 @@ namespace FranceJudo.Metier.Site
             GuardRail(); // Sécurité standard
             return _fileCache.GetOrAdd(cacheKey, _ => pathFactory());
         }
+
         #endregion
     }
 }

@@ -1,5 +1,74 @@
-﻿div.tas-panel-classement {
-    overflow: scroll;
-    white-space: nowrap;
+﻿/* ==========================================================================
+   Carte de Classement (Inspiration iOS)
+   ========================================================================== */
+.ios-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    /* Marge optimisée pour les smartphones : 12px en haut/bas, 16px sur les bords */
+    margin: 12px 16px 16px 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    overflow: hidden;
+    position: relative;
+    z-index: 10;
+    border: 1px solid var(--border-color);
 }
 
+/* ==========================================================================
+   Stylisation du Tableau
+   ========================================================================== */
+.w3-table-all {
+    border-collapse: collapse;
+    width: 100%;
+    border: none !important;
+    white-space: nowrap; /* Conserve la règle d'origine pour éviter les retours chariots inesthétiques */
+}
+
+    /* En-tête du tableau */
+    .w3-table-all th {
+        color: var(--text-muted);
+        font-size: 0.8em;
+        font-weight: 500;
+        text-align: left;
+        padding: 12px 16px; /* Padding optimisé */
+        border-bottom: 1px solid var(--border-color);
+        background: var(--bg-color) !important; /* Contraste léger avec le fond de la carte */
+        text-transform: uppercase;
+    }
+
+    /* Lignes de données */
+    .w3-table-all td {
+        padding: 12px 16px; /* Padding optimisé */
+        border-bottom: 1px solid var(--border-color);
+        font-size: 0.95em;
+        vertical-align: middle;
+        background: var(--card-bg) !important; /* Force la couleur de fond du thème actif */
+        color: var(--text-color);
+    }
+
+    /* On supprime la bordure de la toute dernière ligne pour un rendu propre dans la carte */
+    .w3-table-all tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* ==========================================================================
+   Typographie Spécifique des Cellules
+   ========================================================================== */
+    /* Colonne du Numéro (Classement) */
+    .w3-table-all td:first-child {
+        font-weight: 700;
+        color: var(--fj-red); /* Rouge officiel France Judo */
+        width: 40px;
+        text-align: center;
+    }
+
+/* Non Classé (NC) - Couleur neutre */
+.tas-classement-nc {
+    color: var(--text-muted) !important;
+    font-weight: 500 !important;
+}
+
+/* Colonne du Nom/Prénom de l'athlète */
+.athlete-name {
+    font-weight: 600;
+    color: var(--text-color);
+}

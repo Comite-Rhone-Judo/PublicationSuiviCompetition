@@ -124,8 +124,8 @@ namespace KernelImpl.Noyau.Deroulement
             }
         }
 
-        private int _etatJ1;
-        public int etatJ1
+        private EtatCombattantEnum _etatJ1;
+        public EtatCombattantEnum etatJ1
         {
             get { return _etatJ1; }
             set
@@ -138,8 +138,8 @@ namespace KernelImpl.Noyau.Deroulement
             }
         }
 
-        private int _etatJ2;
-        public int etatJ2
+        private EtatCombattantEnum _etatJ2;
+        public EtatCombattantEnum etatJ2
         {
             get { return _etatJ2; }
             set
@@ -222,8 +222,8 @@ namespace KernelImpl.Noyau.Deroulement
             }
         }
 
-        private int _etat;
-        public int etat
+        private EtatCombatEnum _etat;
+        public EtatCombatEnum etat
         {
             get { return _etat; }
             set
@@ -404,7 +404,7 @@ namespace KernelImpl.Noyau.Deroulement
             {*/
             //if (this.etatJ1 != (int)EtatCombattantEnum.HansokuMakeX && this.etatJ2 != (int)EtatCombattantEnum.HansokuMakeX &&
             //    this.etatJ1 != (int)EtatCombattantEnum.HansokuMakeH && this.etatJ2 != (int)EtatCombattantEnum.HansokuMakeH)
-            if (this.etatJ1 == (int)EtatCombattantEnum.Normal && this.etatJ2 == (int)EtatCombattantEnum.Normal)
+            if (this.etatJ1 == EtatCombattantEnum.Normal && this.etatJ2 == EtatCombattantEnum.Normal)
             {
                 if ((this.judoka1 == null && this.judoka2 == this.vainqueur) || (this.judoka2 == null && this.judoka1 == this.vainqueur))
                 {
@@ -553,7 +553,7 @@ namespace KernelImpl.Noyau.Deroulement
                 XMLTools.LectureTime(xrencontre.Attribute(ConstantXML.Rencontre_Time_Debut), "HHmmss");
 
             this.temps = XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Rencontre_Temps));
-            this.etat = XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Rencontre_Etat));
+            this.etat = (EtatCombatEnum) XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Rencontre_Etat));
             this.arbitre1 = XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Rencontre_Arbitre1));
             this.arbitre2 = XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Rencontre_Arbitre2));
             this.arbitre3 = XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Rencontre_Arbitre3));
@@ -561,8 +561,8 @@ namespace KernelImpl.Noyau.Deroulement
             this.combat = XMLTools.LectureNullableInt(xrencontre.Attribute(ConstantXML.Rencontre_Combat));
             this.CatePoids = XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Rencontre_CatePoids));
 
-            this.etatJ1 = XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Rencontre_EtatJ1));
-            this.etatJ2 = XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Rencontre_EtatJ2));
+            this.etatJ1 = (EtatCombattantEnum)XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Rencontre_EtatJ1));
+            this.etatJ2 = (EtatCombattantEnum)XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Rencontre_EtatJ2));
 
 
             this.tempsCombat = XMLTools.LectureInt(xrencontre.Attribute(ConstantXML.Rencontre_TempsCombat));
@@ -595,10 +595,10 @@ namespace KernelImpl.Noyau.Deroulement
             xrencontre.SetAttributeValue(ConstantXML.Rencontre_Date_Programmation, programmation.ToString("ddMMyyyy"));
             xrencontre.SetAttributeValue(ConstantXML.Rencontre_Time_Programmation, programmation.ToString("HHmmss"));
             xrencontre.SetAttributeValue(ConstantXML.Rencontre_Vainqueur, vainqueur);
-            xrencontre.SetAttributeValue(ConstantXML.Rencontre_Etat, etat);
+            xrencontre.SetAttributeValue(ConstantXML.Rencontre_Etat, (int) etat);
 
-            xrencontre.SetAttributeValue(ConstantXML.Rencontre_EtatJ1, etatJ1);
-            xrencontre.SetAttributeValue(ConstantXML.Rencontre_EtatJ2, etatJ2);
+            xrencontre.SetAttributeValue(ConstantXML.Rencontre_EtatJ1, (int) etatJ1);
+            xrencontre.SetAttributeValue(ConstantXML.Rencontre_EtatJ2, (int) etatJ2);
 
             xrencontre.SetAttributeValue(ConstantXML.Rencontre_Arbitre1, arbitre1);
             xrencontre.SetAttributeValue(ConstantXML.Rencontre_Arbitre2, arbitre2);

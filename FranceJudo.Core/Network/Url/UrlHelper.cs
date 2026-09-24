@@ -15,6 +15,8 @@ namespace FranceJudo.Core.Network.Url
         /// <returns></returns>
         public static string TraiteChaineURL(this string url)
         {
+            if (string.IsNullOrEmpty(url)) return string.Empty; // ou return chaine;
+
             return url.Replace("+", "p");
         }
 
@@ -26,6 +28,8 @@ namespace FranceJudo.Core.Network.Url
 
         public static string TraiteChaine(this string chaine)
         {
+            if (string.IsNullOrEmpty(chaine)) return string.Empty; // ou return chaine;
+
             string result = chaine.Replace(" ", "_");
 
             char[] invalidPathChars = Path.GetInvalidFileNameChars();

@@ -1,14 +1,10 @@
 ﻿
 using FranceJudo.Core.XML;
-using FranceJudo.Metier.IO;
 using FranceJudo.Metier.Noyau;
 using FranceJudo.Metier.Noyau.Structures;
 using FranceJudo.Metier.XML;
 using KernelImpl.Internal;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Windows.Media.Imaging;
 using System.Xml.Linq;
 
 
@@ -24,18 +20,6 @@ namespace KernelImpl.Noyau.Structures
         public string abr3 { get; set; }
         public string nom { get; set; }
         public string AbrF { get; set; }
-
-        public BitmapImage GetFlag()
-        {
-            string uri_flag = AppDirectoryManager.MediaFlagsDir + @"" + this.abr3 + ".svg_800.png";
-            if (File.Exists(uri_flag))
-            {
-                return new BitmapImage(new Uri(uri_flag));
-            }
-
-            return null;
-
-        }
 
         public void LoadXml(XElement xinfo)
         {

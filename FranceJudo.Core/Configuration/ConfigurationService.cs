@@ -78,7 +78,7 @@ namespace FranceJudo.Core.Configuration
                 if (!_sectionsToSave.Contains(section))
                 {
                     _sectionsToSave.Add(section);
-                    LogTools.Logger.Debug($"Section marked for saving: {section.SectionName}");
+                    LogTools.Logger?.Debug($"Section marked for saving: {section.SectionName}");
                 }
             }
         }
@@ -108,7 +108,7 @@ namespace FranceJudo.Core.Configuration
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Error(ex, "Erreur dans le worker de sauvegarde.");
+                    LogTools.Logger?.Error(ex, "Erreur dans le worker de sauvegarde.");
                 }
             }
         }
@@ -158,7 +158,7 @@ namespace FranceJudo.Core.Configuration
                     {
                         // 3. GESTION D'ERREUR : Le fichier a changé sur le disque.
                         // On passe en mode "Force Update" via une instance temporaire.
-                        LogTools.Logger.Warn(ex, "Conflit de configuration detecte (fichier modifie). Tentative de sauvegarde forcee via clônage.");
+                        LogTools.Logger?.Warn(ex, "Conflit de configuration detecte (fichier modifie). Tentative de sauvegarde forcee via clônage.");
 
                         try
                         {
@@ -177,21 +177,21 @@ namespace FranceJudo.Core.Configuration
                         }
                         catch (Exception exFallback)
                         {
-                            LogTools.Logger.Error(exFallback, "Echec definitif de la sauvegarde de configuration.");
+                            LogTools.Logger?.Error(exFallback, "Echec definitif de la sauvegarde de configuration.");
                             return; // On ne vide pas la liste pour retenter plus tard
                         }
                     }
                     catch (Exception ex)
                     {
-                        LogTools.Logger.Error(ex, "Erreur inattendue lors de la sauvegarde.");
+                        LogTools.Logger?.Error(ex, "Erreur inattendue lors de la sauvegarde.");
                         return;
                     }
 
-                    LogTools.Logger.Debug("Configuration sauvegardee.");
+                    LogTools.Logger?.Debug("Configuration sauvegardee.");
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Error(ex, "Erreur sauvegarde configuration.");
+                    LogTools.Logger?.Error(ex, "Erreur sauvegarde configuration.");
                 }
             }
         }
@@ -215,9 +215,9 @@ namespace FranceJudo.Core.Configuration
                 }
                 // Vidage de la liste en une seule opération O(1) ou O(n) interne optimisée
                 _sectionsToSave.Clear();
-                LogTools.Logger.Debug($"Configuration sauvegardee ({count} sections).");
+                LogTools.Logger?.Debug($"Configuration sauvegardee ({count} sections).");
             }
-            catch (Exception ex) { LogTools.Logger.Error(ex, "Erreur nettoyage."); }
+            catch (Exception ex) { LogTools.Logger?.Error(ex, "Erreur nettoyage."); }
         }
 
         /// <summary>

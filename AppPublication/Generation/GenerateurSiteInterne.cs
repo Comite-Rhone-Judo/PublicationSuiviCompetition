@@ -5,11 +5,9 @@ using FranceJudo.Core.Export;
 using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
 using FranceJudo.Core.Threading;
-using FranceJudo.Core.Utils;
 using FranceJudo.Metier.Noyau;
-using NLog;
 using System;
-using System.CodeDom;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -97,7 +95,7 @@ namespace AppPublication.Generation
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Fatal(ex, "Impossible d'initialiser le generateur de Site Interne. Impossible de continuer");
+                LogTools.Logger?.Fatal(ex, "Impossible d'initialiser le generateur de Site Interne. Impossible de continuer");
                 throw new NotSupportedException("Impossible d'initialiser le generateur de Site Interne. Impossible de continuer", ex);
             }
         }
@@ -119,7 +117,7 @@ namespace AppPublication.Generation
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors du nettoyage initial du site");
+                LogTools.Logger?.Error(ex, "Erreur lors du nettoyage initial du site");
                 return new ResultatOperation(EtapeGenerateurSiteEnum.CleanupInitial, false, true, -1);
             }
 
@@ -153,7 +151,7 @@ namespace AppPublication.Generation
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Exception lors du controle de la consistance donnees recues.");
+                LogTools.Logger?.Error(ex, "Exception lors du controle de la consistance donnees recues.");
             }
 
             if (dataConsistent)
@@ -171,7 +169,7 @@ namespace AppPublication.Generation
             else
             {
                 // Le controle d'integrite a echoue
-                LogTools.Logger.Warn("Impossible de valider l'integrite des donnees combats (Timeout ou deconnexion).");
+                LogTools.Logger?.Warn("Impossible de valider l'integrite des donnees combats (Timeout ou deconnexion).");
             }
 
             _etapeCourante = EtapeGenerateurSiteEnum.None;
@@ -192,7 +190,7 @@ namespace AppPublication.Generation
             // Si un taskbatcher en toujours en cours, ce n'est pas normal. plutot un exception que Silent car ce cas ne devrait pas arriver
             if (_taskBatcher.HasPendingWork)
             {
-                LogTools.Logger.Debug("Batch precedent toujours en cours, exception levee");
+                LogTools.Logger?.Debug("Batch precedent toujours en cours, exception levee");
                 throw new InvalidOperationException("Batch precedent toujours en cours");
             }
 
@@ -221,18 +219,18 @@ namespace AppPublication.Generation
 
                     int nbChunk = 0;
                     int tailleChunk = Math.Max(5, tousLesEcrans.Count / _nbCoeurs); ; // Ajuste la taille du chunk en fonction du nombre de groupes et du nombre de coeurs, avec un minimum
-                    LogTools.Logger.Debug($"Taille de chunk pour Ecran Appel : {tailleChunk} sur {_nbCoeurs} coeurs");
+                    LogTools.Logger?.Debug($"Taille de chunk pour Ecran Appel : {tailleChunk} sur {_nbCoeurs} coeurs");
 
                     // 2. Découpage par lots
-                    foreach (List<EcranAppelModel> paquet in tousLesEcrans.Chunk(tailleChunk))
+                    foreach (var paquet in tousLesEcrans.Chunk(tailleChunk))
                     {
-                        LogTools.Logger.Debug($"Batching chunk Ecran Appel #{nbChunk++} (size = {paquet.Count}");
+                        LogTools.Logger?.Debug($"Batching chunk Ecran Appel #{nbChunk++} (size = {paquet.Length}");
                         // 3. On envoie le lot complet à la méthode "au pluriel" et passe la taille du paquet pour le reporting de progression
                         _taskBatcher.AddWork(p =>
                         {
                             // Le thread utilisera son propre XPathDocument local pour traiter ces 10 écrans
                             return exporter.GenereEcransAppel(_currentContext, _siteInterneUrlGenerator, paquet, p);
-                        }, paquet.Count);
+                        }, paquet.Length);
                     }
 
                     // Attend la fin de tous les batchs
@@ -240,12 +238,12 @@ namespace AppPublication.Generation
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Error(ex, "Erreur lors de la generation");
+                    LogTools.Logger?.Error(ex, "Erreur lors de la generation");
                 }
             }
             else
             {
-                LogTools.Logger.Debug("Aucune competition presente dans le snapshot ou aucun ecrans d'appel configures, generation avortee");
+                LogTools.Logger?.Debug("Aucune competition presente dans le snapshot ou aucun ecrans d'appel configures, generation avortee");
             }
 
             _checksumGenere = output;
@@ -274,7 +272,7 @@ namespace AppPublication.Generation
                 // On délègue totalement le nettoyage (disque + cache) à la structure physique
                 if (!_siteInterneUrlGenerator.PhysicalStructure.EffacerRepertoireCompetition())
                 {
-                    LogTools.Logger.Error("Erreur lors de l'effacement du contenu de '{0}'", _siteInterneUrlGenerator.PhysicalStructure.RepertoireCompetition);
+                    LogTools.Logger?.Error("Erreur lors de l'effacement du contenu de '{0}'", _siteInterneUrlGenerator.PhysicalStructure.RepertoireCompetition);
                 }
             }
         }

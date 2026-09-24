@@ -39,6 +39,6 @@ namespace FranceJudo.Core.Network.Ftp.Test
         }
 
         // Signature purement synchrone avec FtpClient classique
-        public abstract bool Execute(IFtpConfiguration site, FtpClient client, CancellationToken token);
+        public abstract bool Execute(IFtpConfiguration site, IFtpClient client, CancellationToken token);
     }
 }

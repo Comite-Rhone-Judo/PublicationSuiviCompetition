@@ -25,7 +25,7 @@ namespace FranceJudo.Metier.Noyau.Participants
         public float poidsKg { get; set; }
         public int categorie { get; set; }
         public int pays { get; set; }
-        public int etat { get; set; }
+        public EtatJudokaEnum etat { get; set; }
         public int modeControle { get; set; }
         public int modePesee { get; set; }
         public string club { get; set; }

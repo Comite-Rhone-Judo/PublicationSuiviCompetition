@@ -48,8 +48,8 @@ namespace KernelImpl.Noyau.Categories
         {
             System.Xml.Linq.XElement xcateage = new System.Xml.Linq.XElement(ConstantXML.CateAge);
             xcateage.SetAttributeValue(ConstantXML.CateAge_id, id.ToString());
-            xcateage.SetAttributeValue(ConstantXML.CateAge_nom, nom.ToString());
-            xcateage.SetAttributeValue(ConstantXML.CateAge_ordre, ordre.ToString());
+            xcateage.SetAttributeValue(ConstantXML.CateAge_nom, nom);
+            xcateage.SetAttributeValue(ConstantXML.CateAge_ordre, ordre?.ToString() ?? string.Empty);
             xcateage.SetAttributeValue(ConstantXML.CateAge_remoteId, remoteId);
             xcateage.SetAttributeValue(ConstantXML.CateAge_anneeMin, anneeMin);
             xcateage.SetAttributeValue(ConstantXML.CateAge_anneeMax, anneeMax);

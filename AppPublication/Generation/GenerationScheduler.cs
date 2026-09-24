@@ -51,6 +51,9 @@ namespace AppPublication.Generation
         readonly private IGenerateurSite _generateur;            // le generateur de site
 
         private long _generationCounter = 0;                        // Nombre de generation realisees depuis le demarrage
+
+        private bool _isClientConnected = true;
+        private bool _derniereGenerationDeSecuriteEffectuee = false;
         // --- Événement unique pour tout _statMgr d'état (Interne ou Métier) ---
         public event EventHandler<SchedulerStateEventArgs> StateChanged;
 
@@ -66,7 +69,7 @@ namespace AppPublication.Generation
         public GenerationScheduler(StatMgrGeneration statMgrGen, StatMgrSynchronisation statMgrSync, IGenerateurSite generateur)
         {
             // Impossible d'etre null
-            if (generateur == null) throw new ArgumentNullException();
+            ArgumentNullException.ThrowIfNull(generateur);
 
             try
             {
@@ -78,7 +81,7 @@ namespace AppPublication.Generation
             catch (Exception ex)
             {
                 // on se contente de logger l'erreur et de relancer l'exception dans la classe de base
-                LogTools.Logger.Error(ex, "Erreur lors de l'initialisation du scheduler de generation");
+                LogTools.Logger?.Error(ex, "Erreur lors de l'initialisation du scheduler de generation");
                 throw new Exception("Erreur lors de l'initialisation du scheduler de generation", ex);
             }
         }
@@ -86,6 +89,31 @@ namespace AppPublication.Generation
         #endregion
 
         #region PROPRIETES
+
+        /// <summary>
+        /// Indique si le client est actuellement connecté au réseau
+        /// </summary>
+        public bool IsClientConnected
+        {
+            get { return _isClientConnected; }
+            set
+            {
+                if (_isClientConnected != value)
+                {
+                    _isClientConnected = value;
+                    if (_isClientConnected)
+                    {
+                        // Reconnexion : On RAZ le drapeau pour la prochaine boucle
+                        _derniereGenerationDeSecuriteEffectuee = false;
+                        LogTools.Logger?.Info("Connexion rétablie. Reprise de la génération planifiée.");
+                    }
+                    else
+                    {
+                        LogTools.Logger?.Warn("Perte de connexion. Une dernière génération de sécurité sera effectuée.");
+                    }
+                }
+            }
+        }
 
         TaskExecutionInformation _statGeneration;
         /// <summary>
@@ -272,13 +300,13 @@ namespace AppPublication.Generation
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Error(ex, "Erreur lors du lancement de la generation");
+                    LogTools.Logger?.Error(ex, "Erreur lors du lancement de la generation");
                     throw new Exception("Erreur lors du lancement de la generation", ex);
                 }
             }
             else
             {
-                LogTools.Logger.Error("Une tache de generation est deja en cours d'execution");
+                LogTools.Logger?.Error("Une tache de generation est deja en cours d'execution");
                 throw new Exception("Une tache de generation est deja en cours d'execution");
             }
         }
@@ -304,12 +332,12 @@ namespace AppPublication.Generation
                 catch (OperationCanceledException ex)
                 {
                     // Comportement normal et attendu : la tâche a bien obéi à l'annulation.
-                    LogTools.Logger.Debug(ex, "Arrêt de la génération");
+                    LogTools.Logger?.Debug(ex, "Arrêt de la génération");
                 }
                 catch (Exception ex)
                 {
                     // Si une VRAIE erreur se produit au moment de l'arrêt
-                    LogTools.Logger.Error(ex, "Erreur inattendue lors de l'arrêt de la génération");
+                    LogTools.Logger?.Error(ex, "Erreur inattendue lors de l'arrêt de la génération");
                 }
             }
 
@@ -356,6 +384,31 @@ namespace AppPublication.Generation
             {
                 if (DateTime.Now >= wakeUpTime)
                 {
+                    // --- LOGIQUE DE PAUSE ACTIVE ---
+                    if (!IsClientConnected)
+                    {
+                        if (_derniereGenerationDeSecuriteEffectuee)
+                        {
+                            // On utilise le délai normal de génération pour le prochain essai de reconnexion
+                            wakeUpTime = DateTime.Now.AddSeconds(DelaiGenerationSec);
+
+                            // ON MET À JOUR UNIQUEMENT LA PROCHAINE DATE
+                            // La date de dernière génération (DateDemarrage) reste intacte !
+                            DerniereGeneration.DateProchaineGeneration = wakeUpTime;
+
+                            // On notifie l'IHM (le Converter fera le reste automatiquement)
+                            await RaiseStateAsync(StateGenerationEnum.Suspended, DerniereGeneration, -1);
+
+                            continue;
+                        }
+                        else
+                        {
+                            LogTools.Logger?.Debug("Exécution de la génération de sécurité post-déconnexion.");
+                            _derniereGenerationDeSecuriteEffectuee = true;
+                        }
+                    }
+                    // ----------------------------------------
+
                     // Pour controler la duree total par rapport au timer
                     Stopwatch watcherTotal = new Stopwatch();
                     watcherTotal.Start();
@@ -376,7 +429,7 @@ namespace AppPublication.Generation
                                 // Enregistre le demarrage de la generation via StatExecution
                                 TaskExecutionInformation statGeneration = new TaskExecutionInformation();
 
-                                // Lance la tache du generateyr en mesurant son temps de travail
+                                // Lance la tache du generateur en mesurant son temps de travail
                                 TimedResult<ResultatOperation> genTime = await ActionWatcher.ExecuteAsync(async () =>
                                 {
                                     return await _generateur.ExecuteGeneration();
@@ -429,26 +482,26 @@ namespace AppPublication.Generation
                                     }
                                     catch (Exception ex)
                                     {
-                                        LogTools.Logger.Error(ex, "Une erreur est survenue pendant la tentative de synchronisation");
+                                        LogTools.Logger?.Error(ex, "Une erreur est survenue pendant la tentative de synchronisation");
                                         SiteSynchronise = false;
                                     }
                                 }
                                 else
                                 {
                                     // Juste le log debug
-                                    LogTools.Logger.Debug("Site non genere");
+                                    LogTools.Logger?.Debug("Site non genere");
                                 }
                             }
                             catch (Exception ex)
                             {
-                                LogTools.Logger.Error(ex, "Une erreur est survenue durant la sequence de generation du site");
+                                LogTools.Logger?.Error(ex, "Une erreur est survenue durant la sequence de generation du site");
                                 SiteGenere = false;
                             }
                         }
                         else
                         {
                             // Le controle d'integrite a echoue
-                            LogTools.Logger.Warn("Impossible de valider l'integrite des donnees combats (Timeout ou deconnexion).");
+                            LogTools.Logger?.Warn("Impossible de valider l'integrite des donnees combats (Timeout ou deconnexion).");
                         }
                     }
                     finally

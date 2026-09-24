@@ -1,4 +1,5 @@
-﻿using FranceJudo.Core.Network.Tcp.Client;
+﻿using FranceJudo.Core.Logging;
+using FranceJudo.Core.Network.Tcp.Client;
 using FranceJudo.Core.Threading;
 using FranceJudo.Metier.Network;
 using FranceJudo.Metier.XML;
@@ -73,7 +74,9 @@ namespace JudoClient
                 {
                     foreach (UnicastIPAddressInformation uni in uniCast)
                     {
-                        if (uni.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork && uni.IsDnsEligible)
+                        bool isDnsEligible = !OperatingSystem.IsWindows() || uni.IsDnsEligible;
+
+                        if (uni.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork && isDnsEligible)
                         {
                             UInt32 mask = ParseIp(uni.IPv4Mask.ToString());
                             UInt32 ip = ParseIp(uni.Address.ToString());
@@ -143,7 +146,7 @@ namespace JudoClient
                 }
                 catch (Exception ex)
                 {
-                    ExceptionHelper.ShowException(ex);
+                    LogTools.Logger.Error(ex, "Erreur lors de la tentative de ping sur {0}", adresse);
                     for (int port = ConstantNetwork.PortServerMin; port <= ConstantNetwork.PortServerMax; port++)
                     {
                         AdresseTerminee(adresse, port, ServerResponseEnum.PingFAIL);
@@ -159,7 +162,8 @@ namespace JudoClient
             bool EnvoieConnection = false;
             if (e.Reply != null && e.Reply.Status == IPStatus.Success)
             {
-                //LogTools.Log("PING SUCCESS -> " + adresse);
+                LogTools.Logger?.Debug($"Test Ping: Succes -> {adresse}");
+
                 Ping ping = (Ping)sender;
                 ping.SendAsyncCancel();
 
@@ -169,7 +173,7 @@ namespace JudoClient
 
                     try
                     {
-                        //LogTools.Log("DEMANDE CONNEXION -> " + adresse +  ":"+port);
+                        LogTools.Logger?.Debug($"Test TCP: Demande Connexion -> {adresse}:{port}");
 
                         ClientJudo clientjudo = new ClientJudo(adresse, port);
                         if (clientjudo.IsConnected)
@@ -181,12 +185,12 @@ namespace JudoClient
                         else
                         {
                             AdresseTerminee(adresse, port, ServerResponseEnum.PingOK);
-                            //LogTools.Log("DEMANDE REFUSEE -> " + adresse + ":" + port);
+                            LogTools.Logger?.Debug($"Test TCP: Demande Refusee -> {adresse}:{port}");
                         }
                     }
                     catch (Exception ex)
                     {
-                        ExceptionHelper.ShowException(ex);
+                        LogTools.Logger.Error(ex, "Erreur lors de la tentative de connexion sur {0}:{1}", adresse, port);
                         AdresseTerminee(adresse, port, ServerResponseEnum.PingOK);
                     }
 
@@ -203,6 +207,9 @@ namespace JudoClient
                     //LogTools.Log("PING FAIL -> " + adresse);
                     AdresseTerminee(adresse, port, ServerResponseEnum.PingFAIL);
                 }
+
+                string status = e.Reply != null ? e.Reply.Status.ToString() : "Aucune réponse";
+                LogTools.Logger?.Debug($"Test Ping: Echec ({status}) -> {adresse}");
             }
         }
 
@@ -252,7 +259,7 @@ namespace JudoClient
             }
             catch (Exception ex)
             {
-                ExceptionHelper.ShowException(ex);
+                LogTools.Logger.Error(ex, "Erreur lors de la tentative de mise à jour de l'état de la machine {0}:{1}", adresse, port);
             }
         }
 

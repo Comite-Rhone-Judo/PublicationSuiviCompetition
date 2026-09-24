@@ -1,4 +1,5 @@
-﻿using AppPublication.Config.Publication;
+﻿using AppPublication.Config;
+using AppPublication.Config.Publication;
 using FranceJudo.Core.Logging;
 using FranceJudo.Core.Network;
 using FranceJudo.Core.Network.Http;
@@ -48,9 +49,9 @@ namespace AppPublication.Publication
             IServeurHttp httpInstance = null;
 
             // Ici on force le nom de l'instance car on n'a pas encore d'instance initialisé donc InstanceName n'existe pas
-            MiniSiteConfigElement cfg = GetInstanceConfigElement(instanceName);
+            MiniSiteParams cfg = GetInstanceConfigElement(instanceName);
 
-            if (cfg.TypeLocal)
+            if (cfg.Local)
             {
                 // On cherche le type d'instance Htttp
                 try
@@ -59,13 +60,13 @@ namespace AppPublication.Publication
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Error($"Erreur lors de la creation de l'instance du serveur HTTP '{cfg.HttpServer}' pour le minisite '{instanceName}' : {ex.Message}");
+                    LogTools.Logger?.Error($"Erreur lors de la creation de l'instance du serveur HTTP '{cfg.HttpServer}' pour le minisite '{instanceName}' : {ex.Message}");
                     throw new NullReferenceException($"Impossible de creer l'instance du serveur HTTP '{cfg.HttpServer}' pour le minisite '{instanceName}'", ex);
                 }
             }
 
             // On appel le constructeur maintenant que l'on connait le type d'instance
-            return new MiniSiteConfigurable(cfg.TypeLocal, httpInstance, instanceName, cacheCfg, cachePwd);
+            return new MiniSiteConfigurable(cfg.Local, httpInstance, instanceName, cacheCfg, cachePwd);
         }
 
 
@@ -164,7 +165,7 @@ namespace AppPublication.Publication
                     // Sauvegarde de la config si besoin
                     if (CacheConfig && value != null)
                     {
-                        MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
+                        MiniSiteParams cfg = GetCurrentInstanceConfigElement();
                         cfg.InterfaceLocalPublication = value.ToString();
                     }
                 }
@@ -189,7 +190,7 @@ namespace AppPublication.Publication
                     // Sauvegarde de la config si besoin
                     if (CacheConfig)
                     {
-                        MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
+                        MiniSiteParams cfg = GetCurrentInstanceConfigElement();
                         cfg.FtpSite = value;
                     }
                 }
@@ -214,7 +215,7 @@ namespace AppPublication.Publication
                     // Sauvegarde de la config si besoin
                     if (CacheConfig)
                     {
-                        MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
+                        MiniSiteParams cfg = GetCurrentInstanceConfigElement();
                         cfg.FtpLogin = value;
                     }
                 }
@@ -239,7 +240,7 @@ namespace AppPublication.Publication
                     // Sauvegarde de la config si besoin
                     if (CacheConfig)
                     {
-                        MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
+                        MiniSiteParams cfg = GetCurrentInstanceConfigElement();
                         cfg.FtpModeActif = value;
                     }
                 }
@@ -256,15 +257,14 @@ namespace AppPublication.Publication
                 return base.PasswordSiteFTPDistant;
             }
             set
-            {
-                if (base.PasswordSiteFTPDistant != value)
+            {                if (base.PasswordSiteFTPDistant != value)
                 {
                     // Mise à jour de la valeur en mémoire
                     base.PasswordSiteFTPDistant = value;
                     // Sauvegarde de la config si besoin
                     if (CachePassword)
                     {
-                        MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
+                        MiniSiteParams cfg = GetCurrentInstanceConfigElement();
                         cfg.FtpPassword = CachePassword ? value : string.Empty;
                     }
                 }
@@ -289,8 +289,8 @@ namespace AppPublication.Publication
                     // Sauvegarde de la config si besoin
                     if (CacheConfig)
                     {
-                        MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
-                        cfg.SynchroniseDifferences = value;
+                        MiniSiteParams cfg = GetCurrentInstanceConfigElement();
+                        cfg.SyncDiff = value;
                     }
                 }
             }
@@ -303,7 +303,7 @@ namespace AppPublication.Publication
         /// <summary>
         /// Recherche l'element de sauvegarde de la configuration pour l'instance en cours
         /// </summary>
-        private MiniSiteConfigElement GetCurrentInstanceConfigElement()
+        private MiniSiteParams GetCurrentInstanceConfigElement()
         {
             return MiniSiteConfigurable.GetInstanceConfigElement(InstanceName);
         }
@@ -311,17 +311,20 @@ namespace AppPublication.Publication
         /// <summary>
         /// Recherche l'element de sauvegarde de la configuration pour l'instance donnee, ou l'ajoute s'il n'existe pas
         /// </summary>
-        private static MiniSiteConfigElement GetInstanceConfigElement(string instanceName)
+        private static MiniSiteParams GetInstanceConfigElement(string instanceName)
         {
-            // Sauvegarde de la config
-            MiniSiteConfigElement cfg = PublicationConfigSection.Instance.MiniSites[instanceName];
+            // Utilisation du chemin JSON correct et de LINQ (FirstOrDefault)
+            var configRoot = AppConfigRoot.Instance.Publication;
+            var cfg = configRoot.MiniSites.FirstOrDefault(m => m.ID == instanceName);
+
             if (cfg == null)
             {
-                // Pas de config trouvée, on crée une config vide par défaut
-                cfg = new MiniSiteConfigElement();
-                PublicationConfigSection.Instance.MiniSites.Add(cfg);
-            }
+                cfg = new MiniSiteParams { ID = instanceName };
+                configRoot.MiniSites.Add(cfg);
 
+                // Notifie le système racine que la liste a été modifiée pour forcer l'enregistrement
+                configRoot.OnChanged?.Invoke();
+            }
             return cfg;
         }
 
@@ -330,7 +333,7 @@ namespace AppPublication.Publication
         /// </summary>
         private void LoadFromConfiguration()
         {
-            MiniSiteConfigElement cfg = GetCurrentInstanceConfigElement();
+            MiniSiteParams cfg = GetCurrentInstanceConfigElement();
 
             if (IsLocal)
             {
@@ -348,7 +351,7 @@ namespace AppPublication.Publication
 
                 // On se charge maintenant des modules HTTP
                 // On cherche les modules HTTP à ajouter
-                List<string> moduleList = cfg.HttpModules.Split(';').ToList();
+                List<string> moduleList = cfg.HttpModules?.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).ToList() ?? new List<string>();
                 if (moduleList != null)
                 {
                     foreach (string module in moduleList)
@@ -374,7 +377,7 @@ namespace AppPublication.Publication
                             }
                             catch (Exception ex)
                             {
-                                LogTools.Logger.Error($"Erreur lors de la creation le module ${module} du serveur HTTP '{cfg.HttpServer}' pour le minisite '{_instanceName}' : {ex.Message}");
+                                LogTools.Logger?.Error($"Erreur lors de la creation le module ${module} du serveur HTTP '{cfg.HttpServer}' pour le minisite '{_instanceName}' : {ex.Message}");
                                 throw new NullReferenceException($"Impossible de creer le module ${module} du serveur HTTP '{cfg.HttpServer}' pour le minisite '{_instanceName}'", ex);
                             }
                         }
@@ -395,11 +398,11 @@ namespace AppPublication.Publication
                     LoginSiteFTPDistant = cfg.FtpLogin;
                     PasswordSiteFTPDistant = cfg.FtpPassword;
                     ModeActifFTPDistant = cfg.FtpModeActif;
-                    SynchroniseDifferences = cfg.SynchroniseDifferences;
+                    SynchroniseDifferences = cfg.SyncDiff;
                 }
                 catch
                 {
-                    LogTools.Logger.Error($"Erreur lors du chargement de la configuration FTP pour le minisite distant '{InstanceName}'");
+                    LogTools.Logger?.Error($"Erreur lors du chargement de la configuration FTP pour le minisite distant '{InstanceName}'");
                 }
             }
         }

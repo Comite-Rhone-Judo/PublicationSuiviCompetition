@@ -47,6 +47,8 @@ namespace FranceJudo.Metier.Export
             { ExportEnum.Site_FooterScript,        ("footer_script", "footer_script_site.xslt") },
             { ExportEnum.Site_Engagements,         ("groupe_engagements", "groupe_engagements_site.xslt") },
             { ExportEnum.Site_MenuEngagements,     ("engagements", "engagements_site.xslt") },
+            { ExportEnum.Site_MenuStatistiques,    ("statistiques", "statistiques_site.xslt") },
+            { ExportEnum.Site_Statistiques,        ("groupe_statistiques", "groupe_statistiques_site.xslt") },
             { ExportEnum.Site_Interne_EcranAppel,  ("ecran", "ecrans_appel_site.xslt") }
         };
         #endregion
@@ -75,8 +77,34 @@ namespace FranceJudo.Metier.Export
         }
 
         /// <summary>
+        /// Nettoie un nom de fichier en remplaçant les caractères séparateurs de dossiers par des underscores.
+        /// </summary>
+        /// <param name="fileName">Le nom du fichier à nettoyer</param>
+        /// <returns>Le nom du fichier nettoyé</returns>
+        public static string SanitizeFileName(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName)) return fileName;
+
+            // On peut facilement ajouter d'autres caractères interdits ici plus tard
+            return fileName.Replace("/", "_");
+        }
+
+        /// <summary>
+        /// Récupère le nom de fichier associé à un ExportEnum et le nettoie directement.
+        /// </summary>
+        /// <param name="exportType">Le type d'export</param>
+        /// <returns>Le nom du fichier nettoyé</returns>
+        public static string GetSanitizedFileName(ExportEnum exportType)
+        {
+            string rawFileName = GetFileName(exportType);
+            return SanitizeFileName(rawFileName);
+        }
+
+        /// <summary>
         /// Retourne le chemin complet de ressource pour une feuille de style d'export
         /// </summary>
+        /// <param name="type">Le type d'export</param>
+        /// <returns>Le chemin du fichier XSLT</returns>
         private static string GetXsltResourcePath(ExportEnum type)
         {
             if (!_exportRegistry.TryGetValue(type, out var config) || string.IsNullOrEmpty(config.XsltName))
@@ -91,6 +119,14 @@ namespace FranceJudo.Metier.Export
 
         #region 3. GESTION DES RESSOURCES PHYSIQUES (Images, CSS, JS)
 
+        /// <summary>
+        /// Exporte les images embarquées pour un site donné
+        /// </summary>
+        /// <typeparam name="T">Le type de structure physique</typeparam>
+        /// <param name="regenere">Indique si les ressources doivent être régénérées</param>
+        /// <param name="addCustom">Indique si les logos personnalisés doivent être ajoutés</param>
+        /// <param name="structSite">Le générateur d'URL pour la structure du site</param>
+        /// <returns>La liste des fichiers exportés</returns>
         public static List<string> ExportEmbeddedImg<T>(bool regenere, bool addCustom, UrlGeneratorBase<T> structSite) where T : PhysicalStructureBase
         {
             string dir = structSite.PhysicalStructure.RepertoireImg();
@@ -119,6 +155,10 @@ namespace FranceJudo.Metier.Export
             return result;
         }
 
+        /// <summary>
+        /// Énumère les fichiers de logo personnalisés
+        /// </summary>
+        /// <returns>La liste des fichiers de logo personnalisés</returns>
         public static List<FileInfo> EnumerateCustomLogoFiles()
         {
             DirectoryInfo di = new DirectoryInfo(AppDirectoryManager.RessoucesImgDir);
@@ -127,6 +167,13 @@ namespace FranceJudo.Metier.Export
                      .ToList();
         }
 
+        /// <summary>
+        /// Exporte les feuilles de style et les scripts JavaScript embarqués pour un site donné
+        /// </summary>
+        /// <typeparam name="T">Le type de structure physique</typeparam>
+        /// <param name="regenere">Indique si les ressources doivent être régénérées</param>
+        /// <param name="structSite">Le générateur d'URL pour la structure du site</param>
+        /// <returns>La liste des fichiers exportés</returns>
         public static List<string> ExportEmbeddedStyleAndJS<T>(bool regenere, UrlGeneratorBase<T> structSite) where T : PhysicalStructureBase
         {
             List<string> result = new List<string>();
@@ -143,6 +190,10 @@ namespace FranceJudo.Metier.Export
             return result;
         }
 
+        /// <summary>
+        /// Récupère le code JavaScript embarqué
+        /// </summary>
+        /// <returns>Le code JavaScript embarqué</returns>
         public static string GetEmbeddedJS()
         {
             // Utilisation de StringBuilder pour des performances optimales
@@ -167,6 +218,14 @@ namespace FranceJudo.Metier.Export
             return result.ToString();
         }
 
+
+        /// <summary>
+        /// Exporte un dossier de ressources
+        /// </summary>
+        /// <param name="targetDirectory">Le répertoire cible</param>
+        /// <param name="resourceFolder">Le dossier de ressources</param>
+        /// <param name="regenere">Indique si les ressources doivent être régénérées</param>
+        /// <returns>La liste des fichiers exportés</returns>
         private static List<string> ExportResourceFolder(string targetDirectory, string resourceFolder, bool regenere)
         {
             List<string> result = new List<string>();

@@ -1,9 +1,11 @@
 ﻿using FranceJudo.UI.Wpf.Dialogs;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.Versioning;
 
 namespace FranceJudo.UI.Wpf.PDF
 {
+    [SupportedOSPlatform("windows")]
     public static class PdfHelper
     {
         public static void OpenPDF(string file)

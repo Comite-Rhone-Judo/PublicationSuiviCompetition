@@ -18,16 +18,19 @@ namespace AppPublication.Export
         /// </summary>
         public static ExportSharedContextInterne Create(IJudoData DC, ConfigurationExportSiteInterne config)
         {
-            if (DC == null) throw new System.ArgumentNullException(nameof(DC));
-            if (config == null) throw new System.ArgumentNullException(nameof(config));
+            System.ArgumentNullException.ThrowIfNull(DC);
+            System.ArgumentNullException.ThrowIfNull(config);
 
             var context = new ExportSharedContextInterne(DC, config);
-
-            // Génération du document spécifique aux combats (feuilles de combat)
-            XDocument outDoc = ExportXML.CreateDocumentFeuilleCombat(context, null, null);
+            // Enregistrement paresseux (Lazy) du document spécifique aux combats.
+            // La méthode CreateDocumentFeuilleCombat ne sera exécutée que si la clé est appelée.
+            context.RegisterLazyDocument(
+                nameof(ExportDocumentKey.FeuillesCombat),
+                () => ExportXML.CreateDocumentFeuilleCombat(context, null, null)
+            );
 
             // Lancement du pipeline centralisé dans la classe mère
-            context.ExecuteExportPipeline(config.ToXml(), outDoc);
+            context.ExecuteExportPipeline(config.ToXml());
 
             return context;
         }

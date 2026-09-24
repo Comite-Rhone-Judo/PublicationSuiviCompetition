@@ -22,7 +22,7 @@ namespace FranceJudo.Core.Network.Http.HttpServer
         private readonly IHttpRequestParser _parser;
         private readonly int _bufferSize;
         private IHttpRequest _currentRequest;
-        private ClientCertificate _clientCertificate;
+        private readonly ClientCertificate _clientCertificate;
         private IPEndPoint _localEndPoint;
 
         /// <summary>

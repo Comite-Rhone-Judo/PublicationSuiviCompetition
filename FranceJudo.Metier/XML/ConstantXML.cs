@@ -1,4 +1,6 @@
-﻿namespace FranceJudo.Metier.XML
+﻿using FranceJudo.Metier.Noyau.Organisation;
+
+namespace FranceJudo.Metier.XML
 {
     /// <summary>
     /// Enumération des constants pour la construction des fichiers XML
@@ -32,11 +34,6 @@
         public const string JudoTV_Envoie1 = "judotven1";
         public const string JudoTV_Envoie2 = "judotven2";
 
-        public const string Directory = "directory";
-        public const string FileName = "filename";
-
-
-
         public const string Event_ID = "ID";
         public const string Event_Nom = "libelle";
         public const string Event_Date = "date";
@@ -57,11 +54,13 @@
         public const string publierProchainsCombats = "PublierProchainsCombats";
         public const string publierAffectationTapis = "PublierAffectationTapis";
         public const string publierEngagements = "PublierEngagements";
+        public const string publierStatistiques = "PublierStatistiques";
         public const string EngagementsAbsents = "EngagementsAbsents";
         public const string EngagementsTousCombats = "EngagementsTousCombats";
         public const string EngagementsScoreGP = "EngagementsScoreGP";
         public const string EngagementsPositionCombat = "EngagementsPositionCombat";
         public const string delaiActualisationClientSec = "DelaiActualisationClientSec";
+        public const string actualisationClientDefaut = "ActualisationClientDefaut";    
         public const string delaiDeroulementSec = "DelaiDeroulementSec";
         public const string nbProchainsCombats = "NbProchainsCombats";
         public const string msgProchainsCombats = "MsgProchainsCombats";
@@ -70,10 +69,21 @@
         public const string DateGeneration = "DateGeneration";
         public const string AppVersion = "AppVersion";
         public const string Logo = "Logo";
+        public const string LogoDark = "LogoDark";
         public const string urlRedirecteur = "urlRedirecteur";
 
         public const string TapisEpreuve = "TapisEpreuve";
         public const string Tapis_No = "no_tapis";
+
+        // Type de document
+        public const string DocumentType_DocumentIndex = "DocumentIndex";
+        public const string DocumentType_DocumentMenu = "DocumentMenu";
+        public const string DocumentType_DocumentEngagements = "DocumentEngagements";
+        public const string DocumentType_DocumentAffectationTapis = "DocumentAffectationTapis";
+        public const string DocumentType_DocumentEpreuve = "DocumentEpreuve";
+        public const string DocumentType_DocumentPhase = "DocumentPhase";
+        public const string DocumentType_DocumentFeuilleCombat = "DocumentFeuilleCombat";
+        public const string DocumentType_DocumentStatistiques = "DocumentStatistiques";
 
         //Structure 
         public const string Structures = "structures";
@@ -81,21 +91,79 @@
         public const string Structure_RemoteID = "remoteID";
         public const string Structure_Nom = "nom";
 
-        public const string GroupeEngagements_groupes = "groupesEngagements";
-        public const string GroupeEngagements_groupe = "groupeEngagements";
+        // Statistiques
 
-        public const string GroupeEngagements_sexe = "sexe";
-        public const string GroupeEngagements_id = "id";
-        public const string GroupeEngagements_entite = "entite";
-        public const string GroupeEngagements_judokas = "judokas";
-        public const string GroupeEngagements_epreuves = "epreuves";
-        public const string GroupeEngagements_combats = "combats";
-        public const string GroupeEngagements_type = "type";
-        public const string GroupeEngagements_competition = "competition";
+        public const string GroupeStatistiques_groupes = "groupesStatistiques";
+        public const string GroupeStatistiques_groupe = "groupeStatistiques";
+        public const string GroupeStatistiques_Competition = "competition";
+        public const string GroupeStatistiques_Id = "id";
+        public const string GroupeStatistiques_Sexe = "sexe";
+        public const string GroupeStatistiques_Type = "type";
+        public const string GroupeStatistiques_Entite = "entite";
+        public const string GroupeStatistiques_Judokas = "judokas";
+        public const string GroupeStatistiques_UrlGroupe = "urlGroupe";
+
+        public const string Statistiques_ExportStatistiques = "statistiques";
+        public const string Statistiques_Items = "items";
+        public const string Statistiques_Item = "item";
+        public const string Statistiques_TypeEntite = "typeEntite";
+        public const string Statistiques_IdEntite = "idEntite";
+        public const string Statistiques_Sexe = "sexe";
+
+        // --- Attributs de volumétrie et globaux ---
+        public const string Statistiques_NbParticipants = "nbParticipants";
+        public const string Statistiques_NbCombattants = "nbCombattants";
+        public const string Statistiques_PctParticipation = "pctParticipation";
+        public const string Statistiques_NbCombats = "nbCombats";
+        public const string Statistiques_NbVictoires = "nbVictoires";
+        public const string Statistiques_PctVictoires = "pctVictoires";
+        public const string Statistiques_NbHikiwake = "nbHikiwake";
+        public const string Statistiques_PctHikiwake = "pctHikiwake";
+
+        // --- Attributs de détail des victoires ---
+        public const string Statistiques_PctVictoireIpponDirect = "pctVictoireIpponDirect";
+        public const string Statistiques_PctVictoireWazaAriAwaseteIppon = "pctVictoireWazaAriAwaseteIppon";
+        public const string Statistiques_PctVictoireWazaAri = "pctVictoireWazaAri";
+        public const string Statistiques_PctVictoireYuko = "pctVictoireYuko";
+        public const string Statistiques_PctVictoireSogoGachi = "pctVictoireSogoGachi";
+        public const string Statistiques_PctVictoireHansokuMake = "pctVictoireHansokuMake";
+        public const string Statistiques_PctVictoireAbandonForfaitMedical = "pctVictoireAbandonForfaitMedical";
+        public const string Statistiques_PctVictoireDecision = "pctVictoireDecision";
+
+        // --- Attributs des pénalités ---
+        public const string Statistiques_MoyennePenalitesParCombat = "moyennePenalitesParCombat";
+
+        // --- Attributs du Golden Score ---
+        public const string Statistiques_NbCombatsGoldenScore = "nbCombatsGoldenScore";
+        public const string Statistiques_PctCombatsGoldenScore = "pctCombatsGoldenScore";
+        public const string Statistiques_DureeMoyenneGoldenScore = "dureeMoyenneGoldenScore";
+        public const string Statistiques_DureeMaximaleGoldenScore = "dureeMaximaleGoldenScore";
+
+        // --- Attributs des Temps de combat ---
+        public const string Statistiques_DureeCombatMin = "dureeCombatMin";
+        public const string Statistiques_DureeCombatMax = "dureeCombatMax";
+        public const string Statistiques_DureeCombatMoy = "dureeCombatMoy";
+
+        // Engagements
+        public const string GroupeEngagements_Groupes = "groupesEngagements";
+        public const string GroupeEngagements_Groupe = "groupeEngagements";
+
+        public const string GroupeEngagements_Sexe = "sexe";
+        public const string GroupeEngagements_Id = "id";
+        public const string GroupeEngagements_Entite = "entite";
+        public const string GroupeEngagements_Judokas = "judokas";
+        public const string GroupeEngagements_Epreuves = "epreuves";
+        public const string GroupeEngagements_Combats = "combats";
+        public const string GroupeEngagements_Type = "type";
+        public const string GroupeEngagements_Competition = "competition";
+        public const string GroupeEngagements_UrlGroupe = "urlGroupe";
 
         //Compétition 
         public const string Competition = "competition";
         public const string Competition_ID = "ID";
+        public const string Competition_TempsCombat = "tempsCombat";
+        public const string Competition_SiteInternet = "siteInternet";
+        public const string Competition_CodeAcces = "codeAcces";
         public const string Competition_ID2 = "id";
         public const string Competition_RemoteID = "RemoteID";
         public const string Competition_Date = "date";
@@ -259,6 +327,10 @@
         public const string Epreuve_CatePoids_Nom = "nom_catepoids";
         public const string Epreuve_CatePoids_RemoteId = "remoteId_catepoids";
 
+        public const string Epreuve_UrlAvancement = "urlAvancement";
+        public const string Epreuve_UrlClassement = "urlClassement";
+        public const string Epreuve_UrlProchainsCombats = "urlProchainsCombats";
+
         //Epreuves_Equipe
 
         public const string Epreuve_Equipes = "epreuve_equipes";
@@ -293,6 +365,7 @@
         public const string Groupe_ID = "id";
         public const string Groupe_Tapis = "tapis";
         public const string Groupe_Libelle = "libelle";
+        public const string Groupe_Numero = "nom";
         public const string Groupe_Horaire_Debut_Date = "horaire_debut_date";
         public const string Groupe_Horaire_Debut_Time = "horaire_debut_time";
         public const string Groupe_Horaire_Fin_Date = "horaire_fin_date";
@@ -384,7 +457,8 @@
         public const string Phase_Ecartement = "ecartement";
         public const string Phase_Date_Tirage = "date_tirage";
         public const string Phase_Time_Tirage = "time_tirage";
-
+        public const string Phase_Ordre = "ordre";
+        public const string Phase_UrlAvancement = "urlAvancement";
 
         //Feuilles 
         public const string Feuille = "feuille";
@@ -684,5 +758,36 @@
         public const string EasyConfig_Entite_RacineFtp = "racineFtp";
         public const string EasyConfig_Entite_RacineHttp = "racineHttp";
 
+
+        // Dictionnaire de Routage
+        public const string Routing_SiteRoutes = "siteRoutes";
+
+        public const string Routing_UrlCommon = "urlCommon";
+        public const string Routing_UrlImg = "urlImg";
+        public const string Routing_UrlJs = "urlJs";
+        public const string Routing_UrlCss = "urlCss";
+        public const string Routing_UrlSePrepare = "urlSePrepare";
+        public const string Routing_UrlProchainsCombats = "urlProchainsCombats";
+        public const string Routing_UrlAffectationTapis = "urlAffectationTapis";
+        public const string Routing_UrlAvancement = "urlAvancement";
+        public const string Routing_UrlClassement = "urlClassement";
+        public const string Routing_UrlEngagements = "urlEngagements";
+        public const string Routing_UrlStatistiques = "urlStatistiques";
+
+        public const string Routing_RouteEpreuve = "routeEpreuve";
+        public const string Routing_EpreuveId = "epreuve";
+        public const string Routing_EpreuveUrlClassement = "urlClassement";
+        public const string Routing_EpreuveUrlProchainsCombats = "urlProchainsCombats";
+        public const string Routing_EpreuveUrlAvancement = "urlAvancement";
+
+        public const string Routing_RoutePhase = "routePhase";
+        public const string Routing_PhaseId = "phase";
+        public const string Routing_PhaseUrlAvancement = "urlAvancement";
+        public const string Routing_RouteGroupe = "routeGroupe";
+        public const string Routing_GroupeId = "groupe";
+        public const string Routing_TypeGroupe = "typeGroupe";
+        public const string Routing_TypeEngagement = "engagement";
+        public const string Routing_TypeStatistique = "statistique";
+        public const string Routing_UrlGroupe = "urlGroupe";
     }
 }

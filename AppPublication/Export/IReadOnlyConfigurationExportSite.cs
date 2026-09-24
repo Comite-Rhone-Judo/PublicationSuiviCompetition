@@ -14,6 +14,7 @@
         bool EngagementsScoreGP { get; }
         bool AfficherPositionCombat { get; }
         long DelaiActualisationClientSec { get; }
+        bool ActualisationClientDefaut { get; }
         int NbProchainsCombats { get; }
         string MsgProchainsCombats { get; }
         string Logo { get; }

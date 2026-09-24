@@ -1,22 +1,21 @@
-﻿using FranceJudo.UI.Wpf.Behaviors;
+﻿using Microsoft.Web.WebView2.Core;
 using System;
 using System.IO;
+using System.Runtime.Versioning;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using Telerik.Windows.Controls;
-using Telerik.Windows.Documents.Fixed;
-using Telerik.Windows.Documents.Fixed.FormatProviders;
-using Telerik.Windows.Documents.Fixed.FormatProviders.Pdf;
-using Telerik.Windows.Documents.Fixed.Print;
 
 namespace FranceJudo.UI.Wpf.Dialogs
 {
-    /// <summary>
-    /// Logique d'interaction pour PdfViewer.xaml
-    /// </summary>
-    public partial class PdfViewer : RadWindow
+    [SupportedOSPlatform("windows")]
+    public partial class PdfViewer : HandyControl.Controls.Window
     {
-        private byte[] _document = null;
+        private readonly byte[] _document;
+        private string _tempFilePath;
+
+        // Flags pour gérer l'impression silencieuse (mode fantôme)
+        private bool _isNavigated = false;
+        private bool _pendingSilentPrint = false;
 
         public PdfViewer(byte[] document, string title = "", bool allowPrint = true, bool allowSave = true)
         {
@@ -24,102 +23,144 @@ namespace FranceJudo.UI.Wpf.Dialogs
 
             if (!string.IsNullOrEmpty(title))
             {
-                this.Header += " - " + title;
+                this.Title += " - " + title;
             }
 
-            if (!allowPrint)
-            {
-                PDFButton.IsEnabled = false;
-            }
-
-            if (!allowSave)
-            {
-                SaveButton.IsEnabled = false;
-            }
-
-            WindowHelper.ShowInTaskbar(this);
+            PDFButton.IsEnabled = allowPrint;
+            SaveButton.IsEnabled = allowSave;
 
             _document = document;
 
-            MemoryStream stream = new MemoryStream();
-            stream.Write(_document, 0, _document.Length);
-
-            // RadFixedDocument document = new PdfFormatProvider(stream, FormatProviderSettings.ReadOnDemand).Import();
-            this.pdfViewer.DocumentSource = new PdfDocumentSource(stream);
-            //this.pdfViewer.Document = document;
+            InitializeWebView();
         }
 
-        #region EventHandlers
-
-        private void tbCurrentPage_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private async void InitializeWebView()
         {
-            TextBox textBox = sender as TextBox;
-            if (textBox != null)
+            try
             {
-                if (e.Key == System.Windows.Input.Key.Enter)
+                await pdfWebView.EnsureCoreWebView2Async();
+
+                // Abonnement à la fin du chargement pour déclencher l'impression silencieuse si demandée
+                pdfWebView.CoreWebView2.NavigationCompleted += CoreWebView2_NavigationCompleted;
+
+                string tempDir = Path.GetTempPath();
+                string randomName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
+                string tempFileName = $"JudoPrint_{randomName}.pdf";
+
+                _tempFilePath = Path.Combine(tempDir, tempFileName);
+                File.WriteAllBytes(_tempFilePath, _document);
+
+                pdfWebView.CoreWebView2.Navigate(_tempFilePath);
+            }
+            catch (Exception ex)
+            {
+                HandyControl.Controls.MessageBox.Show($"Impossible d'initialiser le composant PDF : {ex.Message}");
+            }
+        }
+
+        private async void CoreWebView2_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
+        {
+            _isNavigated = true;
+
+            // Si un ordre d'impression silencieux était en attente (bloc catch de PrintPDF)
+            if (_pendingSilentPrint)
+            {
+                await ExecuteSilentPrintAsync();
+                this.Close(); // Auto-destruction de la fenêtre fantôme après impression
+            }
+        }
+
+        /// <summary>
+        /// Méthode publique appelée par le code externe pour imprimer (Mode silencieux / Fallback)
+        /// </summary>
+        public void Print()
+        {
+            if (_isNavigated)
+            {
+                // Si la fenêtre est déjà ouverte et le PDF chargé, on imprime directement
+                _ = ExecuteSilentPrintAsync();
+            }
+            else
+            {
+                // Si appelé immédiatement après l'instanciation (new PdfViewer(bytes).Print();)
+                _pendingSilentPrint = true;
+
+                // Astuce WPF : WebView2 ne charge rien si la fenêtre n'est pas "montrée" à l'OS.
+                // On la rend invisible pour forcer le processus sans perturber l'utilisateur.
+                if (!this.IsVisible)
                 {
-                    textBox.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+                    this.Width = 0;
+                    this.Height = 0;
+                    this.ShowInTaskbar = false;
+                    this.WindowStyle = WindowStyle.ToolWindow; // Évite l'animation d'ouverture
+                    this.Show();
                 }
             }
         }
 
-        private void tbFind_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        /// <summary>
+        /// Imprime le PDF silencieusement sur l'imprimante par défaut
+        /// </summary>
+        private async Task ExecuteSilentPrintAsync()
         {
-            if (e.Key == System.Windows.Input.Key.Enter)
+            try
             {
-                this.pdfViewer.CommandDescriptors.FindCommandDescriptor.Command.Execute(this.tbFind.Text);
-                this.btnPrev.Visibility = System.Windows.Visibility.Visible;
-                this.btnNext.Visibility = System.Windows.Visibility.Visible;
+                // CreatePrintSettings crée par défaut une configuration pointant vers l'imprimante par défaut de Windows
+                var printSettings = pdfWebView.CoreWebView2.Environment.CreatePrintSettings();
+                await pdfWebView.CoreWebView2.PrintAsync(printSettings);
+            }
+            catch (Exception ex)
+            {
+                // En mode silencieux, on logue l'erreur ou on l'ignore pour ne pas bloquer l'appli
+                Console.WriteLine($"Erreur d'impression silencieuse : {ex.Message}");
             }
         }
 
-        #endregion
+        /// <summary>
+        /// Bouton Imprimer de la barre d'outils (Mode interactif)
+        /// </summary>
+        private void PDFButton_Click(object sender, RoutedEventArgs e)
+        {
+            // ShowPrintUI() est la méthode moderne de WebView2 (mieux que window.print())
+            pdfWebView?.CoreWebView2.ShowPrintUI();
+        }
 
         private void SaveButton_Click_1(object sender, RoutedEventArgs e)
         {
-            //Sauvegarde du fichier XML
-            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
-            dlg.DefaultExt = ".pdf";
-
-            dlg.Filter = "Fichier PDF |*.pdf";
-
-            Nullable<bool> result = dlg.ShowDialog();
-
-            if (result == true)
+            var dlg = new Microsoft.Win32.SaveFileDialog
             {
-                string filename = dlg.FileName;
+                DefaultExt = ".pdf",
+                Filter = "Fichier PDF |*.pdf",
+                FileName = "Document_Judo.pdf"
+            };
 
-                // Export the FileStream.
-                using (FileStream fs = new FileStream(filename, FileMode.Create))
+            if (dlg.ShowDialog() == true)
+            {
+                try
                 {
-                    fs.Write(_document, 0, _document.Length);
+                    File.WriteAllBytes(dlg.FileName, _document);
+                }
+                catch (Exception ex)
+                {
+                    HandyControl.Controls.MessageBox.Show($"Erreur lors de l'enregistrement : {ex.Message}");
                 }
             }
         }
 
-        private void PDFButton_Click(object sender, RoutedEventArgs e)
+        protected override void OnClosed(EventArgs e)
         {
-            Print();
-        }
+            pdfWebView.Dispose();
 
-        public void Print()
-        {
-            if (!this.pdfViewer.IsLoaded)
+            try
             {
-                MemoryStream stream = new MemoryStream();
-                stream.Write(_document, 0, _document.Length);
-
-                PdfFormatProvider prvdPdfPrint = new PdfFormatProvider(stream, FormatProviderSettings.ReadOnDemand);
-                pdfViewer.Document = prvdPdfPrint.Import();
+                if (!string.IsNullOrEmpty(_tempFilePath) && File.Exists(_tempFilePath))
+                {
+                    File.Delete(_tempFilePath);
+                }
             }
+            catch { }
 
-            PrintSettings settings = new PrintSettings()
-            {
-                DocumentName = "Export DOCUMENT JUDO",
-                UseDefaultPrinter = true
-            };
-
-            this.pdfViewer.Print(settings);
+            base.OnClosed(e);
         }
     }
 }

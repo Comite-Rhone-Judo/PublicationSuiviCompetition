@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 
-namespace AppPublication.ViewModels.Configuration
+namespace AppPublication.ViewModels.Main
 {
     public class TestFtpViewModel : NotificationBase
     {
@@ -25,7 +25,7 @@ namespace AppPublication.ViewModels.Configuration
             set
             {
                 _isTestRunning = value;
-                NotifyPropertyChanged("IsTestRunning");
+                NotifyPropertyChanged(nameof(IsTestRunning));
                 // Indique à WPF de rafraichir le bouton CanExecute
                 CommandManager.InvalidateRequerySuggested();
             }

@@ -11,7 +11,7 @@ namespace FranceJudo.UI.Wpf.Converters
         {
             bool output = false;
             // Verifie le type des donnees en entree
-            if (values.Count() >= 2 && parameter != null)
+            if (values.Length >= 2 && parameter != null)
             {
                 bool? ope1 = null;
                 bool? ope2 = null;

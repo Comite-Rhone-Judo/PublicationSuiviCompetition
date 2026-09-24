@@ -192,7 +192,7 @@ namespace AppPublication.Controles
             }
             catch (Exception ex)
             {
-                LogTools.Logger.Error(ex, "Erreur lors du test de connexion");
+                LogTools.Logger?.Error(ex, "Erreur lors du test de connexion");
             }
         }
 
@@ -231,7 +231,7 @@ namespace AppPublication.Controles
                 }
                 catch (Exception ex)
                 {
-                    LogTools.Logger.Error(ex, "Erreur lors de la fermeture du client");
+                    LogTools.Logger?.Error(ex, "Erreur lors de la fermeture du client");
                 }
 
                 // Notify subscribers of disconnection
@@ -309,7 +309,7 @@ namespace AppPublication.Controles
             // Lever le drapeau d'erreur de transmission
             HasErreurTransmission = true;
 
-            LogTools.Logger.Debug("Signalement d'une erreur de donnee recue", data);
+            LogTools.Logger?.Debug("Signalement d'une erreur de donnee recue", data);
         }
 
         /// <summary>
@@ -319,7 +319,7 @@ namespace AppPublication.Controles
         /// <param name="data"></param>
         private void Client_OnReceivedDataSuccessOccured(object sender, string data)
         {
-            LogTools.Logger.Debug("Donnees recues avec succes signalee");
+            LogTools.Logger?.Debug("Donnees recues avec succes signalee");
         }
 
         /// <summary>

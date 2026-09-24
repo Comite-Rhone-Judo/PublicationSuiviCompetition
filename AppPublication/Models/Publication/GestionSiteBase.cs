@@ -1,4 +1,5 @@
-﻿using AppPublication.Generation;
+﻿using AppPublication.Config;
+using AppPublication.Generation;
 using AppPublication.Models.Statistiques;
 using AppPublication.Statistiques;
 using FranceJudo.Core.Foundation;
@@ -89,7 +90,47 @@ namespace AppPublication.Models.Publication
                     _selectedLogo = value;
                     string logoName = (value != null) ? value.Name : string.Empty;
                     OnSelectedLogoChanged(logoName); // Hook pour propager au générateur
+                 
                     NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private FilteredFileInfo _selectedLogoDark = null;
+        /// <summary>
+        /// Le fichier logo sélectionné pour le mode sombre
+        /// </summary>
+        public FilteredFileInfo SelectedLogoDark
+        {
+            get { return _selectedLogoDark; }
+            set
+            {
+                if (_selectedLogoDark != value)
+                {
+                    _selectedLogoDark = value;
+                    string logoName = (value != null) ? value.Name : string.Empty;
+                    OnSelectedLogoDarkChanged(logoName); // Hook pour propager au générateur
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private bool _useLogoUnique = true;
+        /// <summary>
+        /// Indique si on doit utiliser un logo unique pour le site (true) ou un logo différent pour le mode sombre (false)
+        /// </summary>
+        public bool UseLogoUnique
+        {
+            get { return _useLogoUnique; }
+            set
+            {
+                if (_useLogoUnique != value)
+                {
+                    _useLogoUnique = value;
+                    OnUseLogoUniqueChanged(value); // Hook pour propager au générateur
+                    NotifyPropertyChanged();
+
+                    // Note: on ne modifie pas la valeur du logo sélectionné pour ne pas perdre la valeur si l'utilisateur revient en arrière.
                 }
             }
         }
@@ -246,6 +287,44 @@ namespace AppPublication.Models.Publication
                 IsGenerationActive = !(_status.State == StateGenerationEnum.Stopped);
             }
         }
+
+        private bool _useIntituleCommun;
+        /// <summary>
+        /// Flag indiquant si on doit utiliser un intitule commun en cas de poly competition
+        /// </summary>
+        public bool UseIntituleCommun
+        {
+            get { return _useIntituleCommun; }
+            set
+            {
+                if (_useIntituleCommun != value)
+                {
+                    // propage la valeur au generateur de site
+                    _useIntituleCommun = value;
+                    NotifyPropertyChanged();
+                    OnUseIntituleCommunChanged(value);
+                }
+            }
+        }
+
+        private string _intituleCommun;
+        /// <summary>
+        /// intitule commun en cas de poly competition
+        /// </summary>
+        public string IntituleCommun
+        {
+            get { return _intituleCommun; }
+            set
+            {
+                if (_intituleCommun != value)
+                {
+                    _intituleCommun = value;
+                    NotifyPropertyChanged();
+                    OnIntituleCommunChanged(value);
+                }
+            }
+        }
+
         #endregion
 
         #region CONSTRUCTEUR
@@ -274,6 +353,18 @@ namespace AppPublication.Models.Publication
         /// <summary>Hook exécuté lorsque le logo sélectionné change</summary>
         protected abstract void OnSelectedLogoChanged(string logoName);
 
+        /// <summary>Hook exécuté lorsque le logo sélectionné change</summary>
+        protected abstract void OnSelectedLogoDarkChanged(string logoName);
+
+        /// <summary>Hook exécuté lorsque le flag de logo unique change</summary>
+        protected abstract void OnUseLogoUniqueChanged(bool newValue);
+
+        /// <summary>Hook exécuté lorsque le flag d'utilisation de l'intitulé commun change</summary>
+        protected abstract void OnUseIntituleCommunChanged(bool newValue);
+
+        /// <summary>Hook exécuté lorsque l'intitulé commun change</summary>
+        protected abstract void OnIntituleCommunChanged(string newValue);
+
         /// <summary>Hook exécuté lorsque l'interface locale change</summary>
         protected abstract void OnInterfaceLocalPublicationChanged();
 
@@ -282,10 +373,11 @@ namespace AppPublication.Models.Publication
 
         /// <summary>Hook exécuté lorsque l'ID de compétition change</summary>
         protected abstract void OnIdCompetitionChanged(string newValue);
-        #endregion
 
         /// <summary>Force le recalcul et le rafraîchissement des URLs de publication pour l'interface</summary>
         public abstract void ForceRefreshUrls();
+        #endregion
+
         #region METHODES COMMUNES
 
         /// <summary>
@@ -309,7 +401,7 @@ namespace AppPublication.Models.Publication
         /// </summary>
         protected virtual void OnGenerationSiteProgressReport(OperationProgress valueReported)
         {
-            LogTools.Logger.Debug($"Progress {valueReported.ProgressPercent} signale par le generateur");
+            LogTools.Logger?.Debug($"Progress {valueReported.ProgressPercent} signale par le generateur");
 
             // on doit juste s'assurer que tout est bien execute dans le UI Thread
             System.Windows.Application.Current.ExecOnUiThread(() =>
@@ -331,7 +423,7 @@ namespace AppPublication.Models.Publication
         /// </summary>
         protected virtual void OnSchedulerSiteStateChanged(object sender, SchedulerStateEventArgs evt)
         {
-            LogTools.Logger.Debug($"Event {evt.State} signale par le scheduler");
+            LogTools.Logger?.Debug($"Event {evt.State} signale par le scheduler");
 
             // on doit juste s'assurer que tout est bien execute dans le UI Thread
             System.Windows.Application.Current.ExecOnUiThread(() =>
@@ -360,6 +452,14 @@ namespace AppPublication.Models.Publication
                     cpy.NextGenerationSec = (int)evt.DelaiNextSec;
                 }
             });
+        }
+
+        /// <summary>
+        /// Met à jour l'état de la connexion réseau pour le scheduler
+        /// </summary>
+        public virtual void SetConnectionStatus(bool isConnected)
+        {
+            _schedulerSite?.IsClientConnected = isConnected;
         }
         #endregion
     }

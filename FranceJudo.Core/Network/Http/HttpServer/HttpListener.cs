@@ -4,6 +4,7 @@ using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using FranceJudo.Core.Network.Http.HttpServer.Parser;
 
 namespace FranceJudo.Core.Network.Http.HttpServer
 {
