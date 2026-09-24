@@ -162,7 +162,8 @@ namespace JudoClient
             bool EnvoieConnection = false;
             if (e.Reply != null && e.Reply.Status == IPStatus.Success)
             {
-                //LogTools.Log("PING SUCCESS -> " + adresse);
+                LogTools.Logger?.Debug($"Test Ping: Succes -> {adresse}");
+
                 Ping ping = (Ping)sender;
                 ping.SendAsyncCancel();
 
@@ -172,7 +173,7 @@ namespace JudoClient
 
                     try
                     {
-                        //LogTools.Log("DEMANDE CONNEXION -> " + adresse +  ":"+port);
+                        LogTools.Logger?.Debug($"Test TCP: Demande Connexion -> {adresse}:{port}");
 
                         ClientJudo clientjudo = new ClientJudo(adresse, port);
                         if (clientjudo.IsConnected)
@@ -184,7 +185,7 @@ namespace JudoClient
                         else
                         {
                             AdresseTerminee(adresse, port, ServerResponseEnum.PingOK);
-                            //LogTools.Log("DEMANDE REFUSEE -> " + adresse + ":" + port);
+                            LogTools.Logger?.Debug($"Test TCP: Demande Refusee -> {adresse}:{port}");
                         }
                     }
                     catch (Exception ex)
@@ -206,6 +207,9 @@ namespace JudoClient
                     //LogTools.Log("PING FAIL -> " + adresse);
                     AdresseTerminee(adresse, port, ServerResponseEnum.PingFAIL);
                 }
+
+                string status = e.Reply != null ? e.Reply.Status.ToString() : "Aucune réponse";
+                LogTools.Logger?.Debug($"Test Ping: Echec ({status}) -> {adresse}");
             }
         }
 
