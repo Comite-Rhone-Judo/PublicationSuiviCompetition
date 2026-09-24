@@ -21,6 +21,12 @@
     <ProjectReference Include="..\AppPublication\AppPublication.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Dependancies\windowsdesktop-runtime-10.0.12-win-x64.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)' == 'Release' ">
     <Exec Command="$(InnoSetupCompiler) $(ProjectDir)bin\Release\installer.iss" />
   </Target>

@@ -59,11 +59,18 @@ Source: "..\..\..\AppPublication\bin\Release\{#TargetFramework}\{#MyAppConfig}";
 Source: "..\..\..\AppPublication\bin\Release\{#TargetFramework}\{#MyAppConfig}"; DestDir: "{app}"; Flags: ignoreversion; Check: IsForceConfigOverride
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
+; Dépendance .NET 10 Desktop Runtime
+Source: "..\..\Dependancies\windowsdesktop-runtime-10.0.12-win-x64.exe"; DestDir: "{tmp}"; Flags: ignoreversion d
+
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
+; Installation silencieuse du framework si manquant (s'exécute de façon séquentielle grâce au flag waituntilterminated)
+Filename: "{tmp}\windowsdesktop-runtime-10.0.12-win-x64.exe"; Parameters: "/quiet /norestart"; StatusMsg: "Installation de Microsoft .NET 10 Desktop Runtime en cours..."; Check: NeedsDotNet10; Flags: waituntilterminated
+
+; Votre lancement d'application existant
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}";Flags:runascurrentuser nowait postinstall skipifsilent;
 
 [CustomMessages]
@@ -238,4 +245,21 @@ begin
   end;
 
   Result := True;
+end;
+
+{ Vérifie si le .NET 10 Desktop Runtime (x64) est installé }
+function NeedsDotNet10: Boolean;
+begin
+  // Depuis .NET 5, Microsoft logge les installations sous cette clé.
+  // On utilise HKLM64 car votre exécutable cible un runtime x64.
+  if RegValueExists(HKLM64, 'SOFTWARE\dotnet\Setup\InstalledVersions\x64\sharedfx\Microsoft.WindowsDesktop.App', '10.0.12') then
+  begin
+    Log('.NET 10 Desktop Runtime x64 est déjà installé.');
+    Result := False;
+  end
+  else
+  begin
+    Log('.NET 10 Desktop Runtime x64 manquant. Planification de l''installation.');
+    Result := True;
+  end;
 end;
