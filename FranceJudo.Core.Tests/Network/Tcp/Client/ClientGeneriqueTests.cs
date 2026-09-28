@@ -175,7 +175,7 @@ namespace FranceJudo.Core.Tests.Network.Tcp.Client
             var tcsDataReceived = new TaskCompletionSource<string>();
 
             client.OnConnection += (s) => tcsConnection.TrySetResult(true);
-            client.OnDataRecieve += (s, data) => tcsDataReceived.TrySetResult(data);
+            client.OnDataReceive += (s, data) => tcsDataReceived.TrySetResult(data);
 
             try
             {
@@ -221,7 +221,7 @@ namespace FranceJudo.Core.Tests.Network.Tcp.Client
             var tcsDataReceived = new TaskCompletionSource<string>();
 
             client.OnConnection += (s) => tcsConnection.TrySetResult(true);
-            client.OnDataRecieve += (s, data) => tcsDataReceived.TrySetResult(data);
+            client.OnDataReceive += (s, data) => tcsDataReceived.TrySetResult(data);
 
             try
             {

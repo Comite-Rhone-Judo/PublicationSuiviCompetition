@@ -52,7 +52,7 @@ namespace JudoClient.Tests
             clientJudo.OnReceivedDataErrorOccured += (sender, data) => errorEventTriggered = true;
 
             // Act
-            mockNetworkClient.Raise(m => m.OnDataRecieve += null, mockNetworkClient.Object, xmlPayload);
+            mockNetworkClient.Raise(m => m.OnDataReceive += null, mockNetworkClient.Object, xmlPayload);
 
             // Assert
             successEventTriggered.Should().BeTrue($"La commande {commandATester} doit déclencher l'événement de succès.");
@@ -79,7 +79,7 @@ namespace JudoClient.Tests
             clientJudo.OnReceivedDataErrorOccured += (sender, data) => errorEventTriggered = true;
 
             // Act
-            mockNetworkClient.Raise(m => m.OnDataRecieve += null, mockNetworkClient.Object, xmlCorrompu);
+            mockNetworkClient.Raise(m => m.OnDataReceive += null, mockNetworkClient.Object, xmlCorrompu);
 
             // Assert
             errorEventTriggered.Should().BeTrue("Un XML malformé doit être intercepté par le catch et déclencher l'événement d'erreur.");
@@ -103,7 +103,7 @@ namespace JudoClient.Tests
             clientJudo.OnReceivedDataErrorOccured += (sender, data) => errorEventTriggered = true;
 
             // Act
-            mockNetworkClient.Raise(m => m.OnDataRecieve += null, mockNetworkClient.Object, xmlIncomplet);
+            mockNetworkClient.Raise(m => m.OnDataReceive += null, mockNetworkClient.Object, xmlIncomplet);
 
             // Assert
             errorEventTriggered.Should().BeTrue("L'absence de la balise Command provoque un NullReferenceException ou FormatException qui doit être loggé et déclencher l'erreur.");
@@ -126,7 +126,7 @@ namespace JudoClient.Tests
             clientJudo.OnReceivedDataErrorOccured += (sender, data) => errorEventTriggered = true;
 
             // Act
-            mockNetworkClient.Raise(m => m.OnDataRecieve += null, mockNetworkClient.Object, xmlAutre);
+            mockNetworkClient.Raise(m => m.OnDataReceive += null, mockNetworkClient.Object, xmlAutre);
 
             // Assert
             successEventTriggered.Should().BeTrue("Le code actuel déclenche le succès même si la balise ServerJudo n'est pas trouvée (le if est ignoré).");

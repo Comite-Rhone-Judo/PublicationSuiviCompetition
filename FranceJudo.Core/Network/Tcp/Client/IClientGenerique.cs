@@ -2,7 +2,7 @@
 {
     // 1. Les délégués sont maintenant publics et accessibles à tous
     public delegate void OnConnectionHandler(object sender);
-    public delegate void OnDataRecieveHandler(object sender, string donnees);
+    public delegate void OnDataReceiveHandler(object sender, string donnees);
     public delegate void OnDataSentHandler(object sender);
     public delegate void OnEndConnectionHandler(object sender);
 
@@ -16,7 +16,7 @@
         bool IsConnected { get; }
 
         event OnConnectionHandler OnConnection;
-        event OnDataRecieveHandler OnDataRecieve;
+        event OnDataReceiveHandler OnDataReceive;
         event OnDataSentHandler OnDataSent;
         event OnEndConnectionHandler OnEndConnection;
 
