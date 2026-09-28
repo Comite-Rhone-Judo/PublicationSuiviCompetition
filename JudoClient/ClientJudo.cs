@@ -491,6 +491,11 @@ namespace JudoClient
                             #endregion
                         }
                     }
+                    else
+                    {
+                        // CORRECTION : On lève explicitement une erreur si la commande est absente ou illisible
+                        throw new FormatException("La balise Command est manquante ou invalide.");
+                    }
                 }
 
                 // Ajoute un evenement general de reception de donnees avec succes
