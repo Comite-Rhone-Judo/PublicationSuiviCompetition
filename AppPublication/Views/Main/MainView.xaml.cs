@@ -29,7 +29,7 @@ namespace AppPublication.Views.Main
 
         private void MainWin_Closed_1(object sender, EventArgs e)
         {
-            DialogControleur.Instance.Connection.Client?.NetworkClient.Stop();
+            DialogControleur.Instance.Connection.Client?.Stop();
 
             App.Current.Shutdown();
         }

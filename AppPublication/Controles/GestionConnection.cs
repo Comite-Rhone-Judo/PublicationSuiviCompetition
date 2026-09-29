@@ -112,21 +112,16 @@ namespace AppPublication.Controles
             }
             set
             {
-                if (_client == value) return;
-
-                // Se désabonner de l'ancien client pour éviter les fuites de mémoire
-                if (_client != null)
-                {
-                    _client.TraitementConnexion.OnAcceptConnectionTest -= Clientjudo_OnDemandeConnectionTest;
-                    _client.OnReceivedDataErrorOccured -= Client_OnReceivedDataErrorOccured;
-                    _client.OnReceivedDataSuccessOccured -= Client_OnReceivedDataSuccessOccured;
-                }
-
+                ClientJudo oldClient = null;
                 bool shouldSetup = false;
                 ClientJudo clientToSetup = null;
 
+                // 1. Swap Atomique ultra-rapide (Zéro action lourde dans le verrou)
                 using (TimedLock.Lock(_lock))
                 {
+                    if (_client == value) return;
+
+                    oldClient = _client;
                     _client = value;
                     _isconnected = value != null;
 
@@ -139,9 +134,19 @@ namespace AppPublication.Controles
                     }
                 }
 
-                NotifyPropertyChanged();
+                // 2. Nettoyage HORS DU VERROU (Évite les Deadlocks)
+                if (oldClient != null)
+                {
+                    oldClient.OnConnection -= NetworkClient_OnConnection;
+                    oldClient.TraitementConnexion.OnAcceptConnectionTest -= Clientjudo_OnDemandeConnectionTest;
+                    oldClient.OnReceivedDataErrorOccured -= Client_OnReceivedDataErrorOccured;
+                    oldClient.OnReceivedDataSuccessOccured -= Client_OnReceivedDataSuccessOccured;
 
-                // Réinitialiser le flag d'erreur via le setter
+                    System.Threading.Tasks.Task.Run(() => { try { oldClient.Dispose(); } catch { } });
+                }
+
+                // 3. Notification HORS DU VERROU
+                NotifyPropertyChanged();
                 HasErreurTransmission = false;
 
                 if (shouldSetup)
@@ -201,51 +206,36 @@ namespace AppPublication.Controles
         /// </summary>
         public void DisposeClient()
         {
-            ClientJudo clientToDispose = null;
+            bool wasConnected = false;
 
+            // Prise d'état rapide
             using (TimedLock.Lock(_lock))
             {
-                if (_isDisposing || _client == null)
-                {
-                    return;
-                }
+                if (_isDisposing || _client == null) return;
 
                 _isDisposing = true;
-                clientToDispose = _client;
-                Client = null;  // Ici il faut passer par la propriété pour bien notifier le changement
-                _isconnected = false;
+                wasConnected = _isconnected;
             }
 
-            // Arrêt du timer
             if (_timer != null && _timer.IsEnabled)
             {
                 _timer.Stop();
             }
 
-            // Dispose en dehors du lock pour éviter les deadlocks
-            if (clientToDispose != null)
-            {
-                try
-                {
-                    clientToDispose.NetworkClient.Stop();
-                }
-                catch (Exception ex)
-                {
-                    LogTools.Logger?.Error(ex, "Erreur lors de la fermeture du client");
-                }
+            // Le setter s'occupe du désabonnement, de _isconnected = false, et du Dispose en tâche de fond !
+            Client = null;
 
-                // Notify subscribers of disconnection
+            if (wasConnected)
+            {
                 ClientDisconnected?.Invoke(this, new ClientDisconnectedEventArgs());
             }
-
-            // Réinitialiser le flag d'erreur via le setter
-            HasErreurTransmission = false;
 
             using (TimedLock.Lock(_lock))
             {
                 _isDisposing = false;
             }
         }
+        
         #endregion
 
         #region MTHODES PRIVEES
@@ -274,6 +264,8 @@ namespace AppPublication.Controles
             client.OnReceivedDataErrorOccured += Client_OnReceivedDataErrorOccured;
             client.OnReceivedDataSuccessOccured += Client_OnReceivedDataSuccessOccured;
 
+            // 1. Abonnement prealable a l'evenement reseau bas niveau
+            client.OnConnection += NetworkClient_OnConnection;
 
             // Raise event so GestionEvent can subscribe to client events
             ClientReady?.Invoke(this, new ClientReadyEventArgs(client));
@@ -288,6 +280,19 @@ namespace AppPublication.Controles
             {
                 _timer.Start();
             }
+
+            // 2. Declenchement explicite de la connexion
+            LogTools.Logger?.Debug("GestionConnection: Client pret, lancement de la demande de connexion du client reseau");
+            client.Connect();
+        }
+
+        /// <summary>
+        /// Gère l'initialisation du protocole dès que le socket OS est confirmé
+        /// </summary>
+        private void NetworkClient_OnConnection(object sender)
+        {
+            LogTools.Logger?.Debug("GestionConnection: Socket connecte avec succes, envoi de la trame initiale DemandConnectionCOM");
+            Client?.DemandConnectionCOM();
         }
 
         /// <summary>

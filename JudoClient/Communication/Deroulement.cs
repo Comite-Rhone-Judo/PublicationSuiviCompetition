@@ -13,7 +13,7 @@ namespace JudoClient.Communication
             XDocument doc = Common.CreateDocument(ServerCommandEnum.DemandPhases);
 
             string result = doc.ToString(SaveOptions.None);
-            client.NetworkClient.Write(result);
+            client.Write(result);
         }
 
         public static void DemandeCombats(this ClientJudo client)
@@ -21,7 +21,7 @@ namespace JudoClient.Communication
             XDocument doc = Common.CreateDocument(ServerCommandEnum.DemandCombats);
 
             string result = doc.ToString(SaveOptions.None);
-            client.NetworkClient.Write(result);
+            client.Write(result);
         }
 
 
@@ -33,7 +33,7 @@ namespace JudoClient.Communication
             doc.Element(ConstantXML.ServerJudo).Element(ConstantXML.Valeur).Add(tapis);
 
             string result = doc.ToString(SaveOptions.None);
-            client.NetworkClient.Write(result);
+            client.Write(result);
         }
 
 
@@ -43,7 +43,7 @@ namespace JudoClient.Communication
             doc.Element(ConstantXML.ServerJudo).Element(ConstantXML.Valeur).Add(resultcombat);
 
             string result = doc.ToString(SaveOptions.None);
-            client.NetworkClient.Write(result);
+            client.Write(result);
         }
 
         public static void SendResultRencontre(this ClientJudo client, XElement resultrencontre)
@@ -52,7 +52,7 @@ namespace JudoClient.Communication
             doc.Element(ConstantXML.ServerJudo).Element(ConstantXML.Valeur).Add(resultrencontre);
 
             string result = doc.ToString(SaveOptions.None);
-            client.NetworkClient.Write(result);
+            client.Write(result);
         }
 
         public static void SendUpdateRencontres(this ClientJudo client, IList<XElement> resultrencontres)
@@ -64,7 +64,7 @@ namespace JudoClient.Communication
             }
 
             string result = doc.ToString(SaveOptions.None);
-            client.NetworkClient.Write(result);
+            client.Write(result);
         }
 
         public static void SendCategoriePoidsTireeAuSort(this ClientJudo client, XElement epreuve_equipe)
@@ -74,7 +74,7 @@ namespace JudoClient.Communication
 
 
             string result = doc.ToString(SaveOptions.None);
-            client.NetworkClient.Write(result);
+            client.Write(result);
         }
 
         public static void SendResultsCombats(this ClientJudo client, IList<XElement> resultcombat)
@@ -86,7 +86,7 @@ namespace JudoClient.Communication
             }
 
             string result = doc.ToString(SaveOptions.None);
-            client.NetworkClient.Write(result);
+            client.Write(result);
         }
 
         public static void SendResultsRencontres(this ClientJudo client, IList<XElement> resultrencontres)
@@ -98,7 +98,7 @@ namespace JudoClient.Communication
             }
 
             string result = doc.ToString(SaveOptions.None);
-            client.NetworkClient.Write(result);
+            client.Write(result);
         }
 
         public static void SendChallenge(this ClientJudo client, XElement challenge)
@@ -108,7 +108,7 @@ namespace JudoClient.Communication
 
 
             string result = doc.ToString(SaveOptions.None);
-            client.NetworkClient.Write(result);
+            client.Write(result);
         }
 
     }

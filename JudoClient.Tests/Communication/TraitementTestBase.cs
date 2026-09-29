@@ -19,7 +19,12 @@ namespace JudoClient.Tests.Communication
         {
             var mockNetworkClient = new Mock<IClientGenerique>();
             mockNetworkClient.Setup(c => c.IsConnected).Returns(true);
-            return new ClientJudo(mockNetworkClient.Object);
+            var client = new ClientJudo(mockNetworkClient.Object);
+
+            // CORRECTION : Déclenchement explicite requis suite au refactoring
+            client.Connect();
+
+            return client;
         }
 
         protected void VerifyPassThroughEvent<TDelegate>(

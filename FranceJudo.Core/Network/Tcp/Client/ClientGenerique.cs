@@ -2,6 +2,7 @@
 using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -33,6 +34,8 @@ namespace FranceJudo.Core.Network.Tcp.Client
         private readonly string _endMsgTag;
         private readonly int _port;
         private readonly string _ip;
+
+        private BlockingCollection<string> _messageQueue;
 
         #endregion
 
@@ -109,6 +112,13 @@ namespace FranceJudo.Core.Network.Tcp.Client
             _cts = new CancellationTokenSource();
             _buffer.Clear();
 
+            // Initialisation de la file FIFO thread-safe
+            _messageQueue = new BlockingCollection<string>();
+
+            // Lancement du thread unique de traitement métier (Le Consommateur)
+            _ = Task.Run(() => ProcessMessagesLoop(_cts.Token));
+
+            // Lancement du thread de réception réseau (Le Producteur)
             _ = Task.Run(() => ConnectInternalAsync(_cts.Token));
         }
 
@@ -251,7 +261,9 @@ namespace FranceJudo.Core.Network.Tcp.Client
 
                 if (message.EndsWith(_endMsgTag))
                 {
-                    Task.Run(() => OnDataReceive?.Invoke(this, message));
+                    // Ajout immédiat dans la file sans bloquer la boucle réseau
+                    // (Garantit l'ordre d'arrivée)
+                    _messageQueue?.Add(message);
                 }
             }
 
@@ -262,6 +274,31 @@ namespace FranceJudo.Core.Network.Tcp.Client
             }
         }
 
+        /// <summary>
+        /// Boucle tournant en arrière-plan pour traiter les messages dans l'ordre strict d'arrivée (FIFO)
+        /// sans bloquer le thread de réception TCP.
+        /// </summary>
+        private void ProcessMessagesLoop(CancellationToken token)
+        {
+            try
+            {
+                // GetConsumingEnumerable endort le thread automatiquement (0% CPU) si la file est vide,
+                // et se réveille dès qu'un message est ajouté par le réseau.
+                foreach (var message in _messageQueue.GetConsumingEnumerable(token))
+                {
+                    try
+                    {
+                        OnDataReceive?.Invoke(this, message);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError(ex);
+                    }
+                }
+            }
+            catch (OperationCanceledException) { }
+            catch (ObjectDisposedException) { }
+        }
 
         /// <summary>
         /// Écrit des données sur le client de manière asynchrone
@@ -299,7 +336,11 @@ namespace FranceJudo.Core.Network.Tcp.Client
         /// </summary>
         private void CloseClient()
         {
+            // Arrête proprement la boucle du consommateur
+            _messageQueue?.CompleteAdding();
+
             var client = Interlocked.Exchange(ref _objClient, null);
+
             if (client != null)
             {
                 try { client.GetStream()?.Close(); } catch { }

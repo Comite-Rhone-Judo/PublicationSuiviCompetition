@@ -4,6 +4,7 @@ using FranceJudo.Metier.Network;
 using FranceJudo.Metier.XML;
 using JudoClient.Communication;
 using System;
+using System.Data.Common;
 using System.Xml.Linq;
 
 namespace JudoClient
@@ -19,6 +20,7 @@ namespace JudoClient
         #endregion
 
         #region EVENEMENTS
+        public event OnConnectionHandler OnConnection;
         public event OnEndConnectionHandler OnEndConnection;
         public event OnReceivedDataEventOccured OnReceivedDataErrorOccured;
         public event OnReceivedDataEventOccured OnReceivedDataSuccessOccured;
@@ -26,8 +28,16 @@ namespace JudoClient
         #endregion
 
         #region PROPRIETES
-        public IClientGenerique NetworkClient { get { return _client; } }
 
+        /// <summary>
+        /// Obtient l'adresse IP du serveur distant
+        /// </summary>
+        public string IP => _client?.IP;
+
+        /// <summary>
+        /// Obtient le port de connexion au serveur distant
+        /// </summary>
+        public int Port => _client?.Port ?? 0;
 
         private readonly TraitementArbitrage _traitement_arb = null;
         public TraitementArbitrage TraitementArbitrage { get { return _traitement_arb; } }
@@ -106,8 +116,6 @@ namespace JudoClient
             _client.OnDataReceive += Client_OnDataReceive;
             _client.OnDataSent += Client_OnDataSent;
             _client.OnEndConnection += Client_OnEndConnection;
-
-            _client.Connect();
         }
 
         public void Dispose()
@@ -133,6 +141,32 @@ namespace JudoClient
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Declenche explicitement la connexion TCP vers le serveur
+        /// </summary>
+        public void Connect()
+        {
+            _client?.Connect();
+        }
+
+        // NOUVEAU : Relais pour l'arrêt manuel de la connexion
+        /// <summary>
+        /// Arrête la connexion réseau de manière explicite
+        /// </summary>
+        public void Stop()
+        {
+            _client?.Stop();
+        }
+
+        // NOUVEAU : Relais pour l'émission de données
+        /// <summary>
+        /// Envoie des données au serveur
+        /// </summary>
+        /// <param name="data">La chaîne de caractères (XML) à envoyer</param>
+        public void Write(string data)
+        {
+            _client?.Write(data);
+        }
 
         #endregion
 
@@ -144,7 +178,8 @@ namespace JudoClient
         /// <param name="sender"></param>
         private void Client_OnConnection(object sender)
         {
-
+            LogTools.Logger?.Debug("ClientJudo: Connexion TCP etablie avec succes");
+            OnConnection?.Invoke(this);
         }
 
         /// <summary>
@@ -153,6 +188,7 @@ namespace JudoClient
         /// <param name="sender"></param>
         private void Client_OnEndConnection(object sender)
         {
+            LogTools.Logger?.Debug("ClientJudo: Deconnexion du serveur distante detectee");
             OnEndConnection?.Invoke(this);
         }
 
@@ -162,7 +198,8 @@ namespace JudoClient
         /// <param name="sender"></param>
         private void Client_OnDataSent(object sender)
         {
-            //SaveToLog("message envoyé");
+            // Trace utile pour valider le flux sortant en mode diagnostic
+            LogTools.Logger?.Debug("ClientJudo: Trame de donnees expediee");
         }
 
         private void Client_OnDataReceive(object sender, string donnees)

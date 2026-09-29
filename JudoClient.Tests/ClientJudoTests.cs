@@ -154,6 +154,24 @@ namespace JudoClient.Tests
         #endregion
 
         #region Tests d'État, Cycle de vie et Propriétés
+        [Fact]
+        public void Connect_AppelleLaMethodeConnectDuClientSousJacent_EtNeSAutoConnectePlus()
+        {
+            // Arrange
+            var mockNetworkClient = new Mock<IClientGenerique>();
+
+            // Act 1 : Instanciation seule
+            var clientJudo = new ClientJudo(mockNetworkClient.Object);
+
+            // Assert 1 : Validation de l'absence d'auto-connexion
+            mockNetworkClient.Verify(c => c.Connect(), Times.Never, "Le constructeur ne doit plus déclencher l'auto-connexion.");
+
+            // Act 2 : Appel explicite
+            clientJudo.Connect();
+
+            // Assert 2 : Validation du relai
+            mockNetworkClient.Verify(c => c.Connect(), Times.Once, "La méthode Connect() explicite doit relayer l'appel au client réseau sous-jacent.");
+        }
 
         [Fact]
         public void Proprietes_Traitements_SontCorrectementInstanciees()
@@ -171,7 +189,6 @@ namespace JudoClient.Tests
             clientJudo.TraitementParticipants.Should().NotBeNull();
             clientJudo.TraitementStructure.Should().NotBeNull();
             clientJudo.TraitementLogos.Should().NotBeNull();
-            clientJudo.NetworkClient.Should().NotBeNull();
         }
 
         [Fact]

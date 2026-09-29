@@ -275,14 +275,13 @@ namespace JudoClient
             {
                 clientJudo = new ClientJudo(ip, port);
 
-                clientJudo.NetworkClient.OnConnection += onConn;
-                clientJudo.NetworkClient.OnEndConnection += onEnd;
+                clientJudo.OnConnection += onConn;
+                clientJudo.OnEndConnection += onEnd;
                 clientJudo.TraitementConnexion.OnAcceptConnectionTest += OnAccept;
 
-                if (clientJudo.IsConnected)
-                {
-                    onConn(clientJudo.NetworkClient);
-                }
+                // CORRECTION : Déclenchement explicite de la connexion une fois le filet d'événements en place
+                LogTools.Logger?.Debug($"ScannerServeurJudo: TestJudoServerAsync - Lancement explicite de la connexion vers {ip}:{port}");
+                clientJudo.Connect();
 
                 return await tcs.Task;
             }
@@ -295,8 +294,8 @@ namespace JudoClient
             {
                 if (clientJudo != null)
                 {
-                    clientJudo.NetworkClient.OnConnection -= onConn;
-                    clientJudo.NetworkClient.OnEndConnection -= onEnd;
+                    clientJudo.OnConnection -= onConn;
+                    clientJudo.OnEndConnection -= onEnd;
                     clientJudo.TraitementConnexion.OnAcceptConnectionTest -= OnAccept;
                     clientJudo.Dispose();
                 }

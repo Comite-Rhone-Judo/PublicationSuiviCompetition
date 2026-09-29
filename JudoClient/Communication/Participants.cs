@@ -11,7 +11,7 @@ namespace JudoClient.Communication
             XDocument doc = Common.CreateDocument(ServerCommandEnum.DemandEquipes);
 
             string result = doc.ToString(SaveOptions.None);
-            client.NetworkClient.Write(result);
+            client.Write(result);
         }
 
         public static void DemandeJudokas(this ClientJudo client)
@@ -19,7 +19,7 @@ namespace JudoClient.Communication
             XDocument doc = Common.CreateDocument(ServerCommandEnum.DemandJudokas);
 
             string result = doc.ToString(SaveOptions.None);
-            client.NetworkClient.Write(result);
+            client.Write(result);
         }
 
         public static void DemandeLicencies(this ClientJudo client)
@@ -27,7 +27,7 @@ namespace JudoClient.Communication
             XDocument doc = Common.CreateDocument(ServerCommandEnum.DemandLicencies);
 
             string result = doc.ToString(SaveOptions.None);
-            client.NetworkClient.Write(result);
+            client.Write(result);
         }
     }
 }

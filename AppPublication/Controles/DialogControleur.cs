@@ -1183,7 +1183,7 @@ namespace AppPublication.Controles
         /// <param name="e"></param>
         private void OnClientReady(object sender, ClientReadyEventArgs e)
         {
-            LogTools.Logger?.Info("Client connecte et pret: {0}", e.Client.NetworkClient.IP);
+            LogTools.Logger?.Info("Client connecte et pret: {0}", e.Client.IP);
 
             // --- NOUVEAU : Signale le retour du réseau ---
             SiteCoordinator?.SetConnectionStatus(true);

@@ -30,7 +30,6 @@ namespace FranceJudo.Core.Tests.Network.Tcp.Client
         public async Task Connect_ServeurActif_DeclencheEvenementOnConnection()
         {
             // Arrange
-            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
             var listener = new TcpListener(IPAddress.Loopback, 0);
             listener.Start();
             int port = ((IPEndPoint)listener.LocalEndpoint).Port;
@@ -46,7 +45,7 @@ namespace FranceJudo.Core.Tests.Network.Tcp.Client
                 client.Connect();
 
                 // Assert
-                var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(-1, cts.Token));
+                var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(-1, TestContext.Current.CancellationToken));
                 completedTask.Should().Be(tcs.Task, "L'événement OnConnection doit être déclenché.");
                 client.IsConnected.Should().BeTrue();
             }
@@ -61,7 +60,6 @@ namespace FranceJudo.Core.Tests.Network.Tcp.Client
         public async Task Connect_ServeurInexistant_NePlantePasEtGereLeTimeout()
         {
             // Arrange
-            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
             var client = new ClientGenerique("127.0.0.1", 55555, "</EOF>");
             bool eventFired = false;
 
@@ -73,7 +71,7 @@ namespace FranceJudo.Core.Tests.Network.Tcp.Client
             // Assert
             act.Should().NotThrow("La méthode Connect est fire-and-forget et capture ses exceptions en interne.");
 
-            await Task.Delay(1500, cts.Token);
+            await Task.Delay(1500, TestContext.Current.CancellationToken);
 
             eventFired.Should().BeFalse("L'événement OnConnection ne doit pas se déclencher.");
             client.IsConnected.Should().BeFalse();
@@ -83,7 +81,6 @@ namespace FranceJudo.Core.Tests.Network.Tcp.Client
         public async Task Stop_DeconnecteLeClient_EtDeclencheOnEndConnection()
         {
             // Arrange
-            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
             var listener = new TcpListener(IPAddress.Loopback, 0);
             listener.Start();
             int port = ((IPEndPoint)listener.LocalEndpoint).Port;
@@ -105,7 +102,7 @@ namespace FranceJudo.Core.Tests.Network.Tcp.Client
                 client.Stop();
 
                 // Assert
-                var completedTask = await Task.WhenAny(tcsEndConnection.Task, Task.Delay(-1, cts.Token));
+                var completedTask = await Task.WhenAny(tcsEndConnection.Task, Task.Delay(-1, TestContext.Current.CancellationToken));
                 completedTask.Should().Be(tcsEndConnection.Task, "L'arrêt doit déclencher OnEndConnection.");
                 client.IsConnected.Should().BeFalse();
             }
@@ -119,7 +116,6 @@ namespace FranceJudo.Core.Tests.Network.Tcp.Client
         public async Task Write_ConnexionEtablie_EnvoieLesDonneesAvecLeMarqueurDeFin()
         {
             // Arrange
-            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
             var listener = new TcpListener(IPAddress.Loopback, 0);
             listener.Start();
             int port = ((IPEndPoint)listener.LocalEndpoint).Port;
@@ -136,7 +132,7 @@ namespace FranceJudo.Core.Tests.Network.Tcp.Client
                 client.Connect();
                 await tcsConnection.Task;
 
-                using var serverSideClient = await listener.AcceptTcpClientAsync(cts.Token);
+                using var serverSideClient = await listener.AcceptTcpClientAsync(TestContext.Current.CancellationToken);
                 var stream = serverSideClient.GetStream();
 
                 // Act
@@ -148,7 +144,7 @@ namespace FranceJudo.Core.Tests.Network.Tcp.Client
                 byte[] buffer = new byte[1024];
 
                 // Correction : Utilisation de Memory<byte> pour la lecture dans les tests
-                int bytesRead = await stream.ReadAsync(buffer.AsMemory(), cts.Token);
+                int bytesRead = await stream.ReadAsync(buffer.AsMemory(), TestContext.Current.CancellationToken);
                 string receivedData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
 
                 receivedData.Should().Be("<Judo>Test</Judo>\n<EOF>", "La méthode Write doit automatiquement ajouter la balise de fin de flux.");
@@ -164,7 +160,6 @@ namespace FranceJudo.Core.Tests.Network.Tcp.Client
         public async Task ReadLoop_DonneesCompletes_DeclencheOnDataRecieve()
         {
             // Arrange
-            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
             var listener = new TcpListener(IPAddress.Loopback, 0);
             listener.Start();
             int port = ((IPEndPoint)listener.LocalEndpoint).Port;
@@ -182,18 +177,18 @@ namespace FranceJudo.Core.Tests.Network.Tcp.Client
                 client.Connect();
                 await tcsConnection.Task;
 
-                using var serverSideClient = await listener.AcceptTcpClientAsync(cts.Token);
+                using var serverSideClient = await listener.AcceptTcpClientAsync(TestContext.Current.CancellationToken);
                 var stream = serverSideClient.GetStream();
 
                 // Act
                 byte[] dataToSend = Encoding.UTF8.GetBytes($"<Msg>Coucou</Msg>\n<EOF>");
 
                 // Correction : Utilisation de ReadOnlyMemory<byte> pour l'écriture dans les tests
-                await stream.WriteAsync(dataToSend.AsMemory(), cts.Token);
-                await stream.FlushAsync(cts.Token);
+                await stream.WriteAsync(dataToSend.AsMemory(), TestContext.Current.CancellationToken);
+                await stream.FlushAsync(TestContext.Current.CancellationToken);
 
                 // Assert
-                var completedTask = await Task.WhenAny(tcsDataReceived.Task, Task.Delay(-1, cts.Token));
+                var completedTask = await Task.WhenAny(tcsDataReceived.Task, Task.Delay(-1, TestContext.Current.CancellationToken));
                 completedTask.Should().Be(tcsDataReceived.Task, "Les données envoyées par le serveur doivent être interceptées.");
 
                 // Correction : Suppression du '.Result' bloquant, utilisation d'un 'await' direct
@@ -211,7 +206,6 @@ namespace FranceJudo.Core.Tests.Network.Tcp.Client
         public async Task ReadLoop_DonneesFragmentees_ReconstruitLeMessageEtDeclencheOnDataRecieve()
         {
             // Arrange
-            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
             var listener = new TcpListener(IPAddress.Loopback, 0);
             listener.Start();
             int port = ((IPEndPoint)listener.LocalEndpoint).Port;
@@ -228,20 +222,20 @@ namespace FranceJudo.Core.Tests.Network.Tcp.Client
                 client.Connect();
                 await tcsConnection.Task;
 
-                using var serverSideClient = await listener.AcceptTcpClientAsync(cts.Token);
+                using var serverSideClient = await listener.AcceptTcpClientAsync(TestContext.Current.CancellationToken);
                 var stream = serverSideClient.GetStream();
 
                 // Act
                 // Correction : Utilisation de ReadOnlyMemory<byte> pour l'écriture fragmentée
-                await stream.WriteAsync(Encoding.UTF8.GetBytes("<Data>De").AsMemory(), cts.Token);
-                await Task.Delay(50, cts.Token);
-                await stream.WriteAsync(Encoding.UTF8.GetBytes("but...F").AsMemory(), cts.Token);
-                await Task.Delay(50, cts.Token);
-                await stream.WriteAsync(Encoding.UTF8.GetBytes("in</Data>\n<EOF>").AsMemory(), cts.Token);
-                await stream.FlushAsync(cts.Token);
+                await stream.WriteAsync(Encoding.UTF8.GetBytes("<Data>De").AsMemory(), TestContext.Current.CancellationToken);
+                await Task.Delay(50, TestContext.Current.CancellationToken);
+                await stream.WriteAsync(Encoding.UTF8.GetBytes("but...F").AsMemory(), TestContext.Current.CancellationToken);
+                await Task.Delay(50, TestContext.Current.CancellationToken);
+                await stream.WriteAsync(Encoding.UTF8.GetBytes("in</Data>\n<EOF>").AsMemory(), TestContext.Current.CancellationToken);
+                await stream.FlushAsync(TestContext.Current.CancellationToken);
 
                 // Assert
-                var completedTask = await Task.WhenAny(tcsDataReceived.Task, Task.Delay(-1, cts.Token));
+                var completedTask = await Task.WhenAny(tcsDataReceived.Task, Task.Delay(-1, TestContext.Current.CancellationToken));
                 completedTask.Should().Be(tcsDataReceived.Task, "Le client doit recoller les fragments TCP avant de déclencher l'événement.");
 
                 // Correction : Suppression du '.Result' bloquant
