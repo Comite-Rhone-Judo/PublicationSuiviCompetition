@@ -20,6 +20,7 @@
     <None Remove="Resources\Site\xslt\statistiques_site.xslt" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="FluentFTP" Version="54.1.2" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="NLog" Version="6.2.1" />

@@ -61,6 +61,7 @@
     <Reference Include="EPPlus">
       <HintPath>..\packages\EPPlus.dll</HintPath>
     </Reference>
+    <PackageReference Include="FluentFTP" Version="54.1.2" />
     <PackageReference Include="HandyControl" Version="3.5.1" />
     <PackageReference Include="HandyControl.Lang.fr" Version="3.5.1" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.161" />

@@ -21,6 +21,7 @@
   </PropertyGroup>
   <ItemGroup>
 	  <InternalsVisibleTo Include="AppPublication.Tests.Controles" />
+	  <PackageReference Include="FluentFTP" Version="54.1.2" />
     <PackageReference Include="NLog" Version="6.2.1" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.12" />
   </ItemGroup>
