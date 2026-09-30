@@ -264,9 +264,14 @@ namespace AppPublication.ViewModels.Server
             {
                 int nbTrouves = await scanner.ScanAsync(reporter, _scanCts.Token);
             }
+            catch (OperationCanceledException)
+            {
+                // L'annulation manuelle lève cette exception spécifique
+                LogTools.Logger?.Debug("Le scan reseau a ete annule manuellement.");
+            }
             catch (Exception ex)
             {
-                LogTools.Logger?.Error(ex, "Erreur lors du scan réseau.");
+                LogTools.Logger?.Error(ex, "Erreur lors du scan reseau.");
             }
             finally
             {

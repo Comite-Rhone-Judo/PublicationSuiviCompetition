@@ -281,7 +281,7 @@ namespace JudoClient
 
                 // CORRECTION : Déclenchement explicite de la connexion une fois le filet d'événements en place
                 LogTools.Logger?.Debug($"ScannerServeurJudo: TestJudoServerAsync - Lancement explicite de la connexion vers {ip}:{port}");
-                clientJudo.Connect();
+                clientJudo.Connect(true);
 
                 return await tcs.Task;
             }

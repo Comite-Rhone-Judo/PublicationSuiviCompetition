@@ -105,7 +105,7 @@ namespace FranceJudo.Core.Network.Tcp.Client
         /// <summary>
         /// Connecte le client au serveur
         /// </summary>
-        public void Connect()
+        public void Connect(bool logExceptionAsDebug = false)
         {
             Stop();
 
@@ -119,7 +119,7 @@ namespace FranceJudo.Core.Network.Tcp.Client
             _ = Task.Run(() => ProcessMessagesLoop(_cts.Token));
 
             // Lancement du thread de réception réseau (Le Producteur)
-            _ = Task.Run(() => ConnectInternalAsync(_cts.Token));
+            _ = Task.Run(() => ConnectInternalAsync(_cts.Token, logExceptionAsDebug));
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace FranceJudo.Core.Network.Tcp.Client
         /// </summary>
         /// <param name="token"></param>
         /// <returns></returns>
-        private async Task ConnectInternalAsync(CancellationToken token)
+        private async Task ConnectInternalAsync(CancellationToken token, bool logExceptionAsDebug = false)
         {
             _objClient = new TcpClient(AddressFamily.InterNetwork)
             {
@@ -193,7 +193,14 @@ namespace FranceJudo.Core.Network.Tcp.Client
             catch (Exception ex)
             {
                 CloseClient();
-                LogError(ex);
+                if (logExceptionAsDebug)
+                {
+                    LogDebug(ex, "An error occurred while connecting to the server.");
+                }
+                else
+                {
+                    LogError(ex);
+                }
             }
         }
 
@@ -350,6 +357,7 @@ namespace FranceJudo.Core.Network.Tcp.Client
         }
 
         private void LogDebug(string message) => LogTools.Logger?.Debug(message);
+        private void LogDebug(Exception ex, string message) => LogTools.Logger?.Debug(ex, message);
         private void LogError(Exception ex) => LogTools.Logger?.Error(new TcpClientException(ex.Message, ex));
         #endregion
     }

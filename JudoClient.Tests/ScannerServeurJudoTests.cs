@@ -12,12 +12,15 @@ namespace JudoClient.Tests
 {
     public class ScannerServeurJudoTests
     {
+        private static readonly string[] ips = new[] { "192.168.1.10", "192.168.1.11" };
+        private static readonly string[] ipsArray = new[] { "192.0.2.1" };
+
         [Fact]
         public async Task ScanAsync_AvecTokenAnnule_SArreteImmediatement()
         {
             // Arrange
             var scanner = new ScannerServeurJudo();
-            scanner.SetExplicitIps(new[] { "192.168.1.10", "192.168.1.11" });
+            scanner.SetExplicitIps(ips);
 
             // On crée un jeton d'annulation et on le déclenche instantanément
             var cts = new CancellationTokenSource();
@@ -73,7 +76,7 @@ namespace JudoClient.Tests
             };
 
             // 192.0.2.x (TEST-NET-1) est une IP réservée pour la doc, elle ne répondra jamais
-            scanner.SetExplicitIps(new[] { "192.0.2.1" });
+            scanner.SetExplicitIps(ipsArray);
 
             var progressValues = new List<int>();
             var progress = new Progress<int>(v => progressValues.Add(v));

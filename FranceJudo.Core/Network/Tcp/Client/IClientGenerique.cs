@@ -20,7 +20,7 @@
         event OnDataSentHandler OnDataSent;
         event OnEndConnectionHandler OnEndConnection;
 
-        void Connect();
+        void Connect(bool logExceptionAsDebug = false);
         void Stop();
         void Write(string data);
     }

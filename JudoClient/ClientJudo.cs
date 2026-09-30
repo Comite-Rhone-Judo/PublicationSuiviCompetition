@@ -144,9 +144,9 @@ namespace JudoClient
         /// <summary>
         /// Declenche explicitement la connexion TCP vers le serveur
         /// </summary>
-        public void Connect()
+        public void Connect(bool logExceptionAsDebug = false)
         {
-            _client?.Connect();
+            _client?.Connect(logExceptionAsDebug);
         }
 
         // NOUVEAU : Relais pour l'arrêt manuel de la connexion
