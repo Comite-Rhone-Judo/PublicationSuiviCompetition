@@ -31,6 +31,9 @@ namespace JudoClient.Tests.Communication
                              .Callback<string>(data => payloadSent = data);
 
             var client = new ClientJudo(mockNetworkClient.Object);
+            
+            // CORRECTION : Le client doit être explicitement connecté avant d'émettre
+            client.Connect();
 
             // Act
             actionToTest(client);

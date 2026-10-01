@@ -35,14 +35,14 @@ namespace AppPublication.Tests.ViewModels.Configuration
 
             // Assert
             // 1. Vérification de la Vue (ViewModel local)
-            Assert.Single(viewModel.EcransViewModels);
+            var item = Assert.Single(viewModel.EcransViewModels);
 
             // 2. Vérification du Métier (Manager)
-            Assert.Single(manager.Ecrans);
+            var item_2 = Assert.Single(manager.Ecrans);
 
             // On s'assure que les deux éléments sont bien liés par le même ID (ID 1 généré par le manager)
-            Assert.Equal(1, viewModel.EcransViewModels[0].Id);
-            Assert.Equal(1, manager.Ecrans[0].Id);
+            Assert.Equal(1, item.Id);
+            Assert.Equal(1, item_2.Id);
         }
     }
 }

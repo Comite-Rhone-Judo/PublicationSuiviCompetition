@@ -12,7 +12,7 @@ namespace JudoClient.Communication
             XDocument doc = Common.CreateDocument(ServerCommandEnum.DemandOrganisation);
 
             string result = doc.ToString(SaveOptions.None);
-            client.NetworkClient.Write(result);
+            client.Write(result);
         }
 
         public static void DemandeCompetitions(this ClientJudo client)
@@ -20,7 +20,7 @@ namespace JudoClient.Communication
             XDocument doc = Common.CreateDocument(ServerCommandEnum.DemandCompetitions);
 
             string result = doc.ToString(SaveOptions.None);
-            client.NetworkClient.Write(result);
+            client.Write(result);
         }
 
         public static void DemandeEpreuves(this ClientJudo client)
@@ -28,7 +28,7 @@ namespace JudoClient.Communication
             XDocument doc = Common.CreateDocument(ServerCommandEnum.DemandEpreuves);
 
             string result = doc.ToString(SaveOptions.None);
-            client.NetworkClient.Write(result);
+            client.Write(result);
         }
 
         public static void DemandeTapis(this ClientJudo client)
@@ -36,7 +36,7 @@ namespace JudoClient.Communication
             XDocument doc = Common.CreateDocument(ServerCommandEnum.DemandTapis);
 
             string result = doc.ToString(SaveOptions.None);
-            client.NetworkClient.Write(result);
+            client.Write(result);
         }
 
         public static void SendResultInscrition(this ClientJudo client, XElement xvaleur)
@@ -45,7 +45,7 @@ namespace JudoClient.Communication
             doc.Element(ConstantXML.ServerJudo).Element(ConstantXML.Valeur).Add(xvaleur);
 
             string result = doc.ToString(SaveOptions.None);
-            client.NetworkClient.Write(result);
+            client.Write(result);
         }
     }
 }

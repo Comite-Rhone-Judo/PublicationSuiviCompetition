@@ -2,48 +2,84 @@
 using FranceJudo.Core.IO;
 using FranceJudo.Core.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace FranceJudo.Core.Network.Tcp.Client
 {
-    public class ClientGenerique : IClientGenerique
+    public class ClientGenerique : IClientGenerique, IDisposable
     {
+        #region CONSTANTES
+        private const int READ_BUFFER_SIZE = 10240;
+        private const string EOF_MARKER = "\n<EOF>";
+        #endregion
 
+        #region EVENT HANDLERS
         public event OnConnectionHandler OnConnection;
-        public event OnDataRecieveHandler OnDataRecieve;
+        public event OnDataReceiveHandler OnDataReceive
+            ;
         public event OnDataSentHandler OnDataSent;
         public event OnEndConnectionHandler OnEndConnection;
+        #endregion
 
-        private const int READ_BUFFER_SIZE = 10240;
-        private string _chaine = string.Empty;
+        #region MEMBRES
+        private readonly StringBuilder _buffer = new StringBuilder();
         private TcpClient _objClient;
         private CancellationTokenSource _cts;
+        private readonly SemaphoreSlim _writeLock = new SemaphoreSlim(1, 1);
+
         private readonly string _endMsgTag;
         private readonly int _port;
         private readonly string _ip;
 
+        private BlockingCollection<string> _messageQueue;
+
+        #endregion
+
+        #region PROPERTIES
+
+        /// <summary>
+        /// Obtient l'adresse IP du client
+        /// </summary>
         public string IP => _ip;
+        /// <summary>
+        /// Obtient le port du client
+        /// </summary>
         public int Port => _port;
+        /// <summary>
+        /// Obtient le tag de message de fin
+        /// </summary>
         public string EndMsgFlag => _endMsgTag;
+        /// <summary>
+        /// Obtient le point de terminaison du client
+        /// </summary>
         public System.Net.IPEndPoint EndPoint => (System.Net.IPEndPoint)_objClient?.Client?.RemoteEndPoint;
 
+        /// <summary>
+        /// Indique si le client est connecté au serveur
+        /// </summary>
         public bool IsConnected
         {
             get
             {
                 try
                 {
-                    return _objClient?.Client != null && _objClient.Connected;
+                    var client = _objClient;
+                    return client?.Client != null && client.Connected;
                 }
                 catch
                 {
-                    Log("ClientGenerique IsConnected - Exception sur la verification de la connection");
                     return false;
                 }
             }
         }
+
+        #endregion
+
+        #region CONSTRUCTORS
 
         public ClientGenerique(string hostNameOrAddress, int port, string endMsgTag)
         {
@@ -51,30 +87,74 @@ namespace FranceJudo.Core.Network.Tcp.Client
             _port = port;
             _endMsgTag = endMsgTag;
         }
+        #endregion
 
-        public void Connect()
+        #region METHODES PUBLIQUES
+
+        /// <summary>
+        /// Libère les ressources utilisées par le client
+        /// </summary>
+        public void Dispose()
         {
-            _cts = new CancellationTokenSource();
-            _ = ConnectAsync(_cts.Token);
+            Stop();
+            _writeLock?.Dispose();
+            _cts?.Dispose();
+            GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Connecte le client au serveur
+        /// </summary>
+        public void Connect(bool logExceptionAsDebug = false)
+        {
+            Stop();
+
+            _cts = new CancellationTokenSource();
+            _buffer.Clear();
+
+            // Initialisation de la file FIFO thread-safe
+            _messageQueue = new BlockingCollection<string>();
+
+            // Lancement du thread unique de traitement métier (Le Consommateur)
+            _ = Task.Run(() => ProcessMessagesLoop(_cts.Token));
+
+            // Lancement du thread de réception réseau (Le Producteur)
+            _ = Task.Run(() => ConnectInternalAsync(_cts.Token, logExceptionAsDebug));
+        }
+
+        /// <summary>
+        /// Arrête la connexion du client
+        /// </summary>
         public void Stop()
         {
             _cts?.Cancel();
             CloseClient();
         }
 
+        /// <summary>
+        /// Écrit des données sur le client
+        /// </summary>
+        /// <param name="data">Les données à écrire</param>
         public void Write(string data)
         {
-            if (IsConnected)
-            {
-                _ = WriteAsync(data, _cts.Token);
-            }
+            if (!IsConnected || string.IsNullOrEmpty(data)) return;
+
+            var token = _cts?.Token ?? CancellationToken.None;
+            _ = Task.Run(() => WriteAsync(data, token));
         }
 
-        private async Task ConnectAsync(CancellationToken token)
+        #endregion
+
+        #region METHODES PRIVEES
+
+        /// <summary>
+        /// Conne le client au serveur de manière asynchrone
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        private async Task ConnectInternalAsync(CancellationToken token, bool logExceptionAsDebug = false)
         {
-            _objClient = new TcpClient
+            _objClient = new TcpClient(AddressFamily.InterNetwork)
             {
                 NoDelay = true,
                 LingerState = new LingerOption(true, 20)
@@ -82,18 +162,23 @@ namespace FranceJudo.Core.Network.Tcp.Client
 
             try
             {
-                var connectTask = _objClient.ConnectAsync(_ip, _port);
-                var timeoutTask = Task.Delay(1000, token); // Timeout de 1 sec
-
-                if (await Task.WhenAny(connectTask, timeoutTask) == timeoutTask)
+                await Task.Run(() =>
                 {
-                    CloseClient();
-                    throw new TimeoutException($"Connection to {_ip}:{_port} timed out.");
-                }
+                    var socket = _objClient.Client;
+                    var result = socket.BeginConnect(_ip, _port, null, null);
 
-                await connectTask; // Surface les exceptions potentielles
+                    bool success = result.AsyncWaitHandle.WaitOne(1000, true);
 
-                Log($"Create Client\t{DateTime.Now}\t{_objClient.GetHashCode()}");
+                    if (!success || !socket.Connected)
+                    {
+                        try { socket.Close(); } catch { }
+                        throw new TimeoutException($"Connection to {_ip}:{_port} timed out.");
+                    }
+
+                    socket.EndConnect(result);
+                }, token);
+
+                LogDebug($"Create Client to {_ip}:{_port} \t{DateTime.Now}\t{_objClient.GetHashCode()}");
 
                 if (_objClient.Connected)
                 {
@@ -101,12 +186,29 @@ namespace FranceJudo.Core.Network.Tcp.Client
                     _ = ReadLoopAsync(token);
                 }
             }
+            catch (OperationCanceledException)
+            {
+                CloseClient();
+            }
             catch (Exception ex)
             {
-                LogError(ex);
+                CloseClient();
+                if (logExceptionAsDebug)
+                {
+                    LogDebug(ex, "An error occurred while connecting to the server.");
+                }
+                else
+                {
+                    LogError(ex);
+                }
             }
         }
 
+        /// <summary>
+        /// Lit les données reçues du client de manière asynchrone
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
         private async Task ReadLoopAsync(CancellationToken token)
         {
             try
@@ -121,14 +223,19 @@ namespace FranceJudo.Core.Network.Tcp.Client
                     if (bytesRead == 0) break;
 
                     string strReceiveData = FileSystemHelper.TheEncoding.GetString(buffer, 0, bytesRead);
-                    _chaine += strReceiveData;
 
-                    if (_chaine.Contains("\n<EOF>"))
+                    _ = Task.Run(() => LogDebug($"Receive\t\t{DateTime.Now}\t{_objClient?.GetHashCode()}\t{strReceiveData}"));
+
+                    lock (_buffer)
                     {
-                        ProcessReceivedData();
-                    }
+                        _buffer.Append(strReceiveData);
+                        string currentContent = _buffer.ToString();
 
-                    _ = Task.Run(() => Log($"Receive\t\t{DateTime.Now}\t{_objClient?.GetHashCode()}\t{strReceiveData}"), token);
+                        if (currentContent.Contains(EOF_MARKER))
+                        {
+                            ProcessReceivedData(currentContent);
+                        }
+                    }
                 }
             }
             catch (OperationCanceledException) { }
@@ -140,34 +247,78 @@ namespace FranceJudo.Core.Network.Tcp.Client
             {
                 OnEndConnection?.Invoke(this);
                 CloseClient();
-                Log($"Connect Closed\t{DateTime.Now}\t{_objClient?.GetHashCode()}");
+                LogDebug($"Connect Closed\t{DateTime.Now}");
             }
         }
-
-        private void ProcessReceivedData()
+        
+        /// <summary>
+        /// Traite les données reçues du client
+        /// </summary>
+        /// <param name="content">Le contenu à traiter</param>
+        private void ProcessReceivedData(string content)
         {
-            if (OnDataRecieve == null) return;
+            int index;
+            bool dataProcessed = false;
 
-            string tmp = string.Empty;
-            foreach (string data in _chaine.Split(new[] { "\n<EOF>" }, StringSplitOptions.RemoveEmptyEntries))
+            while ((index = content.IndexOf(EOF_MARKER)) >= 0)
             {
-                if (data.EndsWith(_endMsgTag))
+                string message = content.Substring(0, index);
+                content = content.Substring(index + EOF_MARKER.Length);
+                dataProcessed = true;
+
+                if (message.EndsWith(_endMsgTag))
                 {
-                    OnDataRecieve(this, data);
-                }
-                else
-                {
-                    tmp = data;
+                    // Ajout immédiat dans la file sans bloquer la boucle réseau
+                    // (Garantit l'ordre d'arrivée)
+                    _messageQueue?.Add(message);
                 }
             }
-            _chaine = tmp;
+
+            if (dataProcessed)
+            {
+                _buffer.Clear();
+                _buffer.Append(content);
+            }
         }
 
-        private async Task WriteAsync(string data, CancellationToken token)
+        /// <summary>
+        /// Boucle tournant en arrière-plan pour traiter les messages dans l'ordre strict d'arrivée (FIFO)
+        /// sans bloquer le thread de réception TCP.
+        /// </summary>
+        private void ProcessMessagesLoop(CancellationToken token)
         {
             try
             {
-                string finalMessage = data + "\n<EOF>";
+                // GetConsumingEnumerable endort le thread automatiquement (0% CPU) si la file est vide,
+                // et se réveille dès qu'un message est ajouté par le réseau.
+                foreach (var message in _messageQueue.GetConsumingEnumerable(token))
+                {
+                    try
+                    {
+                        OnDataReceive?.Invoke(this, message);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError(ex);
+                    }
+                }
+            }
+            catch (OperationCanceledException) { }
+            catch (ObjectDisposedException) { }
+        }
+
+        /// <summary>
+        /// Écrit des données sur le client de manière asynchrone
+        /// </summary>
+        /// <param name="data">Les données à écrire</param>
+        /// <param name="token">Le jeton d'annulation</param>
+        /// <returns></returns>
+        private async Task WriteAsync(string data, CancellationToken token)
+        {
+            await _writeLock.WaitAsync(token);
+            try
+            {
+                string finalMessage = data + EOF_MARKER;
                 byte[] bytes = FileSystemHelper.TheEncoding.GetBytes(finalMessage);
 
                 var stream = _objClient.GetStream();
@@ -181,20 +332,33 @@ namespace FranceJudo.Core.Network.Tcp.Client
                 CloseClient();
                 LogError(ex);
             }
+            finally
+            {
+                _writeLock.Release();
+            }
         }
 
+        /// <summary>
+        /// Ferme la connexion avec le client
+        /// </summary>
         private void CloseClient()
         {
-            if (_objClient == null) return;
-            try
+            // Arrête proprement la boucle du consommateur
+            _messageQueue?.CompleteAdding();
+
+            var client = Interlocked.Exchange(ref _objClient, null);
+
+            if (client != null)
             {
-                if (_objClient.Connected) _objClient.GetStream()?.Close();
+                try { client.GetStream()?.Close(); } catch { }
+                try { client.Close(); } catch { }
+                try { client.Dispose(); } catch { }
             }
-            catch (Exception ex) { LogError(ex); }
-            finally { _objClient.Close(); }
         }
 
-        private void Log(string message) => LogTools.Logger?.Debug(message);
+        private void LogDebug(string message) => LogTools.Logger?.Debug(message);
+        private void LogDebug(Exception ex, string message) => LogTools.Logger?.Debug(ex, message);
         private void LogError(Exception ex) => LogTools.Logger?.Error(new TcpClientException(ex.Message, ex));
+        #endregion
     }
 }

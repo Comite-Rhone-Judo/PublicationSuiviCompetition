@@ -20,8 +20,10 @@
     <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="NLog" Version="6.1.4" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.10" />
+	  <InternalsVisibleTo Include="AppPublication.Tests.Controles" />
+	  <PackageReference Include="FluentFTP" Version="54.1.2" />
+    <PackageReference Include="NLog" Version="6.2.1" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.12" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FranceJudo.Core\FranceJudo.Core.csproj" />

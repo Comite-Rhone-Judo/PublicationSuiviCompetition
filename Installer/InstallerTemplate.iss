@@ -60,7 +60,7 @@ Source: "..\..\..\AppPublication\bin\Release\{#TargetFramework}\{#MyAppConfig}";
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 ; Dépendance .NET 10 Desktop Runtime
-Source: "..\..\Dependancies\windowsdesktop-runtime-10.0.12-win-x64.exe"; DestDir: "{tmp}"; Flags: ignoreversion d
+Source: "..\..\Dependancies\windowsdesktop-runtime-10.0.12-win-x64.exe"; DestDir: "{tmp}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -247,19 +247,49 @@ begin
   Result := True;
 end;
 
-{ Vérifie si le .NET 10 Desktop Runtime (x64) est installé }
+{ Vérifie si le .NET 10 Desktop Runtime (x64) est installé avec une version >= 10.0.12 }
 function NeedsDotNet10: Boolean;
+var
+  FindRec: TFindRec;
+  NetDir: String;
+  IsInstalled: Boolean;
 begin
-  // Depuis .NET 5, Microsoft logge les installations sous cette clé.
-  // On utilise HKLM64 car votre exécutable cible un runtime x64.
-  if RegValueExists(HKLM64, 'SOFTWARE\dotnet\Setup\InstalledVersions\x64\sharedfx\Microsoft.WindowsDesktop.App', '10.0.12') then
+  IsInstalled := False;
+  
+  // Dossier d'installation officiel selon la documentation de Microsoft
+  // On utilise {pf64} car l'exécutable cible un runtime x64 (C:\Program Files\dotnet\...)
+  NetDir := ExpandConstant('{pf64}\dotnet\shared\Microsoft.WindowsDesktop.App');
+
+  // Dans Inno Setup, FindFirst ne prend que 2 paramètres
+  if FindFirst(NetDir + '\10.*', FindRec) then
   begin
-    Log('.NET 10 Desktop Runtime x64 est déjà installé.');
-    Result := False;
+    try
+      repeat
+        // On s'assure qu'il s'agit bien d'un vrai dossier (FILE_ATTRIBUTE_DIRECTORY)
+        if (FindRec.Name <> '.') and (FindRec.Name <> '..') and 
+           ((FindRec.Attributes and FILE_ATTRIBUTE_DIRECTORY) = FILE_ATTRIBUTE_DIRECTORY) then
+        begin
+          // Utilise votre fonction CompareVersion pour valider que la version est suffisante
+          if CompareVersion(FindRec.Name, '10.0.12') >= 0 then
+          begin
+            IsInstalled := True;
+            Log(Format('.NET 10 Desktop Runtime x64 détecté : version %s', [FindRec.Name]));
+            Break;
+          end;
+        end;
+      until not FindNext(FindRec);
+    finally
+      FindClose(FindRec);
+    end;
+  end;
+
+  if IsInstalled then
+  begin
+    Result := False; // Le runtime est déjà là (ou supérieur), on passe
   end
   else
   begin
-    Log('.NET 10 Desktop Runtime x64 manquant. Planification de l''installation.');
-    Result := True;
+    Log('.NET 10 Desktop Runtime x64 >= 10.0.12 manquant. Planification de l''installation.');
+    Result := True; // Installation requise
   end;
 end;

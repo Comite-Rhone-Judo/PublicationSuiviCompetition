@@ -29,7 +29,7 @@ namespace AppPublication.Views.Main
 
         private void MainWin_Closed_1(object sender, EventArgs e)
         {
-            DialogControleur.Instance.Connection.Client?.NetworkClient.Stop();
+            DialogControleur.Instance.Connection.Client?.Stop();
 
             App.Current.Shutdown();
         }
@@ -60,7 +60,11 @@ namespace AppPublication.Views.Main
 
         private void BoutonFindServer_Click_1(object sender, EventArgs e)
         {
-            (new RechercheServer()).ShowDialog();
+            // On instancie la nouvelle vue au lieu de l'ancienne
+            var rechercheView = new RechercheServeurView();
+            rechercheView.ShowDialog();
+
+            // (new RechercheServer()).ShowDialog();
         }
 
         private void QRCodeLocalCopy_Click(object sender, System.Windows.RoutedEventArgs e)
