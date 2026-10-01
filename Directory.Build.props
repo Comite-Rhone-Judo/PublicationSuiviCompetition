@@ -7,6 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <AssemblyMetadata Include="VersionBeta" Value="6" />
+    <AssemblyMetadata Include="VersionBeta" Value="0" />
   </ItemGroup>
 </Project>
