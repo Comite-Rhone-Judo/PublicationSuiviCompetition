@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using System.Windows;
+using FranceJudo.Core.Logging;
 
 namespace FranceJudo.UI.Wpf.Dialogs
 {
@@ -38,7 +39,16 @@ namespace FranceJudo.UI.Wpf.Dialogs
         {
             try
             {
-                await pdfWebView.EnsureCoreWebView2Async();
+                // 1. Définir un dossier de cache dans le répertoire temporaire du profil utilisateur
+                string cacheFolderPath = Path.Combine(Path.GetTempPath(), "FranceJudo_WebView2Cache");
+
+                LogTools.Logger?.Debug($"WebView2 cache folder: {cacheFolderPath}");
+
+                // 2. Créer l'environnement pointant vers ce dossier autorisé en écriture
+                var webView2Environment = await CoreWebView2Environment.CreateAsync(null, cacheFolderPath);
+
+                // 3. Initialiser le composant PDF avec cet environnement spécifique
+                await pdfWebView.EnsureCoreWebView2Async(webView2Environment);
 
                 // Abonnement à la fin du chargement pour déclencher l'impression silencieuse si demandée
                 pdfWebView.CoreWebView2.NavigationCompleted += CoreWebView2_NavigationCompleted;
@@ -54,6 +64,7 @@ namespace FranceJudo.UI.Wpf.Dialogs
             }
             catch (Exception ex)
             {
+                LogTools.Logger?.Error(ex, "Impossible d'initialiser le composant PDF");
                 HandyControl.Controls.MessageBox.Show($"Impossible d'initialiser le composant PDF : {ex.Message}");
             }
         }
@@ -111,6 +122,7 @@ namespace FranceJudo.UI.Wpf.Dialogs
             }
             catch (Exception ex)
             {
+                LogTools.Logger?.Error(ex, "Erreur d'impression silencieuse");
                 // En mode silencieux, on logue l'erreur ou on l'ignore pour ne pas bloquer l'appli
                 Console.WriteLine($"Erreur d'impression silencieuse : {ex.Message}");
             }
@@ -142,6 +154,7 @@ namespace FranceJudo.UI.Wpf.Dialogs
                 }
                 catch (Exception ex)
                 {
+                    LogTools.Logger?.Error(ex, "Erreur lors de l'enregistrement du PDF");
                     HandyControl.Controls.MessageBox.Show($"Erreur lors de l'enregistrement : {ex.Message}");
                 }
             }
@@ -158,7 +171,10 @@ namespace FranceJudo.UI.Wpf.Dialogs
                     File.Delete(_tempFilePath);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                LogTools.Logger?.Error(ex, "Erreur lors de la suppression du fichier temporaire PDF '{0}'", _tempFilePath);
+            }
 
             base.OnClosed(e);
         }
